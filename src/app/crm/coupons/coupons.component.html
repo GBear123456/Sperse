@@ -13,7 +13,7 @@
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <dx-select-box [items]="headerOptions"
                        [(value)]="activeHeaderOption"
-                       (onValueChanged)="navigateToCoupons($event)">
+                       (onValueChanged)="navigateToProducts($event)">
         </dx-select-box>
         <import-progress-bar></import-progress-bar>
     </app-headline>
@@ -57,48 +57,40 @@
                                  [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                                  [allowUpdating]="!isReadOnly">
                     </dxo-editing>
-                    <dxi-column [dataField]="productFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
-                    <dxi-column [dataField]="productFields.ThumbnailUrl"
-                                cellTemplate="imageTemplate"
-                                caption=""
-                                [width]="50"
-                                [showInColumnChooser]="false"
-                                [allowReordering]="false"
-                                [allowExporting]="false"
-                                [allowGrouping]="false"
-                                [allowSorting]="false">
-                    </dxi-column>
-                    <dxi-column [dataField]="productFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [dataField]="productFields.Code" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [dataField]="productFields.Description" [caption]="l('Description')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [dataField]="productFields.Group" [caption]="l('Group')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [dataField]="productFields.Type" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [dataField]="productFields.Price" [caption]="l('Price')" cellTemplate="amountTemplate"></dxi-column>
-                    <dxi-column [dataField]="productFields.Unit" [caption]="l('Unit')"></dxi-column>
+                    <dxi-column [dataField]="couponFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                    <dxi-column [dataField]="couponFields.Code" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="couponFields.Description" [caption]="l('Description')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="couponFields.Type" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="couponFields.Value" [caption]="l('Value')" cellTemplate="valueTemplate"></dxi-column>
+                    <dxi-column [dataField]="couponFields.Duration" [caption]="l('Duration')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="couponFields.ActivationDate" [caption]="l('ActivationDate')" cellTemplate="dateTemplate"></dxi-column>
+                    <dxi-column [dataField]="couponFields.DeactivationDate" [caption]="l('DeactivationDate')" cellTemplate="dateTemplate"></dxi-column>
+                    <dxi-column [dataField]="couponFields.IsArchived" [caption]="l('Archived')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="couponFields.Created" [caption]="l('Created')" cellTemplate="dateTemplate" [visible]="false"></dxi-column>
 
-                    <div *dxTemplate="let cell of 'imageTemplate'" class="image-column">
-                        <img *ngIf="cell.data.ThumbnailUrl" [src]="cell.data.ThumbnailUrl" />
+                    <div *dxTemplate="let cell of 'valueTemplate'" class="clipboard-holder">
+                        <span *ngIf="cell.data.Type == couponTypes.Fixed; else Percent">
+                            {{ cell.data.Value | currency:currency:'symbol':'1.2-2' }}
+                        </span>
+                        <ng-template #Percent>
+                            <span> {{ cell.data.Value / 100 | percent:'1.0-2' }}</span>
+                        </ng-template>
                     </div>
-                    <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
-                        <span> {{ cell.data.Price | currency:currency:'symbol':'1.2-2' }} </span>
+                    <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">
+                        <span class="date-time" [title]="cellData.value ? (cellData.value | datetime: formatting.dateTimeMoment) : ''">
+                            {{cellData.value ? (cellData.value | datetime: formatting.dateMoment) : ''}}
+                        </span>
                     </div>
 
                     <dxo-sorting mode="multiple"></dxo-sorting>
                     <dxo-paging [pageSize]="20"></dxo-paging>
                     <dxo-group-panel [visible]="true"></dxo-group-panel>
-                    <dxo-summary>
-                        <dxi-group-item [column]="productFields.Id"
-                                        summaryType="count"
-                                        [displayFormat]="'{0} ' + l('Products').toLocaleLowerCase()">
-                        </dxi-group-item>
-                    </dxo-summary>
                 </dx-data-grid>
             </div>
         </div>
     </div>
 </div>
 
-<app-no-data
-    [hidden]="!isDataLoaded || totalRowCount"
-    [showLink]="false">
+<app-no-data [hidden]="!isDataLoaded || totalRowCount"
+             [showLink]="false">
 </app-no-data>

@@ -305,10 +305,37 @@
         </dx-scroll-view>
         <div class="row bottom-container">
             <div class="col-sm-6">
+                <div>
+                    <div class="coupon-select-row">
+                        <label class="bottom-container-text">{{ls.l('Invoice_CouponCode')}}</label>
+                        <dx-select-box #couponSelect
+                                       height="42px"
+                                       width="340px"
+                                       [inputAttr]="{readonly: 'readonly'}"
+                                       [disabled]="disabledForUpdate"
+                                       valueExpr="id"
+                                       displayExpr="code"
+                                       [showClearButton]="true"
+                                       [placeholder]="ls.l('Invoice_SelectCoupon')"
+                                       [(value)]="couponId"
+                                       [dataSource]="couponsDataSource"
+                                       [searchEnabled]="true"
+                                       [searchTimeout]="500"
+                                       (onSelectionChanged)="selectCoupon($event)">
+                            <div *dxTemplate="let cell of 'item'">
+                                <span [title]="cell.description">{{cell.code + " (" + cell.description + ")"}}</span>
+                            </div>
+                        </dx-select-box>
+                    </div>
+                    <div class="bottom-container-text coupon-description" [title]="couponSelect?.selectedItem?.description">
+                        {{couponSelect.selectedItem ? couponSelect.selectedItem.description : ''}}
+                    </div>
+                </div>
                 <div class="field-area notes">
                     <label class="notes-label">{{ls.l('InvoiceNote')}} <a (click)="resetNoteDefault()">({{ls.l('default')}} {{ls.l('note')}})</a></label>
                     <dx-text-area
                         name="comment"
+                        class="bottom-container-text"
                         [disabled]="disabledForUpdate"
                         [width]="'380px'"
                         [height]="'100px'"
@@ -316,7 +343,7 @@
                     </dx-text-area>
                 </div>
             </div>
-            <div class="col-sm-6 conclusion">
+            <div class="col-sm-6 conclusion bottom-container-text">
                 <div class="sub-total"><span>{{ls.l('SubTotal')}}</span><span>{{subTotal | currency: invoiceSettings.currency}}</span></div>
                 <div class="user-total"><span>{{ls.l('DiscountTotal')}}</span>
                     <span>
