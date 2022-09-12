@@ -218,14 +218,13 @@ export class LoginService {
         if (loginReturnUrl.endsWith('?'))
             loginReturnUrl = loginReturnUrl.replace('?', '');
 
-        var search = loginReturnUrl.substring(loginReturnUrl.lastIndexOf('?'));
+        var search = loginReturnUrl.lastIndexOf('?') ? loginReturnUrl.substring(loginReturnUrl.lastIndexOf('?')) : '';
         window.history.pushState({}, document.title, window.location.pathname + search);
 
         const model = new LinkedInAuthenticateModel();
         model.authProvider = ExternalLoginProvider.LINKEDIN;
         model.providerAccessCode = '-';
         model.providerKey = provider.clientId;
-        model.autoRegistration = true;
         model.singleSignIn = UrlHelper.getSingleSignIn();
         model.returnUrl = UrlHelper.getReturnUrl();
 
