@@ -132,8 +132,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.clientService.contactInfoSubscribe((data: ContactInfoDto) => {
             if (data && (!this.contactId || data.id != this.contactId)) {
                 this.contactId = data.id;
-                this.isSendEmailAllowed = this.permission.checkCGPermission(
-                    data.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
+                this.isSendEmailAllowed = +abp.features.getValue(AppFeatures.CRMMaxCommunicationMessageCount) && 
+                    this.permission.checkCGPermission(data.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
                 this.dataSource = this.getDataSource();
                 this.initGeneratedCommissionDataSource(true);
             }

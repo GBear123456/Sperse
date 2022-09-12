@@ -68,8 +68,13 @@ export class CreateUserDialogComponent implements OnInit {
     sendActivationEmail = true;
     setRandomPassword = false;
     passwordComplexityInfo = '';
-    userGroups = Object.keys(UserGroup);
-    userGroup = this.userGroups[0];
+    userGroups = Object.keys(UserGroup).map(group => {
+        return {
+            id: group,
+            name: this.ls.l(group + 's')
+        };
+    });
+    userGroup = this.userGroups[0].id;
 
     isTwoFactorEnabled: boolean = this.settingService.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
     isLockoutEnabled: boolean = this.settingService.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
