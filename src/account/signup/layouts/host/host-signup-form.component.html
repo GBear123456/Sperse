@@ -35,8 +35,8 @@
     <div class="box__right box__item">
       <form *ngIf="!leadRequestXref" id="firstStepForm" #firstStepForm="ngForm" novalidate (ngSubmit)="processTenantRegistrationRequest()">
         <div class="social_login">
-          <button class="button_global button_global_blue" [ngClass]="{disabled: !linkedIdLoginProvider}">
-                  <!--(click)="loginService.linkedInInitLogin(linkedIdLoginProvider)">-->
+          <button class="button_global button_global_blue" [ngClass]="{disabled: !linkedIdLoginProvider}"
+                  (click)="loginService.linkedInInitLogin(linkedIdLoginProvider)">
             <span class="i-s-linkedin">Sign In with LinkedIn</span>
           </button>
         </div>

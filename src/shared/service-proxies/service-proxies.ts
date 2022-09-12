@@ -25269,6 +25269,79 @@ export class LearningResourceServiceProxy {
 }
 
 @Injectable()
+export class LinkedInServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param exchangeCode (optional) 
+     * @param loginReturnUrl (optional) 
+     * @return Success
+     */
+    getUserData(exchangeCode: string | undefined, loginReturnUrl: string | undefined): Observable<LinkedInUserData> {
+        let url_ = this.baseUrl + "/api/services/Platform/LinkedIn/GetUserData?";
+        if (exchangeCode === null)
+            throw new Error("The parameter 'exchangeCode' cannot be null.");
+        else if (exchangeCode !== undefined)
+            url_ += "ExchangeCode=" + encodeURIComponent("" + exchangeCode) + "&";
+        if (loginReturnUrl === null)
+            throw new Error("The parameter 'loginReturnUrl' cannot be null.");
+        else if (loginReturnUrl !== undefined)
+            url_ += "LoginReturnUrl=" + encodeURIComponent("" + loginReturnUrl) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserData(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LinkedInUserData>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LinkedInUserData>;
+        }));
+    }
+
+    protected processGetUserData(response: HttpResponseBase): Observable<LinkedInUserData> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LinkedInUserData.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LinkedInUserData>(null as any);
+    }
+}
+
+@Injectable()
 export class LocalizationServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -75119,6 +75192,50 @@ export class LinkedInExternalLoginProviderSettings implements ILinkedInExternalL
 export interface ILinkedInExternalLoginProviderSettings {
     appId: string | undefined;
     appSecret: string | undefined;
+}
+
+export class LinkedInUserData implements ILinkedInUserData {
+    name!: string | undefined;
+    surname!: string | undefined;
+    emailAddress!: string | undefined;
+
+    constructor(data?: ILinkedInUserData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.surname = _data["surname"];
+            this.emailAddress = _data["emailAddress"];
+        }
+    }
+
+    static fromJS(data: any): LinkedInUserData {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedInUserData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["emailAddress"] = this.emailAddress;
+        return data;
+    }
+}
+
+export interface ILinkedInUserData {
+    name: string | undefined;
+    surname: string | undefined;
+    emailAddress: string | undefined;
 }
 
 export class LinkedUserDto implements ILinkedUserDto {

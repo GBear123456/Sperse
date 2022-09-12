@@ -5,7 +5,7 @@ import { Component, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { NotifyService } from 'abp-ng2-module';
+import { MessageService, NotifyService } from 'abp-ng2-module';
 import { MatDialog } from '@angular/material/dialog';
 import { first, finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -16,7 +16,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { AbpSessionService } from 'abp-ng2-module';
 import { SessionServiceProxy, LeadServiceProxy, TenantProductInfo, PaymentPeriodType, 
     SubmitTenancyRequestOutput, TenantSubscriptionServiceProxy, CompleteTenantRegistrationOutput,
-    ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput } from '@shared/service-proxies/service-proxies';
+    ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput,
+    LinkedInServiceProxy, LinkedInUserData} from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -31,7 +32,7 @@ const psl = require('psl');
         '../../../../assets/fonts/sperser-extension.css',
         './host-signup-form.component.less',
     ],
-    providers: [LeadServiceProxy, ProductServiceProxy, TenantSubscriptionServiceProxy],
+    providers: [LeadServiceProxy, ProductServiceProxy, TenantSubscriptionServiceProxy, LinkedInServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HostSignupFormComponent {
@@ -68,7 +69,9 @@ export class HostSignupFormComponent {
         public ls: AppLocalizationService,
         public loginService: LoginService,
         public router: Router,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
+        private linkedInService: LinkedInServiceProxy,
+        private messageService: MessageService
     ) {
         this.tenancyRequestModel.tag = 'Demo Request';
         this.tenancyRequestModel.stage = 'Interested';
@@ -91,7 +94,20 @@ export class HostSignupFormComponent {
                     let exchangeCode = paramsMap.get('code');
                     let state = paramsMap.get('state');
                     if (!!exchangeCode && !!state) {
-                        this.loginService.linkedInLogin(provider, exchangeCode, state);
+                        abp.ui.setBusy();
+                        let loginReturnUrl = this.loginService.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state);
+
+                        this.linkedInService.getUserData(exchangeCode, loginReturnUrl)
+                            .pipe(finalize(() => abp.ui.clearBusy()))
+                            .subscribe((result: LinkedInUserData) => {
+                                this.tenancyRequestModel.firstName = result.name;
+                                this.tenancyRequestModel.lastName = result.surname;
+                                this.tenancyRequestModel.email = result.emailAddress;
+
+                                this.messageService.info('The data provided by LinkedIn is not enough for Create Your Sperse Account');
+
+                                this.changeDetectorRef.detectChanges();
+                            });
                     }
                 });
 
@@ -121,8 +137,8 @@ export class HostSignupFormComponent {
     }
 
     processTenantRegistrationRequest() {
-        if (!this.firstStepForm.valid || (this.phoneNumber && !this.phoneNumber.isValid()))
-            return;
+        //if (!this.firstStepForm.valid || (this.phoneNumber && !this.phoneNumber.isValid()))
+        //    return;
 
         this.startLoading();
         this.leadProxy.submitTenancyRequest(this.tenancyRequestModel).pipe(
