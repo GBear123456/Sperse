@@ -312,7 +312,9 @@ export class LoginService {
             });
         } else if (authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
-            this.router.navigate(['account/select-tenant']);
+            this.router.navigate(['account/select-tenant'],
+                {queryParams: {extlogin: setCookiesOnly}}
+            );
         } else {
             // Unexpected result!
 
