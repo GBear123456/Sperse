@@ -141,10 +141,13 @@ export class HostSignupFormComponent {
     }
 
     processTenantRegistrationRequest() {
-        //if (!this.firstStepForm.valid || (this.phoneNumber && !this.phoneNumber.isValid()))
-        //    return;
+        if (!this.firstStepForm.valid || (this.phoneNumber && !this.phoneNumber.isValid()))
+            return;
 
         this.startLoading();
+        this.tenancyRequestModel.email = this.tenancyRequestModel.email.trim();
+        this.tenancyRequestModel.lastName = this.tenancyRequestModel.lastName.trim();
+        this.tenancyRequestModel.firstName = this.tenancyRequestModel.firstName.trim();
         this.leadProxy.submitTenancyRequest(this.tenancyRequestModel).pipe(
             finalize(() => this.finishLoading())
         ).subscribe((responce: SubmitTenancyRequestOutput) => {
@@ -177,7 +180,7 @@ export class HostSignupFormComponent {
             return;
 
         this.tenantRegistrationModel.requestXref = this.leadRequestXref;
-        this.tenantRegistrationModel.companyName = this.tenantRegistrationModel.tenantName;
+        this.tenantRegistrationModel.companyName = (this.tenantRegistrationModel.tenantName || '').trim();
         this.tenantRegistrationModel.tenancyName = this.clearUrlPrefix(this.tenantRegistrationModel.tenancyName);
 
         this.startLoading();

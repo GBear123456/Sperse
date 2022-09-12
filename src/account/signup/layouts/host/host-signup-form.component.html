@@ -81,7 +81,7 @@
           </label>
         </div>
         <div class="login_btn">
-          <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !agreedTermsAndServices}">
+          <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !agreedTermsAndServices || !firstStepForm.valid}">
             <span>Start Your Free 7-Day Trial Today!</span>
           </button>
         </div>
