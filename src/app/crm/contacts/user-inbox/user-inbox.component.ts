@@ -108,8 +108,8 @@ export class UserInboxComponent implements OnDestroy {
                 let contactId = this.contactId;
                 this.contactInfo = contactInfo;
                 this.contactId = contactInfo.id;
-                this.isSendSmsAndEmailAllowed = +abp.features.getValue(AppFeatures.CRMMaxCommunicationMessageCount) &&
-                    this.permission.checkCGPermission(contactInfo.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
+                this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
+                    contactInfo.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
                 this.activeMessage = undefined;
                 if (!this.dataSource || contactId != this.contactId) {
                     var isSms = this.activatedRoute.snapshot.queryParamMap.get('sms');
