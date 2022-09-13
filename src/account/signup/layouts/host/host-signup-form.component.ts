@@ -77,11 +77,14 @@ export class HostSignupFormComponent {
     ) {
         this.tenancyRequestModel.tag = 'Demo Request';
         this.tenancyRequestModel.stage = 'Interested';
-        this.productProxy.getSubscriptionProductsByGroupName('Extention').subscribe(products => {
-            this.signUpProduct = products[0];
+        this.productProxy.getSubscriptionProductsByGroupName('Main').subscribe(products => {
+            this.signUpProduct = products.sort((prev, next) => {
+                let prevFee = this.getProductMonthlyOption(prev), 
+                    nextFee = this.getProductMonthlyOption(next);
+                return prevFee > nextFee ? -1: 1;
+            })[0];
             if (this.signUpProduct) {
-                let option = this.signUpProduct.productSubscriptionOptions
-                    .filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
+                let option = this.getProductMonthlyOption(this.signUpProduct);
                 this.signUpProduct.price = option.fee;
                 this.tenancyRequestModel.products = [new TenantProductInfo({
                     productId: this.signUpProduct.id,
@@ -120,6 +123,10 @@ export class HostSignupFormComponent {
 
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+    getProductMonthlyOption(product) {
+        return product.productSubscriptionOptions.filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
     }
 
     startLoading() {
