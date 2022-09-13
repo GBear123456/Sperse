@@ -2,24 +2,14 @@ public-invoice {
     background: rgba(168,213,255,.5);
     background: linear-gradient(115.57deg,rgba(168,213,255,.5) 16.28%,rgba(255,251,220,.28) 95.97%);
     width: 100%;
+    min-width: 890px;
     min-height: 100%;
     display: flex;
     flex-direction: column;
+    font-size: 16px;
 
-    @media print {
-        & {
-            background: white;
-        }
-
-        .header, .footer {
-            display: none !important;
-        }
-
-        .content {
-            margin-top: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-        }
+    * {
+        font-family: Calibri;
     }
 
     .content-center {
@@ -32,7 +22,8 @@ public-invoice {
     }
 
     .header {
-        position: fixed;
+        position: sticky;
+        top: 0;
         z-index: 1;
         width: 100%;
         height: 65px;
@@ -52,10 +43,13 @@ public-invoice {
     }
 
     .content {
+        display: flex;
+        flex-direction: column;
         min-height: 1385px;
-        margin-top: 100px;
+        margin-top: 40px;
         padding: 65px 45px 45px;
         background-color: white;
+        position: relative;
 
         .content-logo {
             margin-bottom: 40px;
@@ -135,6 +129,61 @@ public-invoice {
             padding-top: 2px;
             padding-bottom: 0px;
         }
+
+        .items-table .footer td {
+            border: 0;
+            text-align: right;
+            padding-top: 2px;
+            padding-bottom: 0px;
+        }
+
+        .scissors-block {
+            position: relative;
+            margin-top: auto;
+
+            p {
+                margin: 15px 0;
+            }
+
+            .scissors-icon {
+                position: absolute;
+                top: -22px;
+                font-size: 30px;
+                left: 10px;
+            }
+
+            .scissors-main {
+                border-top: 1px dashed black;
+                padding-top: 25px;
+
+                td {
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                }
+
+                .border-bottom td {
+                    border-bottom: 1px solid #e6e6e6;
+                }
+
+                .payment-advice {
+                    .caption {
+                        font-size: 35px;
+                        margin-bottom: 15px;
+                    }
+
+                    p {
+                        font-size: 12px;
+                        font-style: italic;
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            .registered {
+                font-size: 12px;
+                margin-top: 50px;
+            }
+        }
     }
 
     .footer {
@@ -160,6 +209,26 @@ public-invoice {
 
     .gray {
         color: gray;
+    }
+
+    @media print {
+        & {
+            background: white;
+        }
+
+        .header, .footer {
+            display: none !important;
+        }
+
+        .content {
+            margin-top: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+
+            .scissors-block {
+                padding: 0;
+            }
+        }
     }
 }
 

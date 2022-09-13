@@ -50,9 +50,9 @@
                         {{invoiceInfo.invoiceData.number}}
                     </p>
                 </div>
-                <div class="left width-50 pre-line">
-                    {{invoiceInfo.legalName}}<br>
-                    {{invoiceInfo.legalAddress}}
+                <div class="left width-50">
+                    <b>Company</b>
+                    <p class="pre-line">{{invoiceInfo.legalName}}e<br>{{invoiceInfo.legalAddress}}</p>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@
         <table class="items-table full-width" cellspacing="0">
             <thead>
                 <tr>
-                    <th >Description</th>
+                    <th>Description</th>
                     <th class="text-right">Quantity</th>
                     <th class="text-right">Unit Price</th>
                     <th class="text-right">Amount USD</th>
@@ -107,6 +107,89 @@
         </p>
 
         <p *ngIf="invoiceInfo.invoiceData.note" class="pre-line">{{invoiceInfo.invoiceData.note}}</p>
+
+        <div class="full-width scissors-block">
+            <span class="scissors-icon">&#9986;</span>
+            <div class="scissors-main">
+                <div class="left width-60 payment-advice">
+                    <div class="caption">PAYMENT ADVICE</div>
+                    <div>
+                        <div class="left width-40">
+                            <p>
+                                BENEFICIARY INFORMATION
+                            </p>
+                            <div>
+                                {{invoiceInfo.paymentSettings.beneficiaryInfo.name}}<br>
+                                {{invoiceInfo.paymentSettings.beneficiaryInfo.streetAddress}}<br>
+                                {{invoiceInfo.paymentSettings.beneficiaryInfo.cityAddress}}
+                            </div>
+                        </div>
+                        <div class="left width-60">
+                            <p>
+                                BANK ACCOUNT NUMBER
+                            </p>
+                            <div>
+                                {{invoiceInfo.paymentSettings.bankAccountNumber}}
+                            </div>
+                            <p>
+                                BANK ROUTING NUMBER FOR ACH TRANSFERS
+                            </p>
+                            <div>
+                                {{invoiceInfo.paymentSettings.bankRoutingNumberForACH}}
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="left width-40">
+                            <p>
+                                BENEFICIARY BANK
+                            </p>
+                            <div>
+                                {{invoiceInfo.paymentSettings.beneficiaryBank.name}}<br>
+                                {{invoiceInfo.paymentSettings.beneficiaryBank.streetAddress}}<br>
+                                {{invoiceInfo.paymentSettings.beneficiaryBank.cityAddress}}
+                            </div>
+                        </div>
+                        <div class="left width-60">
+                            <p>
+                                IF SENDING AS WIRE USE THE FOLLOWING CODES
+                            </p>
+                            <div>
+                                Bank Routing Number: <span class="right">{{invoiceInfo.paymentSettings.bankRoutingNumber}}</span>
+                            </div>
+                            <div>
+                                SWIFT Code for US Dollar: <span class="right">{{invoiceInfo.paymentSettings.swiftCodeForUSDollar}}</span>
+                            </div>
+                            <div>
+                                SWIFT Code: <span class="right">{{invoiceInfo.paymentSettings.swiftCode}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="left width-40">
+                    <table class="full-width" cellspacing="0">
+                        <tr>
+                            <td class="width-40"><b>Customer</b></td>
+                            <td>{{invoiceInfo.invoiceData.customerName}}</td>
+                        </tr>
+                        <tr class="border-bottom">
+                            <td><b>Invoice Number</b></td>
+                            <td>{{invoiceInfo.invoiceData.number}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Amount Due</b></td>
+                            <td>{{invoiceInfo.invoiceData.grandTotal | number: '1.2-2'}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Due Date</b></td>
+                            <td>{{invoiceInfo.invoiceData.dueDate | date: 'dd MMM yyyy'}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="registered">Registered Office: {{invoiceInfo.paymentSettings.beneficiaryInfo.streetAddress}} {{invoiceInfo.paymentSettings.beneficiaryInfo.cityAddress}}</div>
+        </div>
     </div>
     <div class="footer gray content-center">
         <div class="powered-by">

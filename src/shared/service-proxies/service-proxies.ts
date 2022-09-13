@@ -69477,6 +69477,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
     legalName!: string | undefined;
     legalAddress!: string | undefined;
     invoiceData!: InvoiceData | undefined;
+    paymentSettings!: BankTransferSettings | undefined;
     stripePayUrl!: string | undefined;
 
     constructor(data?: IGetPublicInvoiceInfoOutput) {
@@ -69494,6 +69495,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
             this.legalName = _data["legalName"];
             this.legalAddress = _data["legalAddress"];
             this.invoiceData = _data["invoiceData"] ? InvoiceData.fromJS(_data["invoiceData"]) : <any>undefined;
+            this.paymentSettings = _data["paymentSettings"] ? BankTransferSettings.fromJS(_data["paymentSettings"]) : <any>undefined;
             this.stripePayUrl = _data["stripePayUrl"];
         }
     }
@@ -69511,6 +69513,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
         data["legalName"] = this.legalName;
         data["legalAddress"] = this.legalAddress;
         data["invoiceData"] = this.invoiceData ? this.invoiceData.toJSON() : <any>undefined;
+        data["paymentSettings"] = this.paymentSettings ? this.paymentSettings.toJSON() : <any>undefined;
         data["stripePayUrl"] = this.stripePayUrl;
         return data;
     }
@@ -69521,6 +69524,7 @@ export interface IGetPublicInvoiceInfoOutput {
     legalName: string | undefined;
     legalAddress: string | undefined;
     invoiceData: InvoiceData | undefined;
+    paymentSettings: BankTransferSettings | undefined;
     stripePayUrl: string | undefined;
 }
 
