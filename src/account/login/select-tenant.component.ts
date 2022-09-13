@@ -10,6 +10,7 @@ import { LoginService } from './login.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { TenantModel } from 'shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AccountComponent } from '../account.component';
 
 @Component({
     templateUrl: './select-tenant.component.html',
@@ -17,12 +18,14 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     animations: [ accountModuleAnimation() ]
 })
 export class SelectTenantComponent implements CanActivate, OnInit {
-    @HostBinding('class.extlogin') isExtLogin: boolean = false;
+    @HostBinding('class.unwrapped') isUnWrapped: boolean = false;
+    isExtLogin: boolean = false;
     tenants?: TenantModel[] = [];
     saving = false;
 
     constructor(
         private router: Router,
+        private accountComponent: AccountComponent,
         private activatedRoute: ActivatedRoute,
         public loginService: LoginService,
         public ls: AppLocalizationService
@@ -31,6 +34,7 @@ export class SelectTenantComponent implements CanActivate, OnInit {
             first()
         ).subscribe((paramsMap: ParamMap) => {
             this.isExtLogin = paramsMap.get('extlogin') == 'true';
+            this.isUnWrapped = !this.accountComponent.isWrapped;
         });
     }
 

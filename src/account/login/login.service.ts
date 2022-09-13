@@ -277,7 +277,8 @@ export class LoginService {
                 redirectUrl = authenticateResult.returnUrl;
             }
 
-            if (setCookiesOnly)
+            if (setCookiesOnly) {
+                this.completeSourceEvent();
                 this.authService.setLoginCookies(
                     authenticateResult.accessToken, 
                     authenticateResult.encryptedAccessToken, 
@@ -286,7 +287,7 @@ export class LoginService {
                     authenticateResult.twoFactorRememberClientToken, 
                     redirectUrl
                 );
-            else
+            } else
                 this.login(
                     authenticateResult.accessToken,
                     authenticateResult.encryptedAccessToken,

@@ -61,7 +61,7 @@
 
         &__inner {
             padding: clamp(20px, 4vw, 50px) clamp(20px, 4vw, 50px)
-                clamp(20px, 5vw, 60px);
+                clamp(10px, 2vw, 30px);
             background-color: #fff;
             border-radius: 10px;
             width: clamp(300px, 50vw, 650px);
@@ -128,6 +128,24 @@
             gap: 10px;
         }
 
+        .email-icon, .pass-icon {
+            background-repeat: no-repeat;
+            width: 23px;
+            height: 23px;
+            position: absolute;
+            top: 42px;
+            left: 16px;
+        }
+
+        .email-icon {
+            margin: 2px;
+            background-image: url(../../../../assets/common/icons/email_w.svg);
+        }
+
+        .pass-icon {
+            background-image: url(../../../../assets/common/icons/password_w.svg);
+        }
+
         input {
             background: rgba(239, 247, 254, 0.4);
             border: 1px solid #d0e0ee;
@@ -139,19 +157,9 @@
             background-size: 20px;
             height: 45px;
 
-            &[type="email"] {
-                background-image: url(../../../../assets/common/icons/email_w.svg);
-            }
-
             &:hover,
             &:focus {
                 border-color: var(--m-blue-light);
-            }
-        }
-
-        &__pass {
-            input {
-                background-image: url(../../../../assets/common/icons/password_w.svg);
             }
         }
 
@@ -305,5 +313,15 @@
 
     .success {
         text-align: center;
+    }
+
+    .no-account {
+        width: 100%;
+        text-align: center;
+        padding-top: 20px;
+        a {
+            font-weight: 600;
+            text-decoration: underline;
+        }
     }
 }

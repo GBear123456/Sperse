@@ -19,11 +19,11 @@
                     <span>Or</span>
                 </div>
                 <div class="input">
-                    <label>Email Address <input type="email" [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus autocomplete="off" placeholder="{{getLoginPlaceholder()}}" name="userNameOrEmailAddress" required tabindex="1">
+                    <label>Email Address <i class="email-icon"></i><input type="email" [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus autocomplete="off" placeholder="{{getLoginPlaceholder()}}" name="userNameOrEmailAddress" required tabindex="1">
                     </label>
                 </div>
                 <div class="input input__pass">
-                    <label>Password <input [(ngModel)]="loginService.authenticateModel.password" autocomplete="off" placeholder="{{ls.l('Password')}}" name="password" required maxlength="32" tabindex="2" [type]="showPassword ? 'text' : 'password'">
+                    <label>Password <i class="pass-icon"></i><input [(ngModel)]="loginService.authenticateModel.password" autocomplete="off" placeholder="{{ls.l('Password')}}" name="password" required maxlength="32" tabindex="2" [type]="showPassword ? 'text' : 'password'">
                         <span class="pass" (click)="showPassword = !showPassword">{{ls.l(showPassword ? 'hide' : 'show')}}</span>
                     </label>
                 </div>
@@ -42,6 +42,7 @@
                         <span>Login To Your Sperse Account</span>
                     </button>
                 </div>
+                <span class="no-account">Don't have a Sperse account? <a routerLink="/account/signup">Sign up</a></span>
             </ng-template>
         </div>
     </form>
