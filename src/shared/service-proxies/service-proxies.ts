@@ -44616,64 +44616,6 @@ export class TenantSubscriptionServiceProxy {
     }
 
     /**
-     * @return Success
-     */
-    getSubscriptionFeatureAvailabilities(): Observable<SubscriptionFeatureAvailabilityInfo[]> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetSubscriptionFeatureAvailabilities";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSubscriptionFeatureAvailabilities(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetSubscriptionFeatureAvailabilities(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<SubscriptionFeatureAvailabilityInfo[]>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<SubscriptionFeatureAvailabilityInfo[]>;
-        }));
-    }
-
-    protected processGetSubscriptionFeatureAvailabilities(response: HttpResponseBase): Observable<SubscriptionFeatureAvailabilityInfo[]> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(SubscriptionFeatureAvailabilityInfo.fromJS(item));
-            }
-            else {
-                result200 = <any>null;
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SubscriptionFeatureAvailabilityInfo[]>(null as any);
-    }
-
-    /**
      * @param body (optional) 
      * @return Success
      */
@@ -93119,54 +93061,6 @@ export interface ISubscriberDailyStatsReportInfo {
     starterKitAmount: number | undefined;
     totalCount: number | undefined;
     totalAmount: number | undefined;
-}
-
-export class SubscriptionFeatureAvailabilityInfo implements ISubscriptionFeatureAvailabilityInfo {
-    featureName!: string | undefined;
-    maxCount!: number;
-    usedCount!: number;
-    availableCount!: number;
-
-    constructor(data?: ISubscriptionFeatureAvailabilityInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.featureName = _data["featureName"];
-            this.maxCount = _data["maxCount"];
-            this.usedCount = _data["usedCount"];
-            this.availableCount = _data["availableCount"];
-        }
-    }
-
-    static fromJS(data: any): SubscriptionFeatureAvailabilityInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new SubscriptionFeatureAvailabilityInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["featureName"] = this.featureName;
-        data["maxCount"] = this.maxCount;
-        data["usedCount"] = this.usedCount;
-        data["availableCount"] = this.availableCount;
-        return data;
-    }
-}
-
-export interface ISubscriptionFeatureAvailabilityInfo {
-    featureName: string | undefined;
-    maxCount: number;
-    usedCount: number;
-    availableCount: number;
 }
 
 export class SubscriptionInput implements ISubscriptionInput {
