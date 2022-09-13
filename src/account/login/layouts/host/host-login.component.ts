@@ -112,10 +112,7 @@ export class HostLoginComponent implements OnInit {
             this.loginService.authenticate(() => { 
                 this.loginInProgress = false;
             }, undefined, true, this.isExtLogin, (result) => {
-                if (this.isLoggedIn = this.isExtLogin) {
-                    if (!result.shouldResetPassword)
-                        this.loginService.completeSourceEvent();                
-                }
+                this.isLoggedIn = this.isExtLogin;
             });
         }
     }
