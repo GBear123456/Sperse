@@ -257,6 +257,16 @@ export class FiltersService {
         return CrmFilterHelpers.filterByParentId();
     }
 
+    static filterByBooleanValue(filter: FilterModel) {
+        let data = {};
+        let value = filter.items.element.value;
+
+        if (value !== undefined)
+            data[filter.caption] = { 'eq': value };
+        
+        return data;
+    }
+
     constructor(
         private serverCacheService: ServerCacheService
     ) {}

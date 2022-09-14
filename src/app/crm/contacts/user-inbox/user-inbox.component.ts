@@ -202,7 +202,7 @@ export class UserInboxComponent implements OnDestroy {
             }, {
                 location: 'before',
                 items: [{
-                    html: '<div id=\'unsubscribedStatus\' class=\'unsubscribed-status\'>Unsubscribed</div>',
+                    html: `<div id=\'unsubscribedStatus\' class=\'unsubscribed-status\'>${this.ls.l('CommunicationPreferencesStatus_Unsubcribed')}</div>`,
                     visible: !this.contactInfo.isSubscribedToEmails
                 }]
             }, {
