@@ -40,5 +40,5 @@
     </dx-data-grid>
 </div>
 <div mat-dialog-actions>
-    <button mat-button class="btn-layout" (click)="addNewRecord()">{{ls.l('AddNew')}}</button>
+    <button *ngIf="dataSource?.length < maxPointCount" mat-button class="btn-layout" (click)="addNewRecord()">{{ls.l('AddNew')}}</button>
 </div>

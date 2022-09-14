@@ -16,6 +16,7 @@ import { StageChecklistServiceProxy, CreateStageChecklistPointInput, UpdateStage
     RenameStageChecklistPointInput, StageChecklistPointDto, PipelineDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'check-list-dialog',
@@ -25,6 +26,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class CheckListDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    
+    maxPointCount = parseFloat(abp.features.getValue(AppFeatures.CRMMaxChecklistPointCount));
 
     private slider: any;
     dataSource: any[] = [];
@@ -78,7 +81,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
     }
 
     addNewRecord() {
-        if (this.dataSource.every(item => item.id))
+        if (this.dataSource.every(item => item.id) && this.dataSource.length < this.maxPointCount)
             this.dataSource.push({sortOrder: Infinity, id: null, name: undefined});
     }
 

@@ -5,7 +5,7 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
 export class PanelMenuItem {
     text = '';
     permission: AppPermissions | string = null;
-    feature: AppFeatures = null;
+    feature: AppFeatures | string = null;
     layoutType: LayoutType = null;
     icon = '';
     route = '';
@@ -21,7 +21,7 @@ export class PanelMenuItem {
         permission: AppPermissions | string,
         icon: string,
         route: string,
-        feature: AppFeatures,
+        feature: AppFeatures | string,
         disabled: boolean,
         alterRoutes?: string[],
         host?: string,
