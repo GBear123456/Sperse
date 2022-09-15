@@ -14203,6 +14203,467 @@ export class CountryServiceProxy {
 }
 
 @Injectable()
+export class CouponServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param searchPhrase (optional) 
+     * @param topCount (optional) 
+     * @return Success
+     */
+    getCouponsByPhrase(searchPhrase: string | undefined, topCount: number | undefined): Observable<CouponDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/GetCouponsByPhrase?";
+        if (searchPhrase === null)
+            throw new Error("The parameter 'searchPhrase' cannot be null.");
+        else if (searchPhrase !== undefined)
+            url_ += "searchPhrase=" + encodeURIComponent("" + searchPhrase) + "&";
+        if (topCount === null)
+            throw new Error("The parameter 'topCount' cannot be null.");
+        else if (topCount !== undefined)
+            url_ += "topCount=" + encodeURIComponent("" + topCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCouponsByPhrase(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCouponsByPhrase(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CouponDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CouponDto[]>;
+        }));
+    }
+
+    protected processGetCouponsByPhrase(response: HttpResponseBase): Observable<CouponDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CouponDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CouponDto[]>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    getCoupon(id: number | undefined): Observable<CouponDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/GetCoupon?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCoupon(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCoupon(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CouponDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CouponDto>;
+        }));
+    }
+
+    protected processGetCoupon(response: HttpResponseBase): Observable<CouponDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CouponDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CouponDto>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    getCouponForEdit(id: number | undefined): Observable<CouponEditDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/GetCouponForEdit?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCouponForEdit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCouponForEdit(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CouponEditDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CouponEditDto>;
+        }));
+    }
+
+    protected processGetCouponForEdit(response: HttpResponseBase): Observable<CouponEditDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CouponEditDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CouponEditDto>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    createCoupon(body: CreateCouponInput | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/CreateCoupon";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateCoupon(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateCoupon(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processCreateCoupon(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateCoupon(body: UpdateCouponInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/UpdateCoupon";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCoupon(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateCoupon(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateCoupon(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    archiveCoupon(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/ArchiveCoupon?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processArchiveCoupon(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processArchiveCoupon(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processArchiveCoupon(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    deleteCoupon(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/DeleteCoupon?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteCoupon(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteCoupon(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDeleteCoupon(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param code (optional) 
+     * @return Success
+     */
+    validateCoupon(code: string | undefined): Observable<ValidateCouponOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/ValidateCoupon?";
+        if (code === null)
+            throw new Error("The parameter 'code' cannot be null.");
+        else if (code !== undefined)
+            url_ += "code=" + encodeURIComponent("" + code) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processValidateCoupon(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processValidateCoupon(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ValidateCouponOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ValidateCouponOutput>;
+        }));
+    }
+
+    protected processValidateCoupon(response: HttpResponseBase): Observable<ValidateCouponOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ValidateCouponOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ValidateCouponOutput>(null as any);
+    }
+}
+
+@Injectable()
 export class CreditReportServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -49152,9 +49613,8 @@ export interface IACHCustomerInfoDto {
 }
 
 export class ACHCustomerShortInfo implements IACHCustomerShortInfo {
-    firstName!: string | undefined;
-    lastName!: string | undefined;
-    customerAcctType!: CustomerAccountingType;
+    bankName!: string | undefined;
+    accountNumber!: string | undefined;
 
     constructor(data?: IACHCustomerShortInfo) {
         if (data) {
@@ -49167,9 +49627,8 @@ export class ACHCustomerShortInfo implements IACHCustomerShortInfo {
 
     init(_data?: any) {
         if (_data) {
-            this.firstName = _data["firstName"];
-            this.lastName = _data["lastName"];
-            this.customerAcctType = _data["customerAcctType"];
+            this.bankName = _data["bankName"];
+            this.accountNumber = _data["accountNumber"];
         }
     }
 
@@ -49182,17 +49641,15 @@ export class ACHCustomerShortInfo implements IACHCustomerShortInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["customerAcctType"] = this.customerAcctType;
+        data["bankName"] = this.bankName;
+        data["accountNumber"] = this.accountNumber;
         return data;
     }
 }
 
 export interface IACHCustomerShortInfo {
-    firstName: string | undefined;
-    lastName: string | undefined;
-    customerAcctType: CustomerAccountingType;
+    bankName: string | undefined;
+    accountNumber: string | undefined;
 }
 
 export class ACHWorksSettings implements IACHWorksSettings {
@@ -57261,6 +57718,164 @@ export interface ICountryStateDto {
     name: string | undefined;
 }
 
+export enum CouponDiscountDuration {
+    Once = "Once",
+    Forever = "Forever",
+}
+
+export enum CouponDiscountType {
+    Percentage = "Percentage",
+    Fixed = "Fixed",
+}
+
+export class CouponDto implements ICouponDto {
+    id!: number;
+    code!: string | undefined;
+    description!: string | undefined;
+    type!: CouponDiscountType;
+    duration!: CouponDiscountDuration;
+    amountOff!: number | undefined;
+    percentOff!: number | undefined;
+    activationDate!: moment.Moment;
+    deactivationDate!: moment.Moment | undefined;
+    isArchived!: boolean;
+
+    constructor(data?: ICouponDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.code = _data["code"];
+            this.description = _data["description"];
+            this.type = _data["type"];
+            this.duration = _data["duration"];
+            this.amountOff = _data["amountOff"];
+            this.percentOff = _data["percentOff"];
+            this.activationDate = _data["activationDate"] ? moment(_data["activationDate"].toString()) : <any>undefined;
+            this.deactivationDate = _data["deactivationDate"] ? moment(_data["deactivationDate"].toString()) : <any>undefined;
+            this.isArchived = _data["isArchived"];
+        }
+    }
+
+    static fromJS(data: any): CouponDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CouponDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["code"] = this.code;
+        data["description"] = this.description;
+        data["type"] = this.type;
+        data["duration"] = this.duration;
+        data["amountOff"] = this.amountOff;
+        data["percentOff"] = this.percentOff;
+        data["activationDate"] = this.activationDate ? this.activationDate.toISOString() : <any>undefined;
+        data["deactivationDate"] = this.deactivationDate ? this.deactivationDate.toISOString() : <any>undefined;
+        data["isArchived"] = this.isArchived;
+        return data;
+    }
+}
+
+export interface ICouponDto {
+    id: number;
+    code: string | undefined;
+    description: string | undefined;
+    type: CouponDiscountType;
+    duration: CouponDiscountDuration;
+    amountOff: number | undefined;
+    percentOff: number | undefined;
+    activationDate: moment.Moment;
+    deactivationDate: moment.Moment | undefined;
+    isArchived: boolean;
+}
+
+export class CouponEditDto implements ICouponEditDto {
+    isAlreadyUsed!: boolean;
+    id!: number;
+    code!: string | undefined;
+    description!: string | undefined;
+    type!: CouponDiscountType;
+    duration!: CouponDiscountDuration;
+    amountOff!: number | undefined;
+    percentOff!: number | undefined;
+    activationDate!: moment.Moment;
+    deactivationDate!: moment.Moment | undefined;
+    isArchived!: boolean;
+
+    constructor(data?: ICouponEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isAlreadyUsed = _data["isAlreadyUsed"];
+            this.id = _data["id"];
+            this.code = _data["code"];
+            this.description = _data["description"];
+            this.type = _data["type"];
+            this.duration = _data["duration"];
+            this.amountOff = _data["amountOff"];
+            this.percentOff = _data["percentOff"];
+            this.activationDate = _data["activationDate"] ? moment(_data["activationDate"].toString()) : <any>undefined;
+            this.deactivationDate = _data["deactivationDate"] ? moment(_data["deactivationDate"].toString()) : <any>undefined;
+            this.isArchived = _data["isArchived"];
+        }
+    }
+
+    static fromJS(data: any): CouponEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CouponEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isAlreadyUsed"] = this.isAlreadyUsed;
+        data["id"] = this.id;
+        data["code"] = this.code;
+        data["description"] = this.description;
+        data["type"] = this.type;
+        data["duration"] = this.duration;
+        data["amountOff"] = this.amountOff;
+        data["percentOff"] = this.percentOff;
+        data["activationDate"] = this.activationDate ? this.activationDate.toISOString() : <any>undefined;
+        data["deactivationDate"] = this.deactivationDate ? this.deactivationDate.toISOString() : <any>undefined;
+        data["isArchived"] = this.isArchived;
+        return data;
+    }
+}
+
+export interface ICouponEditDto {
+    isAlreadyUsed: boolean;
+    id: number;
+    code: string | undefined;
+    description: string | undefined;
+    type: CouponDiscountType;
+    duration: CouponDiscountDuration;
+    amountOff: number | undefined;
+    percentOff: number | undefined;
+    activationDate: moment.Moment;
+    deactivationDate: moment.Moment | undefined;
+    isArchived: boolean;
+}
+
 export class CreateAccountingTypeInput implements ICreateAccountingTypeInput {
     cashflowTypeId!: string | undefined;
     name!: string;
@@ -58614,6 +59229,74 @@ export interface ICreateContactPhotoInput {
     comment: string | undefined;
 }
 
+export class CreateCouponInput implements ICreateCouponInput {
+    code!: string;
+    description!: string;
+    type!: CouponDiscountType;
+    duration!: CouponDiscountDuration;
+    amountOff!: number | undefined;
+    percentOff!: number | undefined;
+    activationDate!: moment.Moment;
+    deactivationDate!: moment.Moment | undefined;
+    isArchived!: boolean;
+
+    constructor(data?: ICreateCouponInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.description = _data["description"];
+            this.type = _data["type"];
+            this.duration = _data["duration"];
+            this.amountOff = _data["amountOff"];
+            this.percentOff = _data["percentOff"];
+            this.activationDate = _data["activationDate"] ? moment(_data["activationDate"].toString()) : <any>undefined;
+            this.deactivationDate = _data["deactivationDate"] ? moment(_data["deactivationDate"].toString()) : <any>undefined;
+            this.isArchived = _data["isArchived"];
+        }
+    }
+
+    static fromJS(data: any): CreateCouponInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateCouponInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["description"] = this.description;
+        data["type"] = this.type;
+        data["duration"] = this.duration;
+        data["amountOff"] = this.amountOff;
+        data["percentOff"] = this.percentOff;
+        data["activationDate"] = this.activationDate ? this.activationDate.toISOString() : <any>undefined;
+        data["deactivationDate"] = this.deactivationDate ? this.deactivationDate.toISOString() : <any>undefined;
+        data["isArchived"] = this.isArchived;
+        return data;
+    }
+}
+
+export interface ICreateCouponInput {
+    code: string;
+    description: string;
+    type: CouponDiscountType;
+    duration: CouponDiscountDuration;
+    amountOff: number | undefined;
+    percentOff: number | undefined;
+    activationDate: moment.Moment;
+    deactivationDate: moment.Moment | undefined;
+    isArchived: boolean;
+}
+
 export class CreateDocumentTypeInput implements ICreateDocumentTypeInput {
     name!: string;
 
@@ -59054,6 +59737,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment | undefined;
+    couponCode!: string | undefined;
     grandTotal!: number;
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
@@ -59085,6 +59769,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.number = _data["number"];
             this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
             this.dueDate = _data["dueDate"] ? moment(_data["dueDate"].toString()) : <any>undefined;
+            this.couponCode = _data["couponCode"];
             this.grandTotal = _data["grandTotal"];
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
@@ -59120,6 +59805,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["couponCode"] = this.couponCode;
         data["grandTotal"] = this.grandTotal;
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
@@ -59148,6 +59834,7 @@ export interface ICreateInvoiceInput {
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment | undefined;
+    couponCode: string | undefined;
     grandTotal: number;
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
@@ -62431,11 +63118,6 @@ export enum CustomCssType {
     Platform = "Platform",
     Login = "Login",
     Portal = "Portal",
-}
-
-export enum CustomerAccountingType {
-    Checking = 0,
-    Saving = 1,
 }
 
 export class CustomFieldsInput implements ICustomFieldsInput {
@@ -73751,6 +74433,7 @@ export class InvoiceInfo implements IInvoiceInfo {
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment | undefined;
+    couponId!: number | undefined;
     grandTotal!: number;
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
@@ -73780,6 +74463,7 @@ export class InvoiceInfo implements IInvoiceInfo {
             this.number = _data["number"];
             this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
             this.dueDate = _data["dueDate"] ? moment(_data["dueDate"].toString()) : <any>undefined;
+            this.couponId = _data["couponId"];
             this.grandTotal = _data["grandTotal"];
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
@@ -73813,6 +74497,7 @@ export class InvoiceInfo implements IInvoiceInfo {
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["couponId"] = this.couponId;
         data["grandTotal"] = this.grandTotal;
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
@@ -73839,6 +74524,7 @@ export interface IInvoiceInfo {
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment | undefined;
+    couponId: number | undefined;
     grandTotal: number;
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
@@ -91995,6 +92681,7 @@ export interface ISubmitRequestOutput {
 export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     companyName!: string | undefined;
     products!: TenantProductInfo[] | undefined;
+    couponCode!: string | undefined;
     website!: string | undefined;
     city!: string | undefined;
     state!: string | undefined;
@@ -92029,6 +92716,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
                 for (let item of _data["products"])
                     this.products!.push(TenantProductInfo.fromJS(item));
             }
+            this.couponCode = _data["couponCode"];
             this.website = _data["website"];
             this.city = _data["city"];
             this.state = _data["state"];
@@ -92063,6 +92751,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
             for (let item of this.products)
                 data["products"].push(item.toJSON());
         }
+        data["couponCode"] = this.couponCode;
         data["website"] = this.website;
         data["city"] = this.city;
         data["state"] = this.state;
@@ -92086,6 +92775,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
 export interface ISubmitTenancyRequestInput {
     companyName: string | undefined;
     products: TenantProductInfo[] | undefined;
+    couponCode: string | undefined;
     website: string | undefined;
     city: string | undefined;
     state: string | undefined;
@@ -97311,6 +98001,78 @@ export interface IUpdateContactXrefInput {
     xref: string | undefined;
 }
 
+export class UpdateCouponInput implements IUpdateCouponInput {
+    id!: number;
+    code!: string;
+    description!: string;
+    type!: CouponDiscountType;
+    duration!: CouponDiscountDuration;
+    amountOff!: number | undefined;
+    percentOff!: number | undefined;
+    activationDate!: moment.Moment;
+    deactivationDate!: moment.Moment | undefined;
+    isArchived!: boolean;
+
+    constructor(data?: IUpdateCouponInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.code = _data["code"];
+            this.description = _data["description"];
+            this.type = _data["type"];
+            this.duration = _data["duration"];
+            this.amountOff = _data["amountOff"];
+            this.percentOff = _data["percentOff"];
+            this.activationDate = _data["activationDate"] ? moment(_data["activationDate"].toString()) : <any>undefined;
+            this.deactivationDate = _data["deactivationDate"] ? moment(_data["deactivationDate"].toString()) : <any>undefined;
+            this.isArchived = _data["isArchived"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCouponInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCouponInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["code"] = this.code;
+        data["description"] = this.description;
+        data["type"] = this.type;
+        data["duration"] = this.duration;
+        data["amountOff"] = this.amountOff;
+        data["percentOff"] = this.percentOff;
+        data["activationDate"] = this.activationDate ? this.activationDate.toISOString() : <any>undefined;
+        data["deactivationDate"] = this.deactivationDate ? this.deactivationDate.toISOString() : <any>undefined;
+        data["isArchived"] = this.isArchived;
+        return data;
+    }
+}
+
+export interface IUpdateCouponInput {
+    id: number;
+    code: string;
+    description: string;
+    type: CouponDiscountType;
+    duration: CouponDiscountDuration;
+    amountOff: number | undefined;
+    percentOff: number | undefined;
+    activationDate: moment.Moment;
+    deactivationDate: moment.Moment | undefined;
+    isArchived: boolean;
+}
+
 export class UpdateDocumentTypeInput implements IUpdateDocumentTypeInput {
     id!: number;
     name!: string;
@@ -97819,6 +98581,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment | undefined;
+    couponCode!: string | undefined;
     grandTotal!: number;
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
@@ -97846,6 +98609,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
             this.number = _data["number"];
             this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
             this.dueDate = _data["dueDate"] ? moment(_data["dueDate"].toString()) : <any>undefined;
+            this.couponCode = _data["couponCode"];
             this.grandTotal = _data["grandTotal"];
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
@@ -97877,6 +98641,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["couponCode"] = this.couponCode;
         data["grandTotal"] = this.grandTotal;
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
@@ -97901,6 +98666,7 @@ export interface IUpdateInvoiceInput {
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment | undefined;
+    couponCode: string | undefined;
     grandTotal: number;
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
@@ -101630,6 +102396,58 @@ export interface IUTMParameterInfo {
     keyword: string | undefined;
     adGroup: string | undefined;
     name: string | undefined;
+}
+
+export class ValidateCouponOutput implements IValidateCouponOutput {
+    isValid!: boolean;
+    code!: string | undefined;
+    description!: string | undefined;
+    amountOff!: number | undefined;
+    percentOff!: number | undefined;
+
+    constructor(data?: IValidateCouponOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isValid = _data["isValid"];
+            this.code = _data["code"];
+            this.description = _data["description"];
+            this.amountOff = _data["amountOff"];
+            this.percentOff = _data["percentOff"];
+        }
+    }
+
+    static fromJS(data: any): ValidateCouponOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ValidateCouponOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isValid"] = this.isValid;
+        data["code"] = this.code;
+        data["description"] = this.description;
+        data["amountOff"] = this.amountOff;
+        data["percentOff"] = this.percentOff;
+        return data;
+    }
+}
+
+export interface IValidateCouponOutput {
+    isValid: boolean;
+    code: string | undefined;
+    description: string | undefined;
+    amountOff: number | undefined;
+    percentOff: number | undefined;
 }
 
 export class VerifySmsCodeInputDto implements IVerifySmsCodeInputDto {

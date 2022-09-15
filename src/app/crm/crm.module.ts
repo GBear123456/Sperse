@@ -105,6 +105,8 @@ import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history
 import { EditTypeItemDialogComponent } from '@app/crm/shared/types-dropdown/edit-type-item-dialog/edit-type-item-dialog.component';
 import { TenantSettingsWizardModule } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
 import { ProductsComponent } from './products/products.component';
+import { CouponsComponent } from './coupons/coupons.component';
+import { AddCouponDialogComponent } from './coupons/add-coupon-dialog/add-coupon-dialog.component';
 import { CrmContactGroupGuard } from './crm-contact-group-guard';
 
 @NgModule({
@@ -178,6 +180,8 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
         DocumentsComponent,
         PartnersComponent,
         ProductsComponent,
+        CouponsComponent,
+        AddCouponDialogComponent,
         LeadsComponent,
         OrdersComponent,
         ReportsComponent,
@@ -212,6 +216,7 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
         { provide: 'showGlobalSearch', useValue: true }
     ],
     entryComponents: [
+        AddCouponDialogComponent,
         BankSettingsDialogComponent,
         InvoiceAddressDialog,
         CreateActivityDialogComponent,
