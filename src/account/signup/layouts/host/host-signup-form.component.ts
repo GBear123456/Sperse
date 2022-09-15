@@ -79,9 +79,9 @@ export class HostSignupFormComponent {
         this.tenancyRequestModel.stage = 'Interested';
         this.productProxy.getSubscriptionProductsByGroupName('Main').subscribe(products => {
             this.signUpProduct = products.sort((prev, next) => {
-                let prevFee = this.getProductMonthlyOption(prev), 
-                    nextFee = this.getProductMonthlyOption(next);
-                return prevFee > nextFee ? -1: 1;
+                let prevOption = this.getProductMonthlyOption(prev), 
+                    nextOption = this.getProductMonthlyOption(next);
+                return prevOption.fee > nextOption.fee ? 1: -1;
             })[0];
             if (this.signUpProduct) {
                 let option = this.getProductMonthlyOption(this.signUpProduct);
