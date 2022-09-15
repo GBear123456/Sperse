@@ -64867,6 +64867,7 @@ export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
     returnUrl!: string | undefined;
     singleSignIn!: boolean | undefined;
     autoRegistration!: boolean;
+    autoDetectTenancy!: boolean;
 
     constructor(data?: IExternalAuthenticateModel) {
         if (data) {
@@ -64885,6 +64886,7 @@ export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
             this.returnUrl = _data["returnUrl"];
             this.singleSignIn = _data["singleSignIn"];
             this.autoRegistration = _data["autoRegistration"];
+            this.autoDetectTenancy = _data["autoDetectTenancy"];
         }
     }
 
@@ -64903,6 +64905,7 @@ export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
         data["returnUrl"] = this.returnUrl;
         data["singleSignIn"] = this.singleSignIn;
         data["autoRegistration"] = this.autoRegistration;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
         return data;
     }
 }
@@ -64914,11 +64917,14 @@ export interface IExternalAuthenticateModel {
     returnUrl: string | undefined;
     singleSignIn: boolean | undefined;
     autoRegistration: boolean;
+    autoDetectTenancy: boolean;
 }
 
 export class ExternalAuthenticateResultModel implements IExternalAuthenticateResultModel {
     waitingForActivation!: boolean;
     userNotFound!: boolean;
+    authProvider!: string | undefined;
+    providerAccessCode!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
     email!: string | undefined;
@@ -64949,6 +64955,8 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
         if (_data) {
             this.waitingForActivation = _data["waitingForActivation"];
             this.userNotFound = _data["userNotFound"];
+            this.authProvider = _data["authProvider"];
+            this.providerAccessCode = _data["providerAccessCode"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.email = _data["email"];
@@ -64987,6 +64995,8 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
         data = typeof data === 'object' ? data : {};
         data["waitingForActivation"] = this.waitingForActivation;
         data["userNotFound"] = this.userNotFound;
+        data["authProvider"] = this.authProvider;
+        data["providerAccessCode"] = this.providerAccessCode;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
@@ -65018,6 +65028,8 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
 export interface IExternalAuthenticateResultModel {
     waitingForActivation: boolean;
     userNotFound: boolean;
+    authProvider: string | undefined;
+    providerAccessCode: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
     email: string | undefined;
@@ -75099,6 +75111,7 @@ export class LinkedInAuthenticateModel implements ILinkedInAuthenticateModel {
     returnUrl!: string | undefined;
     singleSignIn!: boolean | undefined;
     autoRegistration!: boolean;
+    autoDetectTenancy!: boolean;
 
     constructor(data?: ILinkedInAuthenticateModel) {
         if (data) {
@@ -75119,6 +75132,7 @@ export class LinkedInAuthenticateModel implements ILinkedInAuthenticateModel {
             this.returnUrl = _data["returnUrl"];
             this.singleSignIn = _data["singleSignIn"];
             this.autoRegistration = _data["autoRegistration"];
+            this.autoDetectTenancy = _data["autoDetectTenancy"];
         }
     }
 
@@ -75139,6 +75153,7 @@ export class LinkedInAuthenticateModel implements ILinkedInAuthenticateModel {
         data["returnUrl"] = this.returnUrl;
         data["singleSignIn"] = this.singleSignIn;
         data["autoRegistration"] = this.autoRegistration;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
         return data;
     }
 }
@@ -75152,6 +75167,7 @@ export interface ILinkedInAuthenticateModel {
     returnUrl: string | undefined;
     singleSignIn: boolean | undefined;
     autoRegistration: boolean;
+    autoDetectTenancy: boolean;
 }
 
 export class LinkedInExternalLoginProviderSettings implements ILinkedInExternalLoginProviderSettings {

@@ -138,6 +138,37 @@ export class LoginService {
             });
     }
 
+    externalAuthenticateByResult(result: ExternalAuthenticateResultModel,
+        finallyCallback?: () => void,
+        redirectUrl?: string,
+        autoDetectTenancy: boolean = true,
+        setCookiesOnly: boolean = false,
+        onSuccessCallback = (result: AuthenticateResultModel) => { }
+    ) {
+        if (!result)
+            return;
+
+        finallyCallback = finallyCallback || (() => { });
+        this.authService.stopTokenCheck();
+        
+        const model = this.externalLoginModal = new ExternalAuthenticateModel();
+        model.authProvider = result.authProvider;
+        model.providerAccessCode = result.providerAccessCode;
+        model.providerKey = '-';
+        model.singleSignIn = UrlHelper.getSingleSignIn();
+        model.returnUrl = UrlHelper.getReturnUrl();
+        model.autoDetectTenancy = autoDetectTenancy;
+
+        this.tokenAuthService.externalAuthenticate(model)
+            .subscribe((result: ExternalAuthenticateResultModel) => {
+                if (result.waitingForActivation) {
+                    this.messageService.info('You have successfully registered. Waiting for activation!');
+                    return;
+                }
+                this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+            });
+    }
+
     sendPasswordResetCode(
         finallyCallback = () => {}, 
         autoDetectTenancy: boolean = true,
@@ -225,9 +256,10 @@ export class LoginService {
                 const model = new LinkedInAuthenticateModel();
                 model.authProvider = ExternalLoginProvider.LINKEDIN;
                 model.providerAccessCode = '-';
-                model.providerKey = provider.clientId;
+                model.providerKey = '-';
                 model.singleSignIn = UrlHelper.getSingleSignIn();
                 model.returnUrl = UrlHelper.getReturnUrl();
+                model.autoDetectTenancy = true;
 
                 model.exchangeCode = exchangeCode;
                 model.loginReturnUrl = window.location.href;
@@ -310,6 +342,7 @@ export class LoginService {
                 if (result) {
                     abp.ui.setBusy();
                     this.externalLoginModal.autoRegistration = true;
+                    this.externalLoginModal.autoDetectTenancy = true;
                     this.tokenAuthService.externalAuthenticate(this.externalLoginModal)
                         .pipe(finalize(() => abp.ui.clearBusy()))
                         .subscribe((result: ExternalAuthenticateResultModel) => {
@@ -317,7 +350,7 @@ export class LoginService {
                         });
                 }
             });
-        } else if (authenticateResult.detectedTenancies.length > 1) {
+        } else if (!!authenticateResult.detectedTenancies && authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
             this.router.navigate(['account/select-tenant'],
                 {queryParams: {extlogin: setCookiesOnly}}
@@ -434,7 +467,7 @@ export class LoginService {
             });
         }
     }
-
+    
     private facebookLoginStatusChangeCallback(resp) {
         if (resp.status === 'connected') {
             const model = this.externalLoginModal = new ExternalAuthenticateModel();
@@ -443,6 +476,7 @@ export class LoginService {
             model.providerKey = resp.authResponse.userID;
             model.singleSignIn = UrlHelper.getSingleSignIn();
             model.returnUrl = UrlHelper.getReturnUrl();
+            model.autoDetectTenancy = true;
 
             this.tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
@@ -463,6 +497,7 @@ export class LoginService {
             model.providerKey = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
             model.singleSignIn = UrlHelper.getSingleSignIn();
             model.returnUrl = UrlHelper.getReturnUrl();
+            model.autoDetectTenancy = true;
 
             this.tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
@@ -487,6 +522,7 @@ export class LoginService {
         model.providerKey = WL.getSession().id; // How to get id?
         model.singleSignIn = UrlHelper.getSingleSignIn();
         model.returnUrl = UrlHelper.getReturnUrl();
+        model.autoDetectTenancy = true;
 
         this.tokenAuthService.externalAuthenticate(model)
             .subscribe((result: ExternalAuthenticateResultModel) => {
