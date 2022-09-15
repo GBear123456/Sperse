@@ -16,8 +16,8 @@ export class AppPreloadingStrategy implements PreloadingStrategy {
 const routes: Routes = [
     {
         path: '',
-        canActivate: [ RouteGuard ],
-        canActivateChild: [ RouteGuard, LocalizationResolver ],
+        canActivate: [RouteGuard],
+        canActivateChild: [RouteGuard, LocalizationResolver],
         children: [
             {
                 path: '',
@@ -59,14 +59,20 @@ const routes: Routes = [
         ]
     },
     {
+        path: 'invoicing',
+        canActivate: [LocalizationResolver],
+        loadChildren: () => import('public/invoicing/invoicing.module').then(m => m.InvoicingModule),
+        data: { localizationSource: 'Platform' }
+    },
+    {
         path: 'receipt',
-        canActivate: [ LocalizationResolver ],
-        loadChildren: () => import('public/receipt/receipt.module').then(m => m.ReceiptModule),
+        canActivate: [LocalizationResolver],
+        loadChildren: () => import('public/invoicing/invoicing.module').then(m => m.InvoicingModule),
         data: { localizationSource: 'Platform' }
     },
     {
         path: '**',
-        canActivateChild: [ LocalizationResolver ],
+        canActivateChild: [LocalizationResolver],
         loadChildren: () => import('shared/not-found/not-found.module').then(m => m.NotFoundModule),
     }
 ];
@@ -88,15 +94,15 @@ export class RootRoutingModule implements AfterViewInit {
         private injector: Injector,
         private router: Router,
         private applicationRef: ApplicationRef
-    ) {}
+    ) { }
 
     ngAfterViewInit() {
         this.router.events.subscribe((event: NavigationEnd) => {
-                setTimeout(() => {
-                    this.injector.get(this.applicationRef.componentTypes[0])
-                        .checkSetClasses(abp.session.userId || (event.url.indexOf('/account/') >= 0));
-                }, 0);
-            }
+            setTimeout(() => {
+                this.injector.get(this.applicationRef.componentTypes[0])
+                    .checkSetClasses(abp.session.userId || (event.url.indexOf('/account/') >= 0));
+            }, 0);
+        }
         );
     }
 }
