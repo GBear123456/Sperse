@@ -217,7 +217,7 @@ export class LoginService {
         });
     }
 
-    linkedInLogin(provider: ExternalLoginProvider, exchangeCode: string, state: string) {
+    linkedInLogin(provider: ExternalLoginProvider, exchangeCode: string, state: string, setCookiesOnly: boolean = false) {
         abp.ui.setBusy();
         //todo check state
         this.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state)
@@ -235,7 +235,8 @@ export class LoginService {
                 this.tokenAuthService.linkedInAuthenticate(model)
                     .pipe(finalize(() => abp.ui.clearBusy()))
                     .subscribe((result: ExternalAuthenticateResultModel) => {
-                        this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+                        this.processAuthenticateResult(result, 
+                            result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
                     });
             });
     }
