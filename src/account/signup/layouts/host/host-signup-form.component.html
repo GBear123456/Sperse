@@ -85,7 +85,7 @@
             <span>Start Your Free 7-Day Trial Today!</span>
           </button>
         </div>
-        <div class="has-account">Already have an account? <a routerLink="/account/signin">Sign in</a></div>
+        <div class="has-account">Already have an account? <a routerLink="/account/signin" [queryParams]="{extlogin: isExtLogin}">Sign in</a></div>
       </form>
       <form *ngIf="leadRequestXref" id="secondStepForm" #secondStepForm="ngForm" novalidate (ngSubmit)="completeTenantRegistrationRequest()">
         <div *ngIf="!congratulationLink; else congratulation">

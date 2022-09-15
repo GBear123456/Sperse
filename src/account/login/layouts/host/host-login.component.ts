@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 /** Third party imports */
@@ -46,8 +46,7 @@ export class HostLoginComponent implements OnInit {
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public loginService: LoginService,
-        public ls: AppLocalizationService,
-        private changeDetectorRef: ChangeDetectorRef
+        public ls: AppLocalizationService
     ) {
         this.activatedRoute.queryParamMap.pipe(
             first()
@@ -68,10 +67,7 @@ export class HostLoginComponent implements OnInit {
                 if (!!exchangeCode && !!state) {
                     this.loginService.linkedInLogin(this.linkedIdLoginProvider, exchangeCode, state);
                 }
-
-                this.changeDetectorRef.detectChanges();
-            });
-            
+            });            
         });
     }
 

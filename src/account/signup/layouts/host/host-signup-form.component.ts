@@ -41,6 +41,7 @@ export class HostSignupFormComponent {
     @ViewChild('secondStepForm') secondStepForm;
     @ViewChild('phoneNumber') phoneNumber;
 
+    isExtLogin: boolean = false; 
     defaultCountryCode: string;
     selectedCountryCode: string;
 
@@ -77,6 +78,13 @@ export class HostSignupFormComponent {
     ) {
         this.tenancyRequestModel.tag = 'Demo Request';
         this.tenancyRequestModel.stage = 'Interested';
+
+        this.activatedRoute.queryParamMap.pipe(
+            first()
+        ).subscribe((paramsMap: ParamMap) => {
+            this.isExtLogin = paramsMap.get('extlogin') == 'true';
+        });
+
         this.productProxy.getSubscriptionProductsByGroupName('Main').subscribe(products => {
             this.signUpProduct = products.sort((prev, next) => {
                 let prevOption = this.getProductMonthlyOption(prev), 
