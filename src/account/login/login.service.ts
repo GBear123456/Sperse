@@ -207,38 +207,36 @@ export class LoginService {
             '&state=foobar&scope=r_liteprofile%20r_emailaddress';
     }
 
-    clearLinkedInParamsAndGetReturnUrl(exchangeCode: string, state: string): string {
-        let loginReturnUrl = window.location.href.replace('code=' + exchangeCode + '&state=' + state, '');
-        if (loginReturnUrl.endsWith('&'))
-            loginReturnUrl = loginReturnUrl.replace('&', '');
-        if (loginReturnUrl.endsWith('?'))
-            loginReturnUrl = loginReturnUrl.replace('?', '');
-
-        var search = loginReturnUrl.includes('?') ? loginReturnUrl.substring(loginReturnUrl.lastIndexOf('?')) : '';
-        window.history.pushState({}, document.title, window.location.pathname + search);
-
-        return loginReturnUrl;
+    clearLinkedInParamsAndGetReturnUrl(exchangeCode: string, state: string): Promise<boolean> {
+        return this.router.navigate([], {
+            queryParams: {
+                'code': null,
+                'state': null,
+            },
+            queryParamsHandling: 'merge'
+        });
     }
 
     linkedInLogin(provider: ExternalLoginProvider, exchangeCode: string, state: string) {
         abp.ui.setBusy();
         //todo check state
-        let loginReturnUrl = this.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state);
+        this.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state)
+            .then(() => {
+                const model = new LinkedInAuthenticateModel();
+                model.authProvider = ExternalLoginProvider.LINKEDIN;
+                model.providerAccessCode = '-';
+                model.providerKey = provider.clientId;
+                model.singleSignIn = UrlHelper.getSingleSignIn();
+                model.returnUrl = UrlHelper.getReturnUrl();
 
-        const model = new LinkedInAuthenticateModel();
-        model.authProvider = ExternalLoginProvider.LINKEDIN;
-        model.providerAccessCode = '-';
-        model.providerKey = provider.clientId;
-        model.singleSignIn = UrlHelper.getSingleSignIn();
-        model.returnUrl = UrlHelper.getReturnUrl();
+                model.exchangeCode = exchangeCode;
+                model.loginReturnUrl = window.location.href;
 
-        model.exchangeCode = exchangeCode;
-        model.loginReturnUrl = loginReturnUrl;
-
-        this.tokenAuthService.linkedInAuthenticate(model)
-            .pipe(finalize(() => abp.ui.clearBusy()))
-            .subscribe((result: ExternalAuthenticateResultModel) => {
-                this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+                this.tokenAuthService.linkedInAuthenticate(model)
+                    .pipe(finalize(() => abp.ui.clearBusy()))
+                    .subscribe((result: ExternalAuthenticateResultModel) => {
+                        this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+                    });
             });
     }
 
