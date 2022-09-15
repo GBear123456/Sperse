@@ -119,7 +119,7 @@ export class HostSignupFormComponent {
                                         this.tenancyRequestModel.lastName = result.surname;
                                         this.tenancyRequestModel.email = result.emailAddress;
 
-                                        this.messageService.info('The data provided by LinkedIn is not enough for Create Your Sperse Account');
+                                        this.messageService.info('The data provided by LinkedIn has been successfully received. Please check the data and finalize creating Sperse Account.');
 
                                         this.changeDetectorRef.detectChanges();
                                     });
