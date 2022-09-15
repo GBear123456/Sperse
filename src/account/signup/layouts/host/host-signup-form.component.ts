@@ -102,18 +102,19 @@ export class HostSignupFormComponent {
                     let state = paramsMap.get('state');
                     if (!!exchangeCode && !!state) {
                         abp.ui.setBusy();
-                        let loginReturnUrl = this.loginService.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state);
+                        this.loginService.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state)
+                            .then(() => {
+                                this.linkedInService.getUserData(exchangeCode, window.location.href)
+                                    .pipe(finalize(() => abp.ui.clearBusy()))
+                                    .subscribe((result: LinkedInUserData) => {
+                                        this.tenancyRequestModel.firstName = result.name;
+                                        this.tenancyRequestModel.lastName = result.surname;
+                                        this.tenancyRequestModel.email = result.emailAddress;
 
-                        this.linkedInService.getUserData(exchangeCode, loginReturnUrl)
-                            .pipe(finalize(() => abp.ui.clearBusy()))
-                            .subscribe((result: LinkedInUserData) => {
-                                this.tenancyRequestModel.firstName = result.name;
-                                this.tenancyRequestModel.lastName = result.surname;
-                                this.tenancyRequestModel.email = result.emailAddress;
+                                        this.messageService.info('The data provided by LinkedIn is not enough for Create Your Sperse Account');
 
-                                this.messageService.info('The data provided by LinkedIn is not enough for Create Your Sperse Account');
-
-                                this.changeDetectorRef.detectChanges();
+                                        this.changeDetectorRef.detectChanges();
+                                    });
                             });
                     }
                 });
