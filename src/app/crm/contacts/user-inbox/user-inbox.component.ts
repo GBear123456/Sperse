@@ -26,6 +26,7 @@ import {
 import { ContactsService } from '../contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppFeatures } from '@shared/AppFeatures';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 class Message extends MessageDto {
     items: MessageDto[];
@@ -50,6 +51,8 @@ export class UserInboxComponent implements OnDestroy {
     @ViewChild('contentView') contentView: ElementRef;
 
     contactId: number;
+    isSubscribedToEmails: boolean;
+    communicationPreferencePublicId: string;
     contentToolbar = [];
     dataSource: DataSource;
     activeMessage: Partial<Message>;
@@ -98,7 +101,8 @@ export class UserInboxComponent implements OnDestroy {
         private activatedRoute: ActivatedRoute,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
-        public profileService: ProfileService
+        public profileService: ProfileService,
+        public appSession: AppSessionService
     ) {
         contactsService.invalidateSubscribe(
             () => this.invalidate(), this.ident
@@ -108,6 +112,8 @@ export class UserInboxComponent implements OnDestroy {
                 let contactId = this.contactId;
                 this.contactInfo = contactInfo;
                 this.contactId = contactInfo.id;
+                this.isSubscribedToEmails = contactInfo.isSubscribedToEmails;
+                this.communicationPreferencePublicId = contactInfo.communicationPreferencePublicId;
                 this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
                     contactInfo.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
                 this.activeMessage = undefined;
@@ -202,8 +208,20 @@ export class UserInboxComponent implements OnDestroy {
             }, {
                 location: 'before',
                 items: [{
-                    html: `<div id=\'unsubscribedStatus\' class=\'unsubscribed-status\'>${this.ls.l('CommunicationPreferencesStatus_Unsubcribed')}</div>`,
-                    visible: !this.contactInfo.isSubscribedToEmails
+                    widget: 'dxButton',
+                    options: {
+                        text: this.getCommunicationPreferencesStatus(this.isSubscribedToEmails),
+                        accessKey: `communication-preferences-${this.isSubscribedToEmails ? 'subscribed' : 'unsubscribed'}`
+                    },
+                    action: (e) => {
+                        this.isSubscribedToEmails = !this.isSubscribedToEmails;
+                        e.element.classList.remove(this.isSubscribedToEmails ? 'unsubscribed' : 'subscribed');
+                        e.element.classList.add(this.isSubscribedToEmails ? 'subscribed' : 'unsubscribed');
+                        e.element.innerHTML = e.element.innerHTML.replace(this.getCommunicationPreferencesStatus(!this.isSubscribedToEmails),
+                            this.getCommunicationPreferencesStatus(this.isSubscribedToEmails))
+                        this.updateEmailPreferences(this.isSubscribedToEmails).subscribe(() => {
+                        })
+                    }
                 }]
             }, {
                 location: 'after',
@@ -713,6 +731,27 @@ export class UserInboxComponent implements OnDestroy {
         }
 
         messageDto['statusCalculated'] = messageStatus;
+    }
+
+    updateEmailPreferences(isSubscribed: boolean) {
+        return new Observable(subscriber => {
+            let xhr = new XMLHttpRequest()
+            xhr.open('GET', `${AppConsts.remoteServiceBaseUrl}/preferences/${isSubscribed ? 'subscribe' : 'unsubscribe'}/${this.appSession.tenantId == null
+                ? 0 : this.appSession.tenantId}/${this.communicationPreferencePublicId}`);
+
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200)
+                    subscriber.next();
+                else
+                    subscriber.error();
+                subscriber.complete();
+            });
+            xhr.send();
+        });
+    }
+
+    getCommunicationPreferencesStatus(isSubscribed: boolean) {
+        return this.ls.l(`CommunicationPreferencesStatus_${isSubscribed ? 'Subscribed' : 'Unsubscribed'}`);
     }
 
     ngOnDestroy() {
