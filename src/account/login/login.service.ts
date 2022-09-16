@@ -163,12 +163,14 @@ export class LoginService {
         model.autoDetectTenancy = autoDetectTenancy;
 
         this.tokenAuthService.externalAuthenticate(model)
+            .pipe(finalize(finallyCallback))
             .subscribe((result: ExternalAuthenticateResultModel) => {
                 if (result.waitingForActivation) {
                     this.messageService.info('You have successfully registered. Waiting for activation!');
                     return;
                 }
-                this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+                onSuccessCallback(result);
+                this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
             });
     }
 
