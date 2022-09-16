@@ -38,6 +38,14 @@ export class PackageCardComponent implements OnChanges {
 
     features;
     products = {
+        Solo: {
+            saveAmount: 159,
+            background: '#a0bc51',
+            features: {
+                included: ['Single Team Admin User', '1,000 Leads & Contacts', 'Customer Relationship Manager'],
+                excluded: ['Sales Management', 'Affiliate Tracking System', 'Member Portal & Management', 'Developer Features & API Access', 'Custom Branding & Domain']
+            }
+        },
         Startup: {
             saveAmount: 159,
             background: '#a0bc51',
@@ -48,7 +56,7 @@ export class PackageCardComponent implements OnChanges {
         },
         Launch: {
             saveAmount: 759,
-            background: '#eb8a2e',
+            background: '#D27C2A',
             features: {
                 included: ['Up to 5 Team Admin & Users', '10,000 Leads & Contacts', 'Customer Relationship Manager', 'Sales Management', 'Affiliate Tracking System', 'Member Portal & Management'],
                 excluded: ['Developer Features & API Access', 'Custom Branding & Domain']
@@ -56,7 +64,7 @@ export class PackageCardComponent implements OnChanges {
         },
         Growth: {
             saveAmount: 3795,
-            background: '#79519a',
+            background: '#6D4A89',
             features: {
                 included: ['Up to 25 Team Admin & Users', '50,000 Leads & Contacts', 'Customer Relationship Manager', 'Sales Management', 'Affiliate Tracking System', 'Member Portal & Management', 'Developer Features & API Access', 'Custom Branding & Domain'],
                 excluded: []
