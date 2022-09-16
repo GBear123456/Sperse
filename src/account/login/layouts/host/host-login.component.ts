@@ -66,8 +66,8 @@ export class HostLoginComponent implements OnInit {
                 let state = paramsMap.get('state');
                 if (!!exchangeCode && !!state) {
                     this.loginService.linkedInLogin(this.linkedIdLoginProvider, exchangeCode, state, this.isExtLogin, (result) => {
-                        this.isLoggedIn = true;
-                        this.loginService.completeSourceEvent();
+                        if (this.isLoggedIn = this.isExtLogin)
+                            this.loginService.completeSourceEvent();
                     });
                 }
             });            
