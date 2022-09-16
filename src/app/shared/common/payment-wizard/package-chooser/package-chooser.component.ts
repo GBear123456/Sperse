@@ -29,6 +29,7 @@ import {
     ModuleType,
     PackageConfigDto,
     PackageEditionConfigDto,
+    RecurringPaymentFrequency,
     PackageServiceProxy,
     ProductInfo,
     ProductServiceProxy
@@ -138,9 +139,17 @@ export class PackageChooserComponent implements OnInit {
         }
     }
 
+    getProductMonthlyOption(product: ProductInfo) {
+        return product.productSubscriptionOptions.filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
+    }
+
     loadPackages() {
         this.packagesConfig$.pipe(first()).subscribe((products: ProductInfo[]) => {
-            this.packages = products;
+            this.packages = products.sort((prev: ProductInfo, next: ProductInfo) => {
+                let prevOption = this.getProductMonthlyOption(prev), 
+                    nextOption = this.getProductMonthlyOption(next);
+                return prevOption.fee > nextOption.fee ? 1: -1;
+            });
             this.preselectPackage();
             // this.splitPackagesForFreeAndNotFree(packagesConfig);
             // this.getCurrentSubscriptionInfo(packagesConfig.currentSubscriptionInfo);
