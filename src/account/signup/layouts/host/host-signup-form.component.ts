@@ -41,6 +41,7 @@ export class HostSignupFormComponent {
     @ViewChild('secondStepForm') secondStepForm;
     @ViewChild('phoneNumber') phoneNumber;
 
+    isExtLogin: boolean = false; 
     defaultCountryCode: string;
     selectedCountryCode: string;
 
@@ -77,11 +78,18 @@ export class HostSignupFormComponent {
     ) {
         this.tenancyRequestModel.tag = 'Demo Request';
         this.tenancyRequestModel.stage = 'Interested';
+
+        this.activatedRoute.queryParamMap.pipe(
+            first()
+        ).subscribe((paramsMap: ParamMap) => {
+            this.isExtLogin = paramsMap.get('extlogin') == 'true';
+        });
+
         this.productProxy.getSubscriptionProductsByGroupName('Main').subscribe(products => {
             this.signUpProduct = products.sort((prev, next) => {
-                let prevFee = this.getProductMonthlyOption(prev), 
-                    nextFee = this.getProductMonthlyOption(next);
-                return prevFee > nextFee ? -1: 1;
+                let prevOption = this.getProductMonthlyOption(prev), 
+                    nextOption = this.getProductMonthlyOption(next);
+                return prevOption.fee > nextOption.fee ? 1: -1;
             })[0];
             if (this.signUpProduct) {
                 let option = this.getProductMonthlyOption(this.signUpProduct);
@@ -111,7 +119,7 @@ export class HostSignupFormComponent {
                                         this.tenancyRequestModel.lastName = result.surname;
                                         this.tenancyRequestModel.email = result.emailAddress;
 
-                                        this.messageService.info('The data provided by LinkedIn is not enough for Create Your Sperse Account');
+                                        this.messageService.info('The data provided by LinkedIn has been successfully received. Please check the data and finalize creating Sperse Account.');
 
                                         this.changeDetectorRef.detectChanges();
                                     });

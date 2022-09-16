@@ -42,7 +42,7 @@
                         <span>Login To Your Sperse Account</span>
                     </button>
                 </div>
-                <span class="no-account">Don't have a Sperse account? <a routerLink="/account/signup">Sign up</a></span>
+                <span class="no-account">Don't have a Sperse account? <a routerLink="/account/signup" [queryParams]="{extlogin: isExtLogin}">Sign up</a></span>
             </ng-template>
         </div>
     </form>
