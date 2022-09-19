@@ -10,7 +10,7 @@
                     <h1 class="title title--h1">Login To Your Sperse Account</h1>
                 </div>
                 <div class="social_login">
-                    <button class="button_global button_global_blue" [ngClass]="{disabled: !linkedIdLoginProvider}"
+                    <button type="button" class="button_global button_global_blue" [ngClass]="{disabled: !linkedIdLoginProvider}"
                             (click)="loginService.linkedInInitLogin(linkedIdLoginProvider)">
                         <span class="i-s-linkedin">Sign In with LinkedIn</span>
                     </button>
