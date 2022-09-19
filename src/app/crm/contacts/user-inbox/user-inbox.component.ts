@@ -21,7 +21,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     CommunicationMessageDeliveryType, ContactCommunicationServiceProxy, AttachmentDto, MessageListDto,
-    CommunicationMessageSendingStatus, MessageDto, ContactInfoDto, FileInfo
+    CommunicationMessageSendingStatus, MessageDto, ContactInfoDto, PreferencesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -94,6 +94,7 @@ export class UserInboxComponent implements OnDestroy {
         private domSanitizer: DomSanitizer,
         private loadingService: LoadingService,
         private communicationService: ContactCommunicationServiceProxy,
+        private preferencesService: PreferencesServiceProxy,
         private contactsService: ContactsService,
         private notifyService: NotifyService,
         private permission: AppPermissionService,
@@ -734,20 +735,10 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     updateEmailPreferences(isSubscribed: boolean) {
-        return new Observable(subscriber => {
-            let xhr = new XMLHttpRequest()
-            xhr.open('GET', `${AppConsts.remoteServiceBaseUrl}/preferences/${isSubscribed ? 'subscribe' : 'unsubscribe'}/${this.appSession.tenantId == null
-                ? 0 : this.appSession.tenantId}/${this.communicationPreferencePublicId}`);
-
-            xhr.addEventListener('load', () => {
-                if (xhr.status === 200)
-                    subscriber.next();
-                else
-                    subscriber.error();
-                subscriber.complete();
-            });
-            xhr.send();
-        });
+        let tenantId = this.appSession.tenantId == null ? 0 : this.appSession.tenantId;
+        return isSubscribed
+            ? this.preferencesService.subscribe(tenantId, this.communicationPreferencePublicId)
+            : this.preferencesService.unsubscribe(tenantId, this.communicationPreferencePublicId);
     }
 
     getCommunicationPreferencesStatus(isSubscribed: boolean) {
