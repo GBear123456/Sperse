@@ -68,7 +68,10 @@
             </thead>
             <tbody>
                 <tr *ngFor="let lineItem of invoiceInfo.invoiceData.items">
-                    <td>{{lineItem.description}}</td>
+                    <td>
+                        <span>{{lineItem.description}}</span>
+                        <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">({{lineItem.subscriptionPeriod}})</span>
+                    </td>
                     <td align="right">{{lineItem.quantity | number: '1.0-0'}}</td>
                     <td align="right">{{lineItem.unitPrice | number: '1.2-2'}}</td>
                     <td align="right">{{lineItem.amount | number: '1.2-2'}}</td>
