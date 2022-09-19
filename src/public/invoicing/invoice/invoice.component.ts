@@ -24,6 +24,7 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
 export class InvoiceComponent implements OnInit {
     loading: boolean = true;
     invoiceInfo: GetPublicInvoiceInfoOutput;
+    showPaymentAdvice = false;
     currentYear: number = new Date().getFullYear();
     conditions = ConditionsType;
     invoiceStatuses = InvoiceStatus;
@@ -54,6 +55,9 @@ export class InvoiceComponent implements OnInit {
             .subscribe(result => {
                 this.loading = false;
                 this.invoiceInfo = result;
+                this.showPaymentAdvice = !!(result.paymentSettings && (result.paymentSettings.bankAccountNumber ||
+                    result.paymentSettings.bankRoutingNumberForACH ||
+                    result.paymentSettings.bankRoutingNumber));
             });
     }
 

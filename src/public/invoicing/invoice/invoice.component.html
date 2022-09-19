@@ -27,7 +27,7 @@
     </div>
     <div class="content content-center">
         <div class="content-logo">
-            <img *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Paid" src="../../../assets/common/images/paid-stamp.png" />
+            <img *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Paid" src="assets/common/images/paid-stamp.png"/>
             <img class="right" src="{{invoiceInfo.tenantLogo}}">
         </div>
         <div class="inline-block full-width content-top-info">
@@ -108,7 +108,7 @@
 
         <p *ngIf="invoiceInfo.invoiceData.note" class="pre-line">{{invoiceInfo.invoiceData.note}}</p>
 
-        <div class="full-width scissors-block">
+        <div *ngIf="showPaymentAdvice" class="full-width scissors-block">
             <span class="scissors-icon">&#9986;</span>
             <div class="scissors-main">
                 <div class="left width-60 payment-advice">
