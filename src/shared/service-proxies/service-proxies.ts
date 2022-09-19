@@ -56608,6 +56608,8 @@ export class ContactInfoDto implements IContactInfoDto {
     affiliateContactId!: number | undefined;
     affiliateContactName!: string | undefined;
     subContactsCount!: number;
+    communicationPreferencePublicId!: string;
+    isSubscribedToEmails!: boolean;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -56660,6 +56662,8 @@ export class ContactInfoDto implements IContactInfoDto {
             this.affiliateContactId = _data["affiliateContactId"];
             this.affiliateContactName = _data["affiliateContactName"];
             this.subContactsCount = _data["subContactsCount"];
+            this.communicationPreferencePublicId = _data["communicationPreferencePublicId"];
+            this.isSubscribedToEmails = _data["isSubscribedToEmails"];
         }
     }
 
@@ -56712,6 +56716,8 @@ export class ContactInfoDto implements IContactInfoDto {
         data["affiliateContactId"] = this.affiliateContactId;
         data["affiliateContactName"] = this.affiliateContactName;
         data["subContactsCount"] = this.subContactsCount;
+        data["communicationPreferencePublicId"] = this.communicationPreferencePublicId;
+        data["isSubscribedToEmails"] = this.isSubscribedToEmails;
         return data;
     }
 }
@@ -56745,6 +56751,8 @@ export interface IContactInfoDto {
     affiliateContactId: number | undefined;
     affiliateContactName: string | undefined;
     subContactsCount: number;
+    communicationPreferencePublicId: string;
+    isSubscribedToEmails: boolean;
 }
 
 export class ContactInfoForMerge implements IContactInfoForMerge {

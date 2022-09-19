@@ -137,7 +137,7 @@
                         </div>
                         <dxi-column [dataField]="partnerFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="partnerFields.CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column [dataField]="partnerFields.Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Email" [caption]="l('Contact.Email')" cellTemplate="emailCell" cssClass="tabular"></dxi-column>
                         <dxi-column [dataField]="partnerFields.Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column *ngIf="isBankCodeLayoutType" [dataField]="partnerFields.StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="partnerFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
@@ -189,6 +189,9 @@
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | datetime: formatting.dateTimeMoment}}
                         </div>
+                        <div *dxTemplate="let cellData of 'emailCell'" class="clipboard-holder">
+                            <span style="font-family: 'Montserrat' !important;">{{cellData.value}}</span><span *ngIf="!cellData.data.IsSubscribedToEmails" class="unsubscribed-status"></span>
+                        </div>                        
                         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                             {{cellData.value | phone}}
                         </div>
