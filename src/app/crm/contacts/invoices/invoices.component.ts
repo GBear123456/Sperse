@@ -388,7 +388,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     previewInvoice() {
         let publicId = this.actionRecordData.InvoicePublicId;
-        window.open(`/invoicing/invoice/${this.appSession.tenantId || 0}/${publicId}`, '_blank');
+        window.open(location.origin + `/invoicing/invoice/${this.appSession.tenantId || 0}/${publicId}`, '_blank');
     }
 
     updateOrderStage(event) {
