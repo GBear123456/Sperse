@@ -128,7 +128,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     description = '';
     notes = '';
-    lines = [{ isCrmProduct: true }];
+    lines = [{isCrmProduct: true}];
 
     couponId: number;
     selectedCoupon: CouponDto;
@@ -793,6 +793,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
         else {
             this.calculateBalance();
         }
+    }
+
+    checkSendEmailAllowed(contactGroup) {
+        return this.permission.checkCGPermission(contactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'); 
     }
 
     selectContact(contact: EntityContactInfo) {

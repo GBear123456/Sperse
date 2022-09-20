@@ -567,6 +567,7 @@
                 margin-top: 21px;
 
                 label {
+                    width: 140px;
                     margin: 10px 0;
                 }
 
@@ -580,6 +581,10 @@
 
                     input {
                         font-weight: 600;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        padding-right: 50px;
                     }
 
                     &.dx-state-focused {
