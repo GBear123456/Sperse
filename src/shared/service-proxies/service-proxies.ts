@@ -75230,6 +75230,7 @@ export interface IIsTenantAvailableOutput {
 
 export class ItemInfo implements IItemInfo {
     description!: string | undefined;
+    subscriptionPeriod!: string | undefined;
     quantity!: number;
     unitPrice!: number;
     amount!: number;
@@ -75246,6 +75247,7 @@ export class ItemInfo implements IItemInfo {
     init(_data?: any) {
         if (_data) {
             this.description = _data["description"];
+            this.subscriptionPeriod = _data["subscriptionPeriod"];
             this.quantity = _data["quantity"];
             this.unitPrice = _data["unitPrice"];
             this.amount = _data["amount"];
@@ -75262,6 +75264,7 @@ export class ItemInfo implements IItemInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["description"] = this.description;
+        data["subscriptionPeriod"] = this.subscriptionPeriod;
         data["quantity"] = this.quantity;
         data["unitPrice"] = this.unitPrice;
         data["amount"] = this.amount;
@@ -75271,6 +75274,7 @@ export class ItemInfo implements IItemInfo {
 
 export interface IItemInfo {
     description: string | undefined;
+    subscriptionPeriod: string | undefined;
     quantity: number;
     unitPrice: number;
     amount: number;
