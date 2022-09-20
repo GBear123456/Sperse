@@ -25,7 +25,7 @@
       <ul class="list">
         <li>Chrome extension to connect LinkedIn API.</li>
         <li>Manage contacts with ease using Sperse CRM.</li>
-        <li>Add up to 2,000 contacts. Upgrade for more.</li>
+        <li>Add up to 1,000 contacts. Upgrade for more.</li>
         <li>One-click Save option to save you time!</li>
         <li>Auto-fill contact info for accuracy and speed.</li>
         <li>Connect your calendar to follow up with leads.</li>
@@ -35,7 +35,7 @@
     <div class="box__right box__item">
       <form *ngIf="!leadRequestXref" id="firstStepForm" #firstStepForm="ngForm" novalidate (ngSubmit)="processTenantRegistrationRequest()">
         <div class="social_login">
-          <button class="button_global button_global_blue" [ngClass]="{disabled: !linkedIdLoginProvider}"
+          <button type="button" class="button_global button_global_blue" [ngClass]="{disabled: !linkedIdLoginProvider}"
                   (click)="loginService.linkedInInitLogin(linkedIdLoginProvider)">
             <span class="i-s-linkedin">Sign Up with LinkedIn</span>
           </button>
