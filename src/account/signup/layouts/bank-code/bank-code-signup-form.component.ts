@@ -20,15 +20,15 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
-    selector: 'signup-form',
-    templateUrl: './signup-form.component.html',
+    selector: 'bank-code-signup-form',
+    templateUrl: './bank-code-signup-form.component.html',
     styleUrls: [
-        './signup-form.component.less'
+        './bank-code-signup-form.component.less'
     ],
     providers: [ ApplicationServiceProxy, LoginService, LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SignupFormComponent implements OnInit, OnDestroy {
+export class BankCodeSignupFormComponent implements OnInit, OnDestroy {
     @ViewChild('agreeWithTermsCheckBox') agreeWithTermsCheckBox: DxCheckBoxComponent;
     @ViewChild('agreeToReceiveCallsCheckBox') agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
     @ViewChild('zipValidator') zipValidator: DxValidatorComponent;

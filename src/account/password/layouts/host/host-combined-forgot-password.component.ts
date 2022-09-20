@@ -23,7 +23,8 @@ export class HostCombinedForgotPasswordComponent {
     emailRegex = AppConsts.regexPatterns.email;
     detectedTenancies: TenantModel[];
     isRequestSent: boolean = false;
-
+    isExtLogin: boolean = false;
+ 
     constructor (
         private activatedRoute: ActivatedRoute,
         public accountProxy: AccountServiceProxy,
@@ -33,6 +34,7 @@ export class HostCombinedForgotPasswordComponent {
         this.activatedRoute.queryParamMap.pipe(
             first()
         ).subscribe((paramsMap: ParamMap) => {
+            this.isExtLogin = paramsMap.get('extlogin') == 'true';
             let email = paramsMap.get('email');
             if (email)
                 this.model.emailAddress = email;

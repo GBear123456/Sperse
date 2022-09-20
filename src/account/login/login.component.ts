@@ -8,6 +8,7 @@ import {
     ViewChild,
     ViewContainerRef
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /** Application imports */
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -36,18 +37,29 @@ export class AdLoginHostDirective {
 export class LoginComponent implements OnInit {
     @ViewChild(AdLoginHostDirective, { static: true }) adLoginHost: AdLoginHostDirective;
 
+    layoutComponent: Type<HostLoginComponent>;
+
     constructor(
         private appSession: AppSessionService,
         private componentFactoryResolver: ComponentFactoryResolver,
+        private activatedRoute: ActivatedRoute,
         private titleService: TitleService
-    ) {}
+    ) {
+        let activeRouteChild = this.activatedRoute.snapshot;
+        if (activeRouteChild) {
+            let data = activeRouteChild.routeConfig.data;
+            this.layoutComponent = data && data.layoutComponent;
+        }
+    }
 
     ngOnInit(): void {
         this.titleService.setTitle('Login');
-        this.loadLayoutComponent(this.getLayoutComponent(this.appSession.tenant));
+        if (!this.layoutComponent)
+            this.layoutComponent = this.getLayoutComponent(this.appSession.tenant);
+        this.loadLayoutComponent(this.layoutComponent);
     }
 
-    private getLayoutComponent(tenant) {
+    private getLayoutComponent(tenant): Type<HostLoginComponent> {
         switch (tenant && tenant.customLayoutType) {
             case LayoutType.LendSpace:
                 return LendSpaceLoginComponent;

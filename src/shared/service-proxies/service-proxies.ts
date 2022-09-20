@@ -25730,6 +25730,79 @@ export class LearningResourceServiceProxy {
 }
 
 @Injectable()
+export class LinkedInServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param exchangeCode (optional) 
+     * @param loginReturnUrl (optional) 
+     * @return Success
+     */
+    getUserData(exchangeCode: string | undefined, loginReturnUrl: string | undefined): Observable<LinkedInUserData> {
+        let url_ = this.baseUrl + "/api/services/Platform/LinkedIn/GetUserData?";
+        if (exchangeCode === null)
+            throw new Error("The parameter 'exchangeCode' cannot be null.");
+        else if (exchangeCode !== undefined)
+            url_ += "ExchangeCode=" + encodeURIComponent("" + exchangeCode) + "&";
+        if (loginReturnUrl === null)
+            throw new Error("The parameter 'loginReturnUrl' cannot be null.");
+        else if (loginReturnUrl !== undefined)
+            url_ += "LoginReturnUrl=" + encodeURIComponent("" + loginReturnUrl) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserData(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LinkedInUserData>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LinkedInUserData>;
+        }));
+    }
+
+    protected processGetUserData(response: HttpResponseBase): Observable<LinkedInUserData> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LinkedInUserData.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LinkedInUserData>(null as any);
+    }
+}
+
+@Injectable()
 export class LocalizationServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -45591,6 +45664,62 @@ export class TokenAuthServiceProxy {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    linkedInAuthenticate(body: LinkedInAuthenticateModel | undefined): Observable<ExternalAuthenticateResultModel> {
+        let url_ = this.baseUrl + "/api/TokenAuth/LinkedInAuthenticate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLinkedInAuthenticate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLinkedInAuthenticate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ExternalAuthenticateResultModel>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ExternalAuthenticateResultModel>;
+        }));
+    }
+
+    protected processLinkedInAuthenticate(response: HttpResponseBase): Observable<ExternalAuthenticateResultModel> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ExternalAuthenticateResultModel.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ExternalAuthenticateResultModel>(null as any);
+    }
+
+    /**
      * @param message (optional) 
      * @param severity (optional) 
      * @return Success
@@ -65420,6 +65549,7 @@ export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
     returnUrl!: string | undefined;
     singleSignIn!: boolean | undefined;
     autoRegistration!: boolean;
+    autoDetectTenancy!: boolean;
 
     constructor(data?: IExternalAuthenticateModel) {
         if (data) {
@@ -65438,6 +65568,7 @@ export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
             this.returnUrl = _data["returnUrl"];
             this.singleSignIn = _data["singleSignIn"];
             this.autoRegistration = _data["autoRegistration"];
+            this.autoDetectTenancy = _data["autoDetectTenancy"];
         }
     }
 
@@ -65456,6 +65587,7 @@ export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
         data["returnUrl"] = this.returnUrl;
         data["singleSignIn"] = this.singleSignIn;
         data["autoRegistration"] = this.autoRegistration;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
         return data;
     }
 }
@@ -65467,11 +65599,14 @@ export interface IExternalAuthenticateModel {
     returnUrl: string | undefined;
     singleSignIn: boolean | undefined;
     autoRegistration: boolean;
+    autoDetectTenancy: boolean;
 }
 
 export class ExternalAuthenticateResultModel implements IExternalAuthenticateResultModel {
     waitingForActivation!: boolean;
     userNotFound!: boolean;
+    authProvider!: string | undefined;
+    providerAccessCode!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
     email!: string | undefined;
@@ -65502,6 +65637,8 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
         if (_data) {
             this.waitingForActivation = _data["waitingForActivation"];
             this.userNotFound = _data["userNotFound"];
+            this.authProvider = _data["authProvider"];
+            this.providerAccessCode = _data["providerAccessCode"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.email = _data["email"];
@@ -65540,6 +65677,8 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
         data = typeof data === 'object' ? data : {};
         data["waitingForActivation"] = this.waitingForActivation;
         data["userNotFound"] = this.userNotFound;
+        data["authProvider"] = this.authProvider;
+        data["providerAccessCode"] = this.providerAccessCode;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
@@ -65571,6 +65710,8 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
 export interface IExternalAuthenticateResultModel {
     waitingForActivation: boolean;
     userNotFound: boolean;
+    authProvider: string | undefined;
+    providerAccessCode: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
     email: string | undefined;
@@ -65648,6 +65789,8 @@ export interface IExternalLoginProviderInfoModel {
 export class ExternalLoginProviderSettingsEditDto implements IExternalLoginProviderSettingsEditDto {
     facebook_IsDeactivated!: boolean;
     facebook!: FacebookExternalLoginProviderSettings | undefined;
+    linkedIn_IsDeactivated!: boolean;
+    linkedIn!: LinkedInExternalLoginProviderSettings | undefined;
     google_IsDeactivated!: boolean;
     google!: GoogleExternalLoginProviderSettings | undefined;
     twitter_IsDeactivated!: boolean;
@@ -65674,6 +65817,8 @@ export class ExternalLoginProviderSettingsEditDto implements IExternalLoginProvi
         if (_data) {
             this.facebook_IsDeactivated = _data["facebook_IsDeactivated"];
             this.facebook = _data["facebook"] ? FacebookExternalLoginProviderSettings.fromJS(_data["facebook"]) : <any>undefined;
+            this.linkedIn_IsDeactivated = _data["linkedIn_IsDeactivated"];
+            this.linkedIn = _data["linkedIn"] ? LinkedInExternalLoginProviderSettings.fromJS(_data["linkedIn"]) : <any>undefined;
             this.google_IsDeactivated = _data["google_IsDeactivated"];
             this.google = _data["google"] ? GoogleExternalLoginProviderSettings.fromJS(_data["google"]) : <any>undefined;
             this.twitter_IsDeactivated = _data["twitter_IsDeactivated"];
@@ -65708,6 +65853,8 @@ export class ExternalLoginProviderSettingsEditDto implements IExternalLoginProvi
         data = typeof data === 'object' ? data : {};
         data["facebook_IsDeactivated"] = this.facebook_IsDeactivated;
         data["facebook"] = this.facebook ? this.facebook.toJSON() : <any>undefined;
+        data["linkedIn_IsDeactivated"] = this.linkedIn_IsDeactivated;
+        data["linkedIn"] = this.linkedIn ? this.linkedIn.toJSON() : <any>undefined;
         data["google_IsDeactivated"] = this.google_IsDeactivated;
         data["google"] = this.google ? this.google.toJSON() : <any>undefined;
         data["twitter_IsDeactivated"] = this.twitter_IsDeactivated;
@@ -65735,6 +65882,8 @@ export class ExternalLoginProviderSettingsEditDto implements IExternalLoginProvi
 export interface IExternalLoginProviderSettingsEditDto {
     facebook_IsDeactivated: boolean;
     facebook: FacebookExternalLoginProviderSettings | undefined;
+    linkedIn_IsDeactivated: boolean;
+    linkedIn: LinkedInExternalLoginProviderSettings | undefined;
     google_IsDeactivated: boolean;
     google: GoogleExternalLoginProviderSettings | undefined;
     twitter_IsDeactivated: boolean;
@@ -75637,6 +75786,158 @@ export interface ILinkDto {
     url: string | undefined;
     isActive: boolean;
     comment: string | undefined;
+}
+
+export class LinkedInAuthenticateModel implements ILinkedInAuthenticateModel {
+    exchangeCode!: string | undefined;
+    loginReturnUrl!: string | undefined;
+    authProvider!: string;
+    providerKey!: string;
+    providerAccessCode!: string;
+    returnUrl!: string | undefined;
+    singleSignIn!: boolean | undefined;
+    autoRegistration!: boolean;
+    autoDetectTenancy!: boolean;
+
+    constructor(data?: ILinkedInAuthenticateModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.exchangeCode = _data["exchangeCode"];
+            this.loginReturnUrl = _data["loginReturnUrl"];
+            this.authProvider = _data["authProvider"];
+            this.providerKey = _data["providerKey"];
+            this.providerAccessCode = _data["providerAccessCode"];
+            this.returnUrl = _data["returnUrl"];
+            this.singleSignIn = _data["singleSignIn"];
+            this.autoRegistration = _data["autoRegistration"];
+            this.autoDetectTenancy = _data["autoDetectTenancy"];
+        }
+    }
+
+    static fromJS(data: any): LinkedInAuthenticateModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedInAuthenticateModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["exchangeCode"] = this.exchangeCode;
+        data["loginReturnUrl"] = this.loginReturnUrl;
+        data["authProvider"] = this.authProvider;
+        data["providerKey"] = this.providerKey;
+        data["providerAccessCode"] = this.providerAccessCode;
+        data["returnUrl"] = this.returnUrl;
+        data["singleSignIn"] = this.singleSignIn;
+        data["autoRegistration"] = this.autoRegistration;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
+        return data;
+    }
+}
+
+export interface ILinkedInAuthenticateModel {
+    exchangeCode: string | undefined;
+    loginReturnUrl: string | undefined;
+    authProvider: string;
+    providerKey: string;
+    providerAccessCode: string;
+    returnUrl: string | undefined;
+    singleSignIn: boolean | undefined;
+    autoRegistration: boolean;
+    autoDetectTenancy: boolean;
+}
+
+export class LinkedInExternalLoginProviderSettings implements ILinkedInExternalLoginProviderSettings {
+    appId!: string | undefined;
+    appSecret!: string | undefined;
+
+    constructor(data?: ILinkedInExternalLoginProviderSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.appId = _data["appId"];
+            this.appSecret = _data["appSecret"];
+        }
+    }
+
+    static fromJS(data: any): LinkedInExternalLoginProviderSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedInExternalLoginProviderSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["appId"] = this.appId;
+        data["appSecret"] = this.appSecret;
+        return data;
+    }
+}
+
+export interface ILinkedInExternalLoginProviderSettings {
+    appId: string | undefined;
+    appSecret: string | undefined;
+}
+
+export class LinkedInUserData implements ILinkedInUserData {
+    name!: string | undefined;
+    surname!: string | undefined;
+    emailAddress!: string | undefined;
+
+    constructor(data?: ILinkedInUserData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.surname = _data["surname"];
+            this.emailAddress = _data["emailAddress"];
+        }
+    }
+
+    static fromJS(data: any): LinkedInUserData {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedInUserData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["emailAddress"] = this.emailAddress;
+        return data;
+    }
+}
+
+export interface ILinkedInUserData {
+    name: string | undefined;
+    surname: string | undefined;
+    emailAddress: string | undefined;
 }
 
 export class LinkedUserDto implements ILinkedUserDto {
