@@ -81873,6 +81873,7 @@ export class PayPalSettings implements IPayPalSettings {
     environment!: string | undefined;
     clientId!: string | undefined;
     clientSecret!: string | undefined;
+    webhookKey!: string | undefined;
 
     constructor(data?: IPayPalSettings) {
         if (data) {
@@ -81888,6 +81889,7 @@ export class PayPalSettings implements IPayPalSettings {
             this.environment = _data["environment"];
             this.clientId = _data["clientId"];
             this.clientSecret = _data["clientSecret"];
+            this.webhookKey = _data["webhookKey"];
         }
     }
 
@@ -81903,6 +81905,7 @@ export class PayPalSettings implements IPayPalSettings {
         data["environment"] = this.environment;
         data["clientId"] = this.clientId;
         data["clientSecret"] = this.clientSecret;
+        data["webhookKey"] = this.webhookKey;
         return data;
     }
 }
@@ -81911,6 +81914,7 @@ export interface IPayPalSettings {
     environment: string | undefined;
     clientId: string | undefined;
     clientSecret: string | undefined;
+    webhookKey: string | undefined;
 }
 
 export class PayPalSettingsDto implements IPayPalSettingsDto {
