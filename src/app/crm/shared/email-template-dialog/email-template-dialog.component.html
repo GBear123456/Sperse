@@ -208,10 +208,10 @@
                                     height="calc(100% - 40px)"
                                     [selectionMode]="'single'"
                                     [dataSource]="tagsList"
-                                    [itemTemplate]="'startCase'"
+                                    [itemTemplate]="'tagTemplate'"
                                     (onItemClick)="onTagClick($event)">
-                                    <div *dxTemplate="let data of 'startCase'" class="tags-list-item" [ngClass]="{disabled: !templateEditMode && !getTagValue(data)}">
-                                        {{ startCase(data) }}
+                                    <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item" [ngClass]="{disabled: !templateEditMode && !getTagValue(data)}">
+                                        {{ getTagText(data) }}
                                     </div>                
                                 </dx-list>
                             </div>
