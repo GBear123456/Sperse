@@ -241,8 +241,18 @@
                             <div class="star star-{{starsLookup[cellData.value] ? starsLookup[cellData.value].colorType.toLowerCase() : 'default'}}"></div>
                         </ng-container>
                         <div *dxTemplate="let cellData of 'emailCell'" class="clipboard-holder">
-                            <span style="font-family: 'Montserrat' !important;">{{cellData.value}}</span><span *ngIf="!cellData.data.IsSubscribedToEmails" class="unsubscribed-status"></span>
-                        </div>      
+                            <span style="font-family: 'Montserrat' !important;">{{cellData.value}}
+                                <span *ngIf="!cellData.data.IsSubscribedToEmails" id="unsubscribedStatus{{cellData.data.Id}}" class="unsubscribed-status">
+                                    <dx-tooltip
+                                        position="bottom" 
+                                        target="#unsubscribedStatus{{cellData.data.Id}}" 
+                                        showEvent="dxhoverstart" 
+                                        hideEvent="dxhoverend">
+                                        <div>{{ l('ContactIsUnsubscribedFromEmails') }}</div>
+                                    </dx-tooltip>
+                                </span>
+                            </span>
+                        </div>
                         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                             {{cellData.value | phone}}
                         </div>
