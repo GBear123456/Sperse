@@ -5,7 +5,7 @@
                 Invoice <b>{{invoiceInfo.invoiceData.number}}</b>
             </h3>
             <div>
-                <a role="button" class="btn btn-primary" [class.disabled]="!invoiceInfo.stripePayUrl" href="{{invoiceInfo.stripePayUrl}}">
+                <a *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent" role="button" class="btn btn-primary" [class.disabled]="!invoiceInfo.stripePayUrl" href="{{invoiceInfo.stripePayUrl}}">
                     Pay with Stripe
                 </a>
                 <button class="btn btn-secondary actions-button" [matMenuTriggerFor]="actions">
@@ -20,6 +20,10 @@
                     <button mat-menu-item (click)="printPage()">
                         <i class="fa fa-print"></i>
                         <span>Print</span>
+                    </button>
+                    <button *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Paid" mat-menu-item [routerLink]="['/receipt', tenantId, publicId]">
+                        <i class="fa fa-file-text"></i>
+                        <span>Receipt</span>
                     </button>
                 </mat-menu>
             </div>
