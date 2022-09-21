@@ -43,6 +43,7 @@ import { InvoiceFields } from '@app/crm/contacts/invoices/invoice-fields.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
 import { AppFeatures } from '@shared/AppFeatures';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -172,7 +173,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                             this.invoiceFields.Key,
                             this.invoiceFields.InvoiceId,
                             this.invoiceFields.InvoiceNumber,
-                            this.invoiceFields.InvoiceStatus
+                            this.invoiceFields.InvoiceStatus,
+                            this.invoiceFields.InvoicePublicId
                         ],
                         this.fieldsDependencies
                     );
@@ -376,11 +378,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     downloadInvoicePdf() {
         this.getPdfLink().subscribe((pdfUrl: string) => {
-            let link = document.createElement('a');
-            link.href = pdfUrl;
-            link.target = '_blank';
-            link.download = this.actionRecordData.InvoiceNumber + '.pdf';
-            link.dispatchEvent(new MouseEvent('click'));
+            UrlHelper.downloadFileFromUrl(pdfUrl, this.actionRecordData.InvoiceNumber + '.pdf');
         });
     }
 
@@ -389,9 +387,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     previewInvoice() {
-        this.getPdfLink().subscribe((pdfUrl: string) => {
-            window.open(pdfUrl, '_blank');
-        });
+        let publicId = this.actionRecordData.InvoicePublicId;
+        window.open(location.origin + `/invoicing/invoice/${this.appSession.tenantId || 0}/${publicId}`, '_blank');
     }
 
     updateOrderStage(event) {

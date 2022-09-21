@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ReceiptComponent } from './receipt.component';
+import { ReceiptComponent } from './receipt/receipt.component';
+import { InvoiceComponent } from './invoice/invoice.component';
 
 @NgModule({
     imports: [
@@ -10,10 +11,16 @@ import { ReceiptComponent } from './receipt.component';
                 component: ReceiptComponent,
                 canActivate: [],
                 canActivateChild: []
+            },
+            {
+                path: 'invoice/:tenantId/:publicId',
+                component: InvoiceComponent,
+                canActivate: [],
+                canActivateChild: []
             }
         ])
     ],
     exports: [ RouterModule ],
     providers: []
 })
-export class ReceiptRoutingModule {}
+export class InvoicingRoutingModule {}

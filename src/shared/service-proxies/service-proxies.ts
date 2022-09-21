@@ -44623,61 +44623,6 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @return Success
      */
-    requestStripePaymentForInvoice(invoiceId: number): Observable<RequestStripePaymentOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestStripePaymentForInvoice?";
-        if (invoiceId === undefined || invoiceId === null)
-            throw new Error("The parameter 'invoiceId' must be defined and cannot be null.");
-        else
-            url_ += "invoiceId=" + encodeURIComponent("" + invoiceId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRequestStripePaymentForInvoice(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processRequestStripePaymentForInvoice(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<RequestStripePaymentOutput>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<RequestStripePaymentOutput>;
-        }));
-    }
-
-    protected processRequestStripePaymentForInvoice(response: HttpResponseBase): Observable<RequestStripePaymentOutput> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = RequestStripePaymentOutput.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<RequestStripePaymentOutput>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
     getModuleSubscriptions(): Observable<ModuleSubscriptionInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetModuleSubscriptions";
         url_ = url_.replace(/[?&]$/, "");
@@ -48251,6 +48196,65 @@ export class UserInvoiceServiceProxy {
     /**
      * @return Success
      */
+    getPublicInvoiceInfo(tenantId: number, publicId: string): Observable<GetPublicInvoiceInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/GetPublicInvoiceInfo?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (publicId === undefined || publicId === null)
+            throw new Error("The parameter 'publicId' must be defined and cannot be null.");
+        else
+            url_ += "publicId=" + encodeURIComponent("" + publicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPublicInvoiceInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPublicInvoiceInfo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetPublicInvoiceInfoOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetPublicInvoiceInfoOutput>;
+        }));
+    }
+
+    protected processGetPublicInvoiceInfo(response: HttpResponseBase): Observable<GetPublicInvoiceInfoOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetPublicInvoiceInfoOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetPublicInvoiceInfoOutput>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     getInvoiceReceiptInfo(tenantId: number, publicId: string): Observable<GetInvoiceReceiptInfoOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/GetInvoiceReceiptInfo?";
         if (tenantId === undefined || tenantId === null)
@@ -48305,6 +48309,66 @@ export class UserInvoiceServiceProxy {
             }));
         }
         return _observableOf<GetInvoiceReceiptInfoOutput>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getInvoicePdfUrl(tenantId: number, publicId: string): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/GetInvoicePdfUrl?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (publicId === undefined || publicId === null)
+            throw new Error("The parameter 'publicId' must be defined and cannot be null.");
+        else
+            url_ += "publicId=" + encodeURIComponent("" + publicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoicePdfUrl(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoicePdfUrl(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processGetInvoicePdfUrl(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
     }
 }
 
@@ -70365,6 +70429,62 @@ export interface IGetProfitShareOutput {
     profitShares: number[] | undefined;
 }
 
+export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
+    tenantLogo!: string | undefined;
+    legalName!: string | undefined;
+    legalAddress!: string | undefined;
+    invoiceData!: InvoiceData | undefined;
+    paymentSettings!: BankTransferSettings | undefined;
+    stripePayUrl!: string | undefined;
+
+    constructor(data?: IGetPublicInvoiceInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantLogo = _data["tenantLogo"];
+            this.legalName = _data["legalName"];
+            this.legalAddress = _data["legalAddress"];
+            this.invoiceData = _data["invoiceData"] ? InvoiceData.fromJS(_data["invoiceData"]) : <any>undefined;
+            this.paymentSettings = _data["paymentSettings"] ? BankTransferSettings.fromJS(_data["paymentSettings"]) : <any>undefined;
+            this.stripePayUrl = _data["stripePayUrl"];
+        }
+    }
+
+    static fromJS(data: any): GetPublicInvoiceInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetPublicInvoiceInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantLogo"] = this.tenantLogo;
+        data["legalName"] = this.legalName;
+        data["legalAddress"] = this.legalAddress;
+        data["invoiceData"] = this.invoiceData ? this.invoiceData.toJSON() : <any>undefined;
+        data["paymentSettings"] = this.paymentSettings ? this.paymentSettings.toJSON() : <any>undefined;
+        data["stripePayUrl"] = this.stripePayUrl;
+        return data;
+    }
+}
+
+export interface IGetPublicInvoiceInfoOutput {
+    tenantLogo: string | undefined;
+    legalName: string | undefined;
+    legalAddress: string | undefined;
+    invoiceData: InvoiceData | undefined;
+    paymentSettings: BankTransferSettings | undefined;
+    stripePayUrl: string | undefined;
+}
+
 export class GetRapidClientsOutput implements IGetRapidClientsOutput {
     contactId!: number;
     name!: string | undefined;
@@ -74480,6 +74600,106 @@ export interface IInvoiceAddressInput {
     phone: string | undefined;
 }
 
+export class InvoiceData implements IInvoiceData {
+    date!: moment.Moment;
+    number!: string | undefined;
+    status!: InvoiceStatus;
+    note!: string | undefined;
+    grandTotal!: number;
+    subTotal!: number;
+    discountTotal!: number;
+    shippingTotal!: number;
+    taxTotal!: number;
+    dueDate!: moment.Moment | undefined;
+    description!: string | undefined;
+    customerName!: string | undefined;
+    customerAddressLine1!: string | undefined;
+    customerAddressLine2!: string | undefined;
+    items!: ItemInfo[] | undefined;
+
+    constructor(data?: IInvoiceData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
+            this.number = _data["number"];
+            this.status = _data["status"];
+            this.note = _data["note"];
+            this.grandTotal = _data["grandTotal"];
+            this.subTotal = _data["subTotal"];
+            this.discountTotal = _data["discountTotal"];
+            this.shippingTotal = _data["shippingTotal"];
+            this.taxTotal = _data["taxTotal"];
+            this.dueDate = _data["dueDate"] ? moment(_data["dueDate"].toString()) : <any>undefined;
+            this.description = _data["description"];
+            this.customerName = _data["customerName"];
+            this.customerAddressLine1 = _data["customerAddressLine1"];
+            this.customerAddressLine2 = _data["customerAddressLine2"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(ItemInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): InvoiceData {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["number"] = this.number;
+        data["status"] = this.status;
+        data["note"] = this.note;
+        data["grandTotal"] = this.grandTotal;
+        data["subTotal"] = this.subTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["description"] = this.description;
+        data["customerName"] = this.customerName;
+        data["customerAddressLine1"] = this.customerAddressLine1;
+        data["customerAddressLine2"] = this.customerAddressLine2;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IInvoiceData {
+    date: moment.Moment;
+    number: string | undefined;
+    status: InvoiceStatus;
+    note: string | undefined;
+    grandTotal: number;
+    subTotal: number;
+    discountTotal: number;
+    shippingTotal: number;
+    taxTotal: number;
+    dueDate: moment.Moment | undefined;
+    description: string | undefined;
+    customerName: string | undefined;
+    customerAddressLine1: string | undefined;
+    customerAddressLine2: string | undefined;
+    items: ItemInfo[] | undefined;
+}
+
 export class InvoiceInfo implements IInvoiceInfo {
     contactName!: string | undefined;
     orderNumber!: string | undefined;
@@ -74948,6 +75168,58 @@ export interface IIsTenantAvailableOutput {
     state: TenantAvailabilityState;
     tenantId: number | undefined;
     serverRootAddress: string | undefined;
+}
+
+export class ItemInfo implements IItemInfo {
+    description!: string | undefined;
+    subscriptionPeriod!: string | undefined;
+    quantity!: number;
+    unitPrice!: number;
+    amount!: number;
+
+    constructor(data?: IItemInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.description = _data["description"];
+            this.subscriptionPeriod = _data["subscriptionPeriod"];
+            this.quantity = _data["quantity"];
+            this.unitPrice = _data["unitPrice"];
+            this.amount = _data["amount"];
+        }
+    }
+
+    static fromJS(data: any): ItemInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ItemInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["description"] = this.description;
+        data["subscriptionPeriod"] = this.subscriptionPeriod;
+        data["quantity"] = this.quantity;
+        data["unitPrice"] = this.unitPrice;
+        data["amount"] = this.amount;
+        return data;
+    }
+}
+
+export interface IItemInfo {
+    description: string | undefined;
+    subscriptionPeriod: string | undefined;
+    quantity: number;
+    unitPrice: number;
+    amount: number;
 }
 
 export class IValueValidator implements IIValueValidator {
@@ -78555,7 +78827,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     trackingCode!: string | undefined;
     hasRecurringBilling!: boolean;
     isUpgradable!: boolean;
-    invoiceId!: number | undefined;
+    invoicePublicId!: string | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
         if (data) {
@@ -78584,7 +78856,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.trackingCode = _data["trackingCode"];
             this.hasRecurringBilling = _data["hasRecurringBilling"];
             this.isUpgradable = _data["isUpgradable"];
-            this.invoiceId = _data["invoiceId"];
+            this.invoicePublicId = _data["invoicePublicId"];
         }
     }
 
@@ -78613,7 +78885,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["trackingCode"] = this.trackingCode;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["isUpgradable"] = this.isUpgradable;
-        data["invoiceId"] = this.invoiceId;
+        data["invoicePublicId"] = this.invoicePublicId;
         return data;
     }
 }
@@ -78635,7 +78907,7 @@ export interface IModuleSubscriptionInfoDto {
     trackingCode: string | undefined;
     hasRecurringBilling: boolean;
     isUpgradable: boolean;
-    invoiceId: number | undefined;
+    invoicePublicId: string | undefined;
 }
 
 export class ModuleSubscriptionInfoExtended implements IModuleSubscriptionInfoExtended {

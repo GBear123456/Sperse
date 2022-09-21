@@ -82,4 +82,14 @@ export class UrlHelper {
     static isPublicUrl(url) {
         return url && UrlHelper.getQueryParameters()['user-key'] && UrlHelper.publicUrls.some(publicUrl => url.indexOf(publicUrl) >= 0);
     }
+
+    static downloadFileFromUrl(url: string, filename?: string) {
+        let link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        if (filename)
+            link.download = filename;
+
+        link.dispatchEvent(new MouseEvent('click'));
+    }
 }

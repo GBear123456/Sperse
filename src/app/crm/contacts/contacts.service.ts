@@ -363,9 +363,9 @@ export class ContactsService {
         }
     }
 
-    initEmailDialogTagsList(dialogComponent) {
+    initEmailDialogTagsList(dialogComponent: EmailTemplateDialogComponent) {
         if (!dialogComponent.tagsList || !dialogComponent.tagsList.length) {
-            dialogComponent.tagsList = this.getEmailTemplateTags(EmailTemplateType.Contact);
+            dialogComponent.tagsList = this.getEmailTemplateTags(dialogComponent.data.templateType);
         }
     }
 
@@ -407,7 +407,7 @@ export class ContactsService {
             data: {
                 ...templateData,
                 title: addMode ? this.ls.l('Add Template') : this.ls.l('Edit Template'),
-                templateType: 'Contact',
+                templateType: EmailTemplateType.Contact,
                 saveTitle: this.ls.l('Save'),
                 hideContextMenu: addMode,
                 addMode: addMode
