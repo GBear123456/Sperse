@@ -2,7 +2,7 @@
     <div class="header">
         <div class="content-center header-content">
             <h3>
-                Invoice <b>{{invoiceInfo.invoiceData.number}}</b>
+                Invoice <b>{{invoiceInfo.invoiceData.number}}</b> <i class="save-to-clipboard" (click)="copyInvoiceNumer()"></i>
             </h3>
             <div>
                 <a *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent" role="button" class="btn btn-primary" [class.disabled]="!invoiceInfo.stripePayUrl" href="{{invoiceInfo.stripePayUrl}}">

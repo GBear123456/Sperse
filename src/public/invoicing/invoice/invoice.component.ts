@@ -1,10 +1,12 @@
 /** Core imports */
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
+import { NotifyService } from 'abp-ng2-module';
 
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
@@ -12,6 +14,7 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
 import { ContditionsModalData } from '../../../shared/common/conditions-modal/conditions-modal-data';
 import { GetPublicInvoiceInfoOutput, UserInvoiceServiceProxy, InvoiceStatus } from '@root/shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'public-invoice',
@@ -35,7 +38,10 @@ export class InvoiceComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private userInvoiceService: UserInvoiceServiceProxy,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private clipboard: Clipboard,
+        private notifyService: NotifyService,
+        private ls: AppLocalizationService
     ) {
     }
 
@@ -75,6 +81,11 @@ export class InvoiceComponent implements OnInit {
 
     printPage() {
         window.print();
+    }
+
+    copyInvoiceNumer() {
+        this.clipboard.copy(this.invoiceInfo.invoiceData.number);
+        this.notifyService.info(this.ls.l('SavedToClipboard'));
     }
 
     openConditionsDialog(type: ConditionsType) {
