@@ -278,10 +278,10 @@
                 </div>
             </dx-scroll-view>
         </mat-tab>
-        <mat-tab *ngIf="showChecklistTab" [label]="ls.l('Checklist')" [disabled]="!!checklistSources.length && !checklistLeadDataSource[0]?.total && !checklistOrderDataSource[0]?.total">
+        <mat-tab *ngIf="showChecklistTab" [label]="ls.l('Checklist')" [disabled]="!checklistSources?.length">
             <dx-scroll-view showScrollbar="onHover" #checklistScroll [height]="getTabContentHeight()">
-                <div *ngFor="let source of checklistSources; let i = index" [hidden]="!source?.checklistId || !source?.checklistDataSource[0]?.total">
-                    <dx-select-box *ngIf="source?.contactDataSource"
+                <div *ngFor="let source of checklistSources; let i = index">
+                    <dx-select-box *ngIf="i ? checklistSources[0]?.checklistId: source?.contactDataSource"
                         valueExpr="Id"
                         displayExpr="Name"
                         [width]="'370px'"
@@ -295,6 +295,7 @@
                         [activeStateEnabled]="false"
                         (onSelectionChanged)="source?.onChange($event)"
                         (onInitialized)="onSelectInitialized($event)"
+                        (onContentReady)="onContentReady($event)"
                         [dataSource]="source?.contactDataSource">
                         <div *dxTemplate="let cell of 'cell'">
                             <dx-text-box
@@ -307,25 +308,27 @@
                             </dx-text-box>
                         </div>
                     </dx-select-box>
-                    <div class="progress-wrapper" *ngIf="source?.checklistDataSource && source?.checklistDataSource[0] as data">
-                        <svg width="28" height="28" class="progress">
-                            <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
-                            <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
-                                class="ring" stroke="#37d749" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
-                        </svg>
-                        <span>{{data.progress}} / {{data.total}}</span>
-                    </div>
-                    <dx-tree-view *ngIf="source?.checklistDataSource && source?.checklistDataSource[0]?.total"
-                        [height]="'100%'"
-                        itemTemplate="cell"
-                        showCheckBoxesMode="normal"
-                        [selectNodesRecursive]="false"
-                        [dataSource]="source?.checklistDataSource"
-                        (onItemSelectionChanged)="onChecklistChanged($event, i)">
-                        <div *dxTemplate="let cell of 'cell'" class="data-item">
-                            <span>{{cell.text}}</span><span class="time-ago" *ngIf="cell.date">{{cell.date | timeAgo}}</span>
+                    <div [hidden]="!source?.checklistId || !source?.checklistDataSource[0]?.total">
+                        <div class="progress-wrapper" *ngIf="source?.checklistDataSource && source?.checklistDataSource[0] as data">
+                            <svg width="28" height="28" class="progress">
+                                <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
+                                <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
+                                    class="ring" stroke="#37d749" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
+                            </svg>
+                            <span>{{data.progress}} / {{data.total}}</span>
                         </div>
-                    </dx-tree-view>
+                        <dx-tree-view *ngIf="source?.checklistDataSource && source?.checklistDataSource[0]?.total"
+                            [height]="'100%'"
+                            itemTemplate="cell"
+                            showCheckBoxesMode="normal"
+                            [selectNodesRecursive]="false"
+                            [dataSource]="source?.checklistDataSource"
+                            (onItemSelectionChanged)="onChecklistChanged($event, i)">
+                            <div *dxTemplate="let cell of 'cell'" class="data-item">
+                                <span>{{cell.text}}</span><span class="time-ago" *ngIf="cell.date">{{cell.date | timeAgo}}</span>
+                            </div>
+                        </dx-tree-view>
+                    </div>
                 </div>
             </dx-scroll-view>
         </mat-tab>

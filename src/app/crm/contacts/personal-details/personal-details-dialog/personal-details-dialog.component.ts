@@ -222,7 +222,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.leadInfo = leadInfo;
                 this.initContactLeadsDataSource();
                 this.initContactOrdersDataSource();
-                this.initChecklistSources();
+                this.initChecklistByLead(this.leadInfo).subscribe(
+                    () => this.initChecklistSources());
                 this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage, ContactGroup.Client);
             }
         }, this.ident);
@@ -315,19 +316,47 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     initChecklistByOrder(order: any): Observable<any> {
-        this.checklistOrderId = order.Id;
-        return this.loadChecklistPoints(this.initChecklistDataSource(AppConsts.PipelinePurposeIds.order,
-            this.ls.l('Post-sale Checklist'), order.Stage), true);
+        let orderId = order.id || order.Id;
+        if (orderId == this.checklistOrderId)
+            return of(this.checklistOrderDataSource);
+
+        this.checklistOrderId = order.id || order.Id;
+        return this.initChecklistDataSource(
+            AppConsts.PipelinePurposeIds.order,
+            this.ls.l('Post-sale Checklist'), 
+            order.Stage,
+            order.contactGroupId || order.ContactGroupId        
+        ).pipe(
+            switchMap((dataSource: any[]) => this.loadChecklistPoints(dataSource, true))
+        );
     }
 
     initChecklistByLead(lead: any): Observable<any> {
-        this.checklistLeadId = lead.id || lead.Id;
-        return this.loadChecklistPoints(this.initChecklistDataSource(AppConsts.PipelinePurposeIds.lead,
-            this.ls.l('Pre-sale Checklist'), lead.stage || lead.Stage));
+        let leadId = lead.id || lead.Id;
+        if (leadId == this.checklistLeadId)
+            return of(this.checklistLeadDataSource);
+
+        this.checklistLeadId = leadId;
+        return this.initChecklistDataSource(
+            AppConsts.PipelinePurposeIds.lead, 
+            this.ls.l('Pre-sale Checklist'), 
+            lead.stage || lead.Stage,
+            lead.contactGroupId || lead.ContactGroupId
+        ).pipe(
+            switchMap((dataSource: any[]) => this.loadChecklistPoints(dataSource))
+        );
     }
 
     loadChecklistPoints(dataSource, isOrder = false): Observable<any> {
         let stages = dataSource[0].items;
+        if (!stages || !stages.length) {
+            if (isOrder)
+                this.checklistOrderDataSource = [];
+            else
+                this.checklistLeadDataSource = [];
+            return of([]);
+        }
+
         if (isOrder)
             return this.orderProxy.getStageChecklistPoints(
                 this.checklistOrderId, stages.map(item => item.key)
@@ -375,13 +404,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        request.params.$select = ['Id',  'Name', 'Stage', 'LeadDate'];
+                        request.params.$select = ['Id',  'Name', 'Stage', 'LeadDate', 'ContactGroupId'];
                         request.params.$filter = 'CustomerId eq ' + this.contactInfo.id;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                    },
-                    onLoaded: (data: any) => {
-                        this.initChecklistByLead(this.leadInfo).subscribe(
-                            () => this.initChecklistSources());
                     }
                 })
             });
@@ -398,15 +423,17 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        request.params.$select = ['Id',  'Number', 'Name', 'Stage', 'OrderDate'];
-                        request.params.$filter = 'ContactId eq ' + this.contactInfo.id;
+                        request.params.$select = ['Id',  'Number', 'Name', 'Stage', 'OrderDate', 'ContactGroupId'];
+                        request.params.$filter = 'ContactId eq ' + this.contactInfo.id + ' and LeadId eq ' + this.checklistLeadId;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
-                    onLoaded: (data: any) => {
+                    onLoaded: (data: any[]) => {
                         if (data.length) {
                             let params = (this.route.queryParams as BehaviorSubject<Params>).getValue(),
                             orderId = params && params['orderId'] && parseInt(params['orderId']),
                             order = orderId ? data.filter(item => item.Id == orderId)[0] : data[0];
+                            if (!order)
+                                order = data[0];
                             this.initChecklistByOrder(order).subscribe(
                                 () => this.initChecklistSources());
                         } else
@@ -417,42 +444,50 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         }
     }
 
-    initChecklistDataSource(purposeId, rootName, stageName) {
-        let rootItem: any = {
-            id: 'root',
-            text: rootName.toUpperCase(),
-            selected: false,
-            expanded: true,
-            disabled: false,
-            items: []
-        }, dataSource = [rootItem];
-        this.pipelineService.getPipelineDefinitionObservable(
-            purposeId, this.leadInfo && this.leadInfo.contactGroupId || ContactGroup.Client
-        ).pipe(takeUntil(this.dialogRef.beforeClosed())).subscribe((pipeline: PipelineDto) => {
-            rootItem.items = [];
-            pipeline.stages.forEach((stage: StageDto) => {
-                if (stage.checklistPoints)
-                    rootItem.items.push({
-                        key: stage.id,
-                        id: 'stage-' + stage.id,
-                        text: stage.name,
-                        selected: false,
-                        expanded: true,
-                        disabled: false,
-                        items: stage.checklistPoints.sort((prev, next) => {
-                            return prev.sortOrder > next.sortOrder ? 1 : -1;
-                        }).map(point => {
-                            return {
-                                id: point.id,
-                                text: point.name,
-                                disabled: stage.name != stageName,
-                                sortOrder: point.sortOrder
-                            };
-                        })
-                    });
-            });
-        });
-        return dataSource;
+    initChecklistDataSource(
+        purposeId: string, 
+        rootName: string, 
+        stageName: string, 
+        contactGroupId: ContactGroup = ContactGroup.Client
+    ): Observable<any> {
+        return this.pipelineService.getPipelineDefinitionObservable(
+            purposeId, purposeId == AppConsts.PipelinePurposeIds.order ? undefined : contactGroupId
+        ).pipe(
+            filter(Boolean), first(),
+            takeUntil(this.dialogRef.beforeClosed()),
+            map((pipeline: PipelineDto) => {
+                let rootItem: any = {
+                    id: 'root',
+                    text: rootName.toUpperCase(),
+                    selected: false,
+                    expanded: true,
+                    disabled: false,
+                    items: []
+                };
+                pipeline.stages.forEach((stage: StageDto) => {
+                    if (stage.checklistPoints)
+                        rootItem.items.push({
+                            key: stage.id,
+                            id: 'stage-' + stage.id,
+                            text: stage.name,
+                            selected: false,
+                            expanded: true,
+                            disabled: false,
+                            items: stage.checklistPoints.sort((prev, next) => {
+                                return prev.sortOrder > next.sortOrder ? 1 : -1;
+                            }).map(point => {
+                                return {
+                                    id: point.id,
+                                    text: point.name,
+                                    disabled: stage.name != stageName,
+                                    sortOrder: point.sortOrder
+                                };
+                            })
+                        });
+                });
+                return [rootItem];
+            })
+        );        
     }
 
     getTabContentHeight(subtract = 0) {
@@ -637,20 +672,33 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     onLeadChanged(event) {
-        if (event.selectedItem.Id != this.checklistLeadId) {
+        if (this.checklistLeadId && event.selectedItem.Id != this.checklistLeadId) {
             this.startLoading();
             this.initChecklistByLead(event.selectedItem).pipe(
-                finalize(() => this.finishLoading())).subscribe(
-                    () => this.initChecklistSources());
+                finalize(() => this.finishLoading())
+            ).subscribe(() => {
+                this.initChecklistSources();
+                if (this.contactOrdersDataSource)
+                    this.contactOrdersDataSource.reload();
+            });
         }
     }
 
+    onContentReady(event) {
+        let cmp = event.component,
+            items = cmp.option('items'),
+            isVisible = !!items.length;
+        cmp.option('visible', isVisible);
+        if (isVisible && !cmp.option('value'))
+            cmp.option('value', items[0].Id);
+    }
+
     onSelectInitialized(event) {
-        setTimeout(() => event.component.repaint(), 1000);
+        setTimeout(() => event.component.repaint(), 2000);
     }
 
     onOrderChanged(event: any) {
-        if (event.selectedItem.Id != this.checklistOrderId) {
+        if (event.selectedItem && event.selectedItem.Id != this.checklistOrderId) {
             this.startLoading();
             let top = this.checklistScroll.instance.scrollTop();
             this.initChecklistByOrder(event.selectedItem).pipe(
@@ -670,13 +718,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 source.checklistId = isOrder ? this.checklistOrderId : this.checklistLeadId;
                 source.checklistDataSource = isOrder ? this.checklistOrderDataSource : this.checklistLeadDataSource;
             });
-        else
-            this.checklistSources.push({
+        else {
+            this.checklistSources = [{
                 checklistId: this.checklistLeadId,
                 onChange: this.onLeadChanged.bind(this),
                 checklistDataSource: this.checklistLeadDataSource,
                 contactDataSource: this.contactLeadsDataSource
-            });
+            }];
 
             if (this.permissionChecker.isGranted(AppPermissions.CRMOrders))
                 this.checklistSources.push({
@@ -685,6 +733,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     checklistDataSource: this.checklistOrderDataSource,
                     contactDataSource: this.contactOrdersDataSource
                 });
+        }
     }
 
     openContactDetails(contactId: number) {
