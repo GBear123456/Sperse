@@ -32623,6 +32623,124 @@ export class PipelineServiceProxy {
 }
 
 @Injectable()
+export class PreferencesServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    subscribe(tenantId: number, publicId: string): Observable<void> {
+        let url_ = this.baseUrl + "/Preferences/subscribe/{tenantId}/{publicId}";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined.");
+        url_ = url_.replace("{tenantId}", encodeURIComponent("" + tenantId));
+        if (publicId === undefined || publicId === null)
+            throw new Error("The parameter 'publicId' must be defined.");
+        url_ = url_.replace("{publicId}", encodeURIComponent("" + publicId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSubscribe(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSubscribe(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSubscribe(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    unsubscribe(tenantId: number, publicId: string): Observable<void> {
+        let url_ = this.baseUrl + "/Preferences/unsubscribe/{tenantId}/{publicId}";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined.");
+        url_ = url_.replace("{tenantId}", encodeURIComponent("" + tenantId));
+        if (publicId === undefined || publicId === null)
+            throw new Error("The parameter 'publicId' must be defined.");
+        url_ = url_.replace("{publicId}", encodeURIComponent("" + publicId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnsubscribe(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnsubscribe(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUnsubscribe(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+}
+
+@Injectable()
 export class ProductServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -56486,6 +56604,8 @@ export class ContactInfoDto implements IContactInfoDto {
     affiliateContactId!: number | undefined;
     affiliateContactName!: string | undefined;
     subContactsCount!: number;
+    communicationPreferencePublicId!: string;
+    isSubscribedToEmails!: boolean;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -56538,6 +56658,8 @@ export class ContactInfoDto implements IContactInfoDto {
             this.affiliateContactId = _data["affiliateContactId"];
             this.affiliateContactName = _data["affiliateContactName"];
             this.subContactsCount = _data["subContactsCount"];
+            this.communicationPreferencePublicId = _data["communicationPreferencePublicId"];
+            this.isSubscribedToEmails = _data["isSubscribedToEmails"];
         }
     }
 
@@ -56590,6 +56712,8 @@ export class ContactInfoDto implements IContactInfoDto {
         data["affiliateContactId"] = this.affiliateContactId;
         data["affiliateContactName"] = this.affiliateContactName;
         data["subContactsCount"] = this.subContactsCount;
+        data["communicationPreferencePublicId"] = this.communicationPreferencePublicId;
+        data["isSubscribedToEmails"] = this.isSubscribedToEmails;
         return data;
     }
 }
@@ -56623,6 +56747,8 @@ export interface IContactInfoDto {
     affiliateContactId: number | undefined;
     affiliateContactName: string | undefined;
     subContactsCount: number;
+    communicationPreferencePublicId: string;
+    isSubscribedToEmails: boolean;
 }
 
 export class ContactInfoForMerge implements IContactInfoForMerge {
