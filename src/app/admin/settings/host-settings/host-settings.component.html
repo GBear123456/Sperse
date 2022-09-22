@@ -358,10 +358,10 @@
             <mat-tab label="{{l('Bugsnag')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
-                            <div class="form-group">
+                        <div class="form-group">
                             <label for="BugsnagAppAPIKey">{{l("App Api Key")}}</label>
                             <input id="BugsnagAppAPIKey" type="text" name="BugsnagAppAPIKey" class="form-control" [(ngModel)]="hostSettings.bugsnag.appApiKey" maxlength="128">
-                            </div>
+                        </div>
                         <div class="form-group">
                             <label for="BugsnagUIAPIKey">{{l("UI Api Key")}}</label>
                             <input id="BugsnagUIAPIKey" type="text" name="BugsnagUIAPIKey" class="form-control" [(ngModel)]="hostSettings.bugsnag.uiApiKey" maxlength="128">
@@ -458,6 +458,22 @@
                         <div class="form-group">
                             <label for="RecurlyPageSize">{{l("RecurlyPageSize")}}</label>
                             <input id="RecurlyPageSize" type="text" name="RecurlyPageSize" class="form-control" [(ngModel)]="recurlySettings.pageSize" maxlength="128">
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab [label]="l('LinkedIn')" *ngIf="!hostSettings.externalLoginProviderSettings.linkedIn_IsDeactivated">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="LinkedInAppId">{{l("LinkedInAppId")}}</label>
+                            <input id="LinkedInAppId" type="text" name="LinkedInAppId" class="form-control" [(ngModel)]="hostSettings.externalLoginProviderSettings.linkedIn.appId">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="LinkedInAppSecret">{{l("LinkedInAppSecret")}}</label>
+                            <input id="LinkedInAppSecret" type="text" name="LinkedInAppSecret" class="form-control" [(ngModel)]="hostSettings.externalLoginProviderSettings.linkedIn.appSecret">
                         </div>
                     </div>
                 </dx-scroll-view>

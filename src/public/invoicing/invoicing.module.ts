@@ -3,23 +3,29 @@ import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
 
 /** Third party imports */
+import { MatMenuModule } from '@angular/material/menu';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
-import { ReceiptRoutingModule } from './receipt-routing.module';
-import { ReceiptComponent } from './receipt.component';
+import { InvoicingRoutingModule } from './invoicing-routing.module';
+import { ReceiptComponent } from './receipt/receipt.component';
+import { InvoiceComponent } from './invoice/invoice.component';
 import { UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [
         ngCommon.CommonModule,
         CommonModule,
-        ReceiptRoutingModule
+        MatMenuModule,
+        InvoicingRoutingModule
     ],
     exports: [],
-    declarations: [ ReceiptComponent ],
+    declarations: [
+        ReceiptComponent,
+        InvoiceComponent
+    ],
     providers: [
         UserInvoiceServiceProxy
     ]
 })
-export class ReceiptModule {}
+export class InvoicingModule {}

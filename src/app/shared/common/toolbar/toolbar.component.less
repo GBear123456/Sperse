@@ -664,6 +664,70 @@
             }
         }
 
+        [accesskey="communication-preferences-subscribed"],
+        [accesskey="communication-preferences-unsubscribed"] {
+            &.dx-button {
+                margin-left: 20px;
+                background: #f3f7fa;
+                color: #677380;
+                text-transform: uppercase;
+                text-align: center;
+                width: 155px;
+                position: relative;
+                border: 0;
+                font-weight: 400 !important;
+                border-radius: 15px;
+                padding: 0 0 0 10px;
+                font-family: 'Montserrat',sans-serif;
+                font-size: 12px;
+                border: solid 1px #dddddd;
+                cursor: pointer;
+                    &::before {
+                        width: 8px;
+                        height: 8px;
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        left: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        border-radius: 50%;
+                    }
+                &.subscribed {
+                    &::before {
+                        background: #37d749;
+                    }
+                }
+                &.unsubscribed {
+                    &::before {
+                        background: #ef8f00;
+                    }
+                }
+            }
+
+            &.dx-button:hover {
+                border: solid 1px #b9b9b9;
+            }
+        }
+
+        [accesskey="communication-preferences-subscribed"] {
+            &::before {
+                background: #37d749;
+            }
+        }
+
+        [accesskey="communication-preferences-unsubscribed"] {
+            &::before {
+                background: #ef8f00;
+            }
+        }
+
+        #testtest {
+            &::before {
+                background: #ef8f00;
+            }
+        }
+
         [accesskey="filters"] {
             img {
                 display: none
