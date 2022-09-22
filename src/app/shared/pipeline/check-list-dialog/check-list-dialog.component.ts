@@ -113,6 +113,8 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
                     cell.data.id = res.id;
                     cell.data.sortOrder = res.sortOrder;
                     this.reloadStageConfig();
+                }, () => {
+                    this.dataSource.splice(cell.rowIndex, 1);
                 });
             } else
                 this.dataSource.splice(cell.rowIndex, 1);

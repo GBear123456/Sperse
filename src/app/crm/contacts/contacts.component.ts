@@ -479,7 +479,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             });
         }
 
-        const featureMaxMessageCount = +abp.features.getValue(AppFeatures.CRMMaxCommunicationMessageCount);
+        const featureMaxMessageCount = this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
         this.isCommunicationHistoryAllowed = featureMaxMessageCount && this.permission.checkCGPermission(
             result.groups,
             'ViewCommunicationHistory'

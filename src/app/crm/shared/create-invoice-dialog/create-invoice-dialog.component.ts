@@ -126,7 +126,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     date = new Date();
     dueDate;
     isAddressDialogOpened = false;
-    featureMaxProductCount: number = +abp.features.getValue(AppFeatures.CRMMaxProductCount);
+    featureMaxProductCount: number = this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount);
 
     description = '';
     notes = '';
