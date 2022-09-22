@@ -457,4 +457,8 @@ export class AppService extends AppServiceBase {
             }
         });
     }
+
+    getFeatureCount(feature: AppFeatures, forced = false) {
+        return !forced && this.isHostTenant ? AppConsts.infinityFeatureCount : +abp.features.getValue(feature);
+    }
 }

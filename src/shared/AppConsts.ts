@@ -87,6 +87,7 @@ export class AppConsts {
     };
 
     static readonly otherLinkTypeId = '-';
+    static readonly infinityFeatureCount = -1;
 
     private static readonly emailRegexString = '(([^<>()\[\\]\\.,;:\\s@"]+(\\.[^<>()\[\\]\\.,;:\\s@"]+)*)|("[^"]+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))';
 

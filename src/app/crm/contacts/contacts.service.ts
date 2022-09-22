@@ -70,6 +70,8 @@ import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-p
 import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
 import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { AppFeatures } from '@shared/AppFeatures';
+import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
@@ -110,6 +112,7 @@ export class ContactsService {
     next: Subject<any> = new Subject();
 
     constructor(injector: Injector,
+        private appService: AppService,
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
@@ -888,5 +891,9 @@ export class ContactsService {
                 ' at ' + date.format(AppConsts.formatting.dateMoment) +
                 ' by ' + (data.confirmedByUserFullName || this.ls.l('System')) : ''
         );
+    }
+
+    getFeatureCount(feature: AppFeatures) {
+        return this.appService.getFeatureCount(feature);
     }
 }
