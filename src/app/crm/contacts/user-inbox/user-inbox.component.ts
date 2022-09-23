@@ -213,7 +213,8 @@ export class UserInboxComponent implements OnDestroy {
                     options: {
                         text: this.getCommunicationPreferencesStatus(this.isSubscribedToEmails),
                         accessKey: `communication-preferences-${this.isSubscribedToEmails ? 'subscribed' : 'unsubscribed'}`
-                    },
+                    }
+                    /* disabled temporarily
                     action: (e) => {
                         this.isSubscribedToEmails = !this.isSubscribedToEmails;
                         e.element.classList.remove(this.isSubscribedToEmails ? 'unsubscribed' : 'subscribed');
@@ -223,6 +224,7 @@ export class UserInboxComponent implements OnDestroy {
                         this.updateEmailPreferences(this.isSubscribedToEmails).subscribe(() => {
                         })
                     }
+                    */
                 }]
             }, {
                 location: 'after',
