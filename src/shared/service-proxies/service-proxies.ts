@@ -50885,6 +50885,17 @@ export class AffiliatePaymentSettingInfo implements IAffiliatePaymentSettingInfo
     type!: PaymentSettingType;
     isDefault!: boolean;
     emailAddress!: string | undefined;
+    beneficiaryName!: string | undefined;
+    beneficiaryStreetAddress!: string | undefined;
+    beneficiaryCityAddress!: string | undefined;
+    beneficiaryBankName!: string | undefined;
+    beneficiaryBankStreetAddress!: string | undefined;
+    beneficiaryBankCityAddress!: string | undefined;
+    bankAccountNumber!: string | undefined;
+    bankRoutingNumberForACH!: string | undefined;
+    bankRoutingNumber!: string | undefined;
+    swiftCodeForUSDollar!: string | undefined;
+    swiftCode!: string | undefined;
 
     constructor(data?: IAffiliatePaymentSettingInfo) {
         if (data) {
@@ -50900,6 +50911,17 @@ export class AffiliatePaymentSettingInfo implements IAffiliatePaymentSettingInfo
             this.type = _data["type"];
             this.isDefault = _data["isDefault"];
             this.emailAddress = _data["emailAddress"];
+            this.beneficiaryName = _data["beneficiaryName"];
+            this.beneficiaryStreetAddress = _data["beneficiaryStreetAddress"];
+            this.beneficiaryCityAddress = _data["beneficiaryCityAddress"];
+            this.beneficiaryBankName = _data["beneficiaryBankName"];
+            this.beneficiaryBankStreetAddress = _data["beneficiaryBankStreetAddress"];
+            this.beneficiaryBankCityAddress = _data["beneficiaryBankCityAddress"];
+            this.bankAccountNumber = _data["bankAccountNumber"];
+            this.bankRoutingNumberForACH = _data["bankRoutingNumberForACH"];
+            this.bankRoutingNumber = _data["bankRoutingNumber"];
+            this.swiftCodeForUSDollar = _data["swiftCodeForUSDollar"];
+            this.swiftCode = _data["swiftCode"];
         }
     }
 
@@ -50915,6 +50937,17 @@ export class AffiliatePaymentSettingInfo implements IAffiliatePaymentSettingInfo
         data["type"] = this.type;
         data["isDefault"] = this.isDefault;
         data["emailAddress"] = this.emailAddress;
+        data["beneficiaryName"] = this.beneficiaryName;
+        data["beneficiaryStreetAddress"] = this.beneficiaryStreetAddress;
+        data["beneficiaryCityAddress"] = this.beneficiaryCityAddress;
+        data["beneficiaryBankName"] = this.beneficiaryBankName;
+        data["beneficiaryBankStreetAddress"] = this.beneficiaryBankStreetAddress;
+        data["beneficiaryBankCityAddress"] = this.beneficiaryBankCityAddress;
+        data["bankAccountNumber"] = this.bankAccountNumber;
+        data["bankRoutingNumberForACH"] = this.bankRoutingNumberForACH;
+        data["bankRoutingNumber"] = this.bankRoutingNumber;
+        data["swiftCodeForUSDollar"] = this.swiftCodeForUSDollar;
+        data["swiftCode"] = this.swiftCode;
         return data;
     }
 }
@@ -50923,12 +50956,34 @@ export interface IAffiliatePaymentSettingInfo {
     type: PaymentSettingType;
     isDefault: boolean;
     emailAddress: string | undefined;
+    beneficiaryName: string | undefined;
+    beneficiaryStreetAddress: string | undefined;
+    beneficiaryCityAddress: string | undefined;
+    beneficiaryBankName: string | undefined;
+    beneficiaryBankStreetAddress: string | undefined;
+    beneficiaryBankCityAddress: string | undefined;
+    bankAccountNumber: string | undefined;
+    bankRoutingNumberForACH: string | undefined;
+    bankRoutingNumber: string | undefined;
+    swiftCodeForUSDollar: string | undefined;
+    swiftCode: string | undefined;
 }
 
 export class AffiliatePaymentSettingInput implements IAffiliatePaymentSettingInput {
     type!: PaymentSettingType;
     isDefault!: boolean;
     emailAddress!: string | undefined;
+    beneficiaryName!: string | undefined;
+    beneficiaryStreetAddress!: string | undefined;
+    beneficiaryCityAddress!: string | undefined;
+    beneficiaryBankName!: string | undefined;
+    beneficiaryBankStreetAddress!: string | undefined;
+    beneficiaryBankCityAddress!: string | undefined;
+    bankAccountNumber!: string | undefined;
+    bankRoutingNumberForACH!: string | undefined;
+    bankRoutingNumber!: string | undefined;
+    swiftCodeForUSDollar!: string | undefined;
+    swiftCode!: string | undefined;
 
     constructor(data?: IAffiliatePaymentSettingInput) {
         if (data) {
@@ -50944,6 +50999,17 @@ export class AffiliatePaymentSettingInput implements IAffiliatePaymentSettingInp
             this.type = _data["type"];
             this.isDefault = _data["isDefault"];
             this.emailAddress = _data["emailAddress"];
+            this.beneficiaryName = _data["beneficiaryName"];
+            this.beneficiaryStreetAddress = _data["beneficiaryStreetAddress"];
+            this.beneficiaryCityAddress = _data["beneficiaryCityAddress"];
+            this.beneficiaryBankName = _data["beneficiaryBankName"];
+            this.beneficiaryBankStreetAddress = _data["beneficiaryBankStreetAddress"];
+            this.beneficiaryBankCityAddress = _data["beneficiaryBankCityAddress"];
+            this.bankAccountNumber = _data["bankAccountNumber"];
+            this.bankRoutingNumberForACH = _data["bankRoutingNumberForACH"];
+            this.bankRoutingNumber = _data["bankRoutingNumber"];
+            this.swiftCodeForUSDollar = _data["swiftCodeForUSDollar"];
+            this.swiftCode = _data["swiftCode"];
         }
     }
 
@@ -50959,6 +51025,17 @@ export class AffiliatePaymentSettingInput implements IAffiliatePaymentSettingInp
         data["type"] = this.type;
         data["isDefault"] = this.isDefault;
         data["emailAddress"] = this.emailAddress;
+        data["beneficiaryName"] = this.beneficiaryName;
+        data["beneficiaryStreetAddress"] = this.beneficiaryStreetAddress;
+        data["beneficiaryCityAddress"] = this.beneficiaryCityAddress;
+        data["beneficiaryBankName"] = this.beneficiaryBankName;
+        data["beneficiaryBankStreetAddress"] = this.beneficiaryBankStreetAddress;
+        data["beneficiaryBankCityAddress"] = this.beneficiaryBankCityAddress;
+        data["bankAccountNumber"] = this.bankAccountNumber;
+        data["bankRoutingNumberForACH"] = this.bankRoutingNumberForACH;
+        data["bankRoutingNumber"] = this.bankRoutingNumber;
+        data["swiftCodeForUSDollar"] = this.swiftCodeForUSDollar;
+        data["swiftCode"] = this.swiftCode;
         return data;
     }
 }
@@ -50967,6 +51044,17 @@ export interface IAffiliatePaymentSettingInput {
     type: PaymentSettingType;
     isDefault: boolean;
     emailAddress: string | undefined;
+    beneficiaryName: string | undefined;
+    beneficiaryStreetAddress: string | undefined;
+    beneficiaryCityAddress: string | undefined;
+    beneficiaryBankName: string | undefined;
+    beneficiaryBankStreetAddress: string | undefined;
+    beneficiaryBankCityAddress: string | undefined;
+    bankAccountNumber: string | undefined;
+    bankRoutingNumberForACH: string | undefined;
+    bankRoutingNumber: string | undefined;
+    swiftCodeForUSDollar: string | undefined;
+    swiftCode: string | undefined;
 }
 
 export enum AffiliateServiceStatus {
