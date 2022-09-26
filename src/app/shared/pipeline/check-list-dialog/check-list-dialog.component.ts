@@ -17,6 +17,7 @@ import { StageChecklistServiceProxy, CreateStageChecklistPointInput, UpdateStage
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppFeatures } from '@shared/AppFeatures';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'check-list-dialog',
@@ -27,7 +28,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 export class CheckListDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     
-    maxPointCount = parseFloat(abp.features.getValue(AppFeatures.CRMMaxChecklistPointCount));
+    maxPointCount = this.appService.getFeatureCount(AppFeatures.CRMMaxChecklistPointCount);
 
     private slider: any;
     dataSource: any[] = [];
@@ -44,6 +45,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
         private store$: Store<CrmStore.State>,
         public dialogRef: MatDialogRef<CheckListDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public dialogData: any,
+        public appService: AppService,
         public ls: AppLocalizationService
     ) {
         this.dataSource = cloneDeep(dialogData.stage.checklistPoints) || [];
