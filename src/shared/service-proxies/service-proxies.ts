@@ -31634,7 +31634,7 @@ export class PaymentServiceProxy {
 }
 
 @Injectable()
-export class PaypalServiceProxy {
+export class PayPalServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -31648,8 +31648,12 @@ export class PaypalServiceProxy {
      * @param invoicePublicId (optional) 
      * @return Success
      */
-    getPaymentInfo(invoicePublicId: string | undefined): Observable<InvoicePaypalInfo> {
-        let url_ = this.baseUrl + "/api/Paypal/GetPaymentInfo?";
+    getPaymentInfo(tenantId: number, invoicePublicId: string | undefined): Observable<InvoicePaypalPaymentInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/PayPal/GetPaymentInfo?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
         if (invoicePublicId === null)
             throw new Error("The parameter 'invoicePublicId' cannot be null.");
         else if (invoicePublicId !== undefined)
@@ -31671,14 +31675,14 @@ export class PaypalServiceProxy {
                 try {
                     return this.processGetPaymentInfo(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<InvoicePaypalInfo>;
+                    return _observableThrow(e) as any as Observable<InvoicePaypalPaymentInfo>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<InvoicePaypalInfo>;
+                return _observableThrow(response_) as any as Observable<InvoicePaypalPaymentInfo>;
         }));
     }
 
-    protected processGetPaymentInfo(response: HttpResponseBase): Observable<InvoicePaypalInfo> {
+    protected processGetPaymentInfo(response: HttpResponseBase): Observable<InvoicePaypalPaymentInfo> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -31689,7 +31693,7 @@ export class PaypalServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = InvoicePaypalInfo.fromJS(resultData200);
+            result200 = InvoicePaypalPaymentInfo.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -31697,7 +31701,129 @@ export class PaypalServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<InvoicePaypalInfo>(null as any);
+        return _observableOf<InvoicePaypalPaymentInfo>(null as any);
+    }
+
+    /**
+     * @param invoicePublicId (optional) 
+     * @return Success
+     */
+    requestPayment(tenantId: number, invoicePublicId: string | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/PayPal/RequestPayment?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (invoicePublicId === null)
+            throw new Error("The parameter 'invoicePublicId' cannot be null.");
+        else if (invoicePublicId !== undefined)
+            url_ += "invoicePublicId=" + encodeURIComponent("" + invoicePublicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRequestPayment(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processRequestPayment(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
+    }
+
+    /**
+     * @param invoicePublicId (optional) 
+     * @return Success
+     */
+    requestSubscription(tenantId: number, invoicePublicId: string | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/PayPal/RequestSubscription?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (invoicePublicId === null)
+            throw new Error("The parameter 'invoicePublicId' cannot be null.");
+        else if (invoicePublicId !== undefined)
+            url_ += "invoicePublicId=" + encodeURIComponent("" + invoicePublicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestSubscription(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRequestSubscription(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processRequestSubscription(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
     }
 }
 
@@ -75028,15 +75154,12 @@ export interface IInvoiceLineInfo {
     subscriptionGateway: string | undefined;
 }
 
-export class InvoicePaypalInfo implements IInvoicePaypalInfo {
+export class InvoicePaypalPaymentInfo implements IInvoicePaypalPaymentInfo {
     isApplicable!: boolean;
     isSubscription!: boolean;
-    planId!: string | undefined;
-    quantity!: number;
-    amount!: number | undefined;
-    description!: string | undefined;
+    clientId!: string | undefined;
 
-    constructor(data?: IInvoicePaypalInfo) {
+    constructor(data?: IInvoicePaypalPaymentInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -75049,16 +75172,13 @@ export class InvoicePaypalInfo implements IInvoicePaypalInfo {
         if (_data) {
             this.isApplicable = _data["isApplicable"];
             this.isSubscription = _data["isSubscription"];
-            this.planId = _data["planId"];
-            this.quantity = _data["quantity"];
-            this.amount = _data["amount"];
-            this.description = _data["description"];
+            this.clientId = _data["clientId"];
         }
     }
 
-    static fromJS(data: any): InvoicePaypalInfo {
+    static fromJS(data: any): InvoicePaypalPaymentInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new InvoicePaypalInfo();
+        let result = new InvoicePaypalPaymentInfo();
         result.init(data);
         return result;
     }
@@ -75067,21 +75187,15 @@ export class InvoicePaypalInfo implements IInvoicePaypalInfo {
         data = typeof data === 'object' ? data : {};
         data["isApplicable"] = this.isApplicable;
         data["isSubscription"] = this.isSubscription;
-        data["planId"] = this.planId;
-        data["quantity"] = this.quantity;
-        data["amount"] = this.amount;
-        data["description"] = this.description;
+        data["clientId"] = this.clientId;
         return data;
     }
 }
 
-export interface IInvoicePaypalInfo {
+export interface IInvoicePaypalPaymentInfo {
     isApplicable: boolean;
     isSubscription: boolean;
-    planId: string | undefined;
-    quantity: number;
-    amount: number | undefined;
-    description: string | undefined;
+    clientId: string | undefined;
 }
 
 export class InvoiceSettings implements IInvoiceSettings {

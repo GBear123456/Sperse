@@ -58,6 +58,32 @@ public-invoice {
             padding: 5px 0;
             align-items: center;
             height: 100%;
+
+            .header-right-side {
+                display: flex;
+
+                & > * {
+                    margin-left: 4px;
+                }
+
+                .stripe-button {
+                    padding-right: 69px;
+                    position: relative;
+                    background-color: #635fcc;
+                    border-color: #635fcc;
+
+                    img {
+                        height: 21px;
+                        position: absolute;
+                        top: 6px;
+                        right: 14px;
+                    }
+                }
+
+                pay-pal {
+                    height: 38px;
+                }
+            }
         }
     }
 

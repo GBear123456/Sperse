@@ -4,10 +4,14 @@
             <h3>
                 Invoice <b>{{invoiceInfo.invoiceData.number}}</b> <i class="save-to-clipboard" (click)="copyInvoiceNumer()"></i>
             </h3>
-            <div>
-                <a *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent" role="button" class="btn btn-primary" [class.disabled]="!invoiceInfo.stripePayUrl" href="{{invoiceInfo.stripePayUrl}}">
-                    Pay with Stripe
-                </a>
+            <div class="header-right-side">
+                <ng-container *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent">
+                    <pay-pal (onApprove)="onPayPalApprove()">
+                    </pay-pal>
+                    <a role="button" class="btn btn-primary stripe-button" [class.disabled]="!invoiceInfo.stripePayUrl" href="{{invoiceInfo.stripePayUrl}}">
+                        Pay with <img src="assets/common/images/stripe.svg"/>
+                    </a>
+                </ng-container>
                 <button class="btn btn-secondary actions-button" [matMenuTriggerFor]="actions">
                     <span>Actions</span>
                     <i class="fa fa-caret-down" aria-hidden="true"></i>

@@ -1,6 +1,6 @@
 /** Core imports */
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 /** Third party imports */
@@ -12,9 +12,10 @@ import { NotifyService } from 'abp-ng2-module';
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ContditionsModalData } from '../../../shared/common/conditions-modal/conditions-modal-data';
-import { GetPublicInvoiceInfoOutput, UserInvoiceServiceProxy, InvoiceStatus } from '@root/shared/service-proxies/service-proxies';
+import { GetPublicInvoiceInfoOutput, UserInvoiceServiceProxy, InvoiceStatus, PayPalServiceProxy, InvoicePaypalPaymentInfo } from '@root/shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { PayPalComponent } from './pay-pal/pay-pal.component';
 
 @Component({
     selector: 'public-invoice',
@@ -22,9 +23,18 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: [
         './invoice.component.less'
     ],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    providers: [
+        PayPalServiceProxy
+    ]
 })
 export class InvoiceComponent implements OnInit {
+    private payPal: PayPalComponent;
+    @ViewChild(PayPalComponent) set paypPalComponent(paypalComp: PayPalComponent) {
+        this.payPal = paypalComp;
+        this.initializePayPal();
+    };
+
     loading: boolean = true;
     invoiceInfo: GetPublicInvoiceInfoOutput;
     showPaymentAdvice = false;
@@ -35,9 +45,13 @@ export class InvoiceComponent implements OnInit {
     tenantId: number;
     publicId: string;
 
+    payPalInfo: InvoicePaypalPaymentInfo;
+
     constructor(
         private route: ActivatedRoute,
+        private router: Router,
         private userInvoiceService: UserInvoiceServiceProxy,
+        private paypalServiceProxy: PayPalServiceProxy,
         private dialog: MatDialog,
         private clipboard: Clipboard,
         private notifyService: NotifyService,
@@ -49,6 +63,7 @@ export class InvoiceComponent implements OnInit {
         this.tenantId = +this.route.snapshot.paramMap.get('tenantId');
         this.publicId = this.route.snapshot.paramMap.get('publicId');
         this.getInvoiceInfo();
+        this.getPayPalInfo();
     }
 
     getInvoiceInfo() {
@@ -65,6 +80,24 @@ export class InvoiceComponent implements OnInit {
                     result.paymentSettings.bankRoutingNumberForACH ||
                     result.paymentSettings.bankRoutingNumber));
             });
+    }
+
+    onPayPalApprove() {
+        this.router.navigate(['/receipt', this.tenantId, this.publicId]);
+    }
+
+    getPayPalInfo() {
+        this.paypalServiceProxy.getPaymentInfo(this.tenantId, this.publicId)
+            .subscribe(res => {
+                this.payPalInfo = res;
+                this.initializePayPal();
+            });
+    }
+
+    initializePayPal() {
+        if (this.payPalInfo && this.payPal) {
+            this.payPal.initialize(this.tenantId, this.publicId, this.payPalInfo)
+        }
     }
 
     downloadInvoice() {
