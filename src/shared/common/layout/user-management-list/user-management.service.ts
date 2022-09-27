@@ -75,7 +75,7 @@ export class UserManagementService {
         {
             name: this.ls.l('MyOrderHistory'),
             iconClass: 'order-history',
-            visible:  this.checkBankCodeFeature(),
+            visible:  this.checkBankCodeFeature() && !this.isLayout(LayoutType.HOA),
             onClick: () => {
                 if (AppConsts.appMemberPortalUrl) {
                     this.authService.setTokenBeforeRedirect();
