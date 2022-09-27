@@ -128,7 +128,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.isContactProspective$
     ).pipe(
         map(([contactIsParent, userId, isProspective]: [boolean, number, boolean]) => {
-            return contactIsParent || (!userId && isProspective);
+            return abp.features.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && (contactIsParent || (!userId && isProspective));
         })
     );
     showPaymentInformationSection$: Observable<boolean> = combineLatest(

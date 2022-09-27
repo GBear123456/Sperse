@@ -11,6 +11,7 @@ import ODataStore from 'devextreme/data/odata/store';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -122,7 +123,8 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
         this.isReadOnly = !this.permission.isGranted(this.permissions.CRMProductsManage);
         this.headlineButtons.push({
-            enabled: !this.isReadOnly,
+            enabled: !this.isReadOnly && 
+                !!appService.getFeatureCount(AppFeatures.CRMMaxProductCount),
             action: () => this.showProductDialog(),
             label: this.l('AddProduct')
         });
