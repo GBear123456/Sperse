@@ -560,6 +560,33 @@
                     </p>
                 </dx-scroll-view>
             </mat-tab>
+            <mat-tab label="{{l('PayPal')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
+                            <input id="PayPalEnvironment" type="text" name="PayPalEnvironment" class="form-control" [(ngModel)]="payPalPaymentSettings.environment">
+                        </div>
+                        <div class="form-group">
+                            <label for="PayPalClientId">{{l("Client ID")}}</label>
+                            <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="payPalPaymentSettings.clientId">
+                        </div>
+                        <div class="form-group">
+                            <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
+                            <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="payPalPaymentSettings.clientSecret">
+                        </div>
+                        <div class="form-group">
+                            <label for="PayPalWebhookKey">{{l("Webhook key")}}</label>
+                            <input id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" class="form-control" [(ngModel)]="payPalPaymentSettings.webhookKey" maxlength="128">
+                        </div>
+                        <p>
+                            <span class="small">* To recieve webhooks from PayPal please enter any secure string above, then add new endpoint on your application using the following info:</span><br />
+                            <span class="small">URL - <span class="copy-url"><b>{{getPayPalWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+                            <span class="small">Events - <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment capture completed'</b></span>
+                        </p>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
             <mat-tab label="{{l('Stripe')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>

@@ -67,15 +67,19 @@ public-invoice {
                 }
 
                 .stripe-button {
-                    padding-right: 69px;
+                    padding-right: 66px;
                     position: relative;
                     background-color: #635fcc;
                     border-color: #635fcc;
 
+                    &:focus {
+                        box-shadow: 0 0 0 .2rem rgba(99, 95, 204,.5);
+                    }
+
                     img {
-                        height: 21px;
+                        height: 20px;
                         position: absolute;
-                        top: 6px;
+                        top: 7px;
                         right: 14px;
                     }
                 }
