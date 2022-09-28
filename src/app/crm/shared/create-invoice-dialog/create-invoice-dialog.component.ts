@@ -325,8 +325,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         } else
             this.resetNoteDefault();
 
-        this.initNewInvoiceInfo();
-        this.initContextMenuItems();
+        this.initNewInvoiceInfo();        
         this.initContactInfo(this.data.contactInfo);
         this.changeDetectorRef.detectChanges();
     }
@@ -361,6 +360,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.initContactAddresses(contact.id);
             this.customer = contact.personContactInfo.fullName;
             this.isSendEmailAllowed = this.checkSendEmailAllowed(contact.groups);
+            this.initContextMenuItems();
             let details = contact.personContactInfo.details,
                 emailAddress = details.emails.length ? details.emails[0].emailAddress : undefined,
                 address: ContactAddressDto = details.addresses[0];
@@ -811,6 +811,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.contactId = contact.id;
             this.selectedContact = contact;
             this.isSendEmailAllowed = this.checkSendEmailAllowed([ContactGroup.Client]);
+            this.initContextMenuItems();
             if (this.orderId && !this.data.invoice) {
                 this.orderId = undefined;
                 this.orderNumber = undefined;
