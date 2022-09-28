@@ -32,7 +32,8 @@ import {
     RecurringPaymentFrequency,
     ProductSubscriptionOptionInfo,
     ProductMeasurementUnit,
-    SetProductImageInput
+    SetProductImageInput,
+    ProductUpgradeAssignmentInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -66,8 +67,13 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     );
     amountNullableFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,###.##')
+    );    
+    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription).pipe(
+        map((products: ProductDto[]) => {
+            return this.data.product && this.data.product.id ? 
+                products.filter((product: ProductDto) => product.id != this.data.product.id) : products
+        })
     );
-
     readonly addNewItemId = -1;
     productTypes: string[] = Object.keys(ProductType);
     defaultProductType = ProductType.Subscription;
@@ -123,6 +129,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 this.product.type = this.defaultProductType;
             }
         }
+
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
             this.detectChanges();
@@ -258,12 +265,27 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         );
     }
 
+    addUpgradeToProduct() {
+        if (!this.product.productUpgradeAssignments)
+            this.product.productUpgradeAssignments = [];
+        if (this.product.productUpgradeAssignments.some(item => !item.upgradeProductId))
+            return ;
+        this.product.productUpgradeAssignments.push(
+            new ProductUpgradeAssignmentInfo()
+        );
+    }
+
     removePaymentPeriod(index) {
         this.product.productSubscriptionOptions.splice(index, 1);
         if (this.isOneTime && !this.product.productSubscriptionOptions.length) {
             this.isOneTime = false;
             this.detectChanges();
         }
+    }
+
+    removeUpgradeToProduct(index) {
+        this.product.productUpgradeAssignments.splice(index, 1);
+        this.detectChanges();
     }
 
     getServiceLevels(serviceId) {

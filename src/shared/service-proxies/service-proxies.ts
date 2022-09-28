@@ -62193,8 +62193,10 @@ export class CreateProductInput implements ICreateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: ICreateProductInput) {
         if (data) {
@@ -62218,6 +62220,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.maxCommissionRate = _data["maxCommissionRate"];
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -62227,6 +62230,11 @@ export class CreateProductInput implements ICreateProductInput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -62251,6 +62259,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -62260,6 +62269,11 @@ export class CreateProductInput implements ICreateProductInput {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -62277,8 +62291,10 @@ export interface ICreateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class CreateProductOutput implements ICreateProductOutput {
@@ -70413,8 +70429,10 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IGetProductInfoOutput) {
         if (data) {
@@ -70441,6 +70459,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -70450,6 +70469,11 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -70477,6 +70501,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -70486,6 +70511,11 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -70506,8 +70536,10 @@ export interface IGetProductInfoOutput {
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class GetProfilePictureOutput implements IGetProfilePictureOutput {
@@ -84313,8 +84345,10 @@ export class ProductInfo implements IProductInfo {
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IProductInfo) {
         if (data) {
@@ -84339,6 +84373,7 @@ export class ProductInfo implements IProductInfo {
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -84348,6 +84383,11 @@ export class ProductInfo implements IProductInfo {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -84373,6 +84413,7 @@ export class ProductInfo implements IProductInfo {
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -84382,6 +84423,11 @@ export class ProductInfo implements IProductInfo {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -84400,8 +84446,10 @@ export interface IProductInfo {
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export enum ProductMeasurementUnit {
@@ -84678,6 +84726,42 @@ export interface IProductSubscriptionOptionInfo {
 export enum ProductType {
     General = "General",
     Subscription = "Subscription",
+}
+
+export class ProductUpgradeAssignmentInfo implements IProductUpgradeAssignmentInfo {
+    upgradeProductId!: number;
+
+    constructor(data?: IProductUpgradeAssignmentInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.upgradeProductId = _data["upgradeProductId"];
+        }
+    }
+
+    static fromJS(data: any): ProductUpgradeAssignmentInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductUpgradeAssignmentInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["upgradeProductId"] = this.upgradeProductId;
+        return data;
+    }
+}
+
+export interface IProductUpgradeAssignmentInfo {
+    upgradeProductId: number;
 }
 
 export class ProfileAddress implements IProfileAddress {
@@ -101197,8 +101281,10 @@ export class UpdateProductInput implements IUpdateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IUpdateProductInput) {
         if (data) {
@@ -101223,6 +101309,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.maxCommissionRate = _data["maxCommissionRate"];
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -101232,6 +101319,11 @@ export class UpdateProductInput implements IUpdateProductInput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -101257,6 +101349,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -101266,6 +101359,11 @@ export class UpdateProductInput implements IUpdateProductInput {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -101284,8 +101382,10 @@ export interface IUpdateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {

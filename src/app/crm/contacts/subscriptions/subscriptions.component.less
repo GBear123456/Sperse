@@ -396,7 +396,8 @@
             &.active::after, 
             &.pending::after, 
             &.approved::after, 
-            &.declined::after, 
+            &.declined::after,
+            &.upgraded::after,
             &.canceled.show-tooltip::after, 
             &.current.show-tooltip::after {
                 content: 'i';
@@ -421,6 +422,9 @@
             }
             &.pending::before {
                 background: #dedede;
+            }
+            &.upgraded::before {
+                background: orange;
             }
             &.failed::before,
             &.declined::before {
