@@ -1179,9 +1179,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }),
                 items: { from: new FilterItemModel(), to: new FilterItemModel() }
             })],
-            this.isGranted(AppPermissions.CRMOrders) ||
-                this.isGranted(AppPermissions.CRMProducts) ?
-                    [this.subscriptionStatusFilter] : [],
+            (this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts)) && 
+                this.contactService.getFeatureCount(AppFeatures.CRMMaxProductCount) ? [this.subscriptionStatusFilter] : [],
             [new FilterModel({
                 component: FilterCalendarComponent,
                 operator: {from: 'ge', to: 'le'},
