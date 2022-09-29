@@ -84,7 +84,7 @@ export class UserInboxComponent implements OnDestroy {
             text: this.ls.l(item),
             icon: this.ls.l(item) === 'Email' ? 'fa fa-envelope-o' : 'fa fa-commenting-o',
             visible: CommunicationMessageDeliveryType[item] != CommunicationMessageDeliveryType.SMS || this.isInboundOutboundSMSEnabled,
-            disabled: this.isSMSIntegrationDisabled
+            disabled: false
         };
     });
     userTimezone = DateHelper.getUserTimezone();
