@@ -31634,6 +31634,200 @@ export class PaymentServiceProxy {
 }
 
 @Injectable()
+export class PayPalServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param invoicePublicId (optional) 
+     * @return Success
+     */
+    getPaymentInfo(tenantId: number, invoicePublicId: string | undefined): Observable<InvoicePaypalPaymentInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/PayPal/GetPaymentInfo?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (invoicePublicId === null)
+            throw new Error("The parameter 'invoicePublicId' cannot be null.");
+        else if (invoicePublicId !== undefined)
+            url_ += "invoicePublicId=" + encodeURIComponent("" + invoicePublicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPaymentInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPaymentInfo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<InvoicePaypalPaymentInfo>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<InvoicePaypalPaymentInfo>;
+        }));
+    }
+
+    protected processGetPaymentInfo(response: HttpResponseBase): Observable<InvoicePaypalPaymentInfo> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = InvoicePaypalPaymentInfo.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<InvoicePaypalPaymentInfo>(null as any);
+    }
+
+    /**
+     * @param invoicePublicId (optional) 
+     * @return Success
+     */
+    requestPayment(tenantId: number, invoicePublicId: string | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/PayPal/RequestPayment?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (invoicePublicId === null)
+            throw new Error("The parameter 'invoicePublicId' cannot be null.");
+        else if (invoicePublicId !== undefined)
+            url_ += "invoicePublicId=" + encodeURIComponent("" + invoicePublicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRequestPayment(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processRequestPayment(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
+    }
+
+    /**
+     * @param invoicePublicId (optional) 
+     * @return Success
+     */
+    requestSubscription(tenantId: number, invoicePublicId: string | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/PayPal/RequestSubscription?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (invoicePublicId === null)
+            throw new Error("The parameter 'invoicePublicId' cannot be null.");
+        else if (invoicePublicId !== undefined)
+            url_ += "invoicePublicId=" + encodeURIComponent("" + invoicePublicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestSubscription(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRequestSubscription(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processRequestSubscription(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
+    }
+}
+
+@Injectable()
 export class PermissionServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -44671,7 +44865,7 @@ export class TenantSubscriptionServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    requestStripePayment(body: RequestStripePaymentInput | undefined): Observable<RequestStripePaymentOutput> {
+    requestStripePayment(body: RequestPaymentInput | undefined): Observable<RequestStripePaymentOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestStripePayment";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -44721,6 +44915,62 @@ export class TenantSubscriptionServiceProxy {
             }));
         }
         return _observableOf<RequestStripePaymentOutput>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    requestPaypalSubscription(body: RequestPaymentInput | undefined): Observable<RequestPaypalSubscriptionOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestPaypalSubscription";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestPaypalSubscription(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRequestPaypalSubscription(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<RequestPaypalSubscriptionOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<RequestPaypalSubscriptionOutput>;
+        }));
+    }
+
+    protected processRequestPaypalSubscription(response: HttpResponseBase): Observable<RequestPaypalSubscriptionOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RequestPaypalSubscriptionOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RequestPaypalSubscriptionOutput>(null as any);
     }
 
     /**
@@ -70415,7 +70665,7 @@ export interface IGetPlatformAppUrlOutput {
 }
 
 export class GetProductInfoOutput implements IGetProductInfoOutput {
-    stripeXref!: string | undefined;
+    hasExternalReference!: boolean;
     hasIncompletedInvoices!: boolean;
     id!: number;
     code!: string | undefined;
@@ -70445,7 +70695,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
 
     init(_data?: any) {
         if (_data) {
-            this.stripeXref = _data["stripeXref"];
+            this.hasExternalReference = _data["hasExternalReference"];
             this.hasIncompletedInvoices = _data["hasIncompletedInvoices"];
             this.id = _data["id"];
             this.code = _data["code"];
@@ -70487,7 +70737,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["stripeXref"] = this.stripeXref;
+        data["hasExternalReference"] = this.hasExternalReference;
         data["hasIncompletedInvoices"] = this.hasIncompletedInvoices;
         data["id"] = this.id;
         data["code"] = this.code;
@@ -70522,7 +70772,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
 }
 
 export interface IGetProductInfoOutput {
-    stripeXref: string | undefined;
+    hasExternalReference: boolean;
     hasIncompletedInvoices: boolean;
     id: number;
     code: string | undefined;
@@ -75020,6 +75270,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     productName!: string | undefined;
     productType!: ProductType | undefined;
     subscriptionXref!: string | undefined;
+    subscriptionGateway!: string | undefined;
 
     constructor(data?: IInvoiceLineInfo) {
         if (data) {
@@ -75046,6 +75297,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.productName = _data["productName"];
             this.productType = _data["productType"];
             this.subscriptionXref = _data["subscriptionXref"];
+            this.subscriptionGateway = _data["subscriptionGateway"];
         }
     }
 
@@ -75072,6 +75324,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["productName"] = this.productName;
         data["productType"] = this.productType;
         data["subscriptionXref"] = this.subscriptionXref;
+        data["subscriptionGateway"] = this.subscriptionGateway;
         return data;
     }
 }
@@ -75091,6 +75344,51 @@ export interface IInvoiceLineInfo {
     productName: string | undefined;
     productType: ProductType | undefined;
     subscriptionXref: string | undefined;
+    subscriptionGateway: string | undefined;
+}
+
+export class InvoicePaypalPaymentInfo implements IInvoicePaypalPaymentInfo {
+    isApplicable!: boolean;
+    isSubscription!: boolean;
+    clientId!: string | undefined;
+
+    constructor(data?: IInvoicePaypalPaymentInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isApplicable = _data["isApplicable"];
+            this.isSubscription = _data["isSubscription"];
+            this.clientId = _data["clientId"];
+        }
+    }
+
+    static fromJS(data: any): InvoicePaypalPaymentInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoicePaypalPaymentInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isApplicable"] = this.isApplicable;
+        data["isSubscription"] = this.isSubscription;
+        data["clientId"] = this.clientId;
+        return data;
+    }
+}
+
+export interface IInvoicePaypalPaymentInfo {
+    isApplicable: boolean;
+    isSubscription: boolean;
+    clientId: string | undefined;
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
@@ -82621,6 +82919,7 @@ export class PayPalSettings implements IPayPalSettings {
     environment!: string | undefined;
     clientId!: string | undefined;
     clientSecret!: string | undefined;
+    webhookKey!: string | undefined;
 
     constructor(data?: IPayPalSettings) {
         if (data) {
@@ -82636,6 +82935,7 @@ export class PayPalSettings implements IPayPalSettings {
             this.environment = _data["environment"];
             this.clientId = _data["clientId"];
             this.clientSecret = _data["clientSecret"];
+            this.webhookKey = _data["webhookKey"];
         }
     }
 
@@ -82651,6 +82951,7 @@ export class PayPalSettings implements IPayPalSettings {
         data["environment"] = this.environment;
         data["clientId"] = this.clientId;
         data["clientSecret"] = this.clientSecret;
+        data["webhookKey"] = this.webhookKey;
         return data;
     }
 }
@@ -82659,6 +82960,7 @@ export interface IPayPalSettings {
     environment: string | undefined;
     clientId: string | undefined;
     clientSecret: string | undefined;
+    webhookKey: string | undefined;
 }
 
 export class PayPalSettingsDto implements IPayPalSettingsDto {
@@ -88799,6 +89101,50 @@ export interface IRequestPaymentDto {
     requestType: RequestPaymentType;
 }
 
+export class RequestPaymentInput implements IRequestPaymentInput {
+    productId!: number;
+    paymentPeriodType!: PaymentPeriodType;
+    quantity!: number;
+
+    constructor(data?: IRequestPaymentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productId = _data["productId"];
+            this.paymentPeriodType = _data["paymentPeriodType"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): RequestPaymentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RequestPaymentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        data["quantity"] = this.quantity;
+        return data;
+    }
+}
+
+export interface IRequestPaymentInput {
+    productId: number;
+    paymentPeriodType: PaymentPeriodType;
+    quantity: number;
+}
+
 export class RequestPaymentResult implements IRequestPaymentResult {
     transactionId!: string | undefined;
     code!: string | undefined;
@@ -88844,12 +89190,11 @@ export enum RequestPaymentType {
     ManualBankTransfer = "ManualBankTransfer",
 }
 
-export class RequestStripePaymentInput implements IRequestStripePaymentInput {
-    productId!: number;
-    paymentPeriodType!: PaymentPeriodType;
-    quantity!: number;
+export class RequestPaypalSubscriptionOutput implements IRequestPaypalSubscriptionOutput {
+    code!: string | undefined;
+    receiptUrl!: string | undefined;
 
-    constructor(data?: IRequestStripePaymentInput) {
+    constructor(data?: IRequestPaypalSubscriptionOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -88860,32 +89205,29 @@ export class RequestStripePaymentInput implements IRequestStripePaymentInput {
 
     init(_data?: any) {
         if (_data) {
-            this.productId = _data["productId"];
-            this.paymentPeriodType = _data["paymentPeriodType"];
-            this.quantity = _data["quantity"];
+            this.code = _data["code"];
+            this.receiptUrl = _data["receiptUrl"];
         }
     }
 
-    static fromJS(data: any): RequestStripePaymentInput {
+    static fromJS(data: any): RequestPaypalSubscriptionOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new RequestStripePaymentInput();
+        let result = new RequestPaypalSubscriptionOutput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["productId"] = this.productId;
-        data["paymentPeriodType"] = this.paymentPeriodType;
-        data["quantity"] = this.quantity;
+        data["code"] = this.code;
+        data["receiptUrl"] = this.receiptUrl;
         return data;
     }
 }
 
-export interface IRequestStripePaymentInput {
-    productId: number;
-    paymentPeriodType: PaymentPeriodType;
-    quantity: number;
+export interface IRequestPaypalSubscriptionOutput {
+    code: string | undefined;
+    receiptUrl: string | undefined;
 }
 
 export class RequestStripePaymentOutput implements IRequestStripePaymentOutput {

@@ -16,7 +16,7 @@
     </div>
     <div class="orderSummary">
         <div class="orderSummaryTitle">
-            <h3 >{{ l('PaymentOrderSummary').toUpperCase() }}</h3>
+            <h3>{{ l('PaymentOrderSummary').toUpperCase() }}</h3>
             <hr>
         </div>
 
@@ -24,7 +24,7 @@
         <div *ngIf="plan.total" class="usersAmountAndBilledInfo">
             <span>{{ l('Price') }}: </span>
             <span>{{ (plan.currencySymbol || '$') + (plan.total | number : '1.2-2') }} per {{ getProductUnit(plan.paymentPeriodType) }}</span>
-        </div>        
+        </div>
         <div *ngIf="plan.total && plan.pricePerUserPerMonth" class="planPrice">
             <div>
                 <span class="currency">{{ plan.currencySymbol || '$' }}</span>
@@ -74,23 +74,24 @@
                     </p>
                     <button [disabled]="isPayByStripeDisabled" class="pay-by-stripe" (click)="payByStripe()">Pay</button>
                 </div>
-            </mat-tab>            
-            <!-- <mat-tab [label]="l('PayPal')">
+            </mat-tab>
+            <mat-tab [label]="l('PayPal')">
                 <ng-template mat-tab-label="">
                     <img [src]="'./assets/common/icons/paypal-logo.png'">
                 </ng-template>
                 <pay-pal *ngIf="payPalClientId && selectedGateway == GATEWAY_PAYPAL"
-                         [editionId]="plan.selectedEditionId"
-                         [maxUserCount]="plan.usersAmount"
-                         [billingPeriod]="plan.billingPeriod"
-                         [clientId] ="payPalClientId" (onSubmit)="submitData($event, paymentMethods.PayPal)">
+                         [productId]="plan.productId"
+                         [paymentPeriodType]="plan.paymentPeriodType"
+                         [quantity]="1"
+                         [clientId] ="payPalClientId"
+                         (onSubmit)="submitData($event, paymentMethods.PayPal)">
                 </pay-pal>
-            </mat-tab> -->
+            </mat-tab>
             <!--<mat-tab [label]="l('CreditCard')">
                 <credit-card (onSubmit)="submitData($event, paymentMethods.CreditCard)"></credit-card>
             </mat-tab>-->
             <!-- mat-tab [label]="l('eCheck')" -->
-                <!-- e-check [price]="plan.total" (onSubmit)="submitData($event, paymentMethods.eCheck)"></e-check -->
+            <!-- e-check [price]="plan.total" (onSubmit)="submitData($event, paymentMethods.eCheck)"></e-check -->
             <!-- /mat-tab -->
             <!-- <mat-tab [label]="l('BankTransfer')">
                 <bank-transfer *ngIf="bankTransferSettings$"
@@ -99,11 +100,11 @@
                 </bank-transfer>
             </mat-tab> -->
             <!--<mat-tab [label]="l('Bitcoin')">-->
-                <!--<div class="row align-items-center h-100">-->
-                    <!--<div class="col-12 text-center">-->
-                        <!--<h4>{{ l("This payment option will be available soon") }}</h4>-->
-                    <!--</div>-->
-                <!--</div>-->
+            <!--<div class="row align-items-center h-100">-->
+            <!--<div class="col-12 text-center">-->
+            <!--<h4>{{ l("This payment option will be available soon") }}</h4>-->
+            <!--</div>-->
+            <!--</div>-->
             <!--</mat-tab>-->
         </mat-tab-group>
         <!-- <div *ngIf="!plan.total" class="downgradeToFreeBlock">
