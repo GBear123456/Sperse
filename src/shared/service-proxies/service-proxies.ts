@@ -75511,7 +75511,7 @@ export interface IKeyValuePairOfBureauListOfScoreHistoryDto {
 
 export class KlaviyoSettingsDto implements IKlaviyoSettingsDto {
     isEnabled!: boolean;
-    apiKey!: string;
+    apiKey!: string | undefined;
 
     constructor(data?: IKlaviyoSettingsDto) {
         if (data) {
@@ -75546,7 +75546,7 @@ export class KlaviyoSettingsDto implements IKlaviyoSettingsDto {
 
 export interface IKlaviyoSettingsDto {
     isEnabled: boolean;
-    apiKey: string;
+    apiKey: string | undefined;
 }
 
 export class LanguageTextListDto implements ILanguageTextListDto {
@@ -90518,6 +90518,62 @@ export interface ISendEmailInput {
     cc: string[] | undefined;
     bcc: string[] | undefined;
     body: string;
+}
+
+export class SendEmailsViaSendGridConfiguration implements ISendEmailsViaSendGridConfiguration {
+    channelCodes!: string[] | undefined;
+    defaultAffiliateCodes!: string[] | undefined;
+
+    constructor(data?: ISendEmailsViaSendGridConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["channelCodes"])) {
+                this.channelCodes = [] as any;
+                for (let item of _data["channelCodes"])
+                    this.channelCodes!.push(item);
+            }
+            if (Array.isArray(_data["defaultAffiliateCodes"])) {
+                this.defaultAffiliateCodes = [] as any;
+                for (let item of _data["defaultAffiliateCodes"])
+                    this.defaultAffiliateCodes!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SendEmailsViaSendGridConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendEmailsViaSendGridConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.channelCodes)) {
+            data["channelCodes"] = [];
+            for (let item of this.channelCodes)
+                data["channelCodes"].push(item);
+        }
+        if (Array.isArray(this.defaultAffiliateCodes)) {
+            data["defaultAffiliateCodes"] = [];
+            for (let item of this.defaultAffiliateCodes)
+                data["defaultAffiliateCodes"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISendEmailsViaSendGridConfiguration {
+    channelCodes: string[] | undefined;
+    defaultAffiliateCodes: string[] | undefined;
 }
 
 export class SendEmailToContactConfiguration implements ISendEmailToContactConfiguration {
