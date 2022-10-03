@@ -706,7 +706,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
                             });
                         },
-                        disabled: this.isSMSIntegrationDisabled,
+                        disabled: this.isSMSIntegrationDisabled || !this.maxMessageCount,
                         checkVisible: (lead: LeadDto) => {
                             return abp.features.isEnabled(AppFeatures.InboundOutboundSMS) &&
                                 this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
@@ -714,6 +714,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         text: this.l('SendEmail'),
+                        disabled: !this.maxMessageCount,
                         class: 'email',
                         action: (data?) => {
                             this.contactService.showEmailDialog({
