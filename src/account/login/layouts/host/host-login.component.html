@@ -44,6 +44,24 @@
                     </button>
                 </div>
 
+                <ng-container *ngIf="showExternalLogin">
+                    <div *ngIf="(loginService.externalLoginProviders$ | async) as externalLoginProviders">
+                        <div class="entrance-page__separator">
+                            <span>
+                                {{ls.l('or')}}
+                            </span>
+                        </div>
+                        <div class="entrance-page__social">
+                            <ul>
+                                <li *ngFor="let provider of externalLoginProviders">
+                                    <a class="entrance-page__social-link entrance-page__social-link--{{provider.icon}}"
+                                       href="javascript:void(0);" (click)="externalLogin(provider)" title="{{provider.name}}"></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </ng-container>
+
                 <p class="agree-rights">By continuing I agree to
                     <a (click)="openConditionsDialog(conditions.Terms)">Terms</a> &
                     <a (click)="openConditionsDialog(conditions.Policies)">Policies</a></p>

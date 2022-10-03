@@ -171,6 +171,97 @@
             }
         }
     }
+
+    .entrance-page__social {
+        width: 100%;
+        margin-bottom: clamp(15px, 3vw, 32px);
+    }
+
+    .entrance-page__social ul {
+        display: grid;
+        grid-template: ~"1fr/1fr 1fr";
+        gap: 10px;
+        justify-items: center;
+        padding: 0 60px;
+    }
+
+    .entrance-page__social li {
+        width: 100%;
+        list-style-type: none; 
+    }
+
+    .entrance-page__social-link {
+        display: flex;
+        border-radius: 7px;
+        color: #fff;
+        height: 49px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: auto;
+        transition: background-color 0.3s;
+    }
+
+    .entrance-page__social-link--facebook {
+        background-color: #3B5998;
+        background-image: url(../../../../assets/common/icons/facebook-icon.svg);
+    }
+
+    .entrance-page__social-link--facebook:hover {
+        background-color: #0c65d4;
+    }
+
+    .entrance-page__social-link--twitter {
+        background-color: #41A1F2;
+        background-image: url(../../../../assets/common/icons/twitter-icon.svg);
+    }
+
+    .entrance-page__social-link--twitter:hover {
+        background-color: #0d8cda;
+    }
+
+    .entrance-page__social-link--linkedin {
+        background-color: #2E78B6;
+        background-image: url(../../../../assets/common/icons/linkedin-icon.svg);
+    }
+
+    .entrance-page__social-link--linkedin:hover {
+        background-color: #005c8c;
+    }
+
+    .entrance-page__separator {
+        font-size: 15px;
+        line-height: 20px;
+        display: flex;
+        justify-content: center;
+        margin: clamp(15px, 3vw, 34px) 0;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .entrance-page__separator span {
+        padding: 3px 22px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .entrance-page__separator span::before, .entrance-page__separator span::after {
+        position: absolute;
+        content: "";
+        width: 160px;
+        height: 1px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #D7DEEB;
+        z-index: 1;
+    }
+
+    .entrance-page__separator span::before {
+        left: -160px;
+    }
+
+    .entrance-page__separator span::after {
+        right: -160px;
+    }
 }
 
 @media (max-width: 767px) {
