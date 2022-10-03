@@ -304,7 +304,7 @@
                                    width="270px"
                                    valueExpr="id"
                                    displayExpr="name"
-                                   [dataSource]="products$ | async"
+                                   [dataSource]="products$ | async | FilterAssignments: getAssignementIds(option)"
                                    [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
                                    [(value)]="option.upgradeProductId"
                                    [disabled]="isReadOnly">
