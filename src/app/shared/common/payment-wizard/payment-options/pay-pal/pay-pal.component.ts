@@ -72,6 +72,9 @@ export class PayPalComponent implements AfterViewInit {
             },
             onApprove(data, actions) {
                 window.location.href = receiptUrl;
+            },
+            onCancel() {
+                window.location.reload();
             }
         }).render('#paypal-button');
     }
