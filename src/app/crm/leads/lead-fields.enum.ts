@@ -42,5 +42,6 @@ export const LeadFields: KeysEnum<LeadDto> = {
     PipelineId: 'PipelineId',
     PropertyId: 'PropertyId',
     PropertyName: 'PropertyName',
-    Amount: 'Amount'
+    Amount: 'Amount',
+    IsSubscribedToEmails: 'IsSubscribedToEmails'
 };

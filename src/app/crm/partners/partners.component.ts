@@ -62,6 +62,8 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterContactStatusComponent } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.component';
 import { FilterContactStatusModel } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.model';
+import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
+import { FilterNullableRadioGroupModel } from '@shared/filters/radio-group/filter-nullable-radio-group.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import {
     BulkUpdatePartnerTypeInput,
@@ -585,7 +587,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     this.partnerFields.Email,
                     this.partnerFields.Phone,
                     this.partnerFields.UserId,
-                    this.partnerFields.StarId
+                    this.partnerFields.StarId,
+                    this.partnerFields.IsSubscribedToEmails,
                 ]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1127,7 +1130,21 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             new FilterModel({
                 caption: 'parentId',
                 hidden: true
-            })
+            }),
+            new FilterModel({
+                component: FilterRadioGroupComponent,
+                caption: 'IsSubscribedToEmails',
+                filterMethod: FiltersService.filterByBooleanValue,
+                items: {
+                    element: new FilterNullableRadioGroupModel({
+                        value:  undefined,
+                        list: [
+                            { id: true, name: this.l('CommunicationPreferencesStatus_Subscribed') },
+                            { id: false, name: this.l('CommunicationPreferencesStatus_Unsubcribed') }
+                        ]
+                    })
+                }
+            })            
         ];
     }
 

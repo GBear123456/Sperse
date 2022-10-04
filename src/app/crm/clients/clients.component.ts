@@ -72,6 +72,8 @@ import { FilterSourceComponent } from '../shared/filters/source-filter/source-fi
 import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
 import { FilterContactStatusComponent } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.component';
 import { FilterContactStatusModel } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.model';
+import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
+import { FilterNullableRadioGroupModel } from '@shared/filters/radio-group/filter-nullable-radio-group.model';
 import {
     UpdateContactStatusesInput,
     ProductDto,
@@ -745,7 +747,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.clientFields.UserId,
                             this.clientFields.Email,
                             this.clientFields.Phone,
-                            this.clientFields.StarId
+                            this.clientFields.StarId,
+                            this.clientFields.IsSubscribedToEmails,
                         ]
                     );
 
@@ -1231,6 +1234,20 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             new FilterModel({
                 caption: 'parentId',
                 hidden: true
+            }),
+            new FilterModel({
+                component: FilterRadioGroupComponent,
+                caption: 'IsSubscribedToEmails',
+                filterMethod: FiltersService.filterByBooleanValue,
+                items: {
+                    element: new FilterNullableRadioGroupModel({
+                        value:  undefined,
+                        list: [
+                            { id: true, name: this.l('CommunicationPreferencesStatus_Subscribed') },
+                            { id: false, name: this.l('CommunicationPreferencesStatus_Unsubcribed') }
+                        ]
+                    })
+                }
             })
         ]);
     }

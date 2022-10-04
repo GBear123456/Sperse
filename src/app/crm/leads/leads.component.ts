@@ -73,6 +73,8 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
+import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
+import { FilterNullableRadioGroupModel } from '@shared/filters/radio-group/filter-nullable-radio-group.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import {
     ContactServiceProxy,
@@ -605,7 +607,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 this.leadFields.UserId,
                                 this.leadFields.Email,
                                 this.leadFields.Phone,
-                                this.leadFields.StarId
+                                this.leadFields.StarId,
+                                this.leadFields.IsSubscribedToEmails
                             ]
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1451,7 +1454,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 }
                             })
                     }
-                })
+                }),
+                new FilterModel({
+                    component: FilterRadioGroupComponent,
+                    caption: 'IsSubscribedToEmails',
+                    filterMethod: FiltersService.filterByBooleanValue,
+                    items: {
+                        element: new FilterNullableRadioGroupModel({
+                            value:  undefined,
+                            list: [
+                                { id: true, name: this.l('CommunicationPreferencesStatus_Subscribed') },
+                                { id: false, name: this.l('CommunicationPreferencesStatus_Unsubcribed') }
+                            ]
+                        })
+                    }
+                }),
             ], this._activatedRoute.snapshot.queryParams);
         }
         this.filtersService.apply(() => {

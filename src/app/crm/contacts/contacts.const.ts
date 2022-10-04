@@ -34,7 +34,9 @@ export enum EmailTags {
     SenderCompanyWebSite = 'SenderCompanyWebSite',
     SenderCalendly       = 'SenderCalendly',
     SenderAffiliateCode  = 'SenderAffiliateCode',
-    SenderEmailSignature = 'SenderEmailSignature'
+    SenderEmailSignature = 'SenderEmailSignature',
+    SubscribeLink = 'SubscribeLink',
+    UnsubscribeLink = 'UnsubscribeLink'
 }
 
 export enum WelcomeEmailTags {

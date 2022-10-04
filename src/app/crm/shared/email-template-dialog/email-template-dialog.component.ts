@@ -39,7 +39,6 @@ import {
     EmailSettingsSource,
     EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
-import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { TemplateDocumentsDialogComponent } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog.component';
@@ -71,7 +70,6 @@ export class EmailTemplateDialogComponent implements OnInit {
     showCC = false;
     showBCC = false;
     tagLastValue: string;
-    startCase = startCase;
     tagsTooltipVisible = false;
 
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
@@ -223,8 +221,8 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.fromDataSource = this.data.from instanceof Array ? 
                 this.data.from : [this.data.from];
         if (this.fromDataSource.length) {
-            let from = this.fromDataSource.find(item => item.emailSettingsSource == EmailSettingsSource.User);
-            this.data.emailSettingsSource = (from ? from : this.fromDataSource[0]).emailSettingsSource;
+            let from = this.fromDataSource.find(item => item.emailSettingsSource == EmailSettingsSource.User) || this.fromDataSource[0];
+            this.data.emailSettingsSource = from.emailSettingsSource;
             this.checkUpdateCCFromEmail(from);
         }
     }
@@ -831,6 +829,12 @@ export class EmailTemplateDialogComponent implements OnInit {
             return false;
 
         return true;
+    }
+
+    getTagText(data: EmailTags) {
+        if (data == EmailTags.InvoiceLink)
+            return 'Invoice PDF Link';
+        return startCase(data);
     }
 
     close() {

@@ -9,13 +9,13 @@ import { MatDialog } from '@angular/material/dialog';
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { ContditionsModalData } from '../../shared/common/conditions-modal/conditions-modal-data';
+import { ContditionsModalData } from '../../../shared/common/conditions-modal/conditions-modal-data';
 
 @Component({
     selector: 'public-receipt',
     templateUrl: 'receipt.component.html',
     styleUrls: [
-        '../../shared/common/styles/core.less',
+        '../../../shared/common/styles/core.less',
         './receipt.component.less'
     ],
     encapsulation: ViewEncapsulation.None

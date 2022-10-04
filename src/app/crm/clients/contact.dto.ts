@@ -26,5 +26,6 @@ export interface ContactDto {
     AffiliateContactAffiliateCode: string;
     AffiliateContactId: number;
     AffiliateRate: number;
-    AffiliateRateTier2: number;    
+    AffiliateRateTier2: number;
+    IsSubscribedToEmails: boolean;
 }

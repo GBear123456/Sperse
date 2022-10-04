@@ -366,9 +366,9 @@ export class ContactsService {
         }
     }
 
-    initEmailDialogTagsList(dialogComponent) {
+    initEmailDialogTagsList(dialogComponent: EmailTemplateDialogComponent) {
         if (!dialogComponent.tagsList || !dialogComponent.tagsList.length) {
-            dialogComponent.tagsList = this.getEmailTemplateTags(EmailTemplateType.Contact);
+            dialogComponent.tagsList = this.getEmailTemplateTags(dialogComponent.data.templateType);
         }
     }
 
@@ -381,14 +381,15 @@ export class ContactsService {
                     EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany,
                     EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone,
                     EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite, EmailTags.SenderCalendly,
-                    EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature
+                    EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature, EmailTags.SubscribeLink, EmailTags.UnsubscribeLink
                 ];
             case EmailTemplateType.Invoice:
                 return [
                     EmailTags.ClientFirstName, EmailTags.ClientLastName, EmailTags.LegalName, EmailTags.InvoiceNumber, EmailTags.InvoiceGrandTotal, EmailTags.InvoiceDueDate, 
                     EmailTags.InvoiceLink, EmailTags.InvoicePayLink, EmailTags.InvoiceAnchor, EmailTags.SenderFullName, EmailTags.SenderPhone, EmailTags.SenderEmail,
                     EmailTags.SenderWebSite1, EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo,
-                    EmailTags.SenderCompanyPhone, EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite, EmailTags.SenderCalendly, EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature
+                    EmailTags.SenderCompanyPhone, EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite, EmailTags.SenderCalendly, EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature,
+                    EmailTags.SubscribeLink, EmailTags.UnsubscribeLink
                 ];
             case EmailTemplateType.WelcomeEmail:
                 return [
@@ -409,7 +410,7 @@ export class ContactsService {
             data: {
                 ...templateData,
                 title: addMode ? this.ls.l('Add Template') : this.ls.l('Edit Template'),
-                templateType: 'Contact',
+                templateType: EmailTemplateType.Contact,
                 saveTitle: this.ls.l('Save'),
                 hideContextMenu: addMode,
                 addMode: addMode
