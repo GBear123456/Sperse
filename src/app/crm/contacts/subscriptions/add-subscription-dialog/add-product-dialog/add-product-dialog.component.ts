@@ -7,7 +7,9 @@ import {
     OnInit,
     ViewChild,
     ChangeDetectionStrategy,
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    PipeTransform,
+    Pipe
 } from '@angular/core';
 import { getCurrencySymbol } from '@angular/common';
 
@@ -47,6 +49,13 @@ import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-p
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
+@Pipe({name:'FilterAssignments'})
+export class FilterAssignmentsPipe implements PipeTransform {
+    transform(products: ProductDto[], excludeIds : number[]){
+        return products && products.filter(product => excludeIds.indexOf(product.id) == -1);
+    }
+}
+
 @Component({
     selector: 'add-product-dialog',
     templateUrl: './add-product-dialog.component.html',
@@ -71,7 +80,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription).pipe(
         map((products: ProductDto[]) => {
             return this.data.product && this.data.product.id ? 
-                products.filter((product: ProductDto) => product.id != this.data.product.id) : products
+                products.filter((product: ProductDto) => product.id != this.data.product.id) : products            
         })
     );
     readonly addNewItemId = -1;
@@ -448,6 +457,15 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
         if (message)
             abp.message.warn(message, this.ls.l('Important'));
+    }
+
+    getAssignementIds(option): number[] {
+        if (this.product && this.product.productUpgradeAssignments)
+            return this.product.productUpgradeAssignments.map(
+                item => option.upgradeProductId == item.upgradeProductId ? undefined : item.upgradeProductId
+            ).filter(Boolean);
+        else 
+            return [];
     }
 
     detectChanges() {
