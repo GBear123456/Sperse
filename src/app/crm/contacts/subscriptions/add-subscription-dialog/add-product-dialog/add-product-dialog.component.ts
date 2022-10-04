@@ -70,6 +70,8 @@ export class FilterAssignmentsPipe implements PipeTransform {
 export class AddProductDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     private slider: any;
+
+    isHostTenant = !abp.session.tenantId;
     product: CreateProductInput | UpdateProductInput;
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')

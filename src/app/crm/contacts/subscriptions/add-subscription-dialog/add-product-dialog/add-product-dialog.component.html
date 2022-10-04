@@ -121,7 +121,7 @@
                            [disabled]="isReadOnly">
             </dx-number-box>
         </div>
-        <div *ngIf="product.type == defaultProductType" class="field">
+        <div *ngIf="product.type == defaultProductType && isHostTenant" class="field">
             <label for="name">{{ls.l('Downgrade Product')}}</label>
             <dx-select-box name="name"
                            width="300px"
