@@ -330,6 +330,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
     maxMessageCount = this.contactService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
+    isSubscriptionManagementEnabled = abp.features.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
 
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
@@ -1181,7 +1182,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }),
                 items: { from: new FilterItemModel(), to: new FilterItemModel() }
             })],
-            (this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts)) && 
+            (this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts)) && this.isSubscriptionManagementEnabled &&
                 this.contactService.getFeatureCount(AppFeatures.CRMMaxProductCount) ? [this.subscriptionStatusFilter] : [],
             [new FilterModel({
                 component: FilterCalendarComponent,

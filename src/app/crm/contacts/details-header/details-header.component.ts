@@ -322,7 +322,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 icon: 'product',
                 visible: abp.session.tenantId && manageAllowed &&
                     this.permissionChecker.isGranted(AppPermissions.CRMOrdersManage) &&
-                    !!this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount),
+                    !!this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount) &&
+                    abp.features.isEnabled(AppFeatures.CRMSubscriptionManagementSystem),
                 contactGroups: this.allContactGroups
             }
         ];

@@ -34,6 +34,7 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'Orders',
             permission: AppPermissions.CRMOrders,
+            feature: AppFeatures.CRMSubscriptionManagementSystem,
             route: '/app/crm/orders'
         },
         {
