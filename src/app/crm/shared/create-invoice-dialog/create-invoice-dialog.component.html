@@ -353,7 +353,8 @@
                             [placeholder]="ls.l('Discount')" 
                             [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
                             (onValueChanged)="calculateBalance()"
-                            [(value)]="discountTotal">
+                            [(value)]="discountTotal"
+                            [disabled]="true">
                         </dx-number-box>
                     </span>
                 </div>
@@ -365,7 +366,8 @@
                             [placeholder]="ls.l('Shipping')" 
                             [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
                             (onValueChanged)="calculateBalance()"
-                            [(value)]="shippingTotal">
+                            [(value)]="shippingTotal"
+                            [disabled]="hasReccuringSubscription || disabledForUpdate">
                         </dx-number-box>
                     </span>
                 </div>
@@ -377,7 +379,8 @@
                             [placeholder]="ls.l('Tax')" 
                             [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
                             (onValueChanged)="calculateBalance()"
-                            [(value)]="taxTotal">
+                            [(value)]="taxTotal"
+                            [disabled]="hasReccuringSubscription || disabledForUpdate">
                         </dx-number-box>
                     </span>
                 </div>

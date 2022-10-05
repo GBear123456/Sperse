@@ -132,7 +132,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     couponId: number;
     selectedCoupon: CouponDto;
-    calculateCoupon: boolean = true;
 
     subTotal = 0;
     balance = 0;
@@ -142,6 +141,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     isSendEmailAllowed = false;
     disabledForUpdate = false;
+    hasReccuringSubscription = false;
     title: string;
     isTitleValid = true;
     buttons: IDialogButton[] = [
@@ -291,7 +291,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.discountTotal = invoiceInfo.discountTotal || 0;
                     this.shippingTotal = invoiceInfo.shippingTotal || 0;
                     this.taxTotal = invoiceInfo.taxTotal || 0;
-                    this.calculateCoupon = false;
                     this.couponId = invoiceInfo.couponId;
                     this.description = invoiceInfo.description;
                     this.notes = invoiceInfo.note;
@@ -727,10 +726,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     calcuateDiscount() {
         let coupon = this.selectedCoupon;
-        if (!this.calculateCoupon) {
-            return;
-        }
-
         if (coupon) {
             this.discountTotal = coupon.type == CouponDiscountType.Fixed ?
                 this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff :
@@ -770,7 +765,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             cellData.data.unitId = item.paymentOptions[0].unitId;
             cellData.data.rate = item.paymentOptions[0].price;
             cellData.data.quantity = 1;
+            cellData.data.productType = item.type;
             this.updateDisabledProducts();
+            this.checkReccuringSubscriptionIsSelected();
             this.changeDetectorRef.detectChanges();
         }
     }
@@ -785,14 +782,24 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
+    checkReccuringSubscriptionIsSelected(calculateBalance: boolean = true) {
+        this.hasReccuringSubscription = this.lines.some((line: any) =>
+            line.isCrmProduct &&
+            line.productType == 'Subscription' &&
+            (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year)
+        );
+
+        if (this.hasReccuringSubscription) {
+            this.shippingTotal = 0;
+            this.taxTotal = 0;
+            if (calculateBalance)
+                this.calculateBalance();
+        }
+    }
+
     selectCoupon(event) {
         this.selectedCoupon = event.selectedItem;
-        if (!this.calculateCoupon) {
-            this.calculateCoupon = true;
-        }
-        else {
-            this.calculateBalance();
-        }
+        this.calculateBalance();
     }
 
     checkSendEmailAllowed(contactGroup) {
@@ -893,6 +900,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             if (unit)
                 cellData.data.rate = unit.price;
         }
+        this.checkReccuringSubscriptionIsSelected();
     }
 
     allowDigitsOnly(event, exceptions = []) {
@@ -923,6 +931,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.hideAddNew = true;
             setTimeout(() => {
                 this.lines.splice(data.rowIndex, 1);
+                this.checkReccuringSubscriptionIsSelected(false);
                 this.calculateBalance();
                 setTimeout(() => {
                     this.hideAddNew = false;
