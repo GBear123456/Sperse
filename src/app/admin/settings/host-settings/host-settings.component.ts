@@ -71,6 +71,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     EmailTemplateType = EmailTemplateType;
     tabIndex: Observable<number>;
 
+    isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments); 
     isInboundOutboundSMSEnabled: boolean = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     isTenantHosts: boolean = this.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
@@ -99,9 +100,11 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     loadHostSettings(): void {
         forkJoin(
             this.hostSettingService.getAllSettings(),
-            this.tenantPaymentSettingsService.getPayPalSettings(),
+            this.isPaymentsEnabled ?
+                this.tenantPaymentSettingsService.getPayPalSettings() : of(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.getACHWorksSettings(),
-            this.tenantPaymentSettingsService.getStripeSettings(),
+            this.isPaymentsEnabled ?
+                this.tenantPaymentSettingsService.getStripeSettings() : of(this.stripePaymentSettings),
             this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
             this.isInboundOutboundSMSEnabled ?
                 this.hostSettingService.getYTelSettings() : of(<any>{isEnabled: false})
