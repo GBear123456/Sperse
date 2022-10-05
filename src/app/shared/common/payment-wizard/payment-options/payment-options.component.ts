@@ -1,8 +1,8 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef, ElementRef, OnInit } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -42,7 +42,7 @@ import { AppService } from '@app/app.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ TenantSubscriptionServiceProxy ]
 })
-export class PaymentOptionsComponent extends AppComponentBase {
+export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
     @Input() plan: PaymentOptions;
     @Input() steps: Step[] = [
         {
@@ -82,10 +82,13 @@ export class PaymentOptionsComponent extends AppComponentBase {
     readonly GATEWAY_C_CARD = 2;
     readonly GATEWAY_ECHECK = 3;
 
+    quantity = 1;
+
     selectedGateway: number = this.GATEWAY_STRIPE;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
     payPalClientId: string;
+    showPayPal: boolean = false;
 
     isPayByStripeDisabled = false;
 
@@ -98,10 +101,10 @@ export class PaymentOptionsComponent extends AppComponentBase {
         private elementRef: ElementRef,
     ) {
         super(injector);
-        this.tenantSubscriptionServiceProxy.getPayPalSettings().subscribe(x => {
-            this.payPalClientId = x.clientId;
-            changeDetector.detectChanges();
-        });
+    }
+
+    ngOnInit(): void {
+        this.initPayPal();
     }
 
     goToStep(i) {
@@ -121,6 +124,23 @@ export class PaymentOptionsComponent extends AppComponentBase {
             /** Load transfer data */
             this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
         }
+    }
+
+    initPayPal() {
+        forkJoin(
+            this.tenantSubscriptionServiceProxy.getPayPalSettings(),
+            this.tenantSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
+                paymentPeriodType: this.plan.paymentPeriodType,
+                productId: this.plan.productId,
+                quantity: this.quantity,
+            }))
+        ).subscribe(([settings, isApplicable]) => {
+            if (settings.clientId && isApplicable) {
+                this.payPalClientId = settings.clientId;
+                this.showPayPal = true;
+                this.changeDetector.detectChanges();
+            }
+        });
     }
 
     submitData(data: any, paymentMethod: PaymentMethods = PaymentMethods.Free) {
