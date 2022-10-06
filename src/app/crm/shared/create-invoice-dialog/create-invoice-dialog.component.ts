@@ -55,7 +55,8 @@ import {
     ProductShortInfo,
     CouponServiceProxy,
     CouponDto,
-    CouponDiscountType
+    CouponDiscountType,
+    PaymentServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -85,7 +86,7 @@ import { InvoiceSettingsDialogComponent } from '../../contacts/invoice-settings-
         '../../contacts/addresses/addresses.styles.less',
         'create-invoice-dialog.component.less'
     ],
-    providers: [CacheHelper, CustomerServiceProxy, InvoiceServiceProxy, ProductServiceProxy, CouponServiceProxy ],
+    providers: [CacheHelper, CustomerServiceProxy, InvoiceServiceProxy, ProductServiceProxy, CouponServiceProxy, PaymentServiceProxy],
     host: {
         '(click)': 'closeAddressDialogs()'
     },
@@ -138,6 +139,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     discountTotal = 0;
     shippingTotal = 0;
     taxTotal = 0;
+
+    isStripeEnabled = false;
+    showStripeSubscriptionsWarning = false;
 
     isSendEmailAllowed = false;
     disabledForUpdate = false;
@@ -229,6 +233,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private permission: AppPermissionService,
         private contactsService: ContactsService,
         private statesService: StatesService,
+        private paymetService: PaymentServiceProxy,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -237,6 +242,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.dialogRef.afterClosed().subscribe(() => {
             this.closeAddressDialogs();
         });
+        this.paymetService.isStripeEnabled()
+            .subscribe(res => this.isStripeEnabled = res);
     }
 
     ngOnInit() {
@@ -317,6 +324,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             ...res
                         };
                     });
+
+                    this.checkSubscriptionsCount();
                     this.changeDetectorRef.detectChanges();
                 });
         } else
@@ -767,6 +776,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             cellData.data.quantity = 1;
             cellData.data.productType = item.type;
             this.updateDisabledProducts();
+            this.checkSubscriptionsCount();
             this.checkReccuringSubscriptionIsSelected();
             this.changeDetectorRef.detectChanges();
         }
@@ -780,6 +790,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     return product.disabled = true;
             });
         });
+    }
+
+    checkSubscriptionsCount() {
+        console.log('checkSubscriptionsCount');
+        if (this.isStripeEnabled) {
+            let subsLines = this.lines.filter(
+                (line: any) => line.productType == 'Subscription' && (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year)
+            );
+
+            this.showStripeSubscriptionsWarning = subsLines.length > 1;
+        }
+        else {
+            this.showStripeSubscriptionsWarning = false;
+        }
     }
 
     checkReccuringSubscriptionIsSelected(calculateBalance: boolean = true) {
@@ -900,6 +924,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             if (unit)
                 cellData.data.rate = unit.price;
         }
+        this.checkSubscriptionsCount();
         this.checkReccuringSubscriptionIsSelected();
     }
 
@@ -931,6 +956,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.hideAddNew = true;
             setTimeout(() => {
                 this.lines.splice(data.rowIndex, 1);
+                this.checkSubscriptionsCount();
                 this.checkReccuringSubscriptionIsSelected(false);
                 this.calculateBalance();
                 setTimeout(() => {

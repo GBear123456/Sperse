@@ -303,6 +303,11 @@
                 </dx-validation-group>
             </div>
         </dx-scroll-view>
+        <div *ngIf="showStripeSubscriptionsWarning" class="row stripe-subs-warning">
+            <div class="col-12">
+                {{ls.l('Invoice_StripeSubsWarning')}}
+            </div>
+        </div>
         <div class="row bottom-container">
             <div class="col-sm-6">
                 <div>
