@@ -11,6 +11,7 @@ import { InvoicingRoutingModule } from './invoicing-routing.module';
 import { ReceiptComponent } from './receipt/receipt.component';
 import { InvoiceComponent } from './invoice/invoice.component';
 import { UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-proxies';
+import { PayPalComponent } from './invoice/pay-pal/pay-pal.component';
 
 @NgModule({
     imports: [
@@ -22,10 +23,11 @@ import { UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-pr
     exports: [],
     declarations: [
         ReceiptComponent,
-        InvoiceComponent
+        InvoiceComponent,
+        PayPalComponent
     ],
     providers: [
         UserInvoiceServiceProxy
     ]
 })
-export class InvoicingModule {}
+export class InvoicingModule { }

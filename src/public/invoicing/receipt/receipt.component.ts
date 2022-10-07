@@ -26,7 +26,8 @@ export class ReceiptComponent implements OnInit {
     currentYear: number = new Date().getFullYear();
     conditions = ConditionsType;
 
-    static maxRetryCount: number = 10;
+    static retryDelay: number = 4000;
+    static maxRetryCount: number = 15;
     currentRetryCount: number = 0;
     failedToLoad: boolean = false;
     failMessage: string = '';
@@ -59,7 +60,7 @@ export class ReceiptComponent implements OnInit {
                                 this.failMessage = 'Failed to load payment information. Please refresh the page or try again later.';
                             }
                             else {
-                                setTimeout(() => this.getInvoiceInfo(tenantId, publicId), 4000);
+                                setTimeout(() => this.getInvoiceInfo(tenantId, publicId), ReceiptComponent.retryDelay);
                             }
                             return;
                         }
