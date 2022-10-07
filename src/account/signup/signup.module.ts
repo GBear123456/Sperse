@@ -10,11 +10,15 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 /** Application imports */
+import { UtilsModule } from '@shared/utils/utils.module';
 import { CommonModule } from '@shared/common/common.module';
-import { SignupComponent } from './signup.component';
-import { SignupFormComponent } from './signup-form.component';
+import { SignupComponent, AdSignupHostDirective } from './signup.component';
+import { HostSignupFormComponent } from './layouts/host/host-signup-form.component';
+import { BankCodeSignupFormComponent } from './layouts/bank-code/bank-code-signup-form.component';
 import { CountryPhoneNumberModule } from '../../shared/common/phone-numbers/country-phone-number.module';
 
 @NgModule({
@@ -23,16 +27,25 @@ import { CountryPhoneNumberModule } from '../../shared/common/phone-numbers/coun
         ngCommon.CommonModule,
         RouterModule,
         FormsModule,
+        UtilsModule,
         DxTextBoxModule,
         DxValidatorModule,
+        MatFormFieldModule,
+        MatInputModule,
         DxCheckBoxModule,
         DxButtonModule,
         NgxMaskModule.forRoot(),
         CountryPhoneNumberModule
     ],
     declarations: [
-        SignupFormComponent,
+        BankCodeSignupFormComponent,
+        HostSignupFormComponent,
+        AdSignupHostDirective,
         SignupComponent
+    ],
+    entryComponents: [
+        BankCodeSignupFormComponent,
+        HostSignupFormComponent
     ],
     exports: [
         SignupComponent

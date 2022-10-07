@@ -89,13 +89,10 @@ export class PaymentWizardComponent {
         this.paymentStatusData = statusInfo;
     }
 
-    processPayment() {
+    showWebInvoice() {
         let draftSubscription = this.appService.moduleSubscriptions[0];
-        this.tenantSubscriptionService.requestStripePaymentForInvoice(
-            draftSubscription.invoiceId
-        ).subscribe((response) => {
-            window.location.href = response.paymentLink;
-        });
+        let publicId = draftSubscription.invoicePublicId;
+        window.location.href = location.origin + `/invoicing/invoice/0/${publicId}`;
     }
 
     activateSubscription() {

@@ -36,6 +36,8 @@ export class HostLoginComponent implements OnInit {
     isLoggedIn: boolean = false;
     isExtLogin: boolean = false; 
 
+    linkedIdLoginProvider: ExternalLoginProvider;
+
     constructor(
         private sessionService: AbpSessionService,
         private sessionAppService: SessionServiceProxy,
@@ -56,6 +58,18 @@ export class HostLoginComponent implements OnInit {
             let email = paramsMap.get('email');
             if (email)
                 this.loginService.authenticateModel.userNameOrEmailAddress = email;
+
+            this.loginService.linkedIdLoginProvider$.subscribe((provider: ExternalLoginProvider) => {
+                this.linkedIdLoginProvider = provider;
+
+                let exchangeCode = paramsMap.get('code');
+                let state = paramsMap.get('state');
+                if (!!exchangeCode && !!state) {
+                    this.loginService.linkedInLogin(this.linkedIdLoginProvider, exchangeCode, state, this.isExtLogin, (result) => {
+                        this.isLoggedIn = result.accessToken && this.isExtLogin;
+                    });
+                }
+            });            
         });
     }
 
@@ -96,10 +110,7 @@ export class HostLoginComponent implements OnInit {
             this.loginService.authenticate(() => { 
                 this.loginInProgress = false;
             }, undefined, true, this.isExtLogin, (result) => {
-                if (this.isLoggedIn = this.isExtLogin) {
-                    if (!result.shouldResetPassword)
-                        this.loginService.completeSourceEvent();                
-                }
+                this.isLoggedIn = this.isExtLogin;
             });
         }
     }

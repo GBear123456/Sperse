@@ -8,6 +8,7 @@ export interface InvoiceDto {
     InvoiceId: number;
     InvoiceNumber: string;
     InvoiceStatus: InvoiceStatus;
+    InvoicePublicId: string;
     Key: string;
     OrderId: number;
     OrderNumber: string;

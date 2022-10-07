@@ -21,4 +21,5 @@ export interface PartnerDto {
     AffiliateContactEmailAddress: string;
     AffiliateContactAffiliateCode: string;
     AffiliateRate: number;
+    IsSubscribedToEmails: boolean;
 }

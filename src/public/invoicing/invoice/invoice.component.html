@@ -1,0 +1,210 @@
+<div *ngIf="!loading" #mainContainer>
+    <div class="header">
+        <div class="content-center header-content">
+            <h3>
+                Invoice <b>{{invoiceInfo.invoiceData.number}}</b> <i class="save-to-clipboard" (click)="copyInvoiceNumer()"></i>
+            </h3>
+            <div>
+                <a *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent" role="button" class="btn btn-primary" [class.disabled]="!invoiceInfo.stripePayUrl" href="{{invoiceInfo.stripePayUrl}}">
+                    Pay with Stripe
+                </a>
+                <button class="btn btn-secondary actions-button" [matMenuTriggerFor]="actions">
+                    <span>Actions</span>
+                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                </button>
+                <mat-menu #actions="matMenu" class="actions-menu">
+                    <button mat-menu-item (click)="downloadInvoice()">
+                        <i class="fa fa-download"></i>
+                        <span>Download</span>
+                    </button>
+                    <button mat-menu-item (click)="printPage()">
+                        <i class="fa fa-print"></i>
+                        <span>Print</span>
+                    </button>
+                    <button *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Paid" mat-menu-item [routerLink]="['/receipt', tenantId, publicId]">
+                        <i class="fa fa-file-text"></i>
+                        <span>Receipt</span>
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+    </div>
+    <div class="content content-center">
+        <div class="content-logo">
+            <img *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Paid" src="assets/common/images/paid-stamp.png"/>
+            <img class="right" src="{{invoiceInfo.tenantLogo}}">
+        </div>
+        <div class="inline-block full-width content-top-info">
+            <div class="left width-60">
+                <div class="invoice-title">INVOICE</div>
+                <div class="customer-info">
+                    {{invoiceInfo.invoiceData.customerName}}<br>
+                    {{invoiceInfo.invoiceData.customerAddressLine1}}<br>
+                    {{invoiceInfo.invoiceData.customerAddressLine2}}
+                </div>
+            </div>
+            <div class="inline-block left width-40">
+                <div class="left width-50">
+                    <p class="margin-top-0">
+                        <b>Invoice Date</b><br>
+                        {{invoiceInfo.invoiceData.date | date: 'dd MMM yyyy'}}
+                    </p>
+                    <p>
+                        <b>Invoice Number</b><br>
+                        {{invoiceInfo.invoiceData.number}}
+                    </p>
+                </div>
+                <div class="left width-50">
+                    <b>Company</b>
+                    <p class="pre-line">{{invoiceInfo.legalName}}e<br>{{invoiceInfo.legalAddress}}</p>
+                </div>
+            </div>
+        </div>
+
+        <table class="items-table full-width" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th class="text-right">Quantity</th>
+                    <th class="text-right">Unit Price</th>
+                    <th class="text-right">Amount USD</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let lineItem of invoiceInfo.invoiceData.items">
+                    <td>
+                        <span>{{lineItem.description}}</span>
+                        <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">({{lineItem.subscriptionPeriod}})</span>
+                    </td>
+                    <td align="right">{{lineItem.quantity | number: '1.0-0'}}</td>
+                    <td align="right">{{lineItem.unitPrice | number: '1.2-2'}}</td>
+                    <td align="right">{{lineItem.amount | number: '1.2-2'}}</td>
+                </tr>
+
+                <tr class="footer-row">
+                    <td></td>
+                    <td colspan="2"><b>Sub Total USD</b></td>
+                    <td><b>{{invoiceInfo.invoiceData.subTotal | number: '1.2-2'}}</b></td>
+                </tr>
+                <tr class="footer-row">
+                    <td></td>
+                    <td colspan="2"><b>Discount Total USD</b></td>
+                    <td><b>{{invoiceInfo.invoiceData.discountTotal | number: '1.2-2'}}</b></td>
+                </tr>
+                <tr class="footer-row">
+                    <td></td>
+                    <td colspan="2"><b>Shipping Total USD</b></td>
+                    <td><b>{{invoiceInfo.invoiceData.shippingTotal | number: '1.2-2'}}</b></td>
+                </tr>
+                <tr class="footer-row">
+                    <td></td>
+                    <td colspan="2"><b>Tax Total USD</b></td>
+                    <td><b>{{invoiceInfo.invoiceData.taxTotal | number: '1.2-2'}}</b></td>
+                </tr>
+                <tr class="footer-row">
+                    <td></td>
+                    <td colspan="2"><b>Total USD</b></td>
+                    <td><b>{{invoiceInfo.invoiceData.grandTotal | number: '1.2-2'}}</b></td>
+                </tr>
+            </tbody>
+        </table>
+        <p *ngIf="invoiceInfo.invoiceData.description" class="pre-line">{{invoiceInfo.invoiceData.description}}</p>
+        <p>
+            <b>Due Date: {{invoiceInfo.invoiceData.dueDate | date: 'dd MMM yyyy'}}</b><br>
+        </p>
+
+        <p *ngIf="invoiceInfo.invoiceData.note" class="pre-line">{{invoiceInfo.invoiceData.note}}</p>
+
+        <div *ngIf="showPaymentAdvice" class="full-width scissors-block">
+            <span class="scissors-icon">&#9986;</span>
+            <div class="scissors-main">
+                <div class="left width-60 payment-advice">
+                    <div class="caption">PAYMENT ADVICE</div>
+                    <div>
+                        <div class="left width-40">
+                            <p>
+                                BENEFICIARY INFORMATION
+                            </p>
+                            <div>
+                                {{invoiceInfo.paymentSettings.beneficiaryInfo.name}}<br>
+                                {{invoiceInfo.paymentSettings.beneficiaryInfo.streetAddress}}<br>
+                                {{invoiceInfo.paymentSettings.beneficiaryInfo.cityAddress}}
+                            </div>
+                        </div>
+                        <div class="left width-60">
+                            <p>
+                                BANK ACCOUNT NUMBER
+                            </p>
+                            <div>
+                                {{invoiceInfo.paymentSettings.bankAccountNumber}}
+                            </div>
+                            <p>
+                                BANK ROUTING NUMBER FOR ACH TRANSFERS
+                            </p>
+                            <div>
+                                {{invoiceInfo.paymentSettings.bankRoutingNumberForACH}}
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="left width-40">
+                            <p>
+                                BENEFICIARY BANK
+                            </p>
+                            <div>
+                                {{invoiceInfo.paymentSettings.beneficiaryBank.name}}<br>
+                                {{invoiceInfo.paymentSettings.beneficiaryBank.streetAddress}}<br>
+                                {{invoiceInfo.paymentSettings.beneficiaryBank.cityAddress}}
+                            </div>
+                        </div>
+                        <div class="left width-60">
+                            <p>
+                                IF SENDING AS WIRE USE THE FOLLOWING CODES
+                            </p>
+                            <div>
+                                Bank Routing Number: <span class="right">{{invoiceInfo.paymentSettings.bankRoutingNumber}}</span>
+                            </div>
+                            <div>
+                                SWIFT Code for US Dollar: <span class="right">{{invoiceInfo.paymentSettings.swiftCodeForUSDollar}}</span>
+                            </div>
+                            <div>
+                                SWIFT Code: <span class="right">{{invoiceInfo.paymentSettings.swiftCode}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="left width-40">
+                    <table class="full-width" cellspacing="0">
+                        <tr>
+                            <td class="width-40"><b>Customer</b></td>
+                            <td>{{invoiceInfo.invoiceData.customerName}}</td>
+                        </tr>
+                        <tr class="border-bottom">
+                            <td><b>Invoice Number</b></td>
+                            <td>{{invoiceInfo.invoiceData.number}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Amount Due</b></td>
+                            <td>{{invoiceInfo.invoiceData.grandTotal | number: '1.2-2'}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Due Date</b></td>
+                            <td>{{invoiceInfo.invoiceData.dueDate | date: 'dd MMM yyyy'}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="registered">Registered Office: {{invoiceInfo.paymentSettings.beneficiaryInfo.streetAddress}} {{invoiceInfo.paymentSettings.beneficiaryInfo.cityAddress}}</div>
+        </div>
+    </div>
+    <div class="footer gray content-center">
+        <div class="powered-by">
+            {{currentYear}} &copy; Sperse Platform
+        </div>
+        <div class="links">
+            <a (click)="openConditionsDialog(conditions.Terms)">Terms</a>
+            <a (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
+        </div>
+    </div>
+</div>

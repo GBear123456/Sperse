@@ -25904,6 +25904,79 @@ export class LearningResourceServiceProxy {
 }
 
 @Injectable()
+export class LinkedInServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param exchangeCode (optional) 
+     * @param loginReturnUrl (optional) 
+     * @return Success
+     */
+    getUserData(exchangeCode: string | undefined, loginReturnUrl: string | undefined): Observable<LinkedInUserData> {
+        let url_ = this.baseUrl + "/api/services/Platform/LinkedIn/GetUserData?";
+        if (exchangeCode === null)
+            throw new Error("The parameter 'exchangeCode' cannot be null.");
+        else if (exchangeCode !== undefined)
+            url_ += "ExchangeCode=" + encodeURIComponent("" + exchangeCode) + "&";
+        if (loginReturnUrl === null)
+            throw new Error("The parameter 'loginReturnUrl' cannot be null.");
+        else if (loginReturnUrl !== undefined)
+            url_ += "LoginReturnUrl=" + encodeURIComponent("" + loginReturnUrl) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserData(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LinkedInUserData>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LinkedInUserData>;
+        }));
+    }
+
+    protected processGetUserData(response: HttpResponseBase): Observable<LinkedInUserData> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LinkedInUserData.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LinkedInUserData>(null as any);
+    }
+}
+
+@Injectable()
 export class LocalizationServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -32704,6 +32777,124 @@ export class PipelineServiceProxy {
     }
 
     protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+}
+
+@Injectable()
+export class PreferencesServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    subscribe(tenantId: number, publicId: string): Observable<void> {
+        let url_ = this.baseUrl + "/Preferences/subscribe/{tenantId}/{publicId}";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined.");
+        url_ = url_.replace("{tenantId}", encodeURIComponent("" + tenantId));
+        if (publicId === undefined || publicId === null)
+            throw new Error("The parameter 'publicId' must be defined.");
+        url_ = url_.replace("{publicId}", encodeURIComponent("" + publicId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSubscribe(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSubscribe(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSubscribe(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    unsubscribe(tenantId: number, publicId: string): Observable<void> {
+        let url_ = this.baseUrl + "/Preferences/unsubscribe/{tenantId}/{publicId}";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined.");
+        url_ = url_.replace("{tenantId}", encodeURIComponent("" + tenantId));
+        if (publicId === undefined || publicId === null)
+            throw new Error("The parameter 'publicId' must be defined.");
+        url_ = url_.replace("{publicId}", encodeURIComponent("" + publicId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnsubscribe(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnsubscribe(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUnsubscribe(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -42742,6 +42933,57 @@ export class TenantSettingsServiceProxy {
     /**
      * @return Success
      */
+    getKlaviyoSettings(): Observable<KlaviyoSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetKlaviyoSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetKlaviyoSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetKlaviyoSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<KlaviyoSettingsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<KlaviyoSettingsDto>;
+        }));
+    }
+
+    protected processGetKlaviyoSettings(response: HttpResponseBase): Observable<KlaviyoSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = KlaviyoSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<KlaviyoSettingsDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     getEmailSettings(): Observable<EmailSettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetEmailSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -43495,6 +43737,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateLdapSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateKlaviyoSettings(body: KlaviyoSettingsDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateKlaviyoSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateKlaviyoSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateKlaviyoSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateKlaviyoSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -44606,61 +44900,6 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @return Success
      */
-    requestStripePaymentForInvoice(invoiceId: number): Observable<RequestStripePaymentOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestStripePaymentForInvoice?";
-        if (invoiceId === undefined || invoiceId === null)
-            throw new Error("The parameter 'invoiceId' must be defined and cannot be null.");
-        else
-            url_ += "invoiceId=" + encodeURIComponent("" + invoiceId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRequestStripePaymentForInvoice(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processRequestStripePaymentForInvoice(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<RequestStripePaymentOutput>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<RequestStripePaymentOutput>;
-        }));
-    }
-
-    protected processRequestStripePaymentForInvoice(response: HttpResponseBase): Observable<RequestStripePaymentOutput> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = RequestStripePaymentOutput.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<RequestStripePaymentOutput>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
     getModuleSubscriptions(): Observable<ModuleSubscriptionInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetModuleSubscriptions";
         url_ = url_.replace(/[?&]$/, "");
@@ -45743,6 +45982,62 @@ export class TokenAuthServiceProxy {
     }
 
     protected processExternalAuthenticate(response: HttpResponseBase): Observable<ExternalAuthenticateResultModel> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ExternalAuthenticateResultModel.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ExternalAuthenticateResultModel>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    linkedInAuthenticate(body: LinkedInAuthenticateModel | undefined): Observable<ExternalAuthenticateResultModel> {
+        let url_ = this.baseUrl + "/api/TokenAuth/LinkedInAuthenticate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLinkedInAuthenticate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLinkedInAuthenticate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ExternalAuthenticateResultModel>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ExternalAuthenticateResultModel>;
+        }));
+    }
+
+    protected processLinkedInAuthenticate(response: HttpResponseBase): Observable<ExternalAuthenticateResultModel> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -48178,6 +48473,65 @@ export class UserInvoiceServiceProxy {
     /**
      * @return Success
      */
+    getPublicInvoiceInfo(tenantId: number, publicId: string): Observable<GetPublicInvoiceInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/GetPublicInvoiceInfo?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (publicId === undefined || publicId === null)
+            throw new Error("The parameter 'publicId' must be defined and cannot be null.");
+        else
+            url_ += "publicId=" + encodeURIComponent("" + publicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPublicInvoiceInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPublicInvoiceInfo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetPublicInvoiceInfoOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetPublicInvoiceInfoOutput>;
+        }));
+    }
+
+    protected processGetPublicInvoiceInfo(response: HttpResponseBase): Observable<GetPublicInvoiceInfoOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetPublicInvoiceInfoOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetPublicInvoiceInfoOutput>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     getInvoiceReceiptInfo(tenantId: number, publicId: string): Observable<GetInvoiceReceiptInfoOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/GetInvoiceReceiptInfo?";
         if (tenantId === undefined || tenantId === null)
@@ -48232,6 +48586,66 @@ export class UserInvoiceServiceProxy {
             }));
         }
         return _observableOf<GetInvoiceReceiptInfoOutput>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getInvoicePdfUrl(tenantId: number, publicId: string): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/GetInvoicePdfUrl?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (publicId === undefined || publicId === null)
+            throw new Error("The parameter 'publicId' must be defined and cannot be null.");
+        else
+            url_ += "publicId=" + encodeURIComponent("" + publicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoicePdfUrl(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoicePdfUrl(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processGetInvoicePdfUrl(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
     }
 }
 
@@ -56707,6 +57121,8 @@ export class ContactInfoDto implements IContactInfoDto {
     affiliateContactId!: number | undefined;
     affiliateContactName!: string | undefined;
     subContactsCount!: number;
+    communicationPreferencePublicId!: string;
+    isSubscribedToEmails!: boolean;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -56759,6 +57175,8 @@ export class ContactInfoDto implements IContactInfoDto {
             this.affiliateContactId = _data["affiliateContactId"];
             this.affiliateContactName = _data["affiliateContactName"];
             this.subContactsCount = _data["subContactsCount"];
+            this.communicationPreferencePublicId = _data["communicationPreferencePublicId"];
+            this.isSubscribedToEmails = _data["isSubscribedToEmails"];
         }
     }
 
@@ -56811,6 +57229,8 @@ export class ContactInfoDto implements IContactInfoDto {
         data["affiliateContactId"] = this.affiliateContactId;
         data["affiliateContactName"] = this.affiliateContactName;
         data["subContactsCount"] = this.subContactsCount;
+        data["communicationPreferencePublicId"] = this.communicationPreferencePublicId;
+        data["isSubscribedToEmails"] = this.isSubscribedToEmails;
         return data;
     }
 }
@@ -56844,6 +57264,8 @@ export interface IContactInfoDto {
     affiliateContactId: number | undefined;
     affiliateContactName: string | undefined;
     subContactsCount: number;
+    communicationPreferencePublicId: string;
+    isSubscribedToEmails: boolean;
 }
 
 export class ContactInfoForMerge implements IContactInfoForMerge {
@@ -62063,8 +62485,10 @@ export class CreateProductInput implements ICreateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: ICreateProductInput) {
         if (data) {
@@ -62088,6 +62512,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.maxCommissionRate = _data["maxCommissionRate"];
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -62097,6 +62522,11 @@ export class CreateProductInput implements ICreateProductInput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -62121,6 +62551,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -62130,6 +62561,11 @@ export class CreateProductInput implements ICreateProductInput {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -62147,8 +62583,10 @@ export interface ICreateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class CreateProductOutput implements ICreateProductOutput {
@@ -65770,6 +66208,7 @@ export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
     returnUrl!: string | undefined;
     singleSignIn!: boolean | undefined;
     autoRegistration!: boolean;
+    autoDetectTenancy!: boolean;
 
     constructor(data?: IExternalAuthenticateModel) {
         if (data) {
@@ -65788,6 +66227,7 @@ export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
             this.returnUrl = _data["returnUrl"];
             this.singleSignIn = _data["singleSignIn"];
             this.autoRegistration = _data["autoRegistration"];
+            this.autoDetectTenancy = _data["autoDetectTenancy"];
         }
     }
 
@@ -65806,6 +66246,7 @@ export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
         data["returnUrl"] = this.returnUrl;
         data["singleSignIn"] = this.singleSignIn;
         data["autoRegistration"] = this.autoRegistration;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
         return data;
     }
 }
@@ -65817,11 +66258,14 @@ export interface IExternalAuthenticateModel {
     returnUrl: string | undefined;
     singleSignIn: boolean | undefined;
     autoRegistration: boolean;
+    autoDetectTenancy: boolean;
 }
 
 export class ExternalAuthenticateResultModel implements IExternalAuthenticateResultModel {
     waitingForActivation!: boolean;
     userNotFound!: boolean;
+    authProvider!: string | undefined;
+    providerAccessCode!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
     email!: string | undefined;
@@ -65852,6 +66296,8 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
         if (_data) {
             this.waitingForActivation = _data["waitingForActivation"];
             this.userNotFound = _data["userNotFound"];
+            this.authProvider = _data["authProvider"];
+            this.providerAccessCode = _data["providerAccessCode"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.email = _data["email"];
@@ -65890,6 +66336,8 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
         data = typeof data === 'object' ? data : {};
         data["waitingForActivation"] = this.waitingForActivation;
         data["userNotFound"] = this.userNotFound;
+        data["authProvider"] = this.authProvider;
+        data["providerAccessCode"] = this.providerAccessCode;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
@@ -65921,6 +66369,8 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
 export interface IExternalAuthenticateResultModel {
     waitingForActivation: boolean;
     userNotFound: boolean;
+    authProvider: string | undefined;
+    providerAccessCode: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
     email: string | undefined;
@@ -65998,6 +66448,8 @@ export interface IExternalLoginProviderInfoModel {
 export class ExternalLoginProviderSettingsEditDto implements IExternalLoginProviderSettingsEditDto {
     facebook_IsDeactivated!: boolean;
     facebook!: FacebookExternalLoginProviderSettings | undefined;
+    linkedIn_IsDeactivated!: boolean;
+    linkedIn!: LinkedInExternalLoginProviderSettings | undefined;
     google_IsDeactivated!: boolean;
     google!: GoogleExternalLoginProviderSettings | undefined;
     twitter_IsDeactivated!: boolean;
@@ -66024,6 +66476,8 @@ export class ExternalLoginProviderSettingsEditDto implements IExternalLoginProvi
         if (_data) {
             this.facebook_IsDeactivated = _data["facebook_IsDeactivated"];
             this.facebook = _data["facebook"] ? FacebookExternalLoginProviderSettings.fromJS(_data["facebook"]) : <any>undefined;
+            this.linkedIn_IsDeactivated = _data["linkedIn_IsDeactivated"];
+            this.linkedIn = _data["linkedIn"] ? LinkedInExternalLoginProviderSettings.fromJS(_data["linkedIn"]) : <any>undefined;
             this.google_IsDeactivated = _data["google_IsDeactivated"];
             this.google = _data["google"] ? GoogleExternalLoginProviderSettings.fromJS(_data["google"]) : <any>undefined;
             this.twitter_IsDeactivated = _data["twitter_IsDeactivated"];
@@ -66058,6 +66512,8 @@ export class ExternalLoginProviderSettingsEditDto implements IExternalLoginProvi
         data = typeof data === 'object' ? data : {};
         data["facebook_IsDeactivated"] = this.facebook_IsDeactivated;
         data["facebook"] = this.facebook ? this.facebook.toJSON() : <any>undefined;
+        data["linkedIn_IsDeactivated"] = this.linkedIn_IsDeactivated;
+        data["linkedIn"] = this.linkedIn ? this.linkedIn.toJSON() : <any>undefined;
         data["google_IsDeactivated"] = this.google_IsDeactivated;
         data["google"] = this.google ? this.google.toJSON() : <any>undefined;
         data["twitter_IsDeactivated"] = this.twitter_IsDeactivated;
@@ -66085,6 +66541,8 @@ export class ExternalLoginProviderSettingsEditDto implements IExternalLoginProvi
 export interface IExternalLoginProviderSettingsEditDto {
     facebook_IsDeactivated: boolean;
     facebook: FacebookExternalLoginProviderSettings | undefined;
+    linkedIn_IsDeactivated: boolean;
+    linkedIn: LinkedInExternalLoginProviderSettings | undefined;
     google_IsDeactivated: boolean;
     google: GoogleExternalLoginProviderSettings | undefined;
     twitter_IsDeactivated: boolean;
@@ -70263,8 +70721,10 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IGetProductInfoOutput) {
         if (data) {
@@ -70291,6 +70751,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -70300,6 +70761,11 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -70327,6 +70793,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -70336,6 +70803,11 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -70356,8 +70828,10 @@ export interface IGetProductInfoOutput {
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class GetProfilePictureOutput implements IGetProfilePictureOutput {
@@ -70438,6 +70912,62 @@ export class GetProfitShareOutput implements IGetProfitShareOutput {
 
 export interface IGetProfitShareOutput {
     profitShares: number[] | undefined;
+}
+
+export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
+    tenantLogo!: string | undefined;
+    legalName!: string | undefined;
+    legalAddress!: string | undefined;
+    invoiceData!: InvoiceData | undefined;
+    paymentSettings!: BankTransferSettings | undefined;
+    stripePayUrl!: string | undefined;
+
+    constructor(data?: IGetPublicInvoiceInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantLogo = _data["tenantLogo"];
+            this.legalName = _data["legalName"];
+            this.legalAddress = _data["legalAddress"];
+            this.invoiceData = _data["invoiceData"] ? InvoiceData.fromJS(_data["invoiceData"]) : <any>undefined;
+            this.paymentSettings = _data["paymentSettings"] ? BankTransferSettings.fromJS(_data["paymentSettings"]) : <any>undefined;
+            this.stripePayUrl = _data["stripePayUrl"];
+        }
+    }
+
+    static fromJS(data: any): GetPublicInvoiceInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetPublicInvoiceInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantLogo"] = this.tenantLogo;
+        data["legalName"] = this.legalName;
+        data["legalAddress"] = this.legalAddress;
+        data["invoiceData"] = this.invoiceData ? this.invoiceData.toJSON() : <any>undefined;
+        data["paymentSettings"] = this.paymentSettings ? this.paymentSettings.toJSON() : <any>undefined;
+        data["stripePayUrl"] = this.stripePayUrl;
+        return data;
+    }
+}
+
+export interface IGetPublicInvoiceInfoOutput {
+    tenantLogo: string | undefined;
+    legalName: string | undefined;
+    legalAddress: string | undefined;
+    invoiceData: InvoiceData | undefined;
+    paymentSettings: BankTransferSettings | undefined;
+    stripePayUrl: string | undefined;
 }
 
 export class GetRapidClientsOutput implements IGetRapidClientsOutput {
@@ -74555,6 +75085,106 @@ export interface IInvoiceAddressInput {
     phone: string | undefined;
 }
 
+export class InvoiceData implements IInvoiceData {
+    date!: moment.Moment;
+    number!: string | undefined;
+    status!: InvoiceStatus;
+    note!: string | undefined;
+    grandTotal!: number;
+    subTotal!: number;
+    discountTotal!: number;
+    shippingTotal!: number;
+    taxTotal!: number;
+    dueDate!: moment.Moment | undefined;
+    description!: string | undefined;
+    customerName!: string | undefined;
+    customerAddressLine1!: string | undefined;
+    customerAddressLine2!: string | undefined;
+    items!: ItemInfo[] | undefined;
+
+    constructor(data?: IInvoiceData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
+            this.number = _data["number"];
+            this.status = _data["status"];
+            this.note = _data["note"];
+            this.grandTotal = _data["grandTotal"];
+            this.subTotal = _data["subTotal"];
+            this.discountTotal = _data["discountTotal"];
+            this.shippingTotal = _data["shippingTotal"];
+            this.taxTotal = _data["taxTotal"];
+            this.dueDate = _data["dueDate"] ? moment(_data["dueDate"].toString()) : <any>undefined;
+            this.description = _data["description"];
+            this.customerName = _data["customerName"];
+            this.customerAddressLine1 = _data["customerAddressLine1"];
+            this.customerAddressLine2 = _data["customerAddressLine2"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(ItemInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): InvoiceData {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["number"] = this.number;
+        data["status"] = this.status;
+        data["note"] = this.note;
+        data["grandTotal"] = this.grandTotal;
+        data["subTotal"] = this.subTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["description"] = this.description;
+        data["customerName"] = this.customerName;
+        data["customerAddressLine1"] = this.customerAddressLine1;
+        data["customerAddressLine2"] = this.customerAddressLine2;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IInvoiceData {
+    date: moment.Moment;
+    number: string | undefined;
+    status: InvoiceStatus;
+    note: string | undefined;
+    grandTotal: number;
+    subTotal: number;
+    discountTotal: number;
+    shippingTotal: number;
+    taxTotal: number;
+    dueDate: moment.Moment | undefined;
+    description: string | undefined;
+    customerName: string | undefined;
+    customerAddressLine1: string | undefined;
+    customerAddressLine2: string | undefined;
+    items: ItemInfo[] | undefined;
+}
+
 export class InvoiceInfo implements IInvoiceInfo {
     contactName!: string | undefined;
     orderNumber!: string | undefined;
@@ -75025,6 +75655,58 @@ export interface IIsTenantAvailableOutput {
     serverRootAddress: string | undefined;
 }
 
+export class ItemInfo implements IItemInfo {
+    description!: string | undefined;
+    subscriptionPeriod!: string | undefined;
+    quantity!: number;
+    unitPrice!: number;
+    amount!: number;
+
+    constructor(data?: IItemInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.description = _data["description"];
+            this.subscriptionPeriod = _data["subscriptionPeriod"];
+            this.quantity = _data["quantity"];
+            this.unitPrice = _data["unitPrice"];
+            this.amount = _data["amount"];
+        }
+    }
+
+    static fromJS(data: any): ItemInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ItemInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["description"] = this.description;
+        data["subscriptionPeriod"] = this.subscriptionPeriod;
+        data["quantity"] = this.quantity;
+        data["unitPrice"] = this.unitPrice;
+        data["amount"] = this.amount;
+        return data;
+    }
+}
+
+export interface IItemInfo {
+    description: string | undefined;
+    subscriptionPeriod: string | undefined;
+    quantity: number;
+    unitPrice: number;
+    amount: number;
+}
+
 export class IValueValidator implements IIValueValidator {
     readonly name!: string | undefined;
     readonly attributes!: { [key: string]: any; } | undefined;
@@ -75207,6 +75889,46 @@ export class KeyValuePairOfBureauListOfScoreHistoryDto implements IKeyValuePairO
 export interface IKeyValuePairOfBureauListOfScoreHistoryDto {
     key: Bureau;
     value: ScoreHistoryDto[] | undefined;
+}
+
+export class KlaviyoSettingsDto implements IKlaviyoSettingsDto {
+    isEnabled!: boolean;
+    apiKey!: string;
+
+    constructor(data?: IKlaviyoSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isEnabled = _data["isEnabled"];
+            this.apiKey = _data["apiKey"];
+        }
+    }
+
+    static fromJS(data: any): KlaviyoSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new KlaviyoSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isEnabled"] = this.isEnabled;
+        data["apiKey"] = this.apiKey;
+        return data;
+    }
+}
+
+export interface IKlaviyoSettingsDto {
+    isEnabled: boolean;
+    apiKey: string;
 }
 
 export class LanguageTextListDto implements ILanguageTextListDto {
@@ -75987,6 +76709,158 @@ export interface ILinkDto {
     url: string | undefined;
     isActive: boolean;
     comment: string | undefined;
+}
+
+export class LinkedInAuthenticateModel implements ILinkedInAuthenticateModel {
+    exchangeCode!: string | undefined;
+    loginReturnUrl!: string | undefined;
+    authProvider!: string;
+    providerKey!: string;
+    providerAccessCode!: string;
+    returnUrl!: string | undefined;
+    singleSignIn!: boolean | undefined;
+    autoRegistration!: boolean;
+    autoDetectTenancy!: boolean;
+
+    constructor(data?: ILinkedInAuthenticateModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.exchangeCode = _data["exchangeCode"];
+            this.loginReturnUrl = _data["loginReturnUrl"];
+            this.authProvider = _data["authProvider"];
+            this.providerKey = _data["providerKey"];
+            this.providerAccessCode = _data["providerAccessCode"];
+            this.returnUrl = _data["returnUrl"];
+            this.singleSignIn = _data["singleSignIn"];
+            this.autoRegistration = _data["autoRegistration"];
+            this.autoDetectTenancy = _data["autoDetectTenancy"];
+        }
+    }
+
+    static fromJS(data: any): LinkedInAuthenticateModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedInAuthenticateModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["exchangeCode"] = this.exchangeCode;
+        data["loginReturnUrl"] = this.loginReturnUrl;
+        data["authProvider"] = this.authProvider;
+        data["providerKey"] = this.providerKey;
+        data["providerAccessCode"] = this.providerAccessCode;
+        data["returnUrl"] = this.returnUrl;
+        data["singleSignIn"] = this.singleSignIn;
+        data["autoRegistration"] = this.autoRegistration;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
+        return data;
+    }
+}
+
+export interface ILinkedInAuthenticateModel {
+    exchangeCode: string | undefined;
+    loginReturnUrl: string | undefined;
+    authProvider: string;
+    providerKey: string;
+    providerAccessCode: string;
+    returnUrl: string | undefined;
+    singleSignIn: boolean | undefined;
+    autoRegistration: boolean;
+    autoDetectTenancy: boolean;
+}
+
+export class LinkedInExternalLoginProviderSettings implements ILinkedInExternalLoginProviderSettings {
+    appId!: string | undefined;
+    appSecret!: string | undefined;
+
+    constructor(data?: ILinkedInExternalLoginProviderSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.appId = _data["appId"];
+            this.appSecret = _data["appSecret"];
+        }
+    }
+
+    static fromJS(data: any): LinkedInExternalLoginProviderSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedInExternalLoginProviderSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["appId"] = this.appId;
+        data["appSecret"] = this.appSecret;
+        return data;
+    }
+}
+
+export interface ILinkedInExternalLoginProviderSettings {
+    appId: string | undefined;
+    appSecret: string | undefined;
+}
+
+export class LinkedInUserData implements ILinkedInUserData {
+    name!: string | undefined;
+    surname!: string | undefined;
+    emailAddress!: string | undefined;
+
+    constructor(data?: ILinkedInUserData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.surname = _data["surname"];
+            this.emailAddress = _data["emailAddress"];
+        }
+    }
+
+    static fromJS(data: any): LinkedInUserData {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedInUserData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["emailAddress"] = this.emailAddress;
+        return data;
+    }
+}
+
+export interface ILinkedInUserData {
+    name: string | undefined;
+    surname: string | undefined;
+    emailAddress: string | undefined;
 }
 
 export class LinkedUserDto implements ILinkedUserDto {
@@ -78478,7 +79352,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     trackingCode!: string | undefined;
     hasRecurringBilling!: boolean;
     isUpgradable!: boolean;
-    invoiceId!: number | undefined;
+    invoicePublicId!: string | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
         if (data) {
@@ -78507,7 +79381,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.trackingCode = _data["trackingCode"];
             this.hasRecurringBilling = _data["hasRecurringBilling"];
             this.isUpgradable = _data["isUpgradable"];
-            this.invoiceId = _data["invoiceId"];
+            this.invoicePublicId = _data["invoicePublicId"];
         }
     }
 
@@ -78536,7 +79410,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["trackingCode"] = this.trackingCode;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["isUpgradable"] = this.isUpgradable;
-        data["invoiceId"] = this.invoiceId;
+        data["invoicePublicId"] = this.invoicePublicId;
         return data;
     }
 }
@@ -78558,7 +79432,7 @@ export interface IModuleSubscriptionInfoDto {
     trackingCode: string | undefined;
     hasRecurringBilling: boolean;
     isUpgradable: boolean;
-    invoiceId: number | undefined;
+    invoicePublicId: string | undefined;
 }
 
 export class ModuleSubscriptionInfoExtended implements IModuleSubscriptionInfoExtended {
@@ -83769,8 +84643,10 @@ export class ProductInfo implements IProductInfo {
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IProductInfo) {
         if (data) {
@@ -83795,6 +84671,7 @@ export class ProductInfo implements IProductInfo {
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -83804,6 +84681,11 @@ export class ProductInfo implements IProductInfo {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -83829,6 +84711,7 @@ export class ProductInfo implements IProductInfo {
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -83838,6 +84721,11 @@ export class ProductInfo implements IProductInfo {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -83856,8 +84744,10 @@ export interface IProductInfo {
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export enum ProductMeasurementUnit {
@@ -84134,6 +85024,42 @@ export interface IProductSubscriptionOptionInfo {
 export enum ProductType {
     General = "General",
     Subscription = "Subscription",
+}
+
+export class ProductUpgradeAssignmentInfo implements IProductUpgradeAssignmentInfo {
+    upgradeProductId!: number;
+
+    constructor(data?: IProductUpgradeAssignmentInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.upgradeProductId = _data["upgradeProductId"];
+        }
+    }
+
+    static fromJS(data: any): ProductUpgradeAssignmentInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductUpgradeAssignmentInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["upgradeProductId"] = this.upgradeProductId;
+        return data;
+    }
+}
+
+export interface IProductUpgradeAssignmentInfo {
+    upgradeProductId: number;
 }
 
 export class ProfileAddress implements IProfileAddress {
@@ -100605,8 +101531,10 @@ export class UpdateProductInput implements IUpdateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IUpdateProductInput) {
         if (data) {
@@ -100631,6 +101559,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.maxCommissionRate = _data["maxCommissionRate"];
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -100640,6 +101569,11 @@ export class UpdateProductInput implements IUpdateProductInput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -100665,6 +101599,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -100674,6 +101609,11 @@ export class UpdateProductInput implements IUpdateProductInput {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -100692,8 +101632,10 @@ export interface IUpdateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
