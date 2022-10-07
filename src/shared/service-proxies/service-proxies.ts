@@ -56554,6 +56554,8 @@ export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
     withdrawalIds!: number[] | undefined;
     paymentSystem!: PaymentSystem;
     payDate!: moment.Moment;
+    isManualPayment!: boolean;
+    paymentNote!: string | undefined;
 
     constructor(data?: ICompleteWithdrawalInput) {
         if (data) {
@@ -56573,6 +56575,8 @@ export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
             }
             this.paymentSystem = _data["paymentSystem"];
             this.payDate = _data["payDate"] ? moment(_data["payDate"].toString()) : <any>undefined;
+            this.isManualPayment = _data["isManualPayment"];
+            this.paymentNote = _data["paymentNote"];
         }
     }
 
@@ -56592,6 +56596,8 @@ export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
         }
         data["paymentSystem"] = this.paymentSystem;
         data["payDate"] = this.payDate ? this.payDate.toISOString() : <any>undefined;
+        data["isManualPayment"] = this.isManualPayment;
+        data["paymentNote"] = this.paymentNote;
         return data;
     }
 }
@@ -56600,6 +56606,8 @@ export interface ICompleteWithdrawalInput {
     withdrawalIds: number[] | undefined;
     paymentSystem: PaymentSystem;
     payDate: moment.Moment;
+    isManualPayment: boolean;
+    paymentNote: string | undefined;
 }
 
 export class ConditionAttributeDto implements IConditionAttributeDto {
@@ -76245,7 +76253,7 @@ export interface IKeyValuePairOfBureauListOfScoreHistoryDto {
 
 export class KlaviyoSettingsDto implements IKlaviyoSettingsDto {
     isEnabled!: boolean;
-    apiKey!: string;
+    apiKey!: string | undefined;
 
     constructor(data?: IKlaviyoSettingsDto) {
         if (data) {
@@ -76280,7 +76288,7 @@ export class KlaviyoSettingsDto implements IKlaviyoSettingsDto {
 
 export interface IKlaviyoSettingsDto {
     isEnabled: boolean;
-    apiKey: string;
+    apiKey: string | undefined;
 }
 
 export class LanguageTextListDto implements ILanguageTextListDto {
@@ -91354,6 +91362,62 @@ export interface ISendEmailInput {
     cc: string[] | undefined;
     bcc: string[] | undefined;
     body: string;
+}
+
+export class SendEmailsViaSendGridConfiguration implements ISendEmailsViaSendGridConfiguration {
+    channelCodes!: string[] | undefined;
+    defaultAffiliateCodes!: string[] | undefined;
+
+    constructor(data?: ISendEmailsViaSendGridConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["channelCodes"])) {
+                this.channelCodes = [] as any;
+                for (let item of _data["channelCodes"])
+                    this.channelCodes!.push(item);
+            }
+            if (Array.isArray(_data["defaultAffiliateCodes"])) {
+                this.defaultAffiliateCodes = [] as any;
+                for (let item of _data["defaultAffiliateCodes"])
+                    this.defaultAffiliateCodes!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SendEmailsViaSendGridConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendEmailsViaSendGridConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.channelCodes)) {
+            data["channelCodes"] = [];
+            for (let item of this.channelCodes)
+                data["channelCodes"].push(item);
+        }
+        if (Array.isArray(this.defaultAffiliateCodes)) {
+            data["defaultAffiliateCodes"] = [];
+            for (let item of this.defaultAffiliateCodes)
+                data["defaultAffiliateCodes"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISendEmailsViaSendGridConfiguration {
+    channelCodes: string[] | undefined;
+    defaultAffiliateCodes: string[] | undefined;
 }
 
 export class SendEmailToContactConfiguration implements ISendEmailToContactConfiguration {
