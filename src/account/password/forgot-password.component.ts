@@ -78,7 +78,7 @@ export class ForgotPasswordComponent implements OnInit {
             case LayoutType.Sperser:
                 return SperserForgotPasswordComponent;
             default:
-                return HostForgotPasswordComponent;
+                return HostCombinedForgotPasswordComponent;
         }
     }
 
