@@ -7,6 +7,7 @@ import invert from 'lodash/invert';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { OrderType } from '@app/crm/orders/order-type.enum';
+import { AppFeatures } from '@shared/AppFeatures';
 import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
@@ -27,11 +28,12 @@ export class OrdersHeaderDropdownComponent {
             text: this.ls.l('Orders'),
             value: OrderType.Order
         },
-        {
-            text: this.ls.l('Subscriptions'),
-            value: OrderType.Subscription
-        }
-    ];
+        abp.features.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) ? 
+            {
+                text: this.ls.l('Subscriptions'),
+                value: OrderType.Subscription
+            } : undefined
+    ].filter(Boolean);
 
     contactGroupKeys = invert(ContactGroup);
     contactGroups = []
