@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>
+    <div>{{ls.l('ConfirmPayPalWithdrawals')}}</div>
+</h2>
+<mat-dialog-content>
+    <dx-scroll-view showScrollbar="onHover">
+        <dx-text-box *ngIf="data?.entities?.length == 1"
+            [readOnly]="true"
+            [placeholder]="ls.l('EmailAddress')"
+            [value]="data.entities[0].EmailAddress">
+        </dx-text-box>
+        <dx-number-box
+            [readOnly]="true"
+            [placeholder]="ls.l('TotalAmount')"
+            [format]="{ style: 'currency', currency: (data.currencyFormat$ | async).currency, useGrouping: true }"
+            [value]="totalAmount">
+        </dx-number-box>
+        <dx-date-box 
+            type="date" 
+            [readOnly]="true"
+            [placeholder]="ls.l('PayDate')"
+            [(value)]="payDate">
+        </dx-date-box>
+        <dx-text-area 
+            [placeholder]="ls.l('Note')"
+            [(value)]="paymentNote">
+        </dx-text-area>
+    </dx-scroll-view>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Confirm')}}</button>
+</mat-dialog-actions>
