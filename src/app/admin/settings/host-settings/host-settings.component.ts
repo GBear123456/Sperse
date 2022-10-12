@@ -54,6 +54,10 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
             text: this.l(item)
         };
     });
+    payPalEnvironments = [
+        { value: 'sandbox', text: 'Sandbox' },
+        { value: 'live', text: 'Live' }
+    ];
 
     initialDefaultCountry: string;
     usingDefaultTimeZone = false;
