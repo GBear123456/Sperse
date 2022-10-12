@@ -793,7 +793,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     checkSubscriptionsCount() {
-        console.log('checkSubscriptionsCount');
         if (this.isStripeEnabled) {
             let subsLines = this.lines.filter(
                 (line: any) => line.productType == 'Subscription' && (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year)
