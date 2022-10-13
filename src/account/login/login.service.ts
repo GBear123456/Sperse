@@ -209,7 +209,9 @@ export class LoginService {
     externalAuthenticate(provider: ExternalLoginProvider): void {
         this.ensureExternalLoginProviderInitialized(provider, () => {
             this.authService.stopTokenCheck();
-            if (provider.name === ExternalLoginProvider.FACEBOOK) {
+            if (provider.name === ExternalLoginProvider.LINKEDIN) {
+                this.linkedInInitLogin(provider);
+            } if (provider.name === ExternalLoginProvider.FACEBOOK) {
                 this.facebookLogin();
             } else if (provider.name === ExternalLoginProvider.GOOGLE) {
                 gapi.auth2.getAuthInstance().signIn().then(() => {
@@ -441,7 +443,7 @@ export class LoginService {
     }
 
     ensureExternalLoginProviderInitialized(loginProvider: ExternalLoginProvider, callback: () => void) {
-        if (loginProvider.initialized) {
+        if (loginProvider.initialized || loginProvider.name === ExternalLoginProvider.LINKEDIN) {
             callback();
             return;
         }
