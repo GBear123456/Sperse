@@ -831,7 +831,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
      checkSendEmailAllowed(contactGroup) {
-        return +abp.features.getValue(AppFeatures.CRMMaxCommunicationMessageCount) &&
+        return this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount) &&
             this.permission.checkCGPermission(contactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'); 
     }
 
