@@ -54,6 +54,10 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
             text: this.l(item)
         };
     });
+    payPalEnvironments = [
+        { value: 'sandbox', text: 'Sandbox' },
+        { value: 'live', text: 'Live' }
+    ];
 
     initialDefaultCountry: string;
     usingDefaultTimeZone = false;
@@ -223,6 +227,11 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
 
     getStripeWebhookUrl(): string {
         return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook`;
+    }
+
+    getPayPalWebhookUrl(): string {
+        let key = this.payPalPaymentSettings.webhookKey || '{webhook_key}';
+        return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=&key=${key}`;
     }
 
     copyToClipboard(event) {

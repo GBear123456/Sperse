@@ -40,7 +40,8 @@ import {
     RapidSettingsDto,
     EmailTemplateType,
     StripeSettings,
-    CustomCssType
+    CustomCssType,
+    PayPalSettings
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -83,6 +84,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     settings: TenantSettingsEditDto = undefined;
     memberPortalSettings: MemberPortalSettingsDto = new MemberPortalSettingsDto();
     idcsSettings: IdcsSettings = new IdcsSettings();
+    payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     stripePaymentSettings: StripeSettings = new StripeSettings();
     isTenantHosts: boolean = this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
@@ -119,6 +121,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             text: this.l(item)
         };
     });
+    payPalEnvironments = [
+        { value: 'sandbox', text: 'Sandbox' },
+        { value: 'live', text: 'Live' }
+    ];
     headlineButtons: HeadlineButton[] = [
         {
             enabled: true, // this.isGranted(AppPermissions.AdministrationLanguagesCreate),
@@ -188,6 +194,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         let requests: Observable<any>[] = [
             this.tenantSettingsService.getAllSettings(),
             this.isAdminCustomizations ? this.tenantSettingsService.getMemberPortalSettings() : of<MemberPortalSettingsDto>(<any>null),
+            this.tenantPaymentSettingsService.getPayPalSettings(),
             this.tenantPaymentSettingsService.getStripeSettings(),
             this.isCreditReportFeatureEnabled ? this.tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
@@ -214,6 +221,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 [
                     this.settings,
                     this.memberPortalSettings,
+                    this.payPalPaymentSettings,
                     this.stripePaymentSettings,
                     this.idcsSettings,
                     this.epcvipSettings,
@@ -411,6 +419,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.checkHandlerErrorWarning(true);
                 return throwError(error);
             })),
+            this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings),
             this.tenantSettingsService.updateSendGridSettings(this.sendGridSettings),
             this.tenantSettingsService.updateKlaviyoSettings(this.klaviyoSettings),
@@ -476,6 +485,11 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     getYtelInboundSMSUrl(): string {
         let key = this.yTelSettings.inboundSmsKey || '{inbound_sms_key}';
         return AppConsts.remoteServiceBaseUrl + `/api/YTel/ProcessInboundSms?tenantId=${this.appSessionService.tenantId}&key=${key}`;
+    }
+
+    getPayPalWebhookUrl(): string {
+        let key = this.payPalPaymentSettings.webhookKey || '{webhook_key}';
+        return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=${this.appSessionService.tenantId}&key=${key}`;
     }
 
     getStripeWebhookUrl(): string {
