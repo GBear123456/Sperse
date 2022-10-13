@@ -7,7 +7,9 @@ import {
     OnInit,
     ViewChild,
     ChangeDetectionStrategy,
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    PipeTransform,
+    Pipe
 } from '@angular/core';
 import { getCurrencySymbol } from '@angular/common';
 
@@ -32,7 +34,8 @@ import {
     RecurringPaymentFrequency,
     ProductSubscriptionOptionInfo,
     ProductMeasurementUnit,
-    SetProductImageInput
+    SetProductImageInput,
+    ProductUpgradeAssignmentInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -45,6 +48,13 @@ import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dial
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 import { StringHelper } from '@shared/helpers/StringHelper';
+
+@Pipe({name:'FilterAssignments'})
+export class FilterAssignmentsPipe implements PipeTransform {
+    transform(products: ProductDto[], excludeIds : number[]){
+        return products && products.filter(product => excludeIds.indexOf(product.id) == -1);
+    }
+}
 
 @Component({
     selector: 'add-product-dialog',
@@ -60,14 +70,21 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 export class AddProductDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     private slider: any;
+
+    isHostTenant = !abp.session.tenantId;
     product: CreateProductInput | UpdateProductInput;
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
     );
     amountNullableFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,###.##')
+    );    
+    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription).pipe(
+        map((products: ProductDto[]) => {
+            return this.data.product && this.data.product.id ? 
+                products.filter((product: ProductDto) => product.id != this.data.product.id) : products            
+        })
     );
-
     readonly addNewItemId = -1;
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
     productTypes: string[] = Object.keys(ProductType).filter(item => item == 'Subscription' ? this.isSubscriptionManagementEnabled : true);
@@ -124,6 +141,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 this.product.type = this.defaultProductType;
             }
         }
+
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
             this.detectChanges();
@@ -259,12 +277,27 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         );
     }
 
+    addUpgradeToProduct() {
+        if (!this.product.productUpgradeAssignments)
+            this.product.productUpgradeAssignments = [];
+        if (this.product.productUpgradeAssignments.some(item => !item.upgradeProductId))
+            return ;
+        this.product.productUpgradeAssignments.push(
+            new ProductUpgradeAssignmentInfo()
+        );
+    }
+
     removePaymentPeriod(index) {
         this.product.productSubscriptionOptions.splice(index, 1);
         if (this.isOneTime && !this.product.productSubscriptionOptions.length) {
             this.isOneTime = false;
             this.detectChanges();
         }
+    }
+
+    removeUpgradeToProduct(index) {
+        this.product.productUpgradeAssignments.splice(index, 1);
+        this.detectChanges();
     }
 
     getServiceLevels(serviceId) {
@@ -427,6 +460,15 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
         if (message)
             abp.message.warn(message, this.ls.l('Important'));
+    }
+
+    getAssignementIds(option): number[] {
+        if (this.product && this.product.productUpgradeAssignments)
+            return this.product.productUpgradeAssignments.map(
+                item => option.upgradeProductId == item.upgradeProductId ? undefined : item.upgradeProductId
+            ).filter(Boolean);
+        else 
+            return [];
     }
 
     detectChanges() {
