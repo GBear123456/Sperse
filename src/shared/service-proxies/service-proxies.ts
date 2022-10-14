@@ -70985,6 +70985,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
     invoiceData!: InvoiceData | undefined;
     paymentSettings!: BankTransferSettings | undefined;
     stripePayUrl!: string | undefined;
+    isPaymentsEnabled!: boolean;
 
     constructor(data?: IGetPublicInvoiceInfoOutput) {
         if (data) {
@@ -71003,6 +71004,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
             this.invoiceData = _data["invoiceData"] ? InvoiceData.fromJS(_data["invoiceData"]) : <any>undefined;
             this.paymentSettings = _data["paymentSettings"] ? BankTransferSettings.fromJS(_data["paymentSettings"]) : <any>undefined;
             this.stripePayUrl = _data["stripePayUrl"];
+            this.isPaymentsEnabled = _data["isPaymentsEnabled"];
         }
     }
 
@@ -71021,6 +71023,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
         data["invoiceData"] = this.invoiceData ? this.invoiceData.toJSON() : <any>undefined;
         data["paymentSettings"] = this.paymentSettings ? this.paymentSettings.toJSON() : <any>undefined;
         data["stripePayUrl"] = this.stripePayUrl;
+        data["isPaymentsEnabled"] = this.isPaymentsEnabled;
         return data;
     }
 }
@@ -71032,6 +71035,7 @@ export interface IGetPublicInvoiceInfoOutput {
     invoiceData: InvoiceData | undefined;
     paymentSettings: BankTransferSettings | undefined;
     stripePayUrl: string | undefined;
+    isPaymentsEnabled: boolean;
 }
 
 export class GetRapidClientsOutput implements IGetRapidClientsOutput {
