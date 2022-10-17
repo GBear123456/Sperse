@@ -15,6 +15,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { finalize, filter, switchMap, first, map } from 'rxjs/operators';
+import { ClipboardService } from 'ngx-clipboard';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
@@ -121,7 +122,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
         private clientService: ContactsService,
-        private invoiceProxy: InvoiceServiceProxy
+        private invoiceProxy: InvoiceServiceProxy,
+        private clipboardService: ClipboardService
     ) {
         super(injector);
         this.clientService.invalidateSubscribe((area: string) => {
@@ -319,6 +321,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     addInvoice() {
         this.openCreateInvoiceDialog(true);
+    }
+
+    copyInvoiceLink() {
+        this.getPdfLink().subscribe((pdfUrl: string) => {
+            this.clipboardService.copyFromContent(pdfUrl);
+            this.notify.info(this.l('SavedToClipboard'));    
+        });
     }
 
     sendInvoice() {

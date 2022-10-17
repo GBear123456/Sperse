@@ -113,7 +113,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     defaultCountryCode = AppConsts.defaultCountryCode;
     saveButtonId = 'saveInvoiceOptions';
-    invoiceInfo = new GetNewInvoiceInfoOutput();
+    newInvoiceInfo = new GetNewInvoiceInfoOutput();
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: ContextMenuItem;
@@ -187,7 +187,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     {
                         text: this.ls.l('Invoice_SaveAndMarkSent'),
                         selected: false,
-                        disabled: true
+                        disabled: this.disabledForUpdate,
+                        data: {
+                            status: InvoiceStatus.Sent,
+                            email: false
+                        }
                     }
                 ],
                 defaultIndex: 0,
@@ -197,6 +201,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     ];
 
+    invoiceInfo: InvoiceInfo;
     invoiceUnits = Object.keys(ProductMeasurementUnit).map(item => {
         return {
             unitId: item,
@@ -293,6 +298,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((invoiceInfo: InvoiceInfo) => {
+                    this.initContextMenuItems();
+                    this.invoiceInfo = invoiceInfo;
                     this.subTotal = invoiceInfo.lines.map(line => {
                         return line.quantity * line.rate;
                     }).reduce((acc, val) => acc + val, 0);
@@ -307,7 +314,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         this.invoiceNo = invoiceInfo.number;
                         this.date = invoiceInfo.date;
                         this.dueDate = invoiceInfo.dueDate;
-                        this.status = invoiceInfo.status;
+                        if (this.status == InvoiceStatus.Final)
+                            this.status = invoiceInfo.status;
                     }
                     this.orderNumber = invoiceInfo.orderNumber;
                     this.customer = invoiceInfo.contactName;
@@ -326,7 +334,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             ...res
                         };
                     });
-
                     this.checkSubscriptionsCount();
                     this.changeDetectorRef.detectChanges();
                 });
@@ -355,7 +362,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         let invoice = this.data.invoice;
         if (!invoice || !invoice.InvoiceId || this.data.addNew)
             this.invoiceProxy.getNewInvoiceInfo().subscribe((newInvoiceInfo: GetNewInvoiceInfoOutput) => {
-                this.invoiceInfo = newInvoiceInfo;
+                this.newInvoiceInfo = newInvoiceInfo;
                 this.invoiceNo = newInvoiceInfo.nextInvoiceNumber;
                 this.changeDetectorRef.detectChanges();
             });
@@ -441,7 +448,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.discountTotal = this.discountTotal;
             data.shippingTotal = this.shippingTotal;
             data.taxTotal = this.taxTotal;
-            data.status = InvoiceStatus[this.status];
+            if (this.status == InvoiceStatus.Sent && 
+                this.invoiceInfo.status != this.status
+            ) 
+                data.status = InvoiceStatus.Final;
+            else 
+                data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index: number) => {
                 return new UpdateInvoiceLineInput({
                     id: row['id'],
@@ -493,6 +505,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         })).subscribe(invoiceId => {
             if (invoiceId)
                 this.invoiceId = invoiceId;
+            else if (this.status == InvoiceStatus.Sent && this.invoiceInfo.status != this.status)
+                this.updateStatus(InvoiceStatus.Sent);                        
             this.afterSave();
         });
     }
@@ -698,7 +712,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetFullDialog(forced = true) {
         let resetInternal = () => {
-            this.invoiceNo = this.invoiceInfo.nextInvoiceNumber;
+            this.invoiceNo = this.newInvoiceInfo.nextInvoiceNumber;
             this.status = InvoiceStatus.Draft;
             this.customer = undefined;
             this.date = new Date();
