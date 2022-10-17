@@ -59,6 +59,7 @@
           <span class="phone__label">Phone</span>
           <div>
               <country-phone-number #phoneNumber
+                [required]="false"
                 [(phoneNumber)]="tenancyRequestModel.phone"
                 (onInitialized)="getDefaultCode($event)"
                 (phoneCountryChange)="getChangedCountry($event)">

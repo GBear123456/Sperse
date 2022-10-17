@@ -160,6 +160,9 @@ export class HostSignupFormComponent {
         if (!this.firstStepForm.valid || (this.phoneNumber && !this.phoneNumber.isValid()))
             return;
 
+        if (this.phoneNumber && this.phoneNumber.isEmpty())
+            this.tenancyRequestModel.phone = undefined;
+
         this.startLoading();
         this.tenancyRequestModel.email = this.tenancyRequestModel.email.trim();
         this.tenancyRequestModel.lastName = this.tenancyRequestModel.lastName.trim();
