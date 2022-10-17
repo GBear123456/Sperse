@@ -100,17 +100,83 @@
             </label>
           </div>
           <div class="input">
-            <label>Choose your password <input #passwordInput="ngModel" [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="tenantRegistrationModel.adminPassword" autoComplete="off" required>
+            <label>Choose your password 
+                <input #passwordInput="ngModel"
+                    [requireDigit]="passwordComplexitySetting.requireDigit"
+                    [requireLowercase]="passwordComplexitySetting.requireLowercase"
+                    [requireUppercase]="passwordComplexitySetting.requireUppercase"
+                    [requireNonAlphanumeric]="passwordComplexitySetting.requireNonAlphanumeric"
+                    [requiredLength]="passwordComplexitySetting.requiredLength" 
+                    [type]="showPassword ? 'text' : 'password'" 
+                    name="password" 
+                    [(ngModel)]="tenantRegistrationModel.adminPassword"
+                    (focus)="onFocus()"
+                    reverse="true"
+                    autoComplete="off" 
+                    required>
                 <span class="pass" (click)="showPassword = !showPassword">{{ls.l(showPassword ? 'hide' : 'show')}}</span>
                 <validation-messages [formCtrl]="passwordInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('Password'))}]"></validation-messages>
             </label>
+            <ng-container *ngIf="passwordInput.errors && passwordInput.value">
+                <div id="message"
+                     class="entrance-page__form-validator"
+                     [class.is-active]="showPasswordComplexity">
+                    <div class="message-inner">
+                        <p id="letter"
+                           class="validator-rule"
+                           *ngIf="passwordComplexitySetting.requireLowercase"
+                           [ngClass]="{
+                            'invalid': (passwordInput?.errors && passwordInput?.errors?.requireLowercase) || !passwordInput.value,
+                            'valid': !passwordInput?.errors?.requireLowercase
+                           }">
+                            {{ls.l('PasswordComplexity_RequireLowercase_Hint')}}
+                        </p>
+                        <p id="capital"
+                           class="validator-rule"
+                           *ngIf="passwordComplexitySetting.requireUppercase"
+                           [ngClass]="{
+                            'invalid': (passwordInput?.errors && passwordInput?.errors?.requireUppercase) || !passwordInput.value,
+                            'valid': !passwordInput?.errors?.requireUppercase
+                           }">
+                            {{ls.l('PasswordComplexity_RequireUppercase_Hint')}}
+                        </p>
+                        <p id="number"
+                           class="validator-rule"
+                           *ngIf="passwordComplexitySetting.requireDigit"
+                           [ngClass]="{
+                            'invalid': (passwordInput?.errors && passwordInput?.errors?.requireDigit) || !passwordInput.value,
+                            'valid': !passwordInput?.errors?.requireDigit
+                           }">
+                            {{ls.l('PasswordComplexity_RequireDigit_Hint')}}
+                        </p>
+                        <p id="length"
+                           class="validator-rule"
+                           *ngIf="passwordComplexitySetting.requiredLength"
+                           [ngClass]="{
+                            'invalid': (passwordInput?.errors && passwordInput?.errors?.requiredLength) || !passwordInput.value,
+                            'valid': !passwordInput?.errors?.requiredLength
+                           }">
+                            {{ls.l('PasswordComplexity_RequiredLength_Hint', passwordComplexitySetting_requiredLength)}}
+                        </p>
+                        <p id="special"
+                           class="validator-rule"
+                           *ngIf="passwordComplexitySetting.requireNonAlphanumeric"
+                           [ngClass]="{
+                            'invalid': (passwordInput?.errors && passwordInput?.errors?.requireNonAlphanumeric) || !passwordInput.value,
+                            'valid': !passwordInput?.errors?.requireNonAlphanumeric
+                            }">
+                            {{ls.l('PasswordComplexity_RequireNonAlphanumeric_Hint')}}
+                        </p>
+                    </div>
+                </div>
+            </ng-container>
           </div>
           <div class="input">
             <label>Select your handle <p><input #handleInput="ngModel" type="text" name="handle" [(ngModel)]="tenantRegistrationModel.tenancyName" autoComplete="off"><span class="sperse-domain">.sperse.com</span></p>
             </label>
           </div>
           <div class="login_btn">
-            <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !tenantRegistrationModel.tenantName || !tenantRegistrationModel.adminPassword}">
+            <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !tenantRegistrationModel.tenantName || !passwordInput.value || passwordInput.errors}">
               <span>Complete Registration</span>
             </button>
           </div>

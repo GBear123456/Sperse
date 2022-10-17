@@ -16,8 +16,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
 import { AbpSessionService } from 'abp-ng2-module';
 import { SessionServiceProxy, LeadServiceProxy, TenantProductInfo, PaymentPeriodType, RecurringPaymentFrequency, 
-    SubmitTenancyRequestOutput, TenantSubscriptionServiceProxy, CompleteTenantRegistrationOutput,
-    ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput,
+    PasswordComplexitySetting, SubmitTenancyRequestOutput, TenantSubscriptionServiceProxy, CompleteTenantRegistrationOutput,
+    ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput, ProfileServiceProxy,
     LinkedInServiceProxy, LinkedInUserData} from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -33,7 +33,13 @@ const psl = require('psl');
         '../../../../assets/fonts/sperser-extension.css',
         './host-signup-form.component.less',
     ],
-    providers: [LeadServiceProxy, ProductServiceProxy, TenantSubscriptionServiceProxy, LinkedInServiceProxy],
+    providers: [
+        LeadServiceProxy, 
+        ProductServiceProxy, 
+        TenantSubscriptionServiceProxy, 
+        LinkedInServiceProxy,
+        ProfileServiceProxy
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HostSignupFormComponent {
@@ -45,6 +51,8 @@ export class HostSignupFormComponent {
     defaultCountryCode: string;
     selectedCountryCode: string;
 
+    showPasswordComplexity: boolean;
+    passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     tenancyRequestModel = new SubmitTenancyRequestInput();
     tenantRegistrationModel = new CompleteTenantRegistrationInput();
     signUpProduct: ProductInfo;
@@ -53,7 +61,7 @@ export class HostSignupFormComponent {
     emailRegexp = AppConsts.regexPatterns.email;
     agreedTermsAndServices: boolean = false;
     congratulationLink: string;
-    leadRequestXref: string;
+    leadRequestXref: string = '1020315';
 
     linkedIdLoginProvider: ExternalLoginProvider;
     conditions = ConditionsType;
@@ -74,7 +82,8 @@ export class HostSignupFormComponent {
         public router: Router,
         private activatedRoute: ActivatedRoute,
         private linkedInService: LinkedInServiceProxy,
-        private messageService: MessageService
+        private messageService: MessageService,
+        private profileService: ProfileServiceProxy
     ) {
         this.tenancyRequestModel.tag = 'Demo Request';
         this.tenancyRequestModel.stage = 'Interested';
@@ -132,6 +141,14 @@ export class HostSignupFormComponent {
 
             this.changeDetectorRef.detectChanges();
         });
+
+        this.profileService.getPasswordComplexitySetting().subscribe(result => {
+            this.passwordComplexitySetting = result.setting;
+        });
+    }
+
+    onFocus(): void {
+        this.showPasswordComplexity = true;
     }
 
     getProductMonthlyOption(product) {
