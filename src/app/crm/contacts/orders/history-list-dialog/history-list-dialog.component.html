@@ -6,7 +6,7 @@
                 <div *ngFor="let record of ordersHistory" class="record">
                     <div class="field"><label>{{ls.l('Time')}}:</label><span>{{record.time}}</span></div>
                     <div class="field"><label>{{ls.l('Type')}}:</label><span>{{record.type}}</span></div>
-                    <div class="field"><label>{{ls.l('User')}}:</label><span>{{'[' + record.userId + '] ' + record.userFullName}}</span></div>
+                    <div class="field"><label>{{ls.l('User')}}:</label><span *ngIf="record.userId">{{'[' + record.userId + '] ' + record.userFullName}}</span></div>
                     <div class="field"><label>{{ls.l('Action')}}:</label><span>{{record.action}}</span></div>
                     <div class="field"><label>{{ls.l('Stage')}}:</label><span>{{record.stage}}</span></div>
                 </div>
