@@ -8,7 +8,7 @@
                 <ng-container *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent">
                     <pay-pal (onApprove)="onPayPalApprove()">
                     </pay-pal>
-                    <a role="button" class="btn btn-primary stripe-button" [class.disabled]="!invoiceInfo.stripePayUrl" href="{{invoiceInfo.stripePayUrl}}">
+                    <a *ngIf="invoiceInfo.stripePayUrl" role="button" class="btn btn-primary stripe-button" href="{{invoiceInfo.stripePayUrl}}">
                         Pay with <img src="assets/common/images/stripe.svg"/>
                     </a>
                 </ng-container>
@@ -80,7 +80,7 @@
                         <span>{{lineItem.description}}</span>
                         <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">({{lineItem.subscriptionPeriod}})</span>
                     </td>
-                    <td align="right">{{lineItem.quantity | number: '1.0-0'}}</td>
+                    <td align="right">{{lineItem.quantity | number: '1.0-2'}}</td>
                     <td align="right">{{lineItem.unitPrice | number: '1.2-2'}}</td>
                     <td align="right">{{lineItem.amount | number: '1.2-2'}}</td>
                 </tr>
