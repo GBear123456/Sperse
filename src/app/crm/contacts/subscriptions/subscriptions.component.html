@@ -10,7 +10,7 @@
 <dx-data-grid #mainGrid
     class="main-component-view"
     keyExpr="id"
-    [hint]="ls.l('Subscriptions')"
+    accessKey="Subscriptions"
     [pager]="{visible: false}"
     [paging]="{enabled: false}"
     [dataSource]="dataSource"
@@ -87,9 +87,10 @@
         </div>
     </div>
     <div *dxTemplate="let cellData of 'statusCell'">
-        <div class="status {{cellData.value.toLowerCase()}}" [ngClass]="{'show-tooltip': cellData.value == 'Canceled' ? !!cellData?.data?.cancelationReason : !!cellData?.data?.gracePeriodEndDate}"
-              [matTooltip]="cellData?.data?.cancelationReason ? 'Cancellation Reason: ' + cellData.data.cancelationReason : cellData?.data?.gracePeriodDayCount + ' day(s) grace period ends at ' + cellData?.data?.gracePeriodEndDate?.format(formatting.dateTimeMoment)"
-              [matTooltipDisabled]="cellData.value == 'Canceled' ? !cellData.data.cancelationReason : !cellData.data.gracePeriodEndDate"
+        <div class="status {{cellData.value.toLowerCase()}}" 
+              [ngClass]="{'show-tooltip': cellData.value == 'Canceled' || cellData.value == 'Upgraded' ? !!cellData?.data?.cancelationReason : !!cellData?.data?.gracePeriodEndDate}"
+              [matTooltip]="cellData?.data?.cancelationReason ? (cellData?.value == 'Canceled' ? 'Cancellation ' : '') + 'Reason: ' + cellData.data.cancelationReason : cellData?.data?.gracePeriodDayCount + ' day(s) grace period ends at ' + cellData?.data?.gracePeriodEndDate?.format(formatting.dateTimeMoment)"
+              [matTooltipDisabled]="cellData.value == 'Canceled' || cellData.value == 'Upgraded' ? !cellData.data.cancelationReason : !cellData.data.gracePeriodEndDate"
               matTooltipClass="mat-primary-tooltip"
               matTooltipShowDelay="200"
               matTooltipHideDelay="0">

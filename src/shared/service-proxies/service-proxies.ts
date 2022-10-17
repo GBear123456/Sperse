@@ -43002,6 +43002,57 @@ export class TenantSettingsServiceProxy {
     /**
      * @return Success
      */
+    getKlaviyoSettings(): Observable<KlaviyoSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetKlaviyoSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetKlaviyoSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetKlaviyoSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<KlaviyoSettingsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<KlaviyoSettingsDto>;
+        }));
+    }
+
+    protected processGetKlaviyoSettings(response: HttpResponseBase): Observable<KlaviyoSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = KlaviyoSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<KlaviyoSettingsDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     getEmailSettings(): Observable<EmailSettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetEmailSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -43755,6 +43806,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateLdapSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateKlaviyoSettings(body: KlaviyoSettingsDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateKlaviyoSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateKlaviyoSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateKlaviyoSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateKlaviyoSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -44861,6 +44964,63 @@ export class TenantSubscriptionServiceProxy {
             }));
         }
         return _observableOf<RequestStripePaymentOutput>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    checkPaypalIsApplicable(body: RequestPaymentInput | undefined): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/CheckPaypalIsApplicable";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCheckPaypalIsApplicable(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCheckPaypalIsApplicable(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<boolean>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<boolean>;
+        }));
+    }
+
+    protected processCheckPaypalIsApplicable(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<boolean>(null as any);
     }
 
     /**
@@ -62331,8 +62491,10 @@ export class CreateProductInput implements ICreateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: ICreateProductInput) {
         if (data) {
@@ -62356,6 +62518,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.maxCommissionRate = _data["maxCommissionRate"];
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -62365,6 +62528,11 @@ export class CreateProductInput implements ICreateProductInput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -62389,6 +62557,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -62398,6 +62567,11 @@ export class CreateProductInput implements ICreateProductInput {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -62415,8 +62589,10 @@ export interface ICreateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class CreateProductOutput implements ICreateProductOutput {
@@ -70551,8 +70727,10 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IGetProductInfoOutput) {
         if (data) {
@@ -70579,6 +70757,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -70588,6 +70767,11 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -70615,6 +70799,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -70624,6 +70809,11 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -70644,8 +70834,10 @@ export interface IGetProductInfoOutput {
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class GetProfilePictureOutput implements IGetProfilePictureOutput {
@@ -75751,6 +75943,46 @@ export class KeyValuePairOfBureauListOfScoreHistoryDto implements IKeyValuePairO
 export interface IKeyValuePairOfBureauListOfScoreHistoryDto {
     key: Bureau;
     value: ScoreHistoryDto[] | undefined;
+}
+
+export class KlaviyoSettingsDto implements IKlaviyoSettingsDto {
+    isEnabled!: boolean;
+    apiKey!: string;
+
+    constructor(data?: IKlaviyoSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isEnabled = _data["isEnabled"];
+            this.apiKey = _data["apiKey"];
+        }
+    }
+
+    static fromJS(data: any): KlaviyoSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new KlaviyoSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isEnabled"] = this.isEnabled;
+        data["apiKey"] = this.apiKey;
+        return data;
+    }
+}
+
+export interface IKlaviyoSettingsDto {
+    isEnabled: boolean;
+    apiKey: string;
 }
 
 export class LanguageTextListDto implements ILanguageTextListDto {
@@ -84463,8 +84695,10 @@ export class ProductInfo implements IProductInfo {
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IProductInfo) {
         if (data) {
@@ -84489,6 +84723,7 @@ export class ProductInfo implements IProductInfo {
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -84498,6 +84733,11 @@ export class ProductInfo implements IProductInfo {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -84523,6 +84763,7 @@ export class ProductInfo implements IProductInfo {
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -84532,6 +84773,11 @@ export class ProductInfo implements IProductInfo {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -84550,8 +84796,10 @@ export interface IProductInfo {
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export enum ProductMeasurementUnit {
@@ -84828,6 +85076,42 @@ export interface IProductSubscriptionOptionInfo {
 export enum ProductType {
     General = "General",
     Subscription = "Subscription",
+}
+
+export class ProductUpgradeAssignmentInfo implements IProductUpgradeAssignmentInfo {
+    upgradeProductId!: number;
+
+    constructor(data?: IProductUpgradeAssignmentInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.upgradeProductId = _data["upgradeProductId"];
+        }
+    }
+
+    static fromJS(data: any): ProductUpgradeAssignmentInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductUpgradeAssignmentInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["upgradeProductId"] = this.upgradeProductId;
+        return data;
+    }
+}
+
+export interface IProductUpgradeAssignmentInfo {
+    upgradeProductId: number;
 }
 
 export class ProfileAddress implements IProfileAddress {
@@ -101339,8 +101623,10 @@ export class UpdateProductInput implements IUpdateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IUpdateProductInput) {
         if (data) {
@@ -101365,6 +101651,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.maxCommissionRate = _data["maxCommissionRate"];
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -101374,6 +101661,11 @@ export class UpdateProductInput implements IUpdateProductInput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -101399,6 +101691,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -101408,6 +101701,11 @@ export class UpdateProductInput implements IUpdateProductInput {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
         }
         return data;
     }
@@ -101426,8 +101724,10 @@ export interface IUpdateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {

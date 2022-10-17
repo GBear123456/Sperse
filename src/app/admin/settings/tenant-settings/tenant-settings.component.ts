@@ -34,6 +34,7 @@ import {
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
     SendGridSettingsDto,
+    KlaviyoSettingsDto,
     YTelSettingsEditDto,
     LayoutType,
     RapidSettingsDto,
@@ -100,6 +101,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     ongageSettings: OngageSettingsEditDto = new OngageSettingsEditDto();
     iageSettings: IAgeSettingsEditDto = new IAgeSettingsEditDto();
     sendGridSettings: SendGridSettingsDto = new SendGridSettingsDto();
+    klaviyoSettings: KlaviyoSettingsDto = new KlaviyoSettingsDto();
     yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
     rapidSettings: RapidSettingsDto = new RapidSettingsDto();
     logoUploader: FileUploader;
@@ -119,6 +121,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             text: this.l(item)
         };
     });
+    payPalEnvironments = [
+        { value: 'sandbox', text: 'Sandbox' },
+        { value: 'live', text: 'Live' }
+    ];
     headlineButtons: HeadlineButton[] = [
         {
             enabled: true, // this.isGranted(AppPermissions.AdministrationLanguagesCreate),
@@ -195,7 +201,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
-            this.tenantSettingsService.getSendGridSettings(),            
+            this.tenantSettingsService.getSendGridSettings(),
+            this.tenantSettingsService.getKlaviyoSettings(),
             this.isInboundOutboundSMSEnabled ?
                 this.tenantSettingsService.getYTelSettings() : of(<any>{isEnabled: false}),
             this.isRapidTenantLayout ? this.tenantSettingsService.getRapidSettings() : of<RapidSettingsDto>(<any>null)
@@ -222,6 +229,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.ongageSettings,
                     this.iageSettings,
                     this.sendGridSettings,
+                    this.klaviyoSettings,
                     this.yTelSettings,
                     this.rapidSettings
                 ] = results;
@@ -414,6 +422,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings),
             this.tenantSettingsService.updateSendGridSettings(this.sendGridSettings),
+            this.tenantSettingsService.updateKlaviyoSettings(this.klaviyoSettings),
             this.tenantSettingsService.updateYTelSettings(this.yTelSettings)
         ];
         if (this.isAdminCustomizations) {

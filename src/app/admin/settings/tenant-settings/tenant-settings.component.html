@@ -524,6 +524,27 @@
                     </ng-container>
                 </div>
             </mat-tab>
+            <mat-tab [label]="l('Klaviyo')">
+                <div>
+                    <div class="form-group">
+                        <br />
+                        <label for="KlaviyoIsEnabled" class="m-checkbox">
+                            <input id="KlaviyoIsEnabled" type="checkbox" name="KlaviyoIsEnabled" [(ngModel)]="klaviyoSettings.isEnabled">
+                            {{l("Enabled")}}
+                            <span></span>
+                        </label>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label>{{l("ApiKey")}}</label>
+                            <dx-text-box 
+                                class="form-control" 
+                                [(value)]="klaviyoSettings.apiKey">
+                            </dx-text-box>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
             <mat-tab [label]="l('YTel')" *ngIf="isInboundOutboundSMSEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
@@ -565,7 +586,14 @@
                     <div>
                         <div class="form-group">
                             <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
-                            <input id="PayPalEnvironment" type="text" name="PayPalEnvironment" class="form-control" [(ngModel)]="payPalPaymentSettings.environment">
+                            <dx-select-box class="bold-text"
+                                           stylingMode="outlined"
+                                           valueExpr="value"
+                                           displayExpr="text"
+                                           [showClearButton]="true"
+                                           [(value)]="payPalPaymentSettings.environment"
+                                           [dataSource]="payPalEnvironments">
+                            </dx-select-box>
                         </div>
                         <div class="form-group">
                             <label for="PayPalClientId">{{l("Client ID")}}</label>

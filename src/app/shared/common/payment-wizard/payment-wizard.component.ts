@@ -92,7 +92,7 @@ export class PaymentWizardComponent {
     showWebInvoice() {
         let draftSubscription = this.appService.moduleSubscriptions[0];
         let publicId = draftSubscription.invoicePublicId;
-        window.location.href = `/invoicing/invoice/0/${publicId}`;
+        window.location.href = location.origin + `/invoicing/invoice/0/${publicId}`;
     }
 
     activateSubscription() {
