@@ -3,11 +3,6 @@
 </h2>
 <mat-dialog-content>
     <dx-scroll-view showScrollbar="onHover">
-        <dx-text-box *ngIf="data?.entities?.length == 1"
-            [readOnly]="true"
-            [placeholder]="ls.l('EmailAddress')"
-            [value]="data.entities[0].EmailAddress">
-        </dx-text-box>
         <dx-number-box
             [readOnly]="true"
             [placeholder]="ls.l('TotalAmount')"

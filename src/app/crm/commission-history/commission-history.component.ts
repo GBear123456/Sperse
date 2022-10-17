@@ -740,7 +740,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 },
                                 {
                                     text: this.l('PayWithPayPal'),                                    
-                                    disabled: !this.payPalPaymentSettings.clientSecret || this.selectedRecords.length > 1,
+                                    disabled: !this.payPalPaymentSettings.clientSecret,
                                     action: this.applyPayPalComplete.bind(this)
                                 }
                             ]
