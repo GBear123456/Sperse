@@ -141,7 +141,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     taxTotal = 0;
 
     isStripeEnabled = false;
-    showStripeSubscriptionsWarning = false;
+    stripeSubscriptionsLinesCount = 0;
 
     isSendEmailAllowed = false;
     disabledForUpdate = false;
@@ -798,10 +798,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 (line: any) => line.productType == 'Subscription' && (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year)
             );
 
-            this.showStripeSubscriptionsWarning = subsLines.length > 1;
+            this.stripeSubscriptionsLinesCount = subsLines.length;
         }
         else {
-            this.showStripeSubscriptionsWarning = false;
+            this.stripeSubscriptionsLinesCount = 0;
         }
     }
 
