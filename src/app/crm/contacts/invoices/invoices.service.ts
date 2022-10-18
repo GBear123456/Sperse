@@ -14,6 +14,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class InvoicesService {
@@ -30,7 +31,7 @@ export class InvoicesService {
 
     invalidateSettings(settings?) {
         this.settings.next(settings);
-        if (!settings && (
+        if (!settings && abp.features.isEnabled(AppFeatures.CRMInvoicesManagement) && (
             this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ||
             this.permissionService.isGranted(AppPermissions.CRMSettingsConfigure)
         ))

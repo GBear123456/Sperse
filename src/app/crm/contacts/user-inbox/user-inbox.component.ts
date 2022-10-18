@@ -84,7 +84,7 @@ export class UserInboxComponent implements OnDestroy {
             text: this.ls.l(item),
             icon: this.ls.l(item) === 'Email' ? 'fa fa-envelope-o' : 'fa fa-commenting-o',
             visible: CommunicationMessageDeliveryType[item] != CommunicationMessageDeliveryType.SMS || this.isInboundOutboundSMSEnabled,
-            disabled: this.isSMSIntegrationDisabled
+            disabled: false
         };
     });
     userTimezone = DateHelper.getUserTimezone();
@@ -113,10 +113,12 @@ export class UserInboxComponent implements OnDestroy {
                 let contactId = this.contactId;
                 this.contactInfo = contactInfo;
                 this.contactId = contactInfo.id;
+
                 this.isSubscribedToEmails = contactInfo.isSubscribedToEmails;
                 this.communicationPreferencePublicId = contactInfo.communicationPreferencePublicId;
-                this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
-                    contactInfo.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
+                this.isSendSmsAndEmailAllowed = this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount) &&
+                    this.permission.checkCGPermission(contactInfo.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
+
                 this.activeMessage = undefined;
                 if (!this.dataSource || contactId != this.contactId) {
                     var isSms = this.activatedRoute.snapshot.queryParamMap.get('sms');

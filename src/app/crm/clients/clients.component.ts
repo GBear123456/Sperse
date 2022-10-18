@@ -329,6 +329,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     );
 
     isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+    maxMessageCount = this.contactService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
+    isSubscriptionManagementEnabled = abp.features.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
 
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
@@ -339,7 +341,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
-                    disabled: this.isSMSIntegrationDisabled,
+                    disabled: this.isSMSIntegrationDisabled || !this.maxMessageCount,
                     checkVisible: () => {
                         return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
                     },
@@ -352,6 +354,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('SendEmail'),
                     class: 'email',
+                    disabled: !this.maxMessageCount,
                     action: () => {
                         this.contactService.showEmailDialog({
                             contactId: (this.actionEvent.data || this.actionEvent).Id
@@ -1179,9 +1182,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }),
                 items: { from: new FilterItemModel(), to: new FilterItemModel() }
             })],
-            this.isGranted(AppPermissions.CRMOrders) ||
-                this.isGranted(AppPermissions.CRMProducts) ?
-                    [this.subscriptionStatusFilter] : [],
+            (this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts)) && this.isSubscriptionManagementEnabled &&
+                this.contactService.getFeatureCount(AppFeatures.CRMMaxProductCount) ? [this.subscriptionStatusFilter] : [],
             [new FilterModel({
                 component: FilterCalendarComponent,
                 operator: {from: 'ge', to: 'le'},
@@ -1433,7 +1435,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedClientKeys.length ||
+                        disabled: !this.selectedClientKeys.length || !this.maxMessageCount ||
                             !this.permission.checkCGPermission([ContactGroup.Client], 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [

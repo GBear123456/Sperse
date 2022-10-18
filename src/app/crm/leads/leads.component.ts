@@ -551,6 +551,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
 
     isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+    maxMessageCount = this.contactService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
 
     constructor(
         injector: Injector,
@@ -683,10 +684,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private initContactGroupRelatedProperties() {
-        this.isSmsAndEmailSendingAllowed = this.permission.checkCGPermission(
-            [this.selectedContactGroup],
-            'ViewCommunicationHistory.SendSMSAndEmail'
-        );
+        this.isSmsAndEmailSendingAllowed = this.maxMessageCount && 
+            this.permission.checkCGPermission(
+                [this.selectedContactGroup],
+                'ViewCommunicationHistory.SendSMSAndEmail'
+            );
 
         if (this.isSmsAndEmailSendingAllowed)
             this.pipelineSelectFields.push(this.leadFields.Phone);
@@ -704,7 +706,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
                             });
                         },
-                        disabled: this.isSMSIntegrationDisabled,
+                        disabled: this.isSMSIntegrationDisabled || !this.maxMessageCount,
                         checkVisible: (lead: LeadDto) => {
                             return abp.features.isEnabled(AppFeatures.InboundOutboundSMS) &&
                                 this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
@@ -712,6 +714,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         text: this.l('SendEmail'),
+                        disabled: !this.maxMessageCount,
                         class: 'email',
                         action: (data?) => {
                             this.contactService.showEmailDialog({

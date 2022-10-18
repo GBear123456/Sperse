@@ -140,6 +140,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     filterTimeout: any;
     searchClear = false;
+    maxProductCount = this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount);
     searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
     filterModelStages: FilterModel = new FilterModel({
@@ -242,7 +243,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: this.orderFields.Amount,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        this.orderSubscriptionStatusFilter,
+        this.maxProductCount ? this.orderSubscriptionStatusFilter : undefined,
         this.getSourceOrganizationUnitFilter(),
         this.sourceFilter,
         new FilterModel({
@@ -295,7 +296,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 })
             }
         })
-    ];
+    ].filter(Boolean);
     subscriptionStatuses = Object.keys(SubscriptionsStatus).filter(status => 
         ![SubscriptionsStatus.Upgraded, SubscriptionsStatus.Draft].includes(SubscriptionsStatus[status])
     ).map(status => {
@@ -352,7 +353,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: this.subscriptionFields.Fee,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        this.subscriptionStatusFilter,
+        this.maxProductCount ? this.subscriptionStatusFilter : undefined,
         this.getSourceOrganizationUnitFilter(),
         this.sourceFilter,
         new FilterModel({
@@ -405,7 +406,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 })
             }
         })
-    ];
+    ].filter(Boolean);
     private filterChanged = false;
     masks = AppConsts.masks;
     formatting = AppConsts.formatting;

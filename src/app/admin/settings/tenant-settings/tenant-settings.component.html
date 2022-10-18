@@ -581,7 +581,7 @@
                     </p>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('PayPal')}}">
+            <mat-tab label="{{l('PayPal')}}" *ngIf="isPaymentsEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -615,7 +615,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Stripe')}}">
+            <mat-tab label="{{l('Stripe')}}" *ngIf="isPaymentsEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">

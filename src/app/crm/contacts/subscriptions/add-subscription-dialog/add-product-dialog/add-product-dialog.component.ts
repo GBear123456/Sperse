@@ -86,8 +86,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         })
     );
     readonly addNewItemId = -1;
-    productTypes: string[] = Object.keys(ProductType);
-    defaultProductType = ProductType.Subscription;
+    isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
+    productTypes: string[] = Object.keys(ProductType).filter(item => item == 'Subscription' ? this.isSubscriptionManagementEnabled : true);
+    defaultProductType = this.isSubscriptionManagementEnabled ? ProductType.Subscription : ProductType.General;
     productGroups: ProductGroupInfo[];
     services: MemberServiceDto[];
     productUnits = Object.keys(ProductMeasurementUnit).map(
