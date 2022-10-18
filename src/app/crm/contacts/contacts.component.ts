@@ -218,7 +218,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             name: 'payment-information',
             label: this.l('PaymentInformation'),
             route: 'payment-information',
-            visible$: this.showPaymentInformationSection$
+            visible$: this.showPaymentInformationSection$,
+            disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement)
         },
         {
             name: 'reseller-activity',

@@ -68,6 +68,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     addPaymentDisabled = true;
     markAsDraftDisabled = false;
+    markAsSendInvoiceDisabled = false;
     resendInvoiceDisabled = false;
     markAsCancelledDisabled = false;
     deleteDisabled = false;
@@ -268,9 +269,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.markAsDraftDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled
                     ].indexOf(invoice.InvoiceStatus) < 0;
-                    this.resendInvoiceDisabled = !this.isSendEmailAllowed || isOrder || [
+                    this.markAsSendInvoiceDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled, InvoiceStatus.Sent
                     ].indexOf(invoice.InvoiceStatus) < 0;
+                    this.resendInvoiceDisabled = !this.isSendEmailAllowed || this.markAsSendInvoiceDisabled;
                     this.markAsCancelledDisabled = isOrder || invoice.InvoiceStatus != InvoiceStatus.Sent;
                     this.deleteDisabled = isOrder || [
                         InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled

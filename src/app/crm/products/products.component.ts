@@ -55,6 +55,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     private dependencyChanged = false;
     isReadOnly = true;
     permissions = AppPermissions;
+    isInvoicesEnabled = abp.features.isEnabled(AppFeatures.CRMInvoicesManagement);
     headerOptions = [this.l("Products"), this.l("Coupons")];
     activeHeaderOption = this.headerOptions[0];
     public headlineButtons: HeadlineButton[] = [];
