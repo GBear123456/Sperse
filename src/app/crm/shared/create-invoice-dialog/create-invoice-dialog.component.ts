@@ -306,7 +306,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         this.invoiceNo = invoiceInfo.number;
                         this.date = invoiceInfo.date;
                         this.dueDate = invoiceInfo.dueDate;
-                        if (this.status == InvoiceStatus.Final)
+                        if (this.disabledForUpdate)
                             this.status = invoiceInfo.status;
                     }
                     this.orderNumber = invoiceInfo.orderNumber;
@@ -439,12 +439,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.discountTotal = this.discountTotal;
             data.shippingTotal = this.shippingTotal;
             data.taxTotal = this.taxTotal;
-            if (this.status == InvoiceStatus.Sent && 
-                this.invoiceInfo.status != this.status
-            ) 
-                data.status = InvoiceStatus.Final;
-            else 
-                data.status = InvoiceStatus[this.status];
+            data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index: number) => {
                 return new UpdateInvoiceLineInput({
                     id: row['id'],
