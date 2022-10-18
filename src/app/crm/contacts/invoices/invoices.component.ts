@@ -373,7 +373,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 panelClass: ['slider'],
                 hasBackdrop: false,
                 closeOnNavigation: true,
-                data: { Id: this.actionRecordData.OrderId }
+                data: { orderId: this.actionRecordData.OrderId }
             })
         );
     }
