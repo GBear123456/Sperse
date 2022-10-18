@@ -13,6 +13,7 @@
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <dx-select-box [items]="headerOptions"
                        [(value)]="activeHeaderOption"
+                       [readOnly]="!isInvoicesEnabled"
                        (onValueChanged)="navigateToCoupons($event)">
         </dx-select-box>
         <import-progress-bar></import-progress-bar>
