@@ -342,8 +342,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
                     disabled: this.isSMSIntegrationDisabled || !this.maxMessageCount,
-                    checkVisible: () => {
-                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
+                    checkVisible: (data?) => {
+                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS) &&
+                            this.permission.checkCGPermission([data.ContactGroupId], 'ViewCommunicationHistory.SendSMSAndEmail');
                     },
                     action: () => {
                         this.contactService.showSMSDialog({
@@ -355,6 +356,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     text: this.l('SendEmail'),
                     class: 'email',
                     disabled: !this.maxMessageCount,
+                    checkVisible: (data?) => {
+                        return this.permission.checkCGPermission([data.ContactGroupId], 'ViewCommunicationHistory.SendSMSAndEmail');
+                    },
                     action: () => {
                         this.contactService.showEmailDialog({
                             contactId: (this.actionEvent.data || this.actionEvent).Id
@@ -416,6 +420,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('Orders'),
                     class: 'orders',
+                    disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement),
                     action: () => {
                         this.showClientDetails(this.actionEvent, 'invoices');
                     }

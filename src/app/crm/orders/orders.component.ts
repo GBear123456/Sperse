@@ -140,6 +140,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     filterTimeout: any;
     searchClear = false;
+    maxMessageCount = this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
     maxProductCount = this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount);
     searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
@@ -685,9 +686,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
-                    disabled: abp.setting.get('Integrations:YTel:IsEnabled') == 'False',
-                    checkVisible: () => {
-                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
+                    disabled: abp.setting.get('Integrations:YTel:IsEnabled') == 'False' || !this. maxMessageCount,
+                    checkVisible: (data?) => {
+                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS) &&
+                            this.permission.checkCGPermission([data.ContactGroupId], 'ViewCommunicationHistory.SendSMSAndEmail');
                     },
                     action: (data?) => {
                         let entity = data || this.actionEvent.data || this.actionEvent;
@@ -699,6 +701,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     text: this.l('SendEmail'),
                     class: 'email',
+                    disabled: !this.maxMessageCount,
+                    checkVisible: (data?) => {
+                        return this.permission.checkCGPermission([data.ContactGroupId], 'ViewCommunicationHistory.SendSMSAndEmail');
+                    },
                     action: (data?) => {
                         this.contactsService.showEmailDialog({
                             contactId: (data || this.actionEvent.data || this.actionEvent).ContactId
@@ -747,6 +753,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     text: this.l('Orders'),
                     class: 'orders',
+                    disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement),
                     action: (data?) => {
                         this.showContactDetails({ data: data || this.actionEvent }, 'invoices');
                     }
