@@ -61,7 +61,7 @@ export class HostSignupFormComponent {
     emailRegexp = AppConsts.regexPatterns.email;
     agreedTermsAndServices: boolean = false;
     congratulationLink: string;
-    leadRequestXref: string = '1020315';
+    leadRequestXref: string;
 
     linkedIdLoginProvider: ExternalLoginProvider;
     conditions = ConditionsType;
