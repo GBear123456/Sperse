@@ -8970,6 +8970,68 @@ export class CommissionServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getCommissionPayouts(ledgerEntryId: number): Observable<CommissionPayoutDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/GetCommissionPayouts?";
+        if (ledgerEntryId === undefined || ledgerEntryId === null)
+            throw new Error("The parameter 'ledgerEntryId' must be defined and cannot be null.");
+        else
+            url_ += "ledgerEntryId=" + encodeURIComponent("" + ledgerEntryId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCommissionPayouts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCommissionPayouts(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CommissionPayoutDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CommissionPayoutDto[]>;
+        }));
+    }
+
+    protected processGetCommissionPayouts(response: HttpResponseBase): Observable<CommissionPayoutDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CommissionPayoutDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CommissionPayoutDto[]>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -56403,6 +56465,109 @@ export enum CommissionLedgerEntryStatus {
 export enum CommissionLedgerEntryType {
     Earning = "Earning",
     Withdrawal = "Withdrawal",
+}
+
+export class CommissionPayoutDto implements ICommissionPayoutDto {
+    id!: number;
+    transactionId!: string | undefined;
+    status!: CommissionPayoutStatus;
+    amount!: number;
+    fee!: number | undefined;
+    isManual!: boolean;
+    paymentSystem!: string | undefined;
+    emailAddress!: string | undefined;
+    note!: string | undefined;
+    description!: string | undefined;
+    errors!: string | undefined;
+    creationTime!: moment.Moment;
+    processedTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    creatorUserName!: string | undefined;
+    creatorUserPhotoPublicId!: string | undefined;
+
+    constructor(data?: ICommissionPayoutDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.transactionId = _data["transactionId"];
+            this.status = _data["status"];
+            this.amount = _data["amount"];
+            this.fee = _data["fee"];
+            this.isManual = _data["isManual"];
+            this.paymentSystem = _data["paymentSystem"];
+            this.emailAddress = _data["emailAddress"];
+            this.note = _data["note"];
+            this.description = _data["description"];
+            this.errors = _data["errors"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.processedTime = _data["processedTime"] ? moment(_data["processedTime"].toString()) : <any>undefined;
+            this.creatorUserId = _data["creatorUserId"];
+            this.creatorUserName = _data["creatorUserName"];
+            this.creatorUserPhotoPublicId = _data["creatorUserPhotoPublicId"];
+        }
+    }
+
+    static fromJS(data: any): CommissionPayoutDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CommissionPayoutDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["transactionId"] = this.transactionId;
+        data["status"] = this.status;
+        data["amount"] = this.amount;
+        data["fee"] = this.fee;
+        data["isManual"] = this.isManual;
+        data["paymentSystem"] = this.paymentSystem;
+        data["emailAddress"] = this.emailAddress;
+        data["note"] = this.note;
+        data["description"] = this.description;
+        data["errors"] = this.errors;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["processedTime"] = this.processedTime ? this.processedTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["creatorUserName"] = this.creatorUserName;
+        data["creatorUserPhotoPublicId"] = this.creatorUserPhotoPublicId;
+        return data;
+    }
+}
+
+export interface ICommissionPayoutDto {
+    id: number;
+    transactionId: string | undefined;
+    status: CommissionPayoutStatus;
+    amount: number;
+    fee: number | undefined;
+    isManual: boolean;
+    paymentSystem: string | undefined;
+    emailAddress: string | undefined;
+    note: string | undefined;
+    description: string | undefined;
+    errors: string | undefined;
+    creationTime: moment.Moment;
+    processedTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    creatorUserName: string | undefined;
+    creatorUserPhotoPublicId: string | undefined;
+}
+
+export enum CommissionPayoutStatus {
+    Pending = "Pending",
+    Succeeded = "Succeeded",
+    Failed = "Failed",
+    Unclaimed = "Unclaimed",
 }
 
 export enum CommissionTier {
