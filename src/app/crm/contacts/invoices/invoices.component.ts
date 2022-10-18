@@ -326,10 +326,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     copyInvoiceLink() {
-        this.getPdfLink().subscribe((pdfUrl: string) => {
-            this.clipboardService.copyFromContent(pdfUrl);
-            this.notify.info(this.l('SavedToClipboard'));    
-        });
+        let publicId = this.actionRecordData.InvoicePublicId;
+        this.clipboardService.copyFromContent(location.origin + 
+            `/invoicing/invoice/${this.appSession.tenantId || 0}/${publicId}`);
+        this.notify.info(this.l('SavedToClipboard'));    
     }
 
     sendInvoice() {
