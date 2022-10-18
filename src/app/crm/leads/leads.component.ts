@@ -709,19 +709,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         disabled: this.isSMSIntegrationDisabled || !this.maxMessageCount,
                         checkVisible: (lead: LeadDto) => {
                             return abp.features.isEnabled(AppFeatures.InboundOutboundSMS) &&
-                                this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
+                                this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail');
                         }
                     },
                     {
                         text: this.l('SendEmail'),
-                        disabled: !this.maxMessageCount,
                         class: 'email',
+                        disabled: !this.maxMessageCount,
+                        checkVisible: (lead: LeadDto) => {
+                            return this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail');
+                        },
                         action: (data?) => {
                             this.contactService.showEmailDialog({
                                 contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
                             }).subscribe();
-                        },
-                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
+                        }
                     },
                 ]
             },
@@ -781,6 +783,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         text: this.l('Orders'),
                         class: 'orders',
+                        disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement),
                         action: (data?) => {
                             this.showLeadDetails({ data: data || this.actionEvent }, 'invoices');
                         }

@@ -184,6 +184,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     );
 
     isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+    maxMessageCount = this.contactService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
 
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
@@ -194,7 +195,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
-                    disabled: this.isSMSIntegrationDisabled,
+                    disabled: this.isSMSIntegrationDisabled || !this.maxMessageCount,
                     checkVisible: () => {
                         return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
                     },
@@ -207,6 +208,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('SendEmail'),
                     class: 'email',
+                    disabled: !this.maxMessageCount,
+                    checkVisible: (data?) => {
+                        return this.permission.checkCGPermission([data.ContactGroupId], 'ViewCommunicationHistory.SendSMSAndEmail');
+                    },
                     action: () => {
                         this.contactService.showEmailDialog({
                             contactId: (this.actionEvent.data || this.actionEvent).Id
@@ -270,6 +275,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('Orders'),
                     class: 'orders',
+                    disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement),
                     action: () => {
                         this.showPartnerDetails(this.actionEvent, 'invoices');
                     }
