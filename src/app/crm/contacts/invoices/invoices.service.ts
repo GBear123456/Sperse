@@ -31,7 +31,7 @@ export class InvoicesService {
 
     invalidateSettings(settings?) {
         this.settings.next(settings);
-        if (!settings && abp.features.isEnabled(AppFeatures.CRMInvoicesManagement) && (
+        if (!settings && (
             this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ||
             this.permissionService.isGranted(AppPermissions.CRMSettingsConfigure)
         ))
