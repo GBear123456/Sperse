@@ -284,11 +284,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             stripeApiKey = sessionStorage.getItem(storageKey);
         if (stripeApiKey != null)
             return of(!!stripeApiKey);
-        else
+        else if (abp.features.isEnabled(AppFeatures.CRMPayments))
             return this.tenantPaymentSettingsService.getStripeSettings().pipe(map(res => {
                 sessionStorage.setItem(storageKey, res.apiKey || '');
                 return !!res.apiKey;
             }));
+        else
+            return of(false);
     }
 
     updateAffiliateRate(value: number, valueProp, valueInitialProp, tier) {
