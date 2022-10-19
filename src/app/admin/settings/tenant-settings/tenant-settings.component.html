@@ -581,12 +581,19 @@
                     </p>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('PayPal')}}">
+            <mat-tab label="{{l('PayPal')}}" *ngIf="isPaymentsEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
                             <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
-                            <input id="PayPalEnvironment" type="text" name="PayPalEnvironment" class="form-control" [(ngModel)]="payPalPaymentSettings.environment">
+                            <dx-select-box class="bold-text"
+                                           stylingMode="outlined"
+                                           valueExpr="value"
+                                           displayExpr="text"
+                                           [showClearButton]="true"
+                                           [(value)]="payPalPaymentSettings.environment"
+                                           [dataSource]="payPalEnvironments">
+                            </dx-select-box>
                         </div>
                         <div class="form-group">
                             <label for="PayPalClientId">{{l("Client ID")}}</label>
@@ -608,7 +615,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Stripe')}}">
+            <mat-tab label="{{l('Stripe')}}" *ngIf="isPaymentsEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">

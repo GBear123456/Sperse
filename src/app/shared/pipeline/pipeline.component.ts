@@ -56,6 +56,8 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { AppPermissions } from '@shared/AppPermissions';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { AppFeatures } from '@shared/AppFeatures';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'app-pipeline',
@@ -118,7 +120,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     allStagesEntitiesTotal: number;
     isConfigureAllowed = this.isGranted(AppPermissions.CRMPipelinesConfigure);
     get isChecklistAllowed(): boolean {
-        return [AppConsts.PipelinePurposeIds.lead, AppConsts.PipelinePurposeIds.order].indexOf(this.pipeline.purpose) >= 0;
+        return !!this.appService.getFeatureCount(AppFeatures.CRMMaxChecklistPointCount) &&
+            [AppConsts.PipelinePurposeIds.lead, AppConsts.PipelinePurposeIds.order].indexOf(this.pipeline.purpose) >= 0;
     }
     private queryWithSearch: any = [];
     params: any = [];
@@ -148,6 +151,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         private store$: Store<CrmStore.State>,
         private cacheService: CacheService,
         public userManagementService: UserManagementService,
+        public appService: AppService,
         public dialog: MatDialog
     ) {
         super(injector);
