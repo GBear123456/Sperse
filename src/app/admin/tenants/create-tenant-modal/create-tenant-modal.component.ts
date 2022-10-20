@@ -156,6 +156,8 @@ export class CreateTenantModalComponent implements OnInit {
                 return PaymentPeriodType.Annual;
             case RecurringPaymentFrequency.LifeTime:
                 return PaymentPeriodType.LifeTime;
+            case RecurringPaymentFrequency.OneTime:
+                return PaymentPeriodType.OneTime;
             default:
                 return undefined;
         }

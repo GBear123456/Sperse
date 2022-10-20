@@ -5,7 +5,7 @@
                 Invoice <b>{{invoiceInfo.invoiceData.number}}</b> <i class="save-to-clipboard" (click)="copyInvoiceNumer()"></i>
             </h3>
             <div class="header-right-side">
-                <ng-container *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent">
+                <ng-container *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent && invoiceInfo.isPaymentsEnabled">
                     <pay-pal (onApprove)="onPayPalApprove()">
                     </pay-pal>
                     <a *ngIf="invoiceInfo.stripePayUrl" role="button" class="btn btn-primary stripe-button" href="{{invoiceInfo.stripePayUrl}}">

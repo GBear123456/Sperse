@@ -447,7 +447,18 @@ export class AppService extends AppServiceBase {
         this.toolbarSubject.next();
     }
 
-    isFeatureEnable(featureName: AppFeatures): boolean {
-        return this.isHostTenant || !featureName || this.feature.isEnabled(featureName);
+    isFeatureEnable(featureName: AppFeatures | string): boolean {
+        return this.isHostTenant || !featureName || featureName.split('&').every(item => {
+            let itemValue: any = this.feature.getValue(item);
+            if (isNaN(itemValue))
+                return this.feature.isEnabled(item);
+            else {
+                return !!parseFloat(itemValue);
+            }
+        });
+    }
+
+    getFeatureCount(feature: AppFeatures, forced = false) {
+        return !forced && this.isHostTenant ? AppConsts.infinityFeatureCount : +abp.features.getValue(feature);
     }
 }

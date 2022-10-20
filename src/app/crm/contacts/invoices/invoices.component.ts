@@ -67,6 +67,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     addPaymentDisabled = true;
     markAsDraftDisabled = false;
+    markAsSendInvoiceDisabled = false;
     resendInvoiceDisabled = false;
     markAsCancelledDisabled = false;
     deleteDisabled = false;
@@ -133,8 +134,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.clientService.contactInfoSubscribe((data: ContactInfoDto) => {
             if (data && (!this.contactId || data.id != this.contactId)) {
                 this.contactId = data.id;
-                this.isSendEmailAllowed = this.permission.checkCGPermission(
-                    data.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
+                this.isSendEmailAllowed = this.clientService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount) &&
+                    this.permission.checkCGPermission(data.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
                 this.dataSource = this.getDataSource();
                 this.initGeneratedCommissionDataSource(true);
             }
@@ -266,9 +267,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.markAsDraftDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled
                     ].indexOf(invoice.InvoiceStatus) < 0;
-                    this.resendInvoiceDisabled = !this.isSendEmailAllowed || isOrder || [
+                    this.markAsSendInvoiceDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled, InvoiceStatus.Sent
                     ].indexOf(invoice.InvoiceStatus) < 0;
+                    this.resendInvoiceDisabled = !this.isSendEmailAllowed || this.markAsSendInvoiceDisabled;
                     this.markAsCancelledDisabled = isOrder || invoice.InvoiceStatus != InvoiceStatus.Sent;
                     this.deleteDisabled = isOrder || [
                         InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled

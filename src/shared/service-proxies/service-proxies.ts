@@ -45138,6 +45138,64 @@ export class TenantSubscriptionServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getSubscriptionFeatureAvailabilities(): Observable<SubscriptionFeatureAvailabilityInfo[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetSubscriptionFeatureAvailabilities";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSubscriptionFeatureAvailabilities(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSubscriptionFeatureAvailabilities(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SubscriptionFeatureAvailabilityInfo[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SubscriptionFeatureAvailabilityInfo[]>;
+        }));
+    }
+
+    protected processGetSubscriptionFeatureAvailabilities(response: HttpResponseBase): Observable<SubscriptionFeatureAvailabilityInfo[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SubscriptionFeatureAvailabilityInfo.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SubscriptionFeatureAvailabilityInfo[]>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -70927,6 +70985,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
     invoiceData!: InvoiceData | undefined;
     paymentSettings!: BankTransferSettings | undefined;
     stripePayUrl!: string | undefined;
+    isPaymentsEnabled!: boolean;
 
     constructor(data?: IGetPublicInvoiceInfoOutput) {
         if (data) {
@@ -70945,6 +71004,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
             this.invoiceData = _data["invoiceData"] ? InvoiceData.fromJS(_data["invoiceData"]) : <any>undefined;
             this.paymentSettings = _data["paymentSettings"] ? BankTransferSettings.fromJS(_data["paymentSettings"]) : <any>undefined;
             this.stripePayUrl = _data["stripePayUrl"];
+            this.isPaymentsEnabled = _data["isPaymentsEnabled"];
         }
     }
 
@@ -70963,6 +71023,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
         data["invoiceData"] = this.invoiceData ? this.invoiceData.toJSON() : <any>undefined;
         data["paymentSettings"] = this.paymentSettings ? this.paymentSettings.toJSON() : <any>undefined;
         data["stripePayUrl"] = this.stripePayUrl;
+        data["isPaymentsEnabled"] = this.isPaymentsEnabled;
         return data;
     }
 }
@@ -70974,6 +71035,7 @@ export interface IGetPublicInvoiceInfoOutput {
     invoiceData: InvoiceData | undefined;
     paymentSettings: BankTransferSettings | undefined;
     stripePayUrl: string | undefined;
+    isPaymentsEnabled: boolean;
 }
 
 export class GetRapidClientsOutput implements IGetRapidClientsOutput {
@@ -75947,7 +76009,7 @@ export interface IKeyValuePairOfBureauListOfScoreHistoryDto {
 
 export class KlaviyoSettingsDto implements IKlaviyoSettingsDto {
     isEnabled!: boolean;
-    apiKey!: string;
+    apiKey!: string | undefined;
 
     constructor(data?: IKlaviyoSettingsDto) {
         if (data) {
@@ -75982,7 +76044,7 @@ export class KlaviyoSettingsDto implements IKlaviyoSettingsDto {
 
 export interface IKlaviyoSettingsDto {
     isEnabled: boolean;
-    apiKey: string;
+    apiKey: string | undefined;
 }
 
 export class LanguageTextListDto implements ILanguageTextListDto {
@@ -91052,6 +91114,62 @@ export interface ISendEmailInput {
     body: string;
 }
 
+export class SendEmailsViaSendGridConfiguration implements ISendEmailsViaSendGridConfiguration {
+    channelCodes!: string[] | undefined;
+    defaultAffiliateCodes!: string[] | undefined;
+
+    constructor(data?: ISendEmailsViaSendGridConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["channelCodes"])) {
+                this.channelCodes = [] as any;
+                for (let item of _data["channelCodes"])
+                    this.channelCodes!.push(item);
+            }
+            if (Array.isArray(_data["defaultAffiliateCodes"])) {
+                this.defaultAffiliateCodes = [] as any;
+                for (let item of _data["defaultAffiliateCodes"])
+                    this.defaultAffiliateCodes!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SendEmailsViaSendGridConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendEmailsViaSendGridConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.channelCodes)) {
+            data["channelCodes"] = [];
+            for (let item of this.channelCodes)
+                data["channelCodes"].push(item);
+        }
+        if (Array.isArray(this.defaultAffiliateCodes)) {
+            data["defaultAffiliateCodes"] = [];
+            for (let item of this.defaultAffiliateCodes)
+                data["defaultAffiliateCodes"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISendEmailsViaSendGridConfiguration {
+    channelCodes: string[] | undefined;
+    defaultAffiliateCodes: string[] | undefined;
+}
+
 export class SendEmailToContactConfiguration implements ISendEmailToContactConfiguration {
     emailTemplateId!: number;
     contactGroupIds!: string[] | undefined;
@@ -94150,6 +94268,54 @@ export interface ISubscriberDailyStatsReportInfo {
     starterKitAmount: number | undefined;
     totalCount: number | undefined;
     totalAmount: number | undefined;
+}
+
+export class SubscriptionFeatureAvailabilityInfo implements ISubscriptionFeatureAvailabilityInfo {
+    featureName!: string | undefined;
+    maxCount!: number;
+    usedCount!: number;
+    availableCount!: number;
+
+    constructor(data?: ISubscriptionFeatureAvailabilityInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.featureName = _data["featureName"];
+            this.maxCount = _data["maxCount"];
+            this.usedCount = _data["usedCount"];
+            this.availableCount = _data["availableCount"];
+        }
+    }
+
+    static fromJS(data: any): SubscriptionFeatureAvailabilityInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubscriptionFeatureAvailabilityInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["featureName"] = this.featureName;
+        data["maxCount"] = this.maxCount;
+        data["usedCount"] = this.usedCount;
+        data["availableCount"] = this.availableCount;
+        return data;
+    }
+}
+
+export interface ISubscriptionFeatureAvailabilityInfo {
+    featureName: string | undefined;
+    maxCount: number;
+    usedCount: number;
+    availableCount: number;
 }
 
 export class SubscriptionInput implements ISubscriptionInput {

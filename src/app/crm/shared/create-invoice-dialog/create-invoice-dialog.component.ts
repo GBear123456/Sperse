@@ -78,6 +78,7 @@ import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dial
 import { CreateInvoiceDialogData } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog-data.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { InvoiceSettingsDialogComponent } from '../../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -126,10 +127,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
     date = new Date();
     dueDate;
     isAddressDialogOpened = false;
+    featureMaxProductCount: number = this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount);
 
     description = '';
     notes = '';
-    lines = [{isCrmProduct: true}];
+    lines = [{isCrmProduct: !!this.featureMaxProductCount}];
 
     couponId: number;
     selectedCoupon: CouponDto;
@@ -331,8 +333,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         } else
             this.resetNoteDefault();
 
-        this.initNewInvoiceInfo();
-        this.initContextMenuItems();
+        this.initNewInvoiceInfo();        
         this.initContactInfo(this.data.contactInfo);
         this.changeDetectorRef.detectChanges();
     }
@@ -340,10 +341,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
     initContextMenuItems() {
         this.buttons.forEach((item: IDialogButton) => {
             item.disabled = this.disabledForUpdate;
-            item.contextMenu.items.forEach((contextMenuItem: ContextMenuItem, index: number) => {
-                if (index !== 3) {
+            item.contextMenu.items.forEach((contextMenuItem: ContextMenuItem) => {
+                if (contextMenuItem.text == this.ls.l('Invoice_SaveAndSend')) 
+                    contextMenuItem.disabled = !this.isSendEmailAllowed || this.disabledForUpdate;
+                else if (contextMenuItem.text != this.ls.l('Invoice_SaveAndMarkSent'))
                     contextMenuItem.disabled = this.disabledForUpdate;
-                }
             });
         });
         this.saveOptionsInit();
@@ -365,8 +367,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.orderDropdown.initOrderDataSource();
             this.initContactAddresses(contact.id);
             this.customer = contact.personContactInfo.fullName;
-            this.isSendEmailAllowed = this.permission.checkCGPermission(
-                contact.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
+            this.isSendEmailAllowed = this.checkSendEmailAllowed(contact.groups);
+            this.initContextMenuItems();
             let details = contact.personContactInfo.details,
                 emailAddress = details.emails.length ? details.emails[0].emailAddress : undefined,
                 address: ContactAddressDto = details.addresses[0];
@@ -537,8 +539,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                   return this.contactsService.showInvoiceEmailDialog(this.invoiceId, data);
               })
         ).subscribe(emailId => {
-            this.updateStatus(InvoiceStatus.Sent, emailId);
-            this.dialog.closeAll();
+            if (!isNaN(emailId)) {
+                this.updateStatus(InvoiceStatus.Sent, emailId);
+                this.dialog.closeAll();
+            }
         });
     }
 
@@ -654,17 +658,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     productsLookupRequest(phrase = '', callback?, code?: string) {
-        this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
-            if (!phrase || phrase == this.lastProductPhrase) {
-                this.products = res.map(item => {
-                    item.description = item.name;
-                    return item;
-                });
-                callback && callback(res);
-                this.updateDisabledProducts();
-                this.changeDetectorRef.detectChanges();
-            }
-        });
+        if (this.featureMaxProductCount)
+            this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
+                if (!phrase || phrase == this.lastProductPhrase) {
+                    this.products = res.map(item => {
+                        item.description = item.name;
+                        return item;
+                    });
+                    callback && callback(res);
+                    this.updateDisabledProducts();
+                    this.changeDetectorRef.detectChanges();
+                }
+            });
     }
 
     productLookupItems($event, cellData, fromInvoice = true) {
@@ -700,7 +705,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.dueDate = undefined;
             this.description = '';
             this.notes = '';
-            this.lines = [{isCrmProduct: true}];
+            this.lines = [{isCrmProduct: !!this.featureMaxProductCount}];
             this.changeDetectorRef.detectChanges();
         };
 
@@ -825,8 +830,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.calculateBalance();
     }
 
-    checkSendEmailAllowed(contactGroup) {
-        return this.permission.checkCGPermission(contactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'); 
+     checkSendEmailAllowed(contactGroup) {
+        return this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount) &&
+            this.permission.checkCGPermission(contactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'); 
     }
 
     selectContact(contact: EntityContactInfo) {
@@ -834,8 +840,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.customer = contact.name;
             this.contactId = contact.id;
             this.selectedContact = contact;
-            this.isSendEmailAllowed = this.permission.checkCGPermission(
-                [ContactGroup.Client], 'ViewCommunicationHistory.SendSMSAndEmail');
+            this.isSendEmailAllowed = this.checkSendEmailAllowed([ContactGroup.Client]);
+            this.initContextMenuItems();
             if (this.orderId && !this.data.invoice) {
                 this.orderId = undefined;
                 this.orderNumber = undefined;

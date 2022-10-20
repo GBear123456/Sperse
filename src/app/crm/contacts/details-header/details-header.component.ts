@@ -59,6 +59,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { ContextMenuItem } from '@app/crm/contacts/details-header/context-menu-item.interface';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from 'abp-ng2-module';
@@ -320,7 +321,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 selected: false,
                 icon: 'product',
                 visible: abp.session.tenantId && manageAllowed &&
-                    this.permissionChecker.isGranted(AppPermissions.CRMOrdersManage),                    
+                    this.permissionChecker.isGranted(AppPermissions.CRMOrdersManage) &&
+                    !!this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount) &&
+                    abp.features.isEnabled(AppFeatures.CRMSubscriptionManagementSystem),
                 contactGroups: this.allContactGroups
             }
         ];

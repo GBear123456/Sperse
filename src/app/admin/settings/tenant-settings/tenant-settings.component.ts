@@ -90,6 +90,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     isInboundOutboundSMSEnabled: boolean = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
+    isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments); 
     isCRMConfigureAllowed: boolean = abp.features.isEnabled(AppFeatures.CRMSalesTalk) 
         && this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
@@ -194,8 +195,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         let requests: Observable<any>[] = [
             this.tenantSettingsService.getAllSettings(),
             this.isAdminCustomizations ? this.tenantSettingsService.getMemberPortalSettings() : of<MemberPortalSettingsDto>(<any>null),
-            this.tenantPaymentSettingsService.getPayPalSettings(),
-            this.tenantPaymentSettingsService.getStripeSettings(),
+            this.isPaymentsEnabled ? this.tenantPaymentSettingsService.getPayPalSettings() : of(this.payPalPaymentSettings),
+            this.isPaymentsEnabled ? this.tenantPaymentSettingsService.getStripeSettings() : of(this.stripePaymentSettings),
             this.isCreditReportFeatureEnabled ? this.tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
