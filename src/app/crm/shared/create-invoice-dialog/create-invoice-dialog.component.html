@@ -303,6 +303,14 @@
                 </dx-validation-group>
             </div>
         </dx-scroll-view>
+        <div *ngIf="stripeSubscriptionsLinesCount > 1 || hasReccuringSubscription" class="row stripe-subs-warning">
+            <div *ngIf="stripeSubscriptionsLinesCount > 1" class="col-12">
+                * {{ls.l('Invoice_StripeSubsWarning', stripeSubscriptionsLinesCount)}}
+            </div>
+            <div *ngIf="hasReccuringSubscription" class="col-12">
+                * {{ls.l('Invoice_SubsTaxShippingWarning')}}
+            </div>
+        </div>
         <div class="row bottom-container">
             <div class="col-sm-6">
                 <div>
@@ -353,7 +361,8 @@
                             [placeholder]="ls.l('Discount')" 
                             [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
                             (onValueChanged)="calculateBalance()"
-                            [(value)]="discountTotal">
+                            [(value)]="discountTotal"
+                            [disabled]="true">
                         </dx-number-box>
                     </span>
                 </div>
@@ -365,7 +374,8 @@
                             [placeholder]="ls.l('Shipping')" 
                             [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
                             (onValueChanged)="calculateBalance()"
-                            [(value)]="shippingTotal">
+                            [(value)]="shippingTotal"
+                            [disabled]="hasReccuringSubscription || disabledForUpdate">
                         </dx-number-box>
                     </span>
                 </div>
@@ -377,7 +387,8 @@
                             [placeholder]="ls.l('Tax')" 
                             [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
                             (onValueChanged)="calculateBalance()"
-                            [(value)]="taxTotal">
+                            [(value)]="taxTotal"
+                            [disabled]="hasReccuringSubscription || disabledForUpdate">
                         </dx-number-box>
                     </span>
                 </div>

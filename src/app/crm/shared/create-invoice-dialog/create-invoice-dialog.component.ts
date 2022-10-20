@@ -55,7 +55,8 @@ import {
     ProductShortInfo,
     CouponServiceProxy,
     CouponDto,
-    CouponDiscountType
+    CouponDiscountType,
+    PaymentServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -86,7 +87,7 @@ import { AppFeatures } from '@shared/AppFeatures';
         '../../contacts/addresses/addresses.styles.less',
         'create-invoice-dialog.component.less'
     ],
-    providers: [CacheHelper, CustomerServiceProxy, InvoiceServiceProxy, ProductServiceProxy, CouponServiceProxy ],
+    providers: [CacheHelper, CustomerServiceProxy, InvoiceServiceProxy, ProductServiceProxy, CouponServiceProxy, PaymentServiceProxy],
     host: {
         '(click)': 'closeAddressDialogs()'
     },
@@ -134,7 +135,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     couponId: number;
     selectedCoupon: CouponDto;
-    calculateCoupon: boolean = true;
 
     subTotal = 0;
     balance = 0;
@@ -142,8 +142,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
     shippingTotal = 0;
     taxTotal = 0;
 
+    isStripeEnabled = false;
+    stripeSubscriptionsLinesCount = 0;
+
     isSendEmailAllowed = false;
     disabledForUpdate = false;
+    hasReccuringSubscription = false;
     title: string;
     isTitleValid = true;
     buttons: IDialogButton[] = [
@@ -231,6 +235,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private permission: AppPermissionService,
         private contactsService: ContactsService,
         private statesService: StatesService,
+        private paymetService: PaymentServiceProxy,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -239,6 +244,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.dialogRef.afterClosed().subscribe(() => {
             this.closeAddressDialogs();
         });
+        this.paymetService.isStripeEnabled()
+            .subscribe(res => this.isStripeEnabled = res);
     }
 
     ngOnInit() {
@@ -293,7 +300,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.discountTotal = invoiceInfo.discountTotal || 0;
                     this.shippingTotal = invoiceInfo.shippingTotal || 0;
                     this.taxTotal = invoiceInfo.taxTotal || 0;
-                    this.calculateCoupon = false;
                     this.couponId = invoiceInfo.couponId;
                     this.description = invoiceInfo.description;
                     this.notes = invoiceInfo.note;
@@ -320,6 +326,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             ...res
                         };
                     });
+
+                    this.checkSubscriptionsCount();
                     this.changeDetectorRef.detectChanges();
                 });
         } else
@@ -732,10 +740,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     calcuateDiscount() {
         let coupon = this.selectedCoupon;
-        if (!this.calculateCoupon) {
-            return;
-        }
-
         if (coupon) {
             this.discountTotal = coupon.type == CouponDiscountType.Fixed ?
                 this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff :
@@ -775,7 +779,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             cellData.data.unitId = item.paymentOptions[0].unitId;
             cellData.data.rate = item.paymentOptions[0].price;
             cellData.data.quantity = 1;
+            cellData.data.productType = item.type;
             this.updateDisabledProducts();
+            this.checkSubscriptionsCount();
+            this.checkReccuringSubscriptionIsSelected();
             this.changeDetectorRef.detectChanges();
         }
     }
@@ -790,14 +797,37 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    selectCoupon(event) {
-        this.selectedCoupon = event.selectedItem;
-        if (!this.calculateCoupon) {
-            this.calculateCoupon = true;
+    checkSubscriptionsCount() {
+        if (this.isStripeEnabled) {
+            let subsLines = this.lines.filter(
+                (line: any) => line.productType == 'Subscription' && (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year)
+            );
+
+            this.stripeSubscriptionsLinesCount = subsLines.length;
         }
         else {
-            this.calculateBalance();
+            this.stripeSubscriptionsLinesCount = 0;
         }
+    }
+
+    checkReccuringSubscriptionIsSelected(calculateBalance: boolean = true) {
+        this.hasReccuringSubscription = this.lines.some((line: any) =>
+            line.isCrmProduct &&
+            line.productType == 'Subscription' &&
+            (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year)
+        );
+
+        if (this.hasReccuringSubscription) {
+            this.shippingTotal = 0;
+            this.taxTotal = 0;
+            if (calculateBalance)
+                this.calculateBalance();
+        }
+    }
+
+    selectCoupon(event) {
+        this.selectedCoupon = event.selectedItem;
+        this.calculateBalance();
     }
 
      checkSendEmailAllowed(contactGroup) {
@@ -899,6 +929,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             if (unit)
                 cellData.data.rate = unit.price;
         }
+        this.checkSubscriptionsCount();
+        this.checkReccuringSubscriptionIsSelected();
     }
 
     allowDigitsOnly(event, exceptions = []) {
@@ -929,6 +961,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.hideAddNew = true;
             setTimeout(() => {
                 this.lines.splice(data.rowIndex, 1);
+                this.checkSubscriptionsCount();
+                this.checkReccuringSubscriptionIsSelected(false);
                 this.calculateBalance();
                 setTimeout(() => {
                     this.hideAddNew = false;
