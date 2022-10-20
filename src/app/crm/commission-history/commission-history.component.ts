@@ -741,8 +741,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 },
                                 {
                                     text: this.l('PayWithPayPal'),                                    
-                                    disabled: !this.payPalPaymentSettings.clientSecret &&
-                                        abp.features.isEnabled(AppFeatures.CRMPayments),
+                                    disabled: !this.payPalPaymentSettings.clientSecret ||
+                                        !abp.features.isEnabled(AppFeatures.CRMPayments),
                                     action: this.applyPayPalComplete.bind(this)
                                 }
                             ]
