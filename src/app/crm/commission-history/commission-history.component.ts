@@ -23,6 +23,7 @@ import DevExpress from 'devextreme/bundles/dx.all';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -740,7 +741,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 },
                                 {
                                     text: this.l('PayWithPayPal'),                                    
-                                    disabled: !this.payPalPaymentSettings.clientSecret,
+                                    disabled: !this.payPalPaymentSettings.clientSecret &&
+                                        abp.features.isEnabled(AppFeatures.CRMPayments),
                                     action: this.applyPayPalComplete.bind(this)
                                 }
                             ]
