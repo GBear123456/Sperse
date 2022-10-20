@@ -156,7 +156,7 @@
                             'invalid': (passwordInput?.errors && passwordInput?.errors?.requiredLength) || !passwordInput.value,
                             'valid': !passwordInput?.errors?.requiredLength
                            }">
-                            {{ls.l('PasswordComplexity_RequiredLength_Hint', passwordComplexitySetting_requiredLength)}}
+                            {{ls.l('PasswordComplexity_RequiredLength_Hint', passwordComplexitySetting.requiredLength)}}
                         </p>
                         <p id="special"
                            class="validator-rule"

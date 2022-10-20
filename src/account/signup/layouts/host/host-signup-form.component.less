@@ -532,8 +532,34 @@
 
     #message {
         p {
+            color: #ffffff;
+            padding-left: 35px;
             font-weight: 600;
-            color: #ff0000;
+            position: relative;
+            &::before {
+                position: absolute;
+                content: "";
+                top: -4px;
+                left: 0;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                background-color: #ffffff;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: 50%;
+            }
+
+            &.valid {                
+                &::before {
+                    background-image: url(../../../../assets/common/icons/feature-enabled.svg);
+                }
+            }
+            &.invalid {
+                &::before {
+                    background-image: url(../../../../assets/common/icons/feature-disabled.svg);
+                }
+            }
         }
     }
 }
