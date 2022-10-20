@@ -451,7 +451,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             if (this.status == InvoiceStatus.Sent && 
                 this.invoiceInfo.status != this.status
             ) 
-                data.status = this.invoiceInfo.status;
+                data.status = InvoiceStatus.Final;
             else 
                 data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index: number) => {
