@@ -333,7 +333,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             }] : undefined,
                             ...res
                         };
-                    });
+                    });                    
                     this.checkSubscriptionsCount();
                     this.changeDetectorRef.detectChanges();
                 });
