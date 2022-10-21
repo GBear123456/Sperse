@@ -16,6 +16,7 @@ import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import DataSource from 'devextreme/data/data_source';
+import { forkJoin, of } from 'rxjs';
 import { finalize, first, switchMap, filter } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 import cloneDeep from 'lodash/cloneDeep';
@@ -295,10 +296,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
             }
             this.contactId = invoice.ContactId;
             this.orderDropdown.initOrderDataSource();
-            this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
+
+            let contactInfoObs = !this.data.contactInfo && invoice.ContactId ? this.contactsService.getContactInfo(invoice.ContactId) : of<ContactInfoDto>(null);
+            forkJoin(this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId), contactInfoObs)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
-                .subscribe((invoiceInfo: InvoiceInfo) => {
-                    this.initContextMenuItems();
+                .subscribe(([invoiceInfo, contactInfo]) => {
                     this.invoiceInfo = invoiceInfo;
                     this.subTotal = invoiceInfo.lines.map(line => {
                         return line.quantity * line.rate;
@@ -314,8 +316,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         this.invoiceNo = invoiceInfo.number;
                         this.date = invoiceInfo.date;
                         this.dueDate = invoiceInfo.dueDate;
-                        if (this.disabledForUpdate)
+                        if (this.disabledForUpdate) {
                             this.status = invoiceInfo.status;
+                            this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
+                        }
                     }
                     this.orderNumber = invoiceInfo.orderNumber;
                     this.customer = invoiceInfo.contactName;
@@ -335,6 +339,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         };
                     });                    
 
+                    if (contactInfo) {
+                        this.initContactInfo(contactInfo);
+                    }
+
+                    this.initContextMenuItems();
                     this.checkSubscriptionsCount();
                     this.changeDetectorRef.detectChanges();
                 });

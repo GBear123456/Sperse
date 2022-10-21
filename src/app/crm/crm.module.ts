@@ -62,6 +62,7 @@ import { CommissionHistoryComponent } from './commission-history/commission-hist
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { OrdersHeaderDropdownComponent } from './orders/orders-header-dropdown/orders-header-dropdown.component';
+import { InvoicesComponent } from './invoices/invoices.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { ImportListComponent } from './import-leads/import-list/import-list.component';
 import { ImportLeadsService } from './import-leads/import-leads.service';
@@ -184,6 +185,7 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
         AddCouponDialogComponent,
         LeadsComponent,
         OrdersComponent,
+        InvoicesComponent,
         ReportsComponent,
         DashboardComponent,
         LeftMenuComponent,
