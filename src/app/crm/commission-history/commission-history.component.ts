@@ -23,6 +23,7 @@ import DevExpress from 'devextreme/bundles/dx.all';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -38,14 +39,15 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import {
-    CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
-    CommissionTier, UpdateCommissionAffiliateInput
+    CommissionServiceProxy, InvoiceSettings, ProductServiceProxy, PayPalSettings,
+    TenantPaymentSettingsServiceProxy, CommissionTier, UpdateCommissionAffiliateInput
 } from '@shared/service-proxies/service-proxies';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
+import { PayPalCompleteDialogComponent } from '@app/crm/commission-history/paypal-complete-dialog/paypal-complete-dialog.component';
 import { SourceContactFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
@@ -73,7 +75,7 @@ import { CrmService } from '@app/crm/crm.service';
         './commission-history.component.less'
     ],
     providers: [
-        ProductServiceProxy, LifecycleSubjectsService
+        ProductServiceProxy, LifecycleSubjectsService, TenantPaymentSettingsServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -459,6 +461,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     ];
 
     manageAllowed = this.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
+    payPalPaymentSettings: PayPalSettings = new PayPalSettings();
 
     constructor(
         injector: Injector,
@@ -468,6 +471,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         private invoicesService: InvoicesService,
         private productProxy: ProductServiceProxy,
         private commissionProxy: CommissionServiceProxy,
+        private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef
     ) {
@@ -484,6 +488,11 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     ngOnInit() {
+        this.tenantPaymentSettingsService.getPayPalSettings(
+        ).subscribe(payPalSettings => {
+            this.payPalPaymentSettings = payPalSettings;
+        });
+
         this.handleDataGridUpdate();
         this.handleFiltersPining();
         this.activate();
@@ -717,14 +726,26 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     },
                     cancelButton,
                     {
-                        widget: 'dxButton',
+                        name: 'menu',
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.manageAllowed
+                            || !this.selectedRecords.length
+                            || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                            || this.selectedRecords.every(item => !(item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal)),
                         options: {
-                            text: this.l('UpdatePaymentStatus'),
-                            disabled: !this.manageAllowed
-                                || !this.selectedRecords.length
-                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
-                                || this.selectedRecords.every(item => !(item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal)),
-                            onClick: this.applyComplete.bind(this)
+                            hint: this.l('UpdatePaymentStatus'),
+                            items: [
+                                {
+                                    text: this.l('ManualPayment'),
+                                    action: this.applyComplete.bind(this)
+                                },
+                                {
+                                    text: this.l('PayWithPayPal'),                                    
+                                    disabled: !this.payPalPaymentSettings.clientSecret ||
+                                        !abp.features.isEnabled(AppFeatures.CRMPayments),
+                                    action: this.applyPayPalComplete.bind(this)
+                                }
+                            ]
                         }
                     }] : [{
                         widget: 'dxButton',
@@ -899,6 +920,20 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             disableClose: true,
             closeOnNavigation: false,
             data: {
+                entities: this.selectedRecords.filter(
+                    item => item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal
+                ),
+                bulkUpdateAllowed: this.bulkUpdateAllowed
+            }
+        }).afterClosed().subscribe(() => this.refresh());
+    }
+
+    applyPayPalComplete(event) {
+        this.dialog.open(PayPalCompleteDialogComponent, {
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                currencyFormat$: this.currencyFormat$,
                 entities: this.selectedRecords.filter(
                     item => item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal
                 ),
