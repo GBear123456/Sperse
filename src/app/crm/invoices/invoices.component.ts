@@ -6,8 +6,9 @@ import { CurrencyPipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { filter, finalize, first, map, switchMap, takeUntil } from 'rxjs/operators';
-import DataSource from '@root/node_modules/devextreme/data/data_source';
+import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
+import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -20,6 +21,8 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterServicesAndProductsComponent } from '@app/crm/shared/filters/services-and-products-filter/services-and-products-filter.component';
+import { FilterServicesAndProductsModel } from '@app/crm/shared/filters/services-and-products-filter/services-and-products-filter.model';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -28,7 +31,7 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { InvoiceServiceProxy, InvoiceSettings, InvoiceStatus } from '@shared/service-proxies/service-proxies';
+import { InvoiceServiceProxy, InvoiceSettings, InvoiceStatus, ProductDto, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { InvoiceDto } from './invoices-dto.interface';
@@ -46,7 +49,8 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
     providers: [
         LifecycleSubjectsService,
         CurrencyPipe,
-        InvoiceServiceProxy
+        InvoiceServiceProxy,
+        ProductServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -99,6 +103,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     toolbarConfig: ToolbarGroupModel[];
     readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;
     private filters: FilterModel[] = this.getFilters();
+    private prodcutsFilter: FilterModel;
     rowsViewHeight: number;
 
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
@@ -159,6 +164,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         injector: Injector,
         invoicesService: InvoicesService,
         private invoiceProxy: InvoiceServiceProxy,
+        private productProxy: ProductServiceProxy,
         private filtersService: FiltersService,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef,
@@ -216,7 +222,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 this.dataSourceCountURI,
                 odataRequestValues.filter,
                 null,
-                odataRequestValues.params
+                odataRequestValues.params ? odataRequestValues.params.concat(this.getProductsParams()) : this.getProductsParams()
             );
             if (url && this.oDataService.requestLengthIsValid(url)) {
                 this.totalDataSource['_store']['_url'] = url;
@@ -331,6 +337,41 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 field: this.invoiceFields.Date,
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
+            }),
+            this.prodcutsFilter = new FilterModel({
+                component: FilterServicesAndProductsComponent,
+                caption: 'Product',
+                items: {
+                    products: new FilterServicesAndProductsModel(
+                        {
+                            dataSource$: this.productProxy.getProducts(
+                                undefined
+                            ).pipe(
+                                map((products: ProductDto[]) => {
+                                    let productsWithGroups = products.filter(x => x.group);
+                                    let productsWithoutGroups = products.filter(x => !x.group);
+                                    let groups = _.groupBy(productsWithGroups, (x: ProductDto) => x.group);
+                                    let arr: any[] = _.keys(groups).map(groupName => {
+                                        return {
+                                            id: groupName,
+                                            name: groupName,
+                                            products: groups[groupName].sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }))
+                                        };
+                                    }).sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
+                                    return arr.concat(
+                                        productsWithoutGroups.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }))
+                                    );
+                                })
+                            ),
+                            nameField: 'name',
+                            codeField: 'code',
+                            keyExpr: 'id',
+                            dataStructure: 'tree',
+                            itemsExpr: 'products',
+                            recursive: true
+                        }
+                    )
+                }
             })
         ];
     }
@@ -419,7 +460,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 this.dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
-                this.filtersService.getCheckCustom
+                this.filtersService.getCheckCustom,
+                null,
+                this.getProductsParams()
             );
         }
     }
@@ -469,6 +512,20 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             this.actionEvent = actionEvent;
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+    private getProductsParams() {
+        let result = [],
+            selectedProducts = this.prodcutsFilter.items.products['selectedItems'];
+
+        selectedProducts && selectedProducts.filter(item => Number.isInteger(item.id)).forEach((item, i) => {
+            result.push({
+                name: 'productIds[' + i + ']',
+                value: item.id
+            });
+        });
+
+        return result;
     }
 
     deactivate() {
