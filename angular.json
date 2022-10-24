@@ -154,6 +154,7 @@
                   "maximumWarning": "2048kb"
                 }
               ],
+              "aot": true,
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -177,6 +178,7 @@
                   "maximumWarning": "2048kb"
                 }
               ],
+              "aot": true,
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -200,6 +202,7 @@
                   "maximumWarning": "2048kb"
                 }
               ],
+              "aot": true,
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,

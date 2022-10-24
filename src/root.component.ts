@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
+import { first, filter } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import kebabCase from 'lodash/kebabCase';
 import startCase from 'lodash/startCase';
@@ -39,14 +40,18 @@ export class RootComponent implements OnInit, AfterViewInit {
         @Inject(DOCUMENT) private document
     ) {
         this.pageHeaderFixed(true);
-        let subscription = router.events.subscribe((event) => {
-            if (event instanceof NavigationEnd) {
-                this.document.body.querySelectorAll('div.initial').forEach(elm => {
-                    setTimeout(() => this.document.body.removeChild(elm), 1000);
-                });
-                subscription.unsubscribe();
-            }
-        });
+        router.events.pipe(
+            filter((event) => {
+                if (event instanceof NavigationEnd) {
+                    this.document.body.querySelectorAll('div.initial').forEach(elm => {
+                        setTimeout(() => this.document.body.removeChild(elm), 1000);
+                    });                    
+                    return true;
+                }
+                return false;
+            }), 
+            first()
+        ).subscribe();
 
         this.hostSettingsProxy.getMaintenanceSettings().subscribe((res: MaintenanceSettingsDto) => {
             this.maintenanceSettings = res;

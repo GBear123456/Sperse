@@ -26,6 +26,11 @@ import { SignupComponent } from './signup/signup.component';
                 path: '',
                 component: AccountComponent,
                 children: [
+                    {
+                        path: '',
+                        redirectTo: 'login',
+                        pathMatch: 'full'
+                    },
                     { path: 'login', component: LoginComponent },
                     { path: 'auto-login', component: AutoLoginComponent },
                     { path: 'forgot-password', component: ForgotPasswordComponent },
