@@ -404,6 +404,24 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 ]
             },
             {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',
+                        widget: 'dxTextBox',
+                        options: {
+                            value: this.searchValue,
+                            width: '279',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' ' + this.l('Clients').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
+                        }
+                    }
+                ]
+            },
+            {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
@@ -452,6 +470,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     toggleCompactView() {
         DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
+    }
+
+    searchValueChange(e: object) {
+        if (this.searchValue != e['value']) {
+            this.searchValue = e['value'];
+            this.processFilterInternal();
+        }
     }
 
     processFilterInternal() {
