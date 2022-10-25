@@ -20,6 +20,7 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { GlobalSearchGroup } from '@app/shared/layout/top-bar/global-search/global-search-group.interface';
 import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 import { OrderFields } from '@app/crm/orders/order-fields.enum';
+import { InvoiceFields } from '@app/crm/invoices/invoices-fields.enum';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -79,7 +80,8 @@ export class GlobalSearchComponent implements OnInit {
                 this.getLeadGroup(search, this.ls.l('Vendors'), 'Vendor'),
                 this.getLeadGroup(search, this.ls.l('Others'), 'Other'),
                 this.getOrdersGroup(search),
-                this.getSubscriptionsGroup(search)
+                this.getSubscriptionsGroup(search),
+                this.getInvoicesGroup(search)
             ).pipe(
                 finalize(() => {
                     this.hideSpinner();
@@ -214,6 +216,23 @@ export class GlobalSearchComponent implements OnInit {
             { 
                 orderType: OrderType.Order
             }
+        );
+    }
+
+    private getInvoicesGroup(search: string): Observable<GlobalSearchGroup> {
+        return this.getGlobalSearchGroup(
+            this.oDataService.getODataUrl('Invoice'),
+            this.ls.l('Invoice'),
+            'app/crm/invoices',
+            search,
+            AppPermissions.CRMOrdersInvoices,
+            [
+                InvoiceFields.Id,
+                InvoiceFields.FullName,
+                InvoiceFields.EmailAddress,
+                InvoiceFields.PhotoPublicId,
+                InvoiceFields.ContactId
+            ]
         );
     }
 

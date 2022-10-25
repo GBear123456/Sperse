@@ -6,7 +6,9 @@ export const InvoiceFields: KeysEnum<InvoiceDto> = {
     Status: 'Status',
     Number: 'Number',
     ContactId: 'ContactId',
-    ContactName: 'ContactName',
+    FullName: 'FullName',
+    EmailAddress: 'EmailAddress',
+    PhotoPublicId: 'PhotoPublicId',
     GrandTotal: 'GrandTotal',
     Date: 'Date',
     PublicId: 'PublicId'

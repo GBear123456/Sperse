@@ -3,7 +3,9 @@ export interface InvoiceDto {
     Status: string;
     Number: string;
     ContactId: number;
-    ContactName: string;
+    FullName: string;
+    EmailAddress: string;
+    PhotoPublicId: string;
     GrandTotal: number;
     Date: string;
     PublicId: string;

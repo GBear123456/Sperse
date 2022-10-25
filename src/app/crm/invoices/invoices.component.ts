@@ -40,6 +40,7 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
+import { Params } from '@angular/router';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -99,7 +100,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     ];
 
     currency: string;
-    searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchClear = false;
+    searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     toolbarConfig: ToolbarGroupModel[];
     readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;
     private filters: FilterModel[] = this.getFilters();
@@ -190,6 +192,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.activate();
         this.handleDataGridUpdate();
         this.handleTotalCountUpdate();
+        this.handleQueryParams();
     }
 
     customizeTotal = () => this.totalCount !== undefined ? this.l('Count') + ': ' + this.totalCount : '';
@@ -227,6 +230,20 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             if (url && this.oDataService.requestLengthIsValid(url)) {
                 this.totalDataSource['_store']['_url'] = url;
                 this.totalDataSource.load();
+            }
+        });
+    }
+
+    private handleQueryParams() {
+        this._activatedRoute.queryParams.pipe(
+            filter(() => this.componentIsActivated),
+            takeUntil(this.destroy$)
+        ).subscribe((params: Params) => {
+            let isSearchChanged = params.search && this.searchValue != params.search;
+            if (isSearchChanged) {
+                this.searchValue = params.search;
+                this.initToolbarConfig();
+                this.invalidate();
             }
         });
     }
@@ -498,6 +515,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     activate() {
         super.activate();
+        this.searchClear = false;
         this.lifeCycleSubjectsService.activate.next();
         this.initFilterConfig();
         this.initToolbarConfig();
