@@ -1,0 +1,94 @@
+<div>
+    <app-headline [names]="[ l('Invoices') ]"
+                  icon="people"
+                  [buttons]="headlineButtons"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="ui.showReload"
+                  [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="true"
+                  [showTotalCount]="true"
+                  [totalCount]="totalCount"
+                  [totalErrorMsg]="totalErrorMsg"
+                  (onToggleToolbar)="toggleToolbar()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onReload)="invalidate()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+        <import-progress-bar></import-progress-bar>
+    </app-headline>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <div class="main-wrapper">
+        <action-menu [items]="actionMenuGroups"
+                     [visible]="!!actionEvent"
+                     class="grouped-action-menu"
+                     width="150px"
+                     (onItemClick)="onMenuItemClick($event)">
+        </action-menu>
+        <div class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                <dx-data-grid class="main-component-view limitedPagerTotal"
+                              accesskey="narrowHeaderPanel"
+                              [renderAsync]="true"
+                              [dataSource]="dataSource"
+                              [hoverStateEnabled]="true"
+                              [allowColumnReordering]="true"
+                              [columnAutoWidth]="true"
+                              [allowColumnResizing]="true"
+                              [columnChooser]="{
+                                    height: rowsViewHeight
+                                }"
+                              [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
+                              [loadPanel]="{ enabled: false }"
+                              (onOptionChanged)="onGridOptionChanged($event)"
+                              (onContentReady)="onContentReady($event)"
+                              (onCellClick)="onCellClick($event)"
+                              (onEditingStart)="toggleActionsMenu($event)"
+                              (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                    <dxo-pager [visible]="true"></dxo-pager>
+                    <dxo-selection selectAllMode="page"
+                                   showCheckBoxesMode="always"
+                                   mode="multiple">
+                    </dxo-selection>
+                    <dxo-scrolling mode="infinite"></dxo-scrolling>
+                    <dxo-editing mode="popup"
+                                 [texts]="{ editRow: '' }"
+                                 [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                                 [allowUpdating]="!isReadOnly">
+                    </dxo-editing>
+                    <dxi-column [dataField]="invoiceFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.Status" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.Number" [caption]="l('Number')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.FullName" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.GrandTotal" [caption]="l('GrandTotal')" cellTemplate="amountTemplate"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.Date" [caption]="l('Date')" cellTemplate="dateCell"></dxi-column>
+
+                    <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
+                        <span> {{ cell.data.GrandTotal | currency:currency:'symbol':'1.2-2' }} </span>
+                    </div>
+                    <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                        {{cellData.value | datetime: formatting.dateTimeMoment}}
+                    </div>
+                    <dxo-sorting mode="multiple"></dxo-sorting>
+                    <dxo-group-panel [visible]="true"></dxo-group-panel>
+                    <dxo-summary>
+                        <dxi-total-item [column]="invoiceFields.Number"
+                                        summaryType="count"
+                                        [customizeText]="customizeTotal">
+                        </dxi-total-item>
+                        <dxi-total-item [customizeText]="customizeSum"
+                                        [column]="invoiceFields.GrandTotal"
+                                        summaryType="sum">
+                        </dxi-total-item>
+                    </dxo-summary>
+                </dx-data-grid>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-no-data
+    [hidden]="!isDataLoaded || totalRowCount"
+    [showLink]="false">
+</app-no-data>
