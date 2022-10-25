@@ -116,12 +116,13 @@ export class HostSignupFormComponent {
                     first()
                 ).subscribe((paramsMap: ParamMap) => {
                     let exchangeCode = paramsMap.get('code');
+                    let referrer = paramsMap.get('referrer');
                     let state = paramsMap.get('state');
                     if (!!exchangeCode && !!state) {
                         abp.ui.setBusy();
                         this.loginService.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state)
                             .then(() => {
-                                this.linkedInService.getUserData(exchangeCode, window.location.href)
+                                this.linkedInService.getUserData(exchangeCode, referrer || window.location.href)
                                     .pipe(finalize(() => abp.ui.clearBusy()))
                                     .subscribe((result: LinkedInUserData) => {
                                         this.tenancyRequestModel.firstName = result.name;
