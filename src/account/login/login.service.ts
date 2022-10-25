@@ -250,6 +250,7 @@ export class LoginService {
             queryParams: {
                 'code': null,
                 'state': null,
+                referrer: null
             },
             queryParamsHandling: 'merge'
         });
@@ -279,10 +280,20 @@ export class LoginService {
 
                 this.tokenAuthService.linkedInAuthenticate(model)
                     .pipe(finalize(() => abp.ui.clearBusy()))
-                    .subscribe((result: ExternalAuthenticateResultModel) => {
-                        onSuccessCallback(result);
-                        this.processAuthenticateResult(result, 
-                            result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
+                    .subscribe((result: ExternalAuthenticateResultModel) => {                       
+                        let uri = this.router.routerState.snapshot.url;
+                        if (result.userNotFound) {
+                            this.router.navigate(['account/signup'], {queryParams: {
+                                referrer: location.href,
+                                extlogin: setCookiesOnly,
+                                code: exchangeCode,
+                                state: state
+                            }});
+                        } else {
+                            onSuccessCallback(result);
+                            this.processAuthenticateResult(result, 
+                                result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
+                        }
                     });
             });
     }

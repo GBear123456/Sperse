@@ -3,7 +3,7 @@ import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule, ErrorHandler } from '@a
 import { APP_BASE_HREF, PlatformLocation, registerLocaleData } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouteReuseStrategy, Router } from '@angular/router';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 /** Third party imports */
 import { AbpModule } from 'abp-ng2-module';
@@ -167,7 +167,7 @@ function handleLogoutRequest(authService: AppAuthService) {
 @NgModule({
     imports: [
         AbpModule,
-        BrowserModule,
+        BrowserAnimationsModule,
         ServiceProxyModule,
         HttpClientModule,
         RootRoutingModule,
