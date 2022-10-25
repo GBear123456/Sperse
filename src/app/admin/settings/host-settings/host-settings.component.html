@@ -398,7 +398,10 @@
                         <p>
                             <span class="small">* To recieve webhooks from PayPal please enter any secure string above, then add new endpoint on your application using the following info:</span><br />
                             <span class="small">URL - <span class="copy-url"><b>{{getPayPalWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
-                            <span class="small">Events - <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>, <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b></span>
+                            <span class="small">Events - 
+                                <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>, <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b>, 
+                                <b>'Payment payouts-item succeeded'</b>, <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
+                            </span>
                         </p>
                     </div>
                 </dx-scroll-view>
