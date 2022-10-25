@@ -15,6 +15,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { finalize, filter, switchMap, first, map } from 'rxjs/operators';
+import { ClipboardService } from 'ngx-clipboard';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
@@ -122,7 +123,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
         private clientService: ContactsService,
-        private invoiceProxy: InvoiceServiceProxy
+        private invoiceProxy: InvoiceServiceProxy,
+        private clipboardService: ClipboardService
     ) {
         super(injector);
         this.clientService.invalidateSubscribe((area: string) => {
@@ -323,6 +325,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.openCreateInvoiceDialog(true);
     }
 
+    copyInvoiceLink() {
+        let publicId = this.actionRecordData.InvoicePublicId;
+        this.clipboardService.copyFromContent(location.origin + 
+            `/invoicing/invoice/${this.appSession.tenantId || 0}/${publicId}`);
+        this.notify.info(this.l('SavedToClipboard'));    
+    }
+
     sendInvoice() {
         this.startLoading(true);
         this.invoiceProxy.getEmailData(
@@ -366,7 +375,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 panelClass: ['slider'],
                 hasBackdrop: false,
                 closeOnNavigation: true,
-                data: { Id: this.actionRecordData.OrderId }
+                data: { orderId: this.actionRecordData.OrderId }
             })
         );
     }

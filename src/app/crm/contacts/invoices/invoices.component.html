@@ -10,7 +10,7 @@
                         <div class="link" [ngClass]="{disabled: markAsDraftDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Draft))"><i class="i-check"></i>{{l('Invoice_MarkAsDraft')}}</div>
                         <div class="link" [ngClass]="{disabled: markAsSendInvoiceDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Sent))"><i class="check-list"></i>{{l('Invoice_MarkAsSent')}}</div>
                         <div class="link disabled" [hidden]="true"><i class="time-alarm"></i>{{l('Send Reminder')}}</div>
-                        <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(sendInvoice)"><i class="respond-arrow"></i>{{l('Resend Invoice')}}</div>
+                        <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(sendInvoice)"><i class="respond-arrow"></i>{{l(actionRecordData.InvoiceStatus == invoiceStatus.Sent ? 'Resend' : 'Send') + ' ' + l('Invoice')}}</div>
                         <div class="link" [ngClass]="{disabled: downloadPdfDisabled}" (click)="onMenuItemClick(downloadInvoicePdf)"><i class="move-layer-down"></i>{{l('Download as PDF')}}</div>
                         <div class="link" (click)="onMenuItemClick(showHistory)"><i class="bullet-list-69"></i>{{l('OrderActivity')}}</div>
                         <div class="link" [ngClass]="{disabled: duplicateInvoiceDisabled}" (click)="onMenuItemClick(duplicateInvoice)"><i class="ungroup"></i>{{l('Duplicate Invoice')}}</div>
@@ -28,6 +28,7 @@
                         <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(editInvoice)"><i style="font-size: 18px;" class="fa fa-edit"></i>{{l('Edit')}}</div>
                         <div class="link" [ngClass]="{disabled: previewDisabled}" (click)="onMenuItemClick(previewInvoice)"><i class="preview"></i>{{l('Preview')}}</div>
                         <div class="link" (click)="onMenuItemClick(addInvoice)"><i class="add"></i>{{l('Add Invoice')}}</div>
+                        <div class="link" (click)="onMenuItemClick(copyInvoiceLink)"><i class="copy"></i>{{l('Copy Link')}}</div>
                     </div>
                 </div>
             </div>
