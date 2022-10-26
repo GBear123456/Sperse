@@ -56087,6 +56087,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
     companyName!: string | undefined;
     siteUrl!: string | undefined;
     adminPassword!: string;
+    returnBearerToken!: boolean;
 
     constructor(data?: ICompleteTenantRegistrationInput) {
         if (data) {
@@ -56105,6 +56106,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
             this.companyName = _data["companyName"];
             this.siteUrl = _data["siteUrl"];
             this.adminPassword = _data["adminPassword"];
+            this.returnBearerToken = _data["returnBearerToken"];
         }
     }
 
@@ -56123,6 +56125,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
         data["companyName"] = this.companyName;
         data["siteUrl"] = this.siteUrl;
         data["adminPassword"] = this.adminPassword;
+        data["returnBearerToken"] = this.returnBearerToken;
         return data;
     }
 }
@@ -56134,6 +56137,7 @@ export interface ICompleteTenantRegistrationInput {
     companyName: string | undefined;
     siteUrl: string | undefined;
     adminPassword: string;
+    returnBearerToken: boolean;
 }
 
 export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
@@ -56145,6 +56149,8 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
     isEmailConfirmationRequired!: boolean;
     loginLink!: string | undefined;
     paymentLink!: string | undefined;
+    bearerAccessToken!: string | undefined;
+    bearerRefreshToken!: string | undefined;
 
     constructor(data?: ICompleteTenantRegistrationOutput) {
         if (data) {
@@ -56165,6 +56171,8 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
             this.isEmailConfirmationRequired = _data["isEmailConfirmationRequired"];
             this.loginLink = _data["loginLink"];
             this.paymentLink = _data["paymentLink"];
+            this.bearerAccessToken = _data["bearerAccessToken"];
+            this.bearerRefreshToken = _data["bearerRefreshToken"];
         }
     }
 
@@ -56185,6 +56193,8 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
         data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
         data["loginLink"] = this.loginLink;
         data["paymentLink"] = this.paymentLink;
+        data["bearerAccessToken"] = this.bearerAccessToken;
+        data["bearerRefreshToken"] = this.bearerRefreshToken;
         return data;
     }
 }
@@ -56198,6 +56208,8 @@ export interface ICompleteTenantRegistrationOutput {
     isEmailConfirmationRequired: boolean;
     loginLink: string | undefined;
     paymentLink: string | undefined;
+    bearerAccessToken: string | undefined;
+    bearerRefreshToken: string | undefined;
 }
 
 export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
@@ -75895,7 +75907,7 @@ export interface IKeyValuePairOfBureauListOfScoreHistoryDto {
 
 export class KlaviyoSettingsDto implements IKlaviyoSettingsDto {
     isEnabled!: boolean;
-    apiKey!: string;
+    apiKey!: string | undefined;
 
     constructor(data?: IKlaviyoSettingsDto) {
         if (data) {
@@ -75930,7 +75942,7 @@ export class KlaviyoSettingsDto implements IKlaviyoSettingsDto {
 
 export interface IKlaviyoSettingsDto {
     isEnabled: boolean;
-    apiKey: string;
+    apiKey: string | undefined;
 }
 
 export class LanguageTextListDto implements ILanguageTextListDto {
@@ -90998,6 +91010,62 @@ export interface ISendEmailInput {
     cc: string[] | undefined;
     bcc: string[] | undefined;
     body: string;
+}
+
+export class SendEmailsViaSendGridConfiguration implements ISendEmailsViaSendGridConfiguration {
+    channelCodes!: string[] | undefined;
+    defaultAffiliateCodes!: string[] | undefined;
+
+    constructor(data?: ISendEmailsViaSendGridConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["channelCodes"])) {
+                this.channelCodes = [] as any;
+                for (let item of _data["channelCodes"])
+                    this.channelCodes!.push(item);
+            }
+            if (Array.isArray(_data["defaultAffiliateCodes"])) {
+                this.defaultAffiliateCodes = [] as any;
+                for (let item of _data["defaultAffiliateCodes"])
+                    this.defaultAffiliateCodes!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SendEmailsViaSendGridConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendEmailsViaSendGridConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.channelCodes)) {
+            data["channelCodes"] = [];
+            for (let item of this.channelCodes)
+                data["channelCodes"].push(item);
+        }
+        if (Array.isArray(this.defaultAffiliateCodes)) {
+            data["defaultAffiliateCodes"] = [];
+            for (let item of this.defaultAffiliateCodes)
+                data["defaultAffiliateCodes"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISendEmailsViaSendGridConfiguration {
+    channelCodes: string[] | undefined;
+    defaultAffiliateCodes: string[] | undefined;
 }
 
 export class SendEmailToContactConfiguration implements ISendEmailToContactConfiguration {
