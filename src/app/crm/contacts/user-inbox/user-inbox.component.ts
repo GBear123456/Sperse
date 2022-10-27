@@ -342,7 +342,7 @@ export class UserInboxComponent implements OnDestroy {
                 {
                     name: 'resend',
                     visible: this.isActiveEmailType,
-                    action: this.forward.bind(this),
+                    action: this.resend.bind(this),
                     disabled: !this.isSendSmsAndEmailAllowed
                 }
             ]
@@ -595,6 +595,24 @@ export class UserInboxComponent implements OnDestroy {
                 'Subject: ' + this.activeMessage.subject + '<br>' +
                 'To: ' + this.activeMessage.to + '<br></div><br><br>' + this.activeMessage.body
         });
+    }
+
+    resend() {
+        this.showNewEmailDialog('Resend', {
+            ...this.activeMessage,
+            to: this.spitMessageAddresses(this.activeMessage.to),
+            cc: this.spitMessageAddresses(this.activeMessage.cc),
+            bcc: this.spitMessageAddresses(this.activeMessage.bcc),
+            replyTo: this.spitMessageAddresses(this.activeMessage.replyTo),
+            isResend: true
+        });
+    }
+
+    spitMessageAddresses(addresses: string): string[] {
+        if (!addresses)
+            return [];
+
+        return addresses.split(',');
     }
 
     showNewEmailDialog(title = 'NewEmail', data: any = {}) {

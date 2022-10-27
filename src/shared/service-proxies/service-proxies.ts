@@ -79140,6 +79140,7 @@ export class MessageDto implements IMessageDto {
     cc!: string | undefined;
     bcc!: string | undefined;
     subject!: string | undefined;
+    previewText!: string | undefined;
     creationTime!: moment.Moment;
     deliveryType!: CommunicationMessageDeliveryType;
     status!: CommunicationMessageSendingStatus;
@@ -79176,6 +79177,7 @@ export class MessageDto implements IMessageDto {
             this.cc = _data["cc"];
             this.bcc = _data["bcc"];
             this.subject = _data["subject"];
+            this.previewText = _data["previewText"];
             this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
             this.deliveryType = _data["deliveryType"];
             this.status = _data["status"];
@@ -79216,6 +79218,7 @@ export class MessageDto implements IMessageDto {
         data["cc"] = this.cc;
         data["bcc"] = this.bcc;
         data["subject"] = this.subject;
+        data["previewText"] = this.previewText;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
@@ -79245,6 +79248,7 @@ export interface IMessageDto {
     cc: string | undefined;
     bcc: string | undefined;
     subject: string | undefined;
+    previewText: string | undefined;
     creationTime: moment.Moment;
     deliveryType: CommunicationMessageDeliveryType;
     status: CommunicationMessageSendingStatus;
@@ -79266,6 +79270,7 @@ export class MessageListDto implements IMessageListDto {
     cc!: string | undefined;
     bcc!: string | undefined;
     subject!: string | undefined;
+    previewText!: string | undefined;
     creationTime!: moment.Moment;
     deliveryType!: CommunicationMessageDeliveryType;
     status!: CommunicationMessageSendingStatus;
@@ -79296,6 +79301,7 @@ export class MessageListDto implements IMessageListDto {
             this.cc = _data["cc"];
             this.bcc = _data["bcc"];
             this.subject = _data["subject"];
+            this.previewText = _data["previewText"];
             this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
             this.deliveryType = _data["deliveryType"];
             this.status = _data["status"];
@@ -79330,6 +79336,7 @@ export class MessageListDto implements IMessageListDto {
         data["cc"] = this.cc;
         data["bcc"] = this.bcc;
         data["subject"] = this.subject;
+        data["previewText"] = this.previewText;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
@@ -79357,6 +79364,7 @@ export interface IMessageListDto {
     cc: string | undefined;
     bcc: string | undefined;
     subject: string | undefined;
+    previewText: string | undefined;
     creationTime: moment.Moment;
     deliveryType: CommunicationMessageDeliveryType;
     status: CommunicationMessageSendingStatus;

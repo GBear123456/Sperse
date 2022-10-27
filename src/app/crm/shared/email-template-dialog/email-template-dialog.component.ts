@@ -223,7 +223,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (this.fromDataSource.length) {
             let from = this.fromDataSource.find(item => item.emailSettingsSource == EmailSettingsSource.User) || this.fromDataSource[0];
             this.data.emailSettingsSource = from.emailSettingsSource;
-            this.checkUpdateCCFromEmail(from);
+            if (!this.data.isResend)
+                this.checkUpdateCCFromEmail(from);
         }
     }
 
