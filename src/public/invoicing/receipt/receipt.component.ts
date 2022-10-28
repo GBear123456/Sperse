@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GetInvoiceReceiptInfoOutput, InvoiceStatus, UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-proxies';
 
 /** Third party imports */
@@ -23,6 +23,7 @@ import { ContditionsModalData } from '../../../shared/common/conditions-modal/co
 export class ReceiptComponent implements OnInit {
     loading: boolean = true;
     invoiceInfo: GetInvoiceReceiptInfoOutput;
+    returnText: string = '';
     currentYear: number = new Date().getFullYear();
     conditions = ConditionsType;
 
@@ -33,15 +34,16 @@ export class ReceiptComponent implements OnInit {
     failMessage: string = '';
 
     constructor(
-        private route: ActivatedRoute,
+        private router: Router,
+        private activatedRoute: ActivatedRoute,
         private userInvoiceService: UserInvoiceServiceProxy,
         private dialog: MatDialog
     ) {
     }
 
     ngOnInit(): void {
-        const tenantId: any = this.route.snapshot.paramMap.get('tenantId');
-        const publicId = this.route.snapshot.paramMap.get('publicId');
+        const tenantId: any = this.activatedRoute.snapshot.paramMap.get('tenantId');
+        const publicId = this.activatedRoute.snapshot.paramMap.get('publicId');
         abp.ui.setBusy();
         this.getInvoiceInfo(tenantId, publicId);
     }
@@ -67,6 +69,7 @@ export class ReceiptComponent implements OnInit {
                     case InvoiceStatus.Paid:
                         {
                             this.invoiceInfo = result;
+                            this.setReturnLinkInfo();
                             this.loading = false;
                             abp.ui.clearBusy();
                             return;
@@ -80,6 +83,29 @@ export class ReceiptComponent implements OnInit {
                         }
                 }
             });
+    }
+
+    setReturnLinkInfo() {
+        if (!this.invoiceInfo.isTenantInvoice)
+            return;
+
+        this.returnText = abp.session.userId ?
+            'Return to System' :
+            'Login to System';
+    }
+
+    returnLinkClick() {
+        abp.ui.setBusy();
+        let promise: Promise<boolean>;
+        if (abp.session.userId) {
+            promise = this.router.navigate(['/app/crm']);
+        }
+        else {
+            sessionStorage.setItem('redirectUrl', `${location.origin}/app/crm`);
+            promise = this.router.navigate(['/account/login']);
+        }
+
+        promise.finally(() => abp.ui.clearBusy())
     }
 
     openConditionsDialog(type: ConditionsType) {

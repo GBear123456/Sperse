@@ -69,7 +69,7 @@ export class UserInboxComponent implements OnDestroy {
             hint: this.ls.l(item)
         };
     });
-    get isActiveEmilType(): boolean {
+    get isActiveEmailType(): boolean {
         return this.activeMessage && this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email;
     }
     isSendSmsAndEmailAllowed = false;
@@ -323,20 +323,26 @@ export class UserInboxComponent implements OnDestroy {
             items: [
                 {
                     name: 'reply',
-                    visible: this.isActiveEmilType,
+                    visible: this.isActiveEmailType,
                     action: () => this.reply(),
                     disabled: !this.isSendSmsAndEmailAllowed
                 },
                 {
                     name: 'replyToAll',
-                    visible: this.isActiveEmilType,
+                    visible: this.isActiveEmailType,
                     action: () => this.reply(true),
                     disabled: !this.isSendSmsAndEmailAllowed || !this.activeMessage || !this.activeMessage.cc
                 },
                 {
                     name: 'forward',
-                    visible: this.isActiveEmilType,
+                    visible: this.isActiveEmailType,
                     action: this.forward.bind(this),
+                    disabled: !this.isSendSmsAndEmailAllowed
+                },
+                {
+                    name: 'resend',
+                    visible: this.isActiveEmailType,
+                    action: this.resend.bind(this),
                     disabled: !this.isSendSmsAndEmailAllowed
                 }
             ]
@@ -458,7 +464,7 @@ export class UserInboxComponent implements OnDestroy {
         this.activeMessage = record.message = message;
         this.isNotListedMessage = false;
         this.checkExpandRecord(record);
-        if (this.isActiveEmilType)
+        if (this.isActiveEmailType)
             this.showEmailContent();
         this.initContentToolbar();
         this.scrollToActiveMessage();
@@ -591,6 +597,24 @@ export class UserInboxComponent implements OnDestroy {
         });
     }
 
+    resend() {
+        this.showNewEmailDialog('Resend', {
+            ...this.activeMessage,
+            to: this.spitMessageAddresses(this.activeMessage.to),
+            cc: this.spitMessageAddresses(this.activeMessage.cc),
+            bcc: this.spitMessageAddresses(this.activeMessage.bcc),
+            replyTo: this.spitMessageAddresses(this.activeMessage.replyTo),
+            isResend: true
+        });
+    }
+
+    spitMessageAddresses(addresses: string): string[] {
+        if (!addresses)
+            return [];
+
+        return addresses.split(',');
+    }
+
     showNewEmailDialog(title = 'NewEmail', data: any = {}) {
         data = Object.assign({
             contactId: this.contactId,
@@ -618,7 +642,7 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     extendMessage() {
-        if (this.isActiveEmilType)
+        if (this.isActiveEmailType)
             this.showNewEmailDialog(undefined, {
                 replyToId: this.activeMessage.id,
                 subject: 'Re: ' + this.activeMessage.subject,

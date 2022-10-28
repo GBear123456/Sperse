@@ -103,8 +103,8 @@
                 </ng-container>
             </ng-container>
             <div class="content {{activeMessage.deliveryType | lowercase}}">
-                <iframe [hidden]="!isActiveEmilType" #emailContent frameborder="0" width="100%"></iframe>
-                <dx-scroll-view *ngIf="!isActiveEmilType" showScrollbar="onHover">
+                <iframe [hidden]="!isActiveEmailType" #emailContent frameborder="0" width="100%"></iframe>
+                <dx-scroll-view *ngIf="!isActiveEmailType" showScrollbar="onHover">
                     <div class="message-wrapper">
                         <div [ngClass]="{to: activeMessage.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>                        
                         <div [ngClass]="{from: !activeMessage.isInbound, to: activeMessage.isInbound}" class="body date" [innerHtml]="activeMessage?.body" [attr.date]="activeMessage?.creationTime | datetime: formatting.fieldDateTime"></div>
@@ -130,7 +130,7 @@
                         </div>
                     </dx-scroll-view>
                 </div>
-                <div class="input-form" *ngIf="!isActiveEmilType">
+                <div class="input-form" *ngIf="!isActiveEmailType">
                     <div>
                         <img src="assets/common/icons/page.svg" class="page" (click)="extendMessage()">
                         <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)">

@@ -49,8 +49,8 @@
                         </a>
                     </div>
                 </div>
-                <div *ngIf="invoiceInfo.loginLink" class="row top-indent login-row">
-                    <a href="{{invoiceInfo.loginLink}}">Login to System</a>
+                <div *ngIf="returnText" class="row top-indent login-row">
+                    <a (click)="returnLinkClick()">{{returnText}}</a>
                 </div>
             </div>
         </div>
