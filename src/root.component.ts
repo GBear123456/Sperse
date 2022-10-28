@@ -44,7 +44,7 @@ export class RootComponent implements OnInit, AfterViewInit {
             filter((event) => {
                 if (event instanceof NavigationEnd) {
                     this.document.body.querySelectorAll('div.initial').forEach(elm => {
-                        setTimeout(() => this.document.body.removeChild(elm), 1000);
+                        setTimeout(() => this.document.body.removeChild(elm), 100);
                     });                    
                     return true;
                 }
