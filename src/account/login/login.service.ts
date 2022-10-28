@@ -247,8 +247,7 @@ export class LoginService {
         return this.router.navigate([], {
             queryParams: {
                 'code': null,
-                'state': null,
-                referrer: null
+                'state': null
             },
             queryParamsHandling: 'merge'
         });
@@ -281,12 +280,14 @@ export class LoginService {
                     .subscribe((result: ExternalAuthenticateResultModel) => {                       
                         let uri = this.router.routerState.snapshot.url;
                         if (result.userNotFound) {
-                            this.router.navigate(['account/signup'], {queryParams: {
-                                referrer: location.href,
-                                extlogin: setCookiesOnly,
-                                code: exchangeCode,
-                                state: state
-                            }});
+                            this.router.navigate(['account/signup'], {
+                                queryParams: {
+                                    extlogin: setCookiesOnly,
+                                    code: exchangeCode,
+                                    state: state
+                                },
+                                state: result
+                            });
                         } else {
                             onSuccessCallback(result);
                             this.processAuthenticateResult(result, 
