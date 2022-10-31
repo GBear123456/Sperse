@@ -76,6 +76,7 @@ export class LoginService {
     resetPasswordResult: SendPasswordResetCodeOutput;
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
     linkedIdLoginProvider$: Observable<ExternalLoginProvider>;
+    linkedInLastAuthResult: ExternalAuthenticateResultModel;
 
     constructor(
         private tokenAuthService: TokenAuthServiceProxy,
@@ -278,15 +279,14 @@ export class LoginService {
                 this.tokenAuthService.linkedInAuthenticate(model)
                     .pipe(finalize(() => abp.ui.clearBusy()))
                     .subscribe((result: ExternalAuthenticateResultModel) => {                       
-                        let uri = this.router.routerState.snapshot.url;
+                        this.linkedInLastAuthResult = result;
                         if (result.userNotFound) {
                             this.router.navigate(['account/signup'], {
                                 queryParams: {
                                     extlogin: setCookiesOnly,
                                     code: exchangeCode,
                                     state: state
-                                },
-                                state: result
+                                }
                             });
                         } else {
                             onSuccessCallback(result);

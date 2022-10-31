@@ -148,7 +148,7 @@ export class HostSignupFormComponent {
     }
 
     getUserData(exchangeCode, url): Observable<LinkedInUserData> {
-        let state = this.router.getCurrentNavigation().extras.state;
+        let state = this.loginService.linkedInLastAuthResult;
         if (state && state.userNotFound)
             return of(new LinkedInUserData({
                 name: state.firstName,
