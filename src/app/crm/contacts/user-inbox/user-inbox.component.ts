@@ -569,7 +569,7 @@ export class UserInboxComponent implements OnDestroy {
                 [(this.activeMessage.fromUserName || '') + ' <' + this.activeMessage.from + '>'] :
                 this.spitMessageAddresses(this.activeMessage.to),
             cc: ccList,
-            bcc: this.spitMessageAddresses(this.activeMessage.bcc),
+            bcc: [],
             subject: (this.activeMessage.subject.startsWith('Re:') ? '' : 'Re: ') + this.activeMessage.subject,
             body: '<br><br><div dir="ltr">On ' +
                 this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss A') + ' ' + (this.activeMessage.fromUserName || '') +
