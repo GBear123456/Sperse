@@ -8,7 +8,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MessageService, NotifyService } from 'abp-ng2-module';
 import { MatDialog } from '@angular/material/dialog';
 import { first, finalize } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -116,13 +116,12 @@ export class HostSignupFormComponent {
                     first()
                 ).subscribe((paramsMap: ParamMap) => {
                     let exchangeCode = paramsMap.get('code');
-                    let referrer = paramsMap.get('referrer');
                     let state = paramsMap.get('state');
                     if (!!exchangeCode && !!state) {
                         abp.ui.setBusy();
                         this.loginService.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state)
                             .then(() => {
-                                this.linkedInService.getUserData(exchangeCode, referrer || window.location.href)
+                                this.getUserData(exchangeCode, window.location.href)
                                     .pipe(finalize(() => abp.ui.clearBusy()))
                                     .subscribe((result: LinkedInUserData) => {
                                         this.tenancyRequestModel.firstName = result.name;
@@ -146,6 +145,18 @@ export class HostSignupFormComponent {
         this.profileService.getPasswordComplexitySetting().subscribe(result => {
             this.passwordComplexitySetting = result.setting;
         });
+    }
+
+    getUserData(exchangeCode, url): Observable<LinkedInUserData> {
+        let state = this.router.getCurrentNavigation().extras.state;
+        if (state && state.userNotFound)
+            return of(new LinkedInUserData({
+                name: state.firstName,
+                surname: state.lastName,
+                emailAddress: state.email
+            }));
+        else
+            return this.linkedInService.getUserData(exchangeCode, url);
     }
 
     onFocus(): void {
