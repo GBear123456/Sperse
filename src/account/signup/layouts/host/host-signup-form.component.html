@@ -67,7 +67,7 @@
           </div>
         </div>
         <div class="input">
-          <label>Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="tenancyRequestModel.email" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="emailRegexp" required>
+          <label class="email">Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="tenancyRequestModel.email" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="emailRegexp" required>
             <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
           </label>
         </div>
