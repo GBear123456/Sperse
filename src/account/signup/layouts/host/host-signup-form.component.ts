@@ -228,6 +228,7 @@ export class HostSignupFormComponent {
             return;
 
         this.tenantRegistrationModel.requestXref = this.leadRequestXref;
+        this.tenantRegistrationModel.returnBearerToken = this.isExtLogin;
         this.tenantRegistrationModel.companyName = (this.tenantRegistrationModel.tenantName || '').trim();
         this.tenantRegistrationModel.tenancyName = this.clearUrlPrefix(this.tenantRegistrationModel.tenancyName);
 
@@ -236,6 +237,21 @@ export class HostSignupFormComponent {
             finalize(() => this.finishLoading())
         ).subscribe((res: CompleteTenantRegistrationOutput) => {
             this.congratulationLink = res.paymentLink || res.loginLink;
+
+            if (res.bearerAccessToken)
+                abp.auth.setToken(
+                    res.bearerAccessToken,
+                    undefined
+                );
+
+            if (res.bearerRefreshToken)
+                abp.utils.setCookieValue(
+                    AppConsts.authorization.refreshAuthTokenName,
+                    res.bearerRefreshToken,
+                    undefined,
+                    abp.appPath
+                );
+
             this.changeDetectorRef.detectChanges();            
         });
     }
