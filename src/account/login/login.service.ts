@@ -76,6 +76,7 @@ export class LoginService {
     resetPasswordResult: SendPasswordResetCodeOutput;
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
     linkedIdLoginProvider$: Observable<ExternalLoginProvider>;
+    linkedInLastAuthResult: ExternalAuthenticateResultModel;
 
     constructor(
         private tokenAuthService: TokenAuthServiceProxy,
@@ -247,7 +248,7 @@ export class LoginService {
         return this.router.navigate([], {
             queryParams: {
                 'code': null,
-                'state': null,
+                'state': null
             },
             queryParamsHandling: 'merge'
         });
@@ -277,10 +278,21 @@ export class LoginService {
 
                 this.tokenAuthService.linkedInAuthenticate(model)
                     .pipe(finalize(() => abp.ui.clearBusy()))
-                    .subscribe((result: ExternalAuthenticateResultModel) => {
-                        onSuccessCallback(result);
-                        this.processAuthenticateResult(result, 
-                            result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
+                    .subscribe((result: ExternalAuthenticateResultModel) => {                       
+                        this.linkedInLastAuthResult = result;
+                        if (result.userNotFound) {
+                            this.router.navigate(['account/signup'], {
+                                queryParams: {
+                                    extlogin: setCookiesOnly,
+                                    code: exchangeCode,
+                                    state: state
+                                }
+                            });
+                        } else {
+                            onSuccessCallback(result);
+                            this.processAuthenticateResult(result, 
+                                result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
+                        }
                     });
             });
     }

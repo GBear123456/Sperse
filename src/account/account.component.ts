@@ -29,6 +29,8 @@ export class AdLayoutHostDirective {
     templateUrl: './account.component.html',
     styleUrls: [
         '../shared/common/styles/core.less',
+        '../node_modules/devextreme/dist/css/dx.common.css',
+        '../node_modules/devextreme/dist/css/dx.light.css',
         './account.component.less'
     ],
     encapsulation: ViewEncapsulation.None

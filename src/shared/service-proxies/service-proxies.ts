@@ -56197,6 +56197,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
     companyName!: string | undefined;
     siteUrl!: string | undefined;
     adminPassword!: string;
+    returnBearerToken!: boolean;
 
     constructor(data?: ICompleteTenantRegistrationInput) {
         if (data) {
@@ -56215,6 +56216,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
             this.companyName = _data["companyName"];
             this.siteUrl = _data["siteUrl"];
             this.adminPassword = _data["adminPassword"];
+            this.returnBearerToken = _data["returnBearerToken"];
         }
     }
 
@@ -56233,6 +56235,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
         data["companyName"] = this.companyName;
         data["siteUrl"] = this.siteUrl;
         data["adminPassword"] = this.adminPassword;
+        data["returnBearerToken"] = this.returnBearerToken;
         return data;
     }
 }
@@ -56244,6 +56247,7 @@ export interface ICompleteTenantRegistrationInput {
     companyName: string | undefined;
     siteUrl: string | undefined;
     adminPassword: string;
+    returnBearerToken: boolean;
 }
 
 export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
@@ -56255,6 +56259,8 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
     isEmailConfirmationRequired!: boolean;
     loginLink!: string | undefined;
     paymentLink!: string | undefined;
+    bearerAccessToken!: string | undefined;
+    bearerRefreshToken!: string | undefined;
 
     constructor(data?: ICompleteTenantRegistrationOutput) {
         if (data) {
@@ -56275,6 +56281,8 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
             this.isEmailConfirmationRequired = _data["isEmailConfirmationRequired"];
             this.loginLink = _data["loginLink"];
             this.paymentLink = _data["paymentLink"];
+            this.bearerAccessToken = _data["bearerAccessToken"];
+            this.bearerRefreshToken = _data["bearerRefreshToken"];
         }
     }
 
@@ -56295,6 +56303,8 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
         data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
         data["loginLink"] = this.loginLink;
         data["paymentLink"] = this.paymentLink;
+        data["bearerAccessToken"] = this.bearerAccessToken;
+        data["bearerRefreshToken"] = this.bearerRefreshToken;
         return data;
     }
 }
@@ -56308,6 +56318,8 @@ export interface ICompleteTenantRegistrationOutput {
     isEmailConfirmationRequired: boolean;
     loginLink: string | undefined;
     paymentLink: string | undefined;
+    bearerAccessToken: string | undefined;
+    bearerRefreshToken: string | undefined;
 }
 
 export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
