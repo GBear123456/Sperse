@@ -16,7 +16,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
-import { filter, finalize, first, map, skip, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, finalize, first, skip, switchMap, takeUntil } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 import DevExpress from 'devextreme/bundles/dx.all';
 
@@ -35,11 +35,10 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import {
-    CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
-    CommissionTier, UpdateCommissionAffiliateInput
+    CommissionServiceProxy, ProductServiceProxy,
+    CommissionTier, UpdateCommissionAffiliateInput, TenantPaymentSettingsServiceProxy, CommissionSettings
 } from '@shared/service-proxies/service-proxies';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
@@ -74,7 +73,7 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
         './commission-history.component.less'
     ],
     providers: [
-        ProductServiceProxy, LifecycleSubjectsService
+        ProductServiceProxy, LifecycleSubjectsService, TenantPaymentSettingsServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -462,17 +461,15 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         public dialog: MatDialog,
         public appService: AppService,
         private filtersService: FiltersService,
-        private invoicesService: InvoicesService,
         private productProxy: ProductServiceProxy,
         private commissionProxy: CommissionServiceProxy,
+        private paymentSettings: TenantPaymentSettingsServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
 
-        this.invoicesService.settings$.pipe(
-            filter(Boolean), first()
-        ).subscribe((res: InvoiceSettings) => {
+        this.paymentSettings.getCommissionSettings().subscribe((res: CommissionSettings) => {
             this.reconciliationFilter.items.element.dataSource.rate =
                 this.commissionFields.ResellerAffiliateRate + ' ne null and ' +
                 this.commissionFields.CommissionRate + ' ne ' + res.defaultAffiliateRate +

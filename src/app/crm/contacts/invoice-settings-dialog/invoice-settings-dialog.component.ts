@@ -42,7 +42,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
 
     settings = new InvoiceSettingsDto();
     subscriptionSettings = new SubscriptionSettings();
-    hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
     isRateDisabled = this.isManageUnallowed || !this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
@@ -102,8 +101,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             })
         ).subscribe((results) => {
             this.settings = new InvoiceSettingsDto(results[0]);
-            this.settings.defaultAffiliateRate = this.convertFromPercent(this.settings.defaultAffiliateRate);
-            this.settings.defaultAffiliateRateTier2 = this.convertFromPercent(this.settings.defaultAffiliateRateTier2);
             this.subscriptionSettings = new SubscriptionSettings(results[1])
             this.changeDetectorRef.markForCheck();
         });
@@ -115,8 +112,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             return;
 
         this.modalDialog.startLoading();
-        this.settings.defaultAffiliateRate = this.convertToPercent(this.settings.defaultAffiliateRate);
-        this.settings.defaultAffiliateRateTier2 = this.convertToPercent(this.settings.defaultAffiliateRateTier2);
         if (this.subscriptionSettings.defaultSubscriptionGracePeriodDayCount == undefined)
             this.subscriptionSettings.defaultSubscriptionGracePeriodDayCount = 0
         let requests: Observable<any>[] = [
@@ -144,18 +139,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
                 isManageUnallowed: this.isManageUnallowed
             }
         });
-    }
-
-    convertFromPercent(value: number): number {
-        if (value !== null)
-            return parseFloat((value * 100).toFixed(2));
-        return value;
-    }
-
-    convertToPercent(value: number): number {
-        if (value !== null)
-            return parseFloat((value / 100).toFixed(4));
-        return value;
     }
 
     openAdvisorContactList(event) {
