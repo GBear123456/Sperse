@@ -25,13 +25,13 @@
                     (onKeyUp)="onKeyUp($event)"
                     [value]="cell?.FullName">
                 </dx-text-box>
-                <div>{{cell?.AvailableBalance | currency: (currency$ | async)}}</div>                
+                <div>{{cell?.AvailableBalance | currency: currency}}</div>                
             </div>
         </dx-select-box>
         <dx-number-box
             [min]="1" 
             [placeholder]="ls.l('Amount')" 
-            [format]="{ style: 'currency', currency: currency$ | async, useGrouping: true }"
+            [format]="{ style: 'currency', currency: currency, useGrouping: true }"
             [(value)]="withdrawalAmount">
         </dx-number-box>
         <dx-date-box type="date" [(value)]="date" [max]="today"></dx-date-box>

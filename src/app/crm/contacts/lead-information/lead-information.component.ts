@@ -37,6 +37,7 @@ import { SourceContact } from '@shared/common/source-contact-list/source-contact
 import { LayoutSection } from '@app/crm/contacts/lead-information/layout-section.interface';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { OrganizationUnitsDialogData } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog-data.interface';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'lead-information',
@@ -68,7 +69,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
     private readonly APP_TAB_INDEX = 1;
     private organizationUnits: any;
     private readonly ident = 'LeadInformation';
-    public invoiceSettings: InvoiceSettings = new InvoiceSettings();
+    private currency: string = SettingsHelper.getCurrency();
 
     urlHelper = UrlHelper;
     isCGManageAllowed = false;
@@ -202,16 +203,11 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
             }
         }, this.ident);
 
-        this.invoicesService.settings$.pipe(
-            filter(Boolean), first()
-        ).subscribe((settings: InvoiceSettings) => {
-            this.invoiceSettings = settings;
-            this.layoutColumns[0][0].items.some(item => {
-                if (item.type && item.type.style == 'currency') {
-                    item.type.currency = settings.currency;
-                    return true;
-                }
-            });
+        this.layoutColumns[0][0].items.some(item => {
+            if (item.type && item.type.style == 'currency') {
+                item.type.currency = this.currency;
+                return true;
+            }
         });
     }
 
@@ -317,7 +313,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
             else
                 return value.format(this.formatting.fieldDateTime);
         } else if (this.hasFieldMoneyType(field))
-            return this.currencyPipe.transform(value, this.invoiceSettings.currency);
+            return this.currencyPipe.transform(value, this.currency);
         else if (field == 'ssn')
             return [value.slice(0, 3), value.slice(3, 5), value.slice(5, 9)].filter(Boolean).join('-');
         else

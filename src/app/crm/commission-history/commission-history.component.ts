@@ -65,6 +65,7 @@ import { LedgerType } from '@app/crm/commission-history/ledger-type.enum';
 import { LedgerStatus } from '@app/crm/commission-history/ledger-status.enum';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { CrmService } from '@app/crm/crm.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: './commission-history.component.html',
@@ -255,15 +256,11 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         text: this.l('Resellers')
     }];
 
-    currencyFormat$: Observable<DevExpress.ui.format> = this.invoicesService.settings$.pipe(
-        map((settings: InvoiceSettings) => {
-            return {
-                type: 'currency',
-                precision: 2,
-                currency: settings && settings.currency
-            };
-        })
-    );
+    currencyFormat: DevExpress.ui.format = {
+        type: 'currency',
+        precision: 2,
+        currency: SettingsHelper.getCurrency()
+    };
 
     get dxDataGrid(): DxDataGridComponent {
         return [
