@@ -212,7 +212,8 @@ export class HostSignupFormComponent {
         if (this.tenantRegistrationModel && !this.tenantRegistrationModel.tenancyName) {
             let suggestedDomain,
                 psl = require('psl'),
-                parsedDomain = psl.parse(this.clearUrlPrefix(this.tenantRegistrationModel.siteUrl));
+                parsedDomain = this.tenantRegistrationModel.siteUrl ? 
+                    psl.parse(this.clearUrlPrefix(this.tenantRegistrationModel.siteUrl)) : '';
             if (parsedDomain) {
                 suggestedDomain = parsedDomain.sld;
             }
