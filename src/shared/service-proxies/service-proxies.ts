@@ -42428,6 +42428,109 @@ export class TenantPaymentSettingsServiceProxy {
     /**
      * @return Success
      */
+    getCommissionSettings(): Observable<CommissionSettings> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetCommissionSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCommissionSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCommissionSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CommissionSettings>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CommissionSettings>;
+        }));
+    }
+
+    protected processGetCommissionSettings(response: HttpResponseBase): Observable<CommissionSettings> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CommissionSettings.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CommissionSettings>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateCommissionSettings(body: CommissionSettings | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateCommissionSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCommissionSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateCommissionSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateCommissionSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     getSubscriptionSettings(): Observable<SubscriptionSettings> {
         let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetSubscriptionSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -56165,6 +56268,54 @@ export enum CommissionLedgerEntryType {
     Withdrawal = "Withdrawal",
 }
 
+export class CommissionSettings implements ICommissionSettings {
+    defaultAffiliateRate!: number | undefined;
+    defaultAffiliateRateTier2!: number | undefined;
+    tier2CommissionSource!: Tier2CommissionSource;
+    commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode;
+
+    constructor(data?: ICommissionSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.defaultAffiliateRate = _data["defaultAffiliateRate"];
+            this.defaultAffiliateRateTier2 = _data["defaultAffiliateRateTier2"];
+            this.tier2CommissionSource = _data["tier2CommissionSource"];
+            this.commissionAffiliateAssignmentMode = _data["commissionAffiliateAssignmentMode"];
+        }
+    }
+
+    static fromJS(data: any): CommissionSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new CommissionSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["defaultAffiliateRateTier2"] = this.defaultAffiliateRateTier2;
+        data["tier2CommissionSource"] = this.tier2CommissionSource;
+        data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        return data;
+    }
+}
+
+export interface ICommissionSettings {
+    defaultAffiliateRate: number | undefined;
+    defaultAffiliateRateTier2: number | undefined;
+    tier2CommissionSource: Tier2CommissionSource;
+    commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode;
+}
+
 export enum CommissionTier {
     Tier1 = "Tier1",
     Tier2 = "Tier2",
@@ -67696,6 +67847,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
     timezoneForComparison!: string | undefined;
     zendeskAccountUrl!: string | undefined;
     publicPhone!: string | undefined;
+    currency!: Currency;
     publicSiteUrl!: string | undefined;
 
     constructor(data?: IGeneralSettingsEditDto) {
@@ -67714,6 +67866,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
             this.timezoneForComparison = _data["timezoneForComparison"];
             this.zendeskAccountUrl = _data["zendeskAccountUrl"];
             this.publicPhone = _data["publicPhone"];
+            this.currency = _data["currency"];
             this.publicSiteUrl = _data["publicSiteUrl"];
         }
     }
@@ -67732,6 +67885,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
         data["timezoneForComparison"] = this.timezoneForComparison;
         data["zendeskAccountUrl"] = this.zendeskAccountUrl;
         data["publicPhone"] = this.publicPhone;
+        data["currency"] = this.currency;
         data["publicSiteUrl"] = this.publicSiteUrl;
         return data;
     }
@@ -67743,6 +67897,7 @@ export interface IGeneralSettingsEditDto {
     timezoneForComparison: string | undefined;
     zendeskAccountUrl: string | undefined;
     publicPhone: string | undefined;
+    currency: Currency;
     publicSiteUrl: string | undefined;
 }
 
@@ -75520,13 +75675,8 @@ export class InvoiceSettings implements IInvoiceSettings {
     defaultTemplateId!: number | undefined;
     attachPDF!: boolean;
     defaultNote!: string | undefined;
-    currency!: Currency;
     showShippingAddress!: boolean;
-    defaultAffiliateRate!: number | undefined;
-    defaultAffiliateRateTier2!: number | undefined;
     defaultAdvisorContactId!: number | undefined;
-    tier2CommissionSource!: Tier2CommissionSource;
-    commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode;
     disableProlongingSubscriptionByQuantity!: boolean;
 
     constructor(data?: IInvoiceSettings) {
@@ -75546,13 +75696,8 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.defaultTemplateId = _data["defaultTemplateId"];
             this.attachPDF = _data["attachPDF"];
             this.defaultNote = _data["defaultNote"];
-            this.currency = _data["currency"];
             this.showShippingAddress = _data["showShippingAddress"];
-            this.defaultAffiliateRate = _data["defaultAffiliateRate"];
-            this.defaultAffiliateRateTier2 = _data["defaultAffiliateRateTier2"];
             this.defaultAdvisorContactId = _data["defaultAdvisorContactId"];
-            this.tier2CommissionSource = _data["tier2CommissionSource"];
-            this.commissionAffiliateAssignmentMode = _data["commissionAffiliateAssignmentMode"];
             this.disableProlongingSubscriptionByQuantity = _data["disableProlongingSubscriptionByQuantity"];
         }
     }
@@ -75572,13 +75717,8 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["defaultTemplateId"] = this.defaultTemplateId;
         data["attachPDF"] = this.attachPDF;
         data["defaultNote"] = this.defaultNote;
-        data["currency"] = this.currency;
         data["showShippingAddress"] = this.showShippingAddress;
-        data["defaultAffiliateRate"] = this.defaultAffiliateRate;
-        data["defaultAffiliateRateTier2"] = this.defaultAffiliateRateTier2;
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
-        data["tier2CommissionSource"] = this.tier2CommissionSource;
-        data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
         data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
         return data;
     }
@@ -75591,13 +75731,8 @@ export interface IInvoiceSettings {
     defaultTemplateId: number | undefined;
     attachPDF: boolean;
     defaultNote: string | undefined;
-    currency: Currency;
     showShippingAddress: boolean;
-    defaultAffiliateRate: number | undefined;
-    defaultAffiliateRateTier2: number | undefined;
     defaultAdvisorContactId: number | undefined;
-    tier2CommissionSource: Tier2CommissionSource;
-    commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode;
     disableProlongingSubscriptionByQuantity: boolean;
 }
 
@@ -75609,13 +75744,8 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
     defaultTemplateId!: number | undefined;
     attachPDF!: boolean;
     defaultNote!: string | undefined;
-    currency!: Currency;
     showShippingAddress!: boolean;
-    defaultAffiliateRate!: number | undefined;
-    defaultAffiliateRateTier2!: number | undefined;
     defaultAdvisorContactId!: number | undefined;
-    tier2CommissionSource!: Tier2CommissionSource;
-    commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode;
     disableProlongingSubscriptionByQuantity!: boolean;
 
     constructor(data?: IInvoiceSettingsDto) {
@@ -75636,13 +75766,8 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
             this.defaultTemplateId = _data["defaultTemplateId"];
             this.attachPDF = _data["attachPDF"];
             this.defaultNote = _data["defaultNote"];
-            this.currency = _data["currency"];
             this.showShippingAddress = _data["showShippingAddress"];
-            this.defaultAffiliateRate = _data["defaultAffiliateRate"];
-            this.defaultAffiliateRateTier2 = _data["defaultAffiliateRateTier2"];
             this.defaultAdvisorContactId = _data["defaultAdvisorContactId"];
-            this.tier2CommissionSource = _data["tier2CommissionSource"];
-            this.commissionAffiliateAssignmentMode = _data["commissionAffiliateAssignmentMode"];
             this.disableProlongingSubscriptionByQuantity = _data["disableProlongingSubscriptionByQuantity"];
         }
     }
@@ -75663,13 +75788,8 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
         data["defaultTemplateId"] = this.defaultTemplateId;
         data["attachPDF"] = this.attachPDF;
         data["defaultNote"] = this.defaultNote;
-        data["currency"] = this.currency;
         data["showShippingAddress"] = this.showShippingAddress;
-        data["defaultAffiliateRate"] = this.defaultAffiliateRate;
-        data["defaultAffiliateRateTier2"] = this.defaultAffiliateRateTier2;
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
-        data["tier2CommissionSource"] = this.tier2CommissionSource;
-        data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
         data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
         return data;
     }
@@ -75683,13 +75803,8 @@ export interface IInvoiceSettingsDto {
     defaultTemplateId: number | undefined;
     attachPDF: boolean;
     defaultNote: string | undefined;
-    currency: Currency;
     showShippingAddress: boolean;
-    defaultAffiliateRate: number | undefined;
-    defaultAffiliateRateTier2: number | undefined;
     defaultAdvisorContactId: number | undefined;
-    tier2CommissionSource: Tier2CommissionSource;
-    commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode;
     disableProlongingSubscriptionByQuantity: boolean;
 }
 
