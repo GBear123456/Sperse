@@ -19,6 +19,7 @@ import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { CommissionHistoryComponent } from './commission-history/commission-history.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { CrmContactGroupGuard } from '@app/crm/crm-contact-group-guard'
+import { InvoicesComponent } from './invoices/invoices.component';
 
 @NgModule({
     imports: [
@@ -35,6 +36,7 @@ import { CrmContactGroupGuard } from '@app/crm/crm-contact-group-guard'
                     { path: 'partners', component: PartnersComponent, data: { permission: AppPermissions.CRMPartners, reuse: true } },
                     { path: 'leads', component: LeadsComponent, data: { reuse: true, reuseComponent: true }, canActivate: [CrmContactGroupGuard] },
                     { path: 'orders', component: OrdersComponent, data: { permission: AppPermissions.CRMOrders, reuse: true } },
+                    { path: 'invoices', component: InvoicesComponent, data: { permission: AppPermissions.CRMOrdersInvoices, reuse: true } },
                     { path: 'import-leads', component: ImportLeadsComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRM, reuse: true } },

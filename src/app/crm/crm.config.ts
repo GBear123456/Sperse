@@ -42,6 +42,11 @@ export class CrmConfig implements ConfigInterface {
             route: '/app/crm/products'
         },
         {
+            text: 'Invoices',
+            permission: AppPermissions.CRMOrdersInvoices,
+            route: '/app/crm/invoices'
+        },
+        {
             text: 'Tasks',
             permission: AppPermissions.CRM,
             route: '/app/crm/activity'
