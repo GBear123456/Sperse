@@ -40,7 +40,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import {
     CommissionServiceProxy, InvoiceSettings, ProductServiceProxy, PayPalSettings,
-    TenantPaymentSettingsServiceProxy, CommissionTier, UpdateCommissionAffiliateInput
+    PaymentSettingType, CommissionTier, UpdateCommissionAffiliateInput
 } from '@shared/service-proxies/service-proxies';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
@@ -75,7 +75,7 @@ import { CrmService } from '@app/crm/crm.service';
         './commission-history.component.less'
     ],
     providers: [
-        ProductServiceProxy, LifecycleSubjectsService, TenantPaymentSettingsServiceProxy
+        ProductServiceProxy, LifecycleSubjectsService
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -461,8 +461,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     ];
 
     manageAllowed = this.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
-    payPalPaymentSettings: PayPalSettings = new PayPalSettings();
-
+    isPayPalPayoutEnabled: Boolean = false;
+                   
     constructor(
         injector: Injector,
         public dialog: MatDialog,
@@ -471,7 +471,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         private invoicesService: InvoicesService,
         private productProxy: ProductServiceProxy,
         private commissionProxy: CommissionServiceProxy,
-        private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef
     ) {
@@ -488,10 +487,10 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     ngOnInit() {
-        this.tenantPaymentSettingsService.getPayPalSettings(
-        ).subscribe(payPalSettings => {
-            this.payPalPaymentSettings = payPalSettings;
-        });
+        this.commissionProxy.getAvailablePayoutTypes(
+            ).subscribe((payoutTypes: PaymentSettingType[]) => {
+                this.isPayPalPayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.PayPal);
+            });
 
         this.handleDataGridUpdate();
         this.handleFiltersPining();
@@ -741,7 +740,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 },
                                 {
                                     text: this.l('PayWithPayPal'),                                    
-                                    disabled: !this.payPalPaymentSettings.clientSecret ||
+                                    disabled: !this.isPayPalPayoutEnabled ||
                                         !abp.features.isEnabled(AppFeatures.CRMPayments),
                                     action: this.applyPayPalComplete.bind(this)
                                 }
