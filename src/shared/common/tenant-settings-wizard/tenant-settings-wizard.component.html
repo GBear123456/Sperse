@@ -63,6 +63,11 @@
                 <commissions-settings></commissions-settings>
             </ng-container>
         </mat-step>
+        <mat-step *ngIf="showOtherSettings" #otherStep>
+            <ng-container *ngIf="stepper.selected === otherStep">
+                <other-settings></other-settings>
+            </ng-container>
+        </mat-step>
     </mat-vertical-stepper>
     <div mat-dialog-actions>
         <button mat-button class="skip" (click)="next()">{{ ls.l('SkipForNow') }}</button>

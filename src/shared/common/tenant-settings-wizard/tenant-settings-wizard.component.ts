@@ -48,6 +48,7 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
 import { CommissionsComponent } from './commissions/commissions.component';
+import { OtherSettingsComponent } from './other-settings/other-settings.component';
 
 @Component({
     selector: 'tenant-settings-wizard',
@@ -65,12 +66,14 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(EmailComponent) emailComponent: EmailComponent;
     @ViewChild(MemberPortalComponent) memberPortalComponent: MemberPortalComponent;
     @ViewChild(CommissionsComponent) commissionsComponent: CommissionsComponent;
+    @ViewChild(OtherSettingsComponent) otherSettingsComponent: OtherSettingsComponent;
     hasCustomizationsFeture = this.featureCheckerService.isEnabled(AppFeatures.AdminCustomizations);
     hasHostPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings);
     hasTenantPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings);
 
     showCommissionsSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions) &&
         (this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasHostPermission || this.hasTenantPermission);
+    showOtherSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && (this.hasHostPermission || this.hasTenantPermission);
 
     steps: TenantSettingsStep[];
     generalSettings$: Observable<GeneralSettingsEditDto> = this.tenantSettingsService.getGeneralSettings();
@@ -186,6 +189,13 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 getComponent: () => this.commissionsComponent,
                 saved: false,
                 visible: this.showCommissionsSettings
+            },
+            {
+                name: 'general-settings',
+                text: this.ls.l('Others'),
+                getComponent: () => this.otherSettingsComponent,
+                saved: false,
+                visible: this.showOtherSettings
             }
         ];
     }

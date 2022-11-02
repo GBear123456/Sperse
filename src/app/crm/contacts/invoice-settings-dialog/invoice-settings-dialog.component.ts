@@ -13,8 +13,7 @@ import {
     EmailTemplateType,
     TenantPaymentSettingsServiceProxy,
     InvoiceSettings,
-    InvoiceSettingsDto,
-    SubscriptionSettings
+    InvoiceSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -39,7 +38,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
 
     settings = new InvoiceSettingsDto();
-    subscriptionSettings = new SubscriptionSettings();
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
     buttons: IDialogButton[] = [
@@ -75,20 +73,16 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.modalDialog.startLoading();
-        let requests: Observable<any>[] = [
-            this.invoicesService.settings$.pipe(filter(Boolean), first()),
-            this.tenantPaymentSettingsProxy.getSubscriptionSettings()
-        ];
-        forkJoin(requests)
-        .pipe(
+        this.invoicesService.settings$.pipe(
+            filter(Boolean),
+            first(),
             finalize(() => {
                 this.modalDialog.finishLoading();
-            })
-        ).subscribe((results) => {
-            this.settings = new InvoiceSettingsDto(results[0]);
-            this.subscriptionSettings = new SubscriptionSettings(results[1])
-            this.changeDetectorRef.markForCheck();
-        });
+            }))
+            .subscribe((result: InvoiceSettingsDto) => {
+                this.settings = result;
+                this.changeDetectorRef.markForCheck();
+            });
         this.changeDetectorRef.detectChanges();
     }
 
@@ -97,22 +91,16 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             return;
 
         this.modalDialog.startLoading();
-        if (this.subscriptionSettings.defaultSubscriptionGracePeriodDayCount == undefined)
-            this.subscriptionSettings.defaultSubscriptionGracePeriodDayCount = 0
-        let requests: Observable<any>[] = [
-            this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings)),
-            this.tenantPaymentSettingsProxy.updateSubscriptionSettings(new SubscriptionSettings(this.subscriptionSettings))
-        ];
-        forkJoin(requests)
-        .pipe(
-            finalize(() => {
-                this.modalDialog.finishLoading();
-            })
-        ).subscribe(() => {
-            this.notifyService.info(this.ls.l('SavedSuccessfully'));
-            this.invoicesService.invalidateSettings(this.settings);
-            this.dialogRef.close(this.settings);
-        });
+        this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings))
+            .pipe(
+                finalize(() => {
+                    this.modalDialog.finishLoading();
+                })
+            ).subscribe(() => {
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.invoicesService.invalidateSettings(this.settings);
+                this.dialogRef.close(this.settings);
+            });
     }
 
     showBankSettingsDialog() {

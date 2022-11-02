@@ -30,6 +30,7 @@ import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/mem
 import { ContactsModule } from '@app/crm/contacts/contacts.module';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
 import { CommissionsComponent } from './commissions/commissions.component';
+import { OtherSettingsComponent } from './other-settings/other-settings.component'
 
 @NgModule({
     imports: [
@@ -61,7 +62,8 @@ import { CommissionsComponent } from './commissions/commissions.component';
         TenantManagementComponent,
         MemberPortalComponent,
         UserManagementComponent,
-        CommissionsComponent
+        CommissionsComponent,
+        OtherSettingsComponent
     ],
     entryComponents: [
         TenantSettingsWizardComponent
