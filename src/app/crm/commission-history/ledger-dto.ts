@@ -11,4 +11,5 @@ export interface LedgerDto {
     TotalAmount: number;
     Type: string;
     PaymentSystem: string;
+    PayPalEmailAddress: string;
 }
