@@ -155,6 +155,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.dataSource['total'] = this.totalCount = countSumDto.count;
                     this.totalSum = countSumDto.sum;
                 }
+                else {
+                    this.dataSource['total'] = this.totalCount = this.totalSum = 0;
+                }
             },
             errorHandler: (e: any) => {
                 this.totalErrorMsg = this.l('AnHttpErrorOccured');
