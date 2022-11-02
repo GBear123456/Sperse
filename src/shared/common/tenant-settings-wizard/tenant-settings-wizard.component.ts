@@ -47,6 +47,7 @@ import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/emai
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
+import { CommissionsComponent } from './commissions/commissions.component';
 
 @Component({
     selector: 'tenant-settings-wizard',
@@ -63,9 +64,14 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(SecurityComponent) securityComponent: SecurityComponent;
     @ViewChild(EmailComponent) emailComponent: EmailComponent;
     @ViewChild(MemberPortalComponent) memberPortalComponent: MemberPortalComponent;
+    @ViewChild(CommissionsComponent) commissionsComponent: CommissionsComponent;
     hasCustomizationsFeture = this.featureCheckerService.isEnabled(AppFeatures.AdminCustomizations);
     hasHostPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings);
     hasTenantPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings);
+
+    showCommissionsSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions) &&
+        (this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasHostPermission || this.hasTenantPermission);
+
     steps: TenantSettingsStep[];
     generalSettings$: Observable<GeneralSettingsEditDto> = this.tenantSettingsService.getGeneralSettings();
     tenantManagementSettings$: Observable<TenantManagementSettingsEditDto> = this.hostSettingsService.getTenantManagementSettings();
@@ -173,6 +179,13 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 getComponent: () => this.memberPortalComponent,
                 saved: false,
                 visible: !this.appService.isHostTenant && this.hasCustomizationsFeture
+            },
+            {
+                name: 'commissions',
+                text: this.ls.l('Commissions'),
+                getComponent: () => this.commissionsComponent,
+                saved: false,
+                visible: this.showCommissionsSettings
             }
         ];
     }

@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { NgxFileDropModule } from 'ngx-file-drop';
 
 /** Application imports */
@@ -28,6 +29,7 @@ import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/u
 import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
 import { ContactsModule } from '@app/crm/contacts/contacts.module';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
+import { CommissionsComponent } from './commissions/commissions.component';
 
 @NgModule({
     imports: [
@@ -40,6 +42,7 @@ import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-p
         MatSelectModule,
         DxCheckBoxModule,
         DxSelectBoxModule,
+        DxNumberBoxModule,
         MatInputModule,
         FormsModule,
         TimeZoneComboModule,
@@ -57,7 +60,8 @@ import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-p
         SecurityComponent,
         TenantManagementComponent,
         MemberPortalComponent,
-        UserManagementComponent
+        UserManagementComponent,
+        CommissionsComponent
     ],
     entryComponents: [
         TenantSettingsWizardComponent

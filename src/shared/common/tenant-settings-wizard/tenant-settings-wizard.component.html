@@ -58,6 +58,11 @@
         <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #memberPortalStep>
             <member-portal></member-portal>
         </mat-step>
+        <mat-step *ngIf="showCommissionsSettings" #commissionsStep>
+            <ng-container *ngIf="stepper.selected === commissionsStep">
+                <commissions-settings></commissions-settings>
+            </ng-container>
+        </mat-step>
     </mat-vertical-stepper>
     <div mat-dialog-actions>
         <button mat-button class="skip" (click)="next()">{{ ls.l('SkipForNow') }}</button>
