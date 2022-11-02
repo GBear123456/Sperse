@@ -14,9 +14,7 @@ import {
     TenantPaymentSettingsServiceProxy,
     InvoiceSettings,
     InvoiceSettingsDto,
-    SubscriptionSettings,
-    Tier2CommissionSource,
-    CommissionAffiliateAssignmentMode
+    SubscriptionSettings
 } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -44,7 +42,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     subscriptionSettings = new SubscriptionSettings();
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
-    isRateDisabled = this.isManageUnallowed || !this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     buttons: IDialogButton[] = [
         {
             id: 'cancelTemplateOptions',
@@ -61,18 +58,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         }
     ]
     EmailTemplateType = EmailTemplateType;
-    tier2SourceOptions = Object.keys(Tier2CommissionSource).map(item => {
-        return {
-            id: Tier2CommissionSource[item],
-            text: this.ls.l(item)
-        };
-    });
-    commissionAffiliateAssignmentModeOptions = Object.keys(CommissionAffiliateAssignmentMode).map(item => {
-        return {
-            id: CommissionAffiliateAssignmentMode[item],
-            text: this.ls.l('AffiliateAssignmentMode_' + item)
-        };
-    });
 
     constructor(
         public dialog: MatDialog,

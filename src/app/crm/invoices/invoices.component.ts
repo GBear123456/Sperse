@@ -41,6 +41,7 @@ import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Params } from '@angular/router';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -95,7 +96,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             },
             checkVisible: (data) => {
                 return [InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(data.Status) >= 0;
-            } 
+            }
         }
     ];
 
@@ -282,6 +283,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
+    showInvoiceSettings() {
+        this.dialog.open(InvoiceSettingsDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+        });
+    }
+
     showInvoiceDialog(data?: InvoiceDto) {
         let invoiceData = data ? { InvoiceId: data.Id, ContactId: data.ContactId } : null;
         this.dialog.open(CreateInvoiceDialogComponent, {
@@ -433,6 +442,20 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         }
                     }
                 ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [{
+                    name: 'rules',
+                    options: {
+                        text: this.l('Settings'),
+                        hint: this.l('Settings')
+                    },
+                    visible: this.isGranted(AppPermissions.CRMOrdersInvoices) ||
+                        this.isGranted(AppPermissions.CRMSettingsConfigure),
+                    action: this.showInvoiceSettings.bind(this)
+                }]
             },
             {
                 location: 'after',

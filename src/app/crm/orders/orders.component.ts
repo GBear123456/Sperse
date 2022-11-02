@@ -98,7 +98,6 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
-import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
@@ -1129,20 +1128,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             {
                 location: 'after',
                 locateInMenu: 'auto',
-                items: [{
-                    name: 'rules',
-                    options: {
-                        text: this.l('Settings'),
-                        hint: this.l('Settings')
-                    },
-                    visible: this.isGranted(AppPermissions.CRMOrdersInvoices) ||
-                        this.isGranted(AppPermissions.CRMSettingsConfigure),
-                    action: this.invoiceSettings.bind(this)
-                }]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
                 items: [
                     {
                         name: 'download',
@@ -1708,14 +1693,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             data: {
                 refreshParent: this.invalidate.bind(this)
             }
-        });
-    }
-
-    invoiceSettings() {
-        this.dialog.open(InvoiceSettingsDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
         });
     }
 
