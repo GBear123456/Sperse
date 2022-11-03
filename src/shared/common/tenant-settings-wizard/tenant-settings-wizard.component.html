@@ -63,6 +63,11 @@
                 <commissions-settings></commissions-settings>
             </ng-container>
         </mat-step>
+        <mat-step *ngIf="showBankTransferSettings" #bankTransferStep>
+            <ng-container *ngIf="stepper.selected === bankTransferStep">
+                <bank-transfer></bank-transfer>
+            </ng-container>
+        </mat-step>
         <mat-step *ngIf="showOtherSettings" #otherStep>
             <ng-container *ngIf="stepper.selected === otherStep">
                 <other-settings></other-settings>

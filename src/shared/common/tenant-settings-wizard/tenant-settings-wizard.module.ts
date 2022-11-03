@@ -14,6 +14,7 @@ import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { NgxFileDropModule } from 'ngx-file-drop';
 
 /** Application imports */
@@ -30,7 +31,8 @@ import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/mem
 import { ContactsModule } from '@app/crm/contacts/contacts.module';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
 import { CommissionsComponent } from './commissions/commissions.component';
-import { OtherSettingsComponent } from './other-settings/other-settings.component'
+import { BankTransferComponent } from './bank-transfer/bank-transfer.component';
+import { OtherSettingsComponent } from './other-settings/other-settings.component';
 
 @NgModule({
     imports: [
@@ -44,6 +46,7 @@ import { OtherSettingsComponent } from './other-settings/other-settings.componen
         DxCheckBoxModule,
         DxSelectBoxModule,
         DxNumberBoxModule,
+        DxTextBoxModule,
         MatInputModule,
         FormsModule,
         TimeZoneComboModule,
@@ -63,6 +66,7 @@ import { OtherSettingsComponent } from './other-settings/other-settings.componen
         MemberPortalComponent,
         UserManagementComponent,
         CommissionsComponent,
+        BankTransferComponent,
         OtherSettingsComponent
     ],
     entryComponents: [

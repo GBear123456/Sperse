@@ -48,6 +48,7 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
 import { CommissionsComponent } from './commissions/commissions.component';
+import { BankTransferComponent } from './bank-transfer/bank-transfer.component';
 import { OtherSettingsComponent } from './other-settings/other-settings.component';
 
 @Component({
@@ -66,6 +67,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(EmailComponent) emailComponent: EmailComponent;
     @ViewChild(MemberPortalComponent) memberPortalComponent: MemberPortalComponent;
     @ViewChild(CommissionsComponent) commissionsComponent: CommissionsComponent;
+    @ViewChild(BankTransferComponent) bankTransferComponent: BankTransferComponent;
     @ViewChild(OtherSettingsComponent) otherSettingsComponent: OtherSettingsComponent;
     hasCustomizationsFeture = this.featureCheckerService.isEnabled(AppFeatures.AdminCustomizations);
     hasHostPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings);
@@ -73,6 +75,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
 
     showCommissionsSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions) &&
         (this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasHostPermission || this.hasTenantPermission);
+    showBankTransferSettings = this.hasHostPermission || this.hasTenantPermission || this.permissionCheckerService.isGranted(AppPermissions.CRMSettingsConfigure);
     showOtherSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && (this.hasHostPermission || this.hasTenantPermission);
 
     steps: TenantSettingsStep[];
@@ -191,7 +194,14 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 visible: this.showCommissionsSettings
             },
             {
-                name: 'general-settings',
+                name: 'bankTransfer',
+                text: this.ls.l('BankTransfer'),
+                getComponent: () => this.bankTransferComponent,
+                saved: false,
+                visible: this.showBankTransferSettings
+            },
+            {
+                name: 'others',
                 text: this.ls.l('Others'),
                 getComponent: () => this.otherSettingsComponent,
                 saved: false,
