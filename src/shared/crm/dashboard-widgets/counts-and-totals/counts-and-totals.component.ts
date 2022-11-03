@@ -12,6 +12,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'counts-and-totals',
@@ -22,6 +23,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class CountsAndTotalsComponent implements AfterViewInit, OnDestroy {
     @Output() loadComplete: EventEmitter<any> = new EventEmitter();
+
+    currency: string = SettingsHelper.getCurrency();
 
     data: GetTotalsOutput;
     fields = this.dashboardService.totalsDataFields;

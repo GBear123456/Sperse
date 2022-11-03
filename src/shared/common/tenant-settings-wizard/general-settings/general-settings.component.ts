@@ -108,9 +108,9 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     }
 
     onCountryChanged(event) {
-        if (event.selectedItem.key == Country.Canada)
+        if (event.value == Country.Canada)
             this.settings.currency = Currency.CAD;
-        else if (event.selectedItem.key == Country.USA)
+        else if (event.value == Country.USA)
             this.settings.currency = Currency.USD;
     }
 

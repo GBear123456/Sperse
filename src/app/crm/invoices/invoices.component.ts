@@ -180,7 +180,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             enabled: !this.isReadOnly &&
                 !!appService.getFeatureCount(AppFeatures.CRMInvoicesManagement),
             action: () => this.showInvoiceDialog(),
-            label: this.l('AddInvoice')
+            label: this.l('CreateInvoice')
         });
         this.dataSource = new DataSource({ store: new ODataStore(this.dataStore) });
     }
