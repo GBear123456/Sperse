@@ -17,7 +17,7 @@
             [dataSource]="supportedCountries"
             (onValueChanged)="onCountryChanged($event)">
         </dx-select-box>
-        <div class="payment-settings" *ngIf="paymentSettingsAllowed">
+        <div class="payment-settings">
             <label for="Currency">{{ls.l("Currency")}}</label>
             <dx-select-box
                 width="290px"

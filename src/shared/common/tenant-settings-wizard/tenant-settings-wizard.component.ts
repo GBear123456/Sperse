@@ -47,6 +47,7 @@ import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/emai
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
+import { InvoiceSettingsComponent } from './invoice-settings/invoice-settings.component';
 import { CommissionsComponent } from './commissions/commissions.component';
 import { BankTransferComponent } from './bank-transfer/bank-transfer.component';
 import { OtherSettingsComponent } from './other-settings/other-settings.component';
@@ -66,6 +67,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(SecurityComponent) securityComponent: SecurityComponent;
     @ViewChild(EmailComponent) emailComponent: EmailComponent;
     @ViewChild(MemberPortalComponent) memberPortalComponent: MemberPortalComponent;
+    @ViewChild(InvoiceSettingsComponent) invoiceSettingsComponent: InvoiceSettingsComponent;
     @ViewChild(CommissionsComponent) commissionsComponent: CommissionsComponent;
     @ViewChild(BankTransferComponent) bankTransferComponent: BankTransferComponent;
     @ViewChild(OtherSettingsComponent) otherSettingsComponent: OtherSettingsComponent;
@@ -73,9 +75,11 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     hasHostPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings);
     hasTenantPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings);
 
+    hasHostTenantOrCRMSettings = this.hasHostPermission || this.hasTenantPermission || this.permissionCheckerService.isGranted(AppPermissions.CRMSettingsConfigure);
+    showInvoiceSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMInvoicesManagement) && this.hasHostTenantOrCRMSettings;
     showCommissionsSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions) &&
         (this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasHostPermission || this.hasTenantPermission);
-    showBankTransferSettings = this.hasHostPermission || this.hasTenantPermission || this.permissionCheckerService.isGranted(AppPermissions.CRMSettingsConfigure);
+    showBankTransferSettings = this.hasHostTenantOrCRMSettings;
     showOtherSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && (this.hasHostPermission || this.hasTenantPermission);
 
     steps: TenantSettingsStep[];
@@ -187,6 +191,13 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 visible: !this.appService.isHostTenant && this.hasCustomizationsFeture
             },
             {
+                name: 'invoice',
+                text: this.ls.l('Invoice'),
+                getComponent: () => this.invoiceSettingsComponent,
+                saved: false,
+                visible: this.showInvoiceSettings
+            },
+            {
                 name: 'commissions',
                 text: this.ls.l('Commissions'),
                 getComponent: () => this.commissionsComponent,
@@ -202,7 +213,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             },
             {
                 name: 'others',
-                text: this.ls.l('Others'),
+                text: this.ls.l('Other'),
                 getComponent: () => this.otherSettingsComponent,
                 saved: false,
                 visible: this.showOtherSettings

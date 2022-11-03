@@ -58,6 +58,11 @@
         <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #memberPortalStep>
             <member-portal></member-portal>
         </mat-step>
+        <mat-step *ngIf="showInvoiceSettings" #invoiceStep>
+            <ng-container *ngIf="stepper.selected === invoiceStep">
+                <invoice-settings></invoice-settings>
+            </ng-container>
+        </mat-step>
         <mat-step *ngIf="showCommissionsSettings" #commissionsStep>
             <ng-container *ngIf="stepper.selected === commissionsStep">
                 <commissions-settings></commissions-settings>

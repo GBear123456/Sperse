@@ -24,8 +24,6 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
-import { Observable } from 'rxjs/internal/Observable';
-import { forkJoin } from 'rxjs';
 
 @Component({
     templateUrl: 'invoice-settings-dialog.component.html',
