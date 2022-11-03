@@ -358,6 +358,11 @@
                                     cssClass="clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
+                        <dxi-column [dataField]="ledgerFields.PayPalEmailAddress"
+                                    [caption]="l('PayPal') + ' ' + l('EmailAddress')"
+                                    cssClass="clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
 
                         <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
                             {{cellData.value}}
