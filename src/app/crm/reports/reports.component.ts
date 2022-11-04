@@ -34,8 +34,6 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import {
-    Currency,
-    InvoiceSettings,
     ReportServiceProxy,
     SubscriberDailyStatsReportInfo,
     PaymentServiceProxy
@@ -51,7 +49,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { ReportType } from '@app/crm/reports/report-type.enum';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { SubscriptionTrackerDto } from '@app/crm/reports/subscription-tracker-dto';
@@ -69,6 +66,7 @@ import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-va
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { StarsStoreSelectors } from '@app/store';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'reports-component',
@@ -397,7 +395,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     formatting = AppConsts.formatting;
     userTimezone = DateHelper.getUserTimezone();
-    currency = 'USD';
+    currency = SettingsHelper.getCurrency();
     selectedReportType = ReportType.SalesReport;
     reportTypes = [
         {
@@ -437,7 +435,6 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         private phonePipe: PhoneFormatPipe,
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
-        private invoiceService: InvoicesService,
         private appSessionService: AppSessionService,
         private oDataService: ODataService,
         public ui: AppUiCustomizationService,
@@ -453,13 +450,6 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit(): void {
         this.activate();
-        this.invoiceService.settings$.pipe(
-            filter(Boolean),
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
-            map((settings: InvoiceSettings) => settings.currency)
-        ).subscribe((currency: Currency) => {
-            this.currency = currency.toString();
-        });
         this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
     }
 

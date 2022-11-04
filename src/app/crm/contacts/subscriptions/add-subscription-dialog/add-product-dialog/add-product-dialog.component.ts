@@ -16,11 +16,10 @@ import { getCurrencySymbol } from '@angular/common';
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Observable, of, zip } from 'rxjs';
-import { map, filter, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    InvoiceSettings,
     ProductServiceProxy,
     ProductGroupServiceProxy,
     MemberServiceServiceProxy,
@@ -48,6 +47,7 @@ import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dial
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Pipe({name:'FilterAssignments'})
 export class FilterAssignmentsPipe implements PipeTransform {
@@ -73,12 +73,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     isHostTenant = !abp.session.tenantId;
     product: CreateProductInput | UpdateProductInput;
-    amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),
-        map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
-    );
-    amountNullableFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),
-        map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,###.##')
-    );    
+    amountFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,##0.##';
+    amountNullableFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,###.##';
     products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription).pipe(
         map((products: ProductDto[]) => {
             return this.data.product && this.data.product.id ? 

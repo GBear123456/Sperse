@@ -12,12 +12,10 @@ import {
 import { AbstractControlDirective } from '@angular/forms';
 
 /** Third party imports */
-import { forkJoin, Observable, throwError, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 /** Application imports */
-import { AppPermissions } from '@shared/AppPermissions';
-import { PermissionCheckerService } from 'abp-ng2-module';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
@@ -25,9 +23,6 @@ import {
     SettingScopes,
     TenantLoginInfoDto,
     TenantSettingsServiceProxy,
-    TenantPaymentSettingsServiceProxy,
-    TimingServiceProxy,
-    InvoiceSettings,
     Currency
 } from '@shared/service-proxies/service-proxies';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
@@ -83,35 +78,23 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
             text: this.ls.l(item)
         };
     });
-    paymentSettingsAllowed =
-        this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ||
-        this.permissionService.isGranted(AppPermissions.CRMSettingsConfigure);
-    paymentSettings: InvoiceSettings = new InvoiceSettings();
     initialTimezone: string;
     initialCountry: string;
 
     constructor(
         private appSession: AppSessionService,
         private phoneNumberService: PhoneNumberService,
-        private timingService: TimingServiceProxy,
-        private permissionService: PermissionCheckerService,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
-        private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {
-        if (this.paymentSettingsAllowed)
-            this.tenantPaymentSettingsProxy.getInvoiceSettings(false).subscribe(res => {
-                this.paymentSettings = res;
-                this.changeDetectorRef.detectChanges();
-            });
     }
 
     onCountryChanged(event) {
-        if (event.selectedItem.key == Country.Canada)
-            this.paymentSettings.currency = Currency.CAD;
-        else if (event.selectedItem.key == Country.USA)
-            this.paymentSettings.currency = Currency.USD;
+        if (event.value == Country.Canada)
+            this.settings.currency = Currency.CAD;
+        else if (event.value == Country.USA)
+            this.settings.currency = Currency.USD;
     }
 
     onPhoneNumberChange(phone, elm) {
@@ -130,7 +113,6 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
                         this.onOptionChanged.emit('defaultCountry');
                     this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.settings.defaultCountryCode);
                 })),
-                this.tenantPaymentSettingsProxy.updateInvoiceSettings(this.paymentSettings),
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),
                 this.tosUploader ? this.tosUploader.uploadFile() : of(null)
             );

@@ -13,7 +13,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import oDataUtils from 'devextreme/data/odata/utils';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of, forkJoin } from 'rxjs';
-import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
 import extend from 'lodash/extend';
@@ -32,8 +32,7 @@ import {
     CreateStageInput,
     RenameStageInput,
     MergeStagesInput,
-    UpdateSortOrderInput,
-    InvoiceSettings
+    UpdateSortOrderInput
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
@@ -55,9 +54,9 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { AppPermissions } from '@shared/AppPermissions';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppService } from '@app/app.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'app-pipeline',
@@ -136,7 +135,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     searchClear = false;
     actionEvent: any;
-    currency: string;
+    currency: string = SettingsHelper.getCurrency();
 
     constructor(
         injector: Injector,
@@ -144,7 +143,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         private odataService: ODataService,
         private dragulaService: DragulaService,
         private pipelineService: PipelineService,
-        private invoicesService: InvoicesService,
         private stageServiceProxy: StageServiceProxy,
         private changeDetector: ChangeDetectorRef,
         private filtersService: FiltersService,
@@ -155,12 +153,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         public dialog: MatDialog
     ) {
         super(injector);
-
-        invoicesService.settings$.pipe(
-            filter(Boolean)
-        ).subscribe((res: InvoiceSettings) => {
-            this.currency = res.currency;
-        });
 
         this.filtersService.filterFixed$.pipe(
             switchMap(() => this.pipelineService.dataLayoutType$),

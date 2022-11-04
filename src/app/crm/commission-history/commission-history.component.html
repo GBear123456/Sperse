@@ -138,7 +138,7 @@
                         <dxi-column width="120px"
                                     [dataField]="commissionFields.ProductAmount"
                                     [caption]="l('Price')"
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column width="100px"
@@ -149,7 +149,7 @@
                         <dxi-column width="120px"
                                     [dataField]="commissionFields.CommissionableAmount"
                                     [caption]="l('CV')"
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column width="200px"
@@ -219,7 +219,7 @@
                         <dxi-column width="140px"
                                     [dataField]="commissionFields.CommissionAmount"
                                     [caption]="l('Commission')"
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column width="120px"
@@ -259,13 +259,13 @@
                             </dxi-group-item>
                             <dxi-group-item [column]="commissionFields.CommissionAmount"
                                             summaryType="sum"
-                                            [valueFormat]="currencyFormat$ | async"
+                                            [valueFormat]="currencyFormat"
                                             [displayFormat]="l('Commission') + ' ' + l('Total') + ': {0}'">
                             </dxi-group-item>
                             <dxi-total-item [column]="commissionFields.CommissionAmount"
                                             [showInColumn]="commissionFields.OrderNumber"
                                             [displayFormat]="l('Commission') + ' ' + l('Total') + ': {0}'"
-                                            [valueFormat]="currencyFormat$ | async"
+                                            [valueFormat]="currencyFormat"
                                             summaryType="sum">
                             </dxi-total-item>
                         </dxo-summary>
@@ -350,7 +350,7 @@
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.TotalAmount"
                                     [caption]="l('TotalAmount')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.PaymentSystem"
@@ -431,32 +431,32 @@
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.EarnedAmount"
                                     [caption]="l('EarnedAmount')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.PendingEarningsAmount"
                                     [caption]="l('PendingEarningsAmount')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.PendingWithdrawalsAmount"
                                     [caption]="l('PendingWithdrawalsAmount')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.UnaccountedEarningsAmount"
                                     [caption]="l('UnaccountedEarningsAmount')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.WithdrawnAmount"
                                     [caption]="l('WithdrawnAmount')"
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.AvailableBalance"
                                     [caption]="l('AvailableBalance')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.AffiliateCode"

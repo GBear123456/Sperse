@@ -1,0 +1,79 @@
+<h2>{{ ls.l('BankTransfer') }}</h2>
+<div class="" *ngIf="settings">
+    <dx-scroll-view [height]="450" showScrollbar="onHover">
+        <div class="form-group">
+            <label class="caption">{{ls.l('BankAccountNumber')}}:</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.bankAccountNumber">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label class="caption">{{ls.l('BankRoutingNumber')}}</label>
+            <dx-number-box [placeholder]="ls.l('EditValuePlaceholder')"
+                           [inputAttr]="{maxlength:9}"
+                           [(value)]="settings.bankRoutingNumber">
+            </dx-number-box>
+        </div>
+        <div class="form-group">
+            <label class="caption">{{ls.l('BankRoutingNumberForACHTransfers')}}:</label>
+            <dx-number-box [placeholder]="ls.l('EditValuePlaceholder')"
+                           [inputAttr]="{maxlength:9}"
+                           [(value)]="settings.bankRoutingNumberForACH">
+            </dx-number-box>
+        </div>
+        <div class="form-group">
+            <label class="caption">{{ls.l('SWIFT_Code')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [maxLength]="11"
+                         [(value)]="settings.swiftCode">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label class="caption">{{ls.l('SWIFT_CodeForUSDollar')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [maxLength]="11"
+                         [(value)]="settings.swiftCodeForUSDollar">
+            </dx-text-box>
+        </div>
+
+        <h5>{{ls.l("BeneficiaryBank")}}</h5>
+        <div class="form-group">
+            <label class="caption">{{ls.l('Name')}}:</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.beneficiaryBank.name">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label class="caption">{{ls.l('City')}}:</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.beneficiaryBank.cityAddress">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label class="caption">{{ls.l('Address')}}:</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.beneficiaryBank.streetAddress">
+            </dx-text-box>
+        </div>
+
+        <h5>{{ls.l("BeneficiaryInformation")}}</h5>
+        <div class="form-group">
+            <label class="caption">{{ls.l('Name')}}:</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.beneficiaryInfo.name">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label class="caption">{{ls.l('City')}}:</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.beneficiaryInfo.cityAddress">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label class="caption">{{ls.l('Address')}}:</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.beneficiaryInfo.streetAddress">
+            </dx-text-box>
+        </div>
+    </dx-scroll-view>
+</div>

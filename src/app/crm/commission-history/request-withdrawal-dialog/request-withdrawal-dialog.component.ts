@@ -2,8 +2,7 @@
 import { Component, Injector, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 
@@ -13,11 +12,11 @@ import { NotifyService } from 'abp-ng2-module';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ResellersFields } from '@app/crm/commission-history/resellers-fields.enum';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
-import { CommissionServiceProxy, RequestWithdrawalInput, InvoiceSettings } from '@shared/service-proxies/service-proxies';
+import { CommissionServiceProxy, RequestWithdrawalInput } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'request-withdrawal-dialog',
@@ -50,9 +49,7 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
         })
     });
 
-    currency$: Observable<string> = this.invoicesService.settings$.pipe(
-        map((settings: InvoiceSettings) => settings && settings.currency)
-    );
+    currency: string = SettingsHelper.getCurrency();
     today: Date = DateHelper.addTimezoneOffset(new Date(), true);
     date: Date = this.today;
 
@@ -62,7 +59,6 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
         private notify: NotifyService,
         private oDataService: ODataService,
         private loadingService: LoadingService,
-        private invoicesService: InvoicesService,
         private commissionProxy: CommissionServiceProxy
     ) {
         super(injector);
