@@ -42,6 +42,7 @@ import {
     CommissionServiceProxy, InvoiceSettings, ProductServiceProxy, PayPalSettings,
     PaymentSettingType, CommissionTier, UpdateCommissionAffiliateInput
 } from '@shared/service-proxies/service-proxies';
+import { LedgerHistoryDialogComponent } from '@app/crm/commission-history/ledger-history-dialog/ledger-history-dialog.component';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
@@ -1138,5 +1139,17 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             },
             checkBoxes
         );
+    }
+
+    showLedgerHistory(data) {
+        this.dialog.open(LedgerHistoryDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                ledgerEntryId: data.Id
+            }
+        }).afterClosed().subscribe(() => {
+        });
     }
 }
