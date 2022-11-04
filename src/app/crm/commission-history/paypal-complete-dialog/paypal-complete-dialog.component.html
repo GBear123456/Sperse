@@ -6,7 +6,7 @@
         <dx-number-box
             [readOnly]="true"
             [placeholder]="ls.l('TotalAmount')"
-            [format]="{ style: 'currency', currency: (data.currencyFormat$ | async).currency, useGrouping: true }"
+            [format]="{ style: 'currency', currency: currency, useGrouping: true }"
             [value]="totalAmount">
         </dx-number-box>
         <dx-date-box 

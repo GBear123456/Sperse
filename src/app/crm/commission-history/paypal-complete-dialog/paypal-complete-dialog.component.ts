@@ -13,6 +13,7 @@ import { PaymentSystem, CommissionServiceProxy,
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'paypal-complete-dialog',
@@ -24,6 +25,7 @@ export class PayPalCompleteDialogComponent extends ConfirmDialogComponent {
     paymentSystem = PaymentSystem.PayPal;
     payDate: Date = DateHelper.addTimezoneOffset(new Date(), true);
     paymentNote: string;
+    currency = SettingsHelper.getCurrency();
 
     constructor(
         injector: Injector,
