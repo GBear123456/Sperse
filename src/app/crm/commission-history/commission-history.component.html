@@ -273,7 +273,7 @@
                 </div>
                 <div>
                     <dx-data-grid #ledgerDataGrid
-                                  [hint]="l('Ledger')"
+                                  [hint]="l('Ledgers')"
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
                                   columnResizingMode="widget"
@@ -299,6 +299,14 @@
                                        mode="multiple">
                         </dxo-selection>
                         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                        <dxi-column caption=""
+                                    [width]="30"
+                                    cellTemplate="historyTemplate"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false"
+                                    [allowGrouping]="false"
+                                    [allowSorting]="false">
+                        </dxi-column>
                         <dxi-column [dataField]="ledgerFields.Id"
                                     [caption]="l('Id')"
                                     cssClass="tabular clipboard-holder"
@@ -363,6 +371,10 @@
                                     cssClass="clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
+
+                        <div *dxTemplate="let cellData of 'historyTemplate'">
+                            <span *ngIf="cellData.data.Status == 'Completed' && cellData.data.Type == 'Withdrawal'" class="dx-icon-clock code-history" (click)="showLedgerHistory(cellData.data)"></span>
+                        </div>
 
                         <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
                             {{cellData.value}}
