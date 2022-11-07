@@ -46,7 +46,7 @@
 
                 <ng-container *ngIf="showExternalLogin">
                     <div *ngIf="(loginService.externalLoginProviders$ | async) as externalLoginProviders">
-                        <div class="entrance-page__separator">
+                        <div class="entrance-page__separator" *ngIf="externalLoginProviders?.length">
                             <span>
                                 {{ls.l('or')}}
                             </span>
