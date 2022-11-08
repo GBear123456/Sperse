@@ -9,13 +9,11 @@ import {
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { finalize, filter, switchMap, first, map } from 'rxjs/operators';
-import { ClipboardService } from 'ngx-clipboard';
+import { finalize, filter, first, map } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
@@ -26,16 +24,13 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import {
     ContactInfoDto,
     ContactServiceProxy,
-    InvoiceServiceProxy,
     InvoiceStatus,
     InvoiceSettings,
     PipelineDto,
     StageDto
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
-import { MarkAsPaidDialogComponent } from '@app/crm/contacts/invoices/mark-paid-dialog/mark-paid-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
-import { HistoryListDialogComponent } from '../orders/history-list-dialog/history-list-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
@@ -44,19 +39,18 @@ import { InvoiceFields } from '@app/crm/contacts/invoices/invoice-fields.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
 import { AppFeatures } from '@shared/AppFeatures';
-import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { InvoiceGridMenuComponent } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.component';
+import { InvoiceGridMenuDto } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.interface';
 
 @Component({
     templateUrl: './invoices.component.html',
-    styleUrls: ['./invoices.component.less'],
-    providers: [ InvoiceServiceProxy ]
+    styleUrls: ['./invoices.component.less']
 })
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
     @ViewChild('invoicesDataGrid') dataGrid: DxDataGridComponent;
     @ViewChild('generatedCommissionDataGrid') generatedCommissionDataGrid: DxDataGridComponent;
+    @ViewChild(InvoiceGridMenuComponent) invoiceGridMenu: InvoiceGridMenuComponent;
 
-    private actionRecordData: InvoiceDto;
     private settings = new InvoiceSettings();
     private readonly commissionDataSourceURI = 'Commission';
     private readonly dataSourceURI = 'OrderInvoices';
@@ -75,6 +69,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     previewDisabled = false;
     downloadPdfDisabled = false;
     duplicateInvoiceDisabled = false;
+
     isSendEmailAllowed = false;
 
     hasOrdersManage = this.isGranted(AppPermissions.CRMOrdersManage);
@@ -122,9 +117,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private pipelineService: PipelineService,
         private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
-        private clientService: ContactsService,
-        private invoiceProxy: InvoiceServiceProxy,
-        private clipboardService: ClipboardService
+        private clientService: ContactsService
     ) {
         super(injector);
         this.clientService.invalidateSubscribe((area: string) => {
@@ -177,7 +170,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                             this.invoiceFields.InvoiceId,
                             this.invoiceFields.InvoiceNumber,
                             this.invoiceFields.InvoiceStatus,
-                            this.invoiceFields.InvoicePublicId
+                            this.invoiceFields.InvoicePublicId,
+                            this.invoiceFields.Amount
                         ],
                         this.fieldsDependencies
                     );
@@ -237,17 +231,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    toggleActionMenu(target) {
-        setTimeout(() => {
-            if (!this.actionsTooltip.instance.option('visible')) {
-                this.actionsTooltip.instance.show(target);
-            } else {
-                this.actionsTooltip.instance.hide();
-            }
-        });
-        this.actionsTooltip.instance.repaint();
-    }
-
     onCellClick(event) {
         if (event.rowType === 'data' && event.column.caption != 'Stage'
             && this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
@@ -255,151 +238,38 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             const invoice: InvoiceDto = event.data;
             /** If user click on actions icon */
             if (event.columnIndex > 1 && invoice) {
-                this.actionRecordData = invoice;
-                setTimeout(() => this.editInvoice());
+                setTimeout(() => this.editInvoiceDialog(invoice));
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
-                    const isOrder: boolean = !invoice.InvoiceId;
-                    this.downloadPdfDisabled =
-                    this.duplicateInvoiceDisabled =
-                    this.previewDisabled = isOrder;
-                    this.addPaymentDisabled = isOrder || [
-                        InvoiceStatus.Draft, InvoiceStatus.Canceled
-                    ].indexOf(invoice.InvoiceStatus) >= 0;
-                    this.markAsDraftDisabled = isOrder || [
-                        InvoiceStatus.Final, InvoiceStatus.Canceled
-                    ].indexOf(invoice.InvoiceStatus) < 0;
-                    this.markAsSendInvoiceDisabled = isOrder || [
-                        InvoiceStatus.Final, InvoiceStatus.Canceled, InvoiceStatus.Sent
-                    ].indexOf(invoice.InvoiceStatus) < 0;
-                    this.resendInvoiceDisabled = !this.isSendEmailAllowed || this.markAsSendInvoiceDisabled;
-                    this.markAsCancelledDisabled = isOrder || invoice.InvoiceStatus != InvoiceStatus.Sent;
-                    this.deleteDisabled = isOrder || [
-                        InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled
-                    ].indexOf(invoice.InvoiceStatus) < 0;
-                    this.actionRecordData = event.data;
-                    this.toggleActionMenu(event.event.target);
+                    let invoiceDto: InvoiceGridMenuDto = {
+                        Id: invoice.InvoiceId,
+                        Number: invoice.InvoiceNumber,
+                        Status: invoice.InvoiceStatus,
+                        Amount: invoice.Amount,
+                        PublicId: invoice.InvoicePublicId,
+                        OrderId: invoice.OrderId,
+                        OrderStage: invoice.OrderStage,
+                        ContactId: invoice.ContactId || this.contactId
+                    };
+                    this.invoiceGridMenu.showTooltip(invoiceDto, event.event.target, this.isSendEmailAllowed);
                 }
             }
         }
     }
 
-    deleteInvoice() {
-        this.message.confirm(
-            this.l('InvoiceDeleteWarningMessage', this.actionRecordData.InvoiceNumber), '',
-            isConfirmed => {
-                if (isConfirmed) {
-                    this.startLoading(true);
-                    this.invoiceProxy.deleteInvoice(this.actionRecordData.InvoiceId).pipe(
-                        finalize(() => this.finishLoading(true))
-                    ).subscribe(() => {
-                        this.dataGrid.instance.refresh();
-                    });
-                }
-            }
-        );
-    }
-
-    private openCreateInvoiceDialog(addNew = false, saveAsDraft = false) {
+    private editInvoiceDialog(invoiceData) {
         this.dialog.open(CreateInvoiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                addNew: addNew,
-                saveAsDraft: saveAsDraft,
-                invoice: this.actionRecordData,
+                invoice: invoiceData,
                 contactInfo: this.contactService['data'].contactInfo,
                 refreshParent: () => {
-                    this.dataGrid.instance.refresh();
+                    this.invalidate();
                 }
             }
         });
-    }
-
-    editInvoice() {
-        this.openCreateInvoiceDialog();
-    }
-
-    addInvoice() {
-        this.openCreateInvoiceDialog(true);
-    }
-
-    copyInvoiceLink() {
-        let publicId = this.actionRecordData.InvoicePublicId;
-        this.clipboardService.copyFromContent(location.origin + 
-            `/invoicing/invoice/${this.appSession.tenantId || 0}/${publicId}`);
-        this.notify.info(this.l('SavedToClipboard'));    
-    }
-
-    sendInvoice() {
-        this.startLoading(true);
-        this.invoiceProxy.getEmailData(
-            this.settings.defaultTemplateId, 
-            this.actionRecordData.InvoiceId
-        ).pipe(
-            finalize(() => this.finishLoading(true)),
-            switchMap(data => {
-                data['contactId'] = this.contactId;
-                data['templateId'] = this.settings.defaultTemplateId;
-                return this.clientService.showInvoiceEmailDialog(
-                    this.actionRecordData.InvoiceId, data);
-            })
-        ).subscribe(emailId => {
-            if (!isNaN(emailId))
-                this.updateStatus(InvoiceStatus.Sent, emailId);
-        });
-    }
-
-    onMenuItemClick(action) {
-        if (this.isGranted(AppPermissions.CRMOrdersInvoicesManage)) {
-            let tooltip = this.actionsTooltip.instance;
-            if (tooltip.option('visible'))
-                tooltip.hide();
-            action.call(this);
-        }
-    }
-
-    updateStatus(newStatus: InvoiceStatus, emailId?: number) {
-        this.startLoading(true);
-        this.invoicesService.updateStatus(
-            this.actionRecordData.InvoiceId, newStatus, emailId
-        ).pipe(
-            finalize(() => this.finishLoading(true))
-        ).subscribe(() => this.invalidate());
-    }
-
-    showHistory() {
-        setTimeout(() =>
-            this.dialog.open(HistoryListDialogComponent, {
-                panelClass: ['slider'],
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: { orderId: this.actionRecordData.OrderId }
-            })
-        );
-    }
-
-    getPdfLink(): Observable<string> {
-        this.startLoading(true);
-        return this.invoiceProxy.generatePdf(this.actionRecordData.InvoiceId, false).pipe(
-            finalize(() => this.finishLoading(true))
-        );
-    }
-
-    downloadInvoicePdf() {
-        this.getPdfLink().subscribe((pdfUrl: string) => {
-            UrlHelper.downloadFileFromUrl(pdfUrl, this.actionRecordData.InvoiceNumber + '.pdf');
-        });
-    }
-
-    duplicateInvoice() {
-        this.openCreateInvoiceDialog(true, true);
-    }
-
-    previewInvoice() {
-        let publicId = this.actionRecordData.InvoicePublicId;
-        window.open(location.origin + `/invoicing/invoice/${this.appSession.tenantId || 0}/${publicId}`, '_blank');
     }
 
     updateOrderStage(event) {
@@ -434,33 +304,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    addPaymentDialog() {
-        this.dialog.open(MarkAsPaidDialogComponent, {
-            closeOnNavigation: false,
-            data: {
-                stages$: this.stages$,
-                invoice: this.actionRecordData
-            }
-        }).beforeClosed().subscribe((successed: boolean) => {
-            if (successed) {
-                this.notify.success(this.l('SuccessfullyUpdated'));
-                this.dataGrid.instance.refresh();
-            }
-        });
-    }
-
     onStageOptionChanged(data, event) {
         if (event.component.option('disabled'))
             return;
 
         event.component.option('disabled', event.component.option('dataSource')
             .some(item => data.value == item.name && item.isFinal));
-    }
-
-    onTooltipReady(e) {
-        const contentElement = e.component.content();
-        contentElement.style.padding = '0';
-        contentElement.style.width = '100%';
     }
 
     ngOnDestroy() {
