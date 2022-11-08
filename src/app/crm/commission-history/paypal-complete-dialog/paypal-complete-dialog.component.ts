@@ -21,7 +21,6 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 })
 export class PayPalCompleteDialogComponent extends ConfirmDialogComponent {
     totalAmount = this.data.entities.reduce((acc, entity) => acc + entity.TotalAmount, 0);
-    paymentSystem = PaymentSystem.PayPal;
     payDate: Date = DateHelper.addTimezoneOffset(new Date(), true);
     paymentNote: string;
 
@@ -46,7 +45,7 @@ export class PayPalCompleteDialogComponent extends ConfirmDialogComponent {
                             isManualPayment: false,
                             paymentNote: this.paymentNote,
                             withdrawalIds: this.data.entities.map(item => item.Id),
-                            paymentSystem: PaymentSystem[this.paymentSystem],
+                            paymentSystem: this.data.paymentType,
                             payDate: DateHelper.removeTimezoneOffset(this.payDate, true, undefined)
                         })).pipe(
                             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))

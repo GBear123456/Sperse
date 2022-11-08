@@ -40,7 +40,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import {
     CommissionServiceProxy, InvoiceSettings, ProductServiceProxy, PayPalSettings,
-    PaymentSettingType, CommissionTier, UpdateCommissionAffiliateInput
+    PaymentSettingType, CommissionTier, UpdateCommissionAffiliateInput, PaymentSystem
 } from '@shared/service-proxies/service-proxies';
 import { LedgerHistoryDialogComponent } from '@app/crm/commission-history/ledger-history-dialog/ledger-history-dialog.component';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
@@ -463,6 +463,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     manageAllowed = this.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     isPayPalPayoutEnabled: Boolean = false;
+    isStripePayoutEnabled: Boolean = false;
                    
     constructor(
         injector: Injector,
@@ -491,6 +492,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         this.commissionProxy.getAvailablePayoutTypes(
             ).subscribe((payoutTypes: PaymentSettingType[]) => {
                 this.isPayPalPayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.PayPal);
+                this.isStripePayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.Stripe);
             });
 
         this.handleDataGridUpdate();
@@ -744,7 +746,13 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                     disabled: !this.isPayPalPayoutEnabled ||                                        
                                         !abp.features.isEnabled(AppFeatures.CRMPayments) ||
                                         !this.selectedRecords.some(item => item.PayPalEmailAddress),
-                                    action: this.applyPayPalComplete.bind(this)
+                                    action: () => this.applyPaymentComplete(PaymentSystem.PayPal)
+                                },
+                                {
+                                    text: this.l('PayWithStripe'),
+                                    disabled: !this.isStripePayoutEnabled ||
+                                        !abp.features.isEnabled(AppFeatures.CRMPayments),
+                                    action: () => this.applyPaymentComplete(PaymentSystem.Stripe)
                                 }
                             ]
                         }
@@ -929,7 +937,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }).afterClosed().subscribe(() => this.refresh());
     }
 
-    applyPayPalComplete(event) {
+    applyPaymentComplete(type) {
         this.dialog.open(PayPalCompleteDialogComponent, {
             disableClose: true,
             closeOnNavigation: false,
@@ -938,7 +946,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 entities: this.selectedRecords.filter(
                     item => item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal
                 ),
-                bulkUpdateAllowed: this.bulkUpdateAllowed
+                bulkUpdateAllowed: this.bulkUpdateAllowed,
+                paymentType: type
             }
         }).afterClosed().subscribe(() => this.refresh());
     }
