@@ -67,7 +67,7 @@ export class RootComponent implements OnInit, AfterViewInit {
 
     removeLoadingSpinner() {
         this.document.body.querySelectorAll('div.spinner').forEach(elm => {
-            setTimeout(() => this.document.body.removeChild(elm), 100);
+            this.document.body.removeChild(elm);
         });
     }
     
