@@ -88,6 +88,7 @@ import { SliceModule } from '@app/shared/common/slice/slice.module';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
+import { InvoiceGridMenuModule } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.module'
 import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
 import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
@@ -166,6 +167,7 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
         MapModule,
         OrderDropdownModule,
         ActionMenuModule,
+        InvoiceGridMenuModule,
         StaticListModule,
         StaticTreeViewModule,
         CountryPhoneNumberModule,

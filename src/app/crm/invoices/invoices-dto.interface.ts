@@ -1,12 +1,21 @@
+import { InvoiceStatus } from "@shared/service-proxies/service-proxies";
+
 export interface InvoiceDto {
     Id: number;
-    Status: string;
+    Status: InvoiceStatus;
     Number: string;
+    GrandTotal: number;
+    Date: string;
+    DueDate: string;
+    Description: string;
+    Coupon: string;
+    PublicId: string;
+
     ContactId: number;
     FullName: string;
     EmailAddress: string;
     PhotoPublicId: string;
-    GrandTotal: number;
-    Date: string;
-    PublicId: string;
+    AffiliateContactName: string;
+    OrderId: number;
+    OrderStageName: string;
 }

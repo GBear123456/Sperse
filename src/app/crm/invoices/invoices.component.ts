@@ -5,7 +5,7 @@ import { CurrencyPipe } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { filter, finalize, first, map, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import * as _ from 'underscore';
@@ -30,7 +30,6 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
-import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { InvoiceServiceProxy, InvoiceSettings, InvoiceStatus, ProductDto, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
@@ -41,12 +40,12 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Params } from '@angular/router';
+import { InvoiceGridMenuComponent } from './invoice-grid-menu/invoice-grid-menu.component';
+import { InvoiceGridMenuDto } from './invoice-grid-menu/invoice-grid-menu.interface';
 
 @Component({
     templateUrl: './invoices.component.html',
-    styleUrls: [
-        '../shared/styles/grouped-action-menu.less'
-    ],
+    styleUrls: ['./invoices.component.less'],
     providers: [
         LifecycleSubjectsService,
         CurrencyPipe,
@@ -58,6 +57,7 @@ import { Params } from '@angular/router';
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
+    @ViewChild(InvoiceGridMenuComponent) invoiceGridMenu: InvoiceGridMenuComponent;
 
     private readonly dataSourceURI = 'Invoice';
     private readonly dataSourceCountURI = 'InvoiceCount';
@@ -70,34 +70,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     permissions = AppPermissions;
     formatting = AppConsts.formatting;
     public headlineButtons: HeadlineButton[] = [];
-
-    actionEvent: any;
-    actionMenuGroups: ActionMenuItem[] = [
-        {
-            text: this.l('Edit'),
-            class: 'edit',
-            action: () => {
-                this.showInvoiceDialog(this.actionEvent.Id);
-            }
-        },
-        {
-            text: this.l('Preview'),
-            class: 'preview',
-            action: () => {
-                this.previewInvoice(this.actionEvent);
-            }
-        },
-        {
-            text: this.l('Delete'),
-            class: 'delete',
-            action: () => {
-                this.deleteInvoice(this.actionEvent);
-            },
-            checkVisible: (data) => {
-                return [InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(data.Status) >= 0;
-            } 
-        }
-    ];
 
     currency: string;
     searchClear = false;
@@ -130,7 +102,11 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.params.$select = DataGridService.getSelectFields(
-                this.dataGrid, [this.invoiceFields.Id, this.invoiceFields.PublicId, this.invoiceFields.Number, this.invoiceFields.ContactId]
+                this.dataGrid,
+                [
+                    this.invoiceFields.Id, this.invoiceFields.PublicId, this.invoiceFields.Number, this.invoiceFields.ContactId,
+                    this.invoiceFields.Status, this.invoiceFields.GrandTotal, this.invoiceFields.OrderStageName
+                ]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         },
@@ -262,31 +238,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.setGridDataLoaded();
         if (!this.rowsViewHeight)
             this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
-        event.component.columnOption('command:edit', {
-            visibleIndex: -1,
-            width: 40
-        });
     }
 
     invalidate() {
         this._refresh.next(null);
-    }
-
-    deleteInvoice(actionEvent) {
-        let invoiceId = actionEvent.Id;
-        this.message.confirm(
-            this.l('InvoiceDeleteWarningMessage', actionEvent.Number), '',
-            isConfirmed => {
-                if (isConfirmed) {
-                    this.startLoading(true);
-                    this.invoiceProxy.deleteInvoice(invoiceId).pipe(
-                        finalize(() => this.finishLoading(true))
-                    ).subscribe(() => {
-                        this.invalidate();
-                    });
-                }
-            }
-        );
     }
 
     showInvoiceDialog(data?: InvoiceDto) {
@@ -303,10 +258,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         });
-    }
-
-    previewInvoice(data: InvoiceDto) {
-        window.open(location.origin + `/invoicing/invoice/${this.appSession.tenantId || 0}/${data.PublicId}`, '_blank');
     }
 
     initFilterConfig() {
@@ -539,25 +490,27 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         e.component.hide();
     }
 
-    onMenuItemClick(event) {
-        event.itemData.action.call(this);
-        this.actionEvent = null;
-    }
-
     onCellClick(event) {
-        if (event.rowType == 'data' && event.data)
-            this.showInvoiceDialog(event.data);
-    }
-
-    toggleActionsMenu(event) {
-        if (this.isReadOnly)
-            return;
-
-        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe(actionEvent => {
-            ActionMenuService.prepareActionMenuItems(this.actionMenuGroups, event.data);
-            this.actionEvent = actionEvent;
-            this.changeDetectorRef.detectChanges();
-        });
+        if (event.rowType == 'data') {
+            let invoice = event.data;
+            if (event.columnIndex > 1 && invoice) {
+                this.showInvoiceDialog(invoice);
+            }
+            else if (!this.isReadOnly && event.event.target.closest('.dx-link.dx-link-edit')) {
+                let oDataDto: InvoiceDto = event.data;
+                let invoiceDto: InvoiceGridMenuDto = {
+                    Id: oDataDto.Id,
+                    Number: oDataDto.Number,
+                    Status: oDataDto.Status,
+                    Amount: oDataDto.GrandTotal,
+                    PublicId: oDataDto.PublicId,
+                    OrderId: oDataDto.OrderId,
+                    OrderStage: oDataDto.OrderStageName,
+                    ContactId: oDataDto.ContactId
+                };
+                this.invoiceGridMenu.showTooltip(invoiceDto, event.event.target, true);
+            }
+        }
     }
 
     private getProductsParams() {
