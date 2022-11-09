@@ -38,7 +38,7 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import {
-    CommissionServiceProxy, InvoiceSettings, ProductServiceProxy, PayPalSettings,
+    CommissionServiceProxy, ProductServiceProxy,
     PaymentSettingType, CommissionTier, UpdateCommissionAffiliateInput, PaymentSystem, TenantPaymentSettingsServiceProxy, CommissionSettings
 } from '@shared/service-proxies/service-proxies';
 import { LedgerHistoryDialogComponent } from '@app/crm/commission-history/ledger-history-dialog/ledger-history-dialog.component';
