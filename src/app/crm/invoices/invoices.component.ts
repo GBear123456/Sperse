@@ -5,10 +5,11 @@ import { CurrencyPipe } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { filter, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import * as _ from 'underscore';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -29,8 +30,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
-import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
-import { InvoiceServiceProxy, InvoiceSettings, InvoiceStatus, ProductDto, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InvoiceServiceProxy, InvoiceSettings, InvoiceStatus, PipelineDto, ProductDto, ProductServiceProxy, StageDto } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { InvoiceDto } from './invoices-dto.interface';
@@ -42,6 +42,7 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { Params } from '@angular/router';
 import { InvoiceGridMenuComponent } from './invoice-grid-menu/invoice-grid-menu.component';
 import { InvoiceGridMenuDto } from './invoice-grid-menu/invoice-grid-menu.interface';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -71,6 +72,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     formatting = AppConsts.formatting;
     public headlineButtons: HeadlineButton[] = [];
 
+    startCase = startCase;
+
     currency: string;
     searchClear = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
@@ -79,6 +82,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     private filters: FilterModel[] = this.getFilters();
     private prodcutsFilter: FilterModel;
     rowsViewHeight: number;
+
+    hasOrdersManage = this.isGranted(AppPermissions.CRMOrdersManage);
+
+    stages$: Observable<StageDto[]> = this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order, null).pipe(
+        map((pipeline: PipelineDto) => pipeline.stages)
+    );
 
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
@@ -106,7 +115,11 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 [
                     this.invoiceFields.Id, this.invoiceFields.PublicId, this.invoiceFields.Number, this.invoiceFields.ContactId,
                     this.invoiceFields.Status, this.invoiceFields.GrandTotal, this.invoiceFields.OrderStageName
-                ]
+                ],
+                {
+                    FullName: [this.invoiceFields.PhotoPublicId],
+                    OrderStageName: [this.invoiceFields.OrderId]
+                }
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         },
@@ -143,13 +156,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
-        invoicesService: InvoicesService,
-        private invoiceProxy: InvoiceServiceProxy,
+        private invoicesService: InvoicesService,
         private productProxy: ProductServiceProxy,
         private filtersService: FiltersService,
+        private pipelineService: PipelineService,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
-        private changeDetectorRef: ChangeDetectorRef,
-        public appService: AppService,
+        private appService: AppService,
         private currencyPipe: CurrencyPipe,
         public dialog: MatDialog
     ) {
@@ -485,6 +497,15 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
+    getDueDateColor(data: InvoiceDto) {
+        if (!data.DueDate || [InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid].indexOf(data.Status) < 0)
+            return '';
+
+        let today = new Date();
+        let date = new Date(data.DueDate);
+        return date < today && date.getDate() < today.getDate() ? 'red' : 'green';
+    }
+
     onShowingPopup(e) {
         e.component.option('visible', false);
         e.component.hide();
@@ -492,6 +513,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     onCellClick(event) {
         if (event.rowType == 'data') {
+            if (event.column.dataField == this.invoiceFields.OrderStageName)
+                return;
+
             let invoice = event.data;
             if (event.columnIndex > 1 && invoice) {
                 this.showInvoiceDialog(invoice);
@@ -511,6 +535,33 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 this.invoiceGridMenu.showTooltip(invoiceDto, event.event.target, true);
             }
         }
+    }
+
+    updateOrderStage(event) {
+        if (!this.hasOrdersManage)
+            return;
+
+        const invoice: InvoiceDto = event.data;
+        this.invoicesService.updateOrderStage(invoice.OrderId, invoice.OrderStageName, event.value)
+            .subscribe(declinedList => {
+                if (declinedList.length)
+                    event.value = invoice.OrderStageName;
+                else {
+                    this.notify.success(this.l('StageSuccessfullyUpdated'));
+                    this.dataGrid.instance.getVisibleRows().map(row => {
+                        if (invoice.OrderId == row.data.OrderId)
+                            row.data.OrderStage = event.value;
+                    });
+                }
+            });
+    }
+
+    onStageOptionChanged(data, event) {
+        if (event.component.option('disabled'))
+            return;
+
+        event.component.option('disabled', event.component.option('dataSource')
+            .some(item => data.value == item.name && item.isFinal));
     }
 
     private getProductsParams() {

@@ -13,7 +13,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { finalize, filter, first, map } from 'rxjs/operators';
+import { filter, first, map } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
@@ -156,7 +156,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     private getDataSource(): DataSource {
         return new DataSource({
             requireTotalCount: true,
-            filter: [ this.invoiceFields.ContactId, '=', this.contactId],
+            filter: [this.invoiceFields.ContactId, '=', this.contactId],
             store: new ODataStore({
                 key: this.invoiceFields.Key,
                 url: this.getODataUrl(this.dataSourceURI),
@@ -199,7 +199,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 store: new ODataStore({
                     key: 'Id',
                     url: this.oDataService.getODataUrl(this.commissionDataSourceURI,
-                        {'BuyerContactId': this.contactId}),
+                        { 'BuyerContactId': this.contactId }),
                     version: AppConsts.ODataVersion,
                     deserializeDates: false,
                     beforeSend: (request) => {
@@ -223,7 +223,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 this.filters,
                 (filter) => {
                     let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
+                        this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }
@@ -276,32 +276,20 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         if (!this.hasOrdersManage)
             return;
 
-        this.startLoading(true);
         const invoice: InvoiceDto = event.data;
-        this.pipelineService.updateEntitiesStage(
-            AppConsts.PipelinePurposeIds.order,
-            [{
-                Id: invoice.OrderId,
-                ContactId: invoice.ContactId,
-                CreationTime: invoice.Date,
-                Stage: invoice.OrderStage
-            }],
-            event.value,
-            null
-        ).pipe(
-            finalize(() => this.finishLoading(true))
-        ).subscribe(declinedList => {
-            if (declinedList.length)
-                event.value = invoice.OrderStage;
-            else {
-                this.contactService['data'].refresh = true;
-                this.notify.success(this.l('StageSuccessfullyUpdated'));
-                this.dataGrid.instance.getVisibleRows().map(row => {
-                    if (invoice.OrderId == row.data.OrderId)
-                        row.data.OrderStage = event.value;
-                });
-            }
-        });
+        this.invoicesService.updateOrderStage(invoice.OrderId, invoice.OrderStage, event.value)
+            .subscribe(declinedList => {
+                if (declinedList.length)
+                    event.value = invoice.OrderStage;
+                else {
+                    this.contactService['data'].refresh = true;
+                    this.notify.success(this.l('StageSuccessfullyUpdated'));
+                    this.dataGrid.instance.getVisibleRows().map(row => {
+                        if (invoice.OrderId == row.data.OrderId)
+                            row.data.OrderStage = event.value;
+                    });
+                }
+            });
     }
 
     onStageOptionChanged(data, event) {

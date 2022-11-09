@@ -1,4 +1,90 @@
 :host {
     position: relative;
     height: 100%;
+
+    ::ng-deep .dx-datagrid {
+        .dx-datagrid-focus-overlay {
+            border: none;
+        }
+
+        .dx-selectbox input {
+            border: none;
+            font-size: 15px;
+        }
+
+        div.status-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        .photo {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .green {
+            color: #1fb430;
+        }
+
+        .red {
+            color: #b42b1f;
+        }
+
+        div.status {
+            width: 110px;
+            height: 26px;
+            background: #f3f7fa;
+            padding: 2px 15px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 2.18;
+            letter-spacing: 0.88px;
+            text-transform: uppercase;
+            text-align: center;
+            color: #40596b;
+
+            &:before {
+                content: "\A";
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                display: inline-block;
+                margin-right: 5px;
+                background: #dedede;
+            }
+
+            &.final:before {
+                background: #1fb430;
+            }
+
+            &.pending:before {
+                background: #f1a72d;
+            }
+
+            &.sent:before {
+                background: #fff939;
+            }
+
+            &.draft:before {
+                background: rgba(64, 89, 107, 0.28);
+            }
+
+            &.partiallypaid {
+                width: 145px;
+
+                &:before {
+                    background: #248392;
+                }
+            }
+
+            &.paid:before {
+                background: #3acddc;
+            }
+        }
+    }
 }
