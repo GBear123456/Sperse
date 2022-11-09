@@ -19,3 +19,10 @@ export interface InvoiceDto {
     OrderId: number;
     OrderStageName: string;
 }
+
+export enum InvoiceStatusQuickFitler {
+    All = 'All',
+    Paid = 'Paid',
+    Unpaid = 'Unpaid',
+    Overdue = 'Overdue'
+}

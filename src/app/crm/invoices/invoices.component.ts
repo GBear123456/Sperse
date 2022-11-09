@@ -33,7 +33,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { InvoiceServiceProxy, InvoiceSettings, InvoiceStatus, PipelineDto, ProductDto, ProductServiceProxy, StageDto } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
-import { InvoiceDto } from './invoices-dto.interface';
+import { InvoiceDto, InvoiceStatusQuickFitler } from './invoices-dto.interface';
 import { InvoiceFields } from './invoices-fields.enum';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
@@ -43,6 +43,7 @@ import { Params } from '@angular/router';
 import { InvoiceGridMenuComponent } from './invoice-grid-menu/invoice-grid-menu.component';
 import { InvoiceGridMenuDto } from './invoice-grid-menu/invoice-grid-menu.interface';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { DateHelper } from '../../../shared/helpers/DateHelper';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -78,6 +79,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     searchClear = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     toolbarConfig: ToolbarGroupModel[];
+    selectedQuickStatusFilter: InvoiceStatusQuickFitler = InvoiceStatusQuickFitler.All;
     readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;
     private filters: FilterModel[] = this.getFilters();
     private prodcutsFilter: FilterModel;
@@ -355,7 +357,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         }
                     )
                 }
-            })
+            }),
+            new FilterModel({
+                caption: 'statusQuickFilter',
+                hidden: true,
+                isSelected: false,
+                filterMethod: () => this.getOdataFilterByQuickStatus()
+            }),
         ];
     }
 
@@ -403,6 +411,26 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         }
                     }
                 ]
+            },
+            {
+                location: 'center',
+                locateInMenu: 'auto',
+                areItemsDependent: true,
+                items: Object.keys(InvoiceStatusQuickFitler).map(key => {
+                    return {
+                        name: key,
+                        widget: 'dxButton',
+                        options: {
+                            text: key,
+                            checkPressed: () => {
+                                return this.selectedQuickStatusFilter == InvoiceStatusQuickFitler[key];
+                            }
+                        },
+                        action: () => {
+                            this.filterByQuickStatus(InvoiceStatusQuickFitler[key]);
+                        }
+                    };
+                })
             },
             {
                 location: 'after',
@@ -472,6 +500,34 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 null,
                 this.getProductsParams()
             );
+        }
+    }
+
+    filterByQuickStatus(item: InvoiceStatusQuickFitler) {
+        this.selectedQuickStatusFilter = item;
+        this.initToolbarConfig();
+        this.invalidate();
+    }
+
+    getOdataFilterByQuickStatus() {
+        switch (this.selectedQuickStatusFilter) {
+            case InvoiceStatusQuickFitler.Paid:
+                return `${this.invoiceFields.Status} eq '${InvoiceStatus.Paid}'`;
+            case InvoiceStatusQuickFitler.Unpaid:
+                return {
+                    or: [`${this.invoiceFields.Status} eq '${InvoiceStatus.Sent}'`,
+                    `${this.invoiceFields.Status} eq '${InvoiceStatus.PartiallyPaid}'`]
+                };
+            case InvoiceStatusQuickFitler.Overdue:
+                return {
+                    and: [{
+                        or: [`${this.invoiceFields.Status} eq '${InvoiceStatus.Sent}'`,
+                        `${this.invoiceFields.Status} eq '${InvoiceStatus.PartiallyPaid}'`]
+                    },
+                        `${this.invoiceFields.DueDate} lt ${DateHelper.removeTimezoneOffset(new Date(), true, 'from').toISOString()}`]
+                };
+            default:
+                return {};
         }
     }
 
