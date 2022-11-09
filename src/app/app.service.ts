@@ -245,15 +245,26 @@ export class AppService extends AppServiceBase {
         return groups.includes(group.toLowerCase());
     }    
 
+    checkSubscriptionsGroups(
+        productGroups: string[]
+    ) {
+        return this.moduleSubscriptions.some(item => item.productGroup && this.checkGroupIncluded(productGroups, item.productGroup));
+    }
+
     getModuleSubscription(
         name: string = this.defaultSubscriptionModule, 
-        productGroups: string[] = [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN]
+        productGroups: string[] = [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN],
+        hasCrmFeature: boolean = true
     ): ModuleSubscriptionInfoDto {
         let module = name.toUpperCase(), 
             moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && productGroups.length ?
                 this.moduleSubscriptions.filter(item => item.productGroup && this.checkGroupIncluded(productGroups, item.productGroup)) :
                 this.moduleSubscriptions,
             subscription;
+
+        if (hasCrmFeature)
+            moduleSubscriptions = moduleSubscriptions.filter(item => item.hasCrmFeature);
+
         if (moduleSubscriptions && moduleSubscriptions.length) {
             subscription = _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
                 return subscription.module.includes(module) && subscription.statusId == 'A';
