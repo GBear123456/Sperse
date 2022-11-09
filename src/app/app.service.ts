@@ -374,8 +374,13 @@ export class AppService extends AppServiceBase {
         if (module && ['D', 'C'].includes(module.statusId))
             return false;
 
-        return this.isHostTenant || !module || !module.endDate 
-            || (module.endDate > moment().utc());
+        return this.isHostTenant || !module || !module.endDate ||
+            this.hasRecurringBilling(module) || (module.endDate > moment().utc());
+    }
+
+    hasRecurringBilling(module: ModuleSubscriptionInfoDto): boolean {
+        return module && module.hasRecurringBilling && (moment(module.endDate).add(
+            AppConsts.subscriptionRecurringBillingPeriod, 'days') > moment().utc());
     }
 
     hasUnconventionalSubscription() {
