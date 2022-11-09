@@ -298,7 +298,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         {
                             dataSource: Object.keys(InvoiceStatus).map((status: string) => ({
                                 id: InvoiceStatus[status],
-                                name: status
+                                name: startCase(status)
                             })),
                             nameField: 'name',
                             keyExpr: 'id'
