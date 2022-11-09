@@ -8,4 +8,7 @@
     <b [hidden]="hideMaintenanceMessage" [innerHtml]="getMaintenanceMessageLink()"></b>
     <div [ngClass]="{'arrow-down': hideMaintenanceMessage, 'arrow-left': !hideMaintenanceMessage}"></div>
 </div>
+<div *ngIf="showSperseLoader" class="sperse-spinner">
+    <img src="./assets/images/sperse-spinner.gif">
+</div>
 <router-outlet></router-outlet>
