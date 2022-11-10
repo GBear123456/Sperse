@@ -262,7 +262,7 @@ export class AppService extends AppServiceBase {
                 this.moduleSubscriptions,
             subscription;
 
-        if (hasCrmFeature)
+        if (hasCrmFeature && moduleSubscriptions)
             moduleSubscriptions = moduleSubscriptions.filter(item => item.hasCrmFeature);
 
         if (moduleSubscriptions && moduleSubscriptions.length) {
