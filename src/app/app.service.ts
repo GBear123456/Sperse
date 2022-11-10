@@ -377,10 +377,11 @@ export class AppService extends AppServiceBase {
 
     hasModuleSubscription(
         name: string = this.defaultSubscriptionModule,
-        productGroups?: string[]
+        productGroups?: string[],
+        hasCrmFeature: boolean = true
     ) {
         name = name && name.toUpperCase();
-        let module = this.getModuleSubscription(name, productGroups);
+        let module = this.getModuleSubscription(name, productGroups, hasCrmFeature);
 
         if (module && ['D', 'C'].includes(module.statusId))
             return false;
@@ -397,9 +398,9 @@ export class AppService extends AppServiceBase {
     hasUnconventionalSubscription() {
         let sub = this.getModuleSubscription();
         if (!sub.productId) {
-            let hasActiveSubscription = this.hasModuleSubscription('', []);
+            let hasActiveSubscription = this.hasModuleSubscription('', [], false);
 
-            sub = this.getModuleSubscription('', []);
+            sub = this.getModuleSubscription('', [], false);
             if (sub.productId)
                 return hasActiveSubscription &&
                     this.feature.isEnabled(AppFeatures.CRM);
