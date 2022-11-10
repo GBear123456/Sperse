@@ -245,15 +245,26 @@ export class AppService extends AppServiceBase {
         return groups.includes(group.toLowerCase());
     }    
 
+    checkSubscriptionsGroups(
+        productGroups: string[]
+    ) {
+        return this.moduleSubscriptions.some(item => item.productGroup && this.checkGroupIncluded(productGroups, item.productGroup));
+    }
+
     getModuleSubscription(
         name: string = this.defaultSubscriptionModule, 
-        productGroups: string[] = [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN]
+        productGroups: string[] = [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN],
+        hasCrmFeature: boolean = true
     ): ModuleSubscriptionInfoDto {
         let module = name.toUpperCase(), 
             moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && productGroups.length ?
                 this.moduleSubscriptions.filter(item => item.productGroup && this.checkGroupIncluded(productGroups, item.productGroup)) :
                 this.moduleSubscriptions,
             subscription;
+
+        if (hasCrmFeature && moduleSubscriptions)
+            moduleSubscriptions = moduleSubscriptions.filter(item => item.hasCrmFeature);
+
         if (moduleSubscriptions && moduleSubscriptions.length) {
             subscription = _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
                 return subscription.module.includes(module) && subscription.statusId == 'A';
@@ -374,8 +385,13 @@ export class AppService extends AppServiceBase {
         if (module && ['D', 'C'].includes(module.statusId))
             return false;
 
-        return this.isHostTenant || !module || !module.endDate 
-            || (module.endDate > moment().utc());
+        return this.isHostTenant || !module || !module.endDate ||
+            this.hasRecurringBilling(module) || (module.endDate > moment().utc());
+    }
+
+    hasRecurringBilling(module: ModuleSubscriptionInfoDto): boolean {
+        return module && module.hasRecurringBilling && (moment(module.endDate).add(
+            AppConsts.subscriptionRecurringBillingPeriod, 'days') > moment().utc());
     }
 
     hasUnconventionalSubscription() {

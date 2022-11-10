@@ -79489,6 +79489,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     hasRecurringBilling!: boolean;
     isUpgradable!: boolean;
     invoicePublicId!: string | undefined;
+    hasCrmFeature!: boolean;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
         if (data) {
@@ -79518,6 +79519,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.hasRecurringBilling = _data["hasRecurringBilling"];
             this.isUpgradable = _data["isUpgradable"];
             this.invoicePublicId = _data["invoicePublicId"];
+            this.hasCrmFeature = _data["hasCrmFeature"];
         }
     }
 
@@ -79547,6 +79549,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["isUpgradable"] = this.isUpgradable;
         data["invoicePublicId"] = this.invoicePublicId;
+        data["hasCrmFeature"] = this.hasCrmFeature;
         return data;
     }
 }
@@ -79569,6 +79572,7 @@ export interface IModuleSubscriptionInfoDto {
     hasRecurringBilling: boolean;
     isUpgradable: boolean;
     invoicePublicId: string | undefined;
+    hasCrmFeature: boolean;
 }
 
 export class ModuleSubscriptionInfoExtended implements IModuleSubscriptionInfoExtended {

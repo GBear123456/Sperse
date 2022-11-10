@@ -65,7 +65,8 @@ export class AppComponent implements OnInit {
         if (!appService.isHostTenant) {
             let paymentDialogTimeout;
             appService.moduleSubscriptions$.pipe(first()).subscribe(() => {
-                let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default,                    
+                let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default || 
+                        !appService.checkSubscriptionsGroups([AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN]),                    
                     moduleName = isCustomLayout ? '' : appService.defaultSubscriptionModule.toLowerCase(),
                     productGroups = isCustomLayout ? [] : [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN];
                 if (moduleName != appService.getDefaultModule() && !appService.hasUnconventionalSubscription()) {
