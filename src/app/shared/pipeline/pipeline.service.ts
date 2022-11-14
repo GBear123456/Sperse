@@ -240,6 +240,7 @@ export class PipelineService {
             (declinedList) => {
                 this.resetIgnoreChecklist();
                 subject.next(declinedList);
+                subject.complete();
             }, [], pipelineId
         );
 
