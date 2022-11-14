@@ -170,8 +170,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
         this.isReadOnly = !this.permission.isGranted(this.permissions.CRMOrdersInvoicesManage);
         this.headlineButtons.push({
-            enabled: !this.isReadOnly &&
-                !!appService.getFeatureCount(AppFeatures.CRMInvoicesManagement),
+            enabled: !this.isReadOnly && this.feature.isEnabled(AppFeatures.CRMInvoicesManagement),
             action: () => this.showInvoiceDialog(),
             label: this.l('AddInvoice')
         });
