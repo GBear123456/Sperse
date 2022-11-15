@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import Validator from 'devextreme/ui/validator';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -35,6 +36,7 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
     settings: InvoiceSettingsDto;
 
     EmailTemplateType = EmailTemplateType;
+    gracePeriodValidator: Validator;
 
     constructor(
         private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
@@ -45,6 +47,13 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
             this.settings = invoiceSettings;
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+    onDueGracePeriodFocusOut(event) {
+        if (!this.gracePeriodValidator)
+            this.gracePeriodValidator = Validator.getInstance(event.element) as Validator;
+
+        this.gracePeriodValidator.validate();
     }
 
     openAdvisorContactList(event) {
@@ -69,6 +78,9 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
     }
 
     save(): Observable<any> {
+        if (!this.gracePeriodValidator.validate().isValid)
+            return throwError('');
+
         return this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings));
     }
 }
