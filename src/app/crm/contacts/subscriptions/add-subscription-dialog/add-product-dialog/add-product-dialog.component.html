@@ -72,7 +72,7 @@
                 <label>{{ls.l('Price')}}</label>
                 <dx-number-box name="price"
                                width="300px"
-                               [format]="amountFormat$ | async"
+                               [format]="amountFormat"
                                [(value)]="product.price"
                                [disabled]="isReadOnly"
                                (onValueChanged)="checkShowAmountChangeWarrning()">
@@ -97,7 +97,7 @@
                 <label>{{ls.l('CommissionableAmount')}}</label>
                 <dx-number-box name="commissionableAmount"
                                width="300px"
-                               [format]="amountNullableFormat$ | async"
+                               [format]="amountNullableFormat"
                                [(value)]="product.commissionableAmount"
                                [disabled]="isReadOnly">
                 </dx-number-box>
@@ -222,7 +222,7 @@
                     <label class="wide">{{ls.l('SignupFee')}}</label>
                     <dx-number-box name="price"
                                    width="270px"
-                                   [format]="amountFormat$ | async"
+                                   [format]="amountFormat"
                                    [(value)]="option.signupFee"
                                    [disabled]="isReadOnly"
                                    (onValueChanged)="checkShowAmountChangeWarrning()">
@@ -235,7 +235,7 @@
                     <label class="wide">{{ls.l('CommissionableAmount')}}</label>
                     <dx-number-box name="commissionableSignupFeeAmount"
                                    width="270px"
-                                   [format]="amountNullableFormat$ | async"
+                                   [format]="amountNullableFormat"
                                    [(value)]="option.commissionableSignupFeeAmount"
                                    [disabled]="isReadOnly">
                     </dx-number-box>
@@ -259,7 +259,7 @@
                     <label class="wide">{{ls.l('Fee')}}</label>
                     <dx-number-box name="price"
                                    width="270px"
-                                   [format]="amountFormat$ | async"
+                                   [format]="amountFormat"
                                    [(value)]="option.fee"
                                    [disabled]="isReadOnly"
                                    (onValueChanged)="checkShowAmountChangeWarrning()">
@@ -272,7 +272,7 @@
                     <label class="wide">{{ls.l('CommissionableAmount')}}</label>
                     <dx-number-box name="commissionableFeeAmount"
                                    width="270px"
-                                   [format]="amountNullableFormat$ | async"
+                                   [format]="amountNullableFormat"
                                    [(value)]="option.commissionableFeeAmount"
                                    [disabled]="isReadOnly">
                     </dx-number-box>

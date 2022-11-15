@@ -12,12 +12,10 @@ import { getCurrencySymbol } from '@angular/common';
 /** Third party imports */
 import { MessageService } from 'abp-ng2-module';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { finalize, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    InvoiceSettings,
     LayoutType,
     OrderSubscriptionServiceProxy,
     SubscriptionInput,
@@ -35,7 +33,6 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
@@ -43,6 +40,7 @@ import { AddMemberServiceDialogComponent } from './add-member-service-dialog/add
 import { BulkProgressDialogComponent } from '@shared/common/dialogs/bulk-progress/bulk-progress-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'add-subscription-dialog',
@@ -90,9 +88,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         hasRecurringBilling: false,
         skipExisting: false
     });
-    amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
-        map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
-    );
+    amountFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,##0.##';
 
     get validationGroup() {
         return this.selectedTabIndex ? this.validationServiceGroup : this.validationProductGroup;
@@ -106,7 +102,6 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         private notify: NotifyService,
         private contactsService: ContactsService,
         private userManagementService: UserManagementService,
-        private invoicesService: InvoicesService,
         private permission: AppPermissionService,
         private message: MessageService,
         public dialogRef: MatDialogRef<AddSubscriptionDialogComponent>,

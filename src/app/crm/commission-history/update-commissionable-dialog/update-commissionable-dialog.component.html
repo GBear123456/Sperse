@@ -5,7 +5,7 @@
     <dx-number-box
         [min]="0" 
         [placeholder]="ls.l('Amount')" 
-        [format]="{ style: 'currency', currency: currency$ | async, useGrouping: true }"
+        [format]="{ style: 'currency', currency: currency, useGrouping: true }"
         [(value)]="amount">
     </dx-number-box>
 </mat-dialog-content>

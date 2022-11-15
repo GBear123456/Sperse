@@ -1,20 +1,17 @@
 /** Core imports */
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute, RouteReuseStrategy, Params } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DevExpress from 'devextreme/bundles/dx.all';
-import { map, first } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    ContactInfoDto, 
-    ContactServiceProxy,
-    InvoiceSettings
+    ContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactsService } from '../contacts.service';
@@ -23,13 +20,10 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PermissionCheckerService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { CommissionFields } from '@app/crm/commission-history/commission-fields.enum';
@@ -38,6 +32,7 @@ import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { AppPermissions } from '@shared/AppPermissions';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'reseller-activity',
@@ -94,27 +89,19 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     isCommissionsAllowed = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions)
         && this.permissionService.isGranted(AppPermissions.CRMAffiliatesCommissions);
 
-    currencyFormat$: Observable<DevExpress.ui.format> = this.invoicesService.settings$.pipe(
-        map((settings: InvoiceSettings) => {
-            return {
-                type: 'currency',
-                precision: 2,
-                currency: settings && settings.currency
-            };
-        })
-    );
+    currencyFormat$: DevExpress.ui.format = {
+        type: 'currency',
+        precision: 2,
+        currency: SettingsHelper.getCurrency()
+    };
 
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private reuseService: RouteReuseStrategy,
-        private invoicesService: InvoicesService,
-        private contactProxy: ContactServiceProxy,
         private contactsService: ContactsService,
         private lifeCycleService: LifecycleSubjectsService,
         private itemDetailsService: ItemDetailsService,
         private featureCheckerService: FeatureCheckerService,
-        private permissionCheckerService: PermissionCheckerService,
         private permissionService: AppPermissionService,
         private oDataService: ODataService,
         public loadingService: LoadingService,

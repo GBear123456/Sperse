@@ -14,11 +14,9 @@ import { getCurrencySymbol } from '@angular/common';
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    InvoiceSettings,
     MemberServiceServiceProxy,
     MemberServiceDto,
     MemberServiceLevelDto,
@@ -28,11 +26,9 @@ import {
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { FeatureTreeComponent } from '@app/shared/features/feature-tree.component';
 import { FeatureTreeEditModel, FeatureValuesDto } from '@app/shared/features/feature-tree-edit.model';
-import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from 'devextreme-angular';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 @Component({
@@ -53,9 +49,6 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
     today = new Date();
     private slider: any;
     memberService: MemberServiceDto;
-    amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
-        filter(Boolean), map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
-    );
     systemTypes: string[];
     featuresData: FeatureTreeEditModel;
     title: string;
@@ -65,7 +58,6 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
         private elementRef: ElementRef,
         private memberServiceProxy: MemberServiceServiceProxy,
         private notify: NotifyService,
-        private invoicesService: InvoicesService,
         private changeDetection: ChangeDetectorRef,
         public dialogRef: MatDialogRef<AddMemberServiceDialogComponent>,
         public ls: AppLocalizationService,

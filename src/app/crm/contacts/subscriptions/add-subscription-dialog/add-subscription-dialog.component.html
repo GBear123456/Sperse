@@ -125,7 +125,7 @@
                             <label for="amount">{{ls.l('Amount')}}</label>
                             <dx-number-box name="amount"
                                            [inputAttr]="{ id: 'amount' }"
-                                           [format]="amountFormat$ | async"
+                                           [format]="amountFormat"
                                            [(value)]="subscription.amount">
                             </dx-number-box>
                         </div>

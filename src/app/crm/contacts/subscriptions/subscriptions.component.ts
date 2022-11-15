@@ -5,26 +5,21 @@ import { ActivatedRoute } from '@angular/router';
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
-import { map, first, filter, finalize } from 'rxjs/operators';
+import { map, finalize } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
 import {
-    InvoiceSettings,
     ContactServiceProxy,
     OrderSubscriptionServiceProxy,
-    UpdateOrderSubscriptionInput,
     OrderSubscriptionDto,
-    SubscriptionInput,
     ContactInfoDto,
     NameValueDto,
-    CommonLookupServiceProxy,
     CancelOrderSubscriptionInput,
     UpdateOrderSubscriptionPeriodInput,
     LeadInfoDto,
     LayoutType
 } from '@shared/service-proxies/service-proxies';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { ContactsService } from '../contacts.service';
@@ -34,7 +29,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
@@ -43,6 +37,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { AppService } from '@app/app.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'subscriptions',
@@ -58,7 +53,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     };
     pagerConfig = DataGridService.defaultGridPagerConfig;
 
-    currency: string;
+    currency: string = SettingsHelper.getCurrency();
     public dataSource: DataSource;
     impersonateTenantId: number;
     permissions = AppPermissions;
@@ -89,11 +84,9 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     ];
 
     constructor(
-        private invoicesService: InvoicesService,
         private contactsService: ContactsService,
         private contactService: ContactServiceProxy,
         private orderSubscriptionProxy: OrderSubscriptionServiceProxy,
-        private commonLookupService: CommonLookupServiceProxy,
         private impersonationService: ImpersonationService,
         private userManagementService: UserManagementService,
         private loadingService: LoadingService,
@@ -108,8 +101,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                 this.refreshData(true);
             }
         }, this.ident);
-        invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(
-            (res: InvoiceSettings) => this.currency = res.currency);
     }
 
     ngOnInit() {

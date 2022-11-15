@@ -80,6 +80,7 @@ import { CreateInvoiceDialogData } from '@app/crm/shared/create-invoice-dialog/c
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { InvoiceSettingsDialogComponent } from '../../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -113,6 +114,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     startCase = startCase;
 
     defaultCountryCode = AppConsts.defaultCountryCode;
+    currency = SettingsHelper.getCurrency();
     saveButtonId = 'saveInvoiceOptions';
     newInvoiceInfo = new GetNewInvoiceInfoOutput();
     invoiceSettings: InvoiceSettings = new InvoiceSettings();

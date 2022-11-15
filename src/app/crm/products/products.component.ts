@@ -1,10 +1,10 @@
 /** Core imports */
-import { ChangeDetectorRef, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { filter, finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import DataSource from '@root/node_modules/devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 
@@ -28,11 +28,11 @@ import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/
 import { AddProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ProductServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ProductDto } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: './products.component.html',
@@ -51,7 +51,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     private readonly dataSourceURI = 'Product';
     private rootComponent: any;
-    private subRouteParams: any;
     private dependencyChanged = false;
     isReadOnly = true;
     permissions = AppPermissions;
@@ -86,7 +85,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         }
     ];
 
-    currency: string;
+    currency: string = SettingsHelper.getCurrency();
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
@@ -114,7 +113,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
-        invoicesService: InvoicesService,
         private filtersService: FiltersService,
         private productProxy: ProductServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
@@ -130,9 +128,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             label: this.l('AddProduct')
         });
         this.dataSource = new DataSource({ store: new ODataStore(this.dataStore) });
-        invoicesService.settings$.pipe(filter(Boolean)).subscribe(
-            (res: InvoiceSettings) => this.currency = res.currency
-        );
     }
 
     ngOnInit() {

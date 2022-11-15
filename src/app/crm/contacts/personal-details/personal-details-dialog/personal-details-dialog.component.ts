@@ -4,7 +4,6 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { formatPercent } from '@angular/common';
 
 /** Third party imports */
-import * as moment from 'moment-timezone';
 import { ClipboardService } from 'ngx-clipboard';
 import { CacheService } from 'ng2-cache-service';
 import DataSource from 'devextreme/data/data_source';
@@ -18,7 +17,6 @@ import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from 'abp-ng2-module';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { VerificationChecklistItemType, VerificationChecklistItem,
@@ -29,7 +27,7 @@ import {
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
     GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, 
-    CommissionTier, UpdateAffiliateIsAdvisorInput, TenantPaymentSettingsServiceProxy
+    CommissionTier, UpdateAffiliateIsAdvisorInput, TenantPaymentSettingsServiceProxy, CommissionSettings
 } from '@shared/service-proxies/service-proxies';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -164,7 +162,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private featureCheckerService: FeatureCheckerService,
         private permissionCheckerService: PermissionCheckerService,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
-        public invoicesService: InvoicesService,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
@@ -181,9 +178,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             });
         });
 
-        this.invoicesService.settings$.pipe(
-            filter(Boolean), first()
-        ).subscribe((res: InvoiceSettings) => {
+        this.tenantPaymentSettingsService.getCommissionSettings().subscribe((res: CommissionSettings) => {
             if (res.defaultAffiliateRate !== null)
                 this.defaultAffiliateRateStr = formatPercent(res.defaultAffiliateRate, 'en-US', '1.0-2');
             if (res.defaultAffiliateRateTier2 !== null)

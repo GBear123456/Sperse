@@ -31,8 +31,7 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { InvoiceServiceProxy, InvoiceSettings, InvoiceStatus, ProductDto, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { InvoiceServiceProxy, InvoiceStatus, ProductDto, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { InvoiceDto } from './invoices-dto.interface';
 import { InvoiceFields } from './invoices-fields.enum';
@@ -41,6 +40,8 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Params } from '@angular/router';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -95,11 +96,11 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             },
             checkVisible: (data) => {
                 return [InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(data.Status) >= 0;
-            } 
+            }
         }
     ];
 
-    currency: string;
+    currency: string = SettingsHelper.getCurrency();
     searchClear = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     toolbarConfig: ToolbarGroupModel[];
@@ -167,7 +168,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
-        invoicesService: InvoicesService,
         private invoiceProxy: InvoiceServiceProxy,
         private productProxy: ProductServiceProxy,
         private filtersService: FiltersService,
@@ -183,12 +183,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             enabled: !this.isReadOnly &&
                 !!appService.getFeatureCount(AppFeatures.CRMInvoicesManagement),
             action: () => this.showInvoiceDialog(),
-            label: this.l('AddInvoice')
+            label: this.l('CreateInvoice')
         });
         this.dataSource = new DataSource({ store: new ODataStore(this.dataStore) });
-        invoicesService.settings$.pipe(filter(Boolean)).subscribe(
-            (res: InvoiceSettings) => this.currency = res.currency
-        );
     }
 
     ngOnInit() {
@@ -287,6 +284,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         );
+    }
+
+    showInvoiceSettings() {
+        this.dialog.open(InvoiceSettingsDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+        });
     }
 
     showInvoiceDialog(data?: InvoiceDto) {
@@ -440,6 +445,20 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         }
                     }
                 ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [{
+                    name: 'rules',
+                    options: {
+                        text: this.l('Settings'),
+                        hint: this.l('Settings')
+                    },
+                    visible: this.isGranted(AppPermissions.CRMOrdersInvoices) ||
+                        this.isGranted(AppPermissions.CRMSettingsConfigure),
+                    action: this.showInvoiceSettings.bind(this)
+                }]
             },
             {
                 location: 'after',
