@@ -41,6 +41,7 @@ import { FieldDependencies } from '@app/shared/common/data-grid.service/field-de
 import { AppFeatures } from '@shared/AppFeatures';
 import { InvoiceGridMenuComponent } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.component';
 import { InvoiceGridMenuDto } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.interface';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -109,7 +110,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     currencyFormat = {
         type: 'currency',
         precision: 2,
-        currency: 'USD'
+        currency: SettingsHelper.getCurrency()
     };
 
     constructor(injector: Injector,
@@ -139,7 +140,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(
             (settings: InvoiceSettings) => {
                 this.settings = settings;
-                this.currencyFormat.currency = settings.currency;
             }
         );
     }

@@ -27,6 +27,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     encapsulation: ViewEncapsulation.None
 })
 export class RootComponent implements OnInit, AfterViewInit {    
+    showSperseLoader: Boolean = !abp.session.tenantId; 
     maintenanceSettings: MaintenanceSettingsDto;
     hideMaintenanceMessage: Boolean = false;
     currentDate = moment();
@@ -43,15 +44,17 @@ export class RootComponent implements OnInit, AfterViewInit {
         router.events.pipe(
             filter((event) => {
                 if (event instanceof NavigationEnd) {
-                    this.document.body.querySelectorAll('div.initial').forEach(elm => {
-                        setTimeout(() => this.document.body.removeChild(elm), 100);
-                    });                    
+                    this.showSperseLoader = false;
+                    this.removeLoadingSpinner();
                     return true;
                 }
                 return false;
             }), 
             first()
         ).subscribe();
+
+        if (this.showSperseLoader)
+            this.removeLoadingSpinner();
 
         this.hostSettingsProxy.getMaintenanceSettings().subscribe((res: MaintenanceSettingsDto) => {
             this.maintenanceSettings = res;
@@ -62,6 +65,12 @@ export class RootComponent implements OnInit, AfterViewInit {
             this.hideMaintenanceMessage = Boolean(hideMaintenanceMessage);
     }
 
+    removeLoadingSpinner() {
+        this.document.body.querySelectorAll('div.spinner').forEach(elm => {
+            this.document.body.removeChild(elm);
+        });
+    }
+    
     ngOnInit() {
         sessionStorage.clear();
         if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] && this.SS.userId)

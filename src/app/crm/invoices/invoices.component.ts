@@ -30,8 +30,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
-import { InvoiceServiceProxy, InvoiceSettings, InvoiceStatus, PipelineDto, ProductDto, ProductServiceProxy, StageDto } from '@shared/service-proxies/service-proxies';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { InvoiceServiceProxy, InvoiceStatus, PipelineDto, ProductDto, ProductServiceProxy, StageDto } from '@shared/service-proxies/service-proxies';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { InvoiceDto, InvoiceStatusQuickFitler } from './invoices-dto.interface';
 import { InvoiceFields } from './invoices-fields.enum';
@@ -42,8 +41,11 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { Params } from '@angular/router';
 import { InvoiceGridMenuComponent } from './invoice-grid-menu/invoice-grid-menu.component';
 import { InvoiceGridMenuDto } from './invoice-grid-menu/invoice-grid-menu.interface';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DateHelper } from '../../../shared/helpers/DateHelper';
+import { InvoicesService } from '../contacts/invoices/invoices.service';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -75,7 +77,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     startCase = startCase;
 
-    currency: string;
+    currency: string = SettingsHelper.getCurrency();
     searchClear = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     toolbarConfig: ToolbarGroupModel[];
@@ -172,12 +174,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.headlineButtons.push({
             enabled: !this.isReadOnly && this.feature.isEnabled(AppFeatures.CRMInvoicesManagement),
             action: () => this.showInvoiceDialog(),
-            label: this.l('AddInvoice')
+            label: this.l('CreateInvoice')
         });
         this.dataSource = new DataSource({ store: new ODataStore(this.dataStore) });
-        invoicesService.settings$.pipe(filter(Boolean)).subscribe(
-            (res: InvoiceSettings) => this.currency = res.currency
-        );
     }
 
     ngOnInit() {
@@ -255,6 +254,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     invalidate() {
         this._refresh.next(null);
+    }
+
+    showInvoiceSettings() {
+        this.dialog.open(InvoiceSettingsDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+        });
     }
 
     showInvoiceDialog(data?: InvoiceDto) {
@@ -410,6 +417,20 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         }
                     }
                 ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [{
+                    name: 'rules',
+                    options: {
+                        text: this.l('Settings'),
+                        hint: this.l('Settings')
+                    },
+                    visible: this.isGranted(AppPermissions.CRMOrdersInvoices) ||
+                        this.isGranted(AppPermissions.CRMSettingsConfigure),
+                    action: this.showInvoiceSettings.bind(this)
+                }]
             },
             {
                 location: 'center',

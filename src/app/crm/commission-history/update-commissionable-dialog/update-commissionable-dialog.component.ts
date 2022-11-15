@@ -2,18 +2,16 @@
 import { Component, Injector, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import { finalize, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from 'abp-ng2-module';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
-import { CommissionServiceProxy, UpdateCommissionableAmountInput,
-    InvoiceSettings } from '@shared/service-proxies/service-proxies';
+import { CommissionServiceProxy, UpdateCommissionableAmountInput } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'update-commissionable-dialog',
@@ -22,18 +20,14 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 })
 export class UpdateCommissionableDialogComponent extends ConfirmDialogComponent {
     amount = 0;
-
-    currency$: Observable<string> = this.invoicesService.settings$.pipe(
-        map((settings: InvoiceSettings) => settings && settings.currency)
-    );
+    currency: string = SettingsHelper.getCurrency();
 
     constructor(
         injector: Injector,
         public elementRef: ElementRef,
         private notify: NotifyService,
         private loadingService: LoadingService,
-        private commissionProxy: CommissionServiceProxy,
-        private invoicesService: InvoicesService
+        private commissionProxy: CommissionServiceProxy
     ) {
         super(injector);
     }

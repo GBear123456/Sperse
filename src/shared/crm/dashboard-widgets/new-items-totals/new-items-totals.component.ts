@@ -11,6 +11,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'new-items-totals',
@@ -23,6 +24,7 @@ export class NewItemsTotalsComponent implements OnDestroy, OnInit {
     totalsData$: Observable<GetTotalsOutput> = this.dashboardService.totalsData$;
     totalsDataAvailable$: Observable<boolean> = this.dashboardService.totalsDataAvailable$;
     totalsDataLoading$ = this.dashboardService.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$));
+    currency: string = SettingsHelper.getCurrency();
 
     constructor(
         private lifeCycleService: LifecycleSubjectsService,

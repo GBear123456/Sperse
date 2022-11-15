@@ -345,7 +345,8 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         CrmService
     ],
     exports: [
-        ContactGroupTemplatesComponent
+        ContactGroupTemplatesComponent,
+        EmailTemplateSelectorComponent
     ]
 })
 export class ContactsModule {}
