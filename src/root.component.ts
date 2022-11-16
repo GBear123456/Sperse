@@ -27,6 +27,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     encapsulation: ViewEncapsulation.None
 })
 export class RootComponent implements OnInit, AfterViewInit {    
+    showCBLoader: Boolean = false;
     showSperseLoader: Boolean = !abp.session.tenantId; 
     maintenanceSettings: MaintenanceSettingsDto;
     hideMaintenanceMessage: Boolean = false;
@@ -40,10 +41,15 @@ export class RootComponent implements OnInit, AfterViewInit {
         @Inject(AppSessionService) private SS,
         @Inject(DOCUMENT) private document
     ) {
+        let tenant = this.SS.tenant;
+        this.showCBLoader = tenant && tenant.customLayoutType && 
+            tenant.customLayoutType == LayoutType.BankCode;
+
         this.pageHeaderFixed(true);
         router.events.pipe(
             filter((event) => {
                 if (event instanceof NavigationEnd) {
+                    this.showCBLoader = false;
                     this.showSperseLoader = false;
                     this.removeLoadingSpinner();
                     return true;
@@ -53,7 +59,7 @@ export class RootComponent implements OnInit, AfterViewInit {
             first()
         ).subscribe();
 
-        if (this.showSperseLoader)
+        if (this.showSperseLoader || this.showCBLoader)
             this.removeLoadingSpinner();
 
         this.hostSettingsProxy.getMaintenanceSettings().subscribe((res: MaintenanceSettingsDto) => {
