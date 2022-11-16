@@ -1,10 +1,10 @@
-<modal-dialog [title]="ls.l('Ledger') + ' ' + ls.l('History')"
+<modal-dialog [title]="ls.l('Payout') + ' ' + ls.l('History')"
               [editTitle]="false"
               [titleClearButton]="false">
     <dx-scroll-view showScrollbar="always">
         <div class="content">
             <div class="history-item" *ngFor="let historyItem of processedHistory; index as i">
-                <div class="user-section">
+                <div class="user-section {{historyItem?.status?.toLowerCase()}}">
                     <img [src]="profileService.getContactPhotoUrl(ledgerHistory[i].creatorUserPhotoPublicId, false)"
                          [title]="ledgerHistory[i].creatorUserName || ''"
                          class="user-image"
