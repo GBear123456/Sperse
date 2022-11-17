@@ -574,22 +574,60 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getOdataFilterByQuickStatus() {
+        const unpaidStatusFilter = {
+            [this.invoiceFields.Status]: {
+                in: [InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid]
+            }
+        };
+
+        let today = DateHelper.removeTimezoneOffset(new Date(), true, 'from').toISOString();
+        let dueGraceDate = DateHelper.removeTimezoneOffset(moment().startOf('day').add(-this.invoiceDueGraceDays, 'days').toDate(), true, 'from').toISOString();
+
         switch (this.selectedQuickStatusFilter) {
+            case InvoiceStatusQuickFitler.Draft:
+                return {
+                    [this.invoiceFields.Status]: {
+                        in: [InvoiceStatus.Draft, InvoiceStatus.Final]
+                    }
+                };
             case InvoiceStatusQuickFitler.Paid:
-                return `${this.invoiceFields.Status} eq '${InvoiceStatus.Paid}'`;
+                return { [this.invoiceFields.Status]: InvoiceStatus.Paid };
             case InvoiceStatusQuickFitler.Unpaid:
-                return {
-                    or: [`${this.invoiceFields.Status} eq '${InvoiceStatus.Sent}'`,
-                    `${this.invoiceFields.Status} eq '${InvoiceStatus.PartiallyPaid}'`]
-                };
+                return unpaidStatusFilter;
+            case InvoiceStatusQuickFitler.Due:
+                return [
+                    unpaidStatusFilter,
+                    {
+                        or: [
+                            [
+                                `${this.invoiceFields.DueDate} ne null`,
+                                `${this.invoiceFields.DueDate} lt ${today}`,
+                                `${this.invoiceFields.DueDate} ge ${dueGraceDate}`,
+                            ],
+                            [
+                                `${this.invoiceFields.DueDate} eq null`,
+                                `${this.invoiceFields.Date} lt ${today}`,
+                                `${this.invoiceFields.Date} ge ${dueGraceDate}`,
+                            ]
+                        ]
+                    }
+                ]
             case InvoiceStatusQuickFitler.Overdue:
-                return {
-                    and: [{
-                        or: [`${this.invoiceFields.Status} eq '${InvoiceStatus.Sent}'`,
-                        `${this.invoiceFields.Status} eq '${InvoiceStatus.PartiallyPaid}'`]
-                    },
-                    `${this.invoiceFields.DueDate} lt ${DateHelper.removeTimezoneOffset(new Date(), true, 'from').toISOString()}`]
-                };
+                return [
+                    unpaidStatusFilter,
+                    {
+                        or: [
+                            [
+                                `${this.invoiceFields.DueDate} ne null`,
+                                `${this.invoiceFields.DueDate} lt ${dueGraceDate}`,
+                            ],
+                            [
+                                `${this.invoiceFields.DueDate} eq null`,
+                                `${this.invoiceFields.Date} lt ${dueGraceDate}`,
+                            ]
+                        ]
+                    }
+                ];
             default:
                 return {};
         }
