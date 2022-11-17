@@ -570,7 +570,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     filterByQuickStatus(item: InvoiceStatusQuickFitler) {
         this.selectedQuickStatusFilter = item;
         this.initToolbarConfig();
-        this.invalidate();
+        this.filtersService.change([]);
     }
 
     getOdataFilterByQuickStatus() {
