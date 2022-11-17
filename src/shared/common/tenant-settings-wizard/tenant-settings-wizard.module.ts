@@ -16,6 +16,7 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { NgxFileDropModule } from 'ngx-file-drop';
 
 /** Application imports */
@@ -51,6 +52,7 @@ import { SourceContactListModule } from '@shared/common/source-contact-list/sour
         DxNumberBoxModule,
         DxTextBoxModule,
         DxTextAreaModule,
+        DxValidatorModule,
         MatInputModule,
         FormsModule,
         TimeZoneComboModule,

@@ -7,9 +7,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
-import ODataStore from 'devextreme/data/odata/store';
+import ODataStore, { ODataStoreOptions } from 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 import startCase from 'lodash/startCase';
+import * as moment from 'moment';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -30,9 +31,9 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
-import { InvoiceServiceProxy, InvoiceSettings, InvoiceStatus, PipelineDto, ProductDto, ProductServiceProxy, StageDto } from '@shared/service-proxies/service-proxies';
+import { InvoiceServiceProxy, InvoiceStatus, PipelineDto, ProductDto, ProductServiceProxy, StageDto } from '@shared/service-proxies/service-proxies';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
-import { InvoiceDto, InvoiceStatusQuickFitler } from './invoices-dto.interface';
+import { InvoiceDto, InvoiceDueStatus, InvoiceStatusQuickFitler } from './invoices-dto.interface';
 import { InvoiceFields } from './invoices-fields.enum';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
@@ -43,9 +44,9 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 import { InvoiceGridMenuComponent } from './invoice-grid-menu/invoice-grid-menu.component';
 import { InvoiceGridMenuDto } from './invoice-grid-menu/invoice-grid-menu.interface';
+import { InvoicesService } from '../contacts/invoices/invoices.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DateHelper } from '../../../shared/helpers/DateHelper';
-import { InvoicesService } from '../contacts/invoices/invoices.service';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -78,9 +79,11 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     startCase = startCase;
 
     currency: string = SettingsHelper.getCurrency();
+    invoiceDueGraceDays = this.setting.getInt('Invoice:DueGracePeriod');
     searchClear = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     toolbarConfig: ToolbarGroupModel[];
+    InvoiceDueStatus = InvoiceDueStatus;
     selectedQuickStatusFilter: InvoiceStatusQuickFitler = InvoiceStatusQuickFitler.All;
     readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;
     private filters: FilterModel[] = this.getFilters();
@@ -105,7 +108,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues),
     );
 
-    dataStore = {
+    dataStore: ODataStoreOptions = {
         key: this.invoiceFields.Id,
         deserializeDates: false,
         url: this.getODataUrl(
@@ -122,10 +125,51 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 ],
                 {
                     FullName: [this.invoiceFields.PhotoPublicId],
-                    OrderStageName: [this.invoiceFields.OrderId]
+                    OrderStageName: [this.invoiceFields.OrderId],
+                    DueStatus: [this.invoiceFields.Date, this.invoiceFields.DueDate, this.invoiceFields.Status]
                 }
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+        },
+        onLoaded: (data) => {
+            let todayMoment = moment().endOf('day');
+            data.forEach((v: InvoiceDto) => {
+                if (v.Status != InvoiceStatus.Sent && v.Status != InvoiceStatus.PartiallyPaid)
+                    return;
+
+                let status: InvoiceDueStatus = null;
+                let dateDiffDays: number = null;
+
+                let baseDate = v.DueDate ? v.DueDate : v.Date;
+                dateDiffDays = moment(baseDate).endOf('day').diff(todayMoment, 'days');
+                if (dateDiffDays >= 0) {
+                    status = InvoiceDueStatus.InTime;
+                }
+
+                if (status == null) {
+                    if (dateDiffDays + this.invoiceDueGraceDays >= 0) {
+                        status = InvoiceDueStatus.Due;
+                    }
+                    else {
+                        status = InvoiceDueStatus.Overdue;
+                    }
+                    dateDiffDays = -dateDiffDays;
+                }
+
+                let dueStatusMessage: string;
+                switch (status) {
+                    case InvoiceDueStatus.InTime:
+                        dueStatusMessage = dateDiffDays == 0 ? this.l('DueStatus_Today') : this.l('DueStatus_DueIn', dateDiffDays);
+                        break;
+                    case InvoiceDueStatus.Due:
+                    case InvoiceDueStatus.Overdue:
+                        dueStatusMessage = this.l('DueStatus_DueFor', dateDiffDays);
+                        break;
+                    default:
+                }
+                v['DueStatus'] = status;
+                v['DueStatusMessage'] = dueStatusMessage;
+            });
         },
         errorHandler: (error) => {
             setTimeout(() => this.isDataLoaded = true);
@@ -172,8 +216,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
         this.isReadOnly = !this.permission.isGranted(this.permissions.CRMOrdersInvoicesManage);
         this.headlineButtons.push({
-            enabled: !this.isReadOnly &&
-                !!appService.getFeatureCount(AppFeatures.CRMInvoicesManagement),
+            enabled: !this.isReadOnly && this.feature.isEnabled(AppFeatures.CRMInvoicesManagement),
             action: () => this.showInvoiceDialog(),
             label: this.l('CreateInvoice')
         });
@@ -545,7 +588,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         or: [`${this.invoiceFields.Status} eq '${InvoiceStatus.Sent}'`,
                         `${this.invoiceFields.Status} eq '${InvoiceStatus.PartiallyPaid}'`]
                     },
-                        `${this.invoiceFields.DueDate} lt ${DateHelper.removeTimezoneOffset(new Date(), true, 'from').toISOString()}`]
+                    `${this.invoiceFields.DueDate} lt ${DateHelper.removeTimezoneOffset(new Date(), true, 'from').toISOString()}`]
                 };
             default:
                 return {};
@@ -572,15 +615,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         if (this.toolbar) {
             this.toolbar.toolbarComponent.instance.repaint();
         }
-    }
-
-    getDueDateColor(data: InvoiceDto) {
-        if (!data.DueDate || [InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid].indexOf(data.Status) < 0)
-            return '';
-
-        let today = new Date();
-        let date = new Date(data.DueDate);
-        return date < today && date.getDate() < today.getDate() ? 'red' : 'green';
     }
 
     onShowingPopup(e) {

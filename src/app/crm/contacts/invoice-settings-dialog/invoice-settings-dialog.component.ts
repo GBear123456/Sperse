@@ -5,6 +5,7 @@ import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ViewChil
 import { filter, finalize, first } from 'rxjs/operators';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { NotifyService } from 'abp-ng2-module';
+import Validator from 'devextreme/ui/validator';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -54,6 +55,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         }
     ]
     EmailTemplateType = EmailTemplateType;
+    gracePeriodValidator: Validator;
 
     constructor(
         public dialog: MatDialog,
@@ -88,6 +90,9 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         if (this.isManageUnallowed)
             return;
 
+        if (!this.gracePeriodValidator.validate().isValid)
+            return;
+
         this.modalDialog.startLoading();
         this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings))
             .pipe(
@@ -99,6 +104,13 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
                 this.invoicesService.invalidateSettings(this.settings);
                 this.dialogRef.close(this.settings);
             });
+    }
+
+    onDueGracePeriodFocusOut(event) {
+        if (!this.gracePeriodValidator)
+            this.gracePeriodValidator = Validator.getInstance(event.element) as Validator;
+
+        this.gracePeriodValidator.validate();
     }
 
     showBankSettingsDialog() {

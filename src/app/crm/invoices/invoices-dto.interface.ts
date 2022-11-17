@@ -26,3 +26,9 @@ export enum InvoiceStatusQuickFitler {
     Unpaid = 'Unpaid',
     Overdue = 'Overdue'
 }
+
+export enum InvoiceDueStatus {
+    InTime = 'InTime',
+    Due = 'Due',
+    Overdue = 'Overdue'
+}
