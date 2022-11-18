@@ -491,11 +491,12 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     ngOnInit() {
-        this.affiliatePayoutSettingProxy.getAvailablePayoutTypes(
-            ).subscribe((payoutTypes: PaymentSettingType[]) => {
-                this.isPayPalPayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.PayPal);
-                this.isStripePayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.Stripe);
-            });
+        if (abp.features.isEnabled(AppFeatures.CRMPayments))
+            this.affiliatePayoutSettingProxy.getAvailablePayoutTypes(
+                ).subscribe((payoutTypes: PaymentSettingType[]) => {
+                    this.isPayPalPayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.PayPal);
+                    this.isStripePayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.Stripe);
+                });
 
         this.handleDataGridUpdate();
         this.handleFiltersPining();
@@ -744,16 +745,16 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                     action: this.applyComplete.bind(this)
                                 },
                                 {
-                                    text: this.l('PayWithPayPal'),                                    
+                                    text: this.l('PayWithPayPal'),
+                                    visible: abp.features.isEnabled(AppFeatures.CRMPayments),
                                     disabled: !this.isPayPalPayoutEnabled ||                                        
-                                        !abp.features.isEnabled(AppFeatures.CRMPayments) ||
                                         !this.selectedRecords.some(item => item.PayPalEmailAddress),
                                     action: () => this.applyPaymentComplete(PaymentSystem.PayPal)
                                 },
                                 {
                                     text: this.l('PayWithStripe'),
-                                    disabled: !this.isStripePayoutEnabled ||
-                                        !abp.features.isEnabled(AppFeatures.CRMPayments),
+                                    visible: abp.features.isEnabled(AppFeatures.CRMPayments),
+                                    disabled: !this.isStripePayoutEnabled,
                                     action: () => this.applyPaymentComplete(PaymentSystem.Stripe)
                                 }
                             ]
