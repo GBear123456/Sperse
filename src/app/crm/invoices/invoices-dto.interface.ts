@@ -22,8 +22,10 @@ export interface InvoiceDto {
 
 export enum InvoiceStatusQuickFitler {
     All = 'All',
+    Draft = 'Draft',
     Paid = 'Paid',
     Unpaid = 'Unpaid',
+    Due = 'Due',
     Overdue = 'Overdue'
 }
 
