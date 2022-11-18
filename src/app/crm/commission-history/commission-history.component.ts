@@ -39,7 +39,8 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import {
     CommissionServiceProxy, ProductServiceProxy,
-    PaymentSettingType, CommissionTier, UpdateCommissionAffiliateInput, PaymentSystem, TenantPaymentSettingsServiceProxy, CommissionSettings
+    PaymentSettingType, CommissionTier, UpdateCommissionAffiliateInput, PaymentSystem,
+    AffiliatePayoutSettingServiceProxy, TenantPaymentSettingsServiceProxy, CommissionSettings
 } from '@shared/service-proxies/service-proxies';
 import { LedgerHistoryDialogComponent } from '@app/crm/commission-history/ledger-history-dialog/ledger-history-dialog.component';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
@@ -76,7 +77,7 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
         './commission-history.component.less'
     ],
     providers: [
-        ProductServiceProxy, LifecycleSubjectsService, TenantPaymentSettingsServiceProxy
+        ProductServiceProxy, LifecycleSubjectsService, AffiliatePayoutSettingServiceProxy, TenantPaymentSettingsServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -469,6 +470,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         private productProxy: ProductServiceProxy,
         private commissionProxy: CommissionServiceProxy,
         private paymentSettings: TenantPaymentSettingsServiceProxy,
+        private affiliatePayoutSettingProxy: AffiliatePayoutSettingServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef
     ) {
@@ -483,7 +485,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     ngOnInit() {
-        this.commissionProxy.getAvailablePayoutTypes(
+        this.affiliatePayoutSettingProxy.getAvailablePayoutTypes(
             ).subscribe((payoutTypes: PaymentSettingType[]) => {
                 this.isPayPalPayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.PayPal);
                 this.isStripePayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.Stripe);
