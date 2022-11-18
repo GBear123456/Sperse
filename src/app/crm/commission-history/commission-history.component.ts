@@ -206,7 +206,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.ledgerDataGrid,
-                    [this.ledgerFields.Id, this.ledgerFields.ContactId]
+                    [this.ledgerFields.Id, this.ledgerFields.ContactId, this.ledgerFields.PayPalEmailAddress]
                 );
             },
             errorHandler: (error) => {
