@@ -373,7 +373,7 @@
                         </dxi-column>
 
                         <div *dxTemplate="let cellData of 'historyTemplate'">
-                            <span *ngIf="cellData.data.Status == 'Completed' && cellData.data.Type == 'Withdrawal'" class="dx-icon-clock code-history" (click)="showLedgerHistory(cellData.data)"></span>
+                            <span *ngIf="cellData.data.Status == 'Completed' && cellData.data.Type == 'Withdrawal'" [title]="l('Payouts')" class="dx-icon-clock code-history" (click)="showLedgerHistory(cellData.data)"></span>
                         </div>
 
                         <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
