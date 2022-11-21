@@ -35,6 +35,7 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild('dueGraceValidator') dueGraceValidatorComponent;
 
     settings = new InvoiceSettingsDto();
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
@@ -55,7 +56,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         }
     ]
     EmailTemplateType = EmailTemplateType;
-    gracePeriodValidator: Validator;
 
     constructor(
         public dialog: MatDialog,
@@ -90,7 +90,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         if (this.isManageUnallowed)
             return;
 
-        if (!this.gracePeriodValidator.validate().isValid)
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        if (!dueGraceValidator.validate().isValid)
             return;
 
         this.modalDialog.startLoading();
@@ -106,11 +107,9 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             });
     }
 
-    onDueGracePeriodFocusOut(event) {
-        if (!this.gracePeriodValidator)
-            this.gracePeriodValidator = Validator.getInstance(event.element) as Validator;
-
-        this.gracePeriodValidator.validate();
+    onDueGracePeriodFocusOut() {
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        dueGraceValidator.validate();
     }
 
     showBankSettingsDialog() {

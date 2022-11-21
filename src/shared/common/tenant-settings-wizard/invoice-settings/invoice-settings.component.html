@@ -77,8 +77,8 @@
                            [readOnly]="isManageUnallowed"
                            [placeholder]="ls.l('EditValuePlaceholder')"
                            [(value)]="settings.dueGracePeriod"
-                           (onFocusOut)="onDueGracePeriodFocusOut($event)">
-                <dx-validator>
+                           (onFocusOut)="onDueGracePeriodFocusOut()">
+                <dx-validator #dueGraceValidator>
                     <dxi-validation-rule type="required"
                                          [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
                 </dx-validator>

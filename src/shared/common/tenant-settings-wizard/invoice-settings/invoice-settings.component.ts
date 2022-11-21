@@ -32,11 +32,11 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
 })
 export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild('dueGraceValidator') dueGraceValidatorComponent;
 
     settings: InvoiceSettingsDto;
 
     EmailTemplateType = EmailTemplateType;
-    gracePeriodValidator: Validator;
 
     constructor(
         private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
@@ -49,11 +49,9 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
         });
     }
 
-    onDueGracePeriodFocusOut(event) {
-        if (!this.gracePeriodValidator)
-            this.gracePeriodValidator = Validator.getInstance(event.element) as Validator;
-
-        this.gracePeriodValidator.validate();
+    onDueGracePeriodFocusOut() {
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        dueGraceValidator.validate();
     }
 
     openAdvisorContactList(event) {
@@ -78,7 +76,8 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
     }
 
     save(): Observable<any> {
-        if (!this.gracePeriodValidator.validate().isValid)
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        if (!dueGraceValidator.validate().isValid)
             return throwError('');
 
         return this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings));
