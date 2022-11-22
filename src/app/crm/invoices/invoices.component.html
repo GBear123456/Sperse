@@ -23,6 +23,9 @@
     <div class="main-wrapper">
         <invoice-grid-menu (onRefresh)="invalidate()">
         </invoice-grid-menu>
+        <dx-tooltip target=""
+                    hideEvent="dxhoverend">
+        </dx-tooltip>
         <div class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
@@ -63,6 +66,7 @@
                     <dxi-column [dataField]="invoiceFields.Description" [caption]="l('Description')" cssClass="clipboard-holder description-column"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.OrderStageName" name="OrderStageName" [caption]="l('Stage')" cellTemplate="stageCell" width="160px"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.Coupon" [caption]="l('Coupon')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.LastPaymentType" name="LastPaymentType" [caption]="l('PaymentType')" cellTemplate="paymentTypeCell"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.Status" [caption]="l('Status')" alignment="center" cellTemplate="statusCell"></dxi-column>
                     <dxi-column name="DueStatus" [caption]="l('DueStatus')" cellTemplate="dueStatusCell"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.GrandTotal" [caption]="l('GrandTotal')" cellTemplate="amountTemplate"></dxi-column>
@@ -70,6 +74,8 @@
                     <dxi-column [dataField]="invoiceFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.AffiliateContactName" [caption]="l('MentorName')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.DueDate" [caption]="l('DueDate')" cellTemplate="dueDateCell" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.LastPaymentDate" [caption]="l('PaymentDate')" cellTemplate="dateCell" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.LastPaymentGateway" [caption]="l('Gateway')" [visible]="false"></dxi-column>
 
                     <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
@@ -77,6 +83,17 @@
                     </div>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                         {{cellData.value | datetime: formatting.dateTimeMoment}}
+                    </div>
+                    <div *dxTemplate="let cellData of 'paymentTypeCell'" class="payment-type-cell">
+                        <span *ngIf="cellData.value; else emptyType">{{ l(cellData.value) }}</span>
+                        <ng-template #emptyType>
+                            <span *ngIf="cellData.data.LastPaymentDate" class="unkown-type">unknown</span>
+                        </ng-template>
+                        <i *ngIf="cellData.data.LastPaymentDate"
+                           (mouseenter)="gatewayInfoMouseenter($event)"
+                           [attr.data-date]="cellData.data.LastPaymentDate | datetime: formatting.dateMoment"
+                           class="fa fa-info date-icon">
+                        </i>
                     </div>
                     <div *dxTemplate="let cellData of 'dueDateCell'" class="clipboard-holder">
                         {{ cellData.value ? (cellData.value | datetime: formatting.dateMoment) : l('Invoice_DueOnReceipt') }}
@@ -122,7 +139,6 @@
     </div>
 </div>
 
-<app-no-data
-    [hidden]="!isDataLoaded || totalRowCount"
-    [showLink]="false">
+<app-no-data [hidden]="!isDataLoaded || totalRowCount"
+             [showLink]="false">
 </app-no-data>

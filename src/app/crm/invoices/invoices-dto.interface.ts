@@ -11,6 +11,10 @@ export interface InvoiceDto {
     Coupon: string;
     PublicId: string;
 
+    LastPaymentDate: string;
+    LastPaymentGateway: string;
+    LastPaymentType: string;
+
     ContactId: number;
     FullName: string;
     EmailAddress: string;

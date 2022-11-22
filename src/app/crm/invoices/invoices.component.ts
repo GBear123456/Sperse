@@ -5,6 +5,7 @@ import { CurrencyPipe } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore, { ODataStoreOptions } from 'devextreme/data/odata/store';
@@ -63,6 +64,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
     @ViewChild(InvoiceGridMenuComponent) invoiceGridMenu: InvoiceGridMenuComponent;
+    @ViewChild(DxTooltipComponent) gatewayTooltip: DxTooltipComponent;
 
     private readonly dataSourceURI = 'Invoice';
     private readonly dataSourceCountURI = 'InvoiceCount';
@@ -126,7 +128,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     FullName: [this.invoiceFields.PhotoPublicId],
                     OrderStageName: [this.invoiceFields.OrderId],
-                    DueStatus: [this.invoiceFields.Date, this.invoiceFields.DueDate, this.invoiceFields.Status]
+                    DueStatus: [this.invoiceFields.Date, this.invoiceFields.DueDate, this.invoiceFields.Status],
+                    LastPaymentType: [this.invoiceFields.LastPaymentDate]
                 }
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -684,6 +687,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 this.invoiceGridMenu.showTooltip(invoiceDto, event.event.target, true);
             }
         }
+    }
+
+    gatewayInfoMouseenter(e) {
+        this.gatewayTooltip.target = e.target;
+        this.gatewayTooltip.instance.option('contentTemplate', 'Last Payment - ' + e.target.dataset.date);
+        this.gatewayTooltip.instance.show();
     }
 
     updateOrderStage(event) {
