@@ -97,6 +97,9 @@ export class LedgerHistoryDialogComponent implements OnInit {
             value = this.currencyPipe.transform(+value.toFixed(2));
         }
 
+        if (propName == 'status')
+            value = startCase(value);
+
         if (moment.isMoment(value)) {
             return moment(value).format(AppConsts.formatting.fieldDate);
         }
