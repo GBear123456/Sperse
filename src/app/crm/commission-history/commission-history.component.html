@@ -371,9 +371,14 @@
                                     cssClass="clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
+                        <dxi-column [dataField]="ledgerFields.StripeAccountID"
+                                    [caption]="l('Stripe') + ' ' + l('Account')"
+                                    cssClass="clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
 
                         <div *dxTemplate="let cellData of 'historyTemplate'">
-                            <span *ngIf="cellData.data.Status == 'Completed' && cellData.data.Type == 'Withdrawal'" [title]="l('Payouts')" class="dx-icon-clock code-history" (click)="showLedgerHistory(cellData.data)"></span>
+                            <span *ngIf="cellData.data.HasPayout" [title]="l('Payouts')" class="dx-icon-clock code-history" (click)="showLedgerHistory(cellData.data)"></span>
                         </div>
 
                         <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">

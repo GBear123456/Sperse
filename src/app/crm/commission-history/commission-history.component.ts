@@ -206,7 +206,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.ledgerDataGrid,
-                    [this.ledgerFields.Id, this.ledgerFields.ContactId, this.ledgerFields.PayPalEmailAddress]
+                    [this.ledgerFields.Id, this.ledgerFields.ContactId, this.ledgerFields.HasPayout, this.ledgerFields.PayPalEmailAddress, this.ledgerFields.StripeAccountID]
                 );
             },
             errorHandler: (error) => {
@@ -748,7 +748,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 {
                                     text: this.l('PayWithStripe'),
                                     visible: abp.features.isEnabled(AppFeatures.CRMPayments),
-                                    disabled: !this.isStripePayoutEnabled,
+                                    disabled: !this.isStripePayoutEnabled ||
+                                        !this.selectedRecords.some(item => item.StripeAccountID),
                                     action: () => this.applyPaymentComplete(PaymentSystem.Stripe)
                                 }
                             ]

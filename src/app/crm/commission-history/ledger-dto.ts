@@ -11,5 +11,7 @@ export interface LedgerDto {
     TotalAmount: number;
     Type: string;
     PaymentSystem: string;
+    HasPayout: string;
     PayPalEmailAddress: string;
+    StripeAccountID: string;
 }
