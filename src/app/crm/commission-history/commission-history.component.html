@@ -341,6 +341,9 @@
                                     [caption]="l('Status')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
+                        <dxi-column [caption]="l('Payout System')" 
+                                    cellTemplate="payoutSystemCell">
+                        </dxi-column>
                         <dxi-column [dataField]="ledgerFields.StartDate"
                                     [caption]="l('StartDate')" 
                                     cellTemplate="dateCell" 
@@ -387,6 +390,10 @@
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | datetime: formatting.dateTimeMoment}}
+                        </div>
+
+                        <div *dxTemplate="let cellData of 'payoutSystemCell'" class="clipboard-holder">
+                            <img *ngIf="cellData?.data?.StripeAccountID || cellData?.data?.PayPalEmailAddress" [src]="'assets/common/icons/' + (cellData.data.StripeAccountID ? 'stripe': 'paypal') + '.svg'" [title]="l(cellData.data.StripeAccountID ? 'Stripe' : 'PayPal')" height="25px" width="100px">
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
