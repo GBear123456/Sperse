@@ -341,7 +341,8 @@
                                     [caption]="l('Status')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [caption]="l('Payout System')" 
+                        <dxi-column *ngIf="!isBankCodeLayoutType"
+                                    [caption]="l('Payout System')" 
                                     cellTemplate="payoutSystemCell">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.StartDate"

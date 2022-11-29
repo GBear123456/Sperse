@@ -27,6 +27,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
@@ -40,7 +41,8 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
 import {
     CommissionServiceProxy, ProductServiceProxy,
     PaymentSettingType, CommissionTier, UpdateCommissionAffiliateInput, PaymentSystem,
-    AffiliatePayoutSettingServiceProxy, TenantPaymentSettingsServiceProxy, CommissionSettings
+    AffiliatePayoutSettingServiceProxy, TenantPaymentSettingsServiceProxy, CommissionSettings,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { LedgerHistoryDialogComponent } from '@app/crm/commission-history/ledger-history-dialog/ledger-history-dialog.component';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
@@ -97,6 +99,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     private bulkUpdateAllowed = this.permission.isGranted(AppPermissions.CRMBulkUpdates);
     private affiliateManageAllowed = this.permission.isGranted(AppPermissions.CRMAffiliatesManage);
 
+    isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     selectedRecords: any = [];
     readonly commissionFields: KeysEnum<CommissionDto> = CommissionFields;
     readonly ledgerFields: KeysEnum<LedgerDto> = LedgerFields;
@@ -470,6 +473,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         private productProxy: ProductServiceProxy,
         private commissionProxy: CommissionServiceProxy,
         private paymentSettings: TenantPaymentSettingsServiceProxy,
+        private userManagementService: UserManagementService,
         private affiliatePayoutSettingProxy: AffiliatePayoutSettingServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef
