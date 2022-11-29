@@ -129,6 +129,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     contactId: number;
     products: (ProductPaymentOptionsInfo | ProductShortInfo)[] = [];
     lastProductPhrase: string;
+    lastProductCount: number;
     date = new Date();
     dueDate;
     isAddressDialogOpened = false;
@@ -614,8 +615,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     onFieldFocusIn(event, cellData) {        
         event.component.option('isValid', true);
-        if (cellData) {
-            let value = event.component.option('value');
+        let value = event.component.option('value');            
+        if (cellData && (!this.lastProductPhrase || !value.startsWith(this.lastProductPhrase))) {
             if (cellData.data.isCrmProduct) {
                 if (!this.products || !this.products.length || !this.products[0]['code'])
                     this.productsLookupRequest();
@@ -707,8 +708,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (fromInvoice && cellData.data.productCode)
             return ;
 
-        this.lastProductPhrase = $event.event.target.value;
+        let phrase = $event.event.target.value;
+        if (this.lastProductPhrase && phrase.startsWith(this.lastProductPhrase) && this.lastProductCount == 0)
+            return this.lastProductPhrase = phrase;
 
+        this.lastProductPhrase = phrase;
         $event.component.option('opened', true);
         $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
@@ -721,7 +725,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 ? this.invoiceProductsLookupRequest
                 : this.productsLookupRequest
             ).bind(this)(this.lastProductPhrase, res => {
-                if (!res['length'])
+                this.lastProductCount = res.length;
+                if (!this.lastProductCount)
                     $event.component.option('noDataText', this.ls.l('NoItemsFound'));
             });
         }, 500);

@@ -234,7 +234,7 @@
                                 </div>
                             </dx-select-box>
 
-                            <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="cellData.rowIndex == lines.length - 1 && !productLines.instance.isRowExpanded(cellData.data)">
+                            <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="cellData.data == lines[lines.length - 1] && !productLines.instance.isRowExpanded(cellData.data)">
                                 <span *ngIf="featureMaxProductCount" [class.disabled]="lines.length != getFilteredLines().length && cellData.data.isCrmProduct" class="add-new add-product-line" (click)="addNewLine(productLines, true)">+ {{ls.l('AddProductLine')}}</span>
                                 <span *ngIf="featureMaxProductCount" class="separator">|</span>
                                 <span [class.disabled]="lines.length != getFilteredLines().length && !cellData.data.isCrmProduct" class="add-new add-custom-line" (click)="addNewLine(productLines)">+ {{ls.l('AddCustomLine')}}</span>
@@ -311,6 +311,12 @@
                                 [maxLength]="getDetailsMaxLength(detail)"
                                 [placeholder]="ls.l('Enter') + ' ' + ls.l('AdditionalDetails') + '...'">
                             </dx-text-area>
+
+                            <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="detail.data == lines[lines.length - 1] && productLines.instance.isRowExpanded(detail.data)">
+                                <span *ngIf="featureMaxProductCount" [class.disabled]="lines.length != getFilteredLines().length && detail.data.isCrmProduct" class="add-new add-product-line" (click)="addNewLine(productLines, true)">+ {{ls.l('AddProductLine')}}</span>
+                                <span *ngIf="featureMaxProductCount" class="separator">|</span>
+                                <span [class.disabled]="lines.length != getFilteredLines().length && !detail.data.isCrmProduct" class="add-new add-custom-line" (click)="addNewLine(productLines)">+ {{ls.l('AddCustomLine')}}</span>
+                            </div>
                         </div>
                     </dx-data-grid>
                 </dx-validation-group>
