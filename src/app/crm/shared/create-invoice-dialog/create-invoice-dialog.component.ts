@@ -113,8 +113,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     status = InvoiceStatus.Draft;
     startCase = startCase;
 
-
-    private readonly MAX_DESCRIPTION_LENGTH = 500;
     defaultCountryCode = AppConsts.defaultCountryCode;
     currency = SettingsHelper.getCurrency();
     saveButtonId = 'saveInvoiceOptions';
@@ -241,7 +239,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private messageService: MessageService,
         private cacheHelper: CacheHelper,
         private dialogRef: MatDialogRef<CreateInvoiceDialogComponent>,
-        public changeDetectorRef: ChangeDetectorRef,
+        private changeDetectorRef: ChangeDetectorRef,
         private permission: AppPermissionService,
         private contactsService: ContactsService,
         private statesService: StatesService,
@@ -328,21 +326,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.orderNumber = invoiceInfo.orderNumber;
                     this.customer = invoiceInfo.contactName;
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
-                    this.selectedShippingAddress = invoiceInfo.shippingAddress;                    
+                    this.selectedShippingAddress = invoiceInfo.shippingAddress;
                     this.lines = invoiceInfo.lines.map((res: any) => {
-                        let description = res.description.split('\n').shift();
                         return {
                             isCrmProduct: !!res.productCode,
                             Quantity: res.quantity,
                             Rate: res.rate,
-                            Description: description,
-                            details: res.description.split('\n').slice(1).join('\n'),
+                            Description: res.description,
                             units: res.productType == 'Subscription' ? [{
                                 unitId: res.unitId, 
                                 unitName: res.unitName
                             }] : undefined,
-                            ...res,
-                            description: description
+                            ...res
                         };
                     });                    
 
@@ -479,7 +474,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: row['productCode'],
-                    description: row['description'] + (row['details'] ? '\n' + row['details'] : ''),
+                    description: row['description'],
                     sortOrder: index,
                     commissionableAmount: undefined
                 });
@@ -506,7 +501,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: row['productCode'],
-                    description: row['description'] + (row['details'] ? '\n' + row['details'] : ''),
+                    description: row['description'],
                     sortOrder: index,
                     commissionableAmount: undefined
                 });
@@ -1056,13 +1051,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     onCustomDescriptionCreating(event) {
         if (!event.customItem)
             event.customItem = {description: event.text};
-    }
-
-    getDetailsMaxLength(detail): Number {
-        if (detail.data && detail.data.description)
-            return this.MAX_DESCRIPTION_LENGTH - detail.data.description.length;
-        else
-            return this.MAX_DESCRIPTION_LENGTH;
     }
 
     showEditAddressDialog(event, field) {
