@@ -289,6 +289,13 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+
+            &.email:before {
+                content: url(../../../../assets/common/icons/email_w.svg);
+                position: absolute;
+                top: 44px;
+                left: 18px;
+            }
         }
 
         input {
@@ -303,8 +310,12 @@
             background-size: 20px;
             height: 45px;
 
-            &[type="email"] {
-                background-image: url(../../../../assets/common/icons/email_w.svg);
+            &:-webkit-autofill,
+            &:-webkit-autofill:hover, 
+            &:-webkit-autofill:focus, 
+            &:-webkit-autofill:active{
+                -webkit-box-shadow: 0 0 0 30px #69bef7 inset !important;
+                -webkit-text-fill-color: #fff !important;
             }
 
             &:hover,
@@ -415,6 +426,14 @@
             color: #FFF!important;
             font-size: 16px;
             font-weight: 500;
+
+            &:-webkit-autofill,
+            &:-webkit-autofill:hover, 
+            &:-webkit-autofill:focus, 
+            &:-webkit-autofill:active{
+                -webkit-box-shadow: 0 0 0 30px #69bef7 inset !important;
+                -webkit-text-fill-color: #fff !important;
+            }
         }
         .input-group {
             width: 490px;
@@ -527,6 +546,39 @@
             color: #c8ced3;
             font-weight: 600;
             text-decoration: underline;
+        }
+    }
+
+    #message {
+        p {
+            color: #ffffff;
+            padding-left: 35px;
+            font-weight: 600;
+            position: relative;
+            &::before {
+                position: absolute;
+                content: "";
+                top: -4px;
+                left: 0;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                background-color: #ffffff;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: 50%;
+            }
+
+            &.valid {                
+                &::before {
+                    background-image: url(../../../../assets/common/icons/feature-enabled.svg);
+                }
+            }
+            &.invalid {
+                &::before {
+                    background-image: url(../../../../assets/common/icons/feature-disabled.svg);
+                }
+            }
         }
     }
 }

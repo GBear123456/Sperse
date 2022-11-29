@@ -13,19 +13,17 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
-import { first, filter } from 'rxjs/operators';
-
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactServiceProxy, OrderServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { HistoryListDialogComponent } from './history-list-dialog/history-list-dialog.component';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { OrderDto } from '@app/crm/contacts/orders/order-dto.type';
 import { OrderFields } from '@app/crm/contacts/orders/order-fields.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -36,16 +34,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     private readonly dataSourceURI = 'Order';
     private formatting = AppConsts.formatting;
-    currency: string;
+    currency: string = SettingsHelper.getCurrency();
     private readonly ident = 'Orders';
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
 
     constructor(injector: Injector,
         private dialog: MatDialog,
-        private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
         private clientService: ContactsService,
-        private orderServiceProxy: OrderServiceProxy,
         private currencyPipe: CurrencyPipe
     ) {
         super(injector);
@@ -59,8 +55,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
                 }
             }
         }, this.ident);
-        invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(
-            (res: InvoiceSettings) => this.currency = res.currency);
     }
 
     ngOnInit(): void {

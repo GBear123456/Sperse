@@ -76,6 +76,7 @@ export class LoginService {
     resetPasswordResult: SendPasswordResetCodeOutput;
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
     linkedIdLoginProvider$: Observable<ExternalLoginProvider>;
+    linkedInLastAuthResult: ExternalAuthenticateResultModel;
 
     constructor(
         private tokenAuthService: TokenAuthServiceProxy,
@@ -209,7 +210,9 @@ export class LoginService {
     externalAuthenticate(provider: ExternalLoginProvider): void {
         this.ensureExternalLoginProviderInitialized(provider, () => {
             this.authService.stopTokenCheck();
-            if (provider.name === ExternalLoginProvider.FACEBOOK) {
+            if (provider.name === ExternalLoginProvider.LINKEDIN) {
+                this.linkedInInitLogin(provider);
+            } if (provider.name === ExternalLoginProvider.FACEBOOK) {
                 this.facebookLogin();
             } else if (provider.name === ExternalLoginProvider.GOOGLE) {
                 gapi.auth2.getAuthInstance().signIn().then(() => {
@@ -247,7 +250,7 @@ export class LoginService {
         return this.router.navigate([], {
             queryParams: {
                 'code': null,
-                'state': null,
+                'state': null
             },
             queryParamsHandling: 'merge'
         });
@@ -277,10 +280,21 @@ export class LoginService {
 
                 this.tokenAuthService.linkedInAuthenticate(model)
                     .pipe(finalize(() => abp.ui.clearBusy()))
-                    .subscribe((result: ExternalAuthenticateResultModel) => {
-                        onSuccessCallback(result);
-                        this.processAuthenticateResult(result, 
-                            result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
+                    .subscribe((result: ExternalAuthenticateResultModel) => {                       
+                        this.linkedInLastAuthResult = result;
+                        if (result.userNotFound) {
+                            this.router.navigate(['account/signup'], {
+                                queryParams: {
+                                    extlogin: setCookiesOnly,
+                                    code: exchangeCode,
+                                    state: state
+                                }
+                            });
+                        } else {
+                            onSuccessCallback(result);
+                            this.processAuthenticateResult(result, 
+                                result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
+                        }
                     });
             });
     }
@@ -441,7 +455,7 @@ export class LoginService {
     }
 
     ensureExternalLoginProviderInitialized(loginProvider: ExternalLoginProvider, callback: () => void) {
-        if (loginProvider.initialized) {
+        if (loginProvider.initialized || loginProvider.name === ExternalLoginProvider.LINKEDIN) {
             callback();
             return;
         }

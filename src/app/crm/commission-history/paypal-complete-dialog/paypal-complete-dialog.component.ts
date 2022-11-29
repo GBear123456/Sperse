@@ -8,11 +8,14 @@ import { finalize } from 'rxjs/operators';
 import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from 'abp-ng2-module';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
-import { PaymentSystem, CommissionServiceProxy,
-    CompleteWithdrawalInput } from '@shared/service-proxies/service-proxies';
+import {
+    CommissionServiceProxy,
+    CompleteWithdrawalInput
+} from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'paypal-complete-dialog',
@@ -23,6 +26,7 @@ export class PayPalCompleteDialogComponent extends ConfirmDialogComponent {
     totalAmount = this.data.entities.reduce((acc, entity) => acc + entity.TotalAmount, 0);
     payDate: Date = DateHelper.addTimezoneOffset(new Date(), true);
     paymentNote: string;
+    currency = SettingsHelper.getCurrency();
 
     constructor(
         injector: Injector,
@@ -54,7 +58,7 @@ export class PayPalCompleteDialogComponent extends ConfirmDialogComponent {
                             this.dialogRef.close();
                         });
                     }
-                }, [ ]
+                }, []
             );
         } else
             this.notify.error(this.ls.l('AtLeastOneOfThesePermissionsMustBeGranted', AppPermissions.CRMBulkUpdates));

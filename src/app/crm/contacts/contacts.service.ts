@@ -349,16 +349,15 @@ export class ContactsService {
             : this.contactProxy.getContactInfo(contactId);
     }
 
-    initSuggestionEmails(emailData) {
+    initSuggestionEmails(emailData, title: string) {
         if (emailData.contact) {
             emailData.contactId = emailData.contact.id;
             emailData.suggestionEmails = emailData.contact.personContactInfo.details.emails
                 .filter(item => item.isActive).map(item => item.emailAddress);
 
-            let subject = emailData.subject;
-            if (emailData.suggestionEmails.length && !(subject &&
-                (subject.startsWith('Fwd:') || subject.startsWith('Re:'))
-            )) emailData.to = [emailData.suggestionEmails[0]];
+            if (emailData.suggestionEmails.length && ['Reply', 'ReplyToAll', 'Forward', 'Resend'].indexOf(title) < 0) {
+                emailData.to = [emailData.suggestionEmails[0]];
+            }
 
             emailData.contact.personContactInfo.details.phones
                 .filter(item => item.usageTypeId == 'F' && item.isActive) //Home Fax
@@ -435,11 +434,11 @@ export class ContactsService {
         if (!emailData.templateType)
             emailData.templateType = EmailTemplateType.Contact;
         if (emailData.contact)
-            this.initSuggestionEmails(emailData);
+            this.initSuggestionEmails(emailData, title);
         else if (emailData['contactId'])
             this.getContactInfo(emailData['contactId']).subscribe((contactInfo: ContactInfoDto) => {
                 emailData.contact = contactInfo;
-                this.initSuggestionEmails(emailData);
+                this.initSuggestionEmails(emailData, title);
             });
 
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {

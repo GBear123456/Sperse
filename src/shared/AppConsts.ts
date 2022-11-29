@@ -21,6 +21,7 @@ export class AppConsts {
     static recaptchaSiteKey: string;
     static googleSheetClientId: string;
     static subscriptionExpireNootifyDayCount: number;
+    static subscriptionRecurringBillingPeriod = 1; /* Day */
 
     static localeMappings: any = [];
 
@@ -42,7 +43,8 @@ export class AppConsts {
     };
 
     static readonly authorization = {
-        encrptedAuthTokenName: 'enc_auth_token'
+        encrptedAuthTokenName: 'enc_auth_token',
+        refreshAuthTokenName: 'refresh_auth_token'
     };
 
     static readonly grid = {

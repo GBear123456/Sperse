@@ -13,10 +13,7 @@ import {
     EmailTemplateType,
     TenantPaymentSettingsServiceProxy,
     InvoiceSettings,
-    InvoiceSettingsDto,
-    SubscriptionSettings,
-    Tier2CommissionSource,
-    CommissionAffiliateAssignmentMode
+    InvoiceSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -27,8 +24,6 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
-import { Observable } from 'rxjs/internal/Observable';
-import { forkJoin } from 'rxjs';
 
 @Component({
     templateUrl: 'invoice-settings-dialog.component.html',
@@ -41,11 +36,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
 
     settings = new InvoiceSettingsDto();
-    subscriptionSettings = new SubscriptionSettings();
-    hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
-    isRateDisabled = this.isManageUnallowed || !this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     buttons: IDialogButton[] = [
         {
             id: 'cancelTemplateOptions',
@@ -62,18 +54,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         }
     ]
     EmailTemplateType = EmailTemplateType;
-    tier2SourceOptions = Object.keys(Tier2CommissionSource).map(item => {
-        return {
-            id: Tier2CommissionSource[item],
-            text: this.ls.l(item)
-        };
-    });
-    commissionAffiliateAssignmentModeOptions = Object.keys(CommissionAffiliateAssignmentMode).map(item => {
-        return {
-            id: CommissionAffiliateAssignmentMode[item],
-            text: this.ls.l('AffiliateAssignmentMode_' + item)
-        };
-    });
 
     constructor(
         public dialog: MatDialog,
@@ -91,22 +71,16 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.modalDialog.startLoading();
-        let requests: Observable<any>[] = [
-            this.invoicesService.settings$.pipe(filter(Boolean), first()),
-            this.tenantPaymentSettingsProxy.getSubscriptionSettings()
-        ];
-        forkJoin(requests)
-        .pipe(
+        this.invoicesService.settings$.pipe(
+            filter(Boolean),
+            first(),
             finalize(() => {
                 this.modalDialog.finishLoading();
-            })
-        ).subscribe((results) => {
-            this.settings = new InvoiceSettingsDto(results[0]);
-            this.settings.defaultAffiliateRate = this.convertFromPercent(this.settings.defaultAffiliateRate);
-            this.settings.defaultAffiliateRateTier2 = this.convertFromPercent(this.settings.defaultAffiliateRateTier2);
-            this.subscriptionSettings = new SubscriptionSettings(results[1])
-            this.changeDetectorRef.markForCheck();
-        });
+            }))
+            .subscribe((result: InvoiceSettingsDto) => {
+                this.settings = result;
+                this.changeDetectorRef.markForCheck();
+            });
         this.changeDetectorRef.detectChanges();
     }
 
@@ -115,24 +89,16 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             return;
 
         this.modalDialog.startLoading();
-        this.settings.defaultAffiliateRate = this.convertToPercent(this.settings.defaultAffiliateRate);
-        this.settings.defaultAffiliateRateTier2 = this.convertToPercent(this.settings.defaultAffiliateRateTier2);
-        if (this.subscriptionSettings.defaultSubscriptionGracePeriodDayCount == undefined)
-            this.subscriptionSettings.defaultSubscriptionGracePeriodDayCount = 0
-        let requests: Observable<any>[] = [
-            this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings)),
-            this.tenantPaymentSettingsProxy.updateSubscriptionSettings(new SubscriptionSettings(this.subscriptionSettings))
-        ];
-        forkJoin(requests)
-        .pipe(
-            finalize(() => {
-                this.modalDialog.finishLoading();
-            })
-        ).subscribe(() => {
-            this.notifyService.info(this.ls.l('SavedSuccessfully'));
-            this.invoicesService.invalidateSettings(this.settings);
-            this.dialogRef.close(this.settings);
-        });
+        this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings))
+            .pipe(
+                finalize(() => {
+                    this.modalDialog.finishLoading();
+                })
+            ).subscribe(() => {
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.invoicesService.invalidateSettings(this.settings);
+                this.dialogRef.close(this.settings);
+            });
     }
 
     showBankSettingsDialog() {
@@ -144,18 +110,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
                 isManageUnallowed: this.isManageUnallowed
             }
         });
-    }
-
-    convertFromPercent(value: number): number {
-        if (value !== null)
-            return parseFloat((value * 100).toFixed(2));
-        return value;
-    }
-
-    convertToPercent(value: number): number {
-        if (value !== null)
-            return parseFloat((value / 100).toFixed(4));
-        return value;
     }
 
     openAdvisorContactList(event) {

@@ -13,6 +13,9 @@ import { FormsModule } from '@angular/forms';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { NgxFileDropModule } from 'ngx-file-drop';
 
 /** Application imports */
@@ -28,6 +31,11 @@ import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/u
 import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
 import { ContactsModule } from '@app/crm/contacts/contacts.module';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
+import { InvoiceSettingsComponent } from './invoice-settings/invoice-settings.component';
+import { CommissionsComponent } from './commissions/commissions.component';
+import { BankTransferComponent } from './bank-transfer/bank-transfer.component';
+import { OtherSettingsComponent } from './other-settings/other-settings.component';
+import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
 
 @NgModule({
     imports: [
@@ -40,12 +48,16 @@ import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-p
         MatSelectModule,
         DxCheckBoxModule,
         DxSelectBoxModule,
+        DxNumberBoxModule,
+        DxTextBoxModule,
+        DxTextAreaModule,
         MatInputModule,
         FormsModule,
         TimeZoneComboModule,
         NgxFileDropModule,
         ContactsModule,
-        CountryPhoneNumberModule
+        CountryPhoneNumberModule,
+        SourceContactListModule
     ],
     exports: [TenantSettingsWizardComponent],
     declarations: [
@@ -57,7 +69,11 @@ import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-p
         SecurityComponent,
         TenantManagementComponent,
         MemberPortalComponent,
-        UserManagementComponent
+        UserManagementComponent,
+        InvoiceSettingsComponent,
+        CommissionsComponent,
+        BankTransferComponent,
+        OtherSettingsComponent
     ],
     entryComponents: [
         TenantSettingsWizardComponent

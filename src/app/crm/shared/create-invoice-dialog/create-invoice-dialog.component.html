@@ -49,7 +49,7 @@
                             <i *ngIf="selectedBillingAddress" class="remove fa fa-remove" (click)="selectedBillingAddress = undefined"></i>
                         </ng-template>
                         <a (click)="createClient()" [hidden]="contactId || disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a>
-                        <a (click)="clearClient()" [hidden]="!contactId || disabledForUpdate || data?.contactInfo">{{ls.l('Change') + ' ' + ls.l('Client')}}</a>
+                        <a (click)="clearClient()" [hidden]="!contactId || disabledForUpdate || data?.contactInfo || data?.invoice">{{ls.l('Change') + ' ' + ls.l('Client')}}</a>
                     </label>
                     <span *ngIf="!selectedBillingAddress && selectedContact">
                         {{selectedContact?.name || selectedContact?.email}}
@@ -260,7 +260,7 @@
                                 [placeholder]="ls.lr('Value')"
                                 [showClearButton]="false"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"
-                                [value]="cellData.data.rate | currency: invoiceSettings.currency"
+                                [value]="cellData.data.rate | currency: currency"
                                 (onValueChanged)="onRateChanged($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
@@ -293,7 +293,7 @@
                                 placeholder="$"
                                 dataType="number"
                                 [readOnly]="true"
-                                [value]="cellData.data.total | currency: invoiceSettings.currency">
+                                [value]="cellData.data.total | currency: currency">
                             </dx-text-box>
                         </div>
                         <div *dxTemplate="let cellData of 'actions'" class="row-actions">
@@ -352,14 +352,14 @@
                 </div>
             </div>
             <div class="col-sm-6 conclusion bottom-container-text">
-                <div class="sub-total"><span>{{ls.l('SubTotal')}}</span><span>{{subTotal | currency: invoiceSettings.currency}}</span></div>
+                <div class="sub-total"><span>{{ls.l('SubTotal')}}</span><span>{{subTotal | currency: currency}}</span></div>
                 <div class="user-total"><span>{{ls.l('DiscountTotal')}}</span>
                     <span>
                         <dx-number-box 
                             [min]="0" 
                             [height]="33"
                             [placeholder]="ls.l('Discount')" 
-                            [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
+                            [format]="{ style: 'currency', currency: currency, useGrouping: true }"
                             (onValueChanged)="calculateBalance()"
                             [(value)]="discountTotal"
                             [disabled]="true">
@@ -372,7 +372,7 @@
                             [min]="0" 
                             [height]="33"
                             [placeholder]="ls.l('Shipping')" 
-                            [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
+                            [format]="{ style: 'currency', currency: currency, useGrouping: true }"
                             (onValueChanged)="calculateBalance()"
                             [(value)]="shippingTotal"
                             [disabled]="hasReccuringSubscription || disabledForUpdate">
@@ -385,14 +385,14 @@
                             [min]="0" 
                             [height]="33"
                             [placeholder]="ls.l('Tax')" 
-                            [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
+                            [format]="{ style: 'currency', currency: currency, useGrouping: true }"
                             (onValueChanged)="calculateBalance()"
                             [(value)]="taxTotal"
                             [disabled]="hasReccuringSubscription || disabledForUpdate">
                         </dx-number-box>
                     </span>
                 </div>
-                <div class="balance"><span>{{ls.l('Balance')}} ({{invoiceSettings.currency}})</span><span>{{balance | currency: invoiceSettings.currency}}</span></div>
+                <div class="balance"><span>{{ls.l('Balance')}} ({{currency}})</span><span>{{balance | currency: currency}}</span></div>
             </div>
         </div>
     </div>

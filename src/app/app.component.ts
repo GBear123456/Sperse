@@ -65,7 +65,8 @@ export class AppComponent implements OnInit {
         if (!appService.isHostTenant) {
             let paymentDialogTimeout;
             appService.moduleSubscriptions$.pipe(first()).subscribe(() => {
-                let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default,                    
+                let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default || 
+                        !appService.checkSubscriptionsGroups([AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN]),                    
                     moduleName = isCustomLayout ? '' : appService.defaultSubscriptionModule.toLowerCase(),
                     productGroups = isCustomLayout ? [] : [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN];
                 if (moduleName != appService.getDefaultModule() && !appService.hasUnconventionalSubscription()) {
@@ -77,6 +78,7 @@ export class AppComponent implements OnInit {
                         if ((sub.statusId != 'A' || !hasSubscription || (isOneTimeExpirationSoon && 
                             this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement))
                         ) && !this.dialog.getDialogById('payment-wizard')) {
+                            let expirationDayCount = appService.getSubscriptionExpiringDayCount();
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '800px',
                                 width: '1200px',                                                              
@@ -85,12 +87,15 @@ export class AppComponent implements OnInit {
                                 panelClass: ['payment-wizard', 'setup'],
                                 data: {
                                     subscription: sub,
-                                    title: ls.ls(
-                                        'Platform',
-                                        'ModuleExpired',
-                                        sub.productName,
-                                        appService.getSubscriptionStatusBySubscription(sub)
-                                    )
+                                    title: isOneTimeExpirationSoon ?
+                                        ls.ls('Platform', 'SubscriptionExpiration', sub.productName, expirationDayCount > 0 ? 
+                                            ' in ' + expirationDayCount + ' day(s)' : 'today') :
+                                        ls.ls(
+                                            'Platform',
+                                            'ModuleExpired',
+                                            sub.productName,
+                                            appService.getSubscriptionStatusBySubscription(sub)
+                                        )
                                 }
                             });
                         }

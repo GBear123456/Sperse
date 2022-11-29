@@ -3,7 +3,7 @@
     <div class="smtp-error-block" *ngIf="smtpProviderErrorLink">
         <a [href]="smtpProviderErrorLink" target="blank">{{ls.l("CheckProviderRecommendation")}}</a>
     </div>
-    <dx-scroll-view [height]="smtpProviderErrorLink ? '360px' : '480px'">
+    <dx-scroll-view [height]="smtpProviderErrorLink ? '360px' : '469px'">
         <h5>{{ ls.l('ServerSettings') }}</h5>
         <div class="form-group">
             <label for="DefaultFromAddress">{{ls.l("DefaultFromAddress")}}</label>

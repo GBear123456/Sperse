@@ -15,15 +15,15 @@
             displayExpr="text"
             [(value)]="settings.defaultCountryCode"
             [dataSource]="supportedCountries"
-            (onSelectionChanged)="onCountryChanged($event)">
+            (onValueChanged)="onCountryChanged($event)">
         </dx-select-box>
-        <div class="payment-settings" *ngIf="paymentSettingsAllowed">
+        <div class="payment-settings">
             <label for="Currency">{{ls.l("Currency")}}</label>
             <dx-select-box
                 width="290px"
                 valueExpr="key"
                 displayExpr="text"
-                [(value)]="paymentSettings.currency"
+                [(value)]="settings.currency"
                 [dataSource]="supportedCurrencies">
             </dx-select-box>
         </div>

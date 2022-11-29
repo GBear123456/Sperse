@@ -70,6 +70,10 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 hint: this.ls.l('Forward'),
                 icon: this.getImgURI('forward')
             },
+            resend: {
+                hint: this.ls.l('Resend'),
+                icon: this.getImgURI('resend')
+            },
             replyToAll: {
                 hint: this.ls.l('ReplyToAll'),
                 icon: this.getImgURI('replyToAll')
