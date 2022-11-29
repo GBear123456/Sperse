@@ -497,6 +497,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook?tenantId=${this.appSessionService.tenantId}`;
     }
 
+    getStripeConnectWebhookUrl(): string {
+        return AppConsts.remoteServiceBaseUrl + `/api/stripe/processConnectWebhook?tenantId=${this.appSessionService.tenantId}`;
+    }
+
     copyToClipboard(event) {
         this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
         this.notify.info(this.l('SavedToClipboard'));
