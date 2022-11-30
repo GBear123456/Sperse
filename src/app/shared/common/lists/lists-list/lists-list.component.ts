@@ -67,7 +67,10 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible) {
             if (this.listComponent)
-                setTimeout(() => this.listComponent.repaint());
+                setTimeout(() => {
+                    this.listComponent.getScrollable().scrollTo(0);
+                    this.listComponent.refresh();
+                });
             this.highlightSelectedFilters();
         }
     }
@@ -367,9 +370,14 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         if (this.lastNewAdded) {
             if (this.lastNewAdded.name == item1)
                 return -1;
-            else if (this.lastNewAdded.name == item2)
+            if (this.lastNewAdded.name == item2)
                 return 1;
         }
+        if (this.selectedItems.some(item => item.name == item1))
+            return -1;
+        if (this.selectedItems.some(item => item.name == item2))
+            return 1;
+        return 0;
     }
 
     onSelectionChange(event) {
