@@ -145,7 +145,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
                 let baseDate = v.DueDate ? v.DueDate : v.Date;
                 let momentBaseDate = moment(baseDate);
-                dateDiffDays = moment([momentBaseDate.year(), momentBaseDate.month() + 1, momentBaseDate.date()]).endOf('day').diff(todayMoment, 'days');
+                dateDiffDays = moment([momentBaseDate.year(), momentBaseDate.month(), momentBaseDate.date()]).endOf('day').diff(todayMoment, 'days');
                 if (dateDiffDays >= 0) {
                     status = InvoiceDueStatus.InTime;
                 }
