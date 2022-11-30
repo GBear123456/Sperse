@@ -35,6 +35,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { InvoiceServiceProxy, InvoiceStatus, PipelineDto, ProductDto, ProductServiceProxy, StageDto } from '@shared/service-proxies/service-proxies';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { InvoiceDto, InvoiceDueStatus, InvoiceStatusQuickFitler } from './invoices-dto.interface';
+import { InvoiceHelpers } from './invoices.helper';
 import { InvoiceFields } from './invoices-fields.enum';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
@@ -135,44 +136,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         },
         onLoaded: (data) => {
-            let todayMoment = moment().endOf('day');
             data.forEach((v: InvoiceDto) => {
-                if (v.Status != InvoiceStatus.Sent && v.Status != InvoiceStatus.PartiallyPaid)
+                let invoiceDueInfo = InvoiceHelpers.getDueInfo(v.Status, this.invoiceDueGraceDays, v.DueDate, v.Date, this.l.bind(this));
+
+                if (invoiceDueInfo == null)
                     return;
 
-                let status: InvoiceDueStatus = null;
-                let dateDiffDays: number = null;
-
-                let baseDate = v.DueDate ? v.DueDate : v.Date;
-                let momentBaseDate = moment(baseDate);
-                dateDiffDays = moment([momentBaseDate.year(), momentBaseDate.month(), momentBaseDate.date()]).endOf('day').diff(todayMoment, 'days');
-                if (dateDiffDays >= 0) {
-                    status = InvoiceDueStatus.InTime;
-                }
-
-                if (status == null) {
-                    if (dateDiffDays + this.invoiceDueGraceDays >= 0) {
-                        status = InvoiceDueStatus.Due;
-                    }
-                    else {
-                        status = InvoiceDueStatus.Overdue;
-                    }
-                    dateDiffDays = -dateDiffDays;
-                }
-
-                let dueStatusMessage: string;
-                switch (status) {
-                    case InvoiceDueStatus.InTime:
-                        dueStatusMessage = dateDiffDays == 0 ? this.l('DueStatus_Today') : this.l('DueStatus_DueIn', dateDiffDays);
-                        break;
-                    case InvoiceDueStatus.Due:
-                    case InvoiceDueStatus.Overdue:
-                        dueStatusMessage = this.l('DueStatus_DueFor', dateDiffDays);
-                        break;
-                    default:
-                }
-                v['DueStatus'] = status;
-                v['DueStatusMessage'] = dueStatusMessage;
+                v['DueStatus'] = invoiceDueInfo.status;
+                v['DueStatusMessage'] = invoiceDueInfo.message;
             });
         },
         errorHandler: (error) => {
