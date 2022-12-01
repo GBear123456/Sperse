@@ -191,9 +191,12 @@
                         [columnAutoWidth]="true"
                         [focusStateEnabled]="true"
                         [showColumnLines]="false"
+                        [masterDetail]="{ enabled: true, template: 'detail'}"
                         [scrolling]="{showScrollbar: 'never'}"
                         [allowColumnResizing]="false"
-                        [loadPanel]="{enabled: false}">
+                        [loadPanel]="{enabled: false}"
+                        (onRowCollapsed)="changeDetectorRef.detectChanges()"
+                        (onRowExpanded)="changeDetectorRef.detectChanges()">
 
                         <dxo-editing [texts]="{confirmDeleteMessage: ''}"></dxo-editing>
 
@@ -231,7 +234,7 @@
                                 </div>
                             </dx-select-box>
 
-                            <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="cellData.rowIndex == lines.length - 1">
+                            <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="cellData.data == lines[lines.length - 1] && !productLines.instance.isRowExpanded(cellData.data)">
                                 <span *ngIf="featureMaxProductCount" [class.disabled]="lines.length != getFilteredLines().length && cellData.data.isCrmProduct" class="add-new add-product-line" (click)="addNewLine(productLines, true)">+ {{ls.l('AddProductLine')}}</span>
                                 <span *ngIf="featureMaxProductCount" class="separator">|</span>
                                 <span [class.disabled]="lines.length != getFilteredLines().length && !cellData.data.isCrmProduct" class="add-new add-custom-line" (click)="addNewLine(productLines)">+ {{ls.l('AddCustomLine')}}</span>
@@ -298,6 +301,22 @@
                         </div>
                         <div *dxTemplate="let cellData of 'actions'" class="row-actions">
                             <i [class.disabled]="!cellData.rowIndex && lines.length == 1" (click)="deleteLine(cellData, productLines)" class="delete-icon"></i>
+                        </div>
+                        <div *dxTemplate="let detail of 'detail'">
+                            <dx-text-area 
+                                width="100%"
+                                height="100px"
+                                valueChangeEvent="keyup"
+                                [(value)]="detail.data.details"
+                                [maxLength]="getDetailsMaxLength(detail)"
+                                [placeholder]="ls.l('Enter') + ' ' + ls.l('AdditionalDetails') + '...'">
+                            </dx-text-area>
+
+                            <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="detail.data == lines[lines.length - 1] && productLines.instance.isRowExpanded(detail.data)">
+                                <span *ngIf="featureMaxProductCount" [class.disabled]="lines.length != getFilteredLines().length && detail.data.isCrmProduct" class="add-new add-product-line" (click)="addNewLine(productLines, true)">+ {{ls.l('AddProductLine')}}</span>
+                                <span *ngIf="featureMaxProductCount" class="separator">|</span>
+                                <span [class.disabled]="lines.length != getFilteredLines().length && !detail.data.isCrmProduct" class="add-new add-custom-line" (click)="addNewLine(productLines)">+ {{ls.l('AddCustomLine')}}</span>
+                            </div>
                         </div>
                     </dx-data-grid>
                 </dx-validation-group>
