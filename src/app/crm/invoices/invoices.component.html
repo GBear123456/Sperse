@@ -61,7 +61,7 @@
                                 [allowGrouping]="false"
                                 [allowSorting]="false"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.Number" [caption]="l('Number')" cssClass="font-weight-bold clipboard-holder"></dxi-column>
-                    <dxi-column [dataField]="invoiceFields.Date" [caption]="l('Date')" cellTemplate="dateCell"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.Date" [caption]="l('Date')" cellTemplate="invoiceDateCell"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.FullName" name="FullName" [caption]="l('Customer.Name')" cellTemplate="fullNameCell"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.Description" [caption]="l('Description')" cssClass="clipboard-holder description-column"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.OrderStageName" name="OrderStageName" [caption]="l('Stage')" cellTemplate="stageCell" width="160px"></dxi-column>
@@ -74,15 +74,18 @@
                     <dxi-column [dataField]="invoiceFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.AffiliateContactName" [caption]="l('MentorName')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.DueDate" [caption]="l('DueDate')" cellTemplate="dueDateCell" [visible]="false"></dxi-column>
-                    <dxi-column [dataField]="invoiceFields.LastPaymentDate" [caption]="l('PaymentDate')" cellTemplate="dateCell" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.LastPaymentDate" [caption]="l('PaymentDate')" cellTemplate="dateTimeCell" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.LastPaymentGateway" [caption]="l('Gateway')" [visible]="false"></dxi-column>
 
                     <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
                         <span> {{ cell.data.GrandTotal | currency:currency:'symbol':'1.2-2' }} </span>
                     </div>
-                    <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                        {{cellData.value | datetime: formatting.dateTimeMoment}}
+                    <div *dxTemplate="let cellData of 'invoiceDateCell'" class="clipboard-holder">
+                        {{cellData.value | date:formatting.date}}
+                    </div>
+                    <div *dxTemplate="let cellData of 'dateTimeCell'" class="clipboard-holder">
+                        {{cellData.value | datetime:formatting.dateTimeMoment}}
                     </div>
                     <div *dxTemplate="let cellData of 'paymentTypeCell'" class="payment-type-cell">
                         <span *ngIf="cellData.value; else emptyType">{{ l(cellData.value) }}</span>
@@ -96,7 +99,7 @@
                         </i>
                     </div>
                     <div *dxTemplate="let cellData of 'dueDateCell'" class="clipboard-holder">
-                        {{ cellData.value ? (cellData.value | datetime: formatting.dateMoment) : l('Invoice_DueOnReceipt') }}
+                        {{ cellData.value ? (cellData.value | date:formatting.date) : l('Invoice_DueOnReceipt') }}
                     </div>
                     <div *dxTemplate="let cellData of 'dueStatusCell'" class="clipboard-holder">
                         <ng-container *ngIf="cellData.data.DueStatus">
