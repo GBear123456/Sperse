@@ -8,7 +8,8 @@
         }
 
         ::ng-deep dx-text-box,
-        ::ng-deep dx-text-area {
+        ::ng-deep dx-text-area,
+        ::ng-deep dx-number-box {
             width: 63%;
 
             .dx-placeholder, input, textarea {
@@ -26,6 +27,10 @@
             &.dx-texteditor-empty.dx-state-focused .dx-placeholder {
                 font-size: 11px;
             }
+        }
+
+        ::ng-deep dx-number-box {
+            width: 200px;
         }
 
         &.email-template {

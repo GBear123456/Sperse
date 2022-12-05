@@ -5,10 +5,13 @@ import { CurrencyPipe } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { filter, finalize, first, map, switchMap, takeUntil } from 'rxjs/operators';
+import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
+import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
-import ODataStore from 'devextreme/data/odata/store';
+import ODataStore, { ODataStoreOptions } from 'devextreme/data/odata/store';
 import * as _ from 'underscore';
+import startCase from 'lodash/startCase';
+import * as moment from 'moment';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -29,25 +32,27 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
-import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
-import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { InvoiceServiceProxy, InvoiceStatus, ProductDto, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InvoiceServiceProxy, InvoiceStatus, PipelineDto, ProductDto, ProductServiceProxy, StageDto } from '@shared/service-proxies/service-proxies';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
-import { InvoiceDto } from './invoices-dto.interface';
+import { InvoiceDto, InvoiceDueStatus, InvoiceStatusQuickFitler } from './invoices-dto.interface';
+import { InvoiceHelpers } from './invoices.helper';
 import { InvoiceFields } from './invoices-fields.enum';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Params } from '@angular/router';
+import { InvoiceGridMenuComponent } from './invoice-grid-menu/invoice-grid-menu.component';
+import { InvoiceGridMenuDto } from './invoice-grid-menu/invoice-grid-menu.interface';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { DateHelper } from '../../../shared/helpers/DateHelper';
+import { InvoicesService } from '../contacts/invoices/invoices.service';
 
 @Component({
     templateUrl: './invoices.component.html',
-    styleUrls: [
-        '../shared/styles/grouped-action-menu.less'
-    ],
+    styleUrls: ['./invoices.component.less'],
     providers: [
         LifecycleSubjectsService,
         CurrencyPipe,
@@ -59,6 +64,8 @@ import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dia
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
+    @ViewChild(InvoiceGridMenuComponent) invoiceGridMenu: InvoiceGridMenuComponent;
+    @ViewChild(DxTooltipComponent) gatewayTooltip: DxTooltipComponent;
 
     private readonly dataSourceURI = 'Invoice';
     private readonly dataSourceCountURI = 'InvoiceCount';
@@ -72,42 +79,25 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     formatting = AppConsts.formatting;
     public headlineButtons: HeadlineButton[] = [];
 
-    actionEvent: any;
-    actionMenuGroups: ActionMenuItem[] = [
-        {
-            text: this.l('Edit'),
-            class: 'edit',
-            action: () => {
-                this.showInvoiceDialog(this.actionEvent.Id);
-            }
-        },
-        {
-            text: this.l('Preview'),
-            class: 'preview',
-            action: () => {
-                this.previewInvoice(this.actionEvent);
-            }
-        },
-        {
-            text: this.l('Delete'),
-            class: 'delete',
-            action: () => {
-                this.deleteInvoice(this.actionEvent);
-            },
-            checkVisible: (data) => {
-                return [InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(data.Status) >= 0;
-            }
-        }
-    ];
+    startCase = startCase;
 
     currency: string = SettingsHelper.getCurrency();
+    invoiceDueGraceDays = this.setting.getInt('Invoice:DueGracePeriod');
     searchClear = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     toolbarConfig: ToolbarGroupModel[];
+    InvoiceDueStatus = InvoiceDueStatus;
+    selectedQuickStatusFilter: InvoiceStatusQuickFitler = InvoiceStatusQuickFitler.All;
     readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;
     private filters: FilterModel[] = this.getFilters();
     private prodcutsFilter: FilterModel;
     rowsViewHeight: number;
+
+    hasOrdersManage = this.isGranted(AppPermissions.CRMOrdersManage);
+
+    stages$: Observable<StageDto[]> = this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order, null).pipe(
+        map((pipeline: PipelineDto) => pipeline.stages)
+    );
 
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
@@ -121,7 +111,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues),
     );
 
-    dataStore = {
+    dataStore: ODataStoreOptions = {
         key: this.invoiceFields.Id,
         deserializeDates: false,
         url: this.getODataUrl(
@@ -131,9 +121,30 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.params.$select = DataGridService.getSelectFields(
-                this.dataGrid, [this.invoiceFields.Id, this.invoiceFields.PublicId, this.invoiceFields.Number, this.invoiceFields.ContactId]
+                this.dataGrid,
+                [
+                    this.invoiceFields.Id, this.invoiceFields.PublicId, this.invoiceFields.Number, this.invoiceFields.ContactId,
+                    this.invoiceFields.Status, this.invoiceFields.GrandTotal, this.invoiceFields.OrderStageName
+                ],
+                {
+                    FullName: [this.invoiceFields.PhotoPublicId],
+                    OrderStageName: [this.invoiceFields.OrderId],
+                    DueStatus: [this.invoiceFields.Date, this.invoiceFields.DueDate, this.invoiceFields.Status],
+                    LastPaymentType: [this.invoiceFields.LastPaymentDate]
+                }
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+        },
+        onLoaded: (data) => {
+            data.forEach((v: InvoiceDto) => {
+                let invoiceDueInfo = InvoiceHelpers.getDueInfo(v.Status, this.invoiceDueGraceDays, v.DueDate, v.Date, this.l.bind(this));
+
+                if (invoiceDueInfo == null)
+                    return;
+
+                v['DueStatus'] = invoiceDueInfo.status;
+                v['DueStatusMessage'] = invoiceDueInfo.message;
+            });
         },
         errorHandler: (error) => {
             setTimeout(() => this.isDataLoaded = true);
@@ -168,20 +179,19 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
-        private invoiceProxy: InvoiceServiceProxy,
+        private invoicesService: InvoicesService,
         private productProxy: ProductServiceProxy,
         private filtersService: FiltersService,
+        private pipelineService: PipelineService,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
-        private changeDetectorRef: ChangeDetectorRef,
-        public appService: AppService,
+        private appService: AppService,
         private currencyPipe: CurrencyPipe,
         public dialog: MatDialog
     ) {
         super(injector);
         this.isReadOnly = !this.permission.isGranted(this.permissions.CRMOrdersInvoicesManage);
         this.headlineButtons.push({
-            enabled: !this.isReadOnly &&
-                !!appService.getFeatureCount(AppFeatures.CRMInvoicesManagement),
+            enabled: !this.isReadOnly && this.feature.isEnabled(AppFeatures.CRMInvoicesManagement),
             action: () => this.showInvoiceDialog(),
             label: this.l('CreateInvoice')
         });
@@ -259,31 +269,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.setGridDataLoaded();
         if (!this.rowsViewHeight)
             this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
-        event.component.columnOption('command:edit', {
-            visibleIndex: -1,
-            width: 40
-        });
     }
 
     invalidate() {
         this._refresh.next(null);
-    }
-
-    deleteInvoice(actionEvent) {
-        let invoiceId = actionEvent.Id;
-        this.message.confirm(
-            this.l('InvoiceDeleteWarningMessage', actionEvent.Number), '',
-            isConfirmed => {
-                if (isConfirmed) {
-                    this.startLoading(true);
-                    this.invoiceProxy.deleteInvoice(invoiceId).pipe(
-                        finalize(() => this.finishLoading(true))
-                    ).subscribe(() => {
-                        this.invalidate();
-                    });
-                }
-            }
-        );
     }
 
     showInvoiceSettings() {
@@ -308,10 +297,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         });
-    }
-
-    previewInvoice(data: InvoiceDto) {
-        window.open(location.origin + `/invoicing/invoice/${this.appSession.tenantId || 0}/${data.PublicId}`, '_blank');
     }
 
     initFilterConfig() {
@@ -340,7 +325,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         {
                             dataSource: Object.keys(InvoiceStatus).map((status: string) => ({
                                 id: InvoiceStatus[status],
-                                name: status
+                                name: startCase(status)
                             })),
                             nameField: 'name',
                             keyExpr: 'id'
@@ -397,7 +382,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         }
                     )
                 }
-            })
+            }),
+            new FilterModel({
+                caption: 'statusQuickFilter',
+                hidden: true,
+                isSelected: false,
+                filterMethod: () => this.getOdataFilterByQuickStatus()
+            }),
         ];
     }
 
@@ -459,6 +450,26 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         this.isGranted(AppPermissions.CRMSettingsConfigure),
                     action: this.showInvoiceSettings.bind(this)
                 }]
+            },
+            {
+                location: 'center',
+                locateInMenu: 'auto',
+                areItemsDependent: true,
+                items: Object.keys(InvoiceStatusQuickFitler).map(key => {
+                    return {
+                        name: key,
+                        widget: 'dxButton',
+                        options: {
+                            text: key,
+                            checkPressed: () => {
+                                return this.selectedQuickStatusFilter == InvoiceStatusQuickFitler[key];
+                            }
+                        },
+                        action: () => {
+                            this.filterByQuickStatus(InvoiceStatusQuickFitler[key]);
+                        }
+                    };
+                })
             },
             {
                 location: 'after',
@@ -531,6 +542,72 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
+    filterByQuickStatus(item: InvoiceStatusQuickFitler) {
+        this.selectedQuickStatusFilter = item;
+        this.initToolbarConfig();
+        this.filtersService.change([]);
+    }
+
+    getOdataFilterByQuickStatus() {
+        const unpaidStatusFilter = {
+            [this.invoiceFields.Status]: {
+                in: [InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid]
+            }
+        };
+
+        let today = DateHelper.removeTimezoneOffset(new Date(), true, 'from').toISOString();
+        let dueGraceDate = DateHelper.removeTimezoneOffset(moment().startOf('day').add(-this.invoiceDueGraceDays, 'days').toDate(), true, 'from').toISOString();
+
+        switch (this.selectedQuickStatusFilter) {
+            case InvoiceStatusQuickFitler.Draft:
+                return {
+                    [this.invoiceFields.Status]: {
+                        in: [InvoiceStatus.Draft, InvoiceStatus.Final]
+                    }
+                };
+            case InvoiceStatusQuickFitler.Paid:
+                return { [this.invoiceFields.Status]: InvoiceStatus.Paid };
+            case InvoiceStatusQuickFitler.Unpaid:
+                return unpaidStatusFilter;
+            case InvoiceStatusQuickFitler.Due:
+                return [
+                    unpaidStatusFilter,
+                    {
+                        or: [
+                            [
+                                `${this.invoiceFields.DueDate} ne null`,
+                                `${this.invoiceFields.DueDate} lt ${today}`,
+                                `${this.invoiceFields.DueDate} ge ${dueGraceDate}`,
+                            ],
+                            [
+                                `${this.invoiceFields.DueDate} eq null`,
+                                `${this.invoiceFields.Date} lt ${today}`,
+                                `${this.invoiceFields.Date} ge ${dueGraceDate}`,
+                            ]
+                        ]
+                    }
+                ]
+            case InvoiceStatusQuickFitler.Overdue:
+                return [
+                    unpaidStatusFilter,
+                    {
+                        or: [
+                            [
+                                `${this.invoiceFields.DueDate} ne null`,
+                                `${this.invoiceFields.DueDate} lt ${dueGraceDate}`,
+                            ],
+                            [
+                                `${this.invoiceFields.DueDate} eq null`,
+                                `${this.invoiceFields.Date} lt ${dueGraceDate}`,
+                            ]
+                        ]
+                    }
+                ];
+            default:
+                return {};
+        }
+    }
+
     ngOnDestroy() {
         this.deactivate();
     }
@@ -558,25 +635,63 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         e.component.hide();
     }
 
-    onMenuItemClick(event) {
-        event.itemData.action.call(this);
-        this.actionEvent = null;
-    }
-
     onCellClick(event) {
-        if (event.rowType == 'data' && event.data)
-            this.showInvoiceDialog(event.data);
+        if (event.rowType == 'data') {
+            if (event.column.dataField == this.invoiceFields.OrderStageName)
+                return;
+
+            let invoice = event.data;
+            if (event.columnIndex > 1 && invoice) {
+                this.showInvoiceDialog(invoice);
+            }
+            else if (!this.isReadOnly && event.event.target.closest('.dx-link.dx-link-edit')) {
+                let oDataDto: InvoiceDto = event.data;
+                let invoiceDto: InvoiceGridMenuDto = {
+                    Id: oDataDto.Id,
+                    Number: oDataDto.Number,
+                    Status: oDataDto.Status,
+                    Amount: oDataDto.GrandTotal,
+                    PublicId: oDataDto.PublicId,
+                    OrderId: oDataDto.OrderId,
+                    OrderStage: oDataDto.OrderStageName,
+                    ContactId: oDataDto.ContactId
+                };
+                this.invoiceGridMenu.showTooltip(invoiceDto, event.event.target, true);
+            }
+        }
     }
 
-    toggleActionsMenu(event) {
-        if (this.isReadOnly)
+    gatewayInfoMouseenter(e) {
+        this.gatewayTooltip.target = e.target;
+        this.gatewayTooltip.instance.option('contentTemplate', 'Last Payment - ' + e.target.dataset.date);
+        this.gatewayTooltip.instance.show();
+    }
+
+    updateOrderStage(event) {
+        if (!this.hasOrdersManage)
             return;
 
-        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe(actionEvent => {
-            ActionMenuService.prepareActionMenuItems(this.actionMenuGroups, event.data);
-            this.actionEvent = actionEvent;
-            this.changeDetectorRef.detectChanges();
-        });
+        const invoice: InvoiceDto = event.data;
+        this.invoicesService.updateOrderStage(invoice.OrderId, invoice.OrderStageName, event.value)
+            .subscribe(declinedList => {
+                if (declinedList.length)
+                    event.value = invoice.OrderStageName;
+                else {
+                    this.notify.success(this.l('StageSuccessfullyUpdated'));
+                    this.dataGrid.instance.getVisibleRows().map(row => {
+                        if (invoice.OrderId == row.data.OrderId)
+                            row.data.OrderStage = event.value;
+                    });
+                }
+            });
+    }
+
+    onStageOptionChanged(data, event) {
+        if (event.component.option('disabled'))
+            return;
+
+        event.component.option('disabled', event.component.option('dataSource')
+            .some(item => data.value == item.name && item.isFinal));
     }
 
     private getProductsParams() {

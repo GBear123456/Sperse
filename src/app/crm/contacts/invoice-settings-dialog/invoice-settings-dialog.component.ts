@@ -5,6 +5,7 @@ import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ViewChil
 import { filter, finalize, first } from 'rxjs/operators';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { NotifyService } from 'abp-ng2-module';
+import Validator from 'devextreme/ui/validator';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -34,6 +35,7 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild('dueGraceValidator') dueGraceValidatorComponent;
 
     settings = new InvoiceSettingsDto();
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
@@ -88,6 +90,10 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         if (this.isManageUnallowed)
             return;
 
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        if (!dueGraceValidator.validate().isValid)
+            return;
+
         this.modalDialog.startLoading();
         this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings))
             .pipe(
@@ -99,6 +105,11 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
                 this.invoicesService.invalidateSettings(this.settings);
                 this.dialogRef.close(this.settings);
             });
+    }
+
+    onDueGracePeriodFocusOut() {
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        dueGraceValidator.validate();
     }
 
     showBankSettingsDialog() {

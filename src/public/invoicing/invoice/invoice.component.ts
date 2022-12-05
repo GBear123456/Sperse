@@ -6,6 +6,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
+import { SettingService } from 'abp-ng2-module';
 import { NotifyService } from 'abp-ng2-module';
 
 /** Application imports */
@@ -16,6 +17,8 @@ import { GetPublicInvoiceInfoOutput, UserInvoiceServiceProxy, InvoiceStatus, Pay
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PayPalComponent } from './pay-pal/pay-pal.component';
+import { InvoiceDueStatus } from '@app/crm/invoices/invoices-dto.interface';
+import { InvoiceHelpers } from '@app/crm/invoices/invoices.helper';
 
 @Component({
     selector: 'public-invoice',
@@ -42,6 +45,9 @@ export class InvoiceComponent implements OnInit {
     conditions = ConditionsType;
     invoiceStatuses = InvoiceStatus;
 
+    dueStatus: InvoiceDueStatus;
+    dueStatusMessage;
+
     tenantId: number;
     publicId: string;
 
@@ -54,6 +60,7 @@ export class InvoiceComponent implements OnInit {
         private paypalServiceProxy: PayPalServiceProxy,
         private dialog: MatDialog,
         private clipboard: Clipboard,
+        private setting: SettingService,
         private notifyService: NotifyService,
         private ls: AppLocalizationService
     ) {
@@ -76,10 +83,28 @@ export class InvoiceComponent implements OnInit {
             .subscribe(result => {
                 this.loading = false;
                 this.invoiceInfo = result;
+                this.setDueInfo(result);
                 this.showPaymentAdvice = !!(result.paymentSettings && (result.paymentSettings.bankAccountNumber ||
                     result.paymentSettings.bankRoutingNumberForACH ||
                     result.paymentSettings.bankRoutingNumber));
             });
+    }
+
+    setDueInfo(invoiceInfo: GetPublicInvoiceInfoOutput) {
+        let invoiceDueInfo = InvoiceHelpers.getDueInfo(invoiceInfo.invoiceData.status,
+            this.setting.getInt('Invoice:DueGracePeriod'),
+            invoiceInfo.invoiceData.dueDate,
+            invoiceInfo.invoiceData.date,
+            (key, ...args) => this.ls.l(key, args))
+
+        if (invoiceDueInfo == null)
+            return;
+
+        if ([InvoiceDueStatus.Due, InvoiceDueStatus.Overdue].indexOf(invoiceDueInfo.status) < 0)
+            return;
+
+        this.dueStatus = invoiceDueInfo.status;
+        this.dueStatusMessage = invoiceDueInfo.message;
     }
 
     onPayPalApprove() {

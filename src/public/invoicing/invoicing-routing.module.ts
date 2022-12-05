@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ReceiptComponent } from './receipt/receipt.component';
 import { InvoiceComponent } from './invoice/invoice.component';
+import { LocalizationResolver } from '@shared/common/localization-resolver';
 
 @NgModule({
     imports: [
@@ -15,8 +16,9 @@ import { InvoiceComponent } from './invoice/invoice.component';
             {
                 path: 'invoice/:tenantId/:publicId',
                 component: InvoiceComponent,
-                canActivate: [],
-                canActivateChild: []
+                canActivate: [LocalizationResolver],
+                canActivateChild: [],
+                data: { localizationSource: 'CRM' }
             }
         ])
     ],
