@@ -31,7 +31,7 @@
     </div>
 
     <div *dxTemplate="let cellData of 'dateTimeTemplate'" class="date-box">
-        <span class="date-time" title="{{cellData.value | datetime: formatting.dateTimeMoment}}">{{cellData.value | datetime: formatting.dateMoment}}</span>
+        <span *ngIf="cellData.value" class="date-time" title="{{cellData.value | datetime: formatting.dateTimeMoment}}">{{cellData.value | datetime: formatting.dateMoment}}</span>
     </div>
 
     <div *dxTemplate="let cellData of 'statusCell'" class="status {{isExpired(cellData) ? 'E' : cellData.value}}">
