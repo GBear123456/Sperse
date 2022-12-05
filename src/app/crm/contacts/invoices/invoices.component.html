@@ -45,10 +45,10 @@
                 <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ startCase(cellData.value) }}</div>
             </div>
             <div *dxTemplate="let cellData of 'dueDateCell'" class="clipboard-holder">
-                {{ cellData.value ? (cellData.value | datetime: formatting.dateMoment) : l('Invoice_DueOnReceipt') }}
+                {{ cellData.value ? (cellData.value | date: formatting.date) : l('Invoice_DueOnReceipt') }}
             </div>
             <div *dxTemplate="let cellData of 'datetimeCell'" class="clipboard-holder">
-                {{ cellData.value | datetime: formatting.dateMoment }}
+                {{ cellData.value | date: formatting.date }}
             </div>
 
             <dxo-paging [pageSize]="20"></dxo-paging>

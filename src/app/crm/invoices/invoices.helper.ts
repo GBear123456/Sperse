@@ -16,7 +16,7 @@ export class InvoiceHelpers {
         let dateDiffDays: number = null;
 
         let baseDate = invoiceDueDate ? invoiceDueDate : invoiceDate;
-        let momentBaseDate = moment(baseDate);
+        let momentBaseDate = moment(baseDate).utc();
         dateDiffDays = moment([momentBaseDate.year(), momentBaseDate.month(), momentBaseDate.date()]).endOf('day').diff(todayMoment, 'days');
         if (dateDiffDays >= 0) {
             status = InvoiceDueStatus.InTime;
