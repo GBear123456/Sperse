@@ -1005,6 +1005,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.changeDetectorRef.detectChanges();
                 }, 300);
             });
+        } else {
+            this.lines = [{isCrmProduct: !!this.featureMaxProductCount}];
+            this.updateDisabledProducts();
+            this.changeDetectorRef.detectChanges();
         }
     }
 

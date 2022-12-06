@@ -300,9 +300,9 @@
                             </dx-text-box>
                         </div>
                         <div *dxTemplate="let cellData of 'actions'" class="row-actions">
-                            <i [class.disabled]="!cellData.rowIndex && lines.length == 1" (click)="deleteLine(cellData, productLines)" class="delete-icon"></i>
+                            <i (click)="deleteLine(cellData, productLines)" class="delete-icon"></i>
                         </div>
-                        <div *dxTemplate="let detail of 'detail'">
+                        <div *dxTemplate="let detail of 'detail'" style="position: relative;">
                             <dx-text-area 
                                 width="100%"
                                 height="100px"
@@ -311,6 +311,9 @@
                                 [maxLength]="getDetailsMaxLength(detail)"
                                 [placeholder]="ls.l('Enter') + ' ' + ls.l('AdditionalDetails') + '...'">
                             </dx-text-area>
+                            <div class="footer-wrapper">
+                                <div class="number-of-symbols">{{ (getDetailsMaxLength(detail) - detail.data?.details?.length) + ' ' + ls.l('CharactersLeft') }}</div>
+                            </div>
 
                             <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="detail.data == lines[lines.length - 1] && productLines.instance.isRowExpanded(detail.data)">
                                 <span *ngIf="featureMaxProductCount" [class.disabled]="lines.length != getFilteredLines().length && detail.data.isCrmProduct" class="add-new add-product-line" (click)="addNewLine(productLines, true)">+ {{ls.l('AddProductLine')}}</span>
