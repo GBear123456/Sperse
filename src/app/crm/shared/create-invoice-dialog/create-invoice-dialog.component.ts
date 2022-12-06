@@ -615,7 +615,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     onFieldFocusIn(event, cellData) {        
         event.component.option('isValid', true);
         let value = event.component.option('value');            
-        if (cellData && (!this.lastProductPhrase || !value.startsWith(this.lastProductPhrase))) {
+        if (cellData && (!this.lastProductPhrase || !(value && value.startsWith(this.lastProductPhrase)))) {
             if (cellData.data.isCrmProduct) {
                 if (!this.products || !this.products.length || !this.products[0]['code'])
                     this.productsLookupRequest();
@@ -681,7 +681,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceProductsLookupRequest(phrase = '', callback?, code?: string) {
         this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
-                this.products = res;
+                this.products = res.map((item: any) => {
+                    item.details = item.description.split('\n').slice(1).join('\n');
+                    item.description = item.description.split('\n').shift();
+                    return item;
+                });
                 callback && callback(res);
                 this.changeDetectorRef.detectChanges();
             }
@@ -692,7 +696,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (this.featureMaxProductCount)
             this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
                 if (!phrase || phrase == this.lastProductPhrase) {
-                    this.products = res.map(item => {
+                    this.products = res.map((item: any) => {
+                        item.details = item.description;
                         item.description = item.name;
                         return item;
                     });
@@ -794,6 +799,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             cellData.data.unitId = cellData.data.unitId || item.unitId;
             cellData.data.rate = cellData.data.rate || item.rate;
             cellData.data.quantity = cellData.data.quantity || 1;
+            cellData.data.details = item.details;
             this.changeDetectorRef.detectChanges();
         }
     }
@@ -815,6 +821,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             cellData.data.rate = item.paymentOptions[0].price;
             cellData.data.quantity = 1;
             cellData.data.productType = item.type;
+            cellData.data.details = item.details;
             this.updateDisabledProducts();
             this.checkSubscriptionsCount();
             this.checkReccuringSubscriptionIsSelected();
@@ -1067,7 +1074,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     getDetailsMaxLength(detail): Number {
-        if (detail.data && detail.data.description)
+        if (detail && detail.data && detail.data.description)
             return this.MAX_DESCRIPTION_LENGTH - detail.data.description.length;
         else
             return this.MAX_DESCRIPTION_LENGTH;

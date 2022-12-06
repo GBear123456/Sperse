@@ -194,7 +194,7 @@
                         [masterDetail]="{ enabled: true, template: 'detail'}"
                         [scrolling]="{showScrollbar: 'never'}"
                         [allowColumnResizing]="false"
-                        [loadPanel]="{enabled: false}"
+                        [loadPanel]="{enabled: false}"                        
                         (onRowCollapsed)="changeDetectorRef.detectChanges()"
                         (onRowExpanded)="changeDetectorRef.detectChanges()">
 
@@ -312,7 +312,7 @@
                                 [placeholder]="ls.l('Enter') + ' ' + ls.l('AdditionalDetails') + '...'">
                             </dx-text-area>
                             <div class="footer-wrapper">
-                                <div class="number-of-symbols">{{ (getDetailsMaxLength(detail) - detail.data?.details?.length) + ' ' + ls.l('CharactersLeft') }}</div>
+                                <div class="number-of-symbols">{{ (getDetailsMaxLength(detail) - (detail?.data?.details?.length || 0)) + ' ' + ls.l('CharactersLeft') }}</div>
                             </div>
 
                             <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="detail.data == lines[lines.length - 1] && productLines.instance.isRowExpanded(detail.data)">
