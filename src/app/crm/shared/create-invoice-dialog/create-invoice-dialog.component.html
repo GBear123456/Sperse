@@ -300,7 +300,7 @@
                             </dx-text-box>
                         </div>
                         <div *dxTemplate="let cellData of 'actions'" class="row-actions">
-                            <i [class.disabled]="!cellData.rowIndex && lines.length == 1" (click)="deleteLine(cellData, productLines)" class="delete-icon"></i>
+                            <i (click)="deleteLine(cellData, productLines)" class="delete-icon"></i>
                         </div>
                         <div *dxTemplate="let detail of 'detail'" style="position: relative;">
                             <dx-text-area 
