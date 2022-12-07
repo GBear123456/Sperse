@@ -1077,9 +1077,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     getDetailsMaxLength(detail): Number {
-        if (detail && detail.data && detail.data.description)
-            return this.MAX_DESCRIPTION_LENGTH - detail.data.description.length;
-        else
+        if (detail && detail.data && detail.data.description) {
+            let description = detail.data.description.split('\n').shift();
+            return this.MAX_DESCRIPTION_LENGTH - description.length;
+        } else
             return this.MAX_DESCRIPTION_LENGTH;
     }
 
