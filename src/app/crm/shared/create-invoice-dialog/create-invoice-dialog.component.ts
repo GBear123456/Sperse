@@ -113,6 +113,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     status = InvoiceStatus.Draft;
     startCase = startCase;
 
+
+    private readonly MAX_DESCRIPTION_LENGTH = 499;
     defaultCountryCode = AppConsts.defaultCountryCode;
     currency = SettingsHelper.getCurrency();
     saveButtonId = 'saveInvoiceOptions';
@@ -127,6 +129,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     contactId: number;
     products: (ProductPaymentOptionsInfo | ProductShortInfo)[] = [];
     lastProductPhrase: string;
+    lastProductCount: number;
     date = moment().utcOffset(0, true).toDate();
     dueDate;
     isAddressDialogOpened = false;
@@ -239,7 +242,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private messageService: MessageService,
         private cacheHelper: CacheHelper,
         private dialogRef: MatDialogRef<CreateInvoiceDialogComponent>,
-        private changeDetectorRef: ChangeDetectorRef,
+        public changeDetectorRef: ChangeDetectorRef,
         private permission: AppPermissionService,
         private contactsService: ContactsService,
         private statesService: StatesService,
@@ -326,18 +329,21 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.orderNumber = invoiceInfo.orderNumber;
                     this.customer = invoiceInfo.contactName;
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
-                    this.selectedShippingAddress = invoiceInfo.shippingAddress;
+                    this.selectedShippingAddress = invoiceInfo.shippingAddress;                    
                     this.lines = invoiceInfo.lines.map((res: any) => {
+                        let description = res.description.split('\n').shift();
                         return {
                             isCrmProduct: !!res.productCode,
                             Quantity: res.quantity,
                             Rate: res.rate,
-                            Description: res.description,
+                            Description: description,
+                            details: res.description.split('\n').slice(1).join('\n'),
                             units: res.productType == 'Subscription' ? [{
                                 unitId: res.unitId, 
                                 unitName: res.unitName
                             }] : undefined,
-                            ...res
+                            ...res,
+                            description: description
                         };
                     });                    
 
@@ -467,6 +473,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             else 
                 data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index: number) => {
+                let description = row['description'] ? row['description'].split('\n').shift() : '';
                 return new UpdateInvoiceLineInput({
                     id: row['id'],
                     quantity: row['quantity'],
@@ -474,7 +481,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: row['productCode'],
-                    description: row['description'],
+                    description: description + (row['details'] ? '\n' + row['details'] : ''),
                     sortOrder: index,
                     commissionableAmount: undefined
                 });
@@ -495,13 +502,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.taxTotal = this.taxTotal;
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
+                let description = row['description'] ? row['description'].split('\n').shift() : '';
                 return new CreateInvoiceLineInput({
                     quantity: row['quantity'],
                     rate: row['rate'],
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: row['productCode'],
-                    description: row['description'],
+                    description: description + (row['details'] ? '\n' + row['details'] : ''),
                     sortOrder: index,
                     commissionableAmount: undefined
                 });
@@ -609,8 +617,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     onFieldFocusIn(event, cellData) {        
         event.component.option('isValid', true);
-        if (cellData) {
-            let value = event.component.option('value');
+        let value = event.component.option('value');            
+        if (cellData && (!this.lastProductPhrase || !(value && value.startsWith(this.lastProductPhrase)))) {
             if (cellData.data.isCrmProduct) {
                 if (!this.products || !this.products.length || !this.products[0]['code'])
                     this.productsLookupRequest();
@@ -676,7 +684,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceProductsLookupRequest(phrase = '', callback?, code?: string) {
         this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
-                this.products = res;
+                this.products = res.map((item: any) => {
+                    item.details = item.description.split('\n').slice(1).join('\n');
+                    item.caption = item.description.split('\n').shift();
+                    return item;
+                });
                 callback && callback(res);
                 this.changeDetectorRef.detectChanges();
             }
@@ -687,8 +699,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (this.featureMaxProductCount)
             this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
                 if (!phrase || phrase == this.lastProductPhrase) {
-                    this.products = res.map(item => {
+                    this.products = res.map((item: any) => {
+                        item.details = item.description;
                         item.description = item.name;
+                        item.caption = item.name;
                         return item;
                     });
                     callback && callback(res);
@@ -702,8 +716,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (fromInvoice && cellData.data.productCode)
             return ;
 
-        this.lastProductPhrase = $event.event.target.value;
+        let phrase = $event.event.target.value;
+        if (this.lastProductPhrase && phrase.startsWith(this.lastProductPhrase) && this.lastProductCount == 0)
+            return this.lastProductPhrase = phrase;
 
+        this.lastProductPhrase = phrase;
         $event.component.option('opened', true);
         $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
@@ -716,7 +733,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 ? this.invoiceProductsLookupRequest
                 : this.productsLookupRequest
             ).bind(this)(this.lastProductPhrase, res => {
-                if (!res['length'])
+                this.lastProductCount = res.length;
+                if (!this.lastProductCount)
                     $event.component.option('noDataText', this.ls.l('NoItemsFound'));
             });
         }, 500);
@@ -785,6 +803,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             cellData.data.unitId = cellData.data.unitId || item.unitId;
             cellData.data.rate = cellData.data.rate || item.rate;
             cellData.data.quantity = cellData.data.quantity || 1;
+            cellData.data.details = item.details;
             this.changeDetectorRef.detectChanges();
         }
     }
@@ -806,6 +825,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             cellData.data.rate = item.paymentOptions[0].price;
             cellData.data.quantity = 1;
             cellData.data.productType = item.type;
+            cellData.data.details = item.details;
             this.updateDisabledProducts();
             this.checkSubscriptionsCount();
             this.checkReccuringSubscriptionIsSelected();
@@ -996,6 +1016,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.changeDetectorRef.detectChanges();
                 }, 300);
             });
+        } else {
+            this.lines = [{isCrmProduct: !!this.featureMaxProductCount}];
+            this.updateDisabledProducts();
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -1051,6 +1075,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
     onCustomDescriptionCreating(event) {
         if (!event.customItem)
             event.customItem = {description: event.text};
+    }
+
+    getDetailsMaxLength(detail): Number {
+        if (detail && detail.data && detail.data.description) {
+            let description = detail.data.description.split('\n').shift();
+            return this.MAX_DESCRIPTION_LENGTH - description.length;
+        } else
+            return this.MAX_DESCRIPTION_LENGTH;
     }
 
     showEditAddressDialog(event, field) {

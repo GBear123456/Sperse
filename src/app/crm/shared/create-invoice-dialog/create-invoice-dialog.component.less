@@ -651,6 +651,10 @@
     ::ng-deep dx-data-grid {
         max-width: 810px !important;
 
+        .dx-datagrid-group-closed, .dx-datagrid-group-opened {
+            padding-top: 6px;
+        }
+
         .dx-command-edit {
             .dx-link-delete {
                 width: 16px;
@@ -868,6 +872,20 @@
                 padding-left: 0 !important;
                 padding-right: 0 !important;
             }
+        }
+    }
+
+    .footer-wrapper {
+        display: flex;
+        justify-content: space-between;
+        position: absolute;
+        right: 0px;
+        top: 105px;
+        width: 150px;
+        padding: 0 10px;
+        z-index: 1;
+        .number-of-symbols {
+            color: gray;
         }
     }
 
