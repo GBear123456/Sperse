@@ -472,6 +472,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             else 
                 data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index: number) => {
+                let description = row['description'] ? row['description'].split('\n').shift() : '';
                 return new UpdateInvoiceLineInput({
                     id: row['id'],
                     quantity: row['quantity'],
@@ -479,7 +480,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: row['productCode'],
-                    description: row['description'] + (row['details'] ? '\n' + row['details'] : ''),
+                    description: description + (row['details'] ? '\n' + row['details'] : ''),
                     sortOrder: index,
                     commissionableAmount: undefined
                 });
@@ -500,13 +501,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.taxTotal = this.taxTotal;
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
+                let description = row['description'] ? row['description'].split('\n').shift() : '';
                 return new CreateInvoiceLineInput({
                     quantity: row['quantity'],
                     rate: row['rate'],
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: row['productCode'],
-                    description: row['description'] + (row['details'] ? '\n' + row['details'] : ''),
+                    description: description + (row['details'] ? '\n' + row['details'] : ''),
                     sortOrder: index,
                     commissionableAmount: undefined
                 });
@@ -683,7 +685,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.products = res.map((item: any) => {
                     item.details = item.description.split('\n').slice(1).join('\n');
-                    item.description = item.description.split('\n').shift();
+                    item.caption = item.description.split('\n').shift();
                     return item;
                 });
                 callback && callback(res);
@@ -699,6 +701,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.products = res.map((item: any) => {
                         item.details = item.description;
                         item.description = item.name;
+                        item.caption = item.name;
                         return item;
                     });
                     callback && callback(res);
