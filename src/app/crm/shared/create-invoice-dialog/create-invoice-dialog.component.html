@@ -323,6 +323,17 @@
                         </div>
                     </dx-data-grid>
                 </dx-validation-group>
+                <div class="payment-methods">
+                    <span>{{ls.l('Invoice_PaymentMethods')}}</span>
+                    <ng-container *ngFor="let item of paymentMethods">
+                        <dx-check-box
+                            [value]="item.checked"
+                            [text]="item.name"
+                            [disabled]="disabledForUpdate"
+                            (onValueChanged)="paymentMethodChanged($event, item.value)">
+                        </dx-check-box>
+                    </ng-container>
+                </div>
             </div>
         </dx-scroll-view>
         <div *ngIf="stripeSubscriptionsLinesCount > 1 || hasReccuringSubscription" class="row stripe-subs-warning">

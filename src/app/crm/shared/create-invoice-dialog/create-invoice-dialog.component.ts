@@ -57,7 +57,8 @@ import {
     CouponServiceProxy,
     CouponDto,
     CouponDiscountType,
-    PaymentServiceProxy
+    PaymentServiceProxy,
+    InvoicePaymentMethod
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -214,6 +215,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
             unitName: this.ls.l(item)
         };
     });
+    forbiddenPaymentMethods: number = 0;
+    paymentMethods = Object.keys(InvoicePaymentMethod).filter(v => typeof InvoicePaymentMethod[v] === "number").map(item => {
+        return {
+            id: item,
+            checked: true,
+            value: InvoicePaymentMethod[item],
+            name: this.ls.l(item)
+        }
+    });
     billingAddresses: InvoiceAddressInfo[] = [];
     shippingAddresses: InvoiceAddressInfo[] = [];
     filterBoolean = Boolean;
@@ -345,7 +355,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             ...res,
                             description: description
                         };
-                    });                    
+                    });
+                    this.initForbiddenPaymentMethods(invoiceInfo.forbiddenPaymentMethods);
 
                     if (contactInfo) {
                         this.initContactInfo(contactInfo);
@@ -448,6 +459,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             );
         }
         data.note = this.notes;
+        data.forbiddenPaymentMethods = this.forbiddenPaymentMethods || undefined;
     }
 
     private getDate(value, userTimezone = false, setTime = 'from') {
@@ -749,7 +761,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.dueDate = undefined;
             this.description = '';
             this.notes = '';
-            this.lines = [{isCrmProduct: !!this.featureMaxProductCount}];
+            this.lines = [{ isCrmProduct: !!this.featureMaxProductCount }];
+            this.initForbiddenPaymentMethods(0);
             this.changeDetectorRef.detectChanges();
         };
 
@@ -1131,6 +1144,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
             event.stopPropagation();
             event.preventDefault();
+        }
+    }
+
+    initForbiddenPaymentMethods(forbiddenPaymentMethods) {
+        this.forbiddenPaymentMethods = forbiddenPaymentMethods || 0;
+        this.paymentMethods.forEach(v => v.checked = !((this.forbiddenPaymentMethods & v.value) == v.value));
+    }
+
+    paymentMethodChanged(event, value) {
+        if (event.value) {
+            this.forbiddenPaymentMethods ^= value;
+        }
+        else {
+            this.forbiddenPaymentMethods |= value;
         }
     }
 }
