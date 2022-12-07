@@ -1073,7 +1073,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     onCustomDescriptionCreating(event) {
         if (!event.customItem)
-            event.customItem = {description: event.text};
+            event.customItem = {
+                caption: event.text,
+                description: event.text
+            };
     }
 
     getDetailsMaxLength(detail): Number {
