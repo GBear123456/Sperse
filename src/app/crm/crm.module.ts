@@ -88,6 +88,7 @@ import { SliceModule } from '@app/shared/common/slice/slice.module';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
+import { InvoiceGridMenuModule } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.module'
 import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
 import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
@@ -100,6 +101,8 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
+import { LedgerHistoryDialogComponent } from '@app/crm/commission-history/ledger-history-dialog/ledger-history-dialog.component';
+import { PayPalCompleteDialogComponent } from '@app/crm/commission-history/paypal-complete-dialog/paypal-complete-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
@@ -166,6 +169,7 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
         MapModule,
         OrderDropdownModule,
         ActionMenuModule,
+        InvoiceGridMenuModule,
         StaticListModule,
         StaticTreeViewModule,
         CountryPhoneNumberModule,
@@ -202,6 +206,8 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
         CommissionHistoryComponent,
         CommissionEarningsDialogComponent,
         LedgerCompleteDialogComponent,
+        LedgerHistoryDialogComponent,
+        PayPalCompleteDialogComponent,
         RequestWithdrawalDialogComponent,
         UpdateCommissionableDialogComponent,
         UpdateCommissionRateDialogComponent,
@@ -226,6 +232,7 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
         EntityCheckListDialogComponent,
         CommissionEarningsDialogComponent,
         LedgerCompleteDialogComponent,
+        LedgerHistoryDialogComponent,
         RequestWithdrawalDialogComponent,
         UpdateCommissionableDialogComponent,
         UpdateCommissionRateDialogComponent,

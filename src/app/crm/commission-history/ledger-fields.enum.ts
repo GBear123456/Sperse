@@ -13,5 +13,8 @@ export const LedgerFields: KeysEnum<LedgerDto> = {
     Status: 'Status',
     TotalAmount: 'TotalAmount',
     Type: 'Type',
-    PaymentSystem: 'PaymentSystem'
+    PaymentSystem: 'PaymentSystem',
+    HasPayout: 'HasPayout',
+    PayPalEmailAddress: 'PayPalEmailAddress',
+    StripeAccountID: 'StripeAccountID'
 };

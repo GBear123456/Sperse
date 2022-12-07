@@ -232,6 +232,10 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook`;
     }
 
+    getStripeConnectWebhookUrl(): string {
+        return AppConsts.remoteServiceBaseUrl + `/api/stripe/processConnectWebhook`;
+    }
+
     getPayPalWebhookUrl(): string {
         let key = this.payPalPaymentSettings.webhookKey || '{webhook_key}';
         return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=&key=${key}`;

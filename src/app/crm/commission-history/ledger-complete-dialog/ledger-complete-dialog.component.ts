@@ -53,7 +53,9 @@ export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
                             withdrawalIds: this.data.entities.map(item => item.Id),
                             paymentSystem: PaymentSystem[this.paymentSystem],
                             payDate: DateHelper.removeTimezoneOffset(
-                                this.payDate, true, DateHelper.isSameDateWithoutTime(this.payDate, this.today) ? undefined : 'to')
+                                this.payDate, true, DateHelper.isSameDateWithoutTime(this.payDate, this.today) ? undefined : 'to'),
+                            isManualPayment: true,
+                            paymentNote: null
                         })).pipe(
                             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
                         ).subscribe(() => {

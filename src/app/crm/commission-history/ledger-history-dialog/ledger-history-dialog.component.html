@@ -1,0 +1,54 @@
+<modal-dialog [title]="ls.l('Payout') + ' ' + ls.l('History')"
+              [editTitle]="false"
+              [titleClearButton]="false">
+    <dx-scroll-view showScrollbar="always">
+        <div class="content">
+            <div class="history-item" *ngFor="let historyItem of processedHistory; index as i">
+                <div class="user-section {{historyItem?.status?.toLowerCase()}}">
+                    <img [src]="profileService.getContactPhotoUrl(ledgerHistory[i].creatorUserPhotoPublicId, false)"
+                         [title]="ledgerHistory[i].creatorUserName || ''"
+                         class="user-image"
+                         width="50" height="50">
+                    <p [title]="ledgerHistory[i].creatorUserName || ''">{{ledgerHistory[i].creatorUserName || ''}}</p>
+                </div>
+                <div class="data-section">
+                    <div class="row">
+                        <div class="col-md-6 history-prop-column">
+                            <ng-container *ngFor="let key of Object.keys(historyItem); index as i">
+                                <div *ngIf="canShowProperty(historyItem, i, true)" class="history-prop">
+                                    <label class="control-label">{{ls.l(startCase(key))}}:</label>
+                                    <span class="form-control-static" [title]="historyItem[key]">
+                                        {{historyItem[key]}}
+                                    </span>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <div class="col-md-6 history-prop-column">
+                            <ng-container *ngFor="let key of Object.keys(historyItem); index as i">
+                                <div *ngIf="canShowProperty(historyItem, i, false)" class="history-prop">
+                                    <label class="control-label">{{ls.l(startCase(key))}}:</label>
+                                    <span class="form-control-static" [title]="historyItem[key]">
+                                        {{historyItem[key]}}
+                                    </span>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="row bottom-row">
+                        <div class="col-md-9 history-prop-column">
+                            <label class="control-label">{{ls.l('CompletedDate')}}:</label>
+                            <span class="form-control-static" [title]="getTimeHint(ledgerHistory[i], 'processedTime')">
+                                {{getTimeHint(ledgerHistory[i], 'processedTime')}}
+                            </span>
+                        </div>
+                        <div class="col-md-3 history-prop-column history-date">
+                            <span class="form-control-static" [title]="getTimeHint(ledgerHistory[i], 'creationTime')">
+                                {{getTimeAgo(ledgerHistory[i], 'creationTime')}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>

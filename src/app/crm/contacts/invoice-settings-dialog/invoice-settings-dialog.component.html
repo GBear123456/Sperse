@@ -48,12 +48,22 @@
                                       [text]="ls.l('InvoiceEmail_AttachPDF')"
                                       [(value)]="settings.attachPDF">
                         </dx-check-box>
+                        <dx-number-box [min]="1"
+                                       mode="number"
+                                       [readOnly]="isManageUnallowed"
+                                       [placeholder]="ls.l('InvoiceEmail_DueGracePeriod')"
+                                       [(value)]="settings.dueGracePeriod"
+                                       (onFocusOut)="onDueGracePeriodFocusOut()">
+                            <dx-validator #dueGraceValidator>
+                                <dxi-validation-rule type="required"
+                                                     [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-number-box>
                         <ng-container *ngIf="hasBankCodeFeature">
                             <div class="field default-advisor">
-                                <source-contact-list
-                                    [selectedKey]="settings?.defaultAdvisorContactId"
-                                    [targetSelector]="'#affiliateContactLink'"
-                                    (onItemSelected)="onAdvisorContactChanged($event)">
+                                <source-contact-list [selectedKey]="settings?.defaultAdvisorContactId"
+                                                     [targetSelector]="'#affiliateContactLink'"
+                                                     (onItemSelected)="onAdvisorContactChanged($event)">
                                 </source-contact-list>
                                 <label>{{ ls.l('DefaultAdvisorContact') }}:</label>
                                 <div class="advisor-name">
@@ -73,9 +83,9 @@
                         </ng-container>
                         <ng-container>
                             <dx-check-box [readOnly]="isManageUnallowed"
-                                        [text]="ls.l('InvoiceEmail_DisableProlongingSubscriptionByQuantity')"
-                                        [(value)]="settings.disableProlongingSubscriptionByQuantity">
-                            </dx-check-box>    
+                                          [text]="ls.l('InvoiceEmail_DisableProlongingSubscriptionByQuantity')"
+                                          [(value)]="settings.disableProlongingSubscriptionByQuantity">
+                            </dx-check-box>
                         </ng-container>
                     </div>
                 </div>
