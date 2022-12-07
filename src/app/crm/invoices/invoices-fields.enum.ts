@@ -5,11 +5,22 @@ export const InvoiceFields: KeysEnum<InvoiceDto> = {
     Id: 'Id',
     Status: 'Status',
     Number: 'Number',
+    GrandTotal: 'GrandTotal',
+    Date: 'Date',
+    DueDate: 'DueDate',
+    Description: 'Description',
+    Coupon: 'Coupon',
+    PublicId: 'PublicId',
+
+    LastPaymentDate: 'LastPaymentDate',
+    LastPaymentGateway: 'LastPaymentGateway',
+    LastPaymentType: 'LastPaymentType',
+
     ContactId: 'ContactId',
     FullName: 'FullName',
     EmailAddress: 'EmailAddress',
     PhotoPublicId: 'PhotoPublicId',
-    GrandTotal: 'GrandTotal',
-    Date: 'Date',
-    PublicId: 'PublicId'
+    AffiliateContactName: 'AffiliateContactName',
+    OrderId: 'OrderId',
+    OrderStageName: 'OrderStageName',
 };

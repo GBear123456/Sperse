@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import Validator from 'devextreme/ui/validator';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -31,6 +32,7 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
 })
 export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild('dueGraceValidator') dueGraceValidatorComponent;
 
     settings: InvoiceSettingsDto;
 
@@ -45,6 +47,11 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
             this.settings = invoiceSettings;
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+    onDueGracePeriodFocusOut() {
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        dueGraceValidator.validate();
     }
 
     openAdvisorContactList(event) {
@@ -69,6 +76,10 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
     }
 
     save(): Observable<any> {
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        if (!dueGraceValidator.validate().isValid)
+            return throwError('');
+
         return this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings));
     }
 }

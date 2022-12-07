@@ -144,6 +144,7 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
 import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module';
 import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { OrgUnitsTreeModule } from '@shared/common/organization-units-tree/organization-units-tree.module';
+import { InvoiceGridMenuModule } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.module'
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
@@ -284,7 +285,8 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         MatExpansionModule,
         GooglePlaceModule,
         MatTooltipModule,
-        FeaturesModule
+        FeaturesModule,
+        InvoiceGridMenuModule
     ],
     entryComponents: [
         CreateInvoiceDialogComponent,

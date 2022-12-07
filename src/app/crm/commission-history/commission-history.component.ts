@@ -23,9 +23,11 @@ import DevExpress from 'devextreme/bundles/dx.all';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
@@ -38,13 +40,17 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import {
     CommissionServiceProxy, ProductServiceProxy,
-    CommissionTier, UpdateCommissionAffiliateInput, TenantPaymentSettingsServiceProxy, CommissionSettings
+    PaymentSettingType, CommissionTier, UpdateCommissionAffiliateInput, PaymentSystem,
+    TenantPaymentSettingsServiceProxy, CommissionSettings,
+    AffiliatePayoutSettingServiceProxy, LayoutType
 } from '@shared/service-proxies/service-proxies';
+import { LedgerHistoryDialogComponent } from '@app/crm/commission-history/ledger-history-dialog/ledger-history-dialog.component';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
+import { PayPalCompleteDialogComponent } from '@app/crm/commission-history/paypal-complete-dialog/paypal-complete-dialog.component';
 import { SourceContactFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
@@ -73,7 +79,7 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
         './commission-history.component.less'
     ],
     providers: [
-        ProductServiceProxy, LifecycleSubjectsService, TenantPaymentSettingsServiceProxy
+        ProductServiceProxy, LifecycleSubjectsService, AffiliatePayoutSettingServiceProxy, TenantPaymentSettingsServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -93,6 +99,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     private bulkUpdateAllowed = this.permission.isGranted(AppPermissions.CRMBulkUpdates);
     private affiliateManageAllowed = this.permission.isGranted(AppPermissions.CRMAffiliatesManage);
 
+    isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     selectedRecords: any = [];
     readonly commissionFields: KeysEnum<CommissionDto> = CommissionFields;
     readonly ledgerFields: KeysEnum<LedgerDto> = LedgerFields;
@@ -202,7 +209,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.ledgerDataGrid,
-                    [this.ledgerFields.Id, this.ledgerFields.ContactId]
+                    [this.ledgerFields.Id, this.ledgerFields.ContactId, this.ledgerFields.HasPayout, this.ledgerFields.PayPalEmailAddress, this.ledgerFields.StripeAccountID]
                 );
             },
             errorHandler: (error) => {
@@ -455,7 +462,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     ];
 
     manageAllowed = this.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
-
+    isPayPalPayoutEnabled: Boolean = false;
+    isStripePayoutEnabled: Boolean = false;
+                   
     constructor(
         injector: Injector,
         public dialog: MatDialog,
@@ -463,7 +472,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         private filtersService: FiltersService,
         private productProxy: ProductServiceProxy,
         private commissionProxy: CommissionServiceProxy,
+        private userManagementService: UserManagementService,
         private paymentSettings: TenantPaymentSettingsServiceProxy,
+        private affiliatePayoutSettingProxy: AffiliatePayoutSettingServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef
     ) {
@@ -478,6 +489,13 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     ngOnInit() {
+        if (abp.features.isEnabled(AppFeatures.CRMPayments))
+            this.affiliatePayoutSettingProxy.getAvailablePayoutTypes(
+                ).subscribe((payoutTypes: PaymentSettingType[]) => {
+                    this.isPayPalPayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.PayPal);
+                    this.isStripePayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.Stripe);
+                });
+
         this.handleDataGridUpdate();
         this.handleFiltersPining();
         this.activate();
@@ -711,14 +729,34 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     },
                     cancelButton,
                     {
-                        widget: 'dxButton',
+                        name: 'menu',
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.manageAllowed
+                            || !this.selectedRecords.length
+                            || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                            || this.selectedRecords.every(item => !(item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal)),
                         options: {
-                            text: this.l('UpdatePaymentStatus'),
-                            disabled: !this.manageAllowed
-                                || !this.selectedRecords.length
-                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
-                                || this.selectedRecords.every(item => !(item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal)),
-                            onClick: this.applyComplete.bind(this)
+                            hint: this.l('UpdatePaymentStatus'),
+                            items: [
+                                {
+                                    text: this.l('ManualPayment'),
+                                    action: this.applyComplete.bind(this)
+                                },
+                                {
+                                    text: this.l('PayWithPayPal'),
+                                    visible: abp.features.isEnabled(AppFeatures.CRMPayments),
+                                    disabled: !this.isPayPalPayoutEnabled ||                                        
+                                        !this.selectedRecords.some(item => item.PayPalEmailAddress),
+                                    action: () => this.applyPaymentComplete(PaymentSystem.PayPal)
+                                },
+                                {
+                                    text: this.l('PayWithStripe'),
+                                    visible: abp.features.isEnabled(AppFeatures.CRMPayments),
+                                    disabled: !this.isStripePayoutEnabled ||
+                                        !this.selectedRecords.some(item => item.StripeAccountID),
+                                    action: () => this.applyPaymentComplete(PaymentSystem.Stripe)
+                                }
+                            ]
                         }
                     }] : [{
                         widget: 'dxButton',
@@ -897,6 +935,20 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     item => item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal
                 ),
                 bulkUpdateAllowed: this.bulkUpdateAllowed
+            }
+        }).afterClosed().subscribe(() => this.refresh());
+    }
+
+    applyPaymentComplete(type) {
+        this.dialog.open(PayPalCompleteDialogComponent, {
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                entities: this.selectedRecords.filter(
+                    item => item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal
+                ),
+                bulkUpdateAllowed: this.bulkUpdateAllowed,
+                paymentType: type
             }
         }).afterClosed().subscribe(() => this.refresh());
     }
@@ -1097,5 +1149,17 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             },
             checkBoxes
         );
+    }
+
+    showLedgerHistory(data) {
+        this.dialog.open(LedgerHistoryDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                ledgerEntryId: data.Id
+            }
+        }).afterClosed().subscribe(() => {
+        });
     }
 }

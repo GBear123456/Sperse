@@ -273,7 +273,7 @@
                 </div>
                 <div>
                     <dx-data-grid #ledgerDataGrid
-                                  [hint]="l('Ledger')"
+                                  [hint]="l('Ledgers')"
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
                                   columnResizingMode="widget"
@@ -299,6 +299,14 @@
                                        mode="multiple">
                         </dxo-selection>
                         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                        <dxi-column caption=""
+                                    [width]="30"
+                                    cellTemplate="historyTemplate"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false"
+                                    [allowGrouping]="false"
+                                    [allowSorting]="false">
+                        </dxi-column>
                         <dxi-column [dataField]="ledgerFields.Id"
                                     [caption]="l('Id')"
                                     cssClass="tabular clipboard-holder"
@@ -333,6 +341,10 @@
                                     [caption]="l('Status')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
+                        <dxi-column *ngIf="!isBankCodeLayoutType"
+                                    [caption]="l('Payout System')" 
+                                    cellTemplate="payoutSystemCell">
+                        </dxi-column>
                         <dxi-column [dataField]="ledgerFields.StartDate"
                                     [caption]="l('StartDate')" 
                                     cellTemplate="dateCell" 
@@ -358,6 +370,20 @@
                                     cssClass="clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
+                        <dxi-column [dataField]="ledgerFields.PayPalEmailAddress"
+                                    [caption]="l('PayPal') + ' ' + l('EmailAddress')"
+                                    cssClass="clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column [dataField]="ledgerFields.StripeAccountID"
+                                    [caption]="l('Stripe') + ' ' + l('Account')"
+                                    cssClass="clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+
+                        <div *dxTemplate="let cellData of 'historyTemplate'">
+                            <span *ngIf="cellData.data.HasPayout" [title]="l('Payouts')" class="dx-icon-clock code-history" (click)="showLedgerHistory(cellData.data)"></span>
+                        </div>
 
                         <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
                             {{cellData.value}}
@@ -365,6 +391,10 @@
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | datetime: formatting.dateTimeMoment}}
+                        </div>
+
+                        <div *dxTemplate="let cellData of 'payoutSystemCell'" class="clipboard-holder">
+                            <img *ngIf="cellData?.data?.StripeAccountID || cellData?.data?.PayPalEmailAddress" [src]="'assets/common/icons/' + (cellData.data.StripeAccountID ? 'stripe': 'paypal') + '.svg'" [title]="l(cellData.data.StripeAccountID ? 'Stripe' : 'PayPal')" height="25px" width="100px">
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>

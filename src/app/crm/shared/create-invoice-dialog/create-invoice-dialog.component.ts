@@ -130,7 +130,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     products: (ProductPaymentOptionsInfo | ProductShortInfo)[] = [];
     lastProductPhrase: string;
     lastProductCount: number;
-    date = new Date();
+    date = moment().utcOffset(0, true).toDate();
     dueDate;
     isAddressDialogOpened = false;
     featureMaxProductCount: number = this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount);
