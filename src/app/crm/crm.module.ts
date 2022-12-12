@@ -112,6 +112,7 @@ import { ProductsComponent } from './products/products.component';
 import { CouponsComponent } from './coupons/coupons.component';
 import { AddCouponDialogComponent } from './coupons/add-coupon-dialog/add-coupon-dialog.component';
 import { CrmContactGroupGuard } from './crm-contact-group-guard';
+import { ZapierModule } from '@shared/common/zapier/zapier.module';
 
 @NgModule({
     imports: [
@@ -178,7 +179,8 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
         GooglePlaceModule,
         MatInputModule,
         MatButtonModule,
-        TenantSettingsWizardModule
+        TenantSettingsWizardModule,
+        ZapierModule
     ],
     declarations: [
         ClientsComponent,
