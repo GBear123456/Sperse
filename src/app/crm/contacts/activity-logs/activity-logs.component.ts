@@ -62,7 +62,7 @@ export class ActivityLogsComponent extends AppComponentBase {
             this.contactServiceProxy.getActivityLogs(
                 contactInfo.id
             ).subscribe((logs: ContactActivityLogInfo[]) => {
-                console.log(contactInfo.id, logs);
+                this.contactDataSource = logs;
             });
         });
     }
