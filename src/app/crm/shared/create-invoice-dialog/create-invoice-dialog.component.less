@@ -270,6 +270,22 @@
                     & > * {
                         margin-right: 10px;
                     }
+
+                    dx-check-box.dx-state-disabled .dx-checkbox-icon {
+                        border-color: red !important;
+                        background: none !important;
+
+                        &:after {
+                            border-bottom: 1px solid red;
+                            content: "";
+                            width: 26px;
+                            display: inline-block;
+                            position: absolute;
+                            left: 0;
+                            transform: rotate(45deg);
+                            transform-origin: left;
+                        }
+                    }
                 }
             }
 

@@ -58,7 +58,9 @@ import {
     CouponDto,
     CouponDiscountType,
     PaymentServiceProxy,
-    InvoicePaymentMethod
+    InvoicePaymentMethod,
+    GetApplicablePaymentMethodsInput,
+    ApplicableCheckLine
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -220,10 +222,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
         return {
             id: item,
             checked: true,
+            disabled: true,
             value: InvoicePaymentMethod[item],
             name: this.ls.l(item)
         }
     });
+    paymentMethodsCheckTimeout;
+    paymentMethodsCheckLoading = false;
+    paymentMethodsCheckReload = false;
     billingAddresses: InvoiceAddressInfo[] = [];
     shippingAddresses: InvoiceAddressInfo[] = [];
     filterBoolean = Boolean;
@@ -357,6 +363,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         };
                     });
                     this.initForbiddenPaymentMethods(invoiceInfo.forbiddenPaymentMethods);
+                    this.initiatePaymentMethodsCheck(0);
 
                     if (contactInfo) {
                         this.initContactInfo(contactInfo);
@@ -422,6 +429,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 } : {}),
                 isActive: true
             });
+            this.initiatePaymentMethodsCheck();
         }
     }
 
@@ -762,7 +770,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.description = '';
             this.notes = '';
             this.lines = [{ isCrmProduct: !!this.featureMaxProductCount }];
-            this.initForbiddenPaymentMethods(0);
+            this.initForbiddenPaymentMethods(0, true);
             this.changeDetectorRef.detectChanges();
         };
 
@@ -793,6 +801,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.calcuateDiscount();
         this.balance = this.subTotal - this.discountTotal + this.shippingTotal + this.taxTotal;
         this.changeDetectorRef.detectChanges();
+        this.initiatePaymentMethodsCheck();
     }
 
     calcuateDiscount() {
@@ -907,6 +916,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             }
             this.orderDropdown.initOrderDataSource();
             this.initContactAddresses(this.contactId);
+            this.initiatePaymentMethodsCheck();
             this.changeDetectorRef.detectChanges();
         }
     }
@@ -927,6 +937,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.customer = undefined;
         this.selectedBillingAddress = undefined;
         this.selectedShippingAddress = undefined;
+        this.initiatePaymentMethodsCheck();
         this.changeDetectorRef.detectChanges();
     }
 
@@ -1147,9 +1158,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
-    initForbiddenPaymentMethods(forbiddenPaymentMethods) {
+    initForbiddenPaymentMethods(forbiddenPaymentMethods, resetDisabled: boolean = false) {
         this.forbiddenPaymentMethods = forbiddenPaymentMethods || 0;
-        this.paymentMethods.forEach(v => v.checked = !((this.forbiddenPaymentMethods & v.value) == v.value));
+        this.paymentMethods.forEach(v => {
+            v.checked = !((this.forbiddenPaymentMethods & v.value) == v.value);
+            if (resetDisabled)
+                v.disabled = false;
+        });
     }
 
     paymentMethodChanged(event, value) {
@@ -1159,5 +1174,52 @@ export class CreateInvoiceDialogComponent implements OnInit {
         else {
             this.forbiddenPaymentMethods |= value;
         }
+    }
+
+    initiatePaymentMethodsCheck(timeout = 1000) {
+        if (this.paymentMethodsCheckLoading) {
+            this.paymentMethodsCheckReload = true;
+            return;
+        }
+
+        this.paymentMethodsCheckReload = false;
+        this.paymentMethods.forEach(v => v.disabled = true);
+
+        if (!this.contactId || this.lines.length == 0 || this.lines.some(v => !v['unitId'] || !v['quantity']))
+            return;
+
+        this.paymentMethodsCheckLoading = true;
+        this.changeDetectorRef.markForCheck();
+        clearTimeout(this.paymentMethodsCheckTimeout);
+
+        let lines = this.lines.map((row, index: number) => {
+            return new ApplicableCheckLine({
+                quantity: row['quantity'],
+                unitId: row['unitId'] as ProductMeasurementUnit,
+                productId: row['productId']
+            });
+        });
+        let input = new GetApplicablePaymentMethodsInput({
+            contactId: this.contactId,
+            couponId: this.selectedCoupon ? this.selectedCoupon.id : null,
+            discountTotal: this.discountTotal,
+            shippingTotal: this.shippingTotal,
+            taxTotal: this.taxTotal,
+            lines: lines
+        });
+        this.paymentMethodsCheckTimeout = setTimeout(() => {
+            this.invoiceProxy
+                .getApplicablePaymentMethods(input)
+                .subscribe(applicableMethods => {
+                    this.paymentMethodsCheckLoading = false;
+                    if (this.paymentMethodsCheckReload) {
+                        setTimeout(() => this.initiatePaymentMethodsCheck(0));
+                    }
+                    else {
+                        this.paymentMethods.forEach(v => v.disabled = (applicableMethods & v.value) != v.value);
+                        this.changeDetectorRef.detectChanges();
+                    }
+                });
+        }, timeout);
     }
 }

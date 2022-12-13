@@ -329,10 +329,11 @@
                         <dx-check-box
                             [value]="item.checked"
                             [text]="item.name"
-                            [disabled]="disabledForUpdate"
+                            [disabled]="item.disabled || disabledForUpdate"
                             (onValueChanged)="paymentMethodChanged($event, item.value)">
                         </dx-check-box>
                     </ng-container>
+                    <i [ngClass]="{ 'fa fa-spinner fa-spin': paymentMethodsCheckLoading }"></i>
                 </div>
             </div>
         </dx-scroll-view>
