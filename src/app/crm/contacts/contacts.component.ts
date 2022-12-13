@@ -240,8 +240,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         {
             name: 'activity-logs',
             label: this.l('ActivityLogs'),
-            route: 'activity-logs',
-            disabled: !this.permission.isGranted(AppPermissions.PFMApplications)
+            route: 'activity-logs'
         },
         {
             name: 'referral-history',
