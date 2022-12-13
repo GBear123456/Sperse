@@ -17,6 +17,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup } from '@shared/AppEnums';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -122,7 +123,8 @@ export class LeftMenuComponent implements OnInit {
             {
                 component: '/zapier',
                 caption: this.ls.l('Zapier'),
-                visible: this.permission.isGranted(AppPermissions.CRM),
+                visible: location.href.includes(AppConsts.defaultDomain) && 
+                    this.permission.isGranted(AppPermissions.CRM),
                 iconSrc: './assets/common/icons/blog.svg'
             }
         ];
