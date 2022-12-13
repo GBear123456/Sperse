@@ -57,7 +57,7 @@ import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DocumentsComponent } from './documents/documents.component';
-import { LeftMenuComponent } from './shared/common/left-menu/left-menu.component';
+import { LeftMenuModule } from './shared/common/left-menu/left-menu.module';
 import { CommissionHistoryComponent } from './commission-history/commission-history.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
@@ -180,6 +180,7 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         MatInputModule,
         MatButtonModule,
         TenantSettingsWizardModule,
+        LeftMenuModule,
         ZapierModule
     ],
     declarations: [
@@ -193,8 +194,7 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         OrdersComponent,
         InvoicesComponent,
         ReportsComponent,
-        DashboardComponent,
-        LeftMenuComponent,
+        DashboardComponent,        
         ImportListComponent,
         ImportLeadsComponent,
         InvoiceAddressDialog,
