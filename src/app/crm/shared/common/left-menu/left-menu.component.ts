@@ -118,6 +118,12 @@ export class LeftMenuComponent implements OnInit {
                 caption: this.ls.l('CRMDashboardMenu_Documents'),
                 visible: this.permission.isGranted(AppPermissions.CRMFileStorageTemplates),
                 iconSrc: './assets/common/icons/folder.svg'
+            },
+            {
+                component: '/zapier',
+                caption: this.ls.l('Zapier'),
+                visible: this.permission.isGranted(AppPermissions.CRM),
+                iconSrc: './assets/common/icons/blog.svg'
             }
         ];
         this.changeDetector.detectChanges();
