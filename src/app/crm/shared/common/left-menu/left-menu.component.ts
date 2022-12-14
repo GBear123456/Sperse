@@ -123,9 +123,9 @@ export class LeftMenuComponent implements OnInit {
             {
                 component: '/zapier',
                 caption: this.ls.l('Zapier'),
-                visible: location.href.includes(AppConsts.defaultDomain) && 
+                visible: location.href.includes(AppConsts.defaultDomain) &&
                     this.permission.isGranted(AppPermissions.CRM),
-                iconSrc: './assets/common/icons/blog.svg'
+                iconSrc: './assets/common/icons/zapier.svg'
             }
         ];
         this.changeDetector.detectChanges();
