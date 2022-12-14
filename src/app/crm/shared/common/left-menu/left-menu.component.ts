@@ -15,8 +15,10 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
 import { AppFeatures } from '@shared/AppFeatures';
 import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
+import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup } from '@shared/AppEnums';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -29,7 +31,6 @@ export class LeftMenuComponent implements OnInit {
     @Input() showIntroductionTour = false;
     @Input() currentContactGroup: ContactGroup;
     @Output() openIntro: EventEmitter<any> = new EventEmitter();
-    @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
     get showIntroTour(): boolean {
         let tenant = this.appSessionService.tenant;
         return !tenant || !tenant.customLayoutType || tenant.customLayoutType == LayoutType.Default;
@@ -59,7 +60,7 @@ export class LeftMenuComponent implements OnInit {
                     this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement),
                 iconSrc: 'assets/common/icons/similar-contacts.svg',
                 isModalDialog: true,
-                onClick: () => this.openPaymentWizard.emit()
+                onClick: () => this.openPaymentWizardDialog()
             },
             {
                 caption: this.ls.l('CRMDashboardMenu_ManageClients'),
@@ -118,6 +119,13 @@ export class LeftMenuComponent implements OnInit {
                 caption: this.ls.l('CRMDashboardMenu_Documents'),
                 visible: this.permission.isGranted(AppPermissions.CRMFileStorageTemplates),
                 iconSrc: './assets/common/icons/folder.svg'
+            },
+            {
+                component: '/zapier',
+                caption: this.ls.l('Zapier'),
+                visible: location.href.includes(AppConsts.defaultDomain) &&
+                    this.permission.isGranted(AppPermissions.CRM),
+                iconSrc: './assets/common/icons/zapier.svg'
             }
         ];
         this.changeDetector.detectChanges();
@@ -131,14 +139,17 @@ export class LeftMenuComponent implements OnInit {
             panelClass: ['tenant-settings']
         });
     }
-    //
-    // onClick(event, elem) {
-    //     if (event.clientX < 260)
-    //         elem.component && this.router.navigate(['/app/crm' + elem.component]);
-    //     else if (event.target.classList.contains('add-button'))
-    //         this.router.navigate(
-    //             ['/app/crm' + elem.component],
-    //             { queryParams: { action: 'addNew' }}
-    //         );
-    // }
+
+    openPaymentWizardDialog() {
+        this.dialog.closeAll();
+        this.dialog.open(PaymentWizardComponent, {
+            height: '800px',
+            width: '1200px',
+            id: 'payment-wizard',
+            panelClass: ['payment-wizard', 'setup'],
+            data: {
+                showSubscriptions: true
+            }
+        });
+    }
 }

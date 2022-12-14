@@ -20,6 +20,7 @@ import { CommissionHistoryComponent } from './commission-history/commission-hist
 import { AppFeatures } from '@shared/AppFeatures';
 import { CrmContactGroupGuard } from '@app/crm/crm-contact-group-guard'
 import { InvoicesComponent } from './invoices/invoices.component';
+import { ZapierComponent } from '@shared/common/zapier/zapier.component';
 
 @NgModule({
     imports: [
@@ -28,6 +29,7 @@ import { InvoicesComponent } from './invoices/invoices.component';
             {
                 path: '',
                 children: [
+                    { path: 'zapier', component: ZapierComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'dashboard', component: DashboardComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'documents', component: DocumentsComponent, data: { permission: AppPermissions.CRMFileStorageTemplates, reuse: true } },
                     { path: 'clients', component: ClientsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },

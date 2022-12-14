@@ -12,8 +12,7 @@
 <div>
   <crm-left-menu [showIntroductionTour]="true"
                  [currentContactGroup]="filterModelContactGroup.items.element.value"
-                 (openIntro)="openDialog()"
-                 (openPaymentWizard)="openPaymentWizardDialog()">
+                 (openIntro)="openDialog()">
   </crm-left-menu>
   <div class="widgets-wrapper" [ngClass]="{ expanded: leftMenuCollapsed$ | async }">
       <div class="wrapper">

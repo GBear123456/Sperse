@@ -57,7 +57,7 @@ import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DocumentsComponent } from './documents/documents.component';
-import { LeftMenuComponent } from './shared/common/left-menu/left-menu.component';
+import { LeftMenuModule } from './shared/common/left-menu/left-menu.module';
 import { CommissionHistoryComponent } from './commission-history/commission-history.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
@@ -112,6 +112,7 @@ import { ProductsComponent } from './products/products.component';
 import { CouponsComponent } from './coupons/coupons.component';
 import { AddCouponDialogComponent } from './coupons/add-coupon-dialog/add-coupon-dialog.component';
 import { CrmContactGroupGuard } from './crm-contact-group-guard';
+import { ZapierModule } from '@shared/common/zapier/zapier.module';
 
 @NgModule({
     imports: [
@@ -178,7 +179,9 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
         GooglePlaceModule,
         MatInputModule,
         MatButtonModule,
-        TenantSettingsWizardModule
+        TenantSettingsWizardModule,
+        LeftMenuModule,
+        ZapierModule
     ],
     declarations: [
         ClientsComponent,
@@ -191,8 +194,7 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
         OrdersComponent,
         InvoicesComponent,
         ReportsComponent,
-        DashboardComponent,
-        LeftMenuComponent,
+        DashboardComponent,        
         ImportListComponent,
         ImportLeadsComponent,
         InvoiceAddressDialog,
