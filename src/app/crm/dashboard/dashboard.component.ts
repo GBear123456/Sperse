@@ -30,7 +30,6 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { RootStore, StatesStoreActions } from '@root/store';
 import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
@@ -259,19 +258,6 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 this.cacheService.set(this.introAcceptedCacheKey, 'true');
             });
         }
-    }
-
-    openPaymentWizardDialog() {
-        this.dialog.closeAll();
-        this.dialog.open(PaymentWizardComponent, {
-            height: '800px',
-            width: '1200px',
-            id: 'payment-wizard',
-            panelClass: ['payment-wizard', 'setup'],
-            data: {
-                showSubscriptions: true
-            }
-        });
     }
 
     activate() {
