@@ -280,6 +280,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
                 this.notes = settings.defaultNote;
+                this.initForbiddenPaymentMethods(settings.forbiddenPaymentMethods, true);
             }
             this.changeDetectorRef.detectChanges();
         });
@@ -770,7 +771,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.description = '';
             this.notes = '';
             this.lines = [{ isCrmProduct: !!this.featureMaxProductCount }];
-            this.initForbiddenPaymentMethods(0, true);
+            this.initForbiddenPaymentMethods(this.invoiceSettings.forbiddenPaymentMethods, true);
             this.changeDetectorRef.detectChanges();
         };
 
