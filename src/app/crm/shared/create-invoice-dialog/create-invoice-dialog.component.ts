@@ -60,7 +60,8 @@ import {
     PaymentServiceProxy,
     InvoicePaymentMethod,
     GetApplicablePaymentMethodsInput,
-    ApplicableCheckLine
+    ApplicableCheckLine,
+    UpdatePaymentMethodsInput
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -140,7 +141,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     description = '';
     notes = '';
-    lines = [{isCrmProduct: !!this.featureMaxProductCount}];
+    lines = [{ isCrmProduct: !!this.featureMaxProductCount }];
 
     couponId: number;
     selectedCoupon: CouponDto;
@@ -227,6 +228,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             name: this.ls.l(item)
         }
     });
+    showUpdatePaymentMethodButton = false;
     paymentMethodsCheckTimeout;
     paymentMethodsCheckLoading = false;
     paymentMethodsCheckReload = false;
@@ -346,7 +348,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.orderNumber = invoiceInfo.orderNumber;
                     this.customer = invoiceInfo.contactName;
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
-                    this.selectedShippingAddress = invoiceInfo.shippingAddress;                    
+                    this.selectedShippingAddress = invoiceInfo.shippingAddress;
                     this.lines = invoiceInfo.lines.map((res: any) => {
                         let description = res.description.split('\n').shift();
                         return {
@@ -356,18 +358,21 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             Description: description,
                             details: res.description.split('\n').slice(1).join('\n'),
                             units: res.productType == 'Subscription' ? [{
-                                unitId: res.unitId, 
+                                unitId: res.unitId,
                                 unitName: res.unitName
                             }] : undefined,
                             ...res,
                             description: description
                         };
                     });
+                    this.showUpdatePaymentMethodButton = this.disabledForUpdate && [InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid].indexOf(this.status) >= 0;
                     this.initForbiddenPaymentMethods(invoiceInfo.forbiddenPaymentMethods);
-                    this.initiatePaymentMethodsCheck(0);
 
                     if (contactInfo) {
                         this.initContactInfo(contactInfo);
+                    }
+                    else {
+                        this.initiatePaymentMethodsCheck(0);
                     }
 
                     this.initContextMenuItems();
@@ -377,7 +382,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         } else
             this.resetNoteDefault();
 
-        this.initNewInvoiceInfo();        
+        this.initNewInvoiceInfo();
         this.initContactInfo(this.data.contactInfo);
         this.changeDetectorRef.detectChanges();
     }
@@ -386,7 +391,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.buttons.forEach((item: IDialogButton) => {
             item.disabled = this.disabledForUpdate;
             item.contextMenu.items.forEach((contextMenuItem: ContextMenuItem) => {
-                if (contextMenuItem.text == this.ls.l('Invoice_SaveAndSend')) 
+                if (contextMenuItem.text == this.ls.l('Invoice_SaveAndSend'))
                     contextMenuItem.disabled = !this.isSendEmailAllowed || this.disabledForUpdate;
                 else if (contextMenuItem.text != this.ls.l('Invoice_SaveAndMarkSent'))
                     contextMenuItem.disabled = this.disabledForUpdate;
@@ -487,11 +492,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.discountTotal = this.discountTotal;
             data.shippingTotal = this.shippingTotal;
             data.taxTotal = this.taxTotal;
-            if (this.status == InvoiceStatus.Sent && 
+            if (this.status == InvoiceStatus.Sent &&
                 this.invoiceInfo.status != this.status
-            ) 
+            )
                 data.status = InvoiceStatus.Final;
-            else 
+            else
                 data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index: number) => {
                 let description = row['description'] ? row['description'].split('\n').shift() : '';
@@ -547,7 +552,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             if (invoiceId)
                 this.invoiceId = invoiceId;
             else if (this.status == InvoiceStatus.Sent && this.invoiceInfo.status != this.status)
-                this.updateStatus(InvoiceStatus.Sent);                        
+                this.updateStatus(InvoiceStatus.Sent);
             this.afterSave();
         });
     }
@@ -557,15 +562,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.status = status;
         /** @todo Check why there is no status in data anywhere  */
         // if (this.status != this.data.status) {
-            status || this.modalDialog.startLoading();
-            this.invoicesService.updateStatus(this.invoiceId, this.status, emailId)
-                .pipe(finalize(() => status || this.modalDialog.finishLoading()))
-                .subscribe(() => {
-                    if (status)
-                        this.data.refreshParent && this.data.refreshParent();
-                    else
-                        this.afterSave();
-                });
+        status || this.modalDialog.startLoading();
+        this.invoicesService.updateStatus(this.invoiceId, this.status, emailId)
+            .pipe(finalize(() => status || this.modalDialog.finishLoading()))
+            .subscribe(() => {
+                if (status)
+                    this.data.refreshParent && this.data.refreshParent();
+                else
+                    this.afterSave();
+            });
         //}
     }
 
@@ -586,13 +591,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private showNewEmailDialog() {
         this.modalDialog.startLoading();
         this.invoiceProxy.getEmailData(this.invoiceSettings.defaultTemplateId, this.invoiceId).pipe(
-              finalize(() => this.modalDialog.finishLoading()),
-              switchMap(data => {
-                  this.close();
-                  data['contactId'] = this.contactId;
-                  data['templateId'] = this.invoiceSettings.defaultTemplateId;
-                  return this.contactsService.showInvoiceEmailDialog(this.invoiceId, data);
-              })
+            finalize(() => this.modalDialog.finishLoading()),
+            switchMap(data => {
+                this.close();
+                data['contactId'] = this.contactId;
+                data['templateId'] = this.invoiceSettings.defaultTemplateId;
+                return this.contactsService.showInvoiceEmailDialog(this.invoiceId, data);
+            })
         ).subscribe(emailId => {
             if (!isNaN(emailId)) {
                 this.updateStatus(InvoiceStatus.Sent, emailId);
@@ -636,9 +641,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
         return ['description', 'quantity', 'rate', 'unitId'][fulfilled ? 'every' : 'some'](field => line[field] != undefined);
     }
 
-    onFieldFocusIn(event, cellData) {        
+    onFieldFocusIn(event, cellData) {
         event.component.option('isValid', true);
-        let value = event.component.option('value');            
+        let value = event.component.option('value');
         if (cellData && (!this.lastProductPhrase || !(value && value.startsWith(this.lastProductPhrase)))) {
             if (cellData.data.isCrmProduct) {
                 if (!this.products || !this.products.length || !this.products[0]['code'])
@@ -658,7 +663,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 let addresses: InvoiceAddressInfo[] = res.map(address => {
                     let fullName = [address.firstName, address.lastName].filter(Boolean).join(' ');
                     address['display'] = [address.company, fullName, address.address1, address.address2,
-                        address.city, address.stateId, address.zip, address.countryId].filter(Boolean).join(', ');
+                    address.city, address.stateId, address.zip, address.countryId].filter(Boolean).join(', ');
                     return address;
                 });
                 this.shippingAddresses = this.sortAddresses(addresses, 'S');
@@ -735,7 +740,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     productLookupItems($event, cellData, fromInvoice = true) {
         if (fromInvoice && cellData.data.productCode)
-            return ;
+            return;
 
         let phrase = $event.event.target.value;
         if (this.lastProductPhrase && phrase.startsWith(this.lastProductPhrase) && this.lastProductCount == 0)
@@ -771,6 +776,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.description = '';
             this.notes = '';
             this.lines = [{ isCrmProduct: !!this.featureMaxProductCount }];
+            this.showUpdatePaymentMethodButton = false;
             this.initForbiddenPaymentMethods(this.invoiceSettings.forbiddenPaymentMethods, true);
             this.changeDetectorRef.detectChanges();
         };
@@ -899,9 +905,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.calculateBalance();
     }
 
-     checkSendEmailAllowed(contactGroup) {
+    checkSendEmailAllowed(contactGroup) {
         return this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount) &&
-            this.permission.checkCGPermission(contactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'); 
+            this.permission.checkCGPermission(contactGroup, 'ViewCommunicationHistory.SendSMSAndEmail');
     }
 
     selectContact(contact: EntityContactInfo) {
@@ -1016,7 +1022,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (this.lines.length != this.getFilteredLines().length)
             this.lines[this.lines.length - 1].isCrmProduct = isCrmProduct;
         else
-            this.lines.push({isCrmProduct: isCrmProduct});
+            this.lines.push({ isCrmProduct: isCrmProduct });
 
         if (isCrmProduct)
             this.productsLookupRequest();
@@ -1042,7 +1048,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 }, 300);
             });
         } else {
-            this.lines = [{isCrmProduct: !!this.featureMaxProductCount}];
+            this.lines = [{ isCrmProduct: !!this.featureMaxProductCount }];
             this.updateDisabledProducts();
             this.changeDetectorRef.detectChanges();
         }
@@ -1082,12 +1088,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
             disableClose: true,
             closeOnNavigation: false
         }).afterClosed()
-        .subscribe(settings => {
-            if (settings) {
-                this.invoiceSettings = settings;
-                this.changeDetectorRef.detectChanges();
-            }
-        });
+            .subscribe(settings => {
+                if (settings) {
+                    this.invoiceSettings = settings;
+                    this.changeDetectorRef.detectChanges();
+                }
+            });
     }
 
     onDateContentReady(event) {
@@ -1170,11 +1176,26 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     paymentMethodChanged(event, value) {
         if (event.value) {
-            this.forbiddenPaymentMethods ^= value;
+            this.forbiddenPaymentMethods &= ~value;
         }
         else {
             this.forbiddenPaymentMethods |= value;
         }
+    }
+
+    updatePaymentMethod() {
+        if (!this.invoiceId)
+            return;
+
+        this.modalDialog.startLoading();
+        this.invoiceProxy.updatePaymentMethods(new UpdatePaymentMethodsInput({
+            invoiceId: this.invoiceId,
+            forbiddenPaymentMethods: this.forbiddenPaymentMethods || undefined
+        })).pipe(finalize(() => {
+            this.modalDialog.finishLoading();
+        })).subscribe(() => {
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+        });
     }
 
     initiatePaymentMethodsCheck(timeout = 1000) {

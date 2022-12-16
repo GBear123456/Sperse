@@ -271,9 +271,13 @@
                         margin-right: 10px;
                     }
 
-                    dx-check-box.dx-state-disabled .dx-checkbox-icon {
+                    dx-check-box.dx-checkbox-indeterminate .dx-checkbox-icon {
                         border-color: red !important;
                         background: none !important;
+
+                        &:before {
+                            background-color: transparent;
+                        }
 
                         &:after {
                             border-bottom: 1px solid red;
@@ -285,6 +289,11 @@
                             transform: rotate(45deg);
                             transform-origin: left;
                         }
+                    }
+
+                    .btn-primary {
+                        background-color: #00aeef;
+                        border-color: #00aeef;
                     }
                 }
             }

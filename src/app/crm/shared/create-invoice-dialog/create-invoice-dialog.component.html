@@ -327,13 +327,14 @@
                     <span>{{ls.l('Invoice_PaymentMethods')}}</span>
                     <ng-container *ngFor="let item of paymentMethods">
                         <dx-check-box
-                            [value]="item.checked"
+                            [value]="item.disabled ? undefined : item.checked"
                             [text]="item.name"
-                            [disabled]="item.disabled || disabledForUpdate"
+                            [disabled]="item.disabled || (disabledForUpdate && !showUpdatePaymentMethodButton)"
                             (onValueChanged)="paymentMethodChanged($event, item.value)">
                         </dx-check-box>
                     </ng-container>
                     <i [ngClass]="{ 'fa fa-spinner fa-spin': paymentMethodsCheckLoading }"></i>
+                    <button *ngIf="showUpdatePaymentMethodButton" class="btn btn-primary" (click)="updatePaymentMethod()">Update</button>
                 </div>
             </div>
         </dx-scroll-view>
