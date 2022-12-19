@@ -262,6 +262,40 @@
                     right: 0px;
                     margin-top: 0;
                 }
+
+                .payment-methods {
+                    display: flex;
+                    align-items: center;
+
+                    & > * {
+                        margin-right: 10px;
+                    }
+
+                    dx-check-box.dx-checkbox-indeterminate .dx-checkbox-icon {
+                        border-color: red !important;
+                        background: none !important;
+
+                        &:before {
+                            background-color: transparent;
+                        }
+
+                        &:after {
+                            border-bottom: 1px solid red;
+                            content: "";
+                            width: 26px;
+                            display: inline-block;
+                            position: absolute;
+                            left: 0;
+                            transform: rotate(45deg);
+                            transform-origin: left;
+                        }
+                    }
+
+                    .btn-primary {
+                        background-color: #00aeef;
+                        border-color: #00aeef;
+                    }
+                }
             }
 
             &.date-row {
@@ -884,6 +918,7 @@
         width: 150px;
         padding: 0 10px;
         z-index: 1;
+
         .number-of-symbols {
             color: gray;
         }

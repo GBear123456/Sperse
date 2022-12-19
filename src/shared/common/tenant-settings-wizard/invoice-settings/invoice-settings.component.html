@@ -106,5 +106,14 @@
                 </div>
             </div>
         </ng-container>
+        <div class="payment-methods">
+            <span>{{ls.l('Default')}} {{ls.l('Invoice_PaymentMethods')}}</span>
+            <ng-container *ngFor="let item of paymentMethods">
+                <dx-check-box [value]="item.checked"
+                              [text]="item.name"
+                              (onValueChanged)="paymentMethodChanged($event, item.value)">
+                </dx-check-box>
+            </ng-container>
+        </div>
     </dx-scroll-view>
 </div>
