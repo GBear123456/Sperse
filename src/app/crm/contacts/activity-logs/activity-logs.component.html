@@ -56,57 +56,66 @@
             <div class="grid-view">
                 <dx-data-grid height="100%"
                     class="main-component-view"
-                    [accessKey]="l('Activity')"
+                    [accessKey]="l('ActivityLogs')"
                     [dataSource]="contactDataSource"
                     [allowColumnReordering]="true"
                     [columnAutoWidth]="true"
                     [allowColumnResizing]="true"
                     [hoverStateEnabled]="true"
                     [pager]="defaultGridPagerConfig"
+                    [toolbar]="{visible: false, disabled: true}"
                     (onOptionChanged)="onGridOptionChanged($event)">
 
-                    <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
+                    <dxo-search-panel [visible]="false"></dxo-search-panel>
                     <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
+                    <dxi-column dataField="type"
+                                cellTemplate="typeTemplate"
+                                [allowReordering]="false"
+                                [allowGrouping]="false"
+                                [caption]="l('Action')">
+                    </dxi-column>
+                    <dxi-column dataField="entityValue"
+                                dataType="string"
+                                cssClass="clipboard-holder"
+                                [allowReordering]="false"
+                                [allowGrouping]="false"
+                                [caption]="l('Entity')">
+                    </dxi-column>
+                    <dxi-column dataField="dateTime"
+                                cssClass="clipboard-holder"
+                                [allowReordering]="false"
+                                [allowGrouping]="false"
+                                [caption]="l('Date')"
+                                cssClass="tabular"
+                                dataType="datetime" 
+                                sortOrder="desc">
+                    </dxi-column>
                     <dxi-column dataField="userPhotoPublicId"
                                 caption=""
                                 width="50px"
                                 cellTemplate="photoTemplate"
+                                [allowReordering]="false"
                                 [showInColumnChooser]="false"
                                 [allowExporting]="false"
                                 [allowGrouping]="false"
                                 [allowSorting]="false"
                                 [allowFiltering]="false">
                     </dxi-column>
-                    <dxi-column dataField="userName" 
-                        [caption]="l('UserName')" 
-                        cssClass="clipboard-holder">
+                    <dxi-column dataField="userName"
+                        [allowReordering]="false"
+                        [allowGrouping]="false"
+                        [caption]="l('UserName')"
+                        cellTemplate="userNameTemplate">
                     </dxi-column>
-                    <dxi-column dataField="type"
-                                cellTemplate="typeTemplate"
-                                [caption]="l('Action')">
-                    </dxi-column>
-                    <dxi-column dataField="dateTime"
-                                [caption]="l('Date')"
-                                cssClass="tabular"
-                                dataType="datetime" 
-                                sortOrder="desc">
-                    </dxi-column>
-                    <dxi-column dataField="entityId"
-                                [visible]="false"
-                                [caption]="l('EntityId')"
-                                cssClass="tabular">
-                    </dxi-column>
-                    <dxi-column dataField="entityValue"
-                                dataType="string"
-                                cssClass="campaign-name"
-                                [caption]="l('Entity')">
-                    </dxi-column>
-
+                  
+                    <div *dxTemplate="let data of 'userNameTemplate'" class="clipboard-holder">
+                        <span class="user-name">{{data.value || l('System')}}</span>
+                    </div>
                     <div *dxTemplate="let data of 'photoTemplate'">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.value) + ')'}" class="img-circle"></div>
                     </div>
-                    <div *dxTemplate="let data of 'typeTemplate'">
+                    <div *dxTemplate="let data of 'typeTemplate'" class="clipboard-holder">
                         <span class="action">{{startCase(data.value)}}</span>
                     </div>
 
