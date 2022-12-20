@@ -153,7 +153,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }];
     selectedTabIndex = 0;
     lastModificationInfo: ContactLastModificationInfoDto;
-    userTimezone = DateHelper.getUserTimezone();
     formatting = AppConsts.formatting;
     checklistLeadDataSource = [];
     checklistOrderDataSource = [];
@@ -446,8 +445,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     ).toPromise().then(response => {
                         return response.map((item: any) => {
                             item.fieldTimeZone = 'Etc/UTC';
-                            item.startDate = item.startDate && item.startDate.toDate();
-                            item.endDate = item.endDate && item.endDate.toDate();
+                            if (item.startDate)
+                                item.startDate = this.getDateWithoutTimezone(item.startDate);
+                            if (item.endDate)
+                                item.endDate = this.getDateWithoutTimezone(item.endDate);
                             return item;
                         });
                     });
@@ -467,13 +468,19 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 ).toPromise().then(response => {
                     return response.map((item: any) => {
                         item.fieldTimeZone = 'Etc/UTC';
-                        item.startDate = item.startDate && item.startDate.toDate();
-                        item.endDate = item.endDate && item.endDate.toDate();
+                        if (item.startDate)
+                            item.startDate = this.getDateWithoutTimezone(item.startDate);
+                        if (item.endDate)
+                            item.endDate = this.getDateWithoutTimezone(item.endDate);
                         return item;
                     });
                 });
             }
         });
+    }
+
+    getDateWithoutTimezone(value: moment): Date {
+        return DateHelper.removeTimezoneOffset(new Date(value.toDate()), false);
     }
 
     initContactLeadsDataSource() {
@@ -894,11 +901,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     getStartDate() {
-        return moment(this.scheduleDate).startOf('day').toDate();
+        return DateHelper.removeTimezoneOffset(new Date(this.scheduleDate), false, 'from');
     }
 
     getEndDate() {
-        return moment(this.scheduleDate).endOf('day').toDate();
+        return DateHelper.removeTimezoneOffset(new Date(this.scheduleDate), false, 'to');
     }
 
     onSelectedTabChange(event) {
