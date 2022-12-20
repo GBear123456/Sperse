@@ -1,6 +1,6 @@
 <span class="close" (click)="close()"></span>
 <mat-dialog-content>
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onSelectedTabChange($event)">
         <mat-tab [label]="ls.l('PersonalSettings.General')">
             <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight()">
                 <div class="general-tab">
@@ -332,7 +332,72 @@
                 </div>
             </dx-scroll-view>
         </mat-tab>
-        <mat-tab [label]="ls.l('Activity')" [disabled]="true">
+        <mat-tab [label]="ls.l('Activity')" [disabled]="!isCRMGranted">
+            <dx-date-box
+                [useMaskBehavior]="true"
+                [openOnFieldClick]="true"
+                [(value)]="scheduleDate">
+            </dx-date-box>
+            <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight(56)">
+                <ng-container *ngIf="contactInfo?.personContactInfo?.userId">
+                    <span class="title">{{ls.l('User Activities')}}</span>
+                    <dx-scheduler
+                        class="main-component-view"
+                        [dataSource]="agendaUserDataSource"
+                        [views]="['agenda']"
+                        [resources]="resources"
+                        [timeZone]="timezone"
+                        [(currentView)]="scheduleView"
+                        [currentDate]="scheduleDate"
+                        [showAllDayPanel]="true"
+                        [editing]="{
+                            allowAdding: false,
+                            allowDeleting: false,
+                            allowDragging: false,
+                            allowResizing: false,
+                            allowTimeZoneEditing:false,
+                            allowUpdating: false
+                        }"
+                        [remoteFiltering]="false"
+                        [cellDuration]="cellDuration"
+                        textExpr="title"
+                        allDayExpr="allDay"
+                        startDateExpr="startDate"
+                        endDateExpr="endDate"
+                        descriptionExpr="description"
+                        startDateTimeZoneExpr="fieldTimeZone"
+                        endDateTimeZoneExpr="fieldTimeZone">
+                    </dx-scheduler>
+                </ng-container>
+                <span class="title">{{ls.l('Contact Activities')}}</span>
+                <dx-scheduler
+                    class="main-component-view"
+                    [dataSource]="agendaContactDataSource"
+                    [views]="['agenda']"
+                    [resources]="resources"
+                    [timeZone]="timezone"
+                    [(currentView)]="scheduleView"
+                    [currentDate]="scheduleDate"
+                    [showAllDayPanel]="true"
+                    [editing]="{
+                        allowAdding: false,
+                        allowDeleting: false,
+                        allowDragging: false,
+                        allowResizing: false,
+                        allowTimeZoneEditing:false,
+                        allowUpdating: false
+                    }"
+                    [remoteFiltering]="false"
+                    [cellDuration]="cellDuration"
+                    textExpr="title"
+                    allDayExpr="allDay"
+                    startDateExpr="startDate"
+                    endDateExpr="endDate"
+                    descriptionExpr="description"
+                    startDateTimeZoneExpr="fieldTimeZone"
+                    endDateTimeZoneExpr="fieldTimeZone">
+                </dx-scheduler>
+            </dx-scroll-view>
         </mat-tab>
     </mat-tab-group>
 </mat-dialog-content>

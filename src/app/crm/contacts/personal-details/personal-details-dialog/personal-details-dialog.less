@@ -465,6 +465,42 @@
     .view-details {
         float: right;
     }
+
+    .title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 10px;
+        display: block;
+        text-align: center;
+    }
+
+    ::ng-deep dx-scheduler {
+        .dx-scheduler-navigator {
+            min-width: 220px!important;
+        }
+        .dx-scheduler-header {
+            display: none;
+        }
+        .dx-scheduler-work-space-overlapping {
+            padding-top: 0px;
+            margin-top: 0px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(221,221,221,.6);
+        }
+        .dx-scheduler-date-table-scrollable {
+            margin: 5px!important;
+            .dx-scrollable-content {
+                min-height: 150px;
+            }
+        }
+    }
+
+    ::ng-deep dx-date-box {
+        input {
+            text-align: center;
+            padding-left: 26px;
+        }
+    }
 }
 
 ::ng-deep .dx-list-item-selected {
