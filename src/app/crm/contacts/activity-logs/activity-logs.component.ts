@@ -6,7 +6,6 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import startCase from 'lodash/startCase';
-import { first } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -58,7 +57,7 @@ export class ActivityLogsComponent extends AppComponentBase {
             filter: [ 'ApplicantUserId', '=', +this.userService['data'].userId ]
         });
 
-        this.contactsService.contactInfo$.pipe(first()).subscribe(contactInfo => {
+        this.contactsService.contactInfo$.subscribe(contactInfo => {
             this.contactServiceProxy.getActivityLogs(
                 contactInfo.id
             ).subscribe((logs: ContactActivityLogInfo[]) => {

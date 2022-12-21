@@ -23,6 +23,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'CRM_ContactCommunication_GetMessages',
         'CRM_Country_GetCountryStates',
         'CRM_DocumentTemplates_GetUrl',
+        'CRM_Activity_GetAll',
         'odata_LeadSlice',
         'odata_SalesSlice',
         'odata_ContactSlice',
