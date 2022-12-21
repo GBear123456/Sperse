@@ -178,12 +178,14 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             });
         });
 
-        this.tenantPaymentSettingsService.getCommissionSettings().subscribe((res: CommissionSettings) => {
-            if (res.defaultAffiliateRate !== null)
-                this.defaultAffiliateRateStr = formatPercent(res.defaultAffiliateRate, 'en-US', '1.0-2');
-            if (res.defaultAffiliateRateTier2 !== null)
-                this.defaultAffiliateRateTier2Str = formatPercent(res.defaultAffiliateRateTier2, 'en-US', '1.0-2');
-        });
+        if (this.hasCommissionsFeature) {
+            this.tenantPaymentSettingsService.getCommissionSettings().subscribe((res: CommissionSettings) => {
+                if (res.defaultAffiliateRate !== null)
+                    this.defaultAffiliateRateStr = formatPercent(res.defaultAffiliateRate, 'en-US', '1.0-2');
+                if (res.defaultAffiliateRateTier2 !== null)
+                    this.defaultAffiliateRateTier2Str = formatPercent(res.defaultAffiliateRateTier2, 'en-US', '1.0-2');
+            });
+        }
 
         contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo && contactInfo.id) {
