@@ -42,6 +42,7 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
         return {
             id: item,
             checked: true,
+            visible: false,
             value: InvoicePaymentMethod[item],
             name: this.ls.l(item)
         }
@@ -83,6 +84,9 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
     initPaymentMethods() {
         this.paymentMethods.forEach(v => {
             v.checked = !((this.settings.forbiddenPaymentMethods & v.value) == v.value);
+        });
+        this.paymentMethods.forEach(v => {
+            v.visible = (this.settings.configuredPaymentMethods & v.value) == v.value;
         });
     }
 

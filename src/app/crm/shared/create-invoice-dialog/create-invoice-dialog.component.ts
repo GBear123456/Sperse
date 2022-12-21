@@ -61,7 +61,8 @@ import {
     InvoicePaymentMethod,
     GetApplicablePaymentMethodsInput,
     ApplicableCheckLine,
-    UpdatePaymentMethodsInput
+    UpdatePaymentMethodsInput,
+    InvoiceSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -123,7 +124,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     currency = SettingsHelper.getCurrency();
     saveButtonId = 'saveInvoiceOptions';
     newInvoiceInfo = new GetNewInvoiceInfoOutput();
-    invoiceSettings: InvoiceSettings = new InvoiceSettings();
+    invoiceSettings: InvoiceSettingsDto = new InvoiceSettingsDto();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: ContextMenuItem;
     selectedContact: EntityContactInfo;
@@ -218,12 +219,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
             unitName: this.ls.l(item)
         };
     });
+
+    showPaymentMethods = false;
     forbiddenPaymentMethods: number = 0;
     paymentMethods = Object.keys(InvoicePaymentMethod).filter(v => typeof InvoicePaymentMethod[v] === "number").map(item => {
         return {
             id: item,
             checked: true,
             disabled: true,
+            visible: false,
             value: InvoicePaymentMethod[item],
             name: this.ls.l(item)
         }
@@ -232,6 +236,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     paymentMethodsCheckTimeout;
     paymentMethodsCheckLoading = false;
     paymentMethodsCheckReload = false;
+
     billingAddresses: InvoiceAddressInfo[] = [];
     shippingAddresses: InvoiceAddressInfo[] = [];
     filterBoolean = Boolean;
@@ -278,12 +283,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettings) => {
+        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettingsDto) => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
                 this.notes = settings.defaultNote;
                 this.initForbiddenPaymentMethods(settings.forbiddenPaymentMethods, true);
             }
+            this.hideNotConfiguredPaymentMethods();
+            this.showPaymentMethods = true;
             this.changeDetectorRef.detectChanges();
         });
         this.initInvoiceData();
@@ -1170,6 +1177,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
             v.checked = !((this.forbiddenPaymentMethods & v.value) == v.value);
             if (resetDisabled)
                 v.disabled = false;
+        });
+    }
+
+    hideNotConfiguredPaymentMethods() {
+        this.paymentMethods.forEach(v => {
+            v.visible = (this.invoiceSettings.configuredPaymentMethods & v.value) == v.value;
         });
     }
 
