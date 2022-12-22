@@ -365,8 +365,27 @@
                         startDateExpr="startDate"
                         endDateExpr="endDate"
                         descriptionExpr="description"
+                        appointmentTemplate="appointmentTemplate"
+                        appointmentTooltipTemplate="appointmentTooltipTemplate"
                         startDateTimeZoneExpr="fieldTimeZone"
                         endDateTimeZoneExpr="fieldTimeZone">
+                        <div *dxTemplate="let appointment of 'appointmentTemplate'">
+                          <div class="showtime-preview">
+                            <div>{{ appointment.appointmentData.title }}</div>
+                            <div class="dropdown-appointment-dates">
+                                {{(getDateWithTimezone(appointment?.appointmentData?.startDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment?.appointmentData?.endDate) | date:'shortTime')}}
+                            </div>
+                          </div>
+                        </div>
+                        <div *dxTemplate="let appointment of 'appointmentTooltipTemplate'">
+                            <div class="appointment-content">
+                                <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.type[0]}}</div>
+                                <div class="appointment-text">{{appointment?.appointmentData?.title}}</div>
+                                <div class="appointment-dates">
+                                    {{(getDateWithTimezone(appointment?.appointmentData?.startDate) | date : 'MMM d') + ' , ' + (getDateWithTimezone(appointment?.appointmentData?.startDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment?.appointmentData?.endDate) | date:'shortTime')}}
+                                </div>
+                            </div>
+                        </div>
                     </dx-scheduler>
                 </ng-container>
                 <span class="title">{{ls.l('Contact Activities')}}</span>
@@ -394,8 +413,27 @@
                     startDateExpr="startDate"
                     endDateExpr="endDate"
                     descriptionExpr="description"
+                    appointmentTemplate="appointmentTemplate"
+                    appointmentTooltipTemplate="appointmentTooltipTemplate"
                     startDateTimeZoneExpr="fieldTimeZone"
                     endDateTimeZoneExpr="fieldTimeZone">
+                    <div *dxTemplate="let appointment of 'appointmentTemplate'">
+                      <div class="showtime-preview">
+                        <div>{{ appointment.appointmentData.title }}</div>
+                        <div class="dropdown-appointment-dates">
+                            {{(getDateWithTimezone(appointment?.appointmentData?.startDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment?.appointmentData?.endDate) | date:'shortTime')}}
+                        </div>
+                      </div>
+                    </div>
+                    <div *dxTemplate="let appointment of 'appointmentTooltipTemplate'">
+                        <div class="appointment-content">
+                            <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.Type[0]}}</div>
+                            <div class="appointment-text">{{appointment?.appointmentData?.title}}</div>
+                            <div class="appointment-dates">
+                                {{(getDateWithTimezone(appointment?.appointmentData?.startDate) | date : 'MMM d') + ' , ' + (getDateWithTimezone(appointment?.appointmentData?.startDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment?.appointmentData?.endDate) | date:'shortTime')}}
+                            </div>
+                        </div>
+                    </div>
                 </dx-scheduler>
             </dx-scroll-view>
         </mat-tab>

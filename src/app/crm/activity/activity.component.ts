@@ -224,10 +224,14 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         };
     }
 
-    getCurrentDate() {
-        let date = new Date(this.currentDate);
-        date.setTime(date.getTime() - (date.getTimezoneOffset() * 60 * 1000));
-        return moment(date);
+    getCurrentDate(isStartDate = true) {
+        let period = <any>this.getPeriodType(),
+            date = moment.utc(this.currentDate.toDateString());
+        if (['month', 'week'].includes(period))
+            date = date[isStartDate ? 'startOf' : 'endOf'](period).add(
+                !this.showPipeline && period == 'month' ? (isStartDate ? -10 : 10) : 0, 'days');
+
+        return date.toDate();
     }
 
     getPeriodType() {
@@ -239,15 +243,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     getStartDate() {
-        let period = <any>this.getPeriodType();
-        return this.getCurrentDate().startOf(period)
-            .add(!this.showPipeline && period == 'month' ? -10 : 0, 'days').toDate();
+        return DateHelper.removeTimezoneOffset(this.getCurrentDate(), true, 'from');
     }
 
     getEndDate() {
-        let period = <any>this.getPeriodType();
-        return this.getCurrentDate().endOf(period)
-            .add( !this.showPipeline && period == 'month' ? 10 : 0, 'days').toDate();
+        return DateHelper.removeTimezoneOffset(this.getCurrentDate(false), true, 'to');
     }
 
     initToolbarConfig() {
@@ -336,7 +336,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             width: 250,
                             height: 40,
                             readOnly: true,
-                            visible: this.currentView != 'month',
+                            visible: ['day', 'week'].includes(this.currentView),
                             value: this.l('CellDurationMinutes') + ':'
                         }
                     },
@@ -345,7 +345,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         options: {
                             width: 60,
                             height: 40,
-                            visible: this.currentView != 'month',
+                            visible: ['day', 'week'].includes(this.currentView),
                             value: this.cellDuration,
                             showSpinButtons: true,
                             onValueChanged: event => {
@@ -648,8 +648,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             });
     }
 
-    deleteAppointment(appointment: ActivityDto) {
-        this.schedulerComponent.instance.deleteAppointment(appointment);
+    deleteAppointment(event, appointment: ActivityDto) {
+        event.stopPropagation();
+        if (appointment) {
+            let instance = this.schedulerComponent.instance;
+            instance.hideAppointmentTooltip();
+            instance.deleteAppointment(appointment);
+        }
     }
 
     getDateWithTimezone(value) {
@@ -724,15 +729,15 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     updateCalendarCaption() {
+        let momentDate = moment.utc(this.currentDate.toDateString());
         switch (this.currentView) {
             case 'agenda':
             case 'day':
-                this.calendarCaption = moment(this.currentDate).format('D MMMM YYYY');
+                this.calendarCaption = momentDate.format('D MMMM YYYY');
                 break;
             case 'week':
-                let momentDate = moment(this.currentDate);
-                let weekStart = moment(this.currentDate).startOf('week');
-                let weekEnd = moment(this.currentDate).endOf('week');
+                let weekStart = momentDate.startOf('week');
+                let weekEnd = momentDate.endOf('week');
                 if (weekStart.month() == momentDate.month() && weekEnd.month() == momentDate.month()) {
                     this.calendarCaption = `${weekStart.date()} - ${weekEnd.date()} ${momentDate.format('MMMM YYYY')}`;
                 } else {
@@ -740,7 +745,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 }
                 break;
             case 'month':
-                this.calendarCaption = moment(this.currentDate).format('MMMM YYYY');
+                this.calendarCaption = momentDate.format('MMMM YYYY');
                 break;
             default:
                 this.calendarCaption = 'All period';
