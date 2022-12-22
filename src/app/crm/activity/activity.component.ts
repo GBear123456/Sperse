@@ -127,6 +127,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     toolbarConfig: ToolbarGroupModel[];
     layoutTypes = DataLayoutType;
     readonly activityFields: KeysEnum<ActivityDto> = ActivityFields;
+    showUserActivitiesOnly = false;
 
     constructor(
         injector: Injector,
@@ -180,10 +181,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         request.url = endpoint.url + 'api/services/CRM/Activity/'
                             + (customize ? 'Move' : 'Delete?Id=' + endpoint.id);
                     } else {
+                        if (this.showUserActivitiesOnly)
+                            request.params.AssignedUserIds = this.appSession.userId;
                         request.params.$filter = buildQuery(
                             {
                                 filter: [
-//                                    {AssignedUserIds: {any: {Id: this.appSession.userId}}},
                                     {
                                         or: [
                                             {and: [{StartDate: {le: this.getEndDate()}}, {EndDate: {ge: this.getStartDate()}}]}
@@ -278,22 +280,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 ]
             },
             {
-                location: 'before',
-                items: [
-                    {
-                        name: 'search',
-                        widget: 'dxTextBox',
-                        options: {
-                            visible: false,
-                            value: this.searchValue,
-                            width: '279',
-                            mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Tasks').toLowerCase()
-                        }
-                    }
-                ]
-            },
-            {
                 location: 'center',
                 areItemsDependent: true,
                 items: [
@@ -368,6 +354,27 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             step: 5,
                             max: 60,
                             min: 5
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                areItemsDependent: false,
+                items: [
+                    {
+                        widget: 'dxCheckBox',
+                        options: {
+                            visible: true,
+                            value: this.showUserActivitiesOnly,
+                            width: '150px',
+                            elementAttr: {style: 'margin-right: 15px;'},
+                            text: this.l('My Activities'),
+                            onValueChanged: (event) => {
+                                this.showUserActivitiesOnly = event.value;
+                                this.refresh();
+                            }
                         }
                     }
                 ]
