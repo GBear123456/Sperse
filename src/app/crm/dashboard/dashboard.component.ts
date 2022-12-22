@@ -82,7 +82,16 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     totalsByPeriodLoad: Subject<any> = new Subject<any>();
     totalsBySourceLoad: Subject<any> = new Subject<any>();
     recentClientsLoad: Subject<any> = new Subject<any>();
-    
+
+    accessilbeContactGroups = Object.keys(ContactGroup).map(item => {
+        if (this.permission.checkCGPermission([ContactGroup[item]], ''))
+            return {
+                id: ContactGroup[item],
+                name: this.ls.l('ContactGroup_' + item)
+            };
+    }).filter(Boolean);
+    hasAccessibleCG = this.accessilbeContactGroups.length !== 0;
+
     filterModelContactGroup = new FilterModel({
         caption: 'ContactGroup',
         component: FilterRadioGroupComponent,
@@ -90,13 +99,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
             element: new FilterRadioGroupModel({
                 showFirstAsDefault: true,
                 value: this.permission.getFirstAvailableCG(),
-                list: Object.keys(ContactGroup).map(item => {
-                    if (this.permission.checkCGPermission([ContactGroup[item]], ''))
-                        return {
-                            id: ContactGroup[item],
-                            name: this.ls.l('ContactGroup_' + item)
-                        };
-                }).filter(Boolean)
+                list: this.accessilbeContactGroups
             })
         }
     });
@@ -154,7 +157,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-        this.loadStatus();
+        if (this.hasAccessibleCG) {
+            this.loadStatus();
+        }
+
         const introAcceptedCache = this.cacheService.get(this.introAcceptedCacheKey);
         /** Show crm wizard if there is no cache for it */
         if (!introAcceptedCache || introAcceptedCache === 'false') {
@@ -164,18 +170,20 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     ngAfterViewInit(): void {
-        combineLatest(
-            this.dashboardWidgetsService.period$,
-            this.dashboardWidgetsService.contactId$,
-            this.dashboardWidgetsService.totalsData$,
-            this.dashboardWidgetsService.contactGroupId$,
-            this.dashboardWidgetsService.sourceOrgUnitIds$,
-            this.dashboardWidgetsService.refresh$
-        ).pipe(
-            delay(300), first()
-        ).subscribe(() => {
-            this.clientsByRegionLoad.next();
-        });
+        if (this.hasAccessibleCG) {
+            combineLatest(
+                this.dashboardWidgetsService.period$,
+                this.dashboardWidgetsService.contactId$,
+                this.dashboardWidgetsService.totalsData$,
+                this.dashboardWidgetsService.contactGroupId$,
+                this.dashboardWidgetsService.sourceOrgUnitIds$,
+                this.dashboardWidgetsService.refresh$
+            ).pipe(
+                delay(300), first()
+            ).subscribe(() => {
+                this.clientsByRegionLoad.next();
+            });
+        }
 
         this.activate();
     }
@@ -238,11 +246,13 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     private loadStatus() {
-        this.dashboardServiceProxy.getStatus(this.filterModelContactGroup.items.element.value.toString(), undefined).subscribe((status: GetCRMStatusOutput) => {
-            this.showWelcomeSection.next(!status.hasData);
-            this.showLoadingSpinner = false;
-            this.changeDetectorRef.detectChanges();
-        });
+        if (this.filterModelContactGroup.items.element.value) {
+            this.dashboardServiceProxy.getStatus(this.filterModelContactGroup.items.element.value.toString(), undefined).subscribe((status: GetCRMStatusOutput) => {
+                this.showWelcomeSection.next(!status.hasData);
+                this.showLoadingSpinner = false;
+                this.changeDetectorRef.detectChanges();
+            });
+        }
     }
 
     openDialog() {
@@ -261,12 +271,18 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     activate() {
-        this.loadStatus();
         this.lifeCycleSubject.activate.next();
-        this.subscribeToRefreshParam();
-        this.refreshClientsByRegion();
-        this.refreshTotalsBySource();
-        this.initFilterConfig();
+
+        if (this.hasAccessibleCG) {
+            this.loadStatus();
+            this.subscribeToRefreshParam();
+            this.refreshClientsByRegion();
+            this.refreshTotalsBySource();
+            this.initFilterConfig();
+        }
+        else {
+            this.showLoadingSpinner = false;
+        }
         this.ui.overflowHidden(true);
         this.appService.isClientSearchDisabled = true;
         this.appService.toolbarIsHidden.next(true);
