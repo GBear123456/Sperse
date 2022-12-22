@@ -225,7 +225,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     getCurrentDate() {
         let date = new Date(this.currentDate);
         date.setTime(date.getTime() - (date.getTimezoneOffset() * 60 * 1000));
-        return moment.utc(date);
+        return moment(date);
     }
 
     getPeriodType() {

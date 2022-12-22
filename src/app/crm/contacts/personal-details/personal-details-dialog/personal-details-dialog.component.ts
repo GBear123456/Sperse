@@ -445,10 +445,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     ).toPromise().then(response => {
                         return response.map((item: any) => {
                             item.fieldTimeZone = 'Etc/UTC';
-                            if (item.startDate)
-                                item.startDate = this.getDateWithoutTimezone(item.startDate);
-                            if (item.endDate)
-                                item.endDate = this.getDateWithoutTimezone(item.endDate);
                             return item;
                         });
                     });
@@ -468,10 +464,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 ).toPromise().then(response => {
                     return response.map((item: any) => {
                         item.fieldTimeZone = 'Etc/UTC';
-                        if (item.startDate)
-                            item.startDate = this.getDateWithoutTimezone(item.startDate);
-                        if (item.endDate)
-                            item.endDate = this.getDateWithoutTimezone(item.endDate);
                         return item;
                     });
                 });
@@ -901,11 +893,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     getStartDate() {
-        return DateHelper.removeTimezoneOffset(new Date(this.scheduleDate), false, 'from');
+        return DateHelper.removeTimezoneOffset(new Date(this.scheduleDate), true, 'from');
     }
 
     getEndDate() {
-        return DateHelper.removeTimezoneOffset(new Date(this.scheduleDate), false, 'to');
+        return DateHelper.removeTimezoneOffset(new Date(this.scheduleDate), true, 'to');
     }
 
     onSelectedTabChange(event) {
