@@ -182,7 +182,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             + (customize ? 'Move' : 'Delete?Id=' + endpoint.id);
                     } else {
                         if (this.showUserActivitiesOnly)
-                            request.params.AssignedUserIds = this.appSession.userId;
+                            request.params['assignedUserIds[0]'] = this.appSession.userId;
                         request.params.$filter = buildQuery(
                             {
                                 filter: [
