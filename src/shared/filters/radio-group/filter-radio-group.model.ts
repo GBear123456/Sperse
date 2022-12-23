@@ -13,7 +13,7 @@ export class FilterRadioGroupModel extends FilterItemModel {
     }
 
     get value(): any {
-        return this.showFirstAsDefault && !this._value ? this.list[0].id : this._value;
+        return !this._value && this.canShowFirstAsDefault() ? this.list[0].id : this._value;
     }
 
     getDisplayElements(): DisplayElement[] {
@@ -28,12 +28,16 @@ export class FilterRadioGroupModel extends FilterItemModel {
             return !selected;
         });
 
-        if (this.showFirstAsDefault && !result.length)
+        if (this.canShowFirstAsDefault() && !result.length)
             return [<DisplayElement>{
                 item: this,
                 displayValue: this.list[0].displayName || this.list[0].name
             }];
         else
             return result;
+    }
+
+    private canShowFirstAsDefault(): boolean {
+        return this.showFirstAsDefault && this.list.length !== 0;
     }
 }

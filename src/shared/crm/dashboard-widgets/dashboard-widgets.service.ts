@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, ReplaySubject, combineLatest, of } from 'rxjs';
-import { catchError, finalize, switchMap, map, tap, distinctUntilChanged } from 'rxjs/operators';
+import { catchError, finalize, switchMap, map, tap, distinctUntilChanged, filter } from 'rxjs/operators';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -71,7 +71,9 @@ export class DashboardWidgetsService  {
     contactId$: Observable<number> = this._contactId.asObservable();
     private _contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject<ContactGroup>(this.permissionService.getFirstAvailableCG());
     contactGroupId$: Observable<ContactGroup> = this._contactGroupId.asObservable().pipe(
-        map((value: ContactGroup) => value || this.permissionService.getFirstAvailableCG()), distinctUntilChanged());
+        map((value: ContactGroup) => value || this.permissionService.getFirstAvailableCG()),
+        filter(value => !!value),
+        distinctUntilChanged());
     private _sourceOrgUnitIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
     sourceOrgUnitIds$: Observable<number[]> = this._sourceOrgUnitIds.asObservable();
 
