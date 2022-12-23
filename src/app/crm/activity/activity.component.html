@@ -37,17 +37,26 @@
                 [descriptionExpr]="activityFields.Description"
                 startDateTimeZoneExpr="fieldTimeZone"
                 endDateTimeZoneExpr="fieldTimeZone"
-                dropDownAppointmentTemplate="appointmentDropDown"
+                appointmentTemplate="appointmentTemplate"
+                appointmentTooltipTemplate="appointmentTooltipTemplate"
                 (onAppointmentUpdating)="onAppointmentUpdating($event)"
                 (onAppointmentFormOpening)="onAppointmentFormCreated($event)">
-                <div *dxTemplate="let appointment of 'appointmentDropDown'">
+                <div *dxTemplate="let appointment of 'appointmentTemplate'">
+                  <div class="showtime-preview">
+                    <div>{{ appointment.targetedAppointmentData.Title }}</div>
+                    <div class="dropdown-appointment-dates" *ngIf="currentView == 'agenda'">
+                        {{(getDateWithTimezone(appointment?.appointmentData?.StartDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment?.appointmentData?.EndDate) | date:'shortTime')}}
+                    </div>
+                  </div>
+                </div>
+                <div *dxTemplate="let appointment of 'appointmentTooltipTemplate'">
                     <div class="appointment-content">
-                        <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment.Type[0]}}</div>
-                        <div class="appointment-text">{{appointment.Title}}</div>
+                        <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.Type[0]}}</div>
+                        <div class="appointment-text">{{appointment?.appointmentData?.Title}}</div>
                         <div class="appointment-dates">
-                            {{(getDateWithTimezone(appointment.StartDate) | date : 'MMM d') + ' , ' + (getDateWithTimezone(appointment.StartDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment.EndDate) | date:'shortTime')}}
+                            {{(getDateWithTimezone(appointment?.appointmentData?.StartDate) | date : 'MMM d') + ' , ' + (getDateWithTimezone(appointment?.appointmentData?.StartDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment?.appointmentData?.EndDate) | date:'shortTime')}}
                         </div>
-                        <dx-button class = "delete-appointment" icon="trash" (onClick)="deleteAppointment(appointment)"></dx-button>
+                        <dx-button class="delete-appointment" icon="trash" (onClick)="deleteAppointment($event.event, appointment.appointmentData)"></dx-button>
                     </div>
                 </div>
             </dx-scheduler>

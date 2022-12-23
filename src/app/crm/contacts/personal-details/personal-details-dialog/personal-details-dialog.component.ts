@@ -79,6 +79,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     public cellDuration = 15;
     public scheduleView = 'agenda';
+    public activityTypes = ActivityType;
     public agendaUserDataSource: DataSource;
     public agendaContactDataSource: DataSource;
     private agendaDataSourceURI = 'Activity';
@@ -473,8 +474,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         });
     }
 
-    getDateWithoutTimezone(value: moment): Date {
-        return DateHelper.removeTimezoneOffset(new Date(value.toDate()), false);
+    getDateWithTimezone(value) {
+        return new Date(moment(value).format('YYYY-MM-DD HH:mm:ss'));
     }
 
     initContactLeadsDataSource() {
