@@ -443,13 +443,16 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 requireTotalCount: false,
                 key: 'id',
                 load: (options) => {
+                    let filterStartDate = this.getStartDate(),
+                        filterEndDate = this.getEndDate();
                     return this.activityServiceProxy.getAll(
                         this.contactInfo.personContactInfo.userId, 
                         undefined, 
-                        this.getStartDate(), 
-                        this.getEndDate()
+                        filterStartDate, 
+                        filterEndDate
                     ).toPromise().then(response => {
                         return response.map((item: any) => {
+                            item.displayEndDate = this.isSameDate(filterEndDate, item.endDate) ? item.endDate : filterEndDate;
                             item.fieldTimeZone = 'Etc/UTC';
                             return item;
                         });
@@ -462,13 +465,16 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             requireTotalCount: false,
             key: 'id',
             load: (options) => {
+                let filterStartDate = this.getStartDate(),
+                    filterEndDate = this.getEndDate();
                 return this.activityServiceProxy.getAll(
                     undefined, 
                     this.contactInfo.id, 
-                    this.getStartDate(), 
-                    this.getEndDate()
+                    filterStartDate, 
+                    filterEndDate
                 ).toPromise().then(response => {
                     return response.map((item: any) => {
+                        item.displayEndDate = this.isSameDate(filterEndDate, item.endDate) ? item.endDate : filterEndDate;
                         item.fieldTimeZone = 'Etc/UTC';
                         return item;
                     });
@@ -909,6 +915,12 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     onSelectedTabChange(event) {
         if (event.index == this.TAB_INDEX_ACTIVITY && !this.agendaContactDataSource)
             this.initAgendaDataSource();
+    }
+
+    isSameDate(start, end) {
+        if (start && end)
+            return moment(start).format('MMM DD') == moment(end).format('MMM DD');
+        return true;
     }
 
     ngOnDestroy() {

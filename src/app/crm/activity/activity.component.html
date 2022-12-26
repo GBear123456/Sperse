@@ -42,10 +42,10 @@
                 (onAppointmentUpdating)="onAppointmentUpdating($event)"
                 (onAppointmentFormOpening)="onAppointmentFormCreated($event)">
                 <div *dxTemplate="let appointment of 'appointmentTemplate'">
-                  <div class="showtime-preview">
-                    <div>{{ appointment.targetedAppointmentData.Title }}</div>
+                  <div class="showtime-preview" *ngIf="appointment?.appointmentData as item">
+                    <div>{{ item?.Title }}</div>
                     <div class="dropdown-appointment-dates" *ngIf="currentView == 'agenda'">
-                        {{(getDateWithTimezone(appointment?.appointmentData?.StartDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment?.appointmentData?.EndDate) | date:'shortTime')}}
+                        {{item?.AllDay ? l('All Day') : (getDateWithTimezone(item?.StartDate) | date: (isSameDate(item?.StartDate, item?.EndDate) ? 'shortTime' : 'MMM d, h:mm a')) + ' - ' + (getDateWithTimezone(item?.EndDate) | date: isSameDate(item?.StartDate, item?.EndDate) ? 'shortTime' : 'MMM d, h:mm a')}}
                     </div>
                   </div>
                 </div>
@@ -53,8 +53,8 @@
                     <div class="appointment-content">
                         <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.Type[0]}}</div>
                         <div class="appointment-text">{{appointment?.appointmentData?.Title}}</div>
-                        <div class="appointment-dates">
-                            {{(getDateWithTimezone(appointment?.appointmentData?.StartDate) | date : 'MMM d') + ' , ' + (getDateWithTimezone(appointment?.appointmentData?.StartDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment?.appointmentData?.EndDate) | date:'shortTime')}}
+                        <div class="appointment-dates" *ngIf="appointment?.appointmentData as item">
+                            {{(isSameDate(item?.StartDate, item?.EndDate) ? (getDateWithTimezone(item?.StartDate) | date : 'MMM d') + ' , ' : '') + (item?.AllDay ? l('All Day') : (getDateWithTimezone(item?.StartDate) | date: isSameDate(item?.StartDate, item?.EndDate) ? 'shortTime' : 'MMM d, h:mm a') + ' - ' + (getDateWithTimezone(item?.EndDate) | date: isSameDate(item?.StartDate, item?.EndDate) ? 'shortTime' : 'MMM d, h:mm a'))}}
                         </div>
                         <dx-button class="delete-appointment" icon="trash" (onClick)="deleteAppointment($event.event, appointment.appointmentData)"></dx-button>
                     </div>

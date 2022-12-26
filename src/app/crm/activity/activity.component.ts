@@ -250,6 +250,12 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         return DateHelper.removeTimezoneOffset(this.getCurrentDate(false), true, 'to');
     }
 
+    isSameDate(start, end) {
+        if (start && end)
+            return moment(start).format('MMM DD') == moment(end).format('MMM DD');
+        return true;
+    }
+
     initToolbarConfig() {
         this.toolbarConfig = [
             {
