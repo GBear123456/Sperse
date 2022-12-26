@@ -579,7 +579,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         if (this.pipelineView)
             dataSource['customFilter'] = { 
                 odata: {and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }]},
-                params: this.showUserActivitiesOnly ? {'assignedUserIds[0]': this.appSession.userId} : {}
+                params: this.showUserActivitiesOnly ? [{name: 'assignedUserIds[0]', value: this.appSession.userId}] : []
             };
 
         this.pipelineDataSource = dataSource;

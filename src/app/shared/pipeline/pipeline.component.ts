@@ -666,10 +666,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             filters = filters.concat({ and: [customFilter.odata] });
 
         if (customFilter && customFilter.params)
-            params = {
+            params = [
                 ...this.params,
                 ...customFilter.params
-            };
+            ];
 
         return this.getODataUrl(
             this.totalsURI,
