@@ -9,6 +9,7 @@ import { CacheService } from 'ng2-cache-service';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabGroup, MatTabHeader } from '@angular/material/tabs';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, ReplaySubject, BehaviorSubject, combineLatest, of } from 'rxjs';
 import { first, map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
@@ -60,6 +61,7 @@ import { ActivityFields } from '@app/crm/activity/activity-fields.enum';
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild('checklistScroll') checklistScroll: DxScrollViewComponent;
+    @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
     showChecklistTab = !!this.appService.getFeatureCount(AppFeatures.CRMMaxChecklistPointCount);
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
@@ -314,6 +316,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     right: '0px'
                 });
             }, 100);
+            (this.tabGroup?._tabHeader as MatTabHeader).updatePagination();
         });
     }
 
