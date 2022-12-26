@@ -379,7 +379,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             text: this.l('My Activities'),
                             onValueChanged: (event) => {
                                 this.showUserActivitiesOnly = event.value;
-                                this.refresh();
+                                if (this.showPipeline)
+                                    this.setPipelineDataSource();
+                                else
+                                    this.refresh();
                             }
                         }
                     }
@@ -565,6 +568,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
+                    if (this.showUserActivitiesOnly)
+                        request.params['assignedUserIds[0]'] = this.appSession.userId;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
                 deserializeDates: false,
@@ -572,7 +577,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             }
         };
         if (this.pipelineView)
-            dataSource['customFilter'] = { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] };
+            dataSource['customFilter'] = { 
+                odata: {and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }]},
+                params: this.showUserActivitiesOnly ? [{name: 'assignedUserIds[0]', value: this.appSession.userId}] : []
+            };
 
         this.pipelineDataSource = dataSource;
 

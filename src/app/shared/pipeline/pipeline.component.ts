@@ -588,7 +588,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     return !item.hasOwnProperty('or') || item.or.every(filter =>
                         typeof(filter) != 'string' || !filter.includes(stage.id.toString())
                     );
-                }).concat({and: [extend(filter, this._dataSource.customFilter)]}),
+                }).concat({and: [extend(filter, this._dataSource.customFilter && this._dataSource.customFilter.odata)]}),
                 null,
                 this.params
             );
@@ -659,16 +659,23 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private getTotalsRequestUrl(filter) {
-        let filters = filter;
-        let customFilter = this._dataSource && this._dataSource.customFilter;
-        if (customFilter)
-            filters = filters.concat({ and: [customFilter] });
+        let filters = filter,
+            params = this.params,
+            customFilter = this._dataSource && this._dataSource.customFilter;
+        if (customFilter && customFilter.odata)
+            filters = filters.concat({ and: [customFilter.odata] });
+
+        if (customFilter && customFilter.params)
+            params = [
+                ...this.params,
+                ...customFilter.params
+            ];
 
         return this.getODataUrl(
             this.totalsURI,
             filters,
             null,
-            this.params
+            params
         );
     }
 
@@ -726,8 +733,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private getDataSourceForStage(stage) {
-        let config = cloneDeep(this._dataSource);
-        config.store.beforeSend = this.getBeforeSendEvent(stage.id);
+        let config = cloneDeep(this._dataSource),
+            _beforeSend = config.store.beforeSend;
+        config.store.beforeSend = (request) => {
+            if (_beforeSend) _beforeSend(request);
+            this.getBeforeSendEvent(stage.id)(request);
+        };
 
         return new DataSource(extend(config, {
             onLoadError: (error) => { this.httpInterceptor.handleError(error); },
