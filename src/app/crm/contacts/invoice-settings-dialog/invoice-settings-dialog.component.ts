@@ -14,7 +14,8 @@ import {
     EmailTemplateType,
     TenantPaymentSettingsServiceProxy,
     InvoiceSettings,
-    InvoiceSettingsDto
+    InvoiceSettingsDto,
+    InvoicePaymentMethod
 } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -55,6 +56,15 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             action: this.save.bind(this)
         }
     ]
+    paymentMethods = Object.keys(InvoicePaymentMethod).filter(v => typeof InvoicePaymentMethod[v] === "number").map(item => {
+        return {
+            id: item,
+            checked: true,
+            visible: false,
+            value: InvoicePaymentMethod[item],
+            name: this.ls.l(item)
+        }
+    });
     EmailTemplateType = EmailTemplateType;
 
     constructor(
@@ -81,6 +91,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             }))
             .subscribe((result: InvoiceSettingsDto) => {
                 this.settings = result;
+                this.initPaymentMethods();
                 this.changeDetectorRef.markForCheck();
             });
         this.changeDetectorRef.detectChanges();
@@ -105,6 +116,24 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
                 this.invoicesService.invalidateSettings(this.settings);
                 this.dialogRef.close(this.settings);
             });
+    }
+
+    initPaymentMethods() {
+        this.paymentMethods.forEach(v => {
+            v.checked = !((this.settings.forbiddenPaymentMethods & v.value) == v.value);
+        });
+        this.paymentMethods.forEach(v => {
+            v.visible = (this.settings.configuredPaymentMethods & v.value) == v.value;
+        });
+    }
+
+    paymentMethodChanged(event, value) {
+        if (event.value) {
+            this.settings.forbiddenPaymentMethods ^= value;
+        }
+        else {
+            this.settings.forbiddenPaymentMethods |= value;
+        }
     }
 
     onDueGracePeriodFocusOut() {

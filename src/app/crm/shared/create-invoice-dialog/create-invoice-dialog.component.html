@@ -323,6 +323,20 @@
                         </div>
                     </dx-data-grid>
                 </dx-validation-group>
+                <div class="payment-methods" *ngIf="showPaymentMethods && invoiceSettings?.configuredPaymentMethods">
+                    <span>{{ls.l('Invoice_PaymentMethods')}}</span>
+                    <ng-container *ngFor="let item of paymentMethods">
+                        <dx-check-box
+                            [value]="item.disabled ? undefined : item.checked"
+                            [text]="item.name"
+                            [disabled]="item.disabled || (disabledForUpdate && !showUpdatePaymentMethodButton)"
+                            [visible]="item.visible"
+                            (onValueChanged)="paymentMethodChanged($event, item.value)">
+                        </dx-check-box>
+                    </ng-container>
+                    <i [ngClass]="{ 'fa fa-spinner fa-spin': paymentMethodsCheckLoading }"></i>
+                    <button *ngIf="showUpdatePaymentMethodButton" class="btn btn-primary" (click)="updatePaymentMethod()">Update</button>
+                </div>
             </div>
         </dx-scroll-view>
         <div *ngIf="stripeSubscriptionsLinesCount > 1 || hasReccuringSubscription" class="row stripe-subs-warning">

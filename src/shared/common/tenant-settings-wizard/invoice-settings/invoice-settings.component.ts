@@ -16,7 +16,8 @@ import {
     TenantPaymentSettingsServiceProxy,
     InvoiceSettings,
     InvoiceSettingsDto,
-    EmailTemplateType
+    EmailTemplateType,
+    InvoicePaymentMethod
 } from '@shared/service-proxies/service-proxies';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
@@ -37,6 +38,15 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
     settings: InvoiceSettingsDto;
 
     EmailTemplateType = EmailTemplateType;
+    paymentMethods = Object.keys(InvoicePaymentMethod).filter(v => typeof InvoicePaymentMethod[v] === "number").map(item => {
+        return {
+            id: item,
+            checked: true,
+            visible: false,
+            value: InvoicePaymentMethod[item],
+            name: this.ls.l(item)
+        }
+    });
 
     constructor(
         private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
@@ -45,6 +55,7 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
     ) {
         this.tenantPaymentSettingsProxy.getInvoiceSettings(true).subscribe((invoiceSettings) => {
             this.settings = invoiceSettings;
+            this.initPaymentMethods();
             this.changeDetectorRef.detectChanges();
         });
     }
@@ -68,6 +79,24 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
             this.settings.advisorName = null;
         }
         contact && this.sourceComponent.toggle();
+    }
+
+    initPaymentMethods() {
+        this.paymentMethods.forEach(v => {
+            v.checked = !((this.settings.forbiddenPaymentMethods & v.value) == v.value);
+        });
+        this.paymentMethods.forEach(v => {
+            v.visible = (this.settings.configuredPaymentMethods & v.value) == v.value;
+        });
+    }
+
+    paymentMethodChanged(event, value) {
+        if (event.value) {
+            this.settings.forbiddenPaymentMethods ^= value;
+        }
+        else {
+            this.settings.forbiddenPaymentMethods |= value;
+        }
     }
 
     removeSourceContact(event) {
