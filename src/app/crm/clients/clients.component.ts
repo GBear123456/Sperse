@@ -1250,7 +1250,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         value:  undefined,
                         list: [
                             { id: true, name: this.l('CommunicationPreferencesStatus_Subscribed') },
-                            { id: false, name: this.l('CommunicationPreferencesStatus_Unsubcribed') }
+                            { id: false, name: this.l('CommunicationPreferencesStatus_Unsubscribed') }
                         ]
                     })
                 }
