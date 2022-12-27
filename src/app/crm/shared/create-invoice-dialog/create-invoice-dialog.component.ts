@@ -1014,7 +1014,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 cellData.data.rate = unit.price;
         }
         this.checkSubscriptionsCount();
-        this.checkReccuringSubscriptionIsSelected();
+        this.checkReccuringSubscriptionIsSelected(false);
+        this.calculateBalance();
     }
 
     allowDigitsOnly(event, exceptions = []) {
@@ -1116,6 +1117,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 caption: event.text,
                 description: event.text
             };
+        setTimeout(() => this.initiatePaymentMethodsCheck(1000));
     }
 
     getDetailsMaxLength(detail): Number {
@@ -1220,7 +1222,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.paymentMethodsCheckReload = false;
         this.paymentMethods.forEach(v => v.disabled = true);
 
-        if (!this.contactId || this.lines.length == 0 || this.lines.some(v => !v['unitId'] || !v['quantity']))
+        if (!this.contactId || this.lines.length == 0 || this.lines.some(v => (!v['productCode'] && !v['description']) || !v['unitId'] || !v['quantity'] || !v['rate']))
             return;
 
         this.paymentMethodsCheckLoading = true;
