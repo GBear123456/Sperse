@@ -156,6 +156,7 @@ import { AffiliateHistoryDialogComponent } from './personal-details/personal-det
 import { PersonHistoryDialogComponent } from './personal-details/personal-details-dialog/person-history-dialog/person-history-dialog.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 import { PropertyInformationComponent } from '@app/crm/contacts/property-information/property-information.component';
+import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity-dialog/create-activity-dialog.component';
 
 @NgModule({
     declarations: [
@@ -223,7 +224,8 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         PersonHistoryDialogComponent,
         CustomerListDialogComponent,
         PropertyInformationComponent,
-        ResellerActivityComponent
+        ResellerActivityComponent,
+        CreateActivityDialogComponent
     ],
     imports: [
         FormsModule,
@@ -291,6 +293,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         InvoiceGridMenuModule
     ],
     entryComponents: [
+        CreateActivityDialogComponent,
         CreateInvoiceDialogComponent,
         EditContactDialog,
         EditAddressDialog,
@@ -348,7 +351,8 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
     ],
     exports: [
         ContactGroupTemplatesComponent,
-        EmailTemplateSelectorComponent
+        EmailTemplateSelectorComponent,
+        CreateActivityDialogComponent
     ]
 })
 export class ContactsModule {}

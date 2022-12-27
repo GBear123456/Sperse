@@ -1,12 +1,12 @@
 <modal-dialog [title]="title"
               [buttons]="buttons"
-              [editTitle]="true"
+              [editTitle]="!data.readOnly"
               [titleClearButton]="true"
               [placeholder]="ls.l('Title')"
               (onTitleKeyUp)="titleChanged($event)"
               (onContextItemChanged)="onSaveOptionSelectionChanged()">
     <dx-scroll-view showScrollbar="onHover">
-        <app-toolbar [config]="toolbarConfig"></app-toolbar>
+        <app-toolbar [isDisabled]="!!data.readOnly" [config]="toolbarConfig"></app-toolbar>
         <app-static-list #stagesList
                          [width]="'210px'"
                          [selectedKeys]="[appointment.StageId]"
@@ -61,6 +61,7 @@
                             <ng-container *ngFor="let type of ['date', 'datetime']">
                                 <dx-date-box #startDateRef
                                              maxLength="10"
+                                             [disabled]="data.readOnly"
                                              *ngIf="type == (isAllDay ? 'date' : 'datetime')"
                                              [type]="type"
                                              [max]="getEndDayTime(endDate)"
@@ -85,6 +86,7 @@
                                              *ngIf="type == (isAllDay ? 'date' : 'datetime')"
                                              maxLength="10"
                                              [type]="type"
+                                             [disabled]="data.readOnly"
                                              [min]="getStartDayTime(startDate)"
                                              (onFocusIn)="openCalendar($event)"
                                              (onClosed)="removeFocusFromElement($event)"
@@ -101,7 +103,7 @@
                             <div class="dx-field all-day-checkbox">
                                 <div class="dx-field-label">{{ls.l('All day')}}</div>
                                 <div class="dx-field-value">
-                                    <dx-check-box [(value)]="isAllDay"></dx-check-box>
+                                    <dx-check-box [readOnly]="data.readOnly" [(value)]="isAllDay"></dx-check-box>
                                 </div>
                             </div>
                         </div>
@@ -116,6 +118,7 @@
                 <div class="row">
                     <div class="col-12">
                         <dx-text-area name="description"
+                                      [readOnly]="data.readOnly"
                                       [width]="'100%'"
                                       [height]="'100px'"
                                       [(value)]="appointment.Description">

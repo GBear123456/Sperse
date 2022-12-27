@@ -26,6 +26,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 })
 export class ToolBarComponent implements OnDestroy, OnInit {
     @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
+    @Input() isDisabled = false;
     @Input() width = '100%';
     _config: ToolbarGroupModel[];
     @Input()

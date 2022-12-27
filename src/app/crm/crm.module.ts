@@ -67,7 +67,6 @@ import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { ImportListComponent } from './import-leads/import-list/import-list.component';
 import { ImportLeadsService } from './import-leads/import-leads.service';
 import { ActivityComponent } from './activity/activity.component';
-import { CreateActivityDialogComponent } from './activity/create-activity-dialog/create-activity-dialog.component';
 import { InvoiceAddressDialog } from './shared/create-invoice-dialog/invoice-address-dialog/invoice-address-dialog.component';
 import { BankSettingsDialogComponent } from './shared/bank-settings-dialog/bank-settings-dialog.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
@@ -198,7 +197,6 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         ImportListComponent,
         ImportLeadsComponent,
         InvoiceAddressDialog,
-        CreateActivityDialogComponent,
         BankSettingsDialogComponent,
         CrmIntroComponent,
         ActivityComponent,
@@ -229,7 +227,6 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         AddCouponDialogComponent,
         BankSettingsDialogComponent,
         InvoiceAddressDialog,
-        CreateActivityDialogComponent,
         CrmIntroComponent,
         EntityCheckListDialogComponent,
         CommissionEarningsDialogComponent,

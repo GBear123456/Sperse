@@ -24,6 +24,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
+import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity-dialog/create-activity-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
@@ -921,6 +922,32 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         if (start && end)
             return moment(start).format('MMM DD') == moment(end).format('MMM DD');
         return true;
+    }
+
+    onAppointmentFormOpening(event) {
+        event.component.hideAppointmentTooltip();
+        event.component.hideAppointmentPopup(false);
+        this.showActivityDialog(event.appointmentData);
+    }
+
+    showActivityDialog(appointment) {
+        this.dialog.open(CreateActivityDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                readOnly: true,
+                appointment: {
+                    Id: appointment.id,
+                    AllDay: appointment.allDay,
+                    StartDate: appointment.startDate,
+                    EndDate: appointment.endDate,
+                    Title:  appointment.title,
+                    Description: appointment.description,
+                    Type: appointment.type
+                }
+            }
+        });
     }
 
     ngOnDestroy() {

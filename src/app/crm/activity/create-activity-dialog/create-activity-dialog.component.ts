@@ -80,7 +80,7 @@ export class CreateActivityDialogComponent implements OnInit {
     isStarSelected = false;
     title: string;
     isTitleValid: boolean;
-    buttons: IDialogButton[] = [
+    buttons: IDialogButton[] = this.data.readOnly ? [] : [
         {
             id: this.saveButtonId,
             title: this.ls.l('Save'),
@@ -174,13 +174,16 @@ export class CreateActivityDialogComponent implements OnInit {
         if (!this.appointment.Type)
             this.appointment.Type = ActivityType.Task;
 
-        this.appointment.Type == 'Event' ? this.activityTypeIndex = 1 : this.activityTypeIndex = 0;
+        this.activityTypeIndex = this.appointment.Type == 'Event' ? 1 : 0;
         this.title = this.appointment.Title ? this.appointment.Title : '';
         this.initToolbarConfig();
         this.changeDetectorRef.detectChanges();
     }
 
     loadResourcesData() {
+        if (this.data.readOnly)
+            return ;
+
         this.modalDialog.startLoading();
         this.getAllByPhraseObserverable()
             .pipe(finalize(() => this.modalDialog.finishLoading()))
