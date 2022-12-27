@@ -34,6 +34,7 @@ import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
 import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
 import { DxFileManagerModule } from 'devextreme-angular';
@@ -265,6 +266,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         NgxFileDropModule,
         ImageViewerModule,
         DxDropDownBoxModule,
+        DxSchedulerModule,
         VgCoreModule,
         VgControlsModule,
         VgOverlayPlayModule,

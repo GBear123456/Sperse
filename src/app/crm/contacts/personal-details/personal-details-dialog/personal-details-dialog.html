@@ -1,6 +1,6 @@
 <span class="close" (click)="close()"></span>
 <mat-dialog-content>
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onSelectedTabChange($event)">
         <mat-tab [label]="ls.l('PersonalSettings.General')">
             <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight()">
                 <div class="general-tab">
@@ -332,7 +332,110 @@
                 </div>
             </dx-scroll-view>
         </mat-tab>
-        <mat-tab [label]="ls.l('Activity')" [disabled]="true">
+        <mat-tab [label]="ls.l('Activity')" [disabled]="!isCRMGranted">
+            <dx-date-box
+                [useMaskBehavior]="true"
+                [openOnFieldClick]="true"
+                [(value)]="scheduleDate">
+            </dx-date-box>
+            <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight(56)">
+                <ng-container *ngIf="contactInfo?.personContactInfo?.userId">
+                    <span class="title">{{ls.l('User Activities')}}</span>
+                    <dx-scheduler
+                        class="main-component-view"
+                        [dataSource]="agendaUserDataSource"
+                        [views]="['agenda']"
+                        [resources]="resources"
+                        [timeZone]="timezone"
+                        [(currentView)]="scheduleView"
+                        [currentDate]="scheduleDate"
+                        [showAllDayPanel]="true"
+                        [editing]="{
+                            allowAdding: false,
+                            allowDeleting: false,
+                            allowDragging: false,
+                            allowResizing: false,
+                            allowTimeZoneEditing:false,
+                            allowUpdating: false
+                        }"
+                        [remoteFiltering]="false"
+                        [cellDuration]="cellDuration"
+                        textExpr="title"
+                        allDayExpr="allDay"
+                        startDateExpr="startDate"
+                        endDateExpr="displayEndDate"
+                        descriptionExpr="description"
+                        appointmentTemplate="appointmentTemplate"
+                        appointmentTooltipTemplate="appointmentTooltipTemplate"
+                        startDateTimeZoneExpr="fieldTimeZone"
+                        endDateTimeZoneExpr="fieldTimeZone">
+                        <div *dxTemplate="let appointment of 'appointmentTemplate'">
+                          <div class="showtime-preview" *ngIf="appointment?.appointmentData as item">
+                            <div>{{ item?.title }}</div>
+                            <div class="dropdown-appointment-dates">
+                                {{item?.allDay ? ls.l('All Day') : (getDateWithTimezone(item?.startDate) | date: (isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a')) + ' - ' + (getDateWithTimezone(item?.endDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a')}}
+                            </div>
+                          </div>
+                        </div>
+                        <div *dxTemplate="let appointment of 'appointmentTooltipTemplate'">
+                            <div class="appointment-content" *ngIf="appointment?.appointmentData as item">
+                                <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.type[0]}}</div>
+                                <div class="appointment-text">{{item?.title}}</div>
+                                <div class="appointment-dates">
+                                    {{(isSameDate(item?.startDate, item?.endDate) ? (getDateWithTimezone(item?.startDate) | date : 'MMM d') + ' , ' : '') + (item?.allDay ? ls.l('All Day') : (getDateWithTimezone(item?.startDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a') + ' - ' + (getDateWithTimezone(item?.endDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a'))}}
+                                </div>
+                            </div>
+                        </div>
+                    </dx-scheduler>
+                </ng-container>
+                <span class="title">{{ls.l('Contact Activities')}}</span>
+                <dx-scheduler
+                    class="main-component-view"
+                    [dataSource]="agendaContactDataSource"
+                    [views]="['agenda']"
+                    [resources]="resources"
+                    [timeZone]="timezone"
+                    [(currentView)]="scheduleView"
+                    [currentDate]="scheduleDate"
+                    [showAllDayPanel]="true"
+                    [editing]="{
+                        allowAdding: false,
+                        allowDeleting: false,
+                        allowDragging: false,
+                        allowResizing: false,
+                        allowTimeZoneEditing:false,
+                        allowUpdating: false
+                    }"
+                    [remoteFiltering]="false"
+                    [cellDuration]="cellDuration"
+                    textExpr="title"
+                    allDayExpr="allDay"
+                    startDateExpr="startDate"
+                    endDateExpr="displayEndDate"
+                    descriptionExpr="description"
+                    appointmentTemplate="appointmentTemplate"
+                    appointmentTooltipTemplate="appointmentTooltipTemplate"
+                    startDateTimeZoneExpr="fieldTimeZone"
+                    endDateTimeZoneExpr="fieldTimeZone">
+                    <div *dxTemplate="let appointment of 'appointmentTemplate'">
+                      <div class="showtime-preview" *ngIf="appointment?.appointmentData as item">
+                        <div>{{ item?.title }}</div>
+                        <div class="dropdown-appointment-dates">
+                            {{item?.allDay ? ls.l('All Day') : (getDateWithTimezone(item?.startDate) | date: (isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a')) + ' - ' + (getDateWithTimezone(item?.endDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a')}}
+                        </div>
+                      </div>
+                    </div>
+                    <div *dxTemplate="let appointment of 'appointmentTooltipTemplate'">
+                        <div class="appointment-content" *ngIf="appointment?.appointmentData as item">
+                            <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.Type[0]}}</div>
+                            <div class="appointment-text">{{item?.title}}</div>
+                            <div class="appointment-dates">
+                                {{(isSameDate(item?.startDate, item?.endDate) ? (getDateWithTimezone(item?.startDate) | date : 'MMM d') + ' , ' : '') + (item?.allDay ? ls.l('All Day') : (getDateWithTimezone(item?.startDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a') + ' - ' + (getDateWithTimezone(item?.endDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a'))}}
+                            </div>
+                        </div>
+                    </div>
+                </dx-scheduler>
+            </dx-scroll-view>
         </mat-tab>
     </mat-tab-group>
 </mat-dialog-content>

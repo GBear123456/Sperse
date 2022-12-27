@@ -37,17 +37,26 @@
                 [descriptionExpr]="activityFields.Description"
                 startDateTimeZoneExpr="fieldTimeZone"
                 endDateTimeZoneExpr="fieldTimeZone"
-                dropDownAppointmentTemplate="appointmentDropDown"
+                appointmentTemplate="appointmentTemplate"
+                appointmentTooltipTemplate="appointmentTooltipTemplate"
                 (onAppointmentUpdating)="onAppointmentUpdating($event)"
                 (onAppointmentFormOpening)="onAppointmentFormCreated($event)">
-                <div *dxTemplate="let appointment of 'appointmentDropDown'">
+                <div *dxTemplate="let appointment of 'appointmentTemplate'">
+                  <div class="showtime-preview" *ngIf="appointment?.appointmentData as item">
+                    <div>{{ item?.Title }}</div>
+                    <div class="dropdown-appointment-dates" *ngIf="currentView == 'agenda'">
+                        {{item?.AllDay ? l('All Day') : (getDateWithTimezone(item?.StartDate) | date: (isSameDate(item?.StartDate, item?.EndDate) ? 'shortTime' : 'MMM d, h:mm a')) + ' - ' + (getDateWithTimezone(item?.EndDate) | date: isSameDate(item?.StartDate, item?.EndDate) ? 'shortTime' : 'MMM d, h:mm a')}}
+                    </div>
+                  </div>
+                </div>
+                <div *dxTemplate="let appointment of 'appointmentTooltipTemplate'">
                     <div class="appointment-content">
-                        <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment.Type[0]}}</div>
-                        <div class="appointment-text">{{appointment.Title}}</div>
-                        <div class="appointment-dates">
-                            {{(getDateWithTimezone(appointment.StartDate) | date : 'MMM d') + ' , ' + (getDateWithTimezone(appointment.StartDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment.EndDate) | date:'shortTime')}}
+                        <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.Type[0]}}</div>
+                        <div class="appointment-text">{{appointment?.appointmentData?.Title}}</div>
+                        <div class="appointment-dates" *ngIf="appointment?.appointmentData as item">
+                            {{(isSameDate(item?.StartDate, item?.EndDate) ? (getDateWithTimezone(item?.StartDate) | date : 'MMM d') + ' , ' : '') + (item?.AllDay ? l('All Day') : (getDateWithTimezone(item?.StartDate) | date: isSameDate(item?.StartDate, item?.EndDate) ? 'shortTime' : 'MMM d, h:mm a') + ' - ' + (getDateWithTimezone(item?.EndDate) | date: isSameDate(item?.StartDate, item?.EndDate) ? 'shortTime' : 'MMM d, h:mm a'))}}
                         </div>
-                        <dx-button class = "delete-appointment" icon="trash" (onClick)="deleteAppointment(appointment)"></dx-button>
+                        <dx-button class="delete-appointment" icon="trash" (onClick)="deleteAppointment($event.event, appointment.appointmentData)"></dx-button>
                     </div>
                 </div>
             </dx-scheduler>

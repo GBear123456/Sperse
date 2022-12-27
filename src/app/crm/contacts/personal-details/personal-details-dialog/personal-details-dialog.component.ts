@@ -14,6 +14,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, ReplaySubject, BehaviorSubject, combineLatest, of } from 'rxjs';
 import { first, map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
+import * as moment from 'moment-timezone';
+import buildQuery from 'odata-query';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -28,7 +30,8 @@ import {
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
     GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, 
-    CommissionTier, UpdateAffiliateIsAdvisorInput, TenantPaymentSettingsServiceProxy, CommissionSettings
+    ActivityType, CommissionTier, UpdateAffiliateIsAdvisorInput, TenantPaymentSettingsServiceProxy, 
+    CommissionSettings, ActivityServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -49,6 +52,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { ActivityFields } from '@app/crm/activity/activity-fields.enum';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -70,6 +74,39 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         totalApproved: true,
         verification: true
     };
+
+    private readonly TAB_INDEX_GENERAL  = 0;
+    private readonly TAB_INDEX_OVERVIEW = 1;    
+    private readonly TAB_INDEX_ACTIVITY = 2;
+
+    public cellDuration = 15;
+    public scheduleView = 'agenda';
+    public activityTypes = ActivityType;
+    public agendaUserDataSource: DataSource;
+    public agendaContactDataSource: DataSource;
+    private agendaDataSourceURI = 'Activity';
+    public scheduleDate = new Date();
+    public timezone = 'Etc/UTC';
+    public resources: any[] = [
+        {
+            fieldExpr: 'type',
+            useColorAsDefault: true,
+            allowMultiple: false,
+            dataSource: [
+                {
+                    text: this.ls.l('Event'),
+                    id: ActivityType.Event,
+                    color: '#727bd2'
+                },
+                {
+                    text: this.ls.l('Task'),
+                    id: ActivityType.Task,
+                    color: '#32c9ed'
+                }
+            ],
+            label: this.ls.l('Type')
+        }
+    ];
 
     private NoName = `<${this.ls.l('ClientNoName')}>`;
 
@@ -119,7 +156,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }];
     selectedTabIndex = 0;
     lastModificationInfo: ContactLastModificationInfoDto;
-    userTimezone = DateHelper.getUserTimezone();
     formatting = AppConsts.formatting;
     checklistLeadDataSource = [];
     checklistOrderDataSource = [];
@@ -142,6 +178,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     affiliateManageAllowed = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesManage);
+    isCRMGranted = this.permissionCheckerService.isGranted(AppPermissions.CRM);        
     formatPercentValue = formatPercent;
 
     constructor(
@@ -161,6 +198,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private loadingService: LoadingService,
         private orderProxy: OrderServiceProxy,
         private itemDetailsService: ItemDetailsService,
+        private activityServiceProxy: ActivityServiceProxy,
         private featureCheckerService: FeatureCheckerService,
         private permissionCheckerService: PermissionCheckerService,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
@@ -173,6 +211,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         public appSession: AppSessionService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
+        if (abp.clock.provider.supportsMultipleTimezone)
+            this.timezone = abp.timing.timeZoneInfo.iana.timeZoneId;
+
         this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '157px',
@@ -393,6 +434,57 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         dataSource[0].total = checklist.length;
         dataSource[0].progress = selectedCount;
         return dataSource;
+    }
+     
+    initAgendaDataSource() {
+        if (this.contactInfo.personContactInfo.userId)
+            this.agendaUserDataSource = new DataSource({
+                paginate: false,
+                requireTotalCount: false,
+                key: 'id',
+                load: (options) => {
+                    let filterStartDate = this.getStartDate(),
+                        filterEndDate = this.getEndDate();
+                    return this.activityServiceProxy.getAll(
+                        this.contactInfo.personContactInfo.userId, 
+                        undefined, 
+                        filterStartDate, 
+                        filterEndDate
+                    ).toPromise().then(response => {
+                        return response.map((item: any) => {
+                            item.displayEndDate = this.isSameDate(filterEndDate, item.endDate) ? item.endDate : filterEndDate;
+                            item.fieldTimeZone = 'Etc/UTC';
+                            return item;
+                        });
+                    });
+                }
+            });
+
+        this.agendaContactDataSource = new DataSource({
+            paginate: false,
+            requireTotalCount: false,
+            key: 'id',
+            load: (options) => {
+                let filterStartDate = this.getStartDate(),
+                    filterEndDate = this.getEndDate();
+                return this.activityServiceProxy.getAll(
+                    undefined, 
+                    this.contactInfo.id, 
+                    filterStartDate, 
+                    filterEndDate
+                ).toPromise().then(response => {
+                    return response.map((item: any) => {
+                        item.displayEndDate = this.isSameDate(filterEndDate, item.endDate) ? item.endDate : filterEndDate;
+                        item.fieldTimeZone = 'Etc/UTC';
+                        return item;
+                    });
+                });
+            }
+        });
+    }
+
+    getDateWithTimezone(value) {
+        return new Date(moment(value).format('YYYY-MM-DD HH:mm:ss'));
     }
 
     initContactLeadsDataSource() {
@@ -810,6 +902,25 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             }
         }).afterClosed().subscribe(() => {
         });
+    }
+
+    getStartDate() {
+        return DateHelper.removeTimezoneOffset(new Date(this.scheduleDate), true, 'from');
+    }
+
+    getEndDate() {
+        return DateHelper.removeTimezoneOffset(new Date(this.scheduleDate), true, 'to');
+    }
+
+    onSelectedTabChange(event) {
+        if (event.index == this.TAB_INDEX_ACTIVITY && !this.agendaContactDataSource)
+            this.initAgendaDataSource();
+    }
+
+    isSameDate(start, end) {
+        if (start && end)
+            return moment(start).format('MMM DD') == moment(end).format('MMM DD');
+        return true;
     }
 
     ngOnDestroy() {
