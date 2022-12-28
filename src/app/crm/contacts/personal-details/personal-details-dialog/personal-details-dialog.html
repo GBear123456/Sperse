@@ -380,7 +380,7 @@
                         </div>
                         <div *dxTemplate="let appointment of 'appointmentTooltipTemplate'">
                             <div class="appointment-content" *ngIf="appointment?.appointmentData as item">
-                                <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.type[0]}}</div>
+                                <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.type[0]}}</div>
                                 <div class="appointment-text">{{item?.title}}</div>
                                 <div class="appointment-dates">
                                     {{(isSameDate(item?.startDate, item?.endDate) ? (getDateWithTimezone(item?.startDate) | date : 'MMM d') + ' , ' : '') + (item?.allDay ? ls.l('All Day') : (getDateWithTimezone(item?.startDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a') + ' - ' + (getDateWithTimezone(item?.endDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a'))}}
@@ -429,7 +429,7 @@
                     </div>
                     <div *dxTemplate="let appointment of 'appointmentTooltipTemplate'">
                         <div class="appointment-content" *ngIf="appointment?.appointmentData as item">
-                            <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.Type[0]}}</div>
+                            <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.type[0]}}</div>
                             <div class="appointment-text">{{item?.title}}</div>
                             <div class="appointment-dates">
                                 {{(isSameDate(item?.startDate, item?.endDate) ? (getDateWithTimezone(item?.startDate) | date : 'MMM d') + ' , ' : '') + (item?.allDay ? ls.l('All Day') : (getDateWithTimezone(item?.startDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a') + ' - ' + (getDateWithTimezone(item?.endDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a'))}}
