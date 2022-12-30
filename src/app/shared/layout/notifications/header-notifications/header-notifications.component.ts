@@ -7,7 +7,10 @@ import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
-import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotificationDto, UserNotificationState, GetNotificationsOutput } from '@shared/service-proxies/service-proxies';
+import { 
+    LayoutType, InstanceServiceProxy, NotificationServiceProxy, 
+    TenantSubscriptionServiceProxy, UserNotificationDto, PaymentPeriodType,
+    UserNotificationState, GetNotificationsOutput } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from '../UserNotificationHelper';
 import { PaymentWizardComponent } from '../../../common/payment-wizard/payment-wizard.component';
 import { AppService } from '@app/app.service';
@@ -42,7 +45,6 @@ export class HeaderNotificationsComponent implements OnInit {
     userName = '';
     subscriptionInfoTitle: string;
     subscriptionInfoText: string;
-    subscriptionExpiringDayCount = null;
 
     private readonly CONTACT_ENTITY_TYPE = 'Sperse.CRM.Contacts.Entities.Contact';
     private readonly COMMUNICATION_MESSAGE_ENTITY_TYPE = 'Sperse.CRM.Contacts.Communication.CommunicationMessage';
@@ -67,57 +69,33 @@ export class HeaderNotificationsComponent implements OnInit {
 
         setInterval(() => this.loadNotifications(), 1000 * 60 * 15 /*Reload every 15min*/);
 
-        if (this.appService.moduleSubscriptions$) {
-            this.appService.subscribeModuleChange((config: ConfigInterface) => this.getSubscriptionInfo(config.name));
+        if (this.appService.moduleSubscriptions$)
             this.appService.moduleSubscriptions$.subscribe(() => this.getSubscriptionInfo());
-        }
         this.getSubscriptionInfo();
     }
 
-    getSubscriptionInfo(module = null) {
-        this.subscriptionExpiringDayCount = -1;
-        module = module || this.appService.getModule().toUpperCase();
-        let subscriptionName = this.appService.getSubscriptionName(module);
-        if (this.appService.checkSubscriptionIsFree(module)) {
-            this.subscriptionInfoTitle = this.ls.l('YouAreUsingTheFreePlan', subscriptionName);
-            this.subscriptionInfoText = this.ls.l('UpgradeToUnlockAllOurFeatures');
-        } else if (this.appService.subscriptionInGracePeriod(module)) {
-            let dayCount = this.appService.getGracePeriodDayCount(module);
-            this.subscriptionInfoTitle = this.ls.l('ModuleExpired', subscriptionName, this.appService.getSubscriptionStatusByModuleName(module));
+    getSubscriptionInfo() {
+        let subscriptionName = this.appService.getSubscriptionName();
+        if (this.appService.checkSubscriptionIsTrial()) {
+            let dayCount = this.appService.getSubscriptionExpiringDayCount();
+            this.subscriptionInfoTitle = this.ls.l('YourTrialWillExpire', subscriptionName) + ' '
+                + (!dayCount ? this.ls.l('Today') : (dayCount === 1 ? this.ls.l('Tomorrow') : ('in ' + dayCount.toString() + ' ' + this.ls.l('Periods_Day_plural')))).toLowerCase()
+                + '!';
+        } else if (this.appService.subscriptionInGracePeriod()) {
+            let dayCount = this.appService.getGracePeriodDayCount();
+            this.subscriptionInfoTitle = this.ls.l('ModuleExpired', subscriptionName, this.appService.getSubscriptionStatusByModuleName());
             this.subscriptionInfoText = this.ls.l('GracePeriodNotification', (
                 dayCount
                 ? dayCount === 1 ? this.ls.l('Tomorrow') : this.ls.l('PeriodDescription', dayCount.toString(), this.ls.l('Periods_Day_plural'))
                 : this.ls.l('Today')
             ).toLowerCase());
-        } else if (!this.appService.hasModuleSubscription(module)) {
-            this.subscriptionInfoTitle = this.ls.l('ModuleExpired', subscriptionName, this.appService.getSubscriptionStatusByModuleName(module));
-            this.subscriptionInfoText = this.ls.l('ChoosePlanToContinueService');
+        } else if (!this.appService.hasModuleSubscription()) {
+            this.subscriptionInfoTitle = this.ls.l('ModuleExpired', subscriptionName, this.appService.getSubscriptionStatusByModuleName());
         } else {
-            let dayCount = this.appService.getSubscriptionExpiringDayCount(module);
-            if (!dayCount && dayCount !== 0) {
-                this.subscriptionExpiringDayCount = null;
-            } else {
-                if (dayCount >= 0 && dayCount <= 15) {
-                    this.subscriptionInfoText = this.ls.l('ChoosePlanThatsRightForYou');
-                    this.subscriptionInfoTitle = this.ls.l('YourTrialWillExpire', subscriptionName) + ' '
-                        + (!dayCount ? this.ls.l('Today') : (dayCount === 1 ? this.ls.l('Tomorrow') : ('in ' + dayCount.toString() + ' ' + this.ls.l('Periods_Day_plural')))).toLowerCase()
-                        + '!';
-                } else {
-                    const subscription = this.appService.getModuleSubscription(module);
-                    if (subscription) {
-                        this.subscriptionInfoText = this.ls.l('UpgradOrChangeYourPlanAnyTime');
-                        this.subscriptionInfoTitle = this.ls.l(
-                            'YouAreUsingPlan',
-                            subscription.editionName
-                        );
-                    } else {
-                        this.subscriptionExpiringDayCount = null;
-                    }
-                }
-            }
-        }
-        if (this.appService.subscriptionIsLocked(module)) {
-            this.subscriptionInfoText = this.ls.l('SubscriptionWillBeRenewed');
+            this.subscriptionInfoTitle = this.ls.l(
+                'YouAreUsingPlan',
+                subscriptionName
+            );
         }
         return this.subscriptionInfoTitle;
     }
@@ -191,9 +169,20 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        const moduleSubscription = this.appService.getModuleSubscription();
-        return this.appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement) && moduleSubscription && moduleSubscription.isUpgradable && !this.appService.hasRecurringBilling(moduleSubscription);
+        return !this.appService.hasUnconventionalSubscription()
+            && this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)
+            && (!this.appSession.tenant.customLayoutType || this.appSession.tenant.customLayoutType == LayoutType.Default);
     }
+
+    prolongButtonVisible(): boolean {
+        let subscription = this.appService.getModuleSubscription();
+        return !subscription || subscription.statusId == 'C' || this.isOneTimeSubscription();
+    }
+
+    isOneTimeSubscription(): boolean {
+        let subscription = this.appService.getModuleSubscription();
+        return subscription.paymentPeriodType == PaymentPeriodType.OneTime;
+    }    
 
     hideDropDown() {
         let element: any = $('#header_notification_bar');
@@ -201,7 +190,7 @@ export class HeaderNotificationsComponent implements OnInit {
         dropDown && dropDown.hide();
     }
 
-    openPaymentWizardDialog(e) {
+    openPaymentWizardDialog(e, showSubscriptions = false) {
         this.hideDropDown();
         this.dialog.open(PaymentWizardComponent, {
             height: '800px',
@@ -209,6 +198,7 @@ export class HeaderNotificationsComponent implements OnInit {
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {
+                showSubscriptions: showSubscriptions,
                 module: this.appService.getModuleSubscription().module,
                 title: this.subscriptionInfoTitle,
                 subtitle: this.subscriptionInfoText

@@ -1,6 +1,7 @@
 export class AppConsts {
     static readonly tenancyNamePlaceHolderInUrl = '{TENANCY_NAME}';
     static readonly defaultTenantName = 'Sperse';
+    static readonly defaultDomain = 'sperse.com';
     static readonly tenantHostType = 1;
 
     static readonly googleMapsApiUrl = 'https://maps.googleapis.com/maps/api/js?key={KEY}&libraries=places&language=en';
@@ -21,8 +22,7 @@ export class AppConsts {
     static recaptchaSiteKey: string;
     static googleSheetClientId: string;
     static subscriptionExpireNootifyDayCount: number;
-    static subscriptionRecurringBillingPeriod = 20; /* Days */
-    static subscriptionGracePeriod = 20; /* Days */
+    static subscriptionRecurringBillingPeriod = 1; /* Day */
 
     static localeMappings: any = [];
 
@@ -44,7 +44,8 @@ export class AppConsts {
     };
 
     static readonly authorization = {
-        encrptedAuthTokenName: 'enc_auth_token'
+        encrptedAuthTokenName: 'enc_auth_token',
+        refreshAuthTokenName: 'refresh_auth_token'
     };
 
     static readonly grid = {
@@ -89,6 +90,7 @@ export class AppConsts {
     };
 
     static readonly otherLinkTypeId = '-';
+    static readonly infinityFeatureCount = -1;
 
     private static readonly emailRegexString = '(([^<>()\[\\]\\.,;:\\s@"]+(\\.[^<>()\[\\]\\.,;:\\s@"]+)*)|("[^"]+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))';
 
@@ -144,7 +146,10 @@ export class AppConsts {
     static readonly maxDocumentSizeMB = 100;
     static readonly maxDocumentSizeBytes = 1024 * 1024 * AppConsts.maxDocumentSizeMB;
 
-    static readonly maxAffiliateCodeLength = 50
+    static readonly maxAffiliateCodeLength = 50;
     static readonly maxAffiliateRateLength = 5;
     static readonly maxAffiliateRateZeroBaseLength = 6;
+
+    static readonly PRODUCT_GROUP_MAIN   = 'main';
+    static readonly PRODUCT_GROUP_SIGNUP = 'signup';
 }

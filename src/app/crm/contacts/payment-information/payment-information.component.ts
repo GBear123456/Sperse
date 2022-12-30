@@ -4,7 +4,6 @@ import { Component, ChangeDetectionStrategy, OnInit, ViewChild, ElementRef, OnDe
 /** Third party imports */
 import { BehaviorSubject, Subscription, Observable, of, combineLatest } from 'rxjs';
 import {
-    distinctUntilChanged,
     publishReplay,
     refCount,
     tap,
@@ -22,14 +21,14 @@ import { ContactsService } from '../contacts.service';
 import {
     ContactServiceProxy,
     ShortPaymentInfo,
+    BankCardShortInfo,
     PaymentMethodInfo,
     PaymentInfoType,
-    PaymentServiceProxy,
-    InvoiceSettings
+    PaymentServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'payment-information',
@@ -43,7 +42,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     warningMessage$: Observable<string>;
     totalPaymentAmount: number;
     hasRecurringBilling: boolean;
-    amountCurrency = '$';
+    amountCurrency = SettingsHelper.getCurrency();
     payments$: Observable<ShortPaymentInfo[]>;
     displayedPayments$: Observable<ShortPaymentInfo[]>;
     paymentMethods$: Observable<PaymentMethodInfo[]>;
@@ -62,16 +61,12 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     contactInfoSubscription: Subscription;
     private readonly ident = 'PaymentInformation';
     constructor(
-        private invoicesService: InvoicesService,
         private paymentServiceProxy: PaymentServiceProxy,
         private contactService: ContactServiceProxy,
         private contactsService: ContactsService,
         private loadingService: LoadingService,
         public ls: AppLocalizationService
     ) {
-        invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(
-            (settings: InvoiceSettings) => this.amountCurrency = settings.currency
-        );
     }
 
     ngOnInit() {
@@ -168,9 +163,12 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
 
     removePaymentMethod() {}
 
-    getCardTypeFromNumber(cardNumber: string): string {
-        let cardInfo = CreditCard.cardFromNumber(cardNumber);
-        return cardInfo && cardInfo.type || 'credit-card';
+    getCardType(cardInfo: BankCardShortInfo): string {
+        if (cardInfo.network)
+            return cardInfo.network;
+
+        let numberInfo = CreditCard.cardFromNumber(cardInfo.cardNumber);
+        return numberInfo && numberInfo.type || 'credit-card';
     }
 
     paymentsScrollHeight() {

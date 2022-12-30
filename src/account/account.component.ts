@@ -1,5 +1,12 @@
+/** Core imports */
 import { Directive, Component, ViewContainerRef, ViewEncapsulation,
     ComponentFactoryResolver, ViewChild, Type, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+
+/** Third party imports */
+import { first } from 'rxjs/operators';
+
+/** Application imports */
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostLayoutComponent } from './layouts/host/host-layout.component';
 import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
@@ -22,20 +29,31 @@ export class AdLayoutHostDirective {
     templateUrl: './account.component.html',
     styleUrls: [
         '../shared/common/styles/core.less',
+        '../node_modules/devextreme/dist/css/dx.common.css',
+        '../node_modules/devextreme/dist/css/dx.light.css',
         './account.component.less'
     ],
     encapsulation: ViewEncapsulation.None
 })
 export class AccountComponent implements OnInit {
     @ViewChild(AdLayoutHostDirective, { static: true }) adLayoutHost: AdLayoutHostDirective;
+    isWrapped: boolean = false;
 
     constructor(
         private appSession: AppSessionService,
+        private activatedRoute: ActivatedRoute,
         private componentFactoryResolver: ComponentFactoryResolver
-    ) { }
+    ) { 
+        let activeRouteChild = this.activatedRoute.snapshot.children[0];
+        if (activeRouteChild) {
+            let data = activeRouteChild.routeConfig.data;
+            this.isWrapped = !data || !data.hasOwnProperty('wrap') || data.wrap == 'true';
+        }
+    }
 
     ngOnInit(): void {
-        this.loadLayoutComponent(this.getLayoutComponent(this.appSession.tenant));
+        if (this.isWrapped)
+            this.loadLayoutComponent(this.getLayoutComponent(this.appSession.tenant));
     }
 
     private getLayoutComponent(tenant) {

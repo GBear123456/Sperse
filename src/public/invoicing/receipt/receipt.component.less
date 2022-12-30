@@ -1,0 +1,125 @@
+body > .blockUI.blockOverlay {
+    top: 0px !important;
+}
+
+public-receipt {
+    background: rgba(168,213,255,.5);
+    background: linear-gradient(115.57deg,rgba(168,213,255,.5) 16.28%,rgba(255,251,220,.28) 95.97%);
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+
+    .loading-container {
+        align-self: center;
+        margin: 0 auto;
+
+        .wait-message {
+            padding-top: 100px;
+        }
+    }
+
+    .main-container {
+        width: 443px;
+        margin: 158px auto 48px;
+
+        .header {
+            display: flex;
+            margin-bottom: 32px;
+
+            img {
+                max-width: 150px;
+                max-height: 32px;
+                background: white;
+                border-radius: 5px;
+            }
+
+            .tenant-name {
+                font-size: 20px;
+                margin-left: 12px;
+            }
+        }
+
+        .content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+
+            .summary {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 25px;
+
+                .icon {
+                    position: relative;
+                    margin-bottom: 16px;
+
+                    .file {
+                        font-size: 76px;
+                        color: #787d93;
+                    }
+
+                    .check {
+                        position: absolute;
+                        bottom: -15px;
+                        right: -14px;
+                        background: white;
+                        color: green;
+                        font-size: 35px;
+                        border-radius: 20px;
+                    }
+                }
+
+                .amount {
+                    font-size: 36px;
+                    font-weight: 500;
+                }
+            }
+
+            .details {
+                .row {
+                    line-height: 30px;
+
+                    .card-network {
+                        margin-right: 12px;
+                    }
+                }
+
+                .top-indent {
+                    margin-top: 15px;
+                }
+
+                .login-row {
+                    a {
+                        margin: 0 auto;
+                    }
+                }
+            }
+        }
+
+        .footer {
+            display: flex;
+            margin-top: 25px;
+            font-size: 12px;
+
+            .powered-by {
+                flex: 1;
+                text-align: right;
+                padding-right: 15px;
+            }
+
+            .links {
+                flex: 1;
+                padding-left: 15px;
+
+                a {
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+
+    .gray {
+        color: gray;
+    }
+}

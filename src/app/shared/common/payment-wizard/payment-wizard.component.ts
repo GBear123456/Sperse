@@ -3,7 +3,6 @@ import {
     Component,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    OnInit,
     ViewChild,
     ViewEncapsulation,
     Inject,
@@ -11,17 +10,20 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import * as moment from 'moment-timezone';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { first, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
-import { ModuleType, PackageServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ModuleType, PackageServiceProxy, RecurringPaymentFrequency, PaymentPeriodType,
+    TenantSubscriptionServiceProxy, ProductInfo, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { StatusInfo } from './models/status-info';
 import { AppPermissions } from '@shared/AppPermissions';
 import { PermissionCheckerService } from 'abp-ng2-module';
@@ -33,24 +35,34 @@ import { MessageService } from 'abp-ng2-module';
     templateUrl: './payment-wizard.component.html',
     styleUrls: ['./payment-wizard.component.less'],
     encapsulation: ViewEncapsulation.None,
-    providers: [ PaymentService, PackageServiceProxy ],
+    providers: [ PaymentService, PackageServiceProxy, ProductServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaymentWizardComponent implements OnInit {
+export class PaymentWizardComponent {
     @ViewChild('stepper') stepper: MatStepper;
     @ViewChild('wizard') wizardRef: ElementRef;
-    plan$: Observable<PackageOptions> = this.paymentService.plan$;
+    plan$: Observable<PaymentOptions> = this.paymentService.plan$;
+    packagesConfig$: Observable<ProductInfo[]> = this.paymentService.packagesConfig$;
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;
     refreshAfterClose = false;
-    module: ModuleType = this.data.module;
-    subscriptionIsLocked: boolean = this.appService.subscriptionIsLocked(this.module) && 
-        this.appService.getModuleSubscription(this.module).statusId != 'C';
-    subscriptionIsFree: boolean = this.appService.checkSubscriptionIsFree(this.module);
+    subscriptionIsDraft: boolean = this.data.subscription && this.data.subscription.statusId == 'D';
+    subscriptionIsFree: boolean = this.appService.checkSubscriptionIsFree();
+    subscriptionIsTrialExpired: boolean = this.data.subscription && this.data.subscription.statusId == 'A' &&
+        this.data.subscription.isTrial && !this.appService.hasModuleSubscription();
+    subscriptionIsActiveExpired: boolean = this.data.subscription && !this.data.subscription.isTrial &&
+        this.data.subscription.statusId == 'A' && !this.appService.hasModuleSubscription() &&
+        this.data.subscription.paymentPeriodType != PaymentPeriodType.OneTime;
+    tenantName = this.appSessionService.tenantName;
+    productName = this.data.subscription && this.data.subscription.productName;
+    cancellationDayCount = this.data.subscription && this.data.subscription.endDate ? 
+        this.appService.getGracePeriodDayCountBySubscription(this.data.subscription) : 0;
+    isSubscriptionManagementAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);
     trackingCode: string;
 
     constructor(
         private appService: AppService,
+        private appSessionService: AppSessionService,
         private dialogRef: MatDialogRef<PaymentWizardComponent>,
         private paymentService: PaymentService,
         private tenantSubscriptionService: TenantSubscriptionServiceProxy,
@@ -61,14 +73,8 @@ export class PaymentWizardComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {}
 
-    ngOnInit() {
-        if (this.subscriptionIsLocked) {
-            this.trackingCode = this.appService.getSubscriptionTrackingCode(this.module);
-        }
-    }
-
     moveToPaymentOptionsStep() {
-        if (this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement))
+        if (this.isSubscriptionManagementAllowed)
             this.stepper.next();
         else
             this.messageService.info(this.ls.l('SubscriptionManagementPermissionRequired'));
@@ -83,15 +89,33 @@ export class PaymentWizardComponent implements OnInit {
         this.paymentStatusData = statusInfo;
     }
 
-    rejectPendingPayment() {
-        abp.ui.setBusy(this.wizardRef.nativeElement);
-        this.tenantSubscriptionService.rejectPendingPayment(<any>this.module)
-                                      .pipe(finalize(() => abp.ui.clearBusy(this.wizardRef.nativeElement)))
-                                      .subscribe(() => {
-                                          this.subscriptionIsLocked = false;
-                                          this.appService.loadModuleSubscriptions();
-                                          this.changeDetectorRef.detectChanges();
-                                      });
+    showWebInvoice() {
+        let draftSubscription = this.appService.moduleSubscriptions[0];
+        let publicId = draftSubscription.invoicePublicId;
+        window.location.href = location.origin + `/invoicing/invoice/0/${publicId}`;
+    }
+
+    activateSubscription() {
+        this.packagesConfig$.pipe(first()).subscribe((products: ProductInfo[]) => {
+            let product = products.find(item => item.id == this.data.subscription.productId),
+                pricePerMonth = product ? (this.data.subscription.paymentPeriodType === 'Monthly' ?
+                    product.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Monthly).fee :
+                    Math.round(product.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual).fee / 12)
+                ) : 0;
+
+            this.changePlan({
+                productId: this.data.subscription.productId,
+                productName: this.data.subscription.productName,
+                paymentPeriodType: this.data.subscription.paymentPeriodType,
+                total: pricePerMonth
+            });
+            setTimeout(() => this.moveToPaymentOptionsStep());
+        });
+    }
+
+    showSubscriptionProducts() {
+        this.data.showSubscriptions = false;
+        this.changeDetectorRef.detectChanges();
     }
 
     setRefreshAfterClose() {

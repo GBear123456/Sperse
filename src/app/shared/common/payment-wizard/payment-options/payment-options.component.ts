@@ -1,13 +1,13 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef, ElementRef, OnInit } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
+import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { Step } from '@app/shared/common/payment-wizard/models/step.model';
 import { StatusInfo } from '@app/shared/common/payment-wizard/models/status-info';
@@ -25,7 +25,8 @@ import {
     RequestPaymentType,
     ModuleSubscriptionInfo,
     BankTransferSettingsDto,
-    RequestPaymentResult
+    RequestPaymentResult,
+    RequestPaymentInput
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -41,8 +42,8 @@ import { AppService } from '@app/app.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ TenantSubscriptionServiceProxy ]
 })
-export class PaymentOptionsComponent extends AppComponentBase {
-    @Input() plan: PackageOptions;
+export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
+    @Input() plan: PaymentOptions;
     @Input() steps: Step[] = [
         {
             name: this.l('ChooseYourPlan'),
@@ -76,27 +77,34 @@ export class PaymentOptionsComponent extends AppComponentBase {
         }
     };
 
-    readonly GATEWAY_PAYPAL = 0;
-    readonly GATEWAY_C_CARD = 1;
-    readonly GATEWAY_ECHECK = 2;
+    readonly GATEWAY_STRIPE = 0;
+    readonly GATEWAY_PAYPAL = 1;
+    readonly GATEWAY_C_CARD = 2;
+    readonly GATEWAY_ECHECK = 3;
 
-    selectedGateway: number = this.GATEWAY_PAYPAL;
+    quantity = 1;
+
+    selectedGateway: number = this.GATEWAY_STRIPE;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
     payPalClientId: string;
+    showPayPal: boolean = false;
+
+    isPayByStripeDisabled = false;
 
     constructor(
-        private injector: Injector,
+        injector: Injector,
         private appHttpConfiguration: AppHttpConfiguration,
         private appService: AppService,
         private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy,
-        private changeDetector: ChangeDetectorRef
+        private changeDetector: ChangeDetectorRef,
+        private elementRef: ElementRef,
     ) {
         super(injector);
-        this.tenantSubscriptionServiceProxy.getPayPalSettings().subscribe(x => {
-            this.payPalClientId = x.clientId;
-            changeDetector.detectChanges();
-        });
+    }
+
+    ngOnInit(): void {
+        this.initPayPal();
     }
 
     goToStep(i) {
@@ -107,11 +115,32 @@ export class PaymentOptionsComponent extends AppComponentBase {
         return billingPeriod === BillingPeriod.Yearly ? 'annually' : 'monthly';
     }
 
+    getProductUnit(paymentPeriodType: PaymentPeriodType) {
+        return paymentPeriodType === PaymentPeriodType.Annual ? 'year' : ( paymentPeriodType === PaymentPeriodType.Monthly ? 'month' : 'life time');
+    }
+
     selectedTabChange(e) {
         if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
             /** Load transfer data */
             this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
         }
+    }
+
+    initPayPal() {
+        forkJoin(
+            this.tenantSubscriptionServiceProxy.getPayPalSettings(),
+            this.tenantSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
+                paymentPeriodType: this.plan.paymentPeriodType,
+                productId: this.plan.productId,
+                quantity: this.quantity,
+            }))
+        ).subscribe(([settings, isApplicable]) => {
+            if (settings.clientId && isApplicable) {
+                this.payPalClientId = settings.clientId;
+                this.showPayPal = true;
+                this.changeDetector.detectChanges();
+            }
+        });
     }
 
     submitData(data: any, paymentMethod: PaymentMethods = PaymentMethods.Free) {
@@ -121,11 +150,11 @@ export class PaymentOptionsComponent extends AppComponentBase {
         this.appHttpConfiguration.avoidErrorHandling = true;
         let paymentInfo: any = {
             subscriptionInfo: {
-                editionId: this.plan.selectedEditionId,
-                maxUserCount: this.plan.usersAmount,
-                frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                    ? PaymentPeriodType.Monthly
-                    : PaymentPeriodType.Annual
+                //editionId: this.plan.selectedEditionId,
+                //maxUserCount: this.plan.usersAmount,
+                // frequency: this.plan.billingPeriod == BillingPeriod.Monthly
+                //     ? PaymentPeriodType.Monthly
+                //     : PaymentPeriodType.Annual
             }
         };
         switch (paymentMethod) {
@@ -237,5 +266,20 @@ export class PaymentOptionsComponent extends AppComponentBase {
 
     close() {
         this.onClose.emit();
+    }
+
+    payByStripe() {
+        this.isPayByStripeDisabled = true;
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        this.tenantSubscriptionServiceProxy.requestStripePayment(new RequestPaymentInput({
+            productId: this.plan.productId,
+            paymentPeriodType: this.plan.paymentPeriodType,
+            quantity: 1
+        })).subscribe((response) => {
+            window.location.href = response.paymentLink;
+        }, () => {
+            this.isPayByStripeDisabled = false;
+            this.loadingService.finishLoading();
+        });
     }
 }

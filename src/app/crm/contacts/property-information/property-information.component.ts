@@ -6,14 +6,13 @@ import {
     ElementRef,
     OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
 import { AppConsts } from '@shared/AppConsts';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription, merge, forkJoin, of } from 'rxjs';
-import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
+import { filter, switchMap, finalize, skip } from 'rxjs/operators';
 import { NotifyService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import cloneDeep from 'lodash/cloneDeep';
@@ -35,7 +34,6 @@ import {
     ExitStrategy,
     PropertyResident,
     PetFeeType,
-    InvoiceSettings,
     PestsType,
     PropertyAcquisitionDto,
     PropertyInvestmentDto,
@@ -54,7 +52,6 @@ import { DayOfWeekEnum } from './enums/dayOfWeek.enum';
 import { GarbageEnum } from './enums/garbage.enum';
 import { ParkingEnum } from './enums/parking.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppliancesEnum } from './enums/appliances.enum';
 import { UtilityTypesEnum } from './enums/utilityTypes.enum';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
@@ -63,6 +60,7 @@ import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dial
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 interface SelectBoxItem {
     displayValue: string;
@@ -99,9 +97,8 @@ export class PropertyInformationComponent implements OnInit {
 
     phoneRegEx = AppConsts.regexPatterns.phone;
     emailRegEx = AppConsts.regexPatterns.email;
-    invoiceSettings: InvoiceSettings = new InvoiceSettings();
     showContractDetails = false;
-    currencyFormat = { style: 'currency', currency: 'USD', useGrouping: true };
+    currencyFormat = { style: 'currency', currency: SettingsHelper.getCurrency(), useGrouping: true };
 
     yesNoDropdowns: SelectBoxItem[] = [
         { displayValue: 'Yes', value: true },
@@ -183,14 +180,12 @@ export class PropertyInformationComponent implements OnInit {
     constructor(
         private dialog: MatDialog,
         private contactsService: ContactsService,
-        private route: ActivatedRoute,
         private profileService: ProfileService,
         private propertyServiceProxy: PropertyServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private leadServiceProxy: LeadServiceProxy,
         public changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
-        private invoicesService: InvoicesService,
         private elementRef: ElementRef,
         private permission: AppPermissionService,
         private notify: NotifyService,
@@ -225,8 +220,6 @@ export class PropertyInformationComponent implements OnInit {
             this.disableEdit = !this.permission.checkCGPermission([leadInfo.contactGroupId]);
             this.changeDetectorRef.detectChanges();
         });
-
-        this.invoiceSettingsLoad();
     }
 
     savePropertyInfo(property: PropertyDto) {
@@ -550,16 +543,6 @@ export class PropertyInformationComponent implements OnInit {
     validateProperty(event): void {
         if (event.value)
             this.valueChanged();
-    }
-
-    invoiceSettingsLoad() {
-        this.invoicesService.settings$.pipe(
-            filter(Boolean), first()
-        ).subscribe((settings: InvoiceSettings) => {
-            this.invoiceSettings = settings;
-            this.currencyFormat.currency = settings.currency;
-            this.changeDetectorRef.detectChanges();
-        });
     }
 
     getPhoto(): string {

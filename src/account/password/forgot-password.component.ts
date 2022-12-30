@@ -8,6 +8,7 @@ import {
     ViewContainerRef,
     ComponentFactoryResolver
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /** Application imports */
 import { SendPasswordResetCodeInput, LayoutType } from '@shared/service-proxies/service-proxies';
@@ -30,6 +31,8 @@ export class AdForgotPasswordHostDirective {
     constructor(public viewContainerRef: ViewContainerRef) { }
 }
 
+type ForgotPasswordLayoutBase = Type<HostForgotPasswordComponent | HostCombinedForgotPasswordComponent>
+
 @Component({
     templateUrl: './forgot-password.component.html',
     animations: [accountModuleAnimation()]
@@ -39,18 +42,28 @@ export class ForgotPasswordComponent implements OnInit {
     model: SendPasswordResetCodeInput = new SendPasswordResetCodeInput();
     saving = false;
 
+    layoutComponent: ForgotPasswordLayoutBase;
+
     constructor (
         private loginService: LoginService,
         private appSession: AppSessionService,
+        private activatedRoute: ActivatedRoute,
         private componentFactoryResolver: ComponentFactoryResolver
-    ) {}
-
-
-    ngOnInit() {
-        this.loadLayoutComponent(this.getLayoutComponent(this.appSession.tenant));
+    ) {
+        let activeRouteChild = this.activatedRoute.snapshot;
+        if (activeRouteChild) {
+            let data = activeRouteChild.routeConfig.data;
+            this.layoutComponent = data && data.layoutComponent;
+        }
     }
 
-    private getLayoutComponent(tenant) {
+    ngOnInit() {
+        if (!this.layoutComponent)
+            this.layoutComponent = this.getLayoutComponent(this.appSession.tenant);
+        this.loadLayoutComponent(this.layoutComponent);
+    }
+
+    private getLayoutComponent(tenant): ForgotPasswordLayoutBase {
         switch (tenant && tenant.customLayoutType) {
             case LayoutType.LendSpace:
                 return LendSpaceForgotPasswordComponent;
@@ -65,11 +78,11 @@ export class ForgotPasswordComponent implements OnInit {
             case LayoutType.Sperser:
                 return SperserForgotPasswordComponent;
             default:
-                return HostForgotPasswordComponent;
+                return HostCombinedForgotPasswordComponent;
         }
     }
 
-    private loadLayoutComponent(component: Type<HostForgotPasswordComponent | HostCombinedForgotPasswordComponent>) {
+    private loadLayoutComponent(component: ForgotPasswordLayoutBase) {
         this.adForgotPasswordHost.viewContainerRef.createComponent(
             this.componentFactoryResolver.resolveComponentFactory(component)
         );

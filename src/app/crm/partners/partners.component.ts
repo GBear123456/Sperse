@@ -62,6 +62,8 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterContactStatusComponent } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.component';
 import { FilterContactStatusModel } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.model';
+import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
+import { FilterNullableRadioGroupModel } from '@shared/filters/radio-group/filter-nullable-radio-group.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import {
     BulkUpdatePartnerTypeInput,
@@ -182,6 +184,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     );
 
     isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+    maxMessageCount = this.contactService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
 
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
@@ -192,7 +195,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
-                    disabled: this.isSMSIntegrationDisabled,
+                    disabled: this.isSMSIntegrationDisabled || !this.maxMessageCount,
                     checkVisible: () => {
                         return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
                     },
@@ -205,6 +208,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('SendEmail'),
                     class: 'email',
+                    disabled: !this.maxMessageCount,
+                    checkVisible: (data?) => {
+                        return this.permission.checkCGPermission([data.ContactGroupId], 'ViewCommunicationHistory.SendSMSAndEmail');
+                    },
                     action: () => {
                         this.contactService.showEmailDialog({
                             contactId: (this.actionEvent.data || this.actionEvent).Id
@@ -268,6 +275,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('Orders'),
                     class: 'orders',
+                    disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement),
                     action: () => {
                         this.showPartnerDetails(this.actionEvent, 'invoices');
                     }
@@ -585,7 +593,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     this.partnerFields.Email,
                     this.partnerFields.Phone,
                     this.partnerFields.UserId,
-                    this.partnerFields.StarId
+                    this.partnerFields.StarId,
+                    this.partnerFields.IsSubscribedToEmails,
                 ]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1109,7 +1118,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     element: new FilterCheckBoxesModel(
                         {
                             dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars), tap(stars => {
-                                stars.forEach(star => {
+                                stars && stars.forEach(star => {
                                     this.starsLookup[star.id] = star;
                                 });
                             })),
@@ -1127,7 +1136,21 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             new FilterModel({
                 caption: 'parentId',
                 hidden: true
-            })
+            }),
+            new FilterModel({
+                component: FilterRadioGroupComponent,
+                caption: 'IsSubscribedToEmails',
+                filterMethod: FiltersService.filterByBooleanValue,
+                items: {
+                    element: new FilterNullableRadioGroupModel({
+                        value:  undefined,
+                        list: [
+                            { id: true, name: this.l('CommunicationPreferencesStatus_Subscribed') },
+                            { id: false, name: this.l('CommunicationPreferencesStatus_Unsubcribed') }
+                        ]
+                    })
+                }
+            })            
         ];
     }
 
@@ -1305,17 +1328,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedPartnerKeys.length || this.selectedPartnerKeys.length > 1 || 
+                        disabled: !this.selectedPartnerKeys.length ||
                             !this.permission.checkCGPermission([this.partnerContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {
-                                    text: this.l('Email'),
-                                    disabled: this.selectedPartnerKeys.length > 1,
+                                    text: this.l('Email'),                                    
                                     action: () => {
                                         this.contactService.showEmailDialog({
-                                            contactId: this.selectedPartnerKeys[0],
-                                            to: this.selectedPartners.map(lead => lead.Email).filter(Boolean)
+                                            to: this.selectedPartners.map(lead => lead.Email).filter(Boolean),
+                                            ...(this.selectedPartnerKeys.length > 1 ? 
+                                                {contactIds: this.selectedPartnerKeys} : 
+                                                {contactId: this.selectedPartnerKeys[0]}
+                                            )
                                         }).subscribe();
                                     }
                                 },

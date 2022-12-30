@@ -94,7 +94,7 @@
                 <dxi-column width="120px"
                             [dataField]="commissionFields.ProductAmount"
                             [caption]="ls.l('Price')"
-                            [format]="currencyFormat$ | async"
+                            [format]="currencyFormat"
                             cssClass="clipboard-holder padding-right">
                 </dxi-column>
                 <dxi-column width="100px"
@@ -105,7 +105,7 @@
                 <dxi-column width="120px"
                             [dataField]="commissionFields.CommissionableAmount"
                             [caption]="ls.l('CV')"
-                            [format]="currencyFormat$ | async"
+                            [format]="currencyFormat"
                             cssClass="clipboard-holder padding-right">
                 </dxi-column>
                 <dxi-column width="200px"
@@ -126,7 +126,7 @@
                 <dxi-column width="140px"
                             [dataField]="commissionFields.CommissionAmount"
                             [caption]="ls.l('Commission')"
-                            [format]="currencyFormat$ | async"
+                            [format]="currencyFormat"
                             cssClass="clipboard-holder padding-right">
                 </dxi-column>
                 <dxi-column width="120px"
@@ -211,7 +211,7 @@
                 </dxi-column>
                 <dxi-column [dataField]="ledgerFields.TotalAmount"
                             [caption]="ls.l('TotalAmount')" 
-                            [format]="currencyFormat$ | async"
+                            [format]="currencyFormat"
                             cssClass="clipboard-holder padding-right">
                 </dxi-column>
 

@@ -21,11 +21,12 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     CommunicationMessageDeliveryType, ContactCommunicationServiceProxy, AttachmentDto, MessageListDto,
-    CommunicationMessageSendingStatus, MessageDto, ContactInfoDto, FileInfo
+    CommunicationMessageSendingStatus, MessageDto, ContactInfoDto, PreferencesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppFeatures } from '@shared/AppFeatures';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 class Message extends MessageDto {
     items: MessageDto[];
@@ -50,6 +51,8 @@ export class UserInboxComponent implements OnDestroy {
     @ViewChild('contentView') contentView: ElementRef;
 
     contactId: number;
+    isSubscribedToEmails: boolean;
+    communicationPreferencePublicId: string;
     contentToolbar = [];
     dataSource: DataSource;
     activeMessage: Partial<Message>;
@@ -66,7 +69,7 @@ export class UserInboxComponent implements OnDestroy {
             hint: this.ls.l(item)
         };
     });
-    get isActiveEmilType(): boolean {
+    get isActiveEmailType(): boolean {
         return this.activeMessage && this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email;
     }
     isSendSmsAndEmailAllowed = false;
@@ -81,7 +84,7 @@ export class UserInboxComponent implements OnDestroy {
             text: this.ls.l(item),
             icon: this.ls.l(item) === 'Email' ? 'fa fa-envelope-o' : 'fa fa-commenting-o',
             visible: CommunicationMessageDeliveryType[item] != CommunicationMessageDeliveryType.SMS || this.isInboundOutboundSMSEnabled,
-            disabled: this.isSMSIntegrationDisabled
+            disabled: false
         };
     });
     userTimezone = DateHelper.getUserTimezone();
@@ -91,6 +94,7 @@ export class UserInboxComponent implements OnDestroy {
         private domSanitizer: DomSanitizer,
         private loadingService: LoadingService,
         private communicationService: ContactCommunicationServiceProxy,
+        private preferencesService: PreferencesServiceProxy,
         private contactsService: ContactsService,
         private notifyService: NotifyService,
         private permission: AppPermissionService,
@@ -98,7 +102,8 @@ export class UserInboxComponent implements OnDestroy {
         private activatedRoute: ActivatedRoute,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
-        public profileService: ProfileService
+        public profileService: ProfileService,
+        public appSession: AppSessionService
     ) {
         contactsService.invalidateSubscribe(
             () => this.invalidate(), this.ident
@@ -108,8 +113,12 @@ export class UserInboxComponent implements OnDestroy {
                 let contactId = this.contactId;
                 this.contactInfo = contactInfo;
                 this.contactId = contactInfo.id;
-                this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
-                    contactInfo.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
+
+                this.isSubscribedToEmails = contactInfo.isSubscribedToEmails;
+                this.communicationPreferencePublicId = contactInfo.communicationPreferencePublicId;
+                this.isSendSmsAndEmailAllowed = this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount) &&
+                    this.permission.checkCGPermission(contactInfo.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
+
                 this.activeMessage = undefined;
                 if (!this.dataSource || contactId != this.contactId) {
                     var isSms = this.activatedRoute.snapshot.queryParamMap.get('sms');
@@ -154,101 +163,123 @@ export class UserInboxComponent implements OnDestroy {
         setTimeout(() => {
             let visibleCount = this.getVisibleList().length,
                 isEmail = this.deliveryType == CommunicationMessageDeliveryType.Email;
-            this.contactsService.toolbarUpdate({ customToolbar: [{
-                location: 'before',
-                items: [{
-                    widget: 'dxButtonGroup',
-                    options: {
-                        keyExpr: 'id',
-                        elementAttr: {
-                            class: 'inbox'
-                        },
-                        items: this.deliveryTypes,
-                        selectionMode: 'multiple',
-                        stylingMode: 'text',
-                        focusStateEnabled: false,
-                        width: '240px',
-                        selectedItemKeys: this.deliveryType ? this.deliveryType : [
-                            CommunicationMessageDeliveryType.Email, 
-                            this.isInboundOutboundSMSEnabled && CommunicationMessageDeliveryType.SMS
-                        ].filter(Boolean),
-                        onSelectionChanged: event => {
-                            if (event.addedItems.length || event.removedItems.length)
-                                this.activeMessage = undefined;
-                            this.dataSource.reload();
-                        },
-                        onOptionChanged: event => {
-                            this.deliveryType = event.value.length > 1 ? undefined : event.value[0];
+            this.contactsService.toolbarUpdate({
+                customToolbar: [{
+                    location: 'before',
+                    items: [{
+                        widget: 'dxButtonGroup',
+                        options: {
+                            keyExpr: 'id',
+                            elementAttr: {
+                                class: 'inbox'
+                            },
+                            items: this.deliveryTypes,
+                            selectionMode: 'multiple',
+                            stylingMode: 'text',
+                            focusStateEnabled: false,
+                            width: '240px',
+                            selectedItemKeys: this.deliveryType ? this.deliveryType : [
+                                CommunicationMessageDeliveryType.Email,
+                                this.isInboundOutboundSMSEnabled && CommunicationMessageDeliveryType.SMS
+                            ].filter(Boolean),
+                            onSelectionChanged: event => {
+                                if (event.addedItems.length || event.removedItems.length)
+                                    this.activeMessage = undefined;
+                                this.dataSource.reload();
+                            },
+                            onOptionChanged: event => {
+                                this.deliveryType = event.value.length > 1 ? undefined : event.value[0];
+                            }
                         }
-                    }
+                    }, {
+                        widget: 'dxSelectBox',
+                        options: {
+                            width: '180px',
+                            valueExpr: 'id',
+                            displayExpr: 'name',
+                            value: this.status,
+                            showClearButton: true,
+                            placeholder: this.ls.l('Status'),
+                            dataSource: this.statuses,
+                            onValueChanged: event => {
+                                this.activeMessage = undefined;
+                                this.status = event.value || undefined;
+                                this.dataSource.reload();
+                            },
+                            inputAttr: { view: 'headline' }
+                        }
+                    }]
                 }, {
-                    widget: 'dxSelectBox',
-                    options: {
-                        width: '180px',
-                        valueExpr: 'id',
-                        displayExpr: 'name',
-                        value: this.status,
-                        showClearButton: true,
-                        placeholder: this.ls.l('Status'),
-                        dataSource: this.statuses,
-                        onValueChanged: event => {
-                            this.activeMessage = undefined;
-                            this.status = event.value || undefined;
-                            this.dataSource.reload();
-                        },
-                        inputAttr: { view: 'headline' }
-                    }
-                }]
-            }, {
-                location: 'after',
-                items: [{
-                    widget: 'dxTextBox',
-                    options: {
-                        value: '1 - ' + visibleCount + ' of ' + this.dataSource.totalCount(),
-                        inputAttr: { view: 'headline' },
-                        visible: visibleCount,
-                        readOnly: true
-                    }
-                }]
-            },
-            {
-                location: 'after',
-                items: [
-                    {
-                        name: 'prev',
-                        action: (e) => this.contactsService.prev.next(e),
-                        disabled: this.contactsService.isPrevDisabled
-                    },
-                    {
-                        name: 'next',
-                        action: (e) => this.contactsService.next.next(e),
-                        disabled: this.contactsService.isNextDisabled
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                items: [
-                    {
+                    location: 'before',
+                    items: [{
                         widget: 'dxButton',
                         options: {
-                            text: '+ ' + this.ls.l('NewEmail')
-                        },
-                        visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || isEmail),
-                        action: () => this.showNewEmailDialog()
-                    },
-                    {
-                        widget: 'dxButton',
+                            text: this.getCommunicationPreferencesStatus(this.isSubscribedToEmails),
+                            accessKey: `communication-preferences-${this.isSubscribedToEmails ? 'subscribed' : 'unsubscribed'}`
+                        }
+                        /* disabled temporarily
+                        action: (e) => {
+                            this.isSubscribedToEmails = !this.isSubscribedToEmails;
+                            e.element.classList.remove(this.isSubscribedToEmails ? 'unsubscribed' : 'subscribed');
+                            e.element.classList.add(this.isSubscribedToEmails ? 'subscribed' : 'unsubscribed');
+                            e.element.innerHTML = e.element.innerHTML.replace(this.getCommunicationPreferencesStatus(!this.isSubscribedToEmails),
+                                this.getCommunicationPreferencesStatus(this.isSubscribedToEmails))
+                            this.updateEmailPreferences(this.isSubscribedToEmails).subscribe(() => {
+                            })
+                        }
+                        */
+                    }]
+                }, {
+                    location: 'after',
+                    items: [{
+                        widget: 'dxTextBox',
                         options: {
-                            text: '+ ' + this.ls.l('NewSms')
+                            value: '1 - ' + visibleCount + ' of ' + this.dataSource.totalCount(),
+                            inputAttr: { view: 'headline' },
+                            visible: visibleCount,
+                            readOnly: true
+                        }
+                    }]
+                },
+                {
+                    location: 'after',
+                    items: [
+                        {
+                            name: 'prev',
+                            action: (e) => this.contactsService.prev.next(e),
+                            disabled: this.contactsService.isPrevDisabled
                         },
-                        disabled: this.isSMSIntegrationDisabled,
-                        visible: this.isInboundOutboundSMSEnabled && 
-                            this.isSendSmsAndEmailAllowed && (!this.deliveryType || !isEmail),
-                        action: () => this.showNewSMSDialog()
-                    }
-                ]
-            }]});
+                        {
+                            name: 'next',
+                            action: (e) => this.contactsService.next.next(e),
+                            disabled: this.contactsService.isNextDisabled
+                        }
+                    ]
+                },
+                {
+                    location: 'after',
+                    items: [
+                        {
+                            widget: 'dxButton',
+                            options: {
+                                text: '+ ' + this.ls.l('NewEmail')
+                            },
+                            visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || isEmail),
+                            action: () => this.showNewEmailDialog()
+                        },
+                        {
+                            widget: 'dxButton',
+                            options: {
+                                text: '+ ' + this.ls.l('NewSms')
+                            },
+                            disabled: this.isSMSIntegrationDisabled,
+                            visible: this.isInboundOutboundSMSEnabled &&
+                                this.isSendSmsAndEmailAllowed && (!this.deliveryType || !isEmail),
+                            action: () => this.showNewSMSDialog()
+                        }
+                    ]
+                }]
+            });
         });
     }
 
@@ -294,20 +325,26 @@ export class UserInboxComponent implements OnDestroy {
             items: [
                 {
                     name: 'reply',
-                    visible: this.isActiveEmilType,
+                    visible: this.isActiveEmailType,
                     action: () => this.reply(),
                     disabled: !this.isSendSmsAndEmailAllowed
                 },
                 {
                     name: 'replyToAll',
-                    visible: this.isActiveEmilType,
+                    visible: this.isActiveEmailType,
                     action: () => this.reply(true),
                     disabled: !this.isSendSmsAndEmailAllowed || !this.activeMessage || !this.activeMessage.cc
                 },
                 {
                     name: 'forward',
-                    visible: this.isActiveEmilType,
+                    visible: this.isActiveEmailType,
                     action: this.forward.bind(this),
+                    disabled: !this.isSendSmsAndEmailAllowed
+                },
+                {
+                    name: 'resend',
+                    visible: this.isActiveEmailType,
+                    action: this.resend.bind(this),
                     disabled: !this.isSendSmsAndEmailAllowed
                 }
             ]
@@ -434,7 +471,7 @@ export class UserInboxComponent implements OnDestroy {
         this.activeMessage = record.message = message;
         this.isNotListedMessage = false;
         this.checkExpandRecord(record);
-        if (this.isActiveEmilType)
+        if (this.isActiveEmailType)
             this.showEmailContent();
         this.initContentToolbar();
         this.scrollToActiveMessage();
@@ -528,17 +565,16 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     reply(forAll = false) {
-        let ccList = forAll ? (this.activeMessage.cc ? this.activeMessage.cc.split(',') : []) : [];
+        let ccList = forAll ? this.spitMessageAddresses(this.activeMessage.cc) : [];
         if (this.activeMessage.isInbound)
-            ccList.push(this.activeMessage.to);
+            ccList.push(...this.spitMessageAddresses(this.activeMessage.to));
         this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {
             ...this.activeMessage,
-            to: [this.activeMessage.isInbound ?
-                (this.activeMessage.fromUserName || '') + ' <' + this.activeMessage.from + '>' :
-                this.activeMessage.to
-            ],
+            to: this.activeMessage.isInbound ?
+                [(this.activeMessage.fromUserName || '') + ' <' + this.activeMessage.from + '>'] :
+                this.spitMessageAddresses(this.activeMessage.to),
             cc: ccList,
-            bcc: this.activeMessage.bcc ? this.activeMessage.bcc.split(',') : [],
+            bcc: [],
             subject: (this.activeMessage.subject.startsWith('Re:') ? '' : 'Re: ') + this.activeMessage.subject,
             body: '<br><br><div dir="ltr">On ' +
                 this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss A') + ' ' + (this.activeMessage.fromUserName || '') +
@@ -565,6 +601,24 @@ export class UserInboxComponent implements OnDestroy {
                 'Subject: ' + this.activeMessage.subject + '<br>' +
                 'To: ' + this.activeMessage.to + '<br></div><br><br>' + this.activeMessage.body
         });
+    }
+
+    resend() {
+        this.showNewEmailDialog('Resend', {
+            ...this.activeMessage,
+            to: this.spitMessageAddresses(this.activeMessage.to),
+            cc: this.spitMessageAddresses(this.activeMessage.cc),
+            bcc: this.spitMessageAddresses(this.activeMessage.bcc),
+            replyTo: this.spitMessageAddresses(this.activeMessage.replyTo),
+            isResend: true
+        });
+    }
+
+    spitMessageAddresses(addresses: string): string[] {
+        if (!addresses)
+            return [];
+
+        return addresses.split(',');
     }
 
     showNewEmailDialog(title = 'NewEmail', data: any = {}) {
@@ -594,7 +648,7 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     extendMessage() {
-        if (this.isActiveEmilType)
+        if (this.isActiveEmailType)
             this.showNewEmailDialog(undefined, {
                 replyToId: this.activeMessage.id,
                 subject: 'Re: ' + this.activeMessage.subject,
@@ -712,6 +766,17 @@ export class UserInboxComponent implements OnDestroy {
         }
 
         messageDto['statusCalculated'] = messageStatus;
+    }
+
+    updateEmailPreferences(isSubscribed: boolean) {
+        let tenantId = this.appSession.tenantId == null ? 0 : this.appSession.tenantId;
+        return isSubscribed
+            ? this.preferencesService.subscribe(tenantId, this.communicationPreferencePublicId)
+            : this.preferencesService.unsubscribe(tenantId, this.communicationPreferencePublicId);
+    }
+
+    getCommunicationPreferencesStatus(isSubscribed: boolean) {
+        return this.ls.l(`CommunicationPreferencesStatus_${isSubscribed ? 'Subscribed' : 'Unsubscribed'}`);
     }
 
     ngOnDestroy() {

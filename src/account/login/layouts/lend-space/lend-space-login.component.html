@@ -38,7 +38,7 @@
         </div>
     </form>
     <div class="login-options" *ngIf="(loginService.externalLoginProviders$ | async) as externalLoginProviders">
-        <div class="login-with">
+        <div class="login-with" *ngIf="externalLoginProviders?.length">
             <span class="login-with-or">{{ls.l("or")}}</span>
         </div>
         <ul class="social-icons">

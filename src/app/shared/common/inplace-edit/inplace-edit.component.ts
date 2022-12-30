@@ -94,7 +94,7 @@ export class InplaceEditComponent extends AppComponentBase {
     @Output() onHistoryClick: EventEmitter<any> = new EventEmitter();
 
     get hasValue(): boolean {
-        return !!this.value || this.value == 0;
+        return !!this.value || this.value === 0;
     }
 
     valueOriginal = '';

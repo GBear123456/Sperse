@@ -26,6 +26,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 })
 export class ToolBarComponent implements OnDestroy, OnInit {
     @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
+    @Input() isDisabled = false;
     @Input() width = '100%';
     _config: ToolbarGroupModel[];
     @Input()
@@ -69,6 +70,10 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             forward: {
                 hint: this.ls.l('Forward'),
                 icon: this.getImgURI('forward')
+            },
+            resend: {
+                hint: this.ls.l('Resend'),
+                icon: this.getImgURI('resend')
             },
             replyToAll: {
                 hint: this.ls.l('ReplyToAll'),

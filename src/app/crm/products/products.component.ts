@@ -4,13 +4,14 @@ import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { filter, finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { DataSource } from 'devextreme/data/data_source/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -27,11 +28,11 @@ import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/
 import { AddProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ProductServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ProductDto } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: './products.component.html',
@@ -50,10 +51,12 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     private readonly dataSourceURI = 'Product';
     private rootComponent: any;
-    private subRouteParams: any;
     private dependencyChanged = false;
     isReadOnly = true;
     permissions = AppPermissions;
+    isInvoicesEnabled = abp.features.isEnabled(AppFeatures.CRMInvoicesManagement);
+    headerOptions = [this.l("Products"), this.l("Coupons")];
+    activeHeaderOption = this.headerOptions[0];
     public headlineButtons: HeadlineButton[] = [];
 
     actionEvent: any;
@@ -82,7 +85,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         }
     ];
 
-    currency: string;
+    currency: string = SettingsHelper.getCurrency();
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
@@ -110,7 +113,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
-        invoicesService: InvoicesService,
         private filtersService: FiltersService,
         private productProxy: ProductServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
@@ -120,14 +122,12 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
         this.isReadOnly = !this.permission.isGranted(this.permissions.CRMProductsManage);
         this.headlineButtons.push({
-            enabled: !this.isReadOnly,
+            enabled: !this.isReadOnly && 
+                !!appService.getFeatureCount(AppFeatures.CRMMaxProductCount),
             action: () => this.showProductDialog(),
             label: this.l('AddProduct')
         });
-        this.dataSource = new DataSource({store: new ODataStore(this.dataStore)});
-        invoicesService.settings$.pipe(filter(Boolean)).subscribe(
-            (res: InvoiceSettings) => this.currency = res.currency
-        );
+        this.dataSource = new DataSource({ store: new ODataStore(this.dataStore) });
     }
 
     ngOnInit() {
@@ -210,6 +210,15 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
+    navigateToCoupons(event) {
+        if (event.value != this.headerOptions[0]) {
+            setTimeout(() => {
+                this.activeHeaderOption = this.headerOptions[0];
+                this._router.navigate(['app/crm/coupons']);
+            });
+        };
+    }
+
     initFilterConfig() {
         if (this.filters) {
             this.filtersService.setup(this.filters);
@@ -232,7 +241,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 component: FilterInputsComponent,
                 operator: 'startswith',
                 caption: 'name',
-                items: { Name: new FilterItemModel()}
+                items: { Name: new FilterItemModel() }
             }),
             new FilterModel({
                 component: FilterMultilineInputComponent,

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Observable, ReplaySubject } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -13,7 +14,10 @@ import {
     TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 @Injectable()
 export class InvoicesService {
@@ -23,7 +27,9 @@ export class InvoicesService {
     constructor(
         private invoiceProxy: InvoiceServiceProxy,
         private permissionService: AppPermissionService,
-        private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy
+        private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
+        private loadingService: LoadingService,
+        private pipelineService: PipelineService
     ) {
         this.invalidateSettings();
     }
@@ -45,5 +51,20 @@ export class InvoicesService {
             status: InvoiceStatus[status],
             emailId: emailId
         }));
+    }
+
+    updateOrderStage(orderId: number, fromStageName: string, toStageName: string): Observable<any> {
+        this.loadingService.startLoading();
+        return this.pipelineService.updateEntitiesStage(
+            AppConsts.PipelinePurposeIds.order,
+            [{
+                Id: orderId,
+                Stage: fromStageName
+            }],
+            toStageName,
+            null
+        ).pipe(
+            finalize(() => this.loadingService.finishLoading())
+        );
     }
 }

@@ -54,6 +54,10 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
             text: this.l(item)
         };
     });
+    payPalEnvironments = [
+        { value: 'sandbox', text: 'Sandbox' },
+        { value: 'live', text: 'Live' }
+    ];
 
     initialDefaultCountry: string;
     usingDefaultTimeZone = false;
@@ -71,6 +75,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     EmailTemplateType = EmailTemplateType;
     tabIndex: Observable<number>;
 
+    isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments); 
     isInboundOutboundSMSEnabled: boolean = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     isTenantHosts: boolean = this.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
@@ -99,9 +104,11 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     loadHostSettings(): void {
         forkJoin(
             this.hostSettingService.getAllSettings(),
-            this.tenantPaymentSettingsService.getPayPalSettings(),
+            this.isPaymentsEnabled ?
+                this.tenantPaymentSettingsService.getPayPalSettings() : of(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.getACHWorksSettings(),
-            this.tenantPaymentSettingsService.getStripeSettings(),
+            this.isPaymentsEnabled ?
+                this.tenantPaymentSettingsService.getStripeSettings() : of(this.stripePaymentSettings),
             this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
             this.isInboundOutboundSMSEnabled ?
                 this.hostSettingService.getYTelSettings() : of(<any>{isEnabled: false})
@@ -185,6 +192,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         forkJoin(
             this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
                 this.phoneService.checkSetDefaultPhoneCodeByCountryCode(this.hostSettings.general.defaultCountryCode);
+                sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
             }),
             catchError(error => {
                 this.checkHandlerErrorWarning(true);
@@ -222,6 +230,15 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
 
     getStripeWebhookUrl(): string {
         return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook`;
+    }
+
+    getStripeConnectWebhookUrl(): string {
+        return AppConsts.remoteServiceBaseUrl + `/api/stripe/processConnectWebhook`;
+    }
+
+    getPayPalWebhookUrl(): string {
+        let key = this.payPalPaymentSettings.webhookKey || '{webhook_key}';
+        return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=&key=${key}`;
     }
 
     copyToClipboard(event) {

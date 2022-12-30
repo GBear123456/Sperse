@@ -14,7 +14,7 @@ import {
 import startCase from 'lodash/startCase';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
-import { finalize } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
@@ -128,7 +128,6 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.modalDialog.startLoading();
         this.profileService.getEmailSettings().subscribe((settings: UserEmailSettings) => {
             this.userEmailSettings = settings;
-            this._initialEmailSettings = cloneDeep(settings);
             if (!this.userEmailSettings.isUserSmtpEnabled) {
                 if (!this.userEmailSettings.from || !this.userEmailSettings.from.emailAddress || this.userEmailSettings.from.emailAddress.length == 0) {
                     this.userEmailSettings.from = new EmailFromSettings({
@@ -147,6 +146,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                     });
                 }
             }
+            this._initialEmailSettings = cloneDeep(this.userEmailSettings);
             this.changeDetectorRef.detectChanges();
         });
         this.profileService.getCurrentUserProfileForEdit()
@@ -154,12 +154,14 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             .subscribe((result) => {
                 this.smsEnabled = this.settingService.getBoolean('App.UserManagement.SmsVerificationEnabled');
                 this.user = result;
-                this._initialUserSettings = cloneDeep(result);
-                this._initialTimezone = result.timezone;
                 this.canChangeUserName = this.user.name !== AppConsts.userManagement.defaultAdminUserName;
                 this.isGoogleAuthenticatorEnabled = result.isGoogleAuthenticatorEnabled;
                 this.isPhoneNumberConfirmed = result.isPhoneNumberConfirmed;
                 this.isPhoneNumberEmpty = result.phoneNumber === '';
+                setTimeout(() => {
+                    this._initialUserSettings = cloneDeep(this.user);
+                    this._initialTimezone = this.user.timezone;
+                }, 600);
                 this.changeDetectorRef.detectChanges();
             });
 
@@ -196,8 +198,9 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     save(): void {
         this.modalDialog.startLoading();
         (this.currentTab == this.ls.l('Email') ?
-            this.profileService.updateEmailSettings(this.userEmailSettings) :
-            this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user))
+            this.profileService.updateEmailSettings(this.userEmailSettings).pipe(tap(() => {
+                sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
+            })) : this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user))
         ).pipe(finalize(() => this.modalDialog.finishLoading())).subscribe(() => {
             this.appSessionService.user.name = this.user.name;
             this.appSessionService.user.surname = this.user.surname;

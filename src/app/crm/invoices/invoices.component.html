@@ -1,0 +1,147 @@
+<div>
+    <app-headline [names]="[ l('Invoices') ]"
+                  icon="people"
+                  [buttons]="headlineButtons"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="ui.showReload"
+                  [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="true"
+                  [showTotalCount]="true"
+                  [showStateResetButton]="true"
+                  [totalCount]="totalCount"
+                  [totalErrorMsg]="totalErrorMsg"
+                  (onToggleToolbar)="toggleToolbar()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onReload)="invalidate()"
+                  (onStateReset)="dataGrid.instance.state(null)"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+        <import-progress-bar></import-progress-bar>
+    </app-headline>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <div class="main-wrapper">
+        <invoice-grid-menu (onRefresh)="invalidate()">
+        </invoice-grid-menu>
+        <dx-tooltip target=""
+                    hideEvent="dxhoverend">
+        </dx-tooltip>
+        <div class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                <dx-data-grid class="main-component-view limitedPagerTotal"
+                              accesskey="narrowHeaderPanel"
+                              [renderAsync]="true"
+                              [dataSource]="dataSource"
+                              [hoverStateEnabled]="true"
+                              [allowColumnReordering]="true"
+                              [columnAutoWidth]="true"
+                              [allowColumnResizing]="true"
+                              [columnChooser]="{
+                                    height: rowsViewHeight
+                                }"
+                              [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
+                              [loadPanel]="{ enabled: false }"
+                              (onOptionChanged)="onGridOptionChanged($event)"
+                              (onContentReady)="onContentReady($event)"
+                              (onCellClick)="onCellClick($event)"
+                              (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                    <dxo-pager [visible]="true"></dxo-pager>
+                    <dxo-selection selectAllMode="page"
+                                   showCheckBoxesMode="always"
+                                   mode="multiple">
+                    </dxo-selection>
+                    <dxo-scrolling mode="infinite"></dxo-scrolling>
+
+                    <dxi-column alignment="center" width="50px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"
+                                [visibleIndex]="0"
+                                [showInColumnChooser]="false"
+                                [allowReordering]="false"
+                                [allowExporting]="false"
+                                [allowGrouping]="false"
+                                [allowSorting]="false"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.Number" [caption]="l('Number')" cssClass="font-weight-bold clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.Date" [caption]="l('Date')" cellTemplate="invoiceDateCell"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.FullName" name="FullName" [caption]="l('Customer.Name')" cellTemplate="fullNameCell"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.Description" [caption]="l('Description')" cssClass="clipboard-holder description-column"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.OrderStageName" name="OrderStageName" [caption]="l('Stage')" cellTemplate="stageCell" width="160px"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.Coupon" [caption]="l('Coupon')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.LastPaymentType" name="LastPaymentType" [caption]="l('PaymentType')" cellTemplate="paymentTypeCell"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.Status" [caption]="l('Status')" alignment="center" cellTemplate="statusCell"></dxi-column>
+                    <dxi-column name="DueStatus" [caption]="l('DueStatus')" cellTemplate="dueStatusCell"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.GrandTotal" [caption]="l('GrandTotal')" cellTemplate="amountTemplate"></dxi-column>
+
+                    <dxi-column [dataField]="invoiceFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.AffiliateContactName" [caption]="l('MentorName')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.DueDate" [caption]="l('DueDate')" cellTemplate="dueDateCell" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.LastPaymentDate" [caption]="l('PaymentDate')" cellTemplate="dateTimeCell" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.LastPaymentGateway" [caption]="l('Gateway')" [visible]="false"></dxi-column>
+
+                    <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
+                    <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
+                        <span> {{ cell.data.GrandTotal | currency:currency:'symbol':'1.2-2' }} </span>
+                    </div>
+                    <div *dxTemplate="let cellData of 'invoiceDateCell'" class="clipboard-holder">
+                        {{cellData.value | date:formatting.date}}
+                    </div>
+                    <div *dxTemplate="let cellData of 'dateTimeCell'" class="clipboard-holder">
+                        {{cellData.value | datetime:formatting.dateTimeMoment}}
+                    </div>
+                    <div *dxTemplate="let cellData of 'paymentTypeCell'" class="payment-type-cell">
+                        <span *ngIf="cellData.value; else emptyType">{{ l(cellData.value) }}</span>
+                        <ng-template #emptyType>
+                            <span *ngIf="cellData.data.LastPaymentDate" class="unkown-type">unknown</span>
+                        </ng-template>
+                        <i *ngIf="cellData.data.LastPaymentDate"
+                           (mouseenter)="gatewayInfoMouseenter($event)"
+                           [attr.data-date]="cellData.data.LastPaymentDate | datetime: formatting.dateMoment"
+                           class="fa fa-info date-icon">
+                        </i>
+                    </div>
+                    <div *dxTemplate="let cellData of 'dueDateCell'" class="clipboard-holder">
+                        {{ cellData.value ? (cellData.value | date:formatting.date) : l('Invoice_DueOnReceipt') }}
+                    </div>
+                    <div *dxTemplate="let cellData of 'dueStatusCell'" class="clipboard-holder">
+                        <ng-container *ngIf="cellData.data.DueStatus">
+                            <span class="due-status {{cellData.data.DueStatus}}">{{l('DueStatus_' + cellData.data.DueStatus)}}</span>
+                            <span class="due-text">{{ cellData.data.DueStatusMessage }}</span>
+                        </ng-container>
+                    </div>
+                    <div *dxTemplate="let cellData of 'fullNameCell'">
+                        <img class="photo" src="{{profileService.getContactPhotoUrl(cellData.data.PhotoPublicId)}}" />
+                        <span class="clipboard-holder">{{cellData.value}}</span>
+                    </div>
+                    <div *dxTemplate="let cellData of 'stageCell'">
+                        <dx-select-box displayExpr="name"
+                                       valueExpr="name"
+                                       [disabled]="!hasOrdersManage"
+                                       [(value)]="cellData.value"
+                                       [dataSource]="stages$ | async"
+                                       (onOptionChanged)="onStageOptionChanged(cellData, $event)"
+                                       (onValueChanged)="updateOrderStage(cellData)">
+                        </dx-select-box>
+                    </div>
+                    <div *dxTemplate="let cellData of 'statusCell'" class="status-wrapper">
+                        <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ startCase(cellData.value) }}</div>
+                    </div>
+                    <dxo-sorting mode="multiple"></dxo-sorting>
+                    <dxo-group-panel [visible]="true"></dxo-group-panel>
+                    <dxo-summary>
+                        <dxi-total-item [column]="invoiceFields.Number"
+                                        summaryType="count"
+                                        [customizeText]="customizeTotal">
+                        </dxi-total-item>
+                        <dxi-total-item [customizeText]="customizeSum"
+                                        [column]="invoiceFields.GrandTotal"
+                                        summaryType="sum">
+                        </dxi-total-item>
+                    </dxo-summary>
+                </dx-data-grid>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-no-data [hidden]="!isDataLoaded || totalRowCount"
+             [showLink]="false">
+</app-no-data>

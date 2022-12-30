@@ -21,6 +21,9 @@ import {
     UserServiceProxy,
     ContactServiceProxy,
     ContactCommunicationServiceProxy,
+    EmailTemplateServiceProxy,
+    IBulkSendEmailInput,
+    BulkSendEmailInput,
     ISendEmailInput,
     SendEmailInput,
     ISendSMSInput,
@@ -67,6 +70,8 @@ import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-p
 import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
 import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { AppFeatures } from '@shared/AppFeatures';
+import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
@@ -107,10 +112,12 @@ export class ContactsService {
     next: Subject<any> = new Subject();
 
     constructor(injector: Injector,
+        private appService: AppService,
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
         private documentProxy: DocumentServiceProxy,
+        private emailTemplateProxy: EmailTemplateServiceProxy,
         private communicationProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,
@@ -342,16 +349,15 @@ export class ContactsService {
             : this.contactProxy.getContactInfo(contactId);
     }
 
-    initSuggestionEmails(emailData) {
+    initSuggestionEmails(emailData, title: string) {
         if (emailData.contact) {
             emailData.contactId = emailData.contact.id;
             emailData.suggestionEmails = emailData.contact.personContactInfo.details.emails
                 .filter(item => item.isActive).map(item => item.emailAddress);
 
-            let subject = emailData.subject;
-            if (emailData.suggestionEmails.length && !(subject &&
-                (subject.startsWith('Fwd:') || subject.startsWith('Re:'))
-            )) emailData.to = [emailData.suggestionEmails[0]];
+            if (emailData.suggestionEmails.length && ['Reply', 'ReplyToAll', 'Forward', 'Resend'].indexOf(title) < 0) {
+                emailData.to = [emailData.suggestionEmails[0]];
+            }
 
             emailData.contact.personContactInfo.details.phones
                 .filter(item => item.usageTypeId == 'F' && item.isActive) //Home Fax
@@ -359,9 +365,9 @@ export class ContactsService {
         }
     }
 
-    initEmailDialogTagsList(dialogComponent) {
+    initEmailDialogTagsList(dialogComponent: EmailTemplateDialogComponent) {
         if (!dialogComponent.tagsList || !dialogComponent.tagsList.length) {
-            dialogComponent.tagsList = this.getEmailTemplateTags(EmailTemplateType.Contact);
+            dialogComponent.tagsList = this.getEmailTemplateTags(dialogComponent.data.templateType);
         }
     }
 
@@ -374,14 +380,15 @@ export class ContactsService {
                     EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany,
                     EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone,
                     EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite, EmailTags.SenderCalendly,
-                    EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature
+                    EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature, EmailTags.SubscribeLink, EmailTags.UnsubscribeLink
                 ];
             case EmailTemplateType.Invoice:
                 return [
-                    EmailTags.ClientFirstName, EmailTags.ClientLastName, EmailTags.LegalName, EmailTags.InvoiceNumber, EmailTags.InvoiceGrandTotal, EmailTags.InvoiceDueDate, EmailTags.InvoiceLink,
-                    EmailTags.InvoiceAnchor, EmailTags.SenderFullName, EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite1, EmailTags.SenderWebSite2, EmailTags.SenderWebSite3,
-                    EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone, EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite,
-                    EmailTags.SenderCalendly, EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature
+                    EmailTags.ClientFirstName, EmailTags.ClientLastName, EmailTags.LegalName, EmailTags.InvoiceNumber, EmailTags.InvoiceGrandTotal, EmailTags.InvoiceDueDate, 
+                    EmailTags.InvoiceLink, EmailTags.InvoicePayLink, EmailTags.InvoiceAnchor, EmailTags.SenderFullName, EmailTags.SenderPhone, EmailTags.SenderEmail,
+                    EmailTags.SenderWebSite1, EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo,
+                    EmailTags.SenderCompanyPhone, EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite, EmailTags.SenderCalendly, EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature,
+                    EmailTags.SubscribeLink, EmailTags.UnsubscribeLink
                 ];
             case EmailTemplateType.WelcomeEmail:
                 return [
@@ -402,7 +409,7 @@ export class ContactsService {
             data: {
                 ...templateData,
                 title: addMode ? this.ls.l('Add Template') : this.ls.l('Edit Template'),
-                templateType: 'Contact',
+                templateType: EmailTemplateType.Contact,
                 saveTitle: this.ls.l('Save'),
                 hideContextMenu: addMode,
                 addMode: addMode
@@ -427,11 +434,11 @@ export class ContactsService {
         if (!emailData.templateType)
             emailData.templateType = EmailTemplateType.Contact;
         if (emailData.contact)
-            this.initSuggestionEmails(emailData);
+            this.initSuggestionEmails(emailData, title);
         else if (emailData['contactId'])
             this.getContactInfo(emailData['contactId']).subscribe((contactInfo: ContactInfoDto) => {
                 emailData.contact = contactInfo;
-                this.initSuggestionEmails(emailData);
+                this.initSuggestionEmails(emailData, title);
             });
 
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
@@ -461,13 +468,32 @@ export class ContactsService {
         dialogComponent.onTemplateChange.pipe(
             switchMap((templateId: number) => {
                 dialogComponent.startLoading();
-                return (onTemplateChange ? onTemplateChange(templateId, emailData) :
-                    this.communicationProxy.getEmailData(templateId, emailData['contactId']).pipe(
+
+                let dataLoader$: Observable<any>;
+                if (onTemplateChange)
+                    dataLoader$ = onTemplateChange(templateId, emailData);
+                else {
+                    if (data.contactIds)
+                        dataLoader$ = this.emailTemplateProxy.getTemplate(templateId).pipe(map(res => {
+                            return <GetEmailDataOutput>{
+                                subject: res.subject,
+                                cc: res.cc,
+                                bcc: res.bcc,
+                                previewText: res.previewText,
+                                body: res.body
+                            };
+                        }));
+                    else
+                        dataLoader$ = this.communicationProxy.getEmailData(templateId, emailData['contactId'])
+
+                    dataLoader$ = dataLoader$.pipe(
                         map((data: GetEmailDataOutput) => {
                             Object.assign(emailData, data);
                         })
-                    )
-                ).pipe(
+                    );
+                }
+
+                return dataLoader$.pipe(
                     finalize(() => dialogComponent.finishLoading())
                 );
             })
@@ -485,10 +511,12 @@ export class ContactsService {
                         });
                     });
                 }
-                return this.sendEmail(res, () => {dialogComponent.finishLoading()});
+                return data.contactIds ? 
+                    this.sendBulkEmail(res, () => {dialogComponent.finishLoading()}) :
+                    this.sendEmail(res, () => {dialogComponent.finishLoading()});
             }),
             tap((res: number) => {
-                if (!isNaN(res)) {
+                if (data.contactIds && !res || !isNaN(res)) {
                     this.notifyService.info(this.ls.l('MailSent'));
                     dialogComponent.close();
                 }
@@ -524,6 +552,16 @@ export class ContactsService {
         }
 
         return dialogComponent;
+    }
+
+    sendBulkEmail(input: IBulkSendEmailInput, finalizeMethod: () => void): Observable<any> {
+        return new Observable<any>((observer) => {
+            this.communicationProxy.bulkEmailSend(new BulkSendEmailInput(input)).pipe(
+                finalize(() => finalizeMethod())
+            ).subscribe(() => {
+                observer.next();
+            }, err => {observer.next(err)});
+        });
     }
 
     sendEmail(input: ISendEmailInput, finalizeMethod: () => void): Observable<number> {
@@ -853,5 +891,9 @@ export class ContactsService {
                 ' at ' + date.format(AppConsts.formatting.dateMoment) +
                 ' by ' + (data.confirmedByUserFullName || this.ls.l('System')) : ''
         );
+    }
+
+    getFeatureCount(feature: AppFeatures) {
+        return this.appService.getFeatureCount(feature);
     }
 }

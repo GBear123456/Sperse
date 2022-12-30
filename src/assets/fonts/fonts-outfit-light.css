@@ -1,0 +1,39 @@
+@font-face {
+    font-family: "Outfit";
+    src: local("Outfit-SemiBold"),
+        url("./Outfit-Light/Outfit-SemiBold.woff2") format("woff2"),
+        url("./Outfit-Light/Outfit-SemiBold.woff") format("woff");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Outfit";
+    src: local("Outfit-Medium"),
+        url("./Outfit-Light/Outfit-Medium.woff2") format("woff2"),
+        url("./Outfit-Light/Outfit-Medium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Outfit";
+    src: local("Outfit-Regular"),
+        url("./Outfit-Light/Outfit-Regular.woff2") format("woff2"),
+        url("./Outfit-Light/Outfit-Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Outfit";
+    src: local("Outfit-Light"),
+        url("./Outfit-Light/Outfit-Light.woff2") format("woff2"),
+        url("./Outfit-Light/Outfit-Light.woff") format("woff");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}

@@ -96,7 +96,7 @@
         </div>
     </ng-container>
 </div>
-<div *ngIf="isHost || !isMultiTenancyEnabled || (twoFactorLoginSettings && twoFactorLoginSettings.isEnabledForApplication)"
+<div *ngIf="twoFactorLoginSettings && (isHost || !isMultiTenancyEnabled || twoFactorLoginSettings.isEnabledForApplication)"
      class="two-factor-login">
     <h5>{{ ls.l("TwoFactorLogin") }}</h5>
     <div class="columns">

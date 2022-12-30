@@ -5,6 +5,7 @@ import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ViewChil
 import { filter, finalize, first } from 'rxjs/operators';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { NotifyService } from 'abp-ng2-module';
+import Validator from 'devextreme/ui/validator';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -14,8 +15,7 @@ import {
     TenantPaymentSettingsServiceProxy,
     InvoiceSettings,
     InvoiceSettingsDto,
-    Tier2CommissionSource,
-    CommissionAffiliateAssignmentMode
+    InvoicePaymentMethod
 } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -36,12 +36,11 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild('dueGraceValidator') dueGraceValidatorComponent;
 
     settings = new InvoiceSettingsDto();
-    hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
-    isRateDisabled = this.isManageUnallowed || !this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     buttons: IDialogButton[] = [
         {
             id: 'cancelTemplateOptions',
@@ -57,19 +56,16 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             action: this.save.bind(this)
         }
     ]
+    paymentMethods = Object.keys(InvoicePaymentMethod).filter(v => typeof InvoicePaymentMethod[v] === "number").map(item => {
+        return {
+            id: item,
+            checked: true,
+            visible: false,
+            value: InvoicePaymentMethod[item],
+            name: this.ls.l(item)
+        }
+    });
     EmailTemplateType = EmailTemplateType;
-    tier2SourceOptions = Object.keys(Tier2CommissionSource).map(item => {
-        return {
-            id: Tier2CommissionSource[item],
-            text: this.ls.l(item)
-        };
-    });
-    commissionAffiliateAssignmentModeOptions = Object.keys(CommissionAffiliateAssignmentMode).map(item => {
-        return {
-            id: CommissionAffiliateAssignmentMode[item],
-            text: this.ls.l('AffiliateAssignmentMode_' + item)
-        };
-    });
 
     constructor(
         public dialog: MatDialog,
@@ -87,14 +83,17 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.modalDialog.startLoading();
-        this.invoicesService.settings$.pipe(filter(Boolean), first(),
-            finalize(() => this.modalDialog.finishLoading())
-        ).subscribe((res: InvoiceSettingsDto) => {
-            this.settings = new InvoiceSettingsDto(res);
-            this.settings.defaultAffiliateRate = this.convertFromPercent(this.settings.defaultAffiliateRate);
-            this.settings.defaultAffiliateRateTier2 = this.convertFromPercent(this.settings.defaultAffiliateRateTier2);
-            this.changeDetectorRef.markForCheck();
-        });
+        this.invoicesService.settings$.pipe(
+            filter(Boolean),
+            first(),
+            finalize(() => {
+                this.modalDialog.finishLoading();
+            }))
+            .subscribe((result: InvoiceSettingsDto) => {
+                this.settings = result;
+                this.initPaymentMethods();
+                this.changeDetectorRef.markForCheck();
+            });
         this.changeDetectorRef.detectChanges();
     }
 
@@ -102,16 +101,44 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         if (this.isManageUnallowed)
             return;
 
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        if (!dueGraceValidator.validate().isValid)
+            return;
+
         this.modalDialog.startLoading();
-        this.settings.defaultAffiliateRate = this.convertToPercent(this.settings.defaultAffiliateRate);
-        this.settings.defaultAffiliateRateTier2 = this.convertToPercent(this.settings.defaultAffiliateRateTier2);
-        this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings)).pipe(
-            finalize(() => this.modalDialog.finishLoading())
-        ).subscribe(() => {
-            this.notifyService.info(this.ls.l('SavedSuccessfully'));
-            this.invoicesService.invalidateSettings(this.settings);
-            this.dialogRef.close(this.settings);
+        this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings))
+            .pipe(
+                finalize(() => {
+                    this.modalDialog.finishLoading();
+                })
+            ).subscribe(() => {
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.invoicesService.invalidateSettings(this.settings);
+                this.dialogRef.close(this.settings);
+            });
+    }
+
+    initPaymentMethods() {
+        this.paymentMethods.forEach(v => {
+            v.checked = !((this.settings.forbiddenPaymentMethods & v.value) == v.value);
         });
+        this.paymentMethods.forEach(v => {
+            v.visible = (this.settings.configuredPaymentMethods & v.value) == v.value;
+        });
+    }
+
+    paymentMethodChanged(event, value) {
+        if (event.value) {
+            this.settings.forbiddenPaymentMethods ^= value;
+        }
+        else {
+            this.settings.forbiddenPaymentMethods |= value;
+        }
+    }
+
+    onDueGracePeriodFocusOut() {
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        dueGraceValidator.validate();
     }
 
     showBankSettingsDialog() {
@@ -123,18 +150,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
                 isManageUnallowed: this.isManageUnallowed
             }
         });
-    }
-
-    convertFromPercent(value: number): number {
-        if (value !== null)
-            return parseFloat((value * 100).toFixed(2));
-        return value;
-    }
-
-    convertToPercent(value: number): number {
-        if (value !== null)
-            return parseFloat((value / 100).toFixed(4));
-        return value;
     }
 
     openAdvisorContactList(event) {

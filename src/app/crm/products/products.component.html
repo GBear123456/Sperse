@@ -1,6 +1,5 @@
 <div>
-    <app-headline [names]="[ l('Products') ]"
-                  icon="people"
+    <app-headline icon="people"
                   [buttons]="headlineButtons"
                   [showToggleCompactViewButton]="true"
                   [showToggleToolbarButton]="true"
@@ -12,7 +11,11 @@
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="invalidate()"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <span *ngIf="totalCount !== undefined" class="total-count">({{ totalCount }})</span>
+        <dx-select-box [items]="headerOptions"
+                       [(value)]="activeHeaderOption"
+                       [readOnly]="!isInvoicesEnabled"
+                       (onValueChanged)="navigateToCoupons($event)">
+        </dx-select-box>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>

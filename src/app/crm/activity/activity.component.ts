@@ -127,6 +127,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     toolbarConfig: ToolbarGroupModel[];
     layoutTypes = DataLayoutType;
     readonly activityFields: KeysEnum<ActivityDto> = ActivityFields;
+    showUserActivitiesOnly = false;
 
     constructor(
         injector: Injector,
@@ -180,10 +181,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         request.url = endpoint.url + 'api/services/CRM/Activity/'
                             + (customize ? 'Move' : 'Delete?Id=' + endpoint.id);
                     } else {
+                        if (this.showUserActivitiesOnly)
+                            request.params['assignedUserIds[0]'] = this.appSession.userId;
                         request.params.$filter = buildQuery(
                             {
                                 filter: [
-//                                    {AssignedUserIds: {any: {Id: this.appSession.userId}}},
                                     {
                                         or: [
                                             {and: [{StartDate: {le: this.getEndDate()}}, {EndDate: {ge: this.getStartDate()}}]}
@@ -222,10 +224,14 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         };
     }
 
-    getCurrentDate() {
-        let date = new Date(this.currentDate);
-        date.setTime(date.getTime() - (date.getTimezoneOffset() * 60 * 1000));
-        return moment.utc(date);
+    getCurrentDate(isStartDate = true) {
+        let period = <any>this.getPeriodType(),
+            date = moment.utc(this.currentDate.toDateString());
+        if (['month', 'week'].includes(period))
+            date = date[isStartDate ? 'startOf' : 'endOf'](period).add(
+                !this.showPipeline && period == 'month' ? (isStartDate ? -10 : 10) : 0, 'days');
+
+        return date.toDate();
     }
 
     getPeriodType() {
@@ -237,15 +243,17 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     getStartDate() {
-        let period = <any>this.getPeriodType();
-        return this.getCurrentDate().startOf(period)
-            .add(!this.showPipeline && period == 'month' ? -10 : 0, 'days').toDate();
+        return DateHelper.removeTimezoneOffset(this.getCurrentDate(), true, 'from');
     }
 
     getEndDate() {
-        let period = <any>this.getPeriodType();
-        return this.getCurrentDate().endOf(period)
-            .add( !this.showPipeline && period == 'month' ? 10 : 0, 'days').toDate();
+        return DateHelper.removeTimezoneOffset(this.getCurrentDate(false), true, 'to');
+    }
+
+    isSameDate(start, end) {
+        if (start && end)
+            return moment(start).format('MMM DD') == moment(end).format('MMM DD');
+        return true;
     }
 
     initToolbarConfig() {
@@ -273,22 +281,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         },
                         attr: {
                             'filter-selected': this.filtersService.hasFilterSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'search',
-                        widget: 'dxTextBox',
-                        options: {
-                            visible: false,
-                            value: this.searchValue,
-                            width: '279',
-                            mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Tasks').toLowerCase()
                         }
                     }
                 ]
@@ -350,7 +342,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             width: 250,
                             height: 40,
                             readOnly: true,
-                            visible: this.currentView != 'month',
+                            visible: ['day', 'week'].includes(this.currentView),
                             value: this.l('CellDurationMinutes') + ':'
                         }
                     },
@@ -359,7 +351,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         options: {
                             width: 60,
                             height: 40,
-                            visible: this.currentView != 'month',
+                            visible: ['day', 'week'].includes(this.currentView),
                             value: this.cellDuration,
                             showSpinButtons: true,
                             onValueChanged: event => {
@@ -368,6 +360,30 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             step: 5,
                             max: 60,
                             min: 5
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                areItemsDependent: false,
+                items: [
+                    {
+                        widget: 'dxCheckBox',
+                        options: {
+                            visible: true,
+                            value: this.showUserActivitiesOnly,
+                            width: '150px',
+                            elementAttr: {style: 'margin-right: 15px;'},
+                            text: this.l('My Activities'),
+                            onValueChanged: (event) => {
+                                this.showUserActivitiesOnly = event.value;
+                                if (this.showPipeline)
+                                    this.setPipelineDataSource();
+                                else
+                                    this.refresh();
+                            }
                         }
                     }
                 ]
@@ -552,6 +568,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
+                    if (this.showUserActivitiesOnly)
+                        request.params['assignedUserIds[0]'] = this.appSession.userId;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
                 deserializeDates: false,
@@ -559,7 +577,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             }
         };
         if (this.pipelineView)
-            dataSource['customFilter'] = { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] };
+            dataSource['customFilter'] = { 
+                odata: {and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }]},
+                params: this.showUserActivitiesOnly ? [{name: 'assignedUserIds[0]', value: this.appSession.userId}] : []
+            };
 
         this.pipelineDataSource = dataSource;
 
@@ -641,8 +662,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             });
     }
 
-    deleteAppointment(appointment: ActivityDto) {
-        this.schedulerComponent.instance.deleteAppointment(<any>appointment);
+    deleteAppointment(event, appointment: any) {
+        event.stopPropagation();
+        if (appointment) {
+            let instance = this.schedulerComponent.instance;
+            instance.hideAppointmentTooltip();
+            instance.deleteAppointment(appointment);
+        }
     }
 
     getDateWithTimezone(value) {
@@ -717,15 +743,15 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     updateCalendarCaption() {
+        let momentDate = moment.utc(this.currentDate.toDateString());
         switch (this.currentView) {
             case 'agenda':
             case 'day':
-                this.calendarCaption = moment(this.currentDate).format('D MMMM YYYY');
+                this.calendarCaption = momentDate.format('D MMMM YYYY');
                 break;
             case 'week':
-                let momentDate = moment(this.currentDate);
-                let weekStart = moment(this.currentDate).startOf('week');
-                let weekEnd = moment(this.currentDate).endOf('week');
+                let weekStart = momentDate.startOf('week');
+                let weekEnd = momentDate.endOf('week');
                 if (weekStart.month() == momentDate.month() && weekEnd.month() == momentDate.month()) {
                     this.calendarCaption = `${weekStart.date()} - ${weekEnd.date()} ${momentDate.format('MMMM YYYY')}`;
                 } else {
@@ -733,7 +759,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 }
                 break;
             case 'month':
-                this.calendarCaption = moment(this.currentDate).format('MMMM YYYY');
+                this.calendarCaption = momentDate.format('MMMM YYYY');
                 break;
             default:
                 this.calendarCaption = 'All period';

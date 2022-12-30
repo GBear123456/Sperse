@@ -1,0 +1,104 @@
+:host {
+    .form-group {
+        display: flex;
+
+        label {
+            width: 25%;
+            margin-right: 10px;
+        }
+
+        ::ng-deep dx-text-box,
+        ::ng-deep dx-text-area,
+        ::ng-deep dx-number-box {
+            width: 63%;
+
+            .dx-placeholder, input, textarea {
+                font-size: 15px;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+                color: #424c56;
+            }
+
+            .dx-placeholder {
+                font-style: italic;
+                color: lightgray;
+            }
+
+            &.dx-texteditor-empty.dx-state-focused .dx-placeholder {
+                font-size: 11px;
+            }
+        }
+
+        ::ng-deep dx-number-box {
+            width: 200px;
+        }
+
+        &.email-template {
+            ::ng-deep email-template-selector {
+                .email-template-selector {
+                    display: flex;
+
+                    h5 {
+                        font-size: 14px;
+                        letter-spacing: 0.2px;
+                        color: #677380;
+                        min-width: 180px;
+                        border-bottom: 1px solid #dfdfdf;
+                        margin-bottom: 0;
+                        display: flex;
+                        align-items: center;
+                        font-weight: normal;
+                        height: 49px;
+                        margin-right: 10px;
+                    }
+
+                    .dx-texteditor-input-container input {
+                        font-size: 15px;
+                        font-weight: 500;
+                        letter-spacing: 0.3px;
+                        color: #424c56;
+                    }
+                }
+            }
+        }
+
+        &.default-advisor {
+            height: 45px;
+            align-items: center;
+
+            label {
+                height: 45px;
+            }
+
+            .advisor-name {
+                font-size: 15px;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+                color: #424c56;
+
+                .empty {
+                    font-style: italic;
+                    color: lightgray;
+                }
+
+                .edit {
+                    font-size: 18px;
+                    padding: 7px;
+                    cursor: pointer;
+                    color: #00aeef;
+                }
+
+                .remove {
+                    font-weight: 100;
+                    font-size: 20px;
+                    color: red;
+                }
+            }
+        }
+    }
+
+    .payment-methods > span {
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+}

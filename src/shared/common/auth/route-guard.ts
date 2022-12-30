@@ -80,8 +80,10 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
-        let bestRoute = (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT ?
-            this.getBestRouteForTenant() : this.getBestRouteForHost());
+        let tenant = this.sessionService.tenant,
+            isDefaultLayout = tenant && (!tenant.customLayoutType || tenant.customLayoutType == LayoutType.Default),
+            bestRoute = (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT ?
+                this.getBestRouteForTenant(isDefaultLayout ? 'CRM' : null) : this.getBestRouteForHost());
         return bestRoute === null ? '/app/access-denied' : bestRoute;
     }
 

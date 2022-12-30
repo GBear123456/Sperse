@@ -13,6 +13,7 @@ export enum EmailTags {
     InvoiceGrandTotal    = 'InvoiceGrandTotal',
     InvoiceDueDate       = 'InvoiceDueDate',
     InvoiceLink          = 'InvoiceLink',
+    InvoicePayLink       = 'InvoicePayLink',
     InvoiceAnchor        = 'InvoiceAnchor',
     FirstName            = 'FirstName',
     LastName             = 'LastName',
@@ -33,7 +34,9 @@ export enum EmailTags {
     SenderCompanyWebSite = 'SenderCompanyWebSite',
     SenderCalendly       = 'SenderCalendly',
     SenderAffiliateCode  = 'SenderAffiliateCode',
-    SenderEmailSignature = 'SenderEmailSignature'
+    SenderEmailSignature = 'SenderEmailSignature',
+    SubscribeLink = 'SubscribeLink',
+    UnsubscribeLink = 'UnsubscribeLink'
 }
 
 export enum WelcomeEmailTags {

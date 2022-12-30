@@ -74,7 +74,7 @@ export abstract class AppComponentBase implements OnDestroy {
     }
     get exportService() {
         if (!this._exportService)
-           this._exportService = this._injector.get(ExportService);
+            this._exportService = this._injector.get(ExportService);
         return this._exportService;
     }
 
@@ -257,12 +257,13 @@ export abstract class AppComponentBase implements OnDestroy {
         if (this.searchValue && this.searchClear) {
             this.searchValue = '';
             this.invalidate();
-        } if (this.dataGrid && this.dataGrid.instance) {
+        }
+        if (this.dataGrid && this.dataGrid.instance) {
             let grid = this.dataGrid.instance,
                 scroll = grid.getScrollable();
             if (scroll) {
                 scroll.update();
-                setTimeout(() => {                    
+                setTimeout(() => {
                     if (this._prevScrollPos)
                         scroll.scrollTo(this._prevScrollPos);
                 }, 200);

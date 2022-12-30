@@ -17,7 +17,6 @@ import { Router } from '@angular/router';
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
-import { CacheService } from 'ng2-cache-service';
 import { Observable, Subscription } from 'rxjs';
 import { filter, finalize, first, map, switchMap, pluck } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
@@ -43,14 +42,10 @@ import {
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup, ContactStatus } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import {
-    ContactGroupDto,
     AddressUsageTypeDto,
-    ContactAddressServiceProxy,
-    ContactEmailServiceProxy,
     ContactLinkTypeDto,
-    ContactPhoneServiceProxy,
     ContactPhotoInput,
     ContactPhotoServiceProxy,
     ContactServiceProxy,
@@ -69,9 +64,7 @@ import {
     PropertyInput,
     SimilarContactOutput,
     StageDto,
-    TrackingInfo,
-
-    InvoiceSettings
+    TrackingInfo
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarEntitiesDialogComponent } from './similar-entities-dialog/similar-entities-dialog.component';
@@ -85,13 +78,11 @@ import { ValidationHelper } from '@shared/helpers/ValidationHelper';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
-import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
@@ -118,7 +109,7 @@ import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-p
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 import { AddressFieldsComponent } from './address-fields/address-fields.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { Country } from '@shared/AppEnums';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: 'create-entity-dialog.component.html',
@@ -159,8 +150,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     currentUserId = abp.session.userId;
     person = new PersonInfoDto();
-    invoiceSettings: InvoiceSettings = new InvoiceSettings();
-    currencyFormat = { style: 'currency', currency: 'USD', useGrouping: true };
+    currencyFormat = { style: 'currency', currency: SettingsHelper.getCurrency(), useGrouping: true };
 
     emailsComponent: any;
     phonesComponent: any;
@@ -319,15 +309,9 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     constructor(
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
-        private contactService: ContactsService,
-        private cacheService: CacheService,
         private router: Router,
-        private contactPhoneService: ContactPhoneServiceProxy,
-        private contactEmailService: ContactEmailServiceProxy,
-        private contactAddressService: ContactAddressServiceProxy,
         private nameParser: NameParserService,
         private pipelineService: PipelineService,
-        private invoicesService: InvoicesService,
         private orgServiceProxy: OrganizationContactServiceProxy,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -359,7 +343,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.addressTypesLoad();
         this.phoneTypesLoad();
         this.emailTypesLoad();
-        this.invoiceSettingsLoad();
         if (!this.hideLinksField)
             this.linkTypesLoad();
         if (this.data.isInLeadMode)
@@ -1112,16 +1095,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             },
             () => this.modalDialog.finishLoading()
         );
-    }
-
-    invoiceSettingsLoad() {
-        this.invoicesService.settings$.pipe(
-            filter(Boolean), first()
-        ).subscribe((settings: InvoiceSettings) => {
-            this.invoiceSettings = settings;
-            this.currencyFormat.currency = settings.currency;
-            this.changeDetectorRef.detectChanges();
-        });
     }
 
     onStagesChanged(event) {

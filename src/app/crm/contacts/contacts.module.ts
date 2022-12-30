@@ -34,6 +34,7 @@ import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
 import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
 import { DxFileManagerModule } from 'devextreme-angular';
@@ -97,6 +98,7 @@ import {
     PersonOrgRelationServiceProxy,
     PersonContactServiceProxy,
     DocumentTypeServiceProxy,
+    EmailTemplateServiceProxy,
     ContactCommunicationServiceProxy,
     PartnerServiceProxy,
     PartnerTypeServiceProxy,
@@ -105,7 +107,8 @@ import {
     CustomerServiceProxy,
     ContactPhotoServiceProxy,
     PropertyServiceProxy,
-    ContactUserServiceProxy
+    ContactUserServiceProxy,
+    PreferencesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
@@ -142,16 +145,18 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
 import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module';
 import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { OrgUnitsTreeModule } from '@shared/common/organization-units-tree/organization-units-tree.module';
+import { InvoiceGridMenuModule } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.module'
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
-import { AddProductDialogComponent } from './subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
+import { AddProductDialogComponent, FilterAssignmentsPipe } from './subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './subscriptions/add-subscription-dialog/add-member-service-dialog/add-member-service-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { AffiliateHistoryDialogComponent } from './personal-details/personal-details-dialog/affiliate-history-dialog/affiliate-history-dialog.component';
 import { PersonHistoryDialogComponent } from './personal-details/personal-details-dialog/person-history-dialog/person-history-dialog.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 import { PropertyInformationComponent } from '@app/crm/contacts/property-information/property-information.component';
+import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity-dialog/create-activity-dialog.component';
 
 @NgModule({
     declarations: [
@@ -212,13 +217,15 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         CreateInvoiceDialogComponent,
         LeadRelatedContactsComponent,
         AddProductDialogComponent,
+        FilterAssignmentsPipe,
         AddMemberServiceDialogComponent,
         TemplateDocumentsDialogComponent,
         AffiliateHistoryDialogComponent,
         PersonHistoryDialogComponent,
         CustomerListDialogComponent,
         PropertyInformationComponent,
-        ResellerActivityComponent
+        ResellerActivityComponent,
+        CreateActivityDialogComponent
     ],
     imports: [
         FormsModule,
@@ -261,6 +268,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         NgxFileDropModule,
         ImageViewerModule,
         DxDropDownBoxModule,
+        DxSchedulerModule,
         VgCoreModule,
         VgControlsModule,
         VgOverlayPlayModule,
@@ -281,9 +289,11 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         MatExpansionModule,
         GooglePlaceModule,
         MatTooltipModule,
-        FeaturesModule
+        FeaturesModule,
+        InvoiceGridMenuModule
     ],
     entryComponents: [
+        CreateActivityDialogComponent,
         CreateInvoiceDialogComponent,
         EditContactDialog,
         EditAddressDialog,
@@ -330,15 +340,19 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         DocumentTypeServiceProxy,
         OrderSubscriptionServiceProxy,
         ContactCommunicationServiceProxy,
+        EmailTemplateServiceProxy,
         PropertyServiceProxy,
         ContactUserServiceProxy,
+        PreferencesServiceProxy,
         PersonalDetailsService,
         DocumentsService,
         InvoicesService,
         CrmService
     ],
     exports: [
-        ContactGroupTemplatesComponent
+        ContactGroupTemplatesComponent,
+        EmailTemplateSelectorComponent,
+        CreateActivityDialogComponent
     ]
 })
 export class ContactsModule {}

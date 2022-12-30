@@ -39,6 +39,7 @@
         "strictDomEventTypes": false,
         "strictLiteralTypes": false,
         "strictInjectionParameters": false,
+        "compilationMode": "full",
         "enableIvy": true
     },
     "files": [

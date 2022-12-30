@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { RouteGuard } from '@shared/common/auth/route-guard';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { AccountModule } from './account/account.module';
 
 @Injectable()
 export class AppPreloadingStrategy implements PreloadingStrategy {
@@ -16,8 +17,8 @@ export class AppPreloadingStrategy implements PreloadingStrategy {
 const routes: Routes = [
     {
         path: '',
-        canActivate: [ RouteGuard ],
-        canActivateChild: [ RouteGuard, LocalizationResolver ],
+        canActivate: [RouteGuard],
+        canActivateChild: [RouteGuard, LocalizationResolver],
         children: [
             {
                 path: '',
@@ -26,11 +27,11 @@ const routes: Routes = [
             },
             {
                 path: 'account',
-                loadChildren: () => import('account/account.module').then(m => m.AccountModule), //Lazy load account module
+                loadChildren: () => AccountModule, //async () => (await import('account/account.module')).AccountModule
             },
             {
                 path: 'code-breaker',
-                loadChildren: () => import('bank-code/bank-code.module').then(m => m.BankCodeModule), //Lazy load bank code module
+                loadChildren: async () => (await import('bank-code/bank-code.module')).BankCodeModule,
                 data: {
                     localizationSource: 'Platform',
                     layoutType: LayoutType.BankCode
@@ -38,30 +39,42 @@ const routes: Routes = [
             },
             {
                 path: 'personal-finance',
-                loadChildren: () => import('personal-finance/personal-finance.module').then(m => m.PersonalFinanceModule), //Lazy load account module
+                loadChildren: async () => (await import('personal-finance/personal-finance.module')).PersonalFinanceModule,
                 data: { feature: 'PFM', localizationSource: 'PFM' }
             },
             {
                 path: 'app',
-                loadChildren: () => import('app/app.module').then(m => m.AppModule), //Lazy load desktop module
+                loadChildren: async () => (await import('app/app.module')).AppModule,
                 data: { localizationSource: 'Platform' }
             },
             {
                 path: 'shared/bankpass',
-                loadChildren: () => import('public/bank-pass-host/bank-pass-host.module').then(m => m.BankPassHostModule),
+                loadChildren: async () => (await import('public/bank-pass-host/bank-pass-host.module')).BankPassHostModule,
                 data: { localizationSource: 'Platform' }
             },
             {
                 path: 'shared/why-they-buy',
-                loadChildren: () => import('public/why-they-buy-host/why-they-buy-host.module').then(m => m.WhyTheyBuyHostModule),
+                loadChildren: async () => (await import('public/why-they-buy-host/why-they-buy-host.module')).WhyTheyBuyHostModule,
                 data: { localizationSource: 'Platform' }
             }
         ]
     },
     {
+        path: 'invoicing',
+        canActivate: [LocalizationResolver],
+        loadChildren: async () => (await import('public/invoicing/invoicing.module')).InvoicingModule,
+        data: { localizationSource: 'Platform' }
+    },
+    {
+        path: 'receipt',
+        canActivate: [LocalizationResolver],
+        loadChildren: async () => (await import('public/invoicing/invoicing.module')).InvoicingModule,
+        data: { localizationSource: 'Platform' }
+    },
+    {
         path: '**',
-        canActivateChild: [ LocalizationResolver ],
-        loadChildren: () => import('shared/not-found/not-found.module').then(m => m.NotFoundModule),
+        canActivateChild: [LocalizationResolver],
+        loadChildren: async () => (await import('shared/not-found/not-found.module')).NotFoundModule,
     }
 ];
 
@@ -82,15 +95,14 @@ export class RootRoutingModule implements AfterViewInit {
         private injector: Injector,
         private router: Router,
         private applicationRef: ApplicationRef
-    ) {}
+    ) { }
 
     ngAfterViewInit() {
         this.router.events.subscribe((event: NavigationEnd) => {
-                setTimeout(() => {
-                    this.injector.get(this.applicationRef.componentTypes[0])
-                        .checkSetClasses(abp.session.userId || (event.url.indexOf('/account/') >= 0));
-                }, 0);
-            }
-        );
+            setTimeout(() => {
+                this.injector.get(this.applicationRef.componentTypes[0])
+                    .checkSetClasses(abp.session.userId || (event.url.indexOf('/account/') >= 0));
+            }, 0);
+        });
     }
 }

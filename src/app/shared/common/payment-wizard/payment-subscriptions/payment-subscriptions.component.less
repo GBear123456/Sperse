@@ -1,0 +1,35 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    align-items: center;
+    padding: 50px 100px;
+    position: relative;
+
+    ::ng-deep dx-data-grid {
+        .dx-datagrid-focus-overlay {
+            display: none;
+        }
+        .dx-header-row td:focus {
+            outline: none!important;
+        }
+    }
+
+    .status {
+        font-weight: 600;
+        &.A {
+            color: #16dd16;
+        }
+        &.D {
+            color: gray;
+        }
+        &.C {
+            color: red;
+        }
+        &.E {
+            color: orange;
+        }
+    }
+}

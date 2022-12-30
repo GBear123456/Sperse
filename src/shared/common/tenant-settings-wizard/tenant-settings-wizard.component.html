@@ -1,18 +1,20 @@
 <div class="left">
     <h3>{{ ls.l('Progress') }}</h3>
-    <ul>
-        <li *ngFor="let step of visibleSteps; let i = index"
-            [ngClass]="{
-                selected: i === stepper.selectedIndex,
-                saved: step.saved
-            }"
-            (click)="stepClick(i)">
-            <div class="icon-container">
-                <img [ngClass]="step.name" src="assets/common/icons/tenant-settings/{{ step.name }}.svg">
-            </div>
-            <span>{{ step.text }}</span>
-        </li>
-    </ul>
+    <dx-scroll-view [height]="650">
+        <ul>
+            <li *ngFor="let step of visibleSteps; let i = index"
+                [ngClass]="{
+                    selected: i === stepper.selectedIndex,
+                    saved: step.saved
+                }"
+                (click)="stepClick(i)">
+                <div class="icon-container">
+                    <img [ngClass]="step.name" src="assets/common/icons/tenant-settings/{{ step.name }}.svg">
+                </div>
+                <span>{{ step.text }}</span>
+            </li>
+        </ul>
+    </dx-scroll-view>
 </div>
 <div class="right">
     <mat-vertical-stepper #stepper>
@@ -57,6 +59,26 @@
         </mat-step>
         <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #memberPortalStep>
             <member-portal></member-portal>
+        </mat-step>
+        <mat-step *ngIf="showInvoiceSettings" #invoiceStep>
+            <ng-container *ngIf="stepper.selected === invoiceStep">
+                <invoice-settings></invoice-settings>
+            </ng-container>
+        </mat-step>
+        <mat-step *ngIf="showCommissionsSettings" #commissionsStep>
+            <ng-container *ngIf="stepper.selected === commissionsStep">
+                <commissions-settings></commissions-settings>
+            </ng-container>
+        </mat-step>
+        <mat-step *ngIf="showBankTransferSettings" #bankTransferStep>
+            <ng-container *ngIf="stepper.selected === bankTransferStep">
+                <bank-transfer></bank-transfer>
+            </ng-container>
+        </mat-step>
+        <mat-step *ngIf="showOtherSettings" #otherStep>
+            <ng-container *ngIf="stepper.selected === otherStep">
+                <other-settings></other-settings>
+            </ng-container>
         </mat-step>
     </mat-vertical-stepper>
     <div mat-dialog-actions>

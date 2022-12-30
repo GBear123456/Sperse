@@ -128,7 +128,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.isContactProspective$
     ).pipe(
         map(([contactIsParent, userId, isProspective]: [boolean, number, boolean]) => {
-            return contactIsParent || (!userId && isProspective);
+            return abp.features.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && (contactIsParent || (!userId && isProspective));
         })
     );
     showPaymentInformationSection$: Observable<boolean> = combineLatest(
@@ -218,7 +218,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             name: 'payment-information',
             label: this.l('PaymentInformation'),
             route: 'payment-information',
-            visible$: this.showPaymentInformationSection$
+            visible$: this.showPaymentInformationSection$,
+            disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement)
         },
         {
             name: 'reseller-activity',
@@ -239,8 +240,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         {
             name: 'activity-logs',
             label: this.l('ActivityLogs'),
-            route: 'activity-logs',
-            disabled: !this.permission.isGranted(AppPermissions.PFMApplications)
+            route: 'activity-logs'
         },
         {
             name: 'referral-history',
@@ -479,12 +479,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             });
         }
 
-        this.isCommunicationHistoryAllowed = this.permission.checkCGPermission(
+        const featureMaxMessageCount = this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
+        this.isCommunicationHistoryAllowed = featureMaxMessageCount && this.permission.checkCGPermission(
             result.groups,
             'ViewCommunicationHistory'
         );
-        this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
-            result.groups,
+        this.isSendSmsAndEmailAllowed = featureMaxMessageCount && this.permission.checkCGPermission(
+            result.groups, 
             'ViewCommunicationHistory.SendSMSAndEmail'
         );
 

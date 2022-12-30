@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
+import { first, filter } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import kebabCase from 'lodash/kebabCase';
 import startCase from 'lodash/startCase';
@@ -26,6 +27,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     encapsulation: ViewEncapsulation.None
 })
 export class RootComponent implements OnInit, AfterViewInit {    
+    showCBLoader: Boolean = false;
+    showSperseLoader: Boolean = !abp.session.tenantId; 
     maintenanceSettings: MaintenanceSettingsDto;
     hideMaintenanceMessage: Boolean = false;
     currentDate = moment();
@@ -38,15 +41,26 @@ export class RootComponent implements OnInit, AfterViewInit {
         @Inject(AppSessionService) private SS,
         @Inject(DOCUMENT) private document
     ) {
+        let tenant = this.SS.tenant;
+        this.showCBLoader = tenant && tenant.customLayoutType && 
+            tenant.customLayoutType == LayoutType.BankCode;
+
         this.pageHeaderFixed(true);
-        let subscription = router.events.subscribe((event) => {
-            if (event instanceof NavigationEnd) {
-                this.document.body.querySelectorAll('div.initial').forEach(elm => {
-                    setTimeout(() => this.document.body.removeChild(elm), 1000);
-                });
-                subscription.unsubscribe();
-            }
-        });
+        router.events.pipe(
+            filter((event) => {
+                if (event instanceof NavigationEnd) {
+                    this.showCBLoader = false;
+                    this.showSperseLoader = false;
+                    this.removeLoadingSpinner();
+                    return true;
+                }
+                return false;
+            }), 
+            first()
+        ).subscribe();
+
+        if (this.showSperseLoader || this.showCBLoader)
+            this.removeLoadingSpinner();
 
         this.hostSettingsProxy.getMaintenanceSettings().subscribe((res: MaintenanceSettingsDto) => {
             this.maintenanceSettings = res;
@@ -57,6 +71,12 @@ export class RootComponent implements OnInit, AfterViewInit {
             this.hideMaintenanceMessage = Boolean(hideMaintenanceMessage);
     }
 
+    removeLoadingSpinner() {
+        this.document.body.querySelectorAll('div.spinner').forEach(elm => {
+            this.document.body.removeChild(elm);
+        });
+    }
+    
     ngOnInit() {
         sessionStorage.clear();
         if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] && this.SS.userId)

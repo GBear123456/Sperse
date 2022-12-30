@@ -35,7 +35,6 @@ import {
     debounceTime,
     tap
 } from 'rxjs/operators';
-import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 import * as _ from 'underscore';
 
@@ -70,11 +69,10 @@ import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/create-invoice-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import {
-    InvoiceSettings, OrderServiceProxy,
+    OrderServiceProxy,
     ProductServiceProxy, ProductType, ProductDto
 } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
@@ -100,9 +98,8 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
-import { ArrayHelper } from '@shared/helpers/ArrayHelper';
-import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -140,6 +137,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     filterTimeout: any;
     searchClear = false;
+    maxMessageCount = this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
+    maxProductCount = this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount);
     searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
     filterModelStages: FilterModel = new FilterModel({
@@ -242,7 +241,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: this.orderFields.Amount,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        this.orderSubscriptionStatusFilter,
+        this.maxProductCount ? this.orderSubscriptionStatusFilter : undefined,
         this.getSourceOrganizationUnitFilter(),
         this.sourceFilter,
         new FilterModel({
@@ -295,7 +294,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 })
             }
         })
-    ];
+    ].filter(Boolean);
     subscriptionStatuses = Object.keys(SubscriptionsStatus).filter(status => 
         ![SubscriptionsStatus.Upgraded, SubscriptionsStatus.Draft].includes(SubscriptionsStatus[status])
     ).map(status => {
@@ -352,7 +351,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: this.subscriptionFields.Fee,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        this.subscriptionStatusFilter,
+        this.maxProductCount ? this.subscriptionStatusFilter : undefined,
         this.getSourceOrganizationUnitFilter(),
         this.sourceFilter,
         new FilterModel({
@@ -405,7 +404,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 })
             }
         })
-    ];
+    ].filter(Boolean);
     private filterChanged = false;
     masks = AppConsts.masks;
     formatting = AppConsts.formatting;
@@ -417,7 +416,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     ];
     permissions = AppPermissions;
-    currency: string = 'USD';
+    currency: string = SettingsHelper.getCurrency();
     totalErrorMsg: string;
     ordersTotalCount: number;
     subscriptionsTotalCount: number;
@@ -684,9 +683,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
-                    disabled: abp.setting.get('Integrations:YTel:IsEnabled') == 'False',
-                    checkVisible: () => {
-                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
+                    disabled: abp.setting.get('Integrations:YTel:IsEnabled') == 'False' || !this. maxMessageCount,
+                    checkVisible: (data?) => {
+                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS) &&
+                            this.permission.checkCGPermission([data.ContactGroupId], 'ViewCommunicationHistory.SendSMSAndEmail');
                     },
                     action: (data?) => {
                         let entity = data || this.actionEvent.data || this.actionEvent;
@@ -698,6 +698,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     text: this.l('SendEmail'),
                     class: 'email',
+                    disabled: !this.maxMessageCount,
+                    checkVisible: (data?) => {
+                        return this.permission.checkCGPermission([data.ContactGroupId], 'ViewCommunicationHistory.SendSMSAndEmail');
+                    },
                     action: (data?) => {
                         this.contactsService.showEmailDialog({
                             contactId: (data || this.actionEvent.data || this.actionEvent).ContactId
@@ -746,6 +750,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     text: this.l('Orders'),
                     class: 'orders',
+                    disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement),
                     action: (data?) => {
                         this.showContactDetails({ data: data || this.actionEvent }, 'invoices');
                     }
@@ -798,13 +803,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     constructor(injector: Injector,
         private productProxy: ProductServiceProxy,
         private orderProxy: OrderServiceProxy,
-        private invoicesService: InvoicesService,
         private contactsService: ContactsService,
         private filtersService: FiltersService,
         private pipelineService: PipelineService,
         private itemDetailsService: ItemDetailsService,
         private store$: Store<CrmStore.State>,
-        private cacheService: CacheService,
         private sessionService: AppSessionService,
         private crmService: CrmService,
         private currencyPipe: CurrencyPipe,
@@ -815,9 +818,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         super(injector);
         this.subscriptionsDataSource['exportIgnoreOnLoaded'] = true;
         this.ordersDataSource['exportIgnoreOnLoaded'] = true;
-        invoicesService.settings$.pipe(
-            filter(Boolean)
-        ).subscribe((res: InvoiceSettings) => this.currency = res.currency);
         this.queryParams$.pipe(
             pluck('refresh'),
             filter(Boolean)
@@ -1123,20 +1123,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     disabled: this.manageDisabled || !this.selectedOrderKeys.length ||
                         (!this.isGranted(AppPermissions.CRMBulkUpdates) && this.selectedOrderKeys.length > 1),
                     action: this.deleteOrders.bind(this)
-                }]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [{
-                    name: 'rules',
-                    options: {
-                        text: this.l('Settings'),
-                        hint: this.l('Settings')
-                    },
-                    visible: this.isGranted(AppPermissions.CRMOrdersInvoices) ||
-                        this.isGranted(AppPermissions.CRMSettingsConfigure),
-                    action: this.invoiceSettings.bind(this)
                 }]
             },
             {
@@ -1707,14 +1693,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             data: {
                 refreshParent: this.invalidate.bind(this)
             }
-        });
-    }
-
-    invoiceSettings() {
-        this.dialog.open(InvoiceSettingsDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
         });
     }
 

@@ -5,7 +5,6 @@ import { SperserAutoLoginComponent } from '@root/account/auto-login/layouts/sper
 import { SperserForgotPasswordComponent } from '@root/account/password/layouts/sperser/sperser-forgot-password.component';
 import { SperserResetPasswordComponent } from '@root/account/password/layouts/sperser/sperser-reset-password.component';
 import { UtilsModule } from '@shared/utils/utils.module';
-import { ModalModule } from 'ngx-bootstrap/modal';
 import { CodeInputModule } from 'angular-code-input';
 import { SignupModule } from './signup/signup.module';
 import { AccountRoutingModule } from './account-routing.module';
@@ -24,7 +23,6 @@ import { TenantChangeModalComponent } from './shared/tenant-change-modal.compone
 import { TenantChangeComponent } from './shared/tenant-change.component';
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration/complete-tenant-registration.component';
-import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { HostLoginComponent } from './login/layouts/host/host-login.component';
 import { LendSpaceLoginComponent } from './login/layouts/lend-space/lend-space-login.component';
 import { AdvicePeriodLoginComponent } from './login/layouts/advice-period/advice-period-login.component';
@@ -47,7 +45,6 @@ import { LendSpaceResetPasswordComponent } from './password/layouts/lend-space/l
 import { AdvicePeriodResetPasswordComponent } from './password/layouts/advice-period/advice-period-reset-password.component';
 import { BankCodeResetPasswordComponent } from './password/layouts/bank-code/bank-code-reset-password.component';
 import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies';
-import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-layout.module';
 import { RapidLayoutComponent } from "@root/account/layouts/rapid/rapid-layout.component";
 import { RapidLoginComponent } from "@root/account/login/layouts/rapid/rapid-login.component";
 import { RapidResetPasswordComponent } from "@root/account/password/layouts/rapid/rapid-reset-password.component";
@@ -68,25 +65,19 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { BankCodeLoginVerificationComponent } from './password/layouts/bank-code/bank-code-login-verification.component';
 import { HostLoginVerificationComponent } from './password/layouts/host/host-login-verification.component';
 import { HostCombinedForgotPasswordComponent } from './password/layouts/host/host-combined-forgot-password.component';
-
-// import { HoaLoginComponent } from "@root/account/login/layouts/hoa/hoa-login.component";
-// import { HoaAutoLoginComponent } from "@root/account/auto-login/layouts/hoa/hoa-auto-login.component";
-// import { HoaResetPasswordComponent } from "@root/account/password/layouts/hoa/hoa-reset-password.component";
-// import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/hoa-forgot-password.component";
+import { SigninForgotPasswordComponent } from '@root/account/password/layouts/signin/signin-forgot-password.component';
+import { SigninLoginVerificationComponent } from './password/layouts/signin/signin-login-verification.component';
+import { SigninComponent } from '@root/account/login/layouts/signin/signin.component';
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
 
-        ModalModule.forRoot(),
-
         UtilsModule,
         SignupModule,
-        PaymentInfoModule,
         AccountRoutingModule,
         PersonalFinanceLayoutModule,
-        BankCodeLayoutModule,
         DxTextBoxModule,
         DxButtonModule,
         CodeInputModule
@@ -101,6 +92,9 @@ import { HostCombinedForgotPasswordComponent } from './password/layouts/host/hos
         TenantChangeComponent,
         TenantChangeModalComponent,
         LoginComponent,
+        SigninComponent,
+        SigninForgotPasswordComponent,
+        SigninLoginVerificationComponent,
         AutoLoginComponent,
         AdvicePeriodLoginComponent,
         BankCodeLoginComponent,
@@ -113,7 +107,7 @@ import { HostCombinedForgotPasswordComponent } from './password/layouts/host/hos
         AdLoginHostDirective,
         AdAutoLoginHostDirective,
         AdResetPasswordHostDirective,
-        AdForgotPasswordHostDirective,
+        AdForgotPasswordHostDirective,        
         ForgotPasswordComponent,
         ResetPasswordComponent,
         EmailActivationComponent,
@@ -158,6 +152,9 @@ import { HostCombinedForgotPasswordComponent } from './password/layouts/host/hos
         GHostLoginComponent
     ],
     entryComponents: [
+        SigninComponent,
+        SigninForgotPasswordComponent,
+        SigninLoginVerificationComponent,
         HostLayoutComponent,
         HostLoginComponent,
         HostAutoLoginComponent,

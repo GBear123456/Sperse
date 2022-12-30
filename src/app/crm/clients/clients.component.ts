@@ -72,6 +72,8 @@ import { FilterSourceComponent } from '../shared/filters/source-filter/source-fi
 import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
 import { FilterContactStatusComponent } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.component';
 import { FilterContactStatusModel } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.model';
+import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
+import { FilterNullableRadioGroupModel } from '@shared/filters/radio-group/filter-nullable-radio-group.model';
 import {
     UpdateContactStatusesInput,
     ProductDto,
@@ -283,7 +285,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             element: new FilterCheckBoxesModel(
                 {
                     dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars), tap(stars => {
-                        stars.forEach(star => {
+                        stars && stars.forEach(star => {
                             this.starsLookup[star.id] = star;
                         });
                     })),
@@ -327,6 +329,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     );
 
     isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+    maxMessageCount = this.contactService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
+    isSubscriptionManagementEnabled = abp.features.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
 
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
@@ -337,9 +341,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
-                    disabled: this.isSMSIntegrationDisabled,
-                    checkVisible: () => {
-                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
+                    disabled: this.isSMSIntegrationDisabled || !this.maxMessageCount,
+                    checkVisible: (data?) => {
+                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS) &&
+                            this.permission.checkCGPermission([data.ContactGroupId], 'ViewCommunicationHistory.SendSMSAndEmail');
                     },
                     action: () => {
                         this.contactService.showSMSDialog({
@@ -350,6 +355,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('SendEmail'),
                     class: 'email',
+                    disabled: !this.maxMessageCount,
+                    checkVisible: (data?) => {
+                        return this.permission.checkCGPermission([data.ContactGroupId], 'ViewCommunicationHistory.SendSMSAndEmail');
+                    },
                     action: () => {
                         this.contactService.showEmailDialog({
                             contactId: (this.actionEvent.data || this.actionEvent).Id
@@ -411,6 +420,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('Orders'),
                     class: 'orders',
+                    disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement),
                     action: () => {
                         this.showClientDetails(this.actionEvent, 'invoices');
                     }
@@ -743,7 +753,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.clientFields.UserId,
                             this.clientFields.Email,
                             this.clientFields.Phone,
-                            this.clientFields.StarId
+                            this.clientFields.StarId,
+                            this.clientFields.IsSubscribedToEmails,
                         ]
                     );
 
@@ -1176,9 +1187,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }),
                 items: { from: new FilterItemModel(), to: new FilterItemModel() }
             })],
-            this.isGranted(AppPermissions.CRMOrders) ||
-                this.isGranted(AppPermissions.CRMProducts) ?
-                    [this.subscriptionStatusFilter] : [],
+            (this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts)) && this.isSubscriptionManagementEnabled &&
+                this.contactService.getFeatureCount(AppFeatures.CRMMaxProductCount) ? [this.subscriptionStatusFilter] : [],
             [new FilterModel({
                 component: FilterCalendarComponent,
                 operator: {from: 'ge', to: 'le'},
@@ -1230,6 +1240,20 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             new FilterModel({
                 caption: 'parentId',
                 hidden: true
+            }),
+            new FilterModel({
+                component: FilterRadioGroupComponent,
+                caption: 'IsSubscribedToEmails',
+                filterMethod: FiltersService.filterByBooleanValue,
+                items: {
+                    element: new FilterNullableRadioGroupModel({
+                        value:  undefined,
+                        list: [
+                            { id: true, name: this.l('CommunicationPreferencesStatus_Subscribed') },
+                            { id: false, name: this.l('CommunicationPreferencesStatus_Unsubscribed') }
+                        ]
+                    })
+                }
             })
         ]);
     }
@@ -1416,7 +1440,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedClientKeys.length || this.selectedClientKeys.length > 1 || 
+                        disabled: !this.selectedClientKeys.length || !this.maxMessageCount ||
                             !this.permission.checkCGPermission([ContactGroup.Client], 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
@@ -1425,8 +1449,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     action: () => {
                                         this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             this.contactService.showEmailDialog({
-                                                contactId: this.selectedClientKeys[0],
-                                                to: clients.map(lead => lead.Email).filter(Boolean)
+                                                to: clients.map(lead => lead.Email).filter(Boolean),
+                                                ...(clients.length > 1 ? 
+                                                    {contactIds: this.selectedClientKeys} : 
+                                                    {contactId: this.selectedClientKeys[0]}
+                                                )
                                             }).subscribe();
                                         });
                                     }

@@ -1,0 +1,67 @@
+<div *ngIf="loading; else mainContainer" class="loading-container">
+    <div *ngIf="!failedToLoad; else failBlock" class="wait-message">
+        Waiting for payment information
+    </div>
+    <ng-template #failBlock>
+        <div>{{failMessage}}</div>
+    </ng-template>
+</div>
+<ng-template #mainContainer>
+    <div class="main-container">
+        <div class="header">
+            <img src="{{invoiceInfo.tenantLogoUrl}}">
+            <div class="tenant-name">{{invoiceInfo.tenantName}}</div>
+        </div>
+        <div class="content">
+            <div class="summary">
+                <div class="icon">
+                    <i class="fa fa-file-text file"></i>
+                    <i class="fa fa-check-circle-o check"></i>
+                </div>
+                <div class="gray">Invoice paid</div>
+                <div class="amount">{{invoiceInfo.invoiceAmount | currency:'USD':'symbol':'1.2-2'}}</div>
+            </div>
+            <div class="details">
+                <div class="row">
+                    <div class="col-6 gray">Invoice number</div>
+                    <div class="col-6 text-right">{{invoiceInfo.invoiceNumber}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-6 gray">Payment date</div>
+                    <div class="col-6 text-right">{{invoiceInfo.paymentDate | date}}</div>
+                </div>
+                <div class="row" *ngIf="invoiceInfo.paymentCardNumber">
+                    <div class="col-6 gray">Payment method</div>
+                    <div class="col-6 text-right">
+                        <span class="card-network">{{invoiceInfo.paymentCardNetwork?.toUpperCase()}}</span>
+                        {{invoiceInfo.paymentCardNumber}}
+                    </div>
+                </div>
+                <div class="row top-indent">
+                    <div class="col-6">
+                        <a role="button" class="btn btn-secondary" href="{{invoiceInfo.downloadInvoiceUrl}}" target="_blank">
+                            Download invoice
+                        </a>
+                    </div>
+                    <div class="col-6 text-right">
+                        <a role="button" class="btn btn-secondary" href="{{invoiceInfo.downloadReceiptUrl}}" [ngClass]="{'disabled':!invoiceInfo.downloadReceiptUrl}" target="_blank">
+                            Download receipt
+                        </a>
+                    </div>
+                </div>
+                <div *ngIf="returnText" class="row top-indent login-row">
+                    <a (click)="returnLinkClick()">{{returnText}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer gray">
+            <div class="powered-by">
+                {{currentYear}} &copy; Sperse Platform
+            </div>
+            <div class="links">
+                <a (click)="openConditionsDialog(conditions.Terms)">Terms</a>
+                <a (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
+            </div>
+        </div>
+    </div>
+</ng-template>

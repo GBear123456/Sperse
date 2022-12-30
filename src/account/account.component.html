@@ -1,1 +1,2 @@
-<ng-template ad-account-host></ng-template>
+<router-outlet *ngIf="!isWrapped; else layout"></router-outlet>
+<ng-template #layout ad-account-host></ng-template>

@@ -524,6 +524,27 @@
                     </ng-container>
                 </div>
             </mat-tab>
+            <mat-tab [label]="l('Klaviyo')">
+                <div>
+                    <div class="form-group">
+                        <br />
+                        <label for="KlaviyoIsEnabled" class="m-checkbox">
+                            <input id="KlaviyoIsEnabled" type="checkbox" name="KlaviyoIsEnabled" [(ngModel)]="klaviyoSettings.isEnabled">
+                            {{l("Enabled")}}
+                            <span></span>
+                        </label>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label>{{l("ApiKey")}}</label>
+                            <dx-text-box 
+                                class="form-control" 
+                                [(value)]="klaviyoSettings.apiKey">
+                            </dx-text-box>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
             <mat-tab [label]="l('YTel')" *ngIf="isInboundOutboundSMSEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
@@ -560,7 +581,44 @@
                     </p>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Stripe')}}">
+            <mat-tab label="{{l('PayPal')}}" *ngIf="isPaymentsEnabled">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
+                            <dx-select-box class="bold-text"
+                                           stylingMode="outlined"
+                                           valueExpr="value"
+                                           displayExpr="text"
+                                           [showClearButton]="true"
+                                           [(value)]="payPalPaymentSettings.environment"
+                                           [dataSource]="payPalEnvironments">
+                            </dx-select-box>
+                        </div>
+                        <div class="form-group">
+                            <label for="PayPalClientId">{{l("Client ID")}}</label>
+                            <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="payPalPaymentSettings.clientId">
+                        </div>
+                        <div class="form-group">
+                            <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
+                            <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="payPalPaymentSettings.clientSecret">
+                        </div>
+                        <div class="form-group">
+                            <label for="PayPalWebhookKey">{{l("Webhook key")}}</label>
+                            <input id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" class="form-control" [(ngModel)]="payPalPaymentSettings.webhookKey" maxlength="128">
+                        </div>
+                        <p>
+                            <span class="small">* To recieve webhooks from PayPal please enter any secure string above, then add new endpoint on your application using the following info:</span><br />
+                            <span class="small">URL - <span class="copy-url"><b>{{getPayPalWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+                            <span class="small">Events - 
+                                <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment capture completed'</b>, 
+                                <b>'Payment payouts-item succeeded'</b>, <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
+                            </span>
+                        </p>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Stripe')}}" *ngIf="isPaymentsEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -571,13 +629,22 @@
                             <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
                         </p>
                         <div class="form-group">
-                            <label for="StripeWebhookSecret">{{l("Signing secret")}}</label>
+                            <label for="StripeWebhookSecret">{{l("AccountWebhookSigningSecret")}}</label>
                             <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
                         </div>
                         <p>
                             <span class="small" [innerHtml]="l('StripeWebhookSecretHint1')"></span><br />
                             <span class="small">URL - <span class="copy-url"><b>{{getStripeWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
                             <span class="small" [innerHtml]="l('StripeWebhookSecretHint2')"></span>
+                        </p>
+                        <div class="form-group">
+                            <label for="StripeConnectWebhookSecret">{{l("ConnectWebhookSigningSecret")}}</label>
+                            <input id="StripeConnectWebhookSecret" type="text" name="StripeConnectWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.connectWebhookSingingSecret">
+                        </div>
+                        <p>
+                            <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint1')"></span><br />
+                            <span class="small">URL - <span class="copy-url"><b>{{getStripeConnectWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+                            <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint2')"></span>
                         </p>
                     </div>
                 </dx-scroll-view>
@@ -745,6 +812,38 @@
             </mat-tab>
             <mat-tab [label]="l('Sales Talk')" *ngIf="isCRMConfigureAllowed">
                 <sales-talk></sales-talk>
+            </mat-tab>
+            <mat-tab [label]="l('LinkedIn')" *ngIf="!settings.externalLoginProviderSettings.linkedIn_IsDeactivated">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="LinkedInAppId">{{l("LinkedInAppId")}}</label>
+                            <input id="LinkedInAppId" type="text" name="LinkedInAppId" class="form-control" [(ngModel)]="settings.externalLoginProviderSettings.linkedIn.appId">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="LinkedInAppSecret">{{l("LinkedInAppSecret")}}</label>
+                            <input id="LinkedInAppSecret" type="text" name="LinkedInAppSecret" class="form-control" [(ngModel)]="settings.externalLoginProviderSettings.linkedIn.appSecret">
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab [label]="l('Facebook')" *ngIf="!settings.externalLoginProviderSettings.facebook_IsDeactivated">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="FacebookAppId">{{l("FacebookAppId")}}</label>
+                            <input id="FacebookAppId" type="text" name="FacebookAppId" class="form-control" [(ngModel)]="settings.externalLoginProviderSettings.facebook.appId">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="FacebookAppSecret">{{l("FacebookAppSecret")}}</label>
+                            <input id="FacebookAppSecret" type="text" name="FacebookAppSecret" class="form-control" [(ngModel)]="settings.externalLoginProviderSettings.facebook.appSecret">
+                        </div>
+                    </div>
+                </dx-scroll-view>
             </mat-tab>
         </mat-tab-group>
     </div>

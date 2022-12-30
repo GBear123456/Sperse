@@ -34,12 +34,14 @@ import {
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
     SendGridSettingsDto,
+    KlaviyoSettingsDto,
     YTelSettingsEditDto,
     LayoutType,
     RapidSettingsDto,
     EmailTemplateType,
     StripeSettings,
-    CustomCssType
+    CustomCssType,
+    PayPalSettings
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -82,11 +84,13 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     settings: TenantSettingsEditDto = undefined;
     memberPortalSettings: MemberPortalSettingsDto = new MemberPortalSettingsDto();
     idcsSettings: IdcsSettings = new IdcsSettings();
+    payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     stripePaymentSettings: StripeSettings = new StripeSettings();
     isTenantHosts: boolean = this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     isInboundOutboundSMSEnabled: boolean = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
+    isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments); 
     isCRMConfigureAllowed: boolean = abp.features.isEnabled(AppFeatures.CRMSalesTalk) 
         && this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
@@ -98,6 +102,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     ongageSettings: OngageSettingsEditDto = new OngageSettingsEditDto();
     iageSettings: IAgeSettingsEditDto = new IAgeSettingsEditDto();
     sendGridSettings: SendGridSettingsDto = new SendGridSettingsDto();
+    klaviyoSettings: KlaviyoSettingsDto = new KlaviyoSettingsDto();
     yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
     rapidSettings: RapidSettingsDto = new RapidSettingsDto();
     logoUploader: FileUploader;
@@ -117,6 +122,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             text: this.l(item)
         };
     });
+    payPalEnvironments = [
+        { value: 'sandbox', text: 'Sandbox' },
+        { value: 'live', text: 'Live' }
+    ];
     headlineButtons: HeadlineButton[] = [
         {
             enabled: true, // this.isGranted(AppPermissions.AdministrationLanguagesCreate),
@@ -186,13 +195,15 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         let requests: Observable<any>[] = [
             this.tenantSettingsService.getAllSettings(),
             this.isAdminCustomizations ? this.tenantSettingsService.getMemberPortalSettings() : of<MemberPortalSettingsDto>(<any>null),
-            this.tenantPaymentSettingsService.getStripeSettings(),
+            this.isPaymentsEnabled ? this.tenantPaymentSettingsService.getPayPalSettings() : of(this.payPalPaymentSettings),
+            this.isPaymentsEnabled ? this.tenantPaymentSettingsService.getStripeSettings() : of(this.stripePaymentSettings),
             this.isCreditReportFeatureEnabled ? this.tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
-            this.tenantSettingsService.getSendGridSettings(),            
+            this.tenantSettingsService.getSendGridSettings(),
+            this.tenantSettingsService.getKlaviyoSettings(),
             this.isInboundOutboundSMSEnabled ?
                 this.tenantSettingsService.getYTelSettings() : of(<any>{isEnabled: false}),
             this.isRapidTenantLayout ? this.tenantSettingsService.getRapidSettings() : of<RapidSettingsDto>(<any>null)
@@ -211,6 +222,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 [
                     this.settings,
                     this.memberPortalSettings,
+                    this.payPalPaymentSettings,
                     this.stripePaymentSettings,
                     this.idcsSettings,
                     this.epcvipSettings,
@@ -218,6 +230,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.ongageSettings,
                     this.iageSettings,
                     this.sendGridSettings,
+                    this.klaviyoSettings,
                     this.yTelSettings,
                     this.rapidSettings
                 ] = results;
@@ -401,13 +414,16 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         let requests: Observable<any>[] = [
             this.tenantSettingsService.updateAllSettings(this.settings).pipe(tap(() => {
                 this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.settings.general.defaultCountryCode);
+                sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
             }),
             catchError(error => {
                 this.checkHandlerErrorWarning(true);
                 return throwError(error);
             })),
+            this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings),
             this.tenantSettingsService.updateSendGridSettings(this.sendGridSettings),
+            this.tenantSettingsService.updateKlaviyoSettings(this.klaviyoSettings),
             this.tenantSettingsService.updateYTelSettings(this.yTelSettings)
         ];
         if (this.isAdminCustomizations) {
@@ -444,7 +460,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
                     window.location.reload();
                 });
-            }
+            }        
         });
     }
 
@@ -472,8 +488,17 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         return AppConsts.remoteServiceBaseUrl + `/api/YTel/ProcessInboundSms?tenantId=${this.appSessionService.tenantId}&key=${key}`;
     }
 
+    getPayPalWebhookUrl(): string {
+        let key = this.payPalPaymentSettings.webhookKey || '{webhook_key}';
+        return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=${this.appSessionService.tenantId}&key=${key}`;
+    }
+
     getStripeWebhookUrl(): string {
         return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook?tenantId=${this.appSessionService.tenantId}`;
+    }
+
+    getStripeConnectWebhookUrl(): string {
+        return AppConsts.remoteServiceBaseUrl + `/api/stripe/processConnectWebhook?tenantId=${this.appSessionService.tenantId}`;
     }
 
     copyToClipboard(event) {

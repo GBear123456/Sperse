@@ -16,6 +16,8 @@ import { StageChecklistServiceProxy, CreateStageChecklistPointInput, UpdateStage
     RenameStageChecklistPointInput, StageChecklistPointDto, PipelineDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { AppFeatures } from '@shared/AppFeatures';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'check-list-dialog',
@@ -25,6 +27,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class CheckListDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    
+    maxPointCount = this.appService.getFeatureCount(AppFeatures.CRMMaxChecklistPointCount);
 
     private slider: any;
     dataSource: any[] = [];
@@ -41,6 +45,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
         private store$: Store<CrmStore.State>,
         public dialogRef: MatDialogRef<CheckListDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public dialogData: any,
+        public appService: AppService,
         public ls: AppLocalizationService
     ) {
         this.dataSource = cloneDeep(dialogData.stage.checklistPoints) || [];
@@ -78,7 +83,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
     }
 
     addNewRecord() {
-        if (this.dataSource.every(item => item.id))
+        if (this.dataSource.every(item => item.id) && this.dataSource.length < this.maxPointCount)
             this.dataSource.push({sortOrder: Infinity, id: null, name: undefined});
     }
 
@@ -110,6 +115,8 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
                     cell.data.id = res.id;
                     cell.data.sortOrder = res.sortOrder;
                     this.reloadStageConfig();
+                }, () => {
+                    this.dataSource.splice(cell.rowIndex, 1);
                 });
             } else
                 this.dataSource.splice(cell.rowIndex, 1);

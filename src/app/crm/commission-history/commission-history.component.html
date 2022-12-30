@@ -138,7 +138,7 @@
                         <dxi-column width="120px"
                                     [dataField]="commissionFields.ProductAmount"
                                     [caption]="l('Price')"
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column width="100px"
@@ -149,7 +149,7 @@
                         <dxi-column width="120px"
                                     [dataField]="commissionFields.CommissionableAmount"
                                     [caption]="l('CV')"
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column width="200px"
@@ -219,7 +219,7 @@
                         <dxi-column width="140px"
                                     [dataField]="commissionFields.CommissionAmount"
                                     [caption]="l('Commission')"
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column width="120px"
@@ -259,13 +259,13 @@
                             </dxi-group-item>
                             <dxi-group-item [column]="commissionFields.CommissionAmount"
                                             summaryType="sum"
-                                            [valueFormat]="currencyFormat$ | async"
+                                            [valueFormat]="currencyFormat"
                                             [displayFormat]="l('Commission') + ' ' + l('Total') + ': {0}'">
                             </dxi-group-item>
                             <dxi-total-item [column]="commissionFields.CommissionAmount"
                                             [showInColumn]="commissionFields.OrderNumber"
                                             [displayFormat]="l('Commission') + ' ' + l('Total') + ': {0}'"
-                                            [valueFormat]="currencyFormat$ | async"
+                                            [valueFormat]="currencyFormat"
                                             summaryType="sum">
                             </dxi-total-item>
                         </dxo-summary>
@@ -273,7 +273,7 @@
                 </div>
                 <div>
                     <dx-data-grid #ledgerDataGrid
-                                  [hint]="l('Ledger')"
+                                  [hint]="l('Ledgers')"
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
                                   columnResizingMode="widget"
@@ -299,6 +299,14 @@
                                        mode="multiple">
                         </dxo-selection>
                         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                        <dxi-column caption=""
+                                    [width]="30"
+                                    cellTemplate="historyTemplate"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false"
+                                    [allowGrouping]="false"
+                                    [allowSorting]="false">
+                        </dxi-column>
                         <dxi-column [dataField]="ledgerFields.Id"
                                     [caption]="l('Id')"
                                     cssClass="tabular clipboard-holder"
@@ -333,6 +341,10 @@
                                     [caption]="l('Status')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
+                        <dxi-column *ngIf="!isBankCodeLayoutType"
+                                    [caption]="l('Payout System')" 
+                                    cellTemplate="payoutSystemCell">
+                        </dxi-column>
                         <dxi-column [dataField]="ledgerFields.StartDate"
                                     [caption]="l('StartDate')" 
                                     cellTemplate="dateCell" 
@@ -350,7 +362,7 @@
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.TotalAmount"
                                     [caption]="l('TotalAmount')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.PaymentSystem"
@@ -358,6 +370,20 @@
                                     cssClass="clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
+                        <dxi-column [dataField]="ledgerFields.PayPalEmailAddress"
+                                    [caption]="l('PayPal') + ' ' + l('EmailAddress')"
+                                    cssClass="clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column [dataField]="ledgerFields.StripeAccountID"
+                                    [caption]="l('Stripe') + ' ' + l('Account')"
+                                    cssClass="clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+
+                        <div *dxTemplate="let cellData of 'historyTemplate'">
+                            <span *ngIf="cellData.data.HasPayout" [title]="l('Payouts')" class="dx-icon-clock code-history" (click)="showLedgerHistory(cellData.data)"></span>
+                        </div>
 
                         <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
                             {{cellData.value}}
@@ -365,6 +391,10 @@
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | datetime: formatting.dateTimeMoment}}
+                        </div>
+
+                        <div *dxTemplate="let cellData of 'payoutSystemCell'" class="clipboard-holder">
+                            <img *ngIf="cellData?.data?.StripeAccountID || cellData?.data?.PayPalEmailAddress" [src]="'assets/common/icons/' + (cellData.data.StripeAccountID ? 'stripe': 'paypal') + '.svg'" [title]="l(cellData.data.StripeAccountID ? 'Stripe' : 'PayPal')" height="25px" width="100px">
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -426,32 +456,32 @@
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.EarnedAmount"
                                     [caption]="l('EarnedAmount')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.PendingEarningsAmount"
                                     [caption]="l('PendingEarningsAmount')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.PendingWithdrawalsAmount"
                                     [caption]="l('PendingWithdrawalsAmount')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.UnaccountedEarningsAmount"
                                     [caption]="l('UnaccountedEarningsAmount')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.WithdrawnAmount"
                                     [caption]="l('WithdrawnAmount')"
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.AvailableBalance"
                                     [caption]="l('AvailableBalance')" 
-                                    [format]="currencyFormat$ | async"
+                                    [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.AffiliateCode"

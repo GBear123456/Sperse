@@ -20,6 +20,7 @@ import { ExternalLoginProvider, LoginService } from '../../login.service';
 import { SettingService } from 'abp-ng2-module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { environment } from '@root/environments/environment';
 
 @Component({
     templateUrl: './host-login.component.html',
@@ -35,6 +36,10 @@ export class HostLoginComponent implements OnInit {
     showPassword = false;
     isLoggedIn: boolean = false;
     isExtLogin: boolean = false; 
+    showExternalLogin = false;
+
+    linkedIdLoginProvider: ExternalLoginProvider;
+    externalLoginProviders: ExternalLoginProvider[];
 
     constructor(
         private sessionService: AbpSessionService,
@@ -56,6 +61,18 @@ export class HostLoginComponent implements OnInit {
             let email = paramsMap.get('email');
             if (email)
                 this.loginService.authenticateModel.userNameOrEmailAddress = email;
+
+            this.loginService.linkedIdLoginProvider$.subscribe((provider: ExternalLoginProvider) => {
+                this.linkedIdLoginProvider = provider;
+
+                let exchangeCode = paramsMap.get('code');
+                let state = paramsMap.get('state');
+                if (!!exchangeCode && !!state) {
+                    this.loginService.linkedInLogin(this.linkedIdLoginProvider, exchangeCode, state, this.isExtLogin, (result) => {
+                        this.isLoggedIn = result.accessToken && this.isExtLogin;
+                    });
+                }
+            });            
         });
     }
 
@@ -63,6 +80,7 @@ export class HostLoginComponent implements OnInit {
         let tenant = this.appSession.tenant;
         if (tenant)
             this.tenantName = tenant.name || tenant.tenancyName;
+        this.showExternalLogin = tenant && (!environment.production || environment.releaseStage == 'staging');
         if (this.sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this.sessionAppService.updateUserSignInToken()
                 .subscribe((result: UpdateUserSignInTokenOutput) => {
@@ -96,10 +114,7 @@ export class HostLoginComponent implements OnInit {
             this.loginService.authenticate(() => { 
                 this.loginInProgress = false;
             }, undefined, true, this.isExtLogin, (result) => {
-                if (this.isLoggedIn = this.isExtLogin) {
-                    if (!result.shouldResetPassword)
-                        this.loginService.completeSourceEvent();                
-                }
+                this.isLoggedIn = this.isExtLogin;
             });
         }
     }

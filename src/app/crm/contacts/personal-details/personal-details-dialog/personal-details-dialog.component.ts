@@ -4,31 +4,35 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { formatPercent } from '@angular/common';
 
 /** Third party imports */
-import * as moment from 'moment-timezone';
 import { ClipboardService } from 'ngx-clipboard';
 import { CacheService } from 'ng2-cache-service';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabGroup, MatTabHeader } from '@angular/material/tabs';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, ReplaySubject, BehaviorSubject, combineLatest } from 'rxjs';
+import { Observable, ReplaySubject, BehaviorSubject, combineLatest, of } from 'rxjs';
 import { first, map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
+import * as moment from 'moment-timezone';
+import buildQuery from 'odata-query';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from 'abp-ng2-module';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
+import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity-dialog/create-activity-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
-    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, CommissionTier, UpdateAffiliateIsAdvisorInput
+    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, 
+    ActivityType, CommissionTier, UpdateAffiliateIsAdvisorInput, TenantPaymentSettingsServiceProxy, 
+    CommissionSettings, ActivityServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -49,6 +53,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { ActivityFields } from '@app/crm/activity/activity-fields.enum';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -57,6 +62,8 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild('checklistScroll') checklistScroll: DxScrollViewComponent;
+    @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
+    showChecklistTab = !!this.appService.getFeatureCount(AppFeatures.CRMMaxChecklistPointCount);
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
     contactInfo: ContactInfoDto;
@@ -68,6 +75,39 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         totalApproved: true,
         verification: true
     };
+
+    private readonly TAB_INDEX_GENERAL  = 0;
+    private readonly TAB_INDEX_OVERVIEW = 1;    
+    private readonly TAB_INDEX_ACTIVITY = 2;
+
+    public cellDuration = 15;
+    public scheduleView = 'agenda';
+    public activityTypes = ActivityType;
+    public agendaUserDataSource: DataSource;
+    public agendaContactDataSource: DataSource;
+    private agendaDataSourceURI = 'Activity';
+    public scheduleDate = new Date();
+    public timezone = 'Etc/UTC';
+    public resources: any[] = [
+        {
+            fieldExpr: 'type',
+            useColorAsDefault: true,
+            allowMultiple: false,
+            dataSource: [
+                {
+                    text: this.ls.l('Event'),
+                    id: ActivityType.Event,
+                    color: '#727bd2'
+                },
+                {
+                    text: this.ls.l('Task'),
+                    id: ActivityType.Task,
+                    color: '#32c9ed'
+                }
+            ],
+            label: this.ls.l('Type')
+        }
+    ];
 
     private NoName = `<${this.ls.l('ClientNoName')}>`;
 
@@ -81,6 +121,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     contactXref$: Observable<string> = this.contactXref.asObservable().pipe(
         map((contactXref: string) => (contactXref || '').trim())
     );
+    private stripeCustomerId: ReplaySubject<string> = new ReplaySubject(1);
+    stripeCustomerId$: Observable<string> = this.stripeCustomerId.asObservable();
     private isAdvisor: ReplaySubject<boolean> = new ReplaySubject(null);
     isAdvisor$: Observable<boolean> = this.isAdvisor.asObservable();
     affiliateValidationRules = [
@@ -115,7 +157,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }];
     selectedTabIndex = 0;
     lastModificationInfo: ContactLastModificationInfoDto;
-    userTimezone = DateHelper.getUserTimezone();
     formatting = AppConsts.formatting;
     checklistLeadDataSource = [];
     checklistOrderDataSource = [];
@@ -138,6 +179,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     affiliateManageAllowed = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesManage);
+    isCRMGranted = this.permissionCheckerService.isGranted(AppPermissions.CRM);        
     formatPercentValue = formatPercent;
 
     constructor(
@@ -157,9 +199,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private loadingService: LoadingService,
         private orderProxy: OrderServiceProxy,
         private itemDetailsService: ItemDetailsService,
+        private activityServiceProxy: ActivityServiceProxy,
         private featureCheckerService: FeatureCheckerService,
         private permissionCheckerService: PermissionCheckerService,
-        public invoicesService: InvoicesService,
+        private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
@@ -169,6 +212,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         public appSession: AppSessionService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
+        if (abp.clock.provider.supportsMultipleTimezone)
+            this.timezone = abp.timing.timeZoneInfo.iana.timeZoneId;
+
         this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '157px',
@@ -176,14 +222,14 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             });
         });
 
-        this.invoicesService.settings$.pipe(
-            filter(Boolean), first()
-        ).subscribe((res: InvoiceSettings) => {
-            if (res.defaultAffiliateRate !== null)
-                this.defaultAffiliateRateStr = formatPercent(res.defaultAffiliateRate, 'en-US', '1.0-2');
-            if (res.defaultAffiliateRateTier2 !== null)
-                this.defaultAffiliateRateTier2Str = formatPercent(res.defaultAffiliateRateTier2, 'en-US', '1.0-2');
-        });
+        if (this.hasCommissionsFeature) {
+            this.tenantPaymentSettingsService.getCommissionSettings().subscribe((res: CommissionSettings) => {
+                if (res.defaultAffiliateRate !== null)
+                    this.defaultAffiliateRateStr = formatPercent(res.defaultAffiliateRate, 'en-US', '1.0-2');
+                if (res.defaultAffiliateRateTier2 !== null)
+                    this.defaultAffiliateRateTier2Str = formatPercent(res.defaultAffiliateRateTier2, 'en-US', '1.0-2');
+            });
+        }
 
         contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo && contactInfo.id) {
@@ -194,7 +240,12 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     this.contactInfo.affiliateRateTier2 === null ? null : this.contactInfo.affiliateRateTier2;
                 this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groups);
                 this.affiliateCode.next(contactInfo.affiliateCode);
-                this.contactXref.next(contactInfo.personContactInfo.xref);
+                if (contactInfo.personContactInfo.xref)
+                    this.contactXref.next(contactInfo.personContactInfo.xref);
+                this.getCheckStripeSettings().subscribe((isEnabled: boolean) => {
+                    if (isEnabled)
+                        this.stripeCustomerId.next(contactInfo.personContactInfo.stripeCustomerId);
+                });
                 this.contactProxy.getContactLastModificationInfo(
                     contactInfo.id
                 ).subscribe((lastModificationInfo: ContactLastModificationInfoDto) => {
@@ -212,7 +263,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.leadInfo = leadInfo;
                 this.initContactLeadsDataSource();
                 this.initContactOrdersDataSource();
-                this.initChecklistSources();
+                this.initChecklistByLead(this.leadInfo).subscribe(
+                    () => this.initChecklistSources());
                 this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage, ContactGroup.Client);
             }
         }, this.ident);
@@ -265,7 +317,22 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     right: '0px'
                 });
             }, 100);
+            (this.tabGroup?._tabHeader as MatTabHeader).updatePagination();
         });
+    }
+
+    getCheckStripeSettings(): Observable<boolean> {
+        let storageKey = 'stripeApiKey' + this.appSession.tenantId,
+            stripeApiKey = sessionStorage.getItem(storageKey);
+        if (stripeApiKey != null)
+            return of(!!stripeApiKey);
+        else if (abp.features.isEnabled(AppFeatures.CRMPayments))
+            return this.tenantPaymentSettingsService.getStripeSettings().pipe(map(res => {
+                sessionStorage.setItem(storageKey, res.apiKey || '');
+                return !!res.apiKey;
+            }));
+        else
+            return of(false);
     }
 
     updateAffiliateRate(value: number, valueProp, valueInitialProp, tier) {
@@ -293,19 +360,47 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     initChecklistByOrder(order: any): Observable<any> {
-        this.checklistOrderId = order.Id;
-        return this.loadChecklistPoints(this.initChecklistDataSource(AppConsts.PipelinePurposeIds.order,
-            this.ls.l('Post-sale Checklist'), order.Stage), true);
+        let orderId = order.id || order.Id;
+        if (orderId == this.checklistOrderId)
+            return of(this.checklistOrderDataSource);
+
+        this.checklistOrderId = order.id || order.Id;
+        return this.initChecklistDataSource(
+            AppConsts.PipelinePurposeIds.order,
+            this.ls.l('Post-sale Checklist'), 
+            order.Stage,
+            order.contactGroupId || order.ContactGroupId        
+        ).pipe(
+            switchMap((dataSource: any[]) => this.loadChecklistPoints(dataSource, true))
+        );
     }
 
     initChecklistByLead(lead: any): Observable<any> {
-        this.checklistLeadId = lead.id || lead.Id;
-        return this.loadChecklistPoints(this.initChecklistDataSource(AppConsts.PipelinePurposeIds.lead,
-            this.ls.l('Pre-sale Checklist'), lead.stage || lead.Stage));
+        let leadId = lead.id || lead.Id;
+        if (leadId == this.checklistLeadId)
+            return of(this.checklistLeadDataSource);
+
+        this.checklistLeadId = leadId;
+        return this.initChecklistDataSource(
+            AppConsts.PipelinePurposeIds.lead, 
+            this.ls.l('Pre-sale Checklist'), 
+            lead.stage || lead.Stage,
+            lead.contactGroupId || lead.ContactGroupId
+        ).pipe(
+            switchMap((dataSource: any[]) => this.loadChecklistPoints(dataSource))
+        );
     }
 
     loadChecklistPoints(dataSource, isOrder = false): Observable<any> {
         let stages = dataSource[0].items;
+        if (!stages || !stages.length) {
+            if (isOrder)
+                this.checklistOrderDataSource = [];
+            else
+                this.checklistLeadDataSource = [];
+            return of([]);
+        }
+
         if (isOrder)
             return this.orderProxy.getStageChecklistPoints(
                 this.checklistOrderId, stages.map(item => item.key)
@@ -341,6 +436,57 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         dataSource[0].progress = selectedCount;
         return dataSource;
     }
+     
+    initAgendaDataSource() {
+        if (this.contactInfo.personContactInfo.userId)
+            this.agendaUserDataSource = new DataSource({
+                paginate: false,
+                requireTotalCount: false,
+                key: 'id',
+                load: (options) => {
+                    let filterStartDate = this.getStartDate(),
+                        filterEndDate = this.getEndDate();
+                    return this.activityServiceProxy.getAll(
+                        this.contactInfo.personContactInfo.userId, 
+                        undefined, 
+                        filterStartDate, 
+                        filterEndDate
+                    ).toPromise().then(response => {
+                        return response.map((item: any) => {
+                            item.displayEndDate = this.isSameDate(filterEndDate, item.endDate) ? item.endDate : filterEndDate;
+                            item.fieldTimeZone = 'Etc/UTC';
+                            return item;
+                        });
+                    });
+                }
+            });
+
+        this.agendaContactDataSource = new DataSource({
+            paginate: false,
+            requireTotalCount: false,
+            key: 'id',
+            load: (options) => {
+                let filterStartDate = this.getStartDate(),
+                    filterEndDate = this.getEndDate();
+                return this.activityServiceProxy.getAll(
+                    undefined, 
+                    this.contactInfo.id, 
+                    filterStartDate, 
+                    filterEndDate
+                ).toPromise().then(response => {
+                    return response.map((item: any) => {
+                        item.displayEndDate = this.isSameDate(filterEndDate, item.endDate) ? item.endDate : filterEndDate;
+                        item.fieldTimeZone = 'Etc/UTC';
+                        return item;
+                    });
+                });
+            }
+        });
+    }
+
+    getDateWithTimezone(value) {
+        return new Date(moment(value).format('YYYY-MM-DD HH:mm:ss'));
+    }
 
     initContactLeadsDataSource() {
         if (this.contactInfo && this.contactInfo.id && !this.contactLeadsDataSource)
@@ -353,13 +499,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        request.params.$select = ['Id',  'Name', 'Stage', 'LeadDate'];
+                        request.params.$select = ['Id',  'Name', 'Stage', 'LeadDate', 'ContactGroupId'];
                         request.params.$filter = 'CustomerId eq ' + this.contactInfo.id;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                    },
-                    onLoaded: (data: any) => {
-                        this.initChecklistByLead(this.leadInfo).subscribe(
-                            () => this.initChecklistSources());
                     }
                 })
             });
@@ -376,15 +518,17 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        request.params.$select = ['Id',  'Number', 'Name', 'Stage', 'OrderDate'];
-                        request.params.$filter = 'ContactId eq ' + this.contactInfo.id;
+                        request.params.$select = ['Id',  'Number', 'Name', 'Stage', 'OrderDate', 'ContactGroupId'];
+                        request.params.$filter = 'ContactId eq ' + this.contactInfo.id + ' and LeadId eq ' + this.checklistLeadId;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
-                    onLoaded: (data: any) => {
+                    onLoaded: (data: any[]) => {
                         if (data.length) {
                             let params = (this.route.queryParams as BehaviorSubject<Params>).getValue(),
                             orderId = params && params['orderId'] && parseInt(params['orderId']),
                             order = orderId ? data.filter(item => item.Id == orderId)[0] : data[0];
+                            if (!order)
+                                order = data[0];
                             this.initChecklistByOrder(order).subscribe(
                                 () => this.initChecklistSources());
                         } else
@@ -395,42 +539,50 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         }
     }
 
-    initChecklistDataSource(purposeId, rootName, stageName) {
-        let rootItem: any = {
-            id: 'root',
-            text: rootName.toUpperCase(),
-            selected: false,
-            expanded: true,
-            disabled: false,
-            items: []
-        }, dataSource = [rootItem];
-        this.pipelineService.getPipelineDefinitionObservable(
-            purposeId, this.leadInfo && this.leadInfo.contactGroupId || ContactGroup.Client
-        ).pipe(takeUntil(this.dialogRef.beforeClosed())).subscribe((pipeline: PipelineDto) => {
-            rootItem.items = [];
-            pipeline.stages.forEach((stage: StageDto) => {
-                if (stage.checklistPoints)
-                    rootItem.items.push({
-                        key: stage.id,
-                        id: 'stage-' + stage.id,
-                        text: stage.name,
-                        selected: false,
-                        expanded: true,
-                        disabled: false,
-                        items: stage.checklistPoints.sort((prev, next) => {
-                            return prev.sortOrder > next.sortOrder ? 1 : -1;
-                        }).map(point => {
-                            return {
-                                id: point.id,
-                                text: point.name,
-                                disabled: stage.name != stageName,
-                                sortOrder: point.sortOrder
-                            };
-                        })
-                    });
-            });
-        });
-        return dataSource;
+    initChecklistDataSource(
+        purposeId: string, 
+        rootName: string, 
+        stageName: string, 
+        contactGroupId: ContactGroup = ContactGroup.Client
+    ): Observable<any> {
+        return this.pipelineService.getPipelineDefinitionObservable(
+            purposeId, purposeId == AppConsts.PipelinePurposeIds.order ? undefined : contactGroupId
+        ).pipe(
+            filter(Boolean), first(),
+            takeUntil(this.dialogRef.beforeClosed()),
+            map((pipeline: PipelineDto) => {
+                let rootItem: any = {
+                    id: 'root',
+                    text: rootName.toUpperCase(),
+                    selected: false,
+                    expanded: true,
+                    disabled: false,
+                    items: []
+                };
+                pipeline.stages.forEach((stage: StageDto) => {
+                    if (stage.checklistPoints)
+                        rootItem.items.push({
+                            key: stage.id,
+                            id: 'stage-' + stage.id,
+                            text: stage.name,
+                            selected: false,
+                            expanded: true,
+                            disabled: false,
+                            items: stage.checklistPoints.sort((prev, next) => {
+                                return prev.sortOrder > next.sortOrder ? 1 : -1;
+                            }).map(point => {
+                                return {
+                                    id: point.id,
+                                    text: point.name,
+                                    disabled: stage.name != stageName,
+                                    sortOrder: point.sortOrder
+                                };
+                            })
+                        });
+                });
+                return [rootItem];
+            })
+        );        
     }
 
     getTabContentHeight(subtract = 0) {
@@ -615,20 +767,33 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     onLeadChanged(event) {
-        if (event.selectedItem.Id != this.checklistLeadId) {
+        if (this.checklistLeadId && event.selectedItem.Id != this.checklistLeadId) {
             this.startLoading();
             this.initChecklistByLead(event.selectedItem).pipe(
-                finalize(() => this.finishLoading())).subscribe(
-                    () => this.initChecklistSources());
+                finalize(() => this.finishLoading())
+            ).subscribe(() => {
+                this.initChecklistSources();
+                if (this.contactOrdersDataSource)
+                    this.contactOrdersDataSource.reload();
+            });
         }
     }
 
+    onContentReady(event) {
+        let cmp = event.component,
+            items = cmp.option('items'),
+            isVisible = !!items.length;
+        cmp.option('visible', isVisible);
+        if (isVisible && !cmp.option('value'))
+            cmp.option('value', items[0].Id);
+    }
+
     onSelectInitialized(event) {
-        setTimeout(() => event.component.repaint(), 1000);
+        setTimeout(() => event.component.repaint(), 2000);
     }
 
     onOrderChanged(event: any) {
-        if (event.selectedItem.Id != this.checklistOrderId) {
+        if (event.selectedItem && event.selectedItem.Id != this.checklistOrderId) {
             this.startLoading();
             let top = this.checklistScroll.instance.scrollTop();
             this.initChecklistByOrder(event.selectedItem).pipe(
@@ -648,13 +813,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 source.checklistId = isOrder ? this.checklistOrderId : this.checklistLeadId;
                 source.checklistDataSource = isOrder ? this.checklistOrderDataSource : this.checklistLeadDataSource;
             });
-        else
-            this.checklistSources.push({
+        else {
+            this.checklistSources = [{
                 checklistId: this.checklistLeadId,
                 onChange: this.onLeadChanged.bind(this),
                 checklistDataSource: this.checklistLeadDataSource,
                 contactDataSource: this.contactLeadsDataSource
-            });
+            }];
 
             if (this.permissionChecker.isGranted(AppPermissions.CRMOrders))
                 this.checklistSources.push({
@@ -663,6 +828,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     checklistDataSource: this.checklistOrderDataSource,
                     contactDataSource: this.contactOrdersDataSource
                 });
+        }
     }
 
     openContactDetails(contactId: number) {
@@ -736,6 +902,51 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 contactId: this.contactInfo.id
             }
         }).afterClosed().subscribe(() => {
+        });
+    }
+
+    getStartDate() {
+        return DateHelper.removeTimezoneOffset(new Date(this.scheduleDate), true, 'from');
+    }
+
+    getEndDate() {
+        return DateHelper.removeTimezoneOffset(new Date(this.scheduleDate), true, 'to');
+    }
+
+    onSelectedTabChange(event) {
+        if (event.index == this.TAB_INDEX_ACTIVITY && !this.agendaContactDataSource)
+            this.initAgendaDataSource();
+    }
+
+    isSameDate(start, end) {
+        if (start && end)
+            return moment(start).format('MMM DD') == moment(end).format('MMM DD');
+        return true;
+    }
+
+    onAppointmentFormOpening(event) {
+        event.component.hideAppointmentTooltip();
+        event.component.hideAppointmentPopup(false);
+        this.showActivityDialog(event.appointmentData);
+    }
+
+    showActivityDialog(appointment) {
+        this.dialog.open(CreateActivityDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                readOnly: true,
+                appointment: {
+                    Id: appointment.id,
+                    AllDay: appointment.allDay,
+                    StartDate: appointment.startDate,
+                    EndDate: appointment.endDate,
+                    Title:  appointment.title,
+                    Description: appointment.description,
+                    Type: appointment.type
+                }
+            }
         });
     }
 

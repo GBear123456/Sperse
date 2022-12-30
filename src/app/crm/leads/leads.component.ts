@@ -73,6 +73,8 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
+import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
+import { FilterNullableRadioGroupModel } from '@shared/filters/radio-group/filter-nullable-radio-group.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import {
     ContactServiceProxy,
@@ -549,6 +551,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
 
     isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+    maxMessageCount = this.contactService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
 
     constructor(
         injector: Injector,
@@ -604,7 +607,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 this.leadFields.UserId,
                                 this.leadFields.Email,
                                 this.leadFields.Phone,
-                                this.leadFields.StarId
+                                this.leadFields.StarId,
+                                this.leadFields.IsSubscribedToEmails
                             ]
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -680,10 +684,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private initContactGroupRelatedProperties() {
-        this.isSmsAndEmailSendingAllowed = this.permission.checkCGPermission(
-            [this.selectedContactGroup],
-            'ViewCommunicationHistory.SendSMSAndEmail'
-        );
+        this.isSmsAndEmailSendingAllowed = this.maxMessageCount && 
+            this.permission.checkCGPermission(
+                [this.selectedContactGroup],
+                'ViewCommunicationHistory.SendSMSAndEmail'
+            );
 
         if (this.isSmsAndEmailSendingAllowed)
             this.pipelineSelectFields.push(this.leadFields.Phone);
@@ -701,21 +706,24 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
                             });
                         },
-                        disabled: this.isSMSIntegrationDisabled,
+                        disabled: this.isSMSIntegrationDisabled || !this.maxMessageCount,
                         checkVisible: (lead: LeadDto) => {
                             return abp.features.isEnabled(AppFeatures.InboundOutboundSMS) &&
-                                this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
+                                this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail');
                         }
                     },
                     {
                         text: this.l('SendEmail'),
                         class: 'email',
+                        disabled: !this.maxMessageCount,
+                        checkVisible: (lead: LeadDto) => {
+                            return this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail');
+                        },
                         action: (data?) => {
                             this.contactService.showEmailDialog({
                                 contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
                             }).subscribe();
-                        },
-                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
+                        }
                     },
                 ]
             },
@@ -775,6 +783,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         text: this.l('Orders'),
                         class: 'orders',
+                        disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement),
                         action: (data?) => {
                             this.showLeadDetails({ data: data || this.actionEvent }, 'invoices');
                         }
@@ -1434,7 +1443,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         element: new FilterCheckBoxesModel(
                             {
                                 dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars), tap(stars => {
-                                    stars.forEach(star => {
+                                    stars && stars.forEach(star => {
                                         this.starsLookup[star.id] = star;
                                     });
                                 })),
@@ -1448,7 +1457,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 }
                             })
                     }
-                })
+                }),
+                new FilterModel({
+                    component: FilterRadioGroupComponent,
+                    caption: 'IsSubscribedToEmails',
+                    filterMethod: FiltersService.filterByBooleanValue,
+                    items: {
+                        element: new FilterNullableRadioGroupModel({
+                            value:  undefined,
+                            list: [
+                                { id: true, name: this.l('CommunicationPreferencesStatus_Subscribed') },
+                                { id: false, name: this.l('CommunicationPreferencesStatus_Unsubcribed') }
+                            ]
+                        })
+                    }
+                }),
             ], this._activatedRoute.snapshot.queryParams);
         }
         this.filtersService.apply(() => {
@@ -1617,16 +1640,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedClientKeys.length || this.selectedClientKeys.length > 1 || !this.isSmsAndEmailSendingAllowed,
+                        disabled: !this.selectedClientKeys.length || !this.isSmsAndEmailSendingAllowed,
                         options: {
                             items: [
                                 {
                                     text: this.l('Email'),
-                                    disabled: this.selectedClientKeys.length > 1,
                                     action: () => {
                                         this.contactService.showEmailDialog({
-                                            contactId: this.selectedClientKeys[0],
-                                            to: this.selectedLeads.map(lead => lead.Email).filter(Boolean)
+                                            to: this.selectedLeads.map(lead => lead.Email).filter(Boolean),
+                                            ...(this.selectedClientKeys.length > 1 ? 
+                                                {contactIds: this.selectedClientKeys} : 
+                                                {contactId: this.selectedClientKeys[0]}
+                                            )
                                         }).subscribe();
                                     }
                                 },
@@ -2042,7 +2067,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.selectedLeads.filter(lead =>
                     lead.Stage != $event.name),
                 $event.name,
-                this.selectedContactGroup
+                this.selectedContactGroup,
+                this.selectedPipelineId
             ).subscribe(declinedList => {
                 if (this.showDataGrid) {
                     let gridInstance = this.dataGrid && this.dataGrid.instance;
