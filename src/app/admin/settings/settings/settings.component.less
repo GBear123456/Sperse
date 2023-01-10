@@ -1,0 +1,106 @@
+:host {
+    display: block;
+    position: relative;
+    height: 100%;
+
+    .wrapper {
+        padding: 10px;
+        height: calc(~"100vh - 150px");
+        display: flex;
+    }
+
+    .left-menu {
+        height: 100%;
+        width: 220px;
+        border-right: 1px solid #dfdfdf;
+        text-align: center;
+        padding: 10px;
+
+        ::ng-deep dx-list {
+            .dx-list-item {
+                border-top: none;
+                text-align: left;
+
+                &.dx-state-focused {
+                    background-color: rgba(0,0,0,.1);
+                    color: #333;
+                }
+            }
+        }
+    }
+
+    .content {
+        padding: 10px 20px;
+        width: 100%;
+
+        ::ng-deep mat-vertical-stepper {
+            .mat-step {
+                mat-step-header {
+                    display: none;
+                }
+
+                .mat-vertical-content-container {
+                    margin-left: 0;
+
+                    &:before {
+                        display: none;
+                    }
+
+                    .mat-vertical-stepper-content {
+                        overflow: initial;
+
+                        .mat-vertical-content {
+                            padding: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    ::ng-deep dx-select-box {
+        width: 100%;
+
+        input, .dx-placeholder {
+            font-family: sans-serif,Arial;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.25;
+        }
+
+        input {
+            background-color: #fff;
+            border: 1px solid #ebedf2;
+            padding: .65rem 1rem;
+            border-radius: .25rem;
+        }
+
+        &.bold-text {
+            input {
+                font-size: 18px;
+                font-weight: 600;
+                color: #171c1d;
+            }
+        }
+    }
+
+    .split-border {
+        border-bottom: 2px solid lightgray;
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+    }
+
+    .copy-url {
+        position: relative;
+
+        .copy {
+            visibility: hidden;
+            position: absolute;
+            top: 0px;
+        }
+
+        &:hover .copy {
+            visibility: visible;
+        }
+    }
+}
