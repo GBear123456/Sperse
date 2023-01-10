@@ -8,10 +8,8 @@ import { Observable, forkJoin } from 'rxjs';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
-    PasswordComplexitySettingsEditDto,
-    TenantSettingsServiceProxy,
-    TwoFactorLoginSettingsEditDto,
-    UserLockOutSettingsEditDto
+    SecuritySettingsEditDto,
+    TenantSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { AppService } from '@app/app.service';
@@ -23,9 +21,7 @@ import { AppService } from '@app/app.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SecurityComponent implements ITenantSettingsStepComponent {
-    @Input() passwordComplexitySettings: PasswordComplexitySettingsEditDto;
-    @Input() userLockOutSettings: UserLockOutSettingsEditDto;
-    @Input() twoFactorLoginSettings: TwoFactorLoginSettingsEditDto;
+    @Input() securitySettings: SecuritySettingsEditDto;
     isMultiTenancyEnabled: boolean = this.multiTenancyService.isEnabled;
     isHost: boolean = this.appService.isHostTenant;
 
@@ -36,15 +32,7 @@ export class SecurityComponent implements ITenantSettingsStepComponent {
         public ls: AppLocalizationService
     ) {}
 
-    save(): Observable<[void, void, void]> {
-        return forkJoin(
-            this.tenantSettingsServiceProxy.updatePasswordComplexitySettings(
-                this.passwordComplexitySettings.isDefaultUsed
-                ? this.passwordComplexitySettings.default
-                : this.passwordComplexitySettings.current
-            ),
-            this.tenantSettingsServiceProxy.updateUserLockOutSettings(this.userLockOutSettings),
-            this.tenantSettingsServiceProxy.updateTwoFactorLoginSettings(this.twoFactorLoginSettings)
-        );
+    save(): Observable<void> {
+        return this.tenantSettingsServiceProxy.updateSecuritySettings(this.securitySettings);
     }
 }

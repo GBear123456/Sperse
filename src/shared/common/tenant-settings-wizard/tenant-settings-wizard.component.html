@@ -46,9 +46,7 @@
         </mat-step>
         <mat-step #securityStep>
             <ng-container *ngIf="stepper.selected === securityStep">
-                <security [passwordComplexitySettings]="passwordComplexitySettings$ | async"
-                          [userLockOutSettings]="userLockOutSettings$ | async"
-                          [twoFactorLoginSettings]="twoFactorLogin$ | async">
+                <security [securitySettings]="securitySettings$ | async">
                 </security>
             </ng-container>
         </mat-step>
