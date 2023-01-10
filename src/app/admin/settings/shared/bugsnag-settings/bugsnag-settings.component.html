@@ -1,0 +1,15 @@
+<h2>{{l('Bugsnag')}} {{l('Settings')}}</h2>
+<div>
+    <div class="form-group">
+        <label for="BugsnagAppAPIKey">{{l("App Api Key")}}</label>
+        <input id="BugsnagAppAPIKey" type="text" name="BugsnagAppAPIKey" class="form-control" [(ngModel)]="bugsnagSettings.appApiKey" maxlength="128">
+    </div>
+    <div class="form-group">
+        <label for="BugsnagUIAPIKey">{{l("UI Api Key")}}</label>
+        <input id="BugsnagUIAPIKey" type="text" name="BugsnagUIAPIKey" class="form-control" [(ngModel)]="bugsnagSettings.uiApiKey" maxlength="128">
+    </div>
+</div>
+<button class="btn btn-layout" (click)="save()">
+    <i class="icon-la la la-floppy-o"></i>
+    {{l('Save')}}
+</button>

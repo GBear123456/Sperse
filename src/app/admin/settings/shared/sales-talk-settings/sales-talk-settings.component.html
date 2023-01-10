@@ -1,0 +1,35 @@
+<h2>{{l('Sales Talk')}} {{l('Settings')}}</h2>
+<div class="wrapper">
+    <div class="form-group">
+        <label></label>
+        <dx-check-box class="form-control"
+                      [text]="l('Enabled')"
+                      [(value)]="isEnabled">
+        </dx-check-box>
+    </div>
+    <ng-container *ngIf="isEnabled">
+        <div class="form-group">
+            <label>{{l("Url")}}</label>
+            <dx-text-box class="form-control"
+                         maxlength="128"
+                         [(value)]="url">
+                <dx-validator>
+                    <dxi-validation-rule type="pattern"
+                                         [pattern]="urlRegexPattern"
+                                         [message]="l('Invalid_MemberPortalUrl')">
+                    </dxi-validation-rule>
+                </dx-validator>
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{l("ApiKey")}}</label>
+            <dx-text-box class="form-control"
+                         [(value)]="apiKey">
+            </dx-text-box>
+        </div>
+    </ng-container>
+</div>
+<button class="btn btn-layout" (click)="save()">
+    <i class="icon-la la la-floppy-o"></i>
+    {{l('Save')}}
+</button>

@@ -1,0 +1,37 @@
+<h2>{{l('Paypal')}} {{l('Settings')}}</h2>
+<div class="form-group">
+    <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
+    <dx-select-box class="bold-text"
+                   stylingMode="outlined"
+                   valueExpr="value"
+                   displayExpr="text"
+                   [showClearButton]="true"
+                   [(value)]="paypalPaymentSettings.environment"
+                   [dataSource]="payPalEnvironments">
+    </dx-select-box>
+</div>
+<div class="form-group">
+    <label for="PayPalClientId">{{l("Client ID")}}</label>
+    <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="paypalPaymentSettings.clientId">
+</div>
+<div class="form-group">
+    <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
+    <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="paypalPaymentSettings.clientSecret">
+</div>
+<div class="form-group">
+    <label for="PayPalWebhookKey">{{l("Webhook key")}}</label>
+    <input id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" class="form-control" [(ngModel)]="paypalPaymentSettings.webhookKey" maxlength="128">
+</div>
+<p>
+    <span class="small">* To recieve webhooks from PayPal please enter any secure string above, then add new endpoint on your application using the following info:</span><br />
+    <span class="small">URL - <span class="copy-url"><b>{{getPayPalWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+    <span class="small">
+        Events -
+        <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>, <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b>,
+        <b>'Payment payouts-item succeeded'</b>, <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
+    </span>
+</p>
+<button class="btn btn-layout" (click)="save()">
+    <i class="icon-la la la-floppy-o"></i>
+    {{l('Save')}}
+</button>

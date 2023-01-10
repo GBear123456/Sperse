@@ -16,19 +16,19 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
-import { AddOrEditSSLBindingModalComponent } from '../modals/add-or-edit-ssl-binding-modal.component';
-import { UploadSSLCertificateModalComponent } from '../modals/upload-ssl-cert-modal.component';
+import { AddOrEditSSLBindingModalComponent } from './modals/add-or-edit-ssl-binding-modal.component';
+import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-modal.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
 
 @Component({
-    selector: 'system-settings',
-    templateUrl: './system-settings.component.html',
-    styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './system-settings.component.less'],
+    selector: 'domain-settings',
+    templateUrl: './domain-settings.component.html',
+    styleUrls: ['../../../../shared/common/styles/checkbox-radio.less', './domain-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
 })
-export class SystemSettingsComponent implements OnInit {
+export class DomainSettingsComponent implements OnInit {
     @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
     @ViewChild('sslGrid') sslGrid: DxDataGridComponent;
     public sslGridDataSource: TenantSslCertificateInfo[];

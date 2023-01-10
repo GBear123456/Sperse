@@ -1,0 +1,19 @@
+<h2>{{l('LinkedIn')}} {{l('Settings')}}</h2>
+<div *ngIf="linkedInSettings">
+    <div>
+        <div class="form-group">
+            <label for="LinkedInAppId">{{l("LinkedInAppId")}}</label>
+            <input id="LinkedInAppId" type="text" name="LinkedInAppId" class="form-control" [(ngModel)]="linkedInSettings.settings.appId">
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label for="LinkedInAppSecret">{{l("LinkedInAppSecret")}}</label>
+            <input id="LinkedInAppSecret" type="text" name="LinkedInAppSecret" class="form-control" [(ngModel)]="linkedInSettings.settings.appSecret">
+        </div>
+    </div>
+</div>
+<button class="btn btn-layout" (click)="save()">
+    <i class="icon-la la la-floppy-o"></i>
+    {{l('Save')}}
+</button>
