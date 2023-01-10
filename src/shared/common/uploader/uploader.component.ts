@@ -6,7 +6,7 @@ import { NgxFileDropEntry } from 'ngx-file-drop';
 import { Observable, Subscriber, of } from 'rxjs';
 import { MessageService } from 'abp-ng2-module';
 
-/** Application import s*/
+/** Application import */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
