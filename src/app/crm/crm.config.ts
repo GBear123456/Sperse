@@ -3,6 +3,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { ConfigInterface } from '@app/shared/common/config.interface';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
+import { ContactGroup } from '@shared/AppEnums';
 
 export class CrmConfig implements ConfigInterface {
     code = 'CRM';
@@ -19,7 +20,13 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'Leads',
             permission: AppPermissions.CRMCustomers + '|' + AppPermissions.CRMPartners + '|' + AppPermissions.CRMEmployees + '|' + AppPermissions.CRMInvestors + '|' + AppPermissions.CRMVendors + '|' + AppPermissions.CRMOthers,
-            route: '/app/crm/leads'
+            route: '/app/crm/leads',
+            items: Object.keys(ContactGroup).map(contactGroup => ({
+                text: contactGroup + 's',
+                route: '/app/crm/leads',
+                permission: AppPermissions['CRM' + contactGroup + 's'],
+                params: {contactGroup: contactGroup}            
+            }))
         },
         {
             text: 'Clients',
