@@ -767,7 +767,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     onLeadChanged(event) {
-        if (this.checklistLeadId && event.selectedItem.Id != this.checklistLeadId) {
+        if (this.checklistLeadId && event.selectedItem && event.selectedItem.Id != this.checklistLeadId) {
             this.startLoading();
             this.initChecklistByLead(event.selectedItem).pipe(
                 finalize(() => this.finishLoading())
