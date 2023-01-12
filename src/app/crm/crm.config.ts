@@ -25,7 +25,7 @@ export class CrmConfig implements ConfigInterface {
                 text: contactGroup + 's',
                 route: '/app/crm/leads',
                 permission: AppPermissions['CRM' + contactGroup + 's'],
-                params: {contactGroup: contactGroup}            
+                params: {contactGroup: contactGroup}
             }))
         },
         {
@@ -41,7 +41,30 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'Orders',
             permission: AppPermissions.CRMOrders,
-            route: '/app/crm/orders'
+            route: '/app/crm/orders',
+            items: [{
+                text: 'Orders',
+                permission: AppPermissions.CRMOrders,
+                route: '/app/crm/orders',
+                params: {contactGroup: ContactGroup.Client, orderType: 1},
+                items: Object.keys(ContactGroup).map(contactGroup => ({
+                    text: contactGroup + 's',
+                    route: '/app/crm/orders',
+                    permission: AppPermissions['CRM' + contactGroup + 's'],
+                    params: {contactGroup: ContactGroup[contactGroup], orderType: 1}
+                }))
+            }, {
+                text: 'Subscriptions',
+                permission: AppPermissions.CRMOrders,
+                route: '/app/crm/orders',
+                params: {contactGroup: ContactGroup.Client, orderType: 2},
+                items: Object.keys(ContactGroup).map(contactGroup => ({
+                    text: contactGroup + 's',
+                    route: '/app/crm/orders',
+                    permission: AppPermissions['CRM' + contactGroup + 's'],
+                    params: {contactGroup: ContactGroup[contactGroup], orderType: 2}
+                }))
+            }]
         },
         {
             text: 'Invoices',
@@ -51,7 +74,11 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'Products',
             permission: AppPermissions.CRMProducts,
-            route: '/app/crm/products'
+            route: '/app/crm/products',
+            items: [{
+                text: 'Coupons',
+                route: '/app/crm/coupons'
+            }]
         },
         {
             text: 'Tasks',

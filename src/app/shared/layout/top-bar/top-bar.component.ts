@@ -271,16 +271,6 @@ export class TopBarComponent implements OnInit, OnDestroy {
         return (!item.host || (abp.session.multiTenancySide == <any>abp.multiTenancy.sides[item.host.toUpperCase()])) && this.checkMenuItemPermission(item) && this.checkMenuItemLayout(item);
     }
 
-    getMenuDataSource(link) {
-        let selectedLink = this.navbarItems[this.selectedIndex],
-            isSelected = link && selectedLink && link.text == selectedLink.text;
-
-        return [isSelected ? {
-            ...link,
-            items: undefined
-        } : link];
-    }
-
     ngOnDestroy() {
         this.lifecycleService.destroy.next(null);
     }

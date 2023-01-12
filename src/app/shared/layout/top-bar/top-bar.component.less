@@ -96,10 +96,10 @@
                             display: none;
                         }
 
-                        .dx-menu-item-popout {
-                            //display: none;
+                        .dx-menu-item-popout {                            
                             line-height: 25px;
                             &:before {
+                                font: 18px/18px DXIcons;
                                 left: 100%;
                             }
                         }
@@ -163,6 +163,22 @@
             &::placeholder {
                 color: #9999A6;
             }
+        }
+    }
+}
+
+::ng-deep .dx-overlay-content {
+    .dx-context-menu-content-delimiter {
+        display: none !important;
+    }
+
+    .dx-menu-items-container {
+        min-width: 200px;
+    }
+
+    .dx-menu-item-popout {                            
+        &:before {
+            font: 18px/18px DXIcons;
         }
     }
 }

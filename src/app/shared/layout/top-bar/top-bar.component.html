@@ -12,10 +12,10 @@
         <div *dxTemplate="let link of 'navBarItem'">
             <dx-menu
                 [dataSource]="[link]"
-                selectionMode="none"
+                [selectByClick]="true"
+                [selectionMode]="'single'"
                 [hoverStateEnabled]="true"
                 [hideSubmenuOnMouseLeave]="true"
-                [disabled]="navbarItems[selectedIndex]?.text == link?.text"
                 [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
                 [showSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
                 (onItemClick)="navigate($event)">
