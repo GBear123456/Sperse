@@ -2,6 +2,14 @@
 <div *ngIf="linkedInSettings">
     <div>
         <div class="form-group">
+            <dx-check-box id="LinkedInIsDeactivated"
+                          [text]="l('Deactivate')"
+                          [(value)]="linkedInSettings.isDeactivated">
+            </dx-check-box>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
             <label for="LinkedInAppId">{{l("LinkedInAppId")}}</label>
             <input id="LinkedInAppId" type="text" name="LinkedInAppId" class="form-control" [(ngModel)]="linkedInSettings.settings.appId">
         </div>

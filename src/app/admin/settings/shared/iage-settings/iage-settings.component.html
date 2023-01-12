@@ -1,5 +1,13 @@
 <h2>{{l('IAge')}} {{l('Settings')}}</h2>
 <div>
+    <div>
+        <div class="form-group m-form__group">
+            <dx-check-box id="IAgeIsEnabled"
+                          [text]="l('IAgeIsEnabled')"
+                          [(value)]="iageSettings.isEnabled">
+            </dx-check-box>
+        </div>
+    </div>
     <div class="form-group">
         <label for="IAgeApiKey">{{l("IAgeApiKey")}}</label>
         <input id="IAgeApiKey" type="text" name="IAgeApiKey" class="form-control" [(ngModel)]="iageSettings.apiKey" maxlength="128">
@@ -16,14 +24,6 @@
         <div class="form-group">
             <label for="OfferAnnouncementEmailId">{{l("OfferAnnouncementEmailId")}}</label>
             <input id="OfferAnnouncementEmailId" type="number" name="OfferAnnouncementEmailId" class="form-control" [(ngModel)]="iageSettings.offerAnnouncementEmailId" maxlength="128">
-        </div>
-    </div>
-    <div>
-        <div class="form-group m-form__group">
-            <dx-check-box id="IAgeIsEnabled"
-                          [text]="l('IAgeIsEnabled')"
-                          [(value)]="iageSettings.isEnabled">
-            </dx-check-box>
         </div>
     </div>
 </div>

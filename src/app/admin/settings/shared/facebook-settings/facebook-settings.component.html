@@ -2,14 +2,22 @@
 <div *ngIf="facebookSettings">
     <div>
         <div class="form-group">
+            <dx-check-box id="FacebookIsDeactivated"
+                          [text]="l('Deactivate')"
+                          [(value)]="facebookSettings.isDeactivated">
+            </dx-check-box>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
             <label for="FacebookAppId">{{l("FacebookAppId")}}</label>
-            <input id="FacebookAppId" type="text" name="FacebookAppId" class="form-control" [(ngModel)]="facebookSettings.settings.appId">
+            <input id="FacebookAppId" type="text" name="FacebookAppId" class="form-control" [(ngModel)]="facebookSettings.settings.appId" maxlength="128">
         </div>
     </div>
     <div>
         <div class="form-group">
             <label for="FacebookAppSecret">{{l("FacebookAppSecret")}}</label>
-            <input id="FacebookAppSecret" type="text" name="FacebookAppSecret" class="form-control" [(ngModel)]="facebookSettings.settings.appSecret">
+            <input id="FacebookAppSecret" type="text" name="FacebookAppSecret" class="form-control" [(ngModel)]="facebookSettings.settings.appSecret" maxlength="128">
         </div>
     </div>
 </div>

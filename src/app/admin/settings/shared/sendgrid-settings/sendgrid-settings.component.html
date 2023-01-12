@@ -1,6 +1,12 @@
 <h2>{{l('SendGrid')}} {{l('Settings')}}</h2>
 <div>
     <div class="form-group">
+        <dx-check-box id="SendGridIsEnabled"
+                      [text]="l('Enabled')"
+                      [(value)]="sendGridSettings.isEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
         <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
         <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" [(ngModel)]="sendGridSettings.defaultFromAddress" maxlength="100">
     </div>

@@ -15,7 +15,7 @@
         </div>
         <div class="content" *ngIf="visibleSettings.length">
             <dx-scroll-view>
-                <mat-vertical-stepper #stepper [animationDuration]="2000">
+                <mat-vertical-stepper #stepper>
                     <mat-step #generalSettingsStep>
                         <ng-container *ngIf="stepper.selected === null || stepper.selected === generalSettingsStep">
                             <general-settings></general-settings>

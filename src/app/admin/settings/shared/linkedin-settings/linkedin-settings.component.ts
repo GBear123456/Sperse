@@ -40,6 +40,20 @@ export class LinkedInSettingsComponent extends SettingsComponentBase {
             });
     }
 
+    isValid(): boolean {
+        let isAppIdSet = !!this.linkedInSettings.settings.appId;
+        let isAppSecret = !!this.linkedInSettings.settings.appSecret;
+
+        let isValid = (!isAppIdSet && !isAppSecret) || (isAppIdSet && isAppSecret);
+
+        if (!isValid) {
+            let fieldName = isAppIdSet ? 'LinkedInAppSecret' : 'LinkedInAppId';
+            this.notify.error(this.l('RequiredField', this.l(fieldName)));
+        }
+
+        return isValid;
+    }
+
     getSaveObs(): Observable<any> {
         return this.tenantSettingsService.updateLinkedInSettings(this.linkedInSettings);
     }

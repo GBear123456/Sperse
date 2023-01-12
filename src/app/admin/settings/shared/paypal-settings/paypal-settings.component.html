@@ -1,4 +1,11 @@
 <h2>{{l('Paypal')}} {{l('Settings')}}</h2>
+
+<div class="form-group">
+    <dx-check-box id="PayPalIsEnabled"
+                  [text]="l('Enabled')"
+                  [(value)]="paypalPaymentSettings.isEnabled">
+    </dx-check-box>
+</div>
 <div class="form-group">
     <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
     <dx-select-box class="bold-text"

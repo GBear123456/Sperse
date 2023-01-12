@@ -40,8 +40,21 @@ export class FacebookSettingsComponent extends SettingsComponentBase {
             });
     }
 
-    getSaveObs(): Observable<any> {
+    isValid(): boolean {
+        let isAppIdSet = !!this.facebookSettings.settings.appId;
+        let isAppSecret = !!this.facebookSettings.settings.appSecret;
 
+        let isValid = (!isAppIdSet && !isAppSecret) || (isAppIdSet && isAppSecret);
+
+        if (!isValid) {
+            let fieldName = isAppIdSet ? 'FacebookAppSecret' : 'FacebookAppId';
+            this.notify.error(this.l('RequiredField', this.l(fieldName)));
+        }
+
+        return isValid;
+    }
+
+    getSaveObs(): Observable<any> {
         return this.tenantSettingsService.updateFacebookSettings(this.facebookSettings);
     }
 }
