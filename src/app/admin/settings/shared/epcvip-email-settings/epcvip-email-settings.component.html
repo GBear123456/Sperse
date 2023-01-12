@@ -1,6 +1,12 @@
 <h2>{{l('EPCVIPEmail')}} {{l('Settings')}}</h2>
 <div>
     <div class="form-group">
+        <dx-check-box id="EPCVIPEmailIsEnabled"
+                      [text]="l('Enabled')"
+                      [(value)]="epcvipEmailSettings.isEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
         <label for="EPCVIPEmailApiKey">{{l("EPCVIPEmailApiKey")}}</label>
         <input id="EPCVIPEmailApiKey" type="text" name="EPCVIPEmailApiKey" class="form-control" [(ngModel)]="epcvipEmailSettings.apiKey" maxlength="128">
     </div>
