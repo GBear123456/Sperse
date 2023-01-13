@@ -199,14 +199,94 @@ input.form-control {
     table-layout: fixed;
 }
 
-.dx-checkbox-container {
-    width: 100%;
-    display: inline;
+// checkboxes styles
+.dx-checkbox {
+    display: inline-block;
+    .dx-checkbox-icon {
+        width: 20px;
+        height: 20px;
+        background: #fff !important;
+        border-color: #DADEE1 !important;
+        font-size: 14px;
+        font-weight: normal;
+        &::before {
+            content: none !important;
+        }
+    }
+
+    .dx-checkbox-text {
+        white-space: nowrap;
+        display: inline;
+    }
+
+    span {
+        margin: auto;
+    }
+
+    &.dx-state-hover,
+    &.dx-state-focused {
+        .dx-checkbox-icon {
+            border-color: #00AEEF !important;
+        }
+    }
+
+    &.dx-checkbox-checked {
+        .dx-checkbox-icon {
+            border-color: #00AEEF !important;
+            background: #00AEEF url("../../../assets/common/icons/check-tik-icon.svg") 49% 50% no-repeat !important;
+        }
+    }
+
+    &.dx-checkbox-indeterminate {
+        .dx-checkbox-icon {
+            border-color: #00AEEF !important;
+            &::before {
+                content: '' !important;
+                width: 10px !important;
+                height: 10px !important;
+                top: 7px;
+                left: 7px;
+                background-color: #00aeef;
+            }
+        }
+    }
 }
 
-.dx-checkbox-text {
-    white-space: nowrap;
-    display: inline;
+// toolbar .dx-datagrid-group-panel .dx-group-panel-message
+.dx-datagrid-group-panel {
+    max-width: calc(~"100% - 30px");
+    margin: 5px 15px 0 !important;
+    height: 46px;
+    border: 1px solid transparent;
+    &:hover {
+        border-image: url("../../../assets/common/icons/border-img.png") 1 round;
+        .dx-group-panel-message {
+            background-color: #F9FBFC;
+        }
+    }
+
+    .dx-group-panel-message {
+        padding: 9px 10px 8px;
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.8;
+        letter-spacing: 0.3px;
+        text-align: left;
+        color: #677380;
+    }
+
+    .dx-group-panel-item {
+        padding: 12px 10px;
+    }
+}
+
+.dx-datagrid-header-panel {
+    .dx-toolbar-items-container {
+        .dx-toolbar-before {
+            width: 100%;
+            padding: 0;
+        }
+    }
 }
 
 dx-file-manager {
@@ -649,10 +729,6 @@ dx-data-grid.main-component-view, dx-file-manager {
 .dx-button-mode-contained.dx-state-hover {
     border-color: #bebebe;
 }
-
-/*.dx-treelist-icon-container.dx-editor-inline-block .dx-checkbox {
-    margin-top: -2px;
-}*/
 
 .dx-treelist-icon-container.dx-editor-inline-block .dx-checkbox {
     margin-top: 2px;

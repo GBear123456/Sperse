@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import RemoteFileProvider from 'devextreme/ui/file_manager/file_provider/remote';
+import RemoteFileSystemProvider from 'devextreme/file_management/remote_provider';
 import { DxFileManagerComponent } from 'devextreme-angular/ui/file-manager';
 import { loadMessages } from 'devextreme/localization';
 import { finalize } from 'rxjs/operators';
@@ -40,7 +40,7 @@ export class DocumentsComponent {
     private readonly VIEW_MODE_THUMBNAILS = 'thumbnails';
 
     layout = this.VIEW_MODE_THUMBNAILS;
-    fileProvider = new RemoteFileProvider({
+    fileProvider = new RemoteFileSystemProvider({
         endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem'
     });
     manageAllowed = this.permission.isGranted(AppPermissions.CRMFileStorageTemplatesManage);

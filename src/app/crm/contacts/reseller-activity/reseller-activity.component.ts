@@ -88,8 +88,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     isCGManageAllowed = false;
     isCommissionsAllowed = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions)
         && this.permissionService.isGranted(AppPermissions.CRMAffiliatesCommissions);
-
-    currencyFormat: DevExpress.ui.format = {
+    currencyFormat: DevExpress.ui.Format = {
         type: 'currency',
         precision: 2,
         currency: SettingsHelper.getCurrency()

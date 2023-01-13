@@ -5,7 +5,7 @@ import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { finalize } from 'rxjs/operators';
-import DataSource from '@root/node_modules/devextreme/data/data_source';
+import { DataSource } from 'devextreme/data/data_source/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */

@@ -662,7 +662,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             });
     }
 
-    deleteAppointment(event, appointment: ActivityDto) {
+    deleteAppointment(event, appointment: any) {
         event.stopPropagation();
         if (appointment) {
             let instance = this.schedulerComponent.instance;

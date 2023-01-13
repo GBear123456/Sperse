@@ -732,7 +732,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                                         if (this.dataGrid instanceof DxDataGridComponent) {
                                             this.exportService.exportToXLS(options, this.dataGrid as DxDataGridComponent);
                                         } else {
-                                            this.dataGrid.instance.exportToExcel();
+                                            (<any>this.dataGrid).instance.exportToExcel();
                                         }
                                     },
                                     text: this.ls.l('Export to Excel'),
@@ -800,7 +800,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         }[this.selectedReportType];
     }
 
-    get dataGrid() {
+    get dataGrid(): any {
         return {
             [ReportType.Subscribers]: this.subscribersDataGrid,
             [ReportType.SubscribersStats]: this.statsDataGrid,

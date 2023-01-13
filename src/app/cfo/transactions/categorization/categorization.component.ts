@@ -357,7 +357,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     sortByColumnIndex(index: number, order: string = '') {
-        let columns = this.categoryList.instance.option('columns');
+        let columns: any[] = this.categoryList.instance.option('columns');
 
         columns[index].sortIndex = 0;
         columns[Number(!index)].sortIndex = 1;
@@ -822,7 +822,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         }
     }
 
-    reloadTransactionsCountDataSource(): Promise<any> & JQueryPromise<any> {
+    reloadTransactionsCountDataSource(): Promise<any> {
         if (!this.transactionsCountDataSource)
             this.initTransactionsTotalCount();
         this.transactionsCountDataSource.store()['_url'] =

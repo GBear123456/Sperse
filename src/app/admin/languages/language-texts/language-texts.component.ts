@@ -4,6 +4,7 @@ import { Params } from '@angular/router';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
+import { Options } from 'devextreme/data/custom_store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialog } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
@@ -83,13 +84,17 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     }
 
     ngAfterViewInit(): void {
-        this.dataSource = new DataSource({
+        this.dataSource = new DataSource(<Options>{
             load: (loadOptions) => {
                 this.isDataLoaded = false;
+                let sortOption = [];
+                if (loadOptions.sort)
+                    sortOption = loadOptions.sort instanceof Array 
+                        ? loadOptions.sort : [loadOptions.sort];
                 return this.languageService.getLanguageTexts(
                     loadOptions.take,
                     loadOptions.skip,
-                    (loadOptions.sort || []).map((item) => {
+                    sortOption.map(item => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                     }).join(','),
                     this.filtersValues.sourceName || this.defaultSourceName,

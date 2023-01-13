@@ -341,7 +341,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
                 /** Remove user from datagrid */
                 this.dataGrid.instance.deleteColumn(stringUserId);
                 /** Update data source */
-                this.dataSource.store()._array.forEach(account => {
+                this.dataSource.items().forEach(account => {
                     if (account.hasOwnProperty(stringUserId)) {
                         account[stringUserId] = false;
                     }
