@@ -28,6 +28,7 @@ import * as jszip from 'jszip';
 import * as Rar from 'rarjs/rar.js';
 import { Papa } from 'ngx-papaparse';
 import { PapaParseResult } from 'ngx-papaparse/lib/interfaces/papa-parse-result';
+import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -722,6 +723,10 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     onTypeListUpdated(list) {
         this.documentTypeService['data'] = this.documentTypes = list;
+    }
+
+    sortCreationDateTime(prev, next) {
+        return moment(prev).diff(moment(next)) >= 0 ? 1 : -1;
     }
 
     ngOnDestroy() {
