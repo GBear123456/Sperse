@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{ls.l('Checklist') + ' (' + data.entity.Name + ')'}}<span class="close" (click)="close()"></span></h2>
+<h2 mat-dialog-title>{{ls.l('Checklist') + ' (' + (data.entity.Name || data.entity.Email) + ')'}}<span class="close" (click)="close()"></span></h2>
 <div mat-dialog-content>
     <hr>
     <dx-data-grid 
