@@ -10,6 +10,7 @@ import { zip, of } from 'rxjs';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from 'abp-ng2-module';
 import { CrmStore, PipelinesStoreActions, PipelinesStoreSelectors } from '@app/crm/store';
 import { StageChecklistServiceProxy, CreateStageChecklistPointInput, UpdateStageChecklistPointSortOrderInput,
@@ -29,6 +30,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     
     maxPointCount = this.appService.getFeatureCount(AppFeatures.CRMMaxChecklistPointCount);
+    infinityFeatureCount = AppConsts.infinityFeatureCount;
 
     private slider: any;
     dataSource: any[] = [];
@@ -83,7 +85,8 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
     }
 
     addNewRecord() {
-        if (this.dataSource.every(item => item.id) && this.dataSource.length < this.maxPointCount)
+        let isAddAllowed = this.maxPointCount == this.infinityFeatureCount || this.dataSource.length < this.maxPointCount;
+        if (isAddAllowed && this.dataSource.every(item => item.id))
             this.dataSource.push({sortOrder: Infinity, id: null, name: undefined});
     }
 

@@ -96,16 +96,13 @@ export class ReceiptComponent implements OnInit {
 
     returnLinkClick() {
         abp.ui.setBusy();
-        let promise: Promise<boolean>;
         if (abp.session.userId) {
-            promise = this.router.navigate(['/app/crm']);
+            window.location.href = location.origin + '/app/crm';
         }
         else {
             sessionStorage.setItem('redirectUrl', `${location.origin}/app/crm`);
-            promise = this.router.navigate(['/account/login']);
+            window.location.href = location.origin + '/account/login';
         }
-
-        promise.finally(() => abp.ui.clearBusy())
     }
 
     openConditionsDialog(type: ConditionsType) {

@@ -20,7 +20,8 @@
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
-        <action-menu [items]="actionMenuItems"
+        <action-menu [width]="'250px'"
+                     [items]="actionMenuItems"
                      [visible]="!!actionRecord"
                      (onItemClick)="onMenuItemClick($event)"
                      (onHidden)="actionRecord = null">
