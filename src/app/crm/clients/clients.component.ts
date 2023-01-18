@@ -886,7 +886,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 null, [...this.getSubscriptionFilterValue(), ...odataRequestValues.params]
             );
             if (url && this.oDataService.requestLengthIsValid(url)) {
-                this.totalDataSource['_store']['_url'] = url;
+                this.totalDataSource['_store']['_requestDispatcher']['_url'] = url;
                 this.totalDataSource.load();
             }
         });

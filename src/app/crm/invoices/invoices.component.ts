@@ -238,7 +238,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 odataRequestValues.params ? odataRequestValues.params.concat(this.getProductsParams()) : this.getProductsParams()
             );
             if (url && this.oDataService.requestLengthIsValid(url)) {
-                this.totalDataSource['_store']['_url'] = url;
+                this.totalDataSource['_store']['_requestDispatcher']['_url'] = url;
                 this.totalDataSource.load();
             }
         });

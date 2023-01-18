@@ -757,7 +757,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 odataRequestValues.params
             );
             if (url && this.oDataService.requestLengthIsValid(url)) {
-                this.totalDataSource['_store']['_url'] = url;
+                this.totalDataSource['_store']['_requestDispatcher']['_url'] = url;
                 this.totalDataSource.load();
             }
         });
