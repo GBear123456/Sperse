@@ -734,18 +734,21 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     private getDataSourceForStage(stage) {
         let config = cloneDeep(this._dataSource),
-            _beforeSend = config.store.beforeSend;
+            _beforeSend = config.store.beforeSend,
+            selectFields = this.selectFields.concat(['SortOrder',
+                this.isChecklistAllowed ? 'StageChecklistPointDoneCount' : null
+            ].filter(Boolean));
+
         config.store.beforeSend = (request) => {
             if (_beforeSend) _beforeSend(request);
             this.getBeforeSendEvent(stage.id)(request);
+            request.params.$select = selectFields;
         };
 
         return new DataSource(extend(config, {
             onLoadError: (error) => { this.httpInterceptor.handleError(error); },
             requireTotalCount: !this.totalsURI,
-            select: this.selectFields.concat(['SortOrder',
-                this.isChecklistAllowed ? 'StageChecklistPointDoneCount' : null
-            ].filter(Boolean))
+            select: selectFields
         }));
     }
 

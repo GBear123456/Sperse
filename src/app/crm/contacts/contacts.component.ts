@@ -394,7 +394,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 finalize(() => this.finishLoading(true))
             ))
         ).subscribe((itemFullInfo: ItemFullInfo) => {
-            let isImproperItemInfo = itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemKeyField]; 
+            let isImproperItemInfo = itemFullInfo && itemFullInfo.itemData && this.currentItemId != itemFullInfo.itemData[itemKeyField]; 
             if (isImproperItemInfo && itemFullInfo.items.some(item => this.currentItemId == item[itemKeyField])) {
                 subscription.unsubscribe();
                 this.targetEntity.next(TargetDirectionEnum.Current);
