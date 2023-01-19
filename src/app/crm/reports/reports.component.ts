@@ -490,7 +490,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 null, this.getSourceOrgUnitsFilter()
             );
             if (url && this.oDataService.requestLengthIsValid(url)) {
-                this.totalDataSource['_store']['_url'] = url;
+                this.totalDataSource['_store']['_requestDispatcher']['_url'] = url;
                 this.totalDataSource.load();
             }
 

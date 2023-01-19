@@ -1144,9 +1144,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
             this.filterQuery = filterQuery;
 
-            this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, filterQuery);
+            this.countDataSource['_store']['_requestDispatcher']['_url'] = super.getODataUrl(this.countDataSourceURI, filterQuery);
             this.countDataSource.load();
-            this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
+            this.totalDataSource['_store']['_requestDispatcher']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
             this.totalDataSource.load();
 
             this.transactionsFilterQuery = _.reject(filterQuery, query =>

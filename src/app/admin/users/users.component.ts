@@ -427,7 +427,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                 return {
                                     id: item.name,
                                     parent: item.parentName,
-                                    name: item.displayName,
+                                    name: String.fromCharCode(160/*Space to avoid trim*/)
+                                        .repeat(item.level * 5) + item.displayName,
                                     displayName: item.displayName
                                 };
                             })
