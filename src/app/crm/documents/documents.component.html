@@ -4,11 +4,10 @@
 </app-headline>
 <div>
     <div class="wrapper">
-        <i class="layout-view dx-icon-{{layout == 'details' ? 'smalliconslayout' : 'contentlayout'}}" (click)="onLayoutToogle()"></i>
         <dx-file-manager
             [itemView]="{mode: layout}"
             [contextMenu]="contextMenu"
-            [fileProvider]="fileProvider"
+            [fileSystemProvider]="fileProvider"
             [allowedFileExtensions]="[]"
             [customizeDetailColumns]="customizeDetailColumns"
             [height]="getHeight()">
@@ -16,7 +15,7 @@
                 [create]="manageAllowed"
                 [copy]="manageAllowed"
                 [move]="manageAllowed"
-                [remove]="manageAllowed"
+                [delete]="manageAllowed"
                 [rename]="manageAllowed"
                 [upload]="manageAllowed"
                 [download]="false">
