@@ -1,0 +1,37 @@
+<h2>{{l('Stripe')}} {{l('Settings')}}</h2>
+
+<div class="form-group">
+    <dx-check-box id="StripeIsEnabled"
+                  [text]="l('Enabled')"
+                  [(value)]="stripePaymentSettings.isEnabled">
+    </dx-check-box>
+</div>
+<div class="form-group">
+    <label for="StripeSecretKey">{{l("Secret key")}}</label>
+    <input id="StripeSecretKey" type="text" name="StripeSecretKey" class="form-control" [(ngModel)]="stripePaymentSettings.apiKey">
+</div>
+<p>
+    <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
+</p>
+<div class="form-group">
+    <label for="StripeWebhookSecret">{{l("AccountWebhookSigningSecret")}}</label>
+    <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
+</div>
+<p>
+    <span class="small" [innerHtml]="l('StripeWebhookSecretHint1')"></span><br />
+    <span class="small">URL - <span class="copy-url"><b>{{getStripeWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+    <span class="small" [innerHtml]="l('StripeWebhookSecretHint2')"></span>
+</p>
+<div class="form-group">
+    <label for="StripeConnectWebhookSecret">{{l("ConnectWebhookSigningSecret")}}</label>
+    <input id="StripeConnectWebhookSecret" type="text" name="StripeConnectWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.connectWebhookSingingSecret">
+</div>
+<p>
+    <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint1')"></span><br />
+    <span class="small">URL - <span class="copy-url"><b>{{getStripeConnectWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+    <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint2')"></span>
+</p>
+<button class="btn btn-layout" (click)="save()">
+    <i class="icon-la la la-floppy-o"></i>
+    {{l('Save')}}
+</button>

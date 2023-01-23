@@ -1,0 +1,76 @@
+<h2>{{l('Appearance')}} {{l('Settings')}}</h2>
+<div class="row m-form file-uploads">
+    <div class="col-lg-4 col-md-6 app-logo-upload">
+        <uploader #logoUploader
+                  [title]="l('ApplicationLogo')"
+                  [documentId]="tenant.logoId"
+                  [documentLink]="tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId : undefined"
+                  [uploadInfoText]="l('UploadLogo_Info')"
+                  [uploadButtonText]="l('FileUpload')"
+                  [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo'"
+                  acceptFileExt=".jpg,.jpeg,.png,.gif"
+                  [maxFileSize]="maxLogoFileSize"
+                  (onDocumentClear)="clearLogo()">
+        </uploader>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <uploader #faviconsUploader
+                  [title]="l('CustomFavicons')"
+                  [documentId]="tenant.tenantCustomizations.favicons?.length"
+                  [documentLink]="tenant.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons' : undefined"
+                  [uploadInfoText]="l('UploadFavicons_Info')"
+                  [uploadButtonText]="l('FileUpload')"
+                  [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons'"
+                  acceptFileExt=".zip"
+                  (onDocumentClear)="clearFavicons()">
+        </uploader>
+    </div>
+</div>
+<div class="row m-form file-uploads">
+    <div class="col-lg-4 col-md-6">
+        <uploader #cssUploader
+                  [title]="l('CustomCSS')"
+                  [documentId]="tenant.customCssId"
+                  [documentLink]="tenant.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id : undefined"
+                  [documentTemplateLink]="getCustomPlatformStylePath()"
+                  [uploadInfoText]="l('UploadCSS_Info')"
+                  [uploadButtonText]="l('FileUpload')"
+                  [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform'"
+                  acceptFileExt=".css"
+                  [maxFileSize]="maxCssFileSize"
+                  (onDocumentClear)="clearCustomCss(CustomCssType.Platform)">
+        </uploader>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <uploader #loginCssUploader
+                  [title]="l('CustomLoginCSS')"
+                  [documentId]="tenant.loginCustomCssId"
+                  [documentLink]="tenant.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.loginCustomCssId + '/' + tenant.id : undefined"
+                  documentTemplateLink="assets/common/styles/custom/login-custom-style.css"
+                  [uploadInfoText]="l('UploadCSS_Info')"
+                  [uploadButtonText]="l('FileUpload')"
+                  [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Login'"
+                  acceptFileExt=".css"
+                  [maxFileSize]="maxCssFileSize"
+                  (onDocumentClear)="clearCustomCss(CustomCssType.Login)">
+        </uploader>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <uploader #portalCssUploader
+                  [title]="l('CustomPortalCSS')"
+                  [documentId]="tenant.portalCustomCssId"
+                  [documentLink]="tenant.portalCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.portalCustomCssId + '/' + tenant.id : undefined"
+                  documentTemplateLink="assets/common/styles/custom/portal-custom-style.css"
+                  [uploadInfoText]="l('UploadCSS_Info')"
+                  [uploadButtonText]="l('FileUpload')"
+                  [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Portal'"
+                  acceptFileExt=".css"
+                  [maxFileSize]="maxCssFileSize"
+                  (onDocumentClear)="clearCustomCss(CustomCssType.Portal)">
+        </uploader>
+    </div>
+</div>
+<button class="btn btn-layout" (click)="save()">
+    <i class="icon-la la la-floppy-o"></i>
+    {{l('Save')}}
+</button>

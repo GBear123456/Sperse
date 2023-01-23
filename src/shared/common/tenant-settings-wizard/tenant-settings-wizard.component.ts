@@ -23,14 +23,12 @@ import {
     GeneralSettingsEditDto,
     HostSettingsServiceProxy,
     HostUserManagementSettingsEditDto,
-    PasswordComplexitySettingsEditDto,
     SubscribableEditionComboboxItemDto,
     ListResultDtoOfSubscribableEditionComboboxItemDto,
     TenantManagementSettingsEditDto,
     TenantSettingsServiceProxy,
     TenantUserManagementSettingsEditDto,
-    TwoFactorLoginSettingsEditDto,
-    UserLockOutSettingsEditDto
+    SecuritySettingsEditDto,
 } from '@shared/service-proxies/service-proxies';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -102,9 +100,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             return result.items;
         })
     );
-    passwordComplexitySettings$: Observable<PasswordComplexitySettingsEditDto> = this.tenantSettingsService.getPasswordComplexitySettings();
-    userLockOutSettings$: Observable<UserLockOutSettingsEditDto> = this.tenantSettingsService.getUserLockOutSettings();
-    twoFactorLogin$: Observable<TwoFactorLoginSettingsEditDto> = this.tenantSettingsService.getTwoFactorLoginSettings();
+    securitySettings$: Observable<SecuritySettingsEditDto> = this.tenantSettingsService.getSecuritySettings();
     emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
     timezoneChanged: Boolean;
     countryChanged: Boolean;

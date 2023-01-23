@@ -1,14 +1,12 @@
 import { NgModule } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
-import { HostDashboardComponent } from './dashboard/host-dashboard.component';
 import { EditionsComponent } from './editions/editions.component';
 import { LanguageTextsComponent } from './languages/language-texts/language-texts.component';
 import { LanguagesComponent } from './languages/languages.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { RolesComponent } from './roles/roles.component';
-import { HostSettingsComponent } from './settings/host-settings/host-settings.component';
-import { TenantSettingsComponent } from './settings/tenant-settings/tenant-settings.component';
+import { SettingsComponent } from './settings/settings/settings.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { UsersComponent } from './users/users.component';
@@ -27,7 +25,7 @@ import { AppPermissions } from '@shared/AppPermissions';
                     { path: 'auditLogs', component: AuditLogsComponent, data: { permission: AppPermissions.AdministrationAuditLogs } },
                     { path: 'maintenance', component: MaintenanceComponent, data: { permission: AppPermissions.AdministrationHostMaintenance } },
                     { path: 'jobs', component: JobsComponent, data: { permission: AppPermissions.AdministrationHangfireDashboard } },
-                    { path: 'hostSettings', component: HostSettingsComponent, data: { permission: AppPermissions.AdministrationHostSettings + '|' + AppPermissions.AdministrationTenantHosts } },
+                    { path: 'settings', component: SettingsComponent, data: { permission: AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationHostSettings + '|' + AppPermissions.AdministrationTenantHosts } },
                     { path: 'languages', component: LanguagesComponent, data: { permission: AppPermissions.AdministrationLanguages } },
                     { path: 'languages/:name/texts', component: LanguageTextsComponent, data: { permission: AppPermissions.AdministrationLanguagesChangeTexts } },
                     { 
@@ -38,7 +36,6 @@ import { AppPermissions } from '@shared/AppPermissions';
                             ),
                         data: { permission: AppPermissions.AdministrationOrganizationUnits } 
                     },
-                    { path: 'tenantSettings', component: TenantSettingsComponent, data: { permission: AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationTenantHosts } },
                     {
                         path: 'hostDashboard',
                         loadChildren: () =>
