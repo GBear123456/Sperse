@@ -148,11 +148,6 @@ export class DocumentsComponent {
         });
     }
 
-    onLayoutToogle() {
-        this.layout = this.layout == this.VIEW_MODE_DETAILS
-            ? this.VIEW_MODE_THUMBNAILS : this.VIEW_MODE_DETAILS;
-    }
-
     activate() {
         this.ui.overflowHidden(true);
         this.lifeCycleSubject.activate.next();
