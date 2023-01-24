@@ -182,9 +182,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     saveProduct() {
-        if (this.product.type == this.defaultProductType) {
-            let services = this.product.productServices,
-                options = this.product.productSubscriptionOptions;
+        if (this.product.type == ProductType.Subscription) {
+            let options = this.product.productSubscriptionOptions;
             if (!options || !options.length)
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.unit = undefined;
@@ -192,6 +191,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         } else {
             this.product.productServices = undefined;
             this.product.productSubscriptionOptions = undefined;
+            this.product.productUpgradeAssignments = undefined;
         }
 
         if (this.validationGroup.instance.validate().isValid) {
