@@ -1,6 +1,6 @@
 <h2>{{l('Facebook')}} {{l('Settings')}}</h2>
 <div *ngIf="facebookSettings">
-    <div>
+    <div *ngIf="!isHost">
         <div class="form-group">
             <dx-check-box id="FacebookIsDeactivated"
                           [text]="l('Deactivate')"
