@@ -708,9 +708,6 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             });
         } else
             $event.component.deselectRows([$event.key]);
-
-        if ($event.isValid && this.mapGrid)
-            this.mapGrid.instance.closeEditCell();
     }
 
     selectionModeChanged($event) {
@@ -750,6 +747,11 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             cell.component.deselectRows(cell.key);
             cell.setValue(event.value);
         }
+    }
+
+    onItemClick(event, cell) {
+        if (event.node.key != cell.value)
+            cell.setValue(event.node.key);
     }
 
     customizePreviewColumns = (columns) => {
