@@ -143,7 +143,7 @@ export class DomainSettingsComponent implements OnInit {
 
     getOrgUnitName(id) {
         if (id) {
-          for (let i = 0; i <= this.orgUnits.length; i++)
+          for (let i = 0; i < this.orgUnits.length; i++)
               if (this.orgUnits[i].id == id)
                   return this.orgUnits[i].displayName;
         }
