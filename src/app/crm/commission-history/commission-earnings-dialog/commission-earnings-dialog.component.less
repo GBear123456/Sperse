@@ -1,13 +1,15 @@
 :host {
     display: block;
-    position: relative;    
+    position: relative;
     min-width: 400px;
+
     h2 {
         font-size: 20px;
         font-weight: 600;
         line-height: 1;
         letter-spacing: 0.4px;
         color: #202b35;
+
         div:first-child {
             padding: 15px;
             color: rgb(0 174 239);
@@ -21,6 +23,7 @@
 
     mat-dialog-actions {
         justify-content: flex-end;
+
         button {
             outline: none;
             min-width: 80px;
@@ -30,6 +33,12 @@
     .mat-dialog-title {
         text-align: center;
     }
+}
+
+
+::ng-deep .accounts-dropdown .dx-list .dx-list-select-all .dx-checkbox.dx-checkbox-indeterminate .dx-checkbox-icon::before {
+    top: 11px;
+    left: 11px;
 }
 
 ::ng-deep .dx-item-content.affiliates-list-item-content {

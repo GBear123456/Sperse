@@ -192,6 +192,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.product.productServices = undefined;
             this.product.productSubscriptionOptions = undefined;
             this.product.productUpgradeAssignments = undefined;
+            this.product.downgradeProductId = undefined;
         }
 
         if (this.validationGroup.instance.validate().isValid) {
