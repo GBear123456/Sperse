@@ -4,7 +4,7 @@
             <h3>{{ls.l('SSLConfiguration')}}</h3>
             <button class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{ls.l("UploadCertificate")}}</button>
         </div>
-        <div id="SSLTable">
+        <div id="SSLTable" class="tab-body">
             <dx-data-grid id="gridContainer"
                           #sslGrid
                           [dataSource]="sslGridDataSource"
@@ -32,7 +32,7 @@
             <h3>{{ls.l('CustomDomains')}}</h3>
             <button class="btn btn-layout" (click)="showSSLBindingDialog(null)"><i class="fa fa-plus"></i>{{ls.l("AddSSLBinding")}}</button>
         </div>
-        <div id="CustomDomainsTable">
+        <div id="CustomDomainsTable" class="tab-body">
             <dx-data-grid id="gridContainer"
                           #customDomainsGrid
                           [dataSource]="sslBindingsDataSource"
@@ -61,6 +61,5 @@
                 </div>
             </dx-data-grid>
         </div>
-
     </mat-tab>
 </mat-tab-group>

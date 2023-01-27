@@ -7,7 +7,7 @@
     }
 
     ::ng-deep #gridContainer {
-        height: auto !important;
+        height: 100% !important;
 
         .default {
             font-style: italic;
@@ -16,6 +16,10 @@
 
     ::ng-deep .mat-tab-body-content {
         overflow: hidden;
+    }
+
+    .tab-body {
+        height: calc(100vh - 292px);
     }
 
     .m-checkbox-list {

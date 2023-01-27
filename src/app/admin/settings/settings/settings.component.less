@@ -11,6 +11,7 @@
 
     .left-menu {
         height: 100%;
+        flex: 0 0 200px;
         width: 220px;
         border-right: 1px solid #dfdfdf;
         text-align: center;
@@ -31,7 +32,7 @@
 
     .content {
         padding: 10px 20px;
-        width: 100%;
+        width: calc(100vw - 220px);
 
         ::ng-deep .dx-scrollable-scrollbar.dx-scrollbar-vertical.dx-scrollbar-hoverable {
             z-index: 2;
