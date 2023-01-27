@@ -1,0 +1,81 @@
+<h2>{{l('General')}} {{l('Settings')}}</h2>
+<div *ngIf="generalSettings">
+    <div class="form-group" *ngIf="showTimezoneSelection">
+        <label for="Timezone">{{l("Timezone")}}</label>
+        <timezone-combo id="Timezone"
+                        [(selectedTimeZone)]="generalSettings.timezone"
+                        [defaultTimezoneScope]="defaultTimezoneScope">
+        </timezone-combo>
+    </div>
+    <div class="form-group">
+        <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
+        <dx-select-box valueExpr="key"
+                       displayExpr="text"
+                       [(value)]="generalSettings.defaultCountryCode"
+                       [dataSource]="supportedCountries">
+        </dx-select-box>
+    </div>
+    <ng-container *ngIf="!isHost">
+        <div class="form-group">
+            <label for="PublicPhone">{{l("PublicPhone")}}</label>
+            <div>
+                <country-phone-number #publicPhoneNumber
+                                      [phoneNumber]="generalSettings.publicPhone"
+                                      [required]="false"
+                                      (phoneNumberChange)="onPhoneNumberChange($event, publicPhoneNumber)">
+                </country-phone-number>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="PublicSiteUrl">{{l("PublicSiteUrl")}}</label>
+            <input #publicSiteUrl="ngModel"
+                   id="PublicSiteUrl"
+                   type="url"
+                   name="PublicSiteUrl"
+                   class="form-control"
+                   [(ngModel)]="generalSettings.publicSiteUrl"
+                   maxlength="128"
+                   [pattern]="siteUrlRegexPattern"
+                   (change)="changeDetection.detectChanges()">
+        </div>
+        <div>
+            <span class="help-block text-danger"
+                  *ngIf="!publicSiteUrl.valid && !publicSiteUrl.pristine">
+                {{l("Invalid_PublicSiteUrl")}}
+            </span>
+        </div>
+        <div class="form-group">
+            <label for="ZendeskAccountUrl">{{l("ZendeskAccountUrl")}}</label>
+            <input id="ZendeskAccountUrl"
+                   type="text"
+                   name="ZendeskAccountUrl"
+                   class="form-control"
+                   [(ngModel)]="generalSettings.zendeskAccountUrl"
+                   maxlength="128">
+        </div>
+        <div class="row m-form" *ngIf="isAdminCustomizations">
+            <div class="col-md-6">
+                <uploader #privacyPolicyUploader
+                          [title]="l('PrivacyPolicy')"
+                          [documentId]="tenant.customPrivacyPolicyDocumentId"
+                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + tenant.id"
+                          [uploadButtonText]="l('UploadPrivacyPolicy')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomPrivacyPolicyDocument'">
+                </uploader>
+            </div>
+            <div class="col-md-6">
+                <uploader #tosUploader
+                          [title]="l('TermsOfService')"
+                          [documentId]="tenant.customToSDocumentId"
+                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + tenant.id"
+                          [uploadButtonText]="l('UploadTermsOfService')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomToSDocument'">
+                </uploader>
+            </div>
+        </div>
+    </ng-container>
+</div>
+<button class="btn btn-layout" (click)="save()">
+    <i class="icon-la la la-floppy-o"></i>
+    {{l('Save')}}
+</button>

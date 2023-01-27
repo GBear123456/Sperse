@@ -36,6 +36,8 @@ import { ModalDialogModule } from './dialogs/modal/modal-dialog.module';
 import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.module';
 import { DateTimeModule } from '@shared/common/pipes/datetime/datetime.module';
 import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
+import { UploaderComponent } from './uploader/uploader.component';
+import { NgxFileDropModule } from 'ngx-file-drop';
 
 @NgModule({
     declarations: [
@@ -50,10 +52,12 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         RegisterConfirmComponent,
         ConditionsModalComponent,
         BulkProgressDialogComponent,
-        DxDataGridDirective
+        DxDataGridDirective,
+        UploaderComponent
     ],
     exports: [
         CalendarComponent,
+        UploaderComponent,
         CustomNumberPipe,
         NumberToWordsPipe,
         PhoneFormatPipe,
@@ -81,7 +85,8 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         DxTextBoxModule,
         DxCheckBoxModule,
         PhoneFormatModule,
-        DateTimeModule
+        DateTimeModule,
+        NgxFileDropModule
     ],
     entryComponents: [
         RegisterConfirmComponent,

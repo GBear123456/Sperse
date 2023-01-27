@@ -1,0 +1,40 @@
+:host {
+    h5 {
+        font-size: 14px;
+        letter-spacing: 0.2px;
+        color: #677380;
+    }
+    p {
+        margin-bottom: 6px;
+        a.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        span {
+            min-height: 42px;
+        }
+    }
+    ::ng-deep .ngx-file-drop__drop-zone {
+        border: 1px dashed #e5e9ec !important;
+        border-radius: 3px !important;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.28px;
+        color: #00aeef;
+        height: 55px !important;
+        display: -webkit-box;
+        display: flex;
+        align-items: center;
+        width: 281px;
+        text-align: center;
+        cursor: pointer;
+        margin: 0 !important;
+        &:before {
+            content: url("../../../assets/common/icons/tenant-settings/upload.svg");
+            width: 21px;
+            height: 16px;
+            margin-right: 22px;
+            margin-left: 19px;
+        }
+    }
+}
