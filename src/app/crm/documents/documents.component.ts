@@ -41,7 +41,14 @@ export class DocumentsComponent {
 
     layout = this.VIEW_MODE_THUMBNAILS;
     fileProvider = new RemoteFileSystemProvider({
-        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem'
+        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem',
+        beforeAjaxSend: (options) => {
+            if (!options.headers || !options.headers['Authorization'])
+                options.headers = {
+                    Authorization: 'Bearer ' + abp.auth.getToken(),
+                    ...(options.headers || {})
+                };
+        }
     });
     manageAllowed = this.permission.isGranted(AppPermissions.CRMFileStorageTemplatesManage);
 
