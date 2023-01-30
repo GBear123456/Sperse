@@ -670,7 +670,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 ...this.params,
                 ...customFilter.params
             ];
-
         return this.getODataUrl(
             this.totalsURI,
             filters,
@@ -691,7 +690,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
         } else {
             /** Update total source url in a case custom filter has changed */
-            this._totalDataSource._store._url = this.getTotalsRequestUrl(filter);
+            this._totalDataSource['_store']['_requestDispatcher']['_url'] = this.getTotalsRequestUrl(filter);
         }
 
         if (!this._totalDataSource.isLoading()) {
