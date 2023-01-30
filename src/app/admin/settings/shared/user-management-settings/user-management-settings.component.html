@@ -1,0 +1,65 @@
+<h2>{{l('UserManagement')}} {{l('Settings')}}</h2>
+<ng-container *ngIf="tenantSettings">
+    <div class="m-form">
+        <h5>{{l("FormBasedRegistration")}}</h5>
+        <div class="m-checkbox-list">
+            <div class="form-group">
+                <dx-check-box id="Setting_AllowSelfRegistration"
+                              [text]="l('AllowUsersToRegisterThemselves')"
+                              [(value)]="tenantSettings.allowSelfRegistration">
+                </dx-check-box>
+                <span class="m-form__help">{{l("AllowUsersToRegisterThemselves_Hint")}}</span>
+            </div>
+            <div class="form-group">
+                <dx-check-box id="Setting_IsNewRegisteredUserActiveByDefault"
+                              [text]="l('NewRegisteredUsersIsActiveByDefault')"
+                              [(value)]="tenantSettings.isNewRegisteredUserActiveByDefault">
+                </dx-check-box>
+                <span class="m-form__help">{{l("NewRegisteredUsersIsActiveByDefault_Hint")}}</span>
+            </div>
+            <div class="form-group" [hidden]="!tenantSettings.allowSelfRegistration">
+                <dx-check-box id="Setting_UseCaptchaOnRegistration"
+                              [text]="l('UseCaptchaOnRegistration')"
+                              [(value)]="tenantSettings.useCaptchaOnRegistration">
+                </dx-check-box>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <h5 class="margin-top-20">{{l("OtherSettings")}}</h5>
+        <dx-check-box id="Setting_IsEmailConfirmationRequiredForLogin"
+                      [text]="l('EmailConfirmationRequiredForLogin')"
+                      [(value)]="tenantSettings.isEmailConfirmationRequiredForLogin">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <contact-group-templates [title]="l('UserRegistrationEmail')"
+                                 [(customTemplates)]="tenantSettings.customWelcomeEmailTemplates"
+                                 [templateType]="EmailTemplateType.WelcomeEmail">
+        </contact-group-templates>
+    </div>
+</ng-container>
+<ng-container *ngIf="hostSettings">
+    <div class="form-group">
+        <dx-check-box id="Settings_IsEmailConfirmationRequiredForLogin"
+                      [text]="l('EmailConfirmationRequiredForLogin')"
+                      [(value)]="hostSettings.isEmailConfirmationRequiredForLogin">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <dx-check-box id="Settings_SmsVerificationEnabled"
+                      [text]="l('SmsVerificationEnabled')"
+                      [(value)]="hostSettings.smsVerificationEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <contact-group-templates [title]="l('UserRegistrationEmail')"
+                                 [(customTemplates)]="hostSettings.customWelcomeEmailTemplates"
+                                 [templateType]="EmailTemplateType.WelcomeEmail">
+        </contact-group-templates>
+    </div>
+</ng-container>
+<button class="btn btn-layout" (click)="save()">
+    <i class="icon-la la la-floppy-o"></i>
+    {{l('Save')}}
+</button>

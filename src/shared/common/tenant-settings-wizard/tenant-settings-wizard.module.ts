@@ -1,6 +1,6 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import * as ngCommon from '@angular/common';
 
 /** Third party imports */
 import { MatStepperModule } from '@angular/material/stepper';
@@ -20,11 +20,11 @@ import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { NgxFileDropModule } from 'ngx-file-drop';
 
 /** Application imports */
+import { CommonModule } from '@shared/common/common.module';
 import { TenantSettingsWizardComponent } from './tenant-settings-wizard.component';
 import { AppearanceComponent } from '@shared/common/tenant-settings-wizard/appearance/appearance.component';
 import { GeneralSettingsComponent } from '@shared/common/tenant-settings-wizard/general-settings/general-settings.component';
 import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.module';
-import { UploaderComponent } from '@shared/common/tenant-settings-wizard/general-settings/uploader/uploader.component';
 import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/email.component';
 import { SecurityComponent } from '@shared/common/tenant-settings-wizard/security/security.component';
 import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard/tenant-management/tenant-management.component';
@@ -40,6 +40,7 @@ import { SourceContactListModule } from '@shared/common/source-contact-list/sour
 
 @NgModule({
     imports: [
+        ngCommon.CommonModule,
         CommonModule,
         DxScrollViewModule,
         MatStepperModule,
@@ -66,7 +67,6 @@ import { SourceContactListModule } from '@shared/common/source-contact-list/sour
         TenantSettingsWizardComponent,
         AppearanceComponent,
         GeneralSettingsComponent,
-        UploaderComponent,
         EmailComponent,
         SecurityComponent,
         TenantManagementComponent,
