@@ -54,7 +54,14 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         }
     });
     templatesFileProvider = new RemoteFileSystemProvider({
-        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem'
+        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem',
+        beforeAjaxSend: (options) => {
+            if (!options.headers || !options.headers['Authorization'])
+                options.headers = {
+                    Authorization: 'Bearer ' + abp.auth.getToken(),
+                    ...(options.headers || {})
+                };
+        }
     });
     isDocumentsVisible = !!(this.data.showDocuments && this.data.contactId);
     isTemplatesVisible = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);

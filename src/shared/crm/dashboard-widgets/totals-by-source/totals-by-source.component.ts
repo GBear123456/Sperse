@@ -59,6 +59,8 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     );
     @Output() loadComplete: EventEmitter<any> = new EventEmitter();
 
+
+    onDrawTimeout: any;
     data$: Observable<any[]>;
     totalCount$: Observable<number>;
     totalCount: string;
@@ -174,6 +176,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             takeUntil(this.lifeCycleService.destroy$),
             tap(() => {
                 this.loading = true;
+                this.totalNumbersTop = this.rangeCount = this.totalCount = '';
                 this.loadingService.startLoading(this.elementRef.nativeElement);
             }),
             switchMap(([selectedTotal, period, groupId, contactId, orgUnitIds, ]: [ITotalOption, PeriodModel, string, number, number[], null]) => {
@@ -240,7 +243,8 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     }
 
     onDrawn(e) {
-        setTimeout(() => {
+        clearTimeout(this.onDrawTimeout);
+        this.onDrawTimeout = setTimeout(() => {
             this.updatePieChartTopPositions(e);
         }, 600);
     }
