@@ -373,9 +373,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         widget: 'dxCheckBox',
                         options: {
                             visible: true,
+                            width: '140px',
                             value: this.showUserActivitiesOnly,
-                            width: '150px',
-                            elementAttr: {style: 'margin-right: 15px;'},
+                            elementAttr: {style: 'width: 140px;margin-right: 15px;'},
                             text: this.l('My Activities'),
                             onValueChanged: (event) => {
                                 this.showUserActivitiesOnly = event.value;
@@ -750,8 +750,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 this.calendarCaption = momentDate.format('D MMMM YYYY');
                 break;
             case 'week':
-                let weekStart = momentDate.startOf('week');
-                let weekEnd = momentDate.endOf('week');
+                let weekStart = moment(momentDate.startOf('week'));
+                let weekEnd = moment(momentDate.endOf('week'));
                 if (weekStart.month() == momentDate.month() && weekEnd.month() == momentDate.month()) {
                     this.calendarCaption = `${weekStart.date()} - ${weekEnd.date()} ${momentDate.format('MMMM YYYY')}`;
                 } else {
