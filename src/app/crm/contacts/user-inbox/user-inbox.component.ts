@@ -188,7 +188,8 @@ export class UserInboxComponent implements OnDestroy {
                                 this.dataSource.reload();
                             },
                             onOptionChanged: event => {
-                                this.deliveryType = event.value.length > 1 ? undefined : event.value[0];
+                                if (event.name == 'selectedItemKeys')
+                                    this.deliveryType = !event.value || event.value.length > 1 ? undefined : event.value[0];
                             }
                         }
                     }, {
