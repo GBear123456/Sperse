@@ -39,6 +39,7 @@ export class DocumentsComponent {
     private readonly VIEW_MODE_DETAILS    = 'details';
     private readonly VIEW_MODE_THUMBNAILS = 'thumbnails';
 
+    selectedItemKeys: any[] = [];
     layout = this.VIEW_MODE_THUMBNAILS;
     fileProvider = new RemoteFileSystemProvider({
         endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem',
@@ -153,6 +154,17 @@ export class DocumentsComponent {
                 column.width = 200;
             return column;
         });
+    }
+
+    onWrapperClick() {
+        if (this.selectedItemKeys.length) {
+            let selectedItemKeys = this.selectedItemKeys.slice();
+            setTimeout(() => {
+                if (this.selectedItemKeys.length == selectedItemKeys.length
+                    && this.selectedItemKeys[0] == selectedItemKeys[0]
+                ) this.selectedItemKeys = [];                
+            }, 100);
+        }
     }
 
     activate() {
