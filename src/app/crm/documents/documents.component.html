@@ -2,7 +2,7 @@
               [showReloadButton]="ui.showReload"
               (onReload)="refresh()">
 </app-headline>
-<div>
+<div (click)="onWrapperClick()">
     <div class="wrapper">
         <dx-file-manager
             [itemView]="{mode: layout}"
@@ -10,6 +10,8 @@
             [fileSystemProvider]="fileProvider"
             [allowedFileExtensions]="[]"
             [customizeDetailColumns]="customizeDetailColumns"
+            [selectionMode]="'single'"
+            [(selectedItemKeys)]="selectedItemKeys"
             [height]="getHeight()">
             <dxo-permissions
                 [create]="manageAllowed"
@@ -32,6 +34,7 @@
                 <dxi-file-selection-item name="rename"></dxi-file-selection-item>
                 <dxi-file-selection-item name="delete"></dxi-file-selection-item>
                 <dxi-file-selection-item widget="dxButton" location="before" [options]="downloadButtonOptions"></dxi-file-selection-item>
+                <dxi-file-selection-item name="clearSelection"></dxi-file-selection-item>
             </dxo-toolbar>
         </dx-file-manager>
     </div>

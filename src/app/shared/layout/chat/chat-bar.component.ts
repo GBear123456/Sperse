@@ -43,12 +43,12 @@ import { NotifyService } from 'abp-ng2-module';
     templateUrl: './chat-bar.component.html',
     selector: 'chat-bar',
     styleUrls: [
+        '../../../../assets/metronic/themes/default/css/style.bundle.css',
         '../../../../shared/metronic/m-list-search.less',
         '../../../../shared/metronic/m-quick-sidebar.less',
         '../../../../shared/metronic/m-messenger.less',
         './chat-bar.component.less'
-    ],
-    encapsulation: ViewEncapsulation.None
+    ]
 })
 export class ChatBarComponent implements OnInit, AfterViewInit {
     @Output() onProgress: EventEmitter<any> = new EventEmitter();
