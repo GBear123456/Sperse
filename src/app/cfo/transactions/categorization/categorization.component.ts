@@ -892,8 +892,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     onCategoryInserted($event) {
         let parentId = $event.data.parent,
-            hasParentCategory = (parseInt(parentId) == parentId);
-        $event.element.querySelector('.dx-treelist-focus-overlay').style.display = 'none';
+            hasParentCategory = (parseInt(parentId) == parentId),
+            overlay = $event.element.querySelector('.dx-treelist-focus-overlay');
+        if (overlay)
+            overlay.style.display = 'none';
         if (this.settings.showAT && parentId === 'root') {
             this.insertAccountingType(this.currentTypeId, $event.data.name);
             return;

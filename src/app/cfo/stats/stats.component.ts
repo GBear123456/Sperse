@@ -631,7 +631,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         ['historical', 'forecast'].forEach(period => {
             /** Add the historical and forecast big texts above the charts */
             let chartSeries = event.component.getSeriesByName(period),
-                points = event.component.getSeriesByName(period).getVisiblePoints();
+                series = event.component.getSeriesByName(period),
+                points = series ? series.getVisiblePoints() : [];
             if (chartSeries && points.length && !event.element.querySelector(`.${period}Label`)) {
                 let x = points[0].vx || points[0].x || 0,
                     left = x / window.outerWidth * 100,

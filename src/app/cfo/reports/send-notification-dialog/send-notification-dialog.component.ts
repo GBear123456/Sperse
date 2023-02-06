@@ -52,7 +52,7 @@ export class SendNotificationDialogComponent implements OnInit {
             this.cfoService.instanceType as InstanceType,
             this.cfoService.instanceId
         ).subscribe((ownerEmail) => {
-            this.notificationToEmail = ownerEmail.length ? ownerEmail : undefined;
+            this.notificationToEmail = ownerEmail && ownerEmail.length ? ownerEmail : undefined;
         });
     }
 
