@@ -373,9 +373,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         widget: 'dxCheckBox',
                         options: {
                             visible: true,
-                            width: '140px',
+                            width: '150px',
+                            accessKey: 'my-activities',
                             value: this.showUserActivitiesOnly,
-                            elementAttr: {style: 'width: 140px;margin-right: 15px;'},
                             text: this.l('My Activities'),
                             onValueChanged: (event) => {
                                 this.showUserActivitiesOnly = event.value;
