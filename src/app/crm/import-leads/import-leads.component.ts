@@ -1107,7 +1107,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         name: 'check-box',
                         widget: 'dxCheckBox',
                         options: {
-                            width: '200px',
+                            width: '190px',
                             value: this.sendWelcomeEmail,
                             disabled: !this.emailInvitation,
                             text: this.l('SendUserInvitation'),
