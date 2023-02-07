@@ -589,6 +589,12 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     showActivityDialog(appointment) {
+        let isDateBase = appointment instanceof Date;
+        if (!isDateBase && this.currentView == 'month') {
+            appointment.EndDate = appointment.StartDate;
+            appointment.AllDay = true;
+        }
+
         this.schedulerComponent.instance.hideAppointmentTooltip();
         this.dialog.open(CreateActivityDialogComponent, {
             panelClass: 'slider',
@@ -596,7 +602,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             closeOnNavigation: false,
             data: {
                 stages: this.stages,
-                appointment: appointment instanceof Date
+                appointment: isDateBase
                     ? { startDate: appointment }
                     : (appointment.entity || appointment) as ActivityDto,
                 refreshParent: this.refresh.bind(this)
