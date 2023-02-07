@@ -161,7 +161,7 @@ export class GenerateReportDialogComponent implements OnInit {
             this.cfoService.instanceType as InstanceType,
             this.cfoService.instanceId
         ).subscribe((ownerEmail: string) => {
-            this.notificationToEmail = ownerEmail.length ? ownerEmail : undefined;
+            this.notificationToEmail = ownerEmail && ownerEmail.length ? ownerEmail : undefined;
         });
         this.bankAccountsService.load();
     }
