@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import oDataUtils from 'devextreme/data/odata/utils';
+import * as oDataUtils from 'devextreme/data/odata/utils';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of, forkJoin } from 'rxjs';
 import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
@@ -670,7 +670,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 ...this.params,
                 ...customFilter.params
             ];
-
         return this.getODataUrl(
             this.totalsURI,
             filters,
@@ -691,7 +690,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
         } else {
             /** Update total source url in a case custom filter has changed */
-            this._totalDataSource._store._url = this.getTotalsRequestUrl(filter);
+            this._totalDataSource['_store']['_requestDispatcher']['_url'] = this.getTotalsRequestUrl(filter);
         }
 
         if (!this._totalDataSource.isLoading()) {

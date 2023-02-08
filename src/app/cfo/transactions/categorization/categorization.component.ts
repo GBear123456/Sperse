@@ -357,7 +357,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     sortByColumnIndex(index: number, order: string = '') {
-        let columns = this.categoryList.instance.option('columns');
+        let columns: any[] = this.categoryList.instance.option('columns');
 
         columns[index].sortIndex = 0;
         columns[Number(!index)].sortIndex = 1;
@@ -822,7 +822,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         }
     }
 
-    reloadTransactionsCountDataSource(): Promise<any> & JQueryPromise<any> {
+    reloadTransactionsCountDataSource(): Promise<any> {
         if (!this.transactionsCountDataSource)
             this.initTransactionsTotalCount();
         this.transactionsCountDataSource.store()['_url'] =
@@ -892,8 +892,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     onCategoryInserted($event) {
         let parentId = $event.data.parent,
-            hasParentCategory = (parseInt(parentId) == parentId);
-        $event.element.querySelector('.dx-treelist-focus-overlay').style.display = 'none';
+            hasParentCategory = (parseInt(parentId) == parentId),
+            overlay = $event.element.querySelector('.dx-treelist-focus-overlay');
+        if (overlay)
+            overlay.style.display = 'none';
         if (this.settings.showAT && parentId === 'root') {
             this.insertAccountingType(this.currentTypeId, $event.data.name);
             return;

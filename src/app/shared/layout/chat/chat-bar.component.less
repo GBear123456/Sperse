@@ -13,21 +13,35 @@
     }
 }
 
-.contact-status1 {
-    position: absolute;
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50% !important;
-    left: 52px;
-    margin-top: 26px;
+.m-messenger__message, .m-messenger__message-body {
+    width: 100% !important;
+}
 
-    &.online {
-        background-color: #26C281;
+.m-messenger__message-username {
+    text-align: left !important;
+
+    span {
+        float: right;
     }
+}
 
-    &.offline {
-        background-color: #BFCAD1;
+::ng-deep {
+    .contact-status1 {
+        position: absolute;
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50% !important;
+        left: 52px;
+        margin-top: 26px;
+
+        &.online {
+            background-color: #26C281;
+        }
+
+        &.offline {
+            background-color: #BFCAD1;
+        }
     }
 }
 
@@ -55,6 +69,16 @@ span.contact-status2 {
     overflow-y: hidden !important;
 }
 
+::ng-deep {
+    friend-profile-picture img {
+        width: 35px;
+    }
+
+    chat-friend-list-item .m-list-search__result-item-text {
+        color: #7b838a;
+    }
+}
+
 div.selected-chat-user {
     margin: 10px;
     padding-bottom: 5px;
@@ -64,7 +88,7 @@ div.selected-chat-user {
     div.selected-chat-user-image {
         display: inline-block;
 
-        img {
+        ::ng-deep img {
             display: inline-block;
             width: 40px;
         }
@@ -85,6 +109,10 @@ div.selected-chat-user {
             width: 50px;
         }
     }
+
+    .dropdown-menu a i {
+        top: 9px;
+    }
 }
 
 #friendListFriends {
@@ -96,7 +124,7 @@ div.selected-chat-user {
 
 .m-messenger__message--out {
     .m-messenger__message-username {
-        text-align: right !important;
+        //text-align: right !important;
     }
 }
 
@@ -244,6 +272,7 @@ a.page-quick-sidebar-pinner.pinned {
         }
     }
 }
+
 .m-messenger__form-tools .ui-fileupload-choose:not(.ui-state-disabled):hover,
 .m-messenger__form-tools .ui-fileupload-choose:not(.ui-state-disabled):focus,
 .m-messenger__form-tools .ui-fileupload-choose:not(.ui-state-disabled):active {
@@ -283,4 +312,18 @@ a.page-quick-sidebar-pinner.pinned {
     padding: 5px;
     background-color: #3598dc;
     color: #f7f7f7;
+}
+
+::ng-deep {
+    .dropdown-menu .p-button {
+        border-radius: 10px;
+        background: #6aa0ca;
+        border-color: #6aa0ca;
+    }
+
+    chat-message {
+        .chat-link-message {
+            color: inherit;
+        }
+    }
 }

@@ -54,7 +54,7 @@ export class PermissionTreeComponent implements OnInit, OnDestroy {
                         event.event.preventDefault();
 
                         this.sortTreeDesc = !this.sortTreeDesc;
-                        this.permissionsDataSource.sort({ getter: 'displayName', desc: this.sortTreeDesc });
+                        this.permissionsDataSource.sort({ selector: 'displayName', desc: this.sortTreeDesc });
                         this.permissionsDataSource.load();
                     }
                 },
@@ -204,7 +204,7 @@ export class PermissionTreeComponent implements OnInit, OnDestroy {
         this.permissionsData.permissions.splice(pagesParentIndex, 1);
 
         this.permissionsDataSource = new DataSource(this.permissionsData.permissions);
-        this.permissionsDataSource.sort({ getter: 'displayName', desc: this.sortTreeDesc });
+        this.permissionsDataSource.sort({ selector: 'displayName', desc: this.sortTreeDesc });
     }
 
     getGrantedPermissionNames(): string[] {

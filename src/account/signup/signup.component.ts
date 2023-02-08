@@ -20,8 +20,8 @@ export class AdSignupHostDirective {
     selector: 'signup',
     templateUrl: './signup.component.html',
     styleUrls: [
-        '../../node_modules/devextreme/dist/css/dx.common.css',
-        '../../node_modules/devextreme/dist/css/dx.light.css'
+        '../../../node_modules/devextreme/dist/css/dx.common.css',
+        '../../../node_modules/devextreme/dist/css/dx.light.css'
     ],
     encapsulation: ViewEncapsulation.None
 })

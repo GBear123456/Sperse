@@ -131,6 +131,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
+                let sortOption = [];
+                if (loadOptions.sort)
+                    sortOption = loadOptions.sort instanceof Array 
+                        ? loadOptions.sort : [loadOptions.sort];
                 this.processUserCountRequest();
                 return this.userServiceProxy.getUsers(
                     this.searchValue || undefined,
@@ -139,9 +143,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     false,
                     this.group,
                     this.isActive,
-                    (loadOptions.sort || []).map((item) => {
+                    sortOption.map(item => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
-                    }).join(','), loadOptions.take || -1, loadOptions.skip
+                    }).join(','),
+                    loadOptions.take || -1, loadOptions.skip
                 ).toPromise().then(response => {
                     this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(response.items);
                     return response.items;
@@ -422,7 +427,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                 return {
                                     id: item.name,
                                     parent: item.parentName,
-                                    name: item.displayName,
+                                    name: String.fromCharCode(160/*Space to avoid trim*/)
+                                        .repeat(item.level * 5) + item.displayName,
                                     displayName: item.displayName
                                 };
                             })

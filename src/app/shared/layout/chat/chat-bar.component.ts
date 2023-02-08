@@ -1,5 +1,5 @@
 /** Core imports */
-import { AfterViewInit, Component, EventEmitter, Injector, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, HostListener, Injector, OnInit, Output, ViewEncapsulation } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -43,12 +43,12 @@ import { NotifyService } from 'abp-ng2-module';
     templateUrl: './chat-bar.component.html',
     selector: 'chat-bar',
     styleUrls: [
+        '../../../../assets/metronic/themes/default/css/style.bundle.css',
         '../../../../shared/metronic/m-list-search.less',
         '../../../../shared/metronic/m-quick-sidebar.less',
         '../../../../shared/metronic/m-messenger.less',
         './chat-bar.component.less'
-    ],
-    encapsulation: ViewEncapsulation.None
+    ]
 })
 export class ChatBarComponent implements OnInit, AfterViewInit {
     @Output() onProgress: EventEmitter<any> = new EventEmitter();
@@ -487,19 +487,19 @@ export class ChatBarComponent implements OnInit, AfterViewInit {
             this.isOpen = $('body').hasClass('m-quick-sidebar--on');
         });
 
-        $('div.m-quick-sidebar').on('mouseleave', () => {
-            if (this.pinned) {
-                return;
-            }
-
-            self.quickSideBarChat.hide();
-            this.isOpen = false;
-            this.adjustNotifyPosition();
-        });
-
         $(window as any).on('resize', () => {
             this.initConversationScrollbar();
         });
+    }
+
+    @HostListener('window:click', ['$event']) hideChat(event) {
+        if (!this.isOpen || this.pinned || event.target.closest('div.m-quick-sidebar') || event.target.closest('#m_quick_sidebar_toggle')) {
+            return;
+        }
+
+        this.quickSideBarChat.hide();
+        this.isOpen = false;
+        this.adjustNotifyPosition();
     }
 
     ngAfterViewInit(): void {

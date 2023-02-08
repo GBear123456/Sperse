@@ -13,6 +13,8 @@ import {
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import DataSource from 'devextreme/data/data_source';
+import { Options } from 'devextreme/data/custom_store';
 import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -21,12 +23,11 @@ import { AppConsts } from '@shared/AppConsts';
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail/audit-log-detail-modal.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    AuditLogListDto,
+    AuditLogListDto,   
     PagedResultDtoOfAuditLogListDto,
     AuditLogServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
-import DataSource from 'devextreme/data/data_source';
 import { AppService } from '@app/app.service';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
@@ -132,9 +133,13 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
             items: { ['Min Execution Duration']: new FilterItemModel(), ['Max Execution Duration']: new FilterItemModel() }
         })
     ];
-    operationLogsDataSource: DataSource = new DataSource({
+    operationLogsDataSource: DataSource = new DataSource(<Options>{
         key: 'id',
         load: (loadOptions) => {
+            let sortOption = [];
+            if (loadOptions.sort)
+                sortOption = loadOptions.sort instanceof Array 
+                    ? loadOptions.sort : [loadOptions.sort];
             this.startLoading();
             return this.auditLogService.getAuditLogs(
                 this.searchValue,
@@ -148,15 +153,15 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 !!this.filtersValues.hasException[0] || undefined,
                 this.filtersValues.minExecutionDuration,
                 this.filtersValues.maxExecutionDuration,
-                (loadOptions.sort || []).map((item) => {
+                sortOption.map(item => {
                     return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                 }).join(','),
                 loadOptions.take,
                 loadOptions.skip
             ).toPromise().then(
-                (response: PagedResultDtoOfAuditLogListDto) => {
+                (response) => {
                     this.finishLoading();
-                    return {
+                    return <any>{
                         data: response.items,
                         totalCount: response.totalCount
                     };

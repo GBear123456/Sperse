@@ -1012,7 +1012,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         name: 'select-box',
                         widget: 'dxDropDownMenu',
                         options: {
-                            width: 130,
                             selectedIndex: this.importTypeIndex,
                             hint: this.l('Import Type'),
                             items: Object.keys(ImportTypeInput)
@@ -1108,7 +1107,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         name: 'check-box',
                         widget: 'dxCheckBox',
                         options: {
-                            width: '200px',
+                            width: '190px',
                             value: this.sendWelcomeEmail,
                             disabled: !this.emailInvitation,
                             text: this.l('SendUserInvitation'),

@@ -58,7 +58,7 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
     refreshkeyPhrasesCountDataSource() {
         if (this.keyPhrasesDataSource) {
             this.keyPhrasesDataSource.store()['_url'] = this.getODataUrl('TransactionGroup', this._keyPhrasesFilterQuery);
-            this.keyPhrasesDataSource.load().done((result: KeyPhrasesDto[]) => {
+            this.keyPhrasesDataSource.load().then((result: KeyPhrasesDto[]) => {
                 event.preventDefault();
                 this.keyPhrasesData = result;
             });

@@ -220,8 +220,6 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     onGridOptionChanged(event) {
-        if (event.name == 'paging' || ['asc', 'desc'].indexOf(event.value) >= 0)
-            this.isDataLoaded = false;
         DataGridService.refreshIfColumnsVisibilityStatusChange(event);
     }
 

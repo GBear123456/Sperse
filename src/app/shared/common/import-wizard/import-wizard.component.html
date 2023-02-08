@@ -132,7 +132,7 @@
                                           [selectNodesRecursive]="false"
                                           (onItemRendered)="onLookupFieldsItemRendered($event)"
                                           (onContentReady)="onLookupFieldsContentReady($event, cell)"
-                                          (onItemClick)="cell.setValue($event.node.key)">
+                                          (onItemClick)="onItemClick($event, cell)">
                             </dx-tree-view>
                         </div>
                     </dx-drop-down-box>

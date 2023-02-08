@@ -262,7 +262,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         text: this.l('Resellers')
     }];
 
-    currencyFormat: DevExpress.ui.format = {
+    currencyFormat: DevExpress.ui.Format = {
         type: 'currency',
         precision: 2,
         currency: SettingsHelper.getCurrency()
