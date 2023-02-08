@@ -19,6 +19,7 @@ import { finalize, map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
+import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -67,7 +68,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public showPipeline = false;
     public pipelineDataSource: any;
     public pipelinePurposeId = AppConsts.PipelinePurposeIds.activity;
-    public cellDuration = 15;
+    private cellDurationStorageKey = 'activity_cell_duration_' + abp.session.tenantId;
+    public cellDuration = parseInt(this.cacheService.get(this.cellDurationStorageKey) || 15);
 
     public activityTypes = ActivityType;
     private selectedEntities: any[] = [];
@@ -131,6 +133,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     constructor(
         injector: Injector,
+        private cacheService: CacheService,
         private activityProxy: ActivityServiceProxy,
         private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
@@ -355,7 +358,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             value: this.cellDuration,
                             showSpinButtons: true,
                             onValueChanged: event => {
-                                this.cellDuration = event.value;
+                                this.cellDuration = parseInt(event.value);
+                                this.changeDetectorRef.detectChanges();
+                                this.cacheService.set(this.cellDurationStorageKey, event.value);
+                                setTimeout(() => this.schedulerComponent.instance.repaint(), 100);
                             },
                             step: 5,
                             max: 60,
