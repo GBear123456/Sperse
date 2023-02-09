@@ -184,7 +184,7 @@ export class CompanyDialogComponent implements OnInit {
         }));
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
         let size = _.find(this.companySizes, item => item.id === this.company.sizeId);
-        if (size && size.id != this.initialSize.id) {
+        if (size && (!this.initialSize || size.id != this.initialSize.id)) {
             input.sizeFrom = size.from;
             input.sizeTo = size.to;
         } else {
