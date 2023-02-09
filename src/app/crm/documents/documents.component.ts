@@ -157,7 +157,8 @@ export class DocumentsComponent {
     }
 
     onWrapperClick() {
-        if (this.selectedItemKeys.length) {
+        this.layout = this.fileManager.instance.option('itemView.mode');
+        if (this.layout == this.VIEW_MODE_THUMBNAILS && this.selectedItemKeys.length) {
             let selectedItemKeys = this.selectedItemKeys.slice();
             setTimeout(() => {
                 if (this.selectedItemKeys.length == selectedItemKeys.length
