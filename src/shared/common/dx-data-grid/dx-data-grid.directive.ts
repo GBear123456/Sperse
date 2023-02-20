@@ -89,7 +89,7 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
                             event.component.option('selection.selectAllMode') === 'allPages' ? 'AffectAllPagesItems' : 'AffectOnPageItems'));
                 } else if (event.rowType == 'data') {
                     if (event.eventType == 'mouseover') {
-                        if (event.column.name && event.column.name.startsWith('hiddenTime')) {
+                        if (event.column.cssClass && event.column.cssClass.includes('hiddenTime')) {
                             let text = event.cellElement.querySelector('span');
                             if (!text) {
                                 event.cellElement.innerHTML = '';
@@ -104,7 +104,7 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
                             this.appendClipboardIcon(event.cellElement.querySelector('.clipboard-holder'));
                     }
                     if (event.eventType == 'mouseout') {
-                        if (event.column.name && event.column.name.startsWith('hiddenTime')) {
+                        if (event.column.cssClass && event.column.cssClass.includes('hiddenTime')) {
                             let text = event.cellElement.querySelector('span');
                             text.innerText = event.value ? this.getDateFormatted(event.data[event.column.dataField]) : '';
                         }
@@ -252,10 +252,10 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
     }
 
     initDateCellColumn(column, component) {
-        component.columnOption(column.dataField, 'name', 'hiddenTime' + Date.now());
         component.columnOption(column.dataField, 'minWidth', '190px');
         component.columnOption(column.dataField, 'cellTemplate', undefined);
-        component.columnOption(column.dataField, 'cssClass', column.cssClass + ' clipboard-holder');
+        component.columnOption(column.dataField, 'cssClass', 
+            column.cssClass + ' clipboard-holder hiddenTime');
         component.columnOption(column.dataField, 'calculateCellValue', (data) => {
             return this.getDateFormatted(data[column.dataField], !this.exporting);
         });
