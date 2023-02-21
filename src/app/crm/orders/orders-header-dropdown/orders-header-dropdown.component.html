@@ -7,9 +7,11 @@
             </span>
         </div>
         <dx-list 
-            selectionMode="single" 
+            selectionMode="single"
+            keyExpr="value"
+            [focusStateEnabled]="false"
             [dataSource]="contactGroups"
-            [selectedItemKeys]="[contactGroup]"                 
+            [selectedItemKeys]="[contactGroup]"
             (onItemClick)="dropdown.instance.close();onContactGroupChanged.emit($event)">
             <div *dxTemplate="let data of 'item'">
                 <div class="name" [title]="data?.text">{{data?.text}}</div>

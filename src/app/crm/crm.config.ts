@@ -21,12 +21,7 @@ export class CrmConfig implements ConfigInterface {
             text: 'Leads',
             permission: AppPermissions.CRMCustomers + '|' + AppPermissions.CRMPartners + '|' + AppPermissions.CRMEmployees + '|' + AppPermissions.CRMInvestors + '|' + AppPermissions.CRMVendors + '|' + AppPermissions.CRMOthers,
             route: '/app/crm/leads',
-            items: Object.keys(ContactGroup).map(contactGroup => ({
-                text: contactGroup + 's',
-                route: '/app/crm/leads',
-                permission: AppPermissions['CRM' + contactGroup + 's'],
-                params: {contactGroup: contactGroup}
-            }))
+            items: []
         },
         {
             text: 'Clients',
@@ -47,22 +42,24 @@ export class CrmConfig implements ConfigInterface {
                 permission: AppPermissions.CRMOrders,
                 route: '/app/crm/orders',
                 params: {contactGroup: ContactGroup.Client, orderType: 1},
-                items: Object.keys(ContactGroup).map(contactGroup => ({
-                    text: contactGroup + 's',
+                items: Object.keys(ContactGroup).concat(['All']).map(contactGroup => ({
+                    text: contactGroup,
+                    localization: 'ContactGroup_',
                     route: '/app/crm/orders',
                     permission: AppPermissions['CRM' + contactGroup + 's'],
-                    params: {contactGroup: ContactGroup[contactGroup], orderType: 1}
+                    params: {contactGroup: ContactGroup[contactGroup] || '', orderType: 1}
                 }))
             }, {
                 text: 'Subscriptions',
                 permission: AppPermissions.CRMOrders,
                 route: '/app/crm/orders',
                 params: {contactGroup: ContactGroup.Client, orderType: 2},
-                items: Object.keys(ContactGroup).map(contactGroup => ({
-                    text: contactGroup + 's',
+                items: Object.keys(ContactGroup).concat(['All']).map(contactGroup => ({
+                    text: contactGroup,
+                    localization: 'ContactGroup_',
                     route: '/app/crm/orders',
                     permission: AppPermissions['CRM' + contactGroup + 's'],
-                    params: {contactGroup: ContactGroup[contactGroup], orderType: 2}
+                    params: {contactGroup: ContactGroup[contactGroup] || '', orderType: 2}
                 }))
             }]
         },

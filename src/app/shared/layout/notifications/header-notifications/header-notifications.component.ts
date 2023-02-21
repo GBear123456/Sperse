@@ -20,7 +20,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
-import { ConfigInterface } from '@app/shared/common/config.interface';
 
 @Component({
     templateUrl: './header-notifications.component.html',

@@ -1050,16 +1050,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private handleContactGroupParam() {
         this.queryParams$.pipe(
-            pluck('contactGroup'),
-            filter((contactGroup: string) => contactGroup && this.selectedContactGroup !== contactGroup),
+            filter(queryParams => 
+                queryParams.contactGroup && this.selectedContactGroup !== queryParams.contactGroup
+                    || queryParams.pipelineId && this.selectedPipelineId != queryParams.pipelineId
+            ),
             withLatestFrom(this.pipelines$)
-        ).subscribe(([contactGroup, pipelines]: [string, PipelineDto[]]) => {
+        ).subscribe(([queryParams, pipelines]: [any, PipelineDto[]]) => {
             /** If contact group is in query params - then update pipelineId with the
              *  first pipeline that has that contact group
              *  @todo remove using of contact group in future */
-            const pipeline: PipelineDto = pipelines.find((pipeline: PipelineDto) => {
-                return pipeline.contactGroupId === ContactGroup[contactGroup];
-            });
+
+            let pipeline: PipelineDto;
+            if (queryParams.pipelineId && pipelines)            
+                pipeline = pipelines.find((pipeline: PipelineDto) => {
+                    return pipeline.id == queryParams.pipelineId;
+                });
+            if (!pipeline && pipelines)
+                pipeline = pipelines.find((pipeline: PipelineDto) => {
+                    return pipeline.contactGroupId === ContactGroup[queryParams.contactGroup];
+                });
+
             if (pipeline) {
                 this._selectedPipelineId.next(pipeline.id);
             }

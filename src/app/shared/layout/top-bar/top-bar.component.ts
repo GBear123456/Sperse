@@ -119,7 +119,8 @@ export class TopBarComponent implements OnInit, OnDestroy {
         let navList: PanelMenuItem[] = [];
         configNavigation.forEach((navigation: ConfigNavigation) => {
             let item = new PanelMenuItem(
-                navigation.text && this.ls.ls(localizationSource, 'Navigation_' + navigation.text),
+                navigation.title || navigation.text && this.ls.ls(localizationSource, 
+                    (navigation.localization || 'Navigation_') + navigation.text),
                 navigation.permission,
                 navigation.icon,
                 navigation.route,
