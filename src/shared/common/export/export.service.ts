@@ -64,11 +64,11 @@ export class ExportService {
         if (exportAllData) {
             let initialDataSource = dataGrid.instance.getDataSource(),
                 initialStore = initialDataSource.store(),
-                initialBeforeSend = initialStore._beforeSend;
+                initialBeforeSend = initialStore['_beforeSend'];
 
             let initialOnLoadedList = this.handleExportIgnoreOnLoaded(initialDataSource, initialStore);
 
-            initialStore._beforeSend = (request) => {
+            initialStore['_beforeSend'] = (request) => {
                 request.isExport = true;
                 initialBeforeSend.call(initialStore, request);
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
@@ -78,12 +78,12 @@ export class ExportService {
                 filter: initialDataSource.filter(),
                 requireTotalCount: true,
                 store: initialStore
-            })).load().done(res => {
-                initialStore._beforeSend = initialBeforeSend;
+            })).load().then(res => {
+                initialStore['_beforeSend'] = initialBeforeSend;
                 this.restoreInitialOnLoadedList(initialStore, initialOnLoadedList);
                 callback(this.checkJustifyData(res));
-            }).fail(error => {
-                initialStore._beforeSend = initialBeforeSend;
+            }).catch(error => {
+                initialStore['_beforeSend'] = initialBeforeSend;
                 this.restoreInitialOnLoadedList(initialStore, initialOnLoadedList);
                 this.handleExportError(error);
             });
@@ -165,7 +165,7 @@ export class ExportService {
     private exportToGoogleSheetsInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
         return this.exportGoogleSheetService.export(new Promise<any>((resolve) => {
             this.getDataFromGrid(dataGrid, data => {
-                let visibleColumns: DevExpress.ui.dxDataGridColumn[] = dataGrid.instance.getVisibleColumns(),
+                let visibleColumns: any[] = dataGrid.instance.getVisibleColumns(),
                     rowData = this.exportGoogleSheetService.getHeaderRows(visibleColumns);
 
                 data.forEach((val: any) => {
@@ -188,7 +188,7 @@ export class ExportService {
             let instance = dataGrid.instance,
                 dataSource = instance.getDataSource(),
                 dataStore = dataSource.store(),
-                initialBeforeSend = dataStore._beforeSend,
+                initialBeforeSend = dataStore['_beforeSend'],
                 isLoadPanel = instance.option('loadPanel.enabled'),
                 initialFileName = dataGrid.export.fileName,
                 onLoadInternal = (res) => {
@@ -206,7 +206,7 @@ export class ExportService {
 
             let initialOnLoadedList = this.handleExportIgnoreOnLoaded(dataSource, dataStore);
 
-            dataStore._beforeSend = (request) => {
+            dataStore['_beforeSend'] = (request) => {
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
                 request.isExport = true;
                 initialBeforeSend.call(dataStore, request);
@@ -218,14 +218,14 @@ export class ExportService {
                     instance.option('loadPanel.enabled', true);
 
                 dataGrid.export.fileName = initialFileName;
-                dataStore._beforeSend = initialBeforeSend;
+                dataStore['_beforeSend'] = initialBeforeSend;
                 dataStore.off('loaded', onLoadInternal);
-                dataStore.off('exported');
+                instance.off('exported');
                 this.restoreInitialOnLoadedList(dataStore, initialOnLoadedList);
                 resolve();
             });
             let onDataError = (error) => {
-                dataStore.off('dataErrorOccurred', onDataError);
+                instance.off('dataErrorOccurred', onDataError);
                 this.handleExportError(error.error);
                 instance.refresh();
             };
@@ -235,11 +235,11 @@ export class ExportService {
     }
 
     private exportToPDFInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
-        const visibleColumns: DevExpress.ui.dxDataGridColumn[] = dataGrid.instance.getVisibleColumns()
-            .filter((column: DevExpress.ui.dxDataGridColumn) => column.dataField);
-        function getHeaders(columns: DevExpress.ui.dxDataGridColumn[]): PdfExportHeader[]  {
+        const visibleColumns: any[] = dataGrid.instance.getVisibleColumns()
+            .filter((column: any) => column.dataField);
+        function getHeaders(columns: any[]): PdfExportHeader[]  {
             let result = [];
-            columns.forEach((column: DevExpress.ui.dxDataGridColumn) => {
+            columns.forEach((column: any) => {
                 result.push({
                     id: column.dataField,
                     name: column.dataField,

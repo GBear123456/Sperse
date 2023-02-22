@@ -68,12 +68,43 @@
     font-size: 23px !important;
 }
 
+::ng-deep .dx-scheduler-agenda {
+    div {
+        &[data-type-event="true"] {
+            &, &:hover, &.dx-state-focused {
+                background-color: rgb(114, 123, 210);            
+                color: #FFF;
+            }
+        }
+
+        &[data-type-task="true"] {
+            &, &:hover, &.dx-state-focused {
+                background-color: rgb(50, 201, 237);
+                color: #FFF;
+            }
+        }
+    }
+}
+
 :host {
     display: block;
     position: relative;
     height: calc(100% - 73px);
 
     ::ng-deep dx-scheduler {
+        .showtime-preview,
+        .dx-scheduler-group-header, 
+        .dx-scheduler-header-panel, 
+        .dx-scheduler-time-panel,
+        .dx-scheduler-header-panel-cell {
+            line-height: 19px;
+            font-size: 16px;
+        }
+
+        .dx-scheduler-agenda .dx-scheduler-time-panel {
+            margin-left: 25px;
+        }
+
         .dx-scheduler-header {
             display: none;
         }
@@ -81,14 +112,6 @@
         .dx-scheduler-work-space {
             padding-top: 0;
             margin-top: 0;
-
-            &.dx-scheduler-work-space-week .dx-scheduler-all-day-title {
-                top: 50px;
-            }
-
-            &.dx-scheduler-work-space-day:not(.dx-scheduler-work-space-grouped) .dx-scheduler-all-day-title {
-                top: 1px;
-            }
         }
 
         .dx-loadpanel-content {

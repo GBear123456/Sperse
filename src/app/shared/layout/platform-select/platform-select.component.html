@@ -2,6 +2,7 @@
     <dx-drop-down-box
         [width]="width"
         [value]="displayName"
+        [items]="moduleItems"
         (onInitialized)="onDropDownInit($event)">
         <div *dxTemplate="let data of 'content'" class="platform-select-wrapper">
             <div class="top-row">

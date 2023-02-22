@@ -24,7 +24,7 @@ import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
 import Button from 'devextreme/ui/button';
 import Tooltip from 'devextreme/ui/tooltip';
-import SparkLine from 'devextreme/viz/sparkline';
+import SparkLine, {Properties} from 'devextreme/viz/sparkline'; 
 import ScrollView from 'devextreme/ui/scroll_view';
 import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
@@ -2143,7 +2143,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (scrollValue) {
                     let scrollable = direction == 'up' || direction == 'down'
                         ? ScrollView.getInstance(this.getElementRef().nativeElement.querySelector('.cashflow .cashflow-scroll'))
-                        : this.pivotGrid.instance['$element']().find('.dx-scrollable').last().dxScrollable('instance');
+                        : Array.prototype.slice.call(this.pivotGrid.instance.element().getElementsByClassName('.dx-scrollable'), -1)[0].dxScrollable('instance');
 
                     scrollable.scrollBy(scrollValue);
                 }
@@ -2671,7 +2671,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let spanChart = this.document.createElement('div');
                 spanChart.className = 'chart';
                 e.cellElement.appendChild(spanChart);
-                let chartOptions: DevExpress.viz.dxSparklineOptions = {
+                let chartOptions: Properties = {
                     dataSource: chartData,
                     type: 'area',
                     argumentField: 'year',
@@ -3707,7 +3707,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    updateDataSource(): Promise<any> & JQueryPromise<any> {
+    updateDataSource(): Promise<any> {
         this.getUserPreferencesForCell.cache = {};
         this.getCellOptionsFromCell.cache = {};
         this.getNewTextWidth.cache = {};

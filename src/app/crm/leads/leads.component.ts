@@ -937,7 +937,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             let url = this.getODataUrl(this.totalDataSourceURI,
                 odataRequestValues.filter, null, odataRequestValues.params);
             if (url && this.oDataService.requestLengthIsValid(url)) {
-                this.totalDataSource['_store']['_url'] = url;
+                this.totalDataSource['_store']['_requestDispatcher']['_url'] = url;
                 this.totalDataSource.load();
             }
         });
@@ -1981,7 +1981,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.filters, 
                 this.filtersService.getCheckCustom
             ).subscribe((odataRequestValues: ODataRequestValues) => {
-                this.dataSource['_store']['_url'] = this.getODataUrl(
+                this.dataSource['_store']['_requestDispatcher']['_url'] = this.getODataUrl(
                     this.dataSourceURI, odataRequestValues.filter, null, odataRequestValues.params);
                 this.dataGrid.dataSource = this.dataSource;                
             });
@@ -2021,8 +2021,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     checkSetDataSourceUrl(dataSource: DataSource, url: string): Boolean {
-        if (dataSource && dataSource['_store'] && dataSource['_store']['_url'] != url)
-            return Boolean(dataSource['_store']['_url'] = url);
+        if (dataSource && dataSource['_store'] && dataSource['_store']['_requestDispatcher']['_url'] != url)
+            return Boolean(dataSource['_store']['_requestDispatcher']['_url'] = url);
     }
 
     private setPivotGridInstance() {

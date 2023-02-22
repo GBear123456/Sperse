@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import buildQuery from 'odata-query';
-import * as dxAjax from 'devextreme/core/utils/ajax';
+import dxAjax from 'devextreme/core/utils/ajax';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
@@ -50,8 +50,8 @@ export class ODataService {
         let promise = Promise.resolve([]);
         if (dataSource) {
             this.cancelDataSource(dataSource, uri);
-            if (url && dataSource['_store'])
-                dataSource['_store']['_url'] = url;
+            if (url && dataSource['_store'] && dataSource['_store']['_requestDispatcher'])
+                dataSource['_store']['_requestDispatcher']['_url'] = url;
             promise = dataSource.reload();
             dataSource['operationId'] = promise['operationId'];
         }

@@ -27,12 +27,12 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
         './linked-accounts-modal.component.less'
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ PrimengTableHelper ]
+    providers: [PrimengTableHelper]
 })
 export class LinkedAccountsModalComponent {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('dataTable') dataTable: Table;
-    @ViewChild('paginator') paginator: Paginator;
+    @ViewChild('dataTable', { static: true }) dataTable: Table;
+    @ViewChild('paginator', { static: true }) paginator: Paginator;
     @Output() modalClose: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(
@@ -44,7 +44,7 @@ export class LinkedAccountsModalComponent {
         private notifyService: NotifyService,
         public primengTableHelper: PrimengTableHelper,
         public ls: AppLocalizationService
-    ) {}
+    ) { }
 
     getLinkedUsers(event?: LazyLoadEvent) {
         this.modalDialog.startLoading();
@@ -52,12 +52,12 @@ export class LinkedAccountsModalComponent {
             this.primengTableHelper.getMaxResultCount(this.paginator, event),
             this.primengTableHelper.getSkipCount(this.paginator, event),
             this.primengTableHelper.getSorting(this.dataTable))
-                .pipe(finalize(() => this.modalDialog.finishLoading()))
-                .subscribe(result => {
-                    this.primengTableHelper.totalRecordsCount = result.totalCount;
-                    this.primengTableHelper.records = result.items;
-                    this.changeDetectorRef.markForCheck();
-                });
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(result => {
+                this.primengTableHelper.totalRecordsCount = result.totalCount;
+                this.primengTableHelper.records = result.items;
+                this.changeDetectorRef.markForCheck();
+            });
     }
 
     getShownLinkedUserName(linkedUser: LinkedUserDto): string {
@@ -85,7 +85,11 @@ export class LinkedAccountsModalComponent {
     }
 
     reloadPage(): void {
-        this.paginator.changePage(this.paginator.getPage());
+        if (this.paginator.totalRecords) {
+            this.paginator.changePage(this.paginator.getPage());
+        } else {
+            this.dataTable.reset();
+        }
         this.changeDetectorRef.markForCheck();
     }
 

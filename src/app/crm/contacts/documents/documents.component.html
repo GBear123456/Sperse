@@ -23,7 +23,7 @@
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
             <dxi-column dataField="size" [calculateSortValue]="numerizeFileSizeSortValue" [caption]="l('DocumentSize')" [calculateCellValue]="calculateFileSizeValue" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="creationTime" [caption]="l('Date')" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
+            <dxi-column dataField="creationTime" [caption]="l('Date')" [sortingMethod]="sortCreationDateTime" dataType="datetime" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
             <dxi-column dataField="typeName" [caption]="l('DocumentType')" cellTemplate="typeCell" [width]="335" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
             <dxi-column dataField="fileName" cellTemplate="fileNameCell" [caption]="l('FileName')"></dxi-column>
 

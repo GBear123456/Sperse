@@ -188,7 +188,8 @@ export class UserInboxComponent implements OnDestroy {
                                 this.dataSource.reload();
                             },
                             onOptionChanged: event => {
-                                this.deliveryType = event.value.length > 1 ? undefined : event.value[0];
+                                if (event.name == 'selectedItemKeys')
+                                    this.deliveryType = !event.value || event.value.length > 1 ? undefined : event.value[0];
                             }
                         }
                     }, {
@@ -357,6 +358,10 @@ export class UserInboxComponent implements OnDestroy {
             load: (loadOptions) => {
                 if (loadOptions.take) {
                     this.loadingService.startLoading();
+                    let sortOption = [];
+                    if (loadOptions.sort)
+                        sortOption = loadOptions.sort instanceof Array 
+                            ? loadOptions.sort : [loadOptions.sort];
                     return this.communicationService.getMessages(
                         this.contactId,
                         undefined, /* filter by parent */
@@ -364,9 +369,10 @@ export class UserInboxComponent implements OnDestroy {
                         loadOptions.searchValue || undefined,
                         this.deliveryType || undefined,
                         this.status,
-                        (loadOptions.sort || []).map((item) => {
+                        sortOption.map(item => {
                             return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
-                        }).join(','), loadOptions.take, loadOptions.skip
+                        }).join(','),
+                        loadOptions.take, loadOptions.skip
                     ).toPromise().then(response => {
                         let record;
                         this.initMainToolbar();

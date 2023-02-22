@@ -58,8 +58,7 @@ import { LanguagesComponent } from './languages/languages.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { CreateOrEditRoleModalComponent } from './roles/create-or-edit-role-modal/create-or-edit-role-modal.component';
 import { RolesComponent } from './roles/roles.component';
-import { HostSettingsComponent } from './settings/host-settings/host-settings.component';
-import { TenantSettingsComponent } from './settings/tenant-settings/tenant-settings.component';
+import { SettingsComponent } from './settings/settings/settings.component';
 import { EditionComboComponent } from './shared/edition-combo.component';
 import { FeaturesModule } from '@app/shared/features/features.module';
 import { PermissionComboComponent } from './shared/permission-combo.component';
@@ -73,9 +72,30 @@ import { UiCustomizationComponent } from './ui-customization/ui-customization.co
 import { ImpersonationService } from './users/impersonation.service';
 import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
-import { SystemSettingsComponent } from './settings/system-settings/system-settings.component';
-import { UploadSSLCertificateModalComponent } from './settings/modals/upload-ssl-cert-modal.component';
-import { AddOrEditSSLBindingModalComponent } from './settings/modals/add-or-edit-ssl-binding-modal.component';
+import { GeneralSettingsComponent } from './settings/shared/general-settings/general-settings.component';
+import { DomainSettingsComponent } from './settings/shared/domain-settings/domain-settings.component';
+import { StripeSettingsComponent } from './settings/shared/stripe-settings/stripe-settings.component';
+import { PaypalSettingsComponent } from './settings/shared/paypal-settings/paypal-settings.component';
+import { FacebookSettingsComponent } from './settings/shared/facebook-settings/facebook-settings.component';
+import { LinkedInSettingsComponent } from './settings/shared/linkedin-settings/linkedin-settings.component';
+import { YTelSettingsComponent } from './settings/shared/ytel-settings/ytel-settings.component';
+import { BugsnagSettingsComponent } from './settings/shared/bugsnag-settings/bugsnag-settings.component';
+import { SecuritySettingsComponent } from './settings/shared/security-settings/security-settings.component';
+import { EmailSettingsComponent } from './settings/shared/email-settings/email-settings.component';
+import { UserManagementSettingsComponent } from './settings/shared/user-management-settings/user-management-settings.component';
+import { TenantManagementSettingsComponent } from './settings/shared/tenant-management-settings/tenant-management-settings.component';
+import { AppearanceSettingsComponent } from './settings/shared/appearance-settings/appearance-settings.component';
+import { MemberPortalSettingsComponent } from './settings/shared/member-portal-settings/member-portal-settings.component';
+import { SendgridSettingsComponent } from './settings/shared/sendgrid-settings/sendgrid-settings.component';
+import { KlaviyoSettingsComponent } from './settings/shared/klaviyo-settings/klaviyo-settings.component';
+import { EpcvipLinkSettingsComponent } from './settings/shared/epcvip-link-settings/epcvip-link-settings.component';
+import { EpcvipEmailSettingsComponent } from './settings/shared/epcvip-email-settings/epcvip-email-settings.component';
+import { IAgeSettingsComponent } from './settings/shared/iage-settings/iage-settings.component';
+import { OngageSettingsComponent } from './settings/shared/ongage-settings/ongage-settings.component';
+import { RapidSettingsComponent } from './settings/shared/rapid-settings/rapid-settings.component';
+import { SalesTalkSettingsComponent } from './settings/shared/sales-talk-settings/sales-talk-settings.component';
+import { UploadSSLCertificateModalComponent } from './settings/shared/domain-settings/modals/upload-ssl-cert-modal.component';
+import { AddOrEditSSLBindingModalComponent } from './settings/shared/domain-settings/modals/add-or-edit-ssl-binding-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { ContactsModule } from '../crm/contacts/contacts.module';
@@ -86,7 +106,6 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
-import { SalesTalkComponent } from './settings/tenant-settings/sales-talk/sales-talk.component';
 
 @NgModule({
     imports: [
@@ -155,15 +174,35 @@ import { SalesTalkComponent } from './settings/tenant-settings/sales-talk/sales-
         CreateOrEditRoleModalComponent,
         AuditLogsComponent,
         AuditLogDetailModalComponent,
-        HostSettingsComponent,
+        SettingsComponent,
         MaintenanceComponent,
         JobsComponent,
         LanguagesComponent,
         LanguageTextsComponent,
         CreateOrEditLanguageModalComponent,
         EditTextModalComponent,
-        TenantSettingsComponent,
-        SystemSettingsComponent,
+        GeneralSettingsComponent,
+        DomainSettingsComponent,
+        StripeSettingsComponent,
+        PaypalSettingsComponent,
+        FacebookSettingsComponent,
+        LinkedInSettingsComponent,
+        YTelSettingsComponent,
+        BugsnagSettingsComponent,
+        SecuritySettingsComponent,
+        EmailSettingsComponent,
+        UserManagementSettingsComponent,
+        TenantManagementSettingsComponent,
+        AppearanceSettingsComponent,
+        MemberPortalSettingsComponent,
+        SendgridSettingsComponent,
+        KlaviyoSettingsComponent,
+        EpcvipLinkSettingsComponent,
+        EpcvipEmailSettingsComponent,
+        IAgeSettingsComponent,
+        OngageSettingsComponent,
+        RapidSettingsComponent,
+        SalesTalkSettingsComponent,
         UploadSSLCertificateModalComponent,
         AddOrEditSSLBindingModalComponent,
         UiCustomizationComponent,
@@ -176,8 +215,7 @@ import { SalesTalkComponent } from './settings/tenant-settings/sales-talk/sales-
         StorageChangeDialog,
         ModulesEditionsSelectComponent,
         ClearIconSvgComponent,
-        CreateUserDialogComponent,
-        SalesTalkComponent
+        CreateUserDialogComponent
     ],
     entryComponents: [
         CreateUserDialogComponent,
@@ -201,4 +239,4 @@ import { SalesTalkComponent } from './settings/tenant-settings/sales-talk/sales-
     ]
 })
 
-export class AdminModule {}
+export class AdminModule { }

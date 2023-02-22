@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { forkJoin, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
@@ -20,6 +22,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { AppConsts } from '@shared/AppConsts';
+import { LocalizationResolver } from '@shared/common/localization-resolver';
 
 @Component({
     templateUrl: './header-notifications.component.html',
@@ -57,6 +61,7 @@ export class HeaderNotificationsComponent implements OnInit {
         private appSession: AppSessionService,
         private permission: PermissionCheckerService,
         private router: Router,
+        private localizationResolver: LocalizationResolver,
         public ls: AppLocalizationService,
         public profileService: ProfileService
     ) {}
@@ -105,12 +110,31 @@ export class HeaderNotificationsComponent implements OnInit {
 
     loadNotifications(): void {
         this.notificationService.getUserNotifications(UserNotificationState.Unread, undefined, undefined, 3, 0).subscribe((result: GetNotificationsOutput) => {
-            this.unreadNotificationCount = result.items.length;
-            this.notifications = [];
-            $.each(result.items, (index, item: UserNotificationDto) => {
-                this.notifications.push(this.userNotificationHelper.format(<any>item));
+            this.checkLocalizations(result.items).subscribe(() => {
+                this.unreadNotificationCount = result.items.length;
+                this.notifications = [];
+                $.each(result.items, (index, item: UserNotificationDto) => {
+                    this.notifications.push(this.userNotificationHelper.format(<any>item));
+                });
             });
         });
+    }
+
+    checkLocalizations(items: UserNotificationDto[]) : Observable<boolean> {
+        let localizationSources = new Set<string>();
+        items.filter(v => v.notification.data.type == 'Abp.Notifications.LocalizableMessageNotificationData').forEach(v => {
+            var message = v.notification.data['message'] || v.notification.data.properties.Message;
+            if (message.sourceName != AppConsts.localization.defaultLocalizationSourceName) {
+                localizationSources.add(message.sourceName);
+            }
+        });
+
+        if (localizationSources.size == 0)
+            return of(true);
+
+        let calls: Observable<boolean>[] = [];
+        localizationSources.forEach(v => calls.push(this.localizationResolver.checkLoadLocalization(v)));
+        return forkJoin(calls).pipe(map(v => true));
     }
 
     registerToEvents() {

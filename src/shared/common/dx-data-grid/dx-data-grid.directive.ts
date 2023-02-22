@@ -60,6 +60,8 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
         this.component.instance.option(
+            'columnChooser.enabled', true);
+        this.component.instance.option(
             'columnResizingMode', 'widget');
 
         this.initStateStoring();
@@ -87,7 +89,7 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
                             event.component.option('selection.selectAllMode') === 'allPages' ? 'AffectAllPagesItems' : 'AffectOnPageItems'));
                 } else if (event.rowType == 'data') {
                     if (event.eventType == 'mouseover') {
-                        if (event.column.name == 'hiddenTime') {
+                        if (event.column.cssClass && event.column.cssClass.includes('hiddenTime')) {
                             let text = event.cellElement.querySelector('span');
                             if (!text) {
                                 event.cellElement.innerHTML = '';
@@ -102,7 +104,7 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
                             this.appendClipboardIcon(event.cellElement.querySelector('.clipboard-holder'));
                     }
                     if (event.eventType == 'mouseout') {
-                        if (event.column.name == 'hiddenTime') {
+                        if (event.column.cssClass && event.column.cssClass.includes('hiddenTime')) {
                             let text = event.cellElement.querySelector('span');
                             text.innerText = event.value ? this.getDateFormatted(event.data[event.column.dataField]) : '';
                         }
@@ -181,7 +183,7 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
                     if (instance.option('dataSource') == initialDataSource) {
                         if (!(initialDataSource instanceof Array))
                             instance.option('dataSource', instance.getDataSource().items());
-                        instance.option('remoteOperations', '{filtering: false}');
+                        instance.option('remoteOperations', {filtering: false});
                     }
                     searchByTextTimeout = setTimeout(() => {
                         instance.searchByText(phrase);
@@ -212,7 +214,6 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
             accessKey = this.component.instance.option('accessKey');
         this.component.instance.option('stateStoring', {
             enabled: true,
-            ignoreColumnOptionNames: [],
             storageKey: this.cacheHelper.getCacheKey(
                 [
                     this.getLocationPath(),
@@ -251,10 +252,10 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
     }
 
     initDateCellColumn(column, component) {
-        component.columnOption(column.dataField, 'name', 'hiddenTime');
         component.columnOption(column.dataField, 'minWidth', '190px');
         component.columnOption(column.dataField, 'cellTemplate', undefined);
-        component.columnOption(column.dataField, 'cssClass', column.cssClass + ' clipboard-holder');
+        component.columnOption(column.dataField, 'cssClass', 
+            column.cssClass + ' clipboard-holder hiddenTime');
         component.columnOption(column.dataField, 'calculateCellValue', (data) => {
             return this.getDateFormatted(data[column.dataField], !this.exporting);
         });

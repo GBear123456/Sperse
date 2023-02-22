@@ -38,8 +38,8 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
-import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
-import { InvoicesService, } from '@app/crm/contacts/invoices/invoices.service';
+import { DxValidationGroupComponent } from 'devextreme-angular';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
@@ -182,9 +182,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     saveProduct() {
-        if (this.product.type == this.defaultProductType) {
-            let services = this.product.productServices,
-                options = this.product.productSubscriptionOptions;
+        if (this.product.type == ProductType.Subscription) {
+            let options = this.product.productSubscriptionOptions;
             if (!options || !options.length)
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.unit = undefined;
@@ -192,6 +191,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         } else {
             this.product.productServices = undefined;
             this.product.productSubscriptionOptions = undefined;
+            this.product.productUpgradeAssignments = undefined;
+            this.product.downgradeProductId = undefined;
         }
 
         if (this.validationGroup.instance.validate().isValid) {

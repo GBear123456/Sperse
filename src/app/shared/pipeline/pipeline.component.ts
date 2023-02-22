@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import oDataUtils from 'devextreme/data/odata/utils';
+import * as oDataUtils from 'devextreme/data/odata/utils';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of, forkJoin } from 'rxjs';
 import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
@@ -670,7 +670,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 ...this.params,
                 ...customFilter.params
             ];
-
         return this.getODataUrl(
             this.totalsURI,
             filters,
@@ -691,7 +690,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
         } else {
             /** Update total source url in a case custom filter has changed */
-            this._totalDataSource._store._url = this.getTotalsRequestUrl(filter);
+            this._totalDataSource['_store']['_requestDispatcher']['_url'] = this.getTotalsRequestUrl(filter);
         }
 
         if (!this._totalDataSource.isLoading()) {
@@ -734,18 +733,21 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     private getDataSourceForStage(stage) {
         let config = cloneDeep(this._dataSource),
-            _beforeSend = config.store.beforeSend;
+            _beforeSend = config.store.beforeSend,
+            selectFields = this.selectFields.concat(['SortOrder',
+                this.isChecklistAllowed ? 'StageChecklistPointDoneCount' : null
+            ].filter(Boolean));
+
         config.store.beforeSend = (request) => {
             if (_beforeSend) _beforeSend(request);
             this.getBeforeSendEvent(stage.id)(request);
+            request.params.$select = selectFields;
         };
 
         return new DataSource(extend(config, {
             onLoadError: (error) => { this.httpInterceptor.handleError(error); },
             requireTotalCount: !this.totalsURI,
-            select: this.selectFields.concat(['SortOrder',
-                this.isChecklistAllowed ? 'StageChecklistPointDoneCount' : null
-            ].filter(Boolean))
+            select: selectFields
         }));
     }
 

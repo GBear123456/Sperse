@@ -497,8 +497,9 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                     let reader = new FileReader();
                     reader.addEventListener('loadend', () => {
                         if (!this.openReportMode)
-                            setTimeout(() => this.showReportFullscreen(), 300);
+                            setTimeout(() => this.showReportFullscreen(), 2000);
                         this.openReportMode = true;
+                        this.appService.toolbarToggle();
                         this.previewContent = StringHelper.getBase64(reader.result as string);
                         this.changeDetector.markForCheck();
                     });
@@ -561,6 +562,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         this.openReportMode = false;
         this.previewContent = undefined;
         this.viewerToolbarConfig = [];
+        this.appService.toolbarToggle();
         this.changeDetector.markForCheck();
         setTimeout(() => this.dataGrid.instance.repaint());
     }

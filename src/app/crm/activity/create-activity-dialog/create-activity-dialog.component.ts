@@ -140,23 +140,13 @@ export class CreateActivityDialogComponent implements OnInit {
             this.isAllDay = true;
 
         if (this.appointment.StartDate) {
-            this.startDate = new Date(this.appointment.StartDate);
-            if (!this.isAllDay) {
-                this.startDate.setHours(dateNow.getHours());
-                this.startDate.setMinutes(dateNow.getMinutes());
-                this.startDate.setSeconds(dateNow.getSeconds());
-            }
+            this.startDate = this.getDateWithTimezone(new Date(this.appointment.StartDate));
         } else {
             this.startDate = new Date(dateNow);
         }
 
         if (this.appointment.EndDate) {
-            this.endDate = new Date(this.appointment.EndDate);
-            if (!this.isAllDay) {
-                this.endDate.setHours(dateNow.getHours());
-                this.endDate.setMinutes(dateNow.getMinutes());
-                this.endDate.setSeconds(dateNow.getSeconds());
-            }
+            this.endDate = this.getDateWithTimezone(new Date(this.appointment.EndDate));
         } else {
             this.endDate = new Date(dateNow);
             this.endDate.setTime(
@@ -214,7 +204,6 @@ export class CreateActivityDialogComponent implements OnInit {
                         name: 'select-box',
                         widget: 'dxDropDownMenu',
                         options: {
-                            width: 80,
                             hint: this.ls.l('Type'),
                             selectedIndex: this.activityTypeIndex,
                             items: [
@@ -295,7 +284,6 @@ export class CreateActivityDialogComponent implements OnInit {
     private activityTypeChanged(event) {
         this.activityTypeIndex = event.itemIndex;
         this.appointment.Type = event.itemData.value;
-        this.initToolbarConfig();
     }
 
     private createEntity(): void {

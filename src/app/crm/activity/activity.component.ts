@@ -19,6 +19,7 @@ import { finalize, map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
+import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -67,7 +68,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public showPipeline = false;
     public pipelineDataSource: any;
     public pipelinePurposeId = AppConsts.PipelinePurposeIds.activity;
-    public cellDuration = 15;
+    private cellDurationStorageKey = 'activity_cell_duration_' + abp.session.tenantId;
+    public cellDuration = parseInt(this.cacheService.get(this.cellDurationStorageKey) || 15);
 
     public activityTypes = ActivityType;
     private selectedEntities: any[] = [];
@@ -131,6 +133,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     constructor(
         injector: Injector,
+        private cacheService: CacheService,
         private activityProxy: ActivityServiceProxy,
         private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
@@ -355,7 +358,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             value: this.cellDuration,
                             showSpinButtons: true,
                             onValueChanged: event => {
-                                this.cellDuration = event.value;
+                                this.cellDuration = parseInt(event.value);
+                                this.changeDetectorRef.detectChanges();
+                                this.cacheService.set(this.cellDurationStorageKey, event.value);
+                                setTimeout(() => this.schedulerComponent.instance.repaint(), 100);
                             },
                             step: 5,
                             max: 60,
@@ -373,9 +379,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         widget: 'dxCheckBox',
                         options: {
                             visible: true,
-                            value: this.showUserActivitiesOnly,
                             width: '150px',
-                            elementAttr: {style: 'margin-right: 15px;'},
+                            accessKey: 'my-activities',
+                            value: this.showUserActivitiesOnly,
                             text: this.l('My Activities'),
                             onValueChanged: (event) => {
                                 this.showUserActivitiesOnly = event.value;
@@ -589,6 +595,12 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     showActivityDialog(appointment) {
+        let isDateBase = appointment instanceof Date;
+        if (!isDateBase && this.currentView == 'month') {
+            appointment.EndDate = appointment.StartDate;
+            appointment.AllDay = true;
+        }
+
         this.schedulerComponent.instance.hideAppointmentTooltip();
         this.dialog.open(CreateActivityDialogComponent, {
             panelClass: 'slider',
@@ -596,7 +608,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             closeOnNavigation: false,
             data: {
                 stages: this.stages,
-                appointment: appointment instanceof Date
+                appointment: isDateBase
                     ? { startDate: appointment }
                     : (appointment.entity || appointment) as ActivityDto,
                 refreshParent: this.refresh.bind(this)
@@ -662,7 +674,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             });
     }
 
-    deleteAppointment(event, appointment: ActivityDto) {
+    deleteAppointment(event, appointment: any) {
         event.stopPropagation();
         if (appointment) {
             let instance = this.schedulerComponent.instance;
@@ -750,8 +762,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 this.calendarCaption = momentDate.format('D MMMM YYYY');
                 break;
             case 'week':
-                let weekStart = momentDate.startOf('week');
-                let weekEnd = momentDate.endOf('week');
+                let weekStart = moment(momentDate.startOf('week'));
+                let weekEnd = moment(momentDate.endOf('week'));
                 if (weekStart.month() == momentDate.month() && weekEnd.month() == momentDate.month()) {
                     this.calendarCaption = `${weekStart.date()} - ${weekEnd.date()} ${momentDate.format('MMMM YYYY')}`;
                 } else {

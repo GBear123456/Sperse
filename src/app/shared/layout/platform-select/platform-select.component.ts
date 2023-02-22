@@ -48,6 +48,8 @@ export class PlatformSelectComponent {
     permissions = AppPermissions;
     width: string = AppConsts.isMobile ? '100vw' : '760px';
 
+    moduleItems: string[];
+
     constructor(
         private appService: AppService,
         private authService: AppAuthService,
@@ -62,7 +64,8 @@ export class PlatformSelectComponent {
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {
-        appService.getModules().forEach((module: Module) => {
+        let modules = appService.getModules();
+        modules.forEach((module: Module) => {
             if (appService.isModuleActive(module.name) && !module.isMemberPortal) this.activeModuleCount++;
             let config = appService.getModuleConfig(module.name);
             if (module.showInDropdown) {
@@ -110,6 +113,7 @@ export class PlatformSelectComponent {
                 }
             }
         });
+        this.moduleItems = modules.map(item => item.name);
         appService.subscribeModuleChange((config: ConfigInterface) => {
             this.module = config.name;
             this.displayName = config.displayName || config.name;

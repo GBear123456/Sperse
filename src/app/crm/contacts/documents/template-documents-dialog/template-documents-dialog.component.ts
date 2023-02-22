@@ -3,8 +3,8 @@ import { Component, ViewChild, OnInit, AfterViewInit, Inject, ElementRef } from 
 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import RemoteFileProvider from 'devextreme/ui/file_manager/file_provider/remote';
-import CustomFileProvider from 'devextreme/ui/file_manager/file_provider/custom';
+import RemoteFileSystemProvider from 'devextreme/file_management/remote_provider';
+import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { DxFileManagerComponent } from 'devextreme-angular/ui/file-manager';
 import { finalize, map } from 'rxjs/operators';
@@ -38,7 +38,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     public readonly VIEW_MODE_THUMBNAILS = 'thumbnails';
 
     layout = this.VIEW_MODE_THUMBNAILS;
-    documentsFileProvider = new CustomFileProvider({
+    documentsFileProvider = new CustomFileSystemProvider({
         getItems: () => {
             return this.documentService.getAll(this.data.contactId).pipe(
                 map((documents: DocumentInfo[]) => {
@@ -53,8 +53,15 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
             ).toPromise();
         }
     });
-    templatesFileProvider = new RemoteFileProvider({
-        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem'
+    templatesFileProvider = new RemoteFileSystemProvider({
+        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem',
+        beforeAjaxSend: (options) => {
+            if (!options.headers || !options.headers['Authorization'])
+                options.headers = {
+                    Authorization: 'Bearer ' + abp.auth.getToken(),
+                    ...(options.headers || {})
+                };
+        }
     });
     isDocumentsVisible = !!(this.data.showDocuments && this.data.contactId);
     isTemplatesVisible = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);

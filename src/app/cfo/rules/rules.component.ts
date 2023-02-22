@@ -159,7 +159,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
 
     refreshList() {
         this.startLoading();
-        this.classificationService.getRules(InstanceType[this.instanceType], this.instanceId, null)
+        this.classificationService.getRules(InstanceType[this.instanceType], this.instanceId, undefined)
             .pipe(finalize(() => this.finishLoading()))
             .subscribe(result => {
                 this.ruleTreeListDataSource = new DataSource({

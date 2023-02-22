@@ -29,7 +29,7 @@ import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { UploaderComponent } from '@shared/common/tenant-settings-wizard/general-settings/uploader/uploader.component';
+import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 
 @Component({
