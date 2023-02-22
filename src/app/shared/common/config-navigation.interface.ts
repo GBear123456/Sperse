@@ -5,6 +5,8 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
 
 export interface ConfigNavigation {
     text?: string;
+    title?: string;
+    localization?: string;
     permission?: AppPermissions | string;
     feature?: AppFeatures | string;
     layout?: LayoutType;

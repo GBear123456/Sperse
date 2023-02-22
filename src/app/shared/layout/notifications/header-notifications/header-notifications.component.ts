@@ -7,7 +7,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-
 /** Application imports */
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { 
@@ -25,6 +24,7 @@ import { PermissionCheckerService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
+
 @Component({
     templateUrl: './header-notifications.component.html',
     styleUrls: [
