@@ -12,7 +12,8 @@
         <div *dxTemplate="let link of 'navBarItem'">
             <dx-menu
                 [dataSource]="[link]"
-                selectionMode="none"
+                [selectByClick]="true"
+                [selectionMode]="'single'"
                 [hoverStateEnabled]="true"
                 [hideSubmenuOnMouseLeave]="true"
                 [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"

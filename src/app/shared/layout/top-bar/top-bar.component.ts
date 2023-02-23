@@ -24,6 +24,7 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { environment } from '@root/environments/environment';
 import { AppPermissions } from '@shared/AppPermissions';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -118,7 +119,8 @@ export class TopBarComponent implements OnInit, OnDestroy {
         let navList: PanelMenuItem[] = [];
         configNavigation.forEach((navigation: ConfigNavigation) => {
             let item = new PanelMenuItem(
-                navigation.text && this.ls.ls(localizationSource, 'Navigation_' + navigation.text),
+                navigation.title || navigation.text && this.ls.ls(localizationSource, 
+                    (navigation.localization || 'Navigation_') + navigation.text),
                 navigation.permission,
                 navigation.icon,
                 navigation.route,
@@ -127,7 +129,13 @@ export class TopBarComponent implements OnInit, OnDestroy {
                     ? (!this.appSessionService.tenant || this.appSessionService.tenant.customLayoutType !== LayoutType.BankCode)
                     : !navigation.route,
                 navigation.alterRoutes,
-                navigation.host
+                navigation.host,
+                navigation.layout,
+                navigation.items ? this.initMenu(
+                    navigation.items, 
+                    localizationSource
+                ) : undefined,
+                navigation.params
             );
             item.visible = this.showMenuItem(item);
             navList.push(item);
@@ -152,7 +160,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
     navigate(event) {
         let route = event.itemData.route;
         /** Avoid redirect to the same route */
-        if (route && location.pathname !== event.itemData.route) {
+        if (route && (location.pathname !== event.itemData.route || location.search != UrlHelper.getUrl('', event.itemData.params))) {
             if (route.startsWith('/')) {
                 if (['/code-breaker', '/personal-finance'].includes(event.itemData.route) && AppConsts.appMemberPortalUrl) {
                     if (this.authService.checkCurrentTopDomainByUri())
@@ -164,7 +172,8 @@ export class TopBarComponent implements OnInit, OnDestroy {
                     }
                     location.href = AppConsts.appMemberPortalUrl;
                 } else
-                    this.router.navigate([event.itemData.route]);
+                    this.router.navigate([event.itemData.route], event.itemData.params ? 
+                        {queryParams: event.itemData.params} : undefined);
             } else
                 window.open(route, '_blank');
         }

@@ -3,6 +3,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { ConfigInterface } from '@app/shared/common/config.interface';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
+import { ContactGroup } from '@shared/AppEnums';
 
 export class CrmConfig implements ConfigInterface {
     code = 'CRM';
@@ -19,7 +20,8 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'Leads',
             permission: AppPermissions.CRMCustomers + '|' + AppPermissions.CRMPartners + '|' + AppPermissions.CRMEmployees + '|' + AppPermissions.CRMInvestors + '|' + AppPermissions.CRMVendors + '|' + AppPermissions.CRMOthers,
-            route: '/app/crm/leads'
+            route: '/app/crm/leads',
+            items: []
         },
         {
             text: 'Clients',
@@ -34,7 +36,32 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'Orders',
             permission: AppPermissions.CRMOrders,
-            route: '/app/crm/orders'
+            route: '/app/crm/orders',
+            items: [{
+                text: 'Orders',
+                permission: AppPermissions.CRMOrders,
+                route: '/app/crm/orders',
+                params: {contactGroup: ContactGroup.Client, orderType: 1},
+                items: Object.keys(ContactGroup).concat(['All']).map(contactGroup => ({
+                    text: contactGroup,
+                    localization: 'ContactGroup_',
+                    route: '/app/crm/orders',
+                    permission: AppPermissions['CRM' + contactGroup + 's'],
+                    params: {contactGroup: ContactGroup[contactGroup] || '', orderType: 1}
+                }))
+            }, {
+                text: 'Subscriptions',
+                permission: AppPermissions.CRMOrders,
+                route: '/app/crm/orders',
+                params: {contactGroup: ContactGroup.Client, orderType: 2},
+                items: Object.keys(ContactGroup).concat(['All']).map(contactGroup => ({
+                    text: contactGroup,
+                    localization: 'ContactGroup_',
+                    route: '/app/crm/orders',
+                    permission: AppPermissions['CRM' + contactGroup + 's'],
+                    params: {contactGroup: ContactGroup[contactGroup] || '', orderType: 2}
+                }))
+            }]
         },
         {
             text: 'Invoices',
@@ -44,7 +71,11 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'Products',
             permission: AppPermissions.CRMProducts,
-            route: '/app/crm/products'
+            route: '/app/crm/products',
+            items: [{
+                text: 'Coupons',
+                route: '/app/crm/coupons'
+            }]
         },
         {
             text: 'Tasks',

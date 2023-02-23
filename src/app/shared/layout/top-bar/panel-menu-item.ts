@@ -1,3 +1,4 @@
+import { Params } from '@angular/router';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
@@ -9,6 +10,7 @@ export class PanelMenuItem {
     layoutType: LayoutType = null;
     icon = '';
     route = '';
+    params: Params;
     alterRoutes: string[] = [];
     visible = true;
     disabled = false;
@@ -26,7 +28,8 @@ export class PanelMenuItem {
         alterRoutes?: string[],
         host?: string,
         layoutType?: LayoutType,
-        items?: PanelMenuItem[]
+        items?: PanelMenuItem[],
+        params?: Params
     ) {
         this.text = text;
         this.permission = permission;
@@ -37,6 +40,7 @@ export class PanelMenuItem {
         this.visible = Boolean(text);
         this.host = host;
         this.layoutType = layoutType;
+        this.params = params;
 
         if (items === undefined) {
             this.items = [];
