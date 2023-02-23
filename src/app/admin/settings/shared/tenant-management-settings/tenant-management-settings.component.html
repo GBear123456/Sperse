@@ -7,14 +7,14 @@
                           [text]="l('AllowTenantsToRegisterThemselves')"
                           [(value)]="tenantManagementSettings.allowSelfRegistration">
             </dx-check-box>
-            <span class="m-form__help">{{l("AllowTenantsToRegisterThemselves_Hint")}}</span>
+            <div class="m-form__help">{{l("AllowTenantsToRegisterThemselves_Hint")}}</div>
         </div>
         <div class="form-group">
             <dx-check-box id="Setting_IsNewRegisteredTenantActiveByDefault"
                           [text]="l('NewRegisteredTenantsIsActiveByDefault')"
                           [(value)]="tenantManagementSettings.isNewRegisteredTenantActiveByDefault">
             </dx-check-box>
-            <span class="m-form__help">{{l("NewRegisteredTenantsIsActiveByDefault_Hint")}}</span>
+            <div class="m-form__help">{{l("NewRegisteredTenantsIsActiveByDefault_Hint")}}</div>
         </div>
         <div class="form-group">
             <dx-check-box id="Setting_UseCaptchaOnRegistration"
