@@ -15,10 +15,12 @@
 
                     <div class="dx-field">
                         <p *ngIf="model.tenantHostType == HostType_PlatformApp">
-                            {{ls.l('MapHostNameDNS')}}<br>
+                            {{ls.l('MapHostNameDNS')}}<br><br>
+                            <b>TXT</b> {{ls.l('record')}} <i><b>asuid.</b>custom.mysite.com</i> with domain verification id <br><b>{{envHost.asuid}}</b><br><br>
                             <b>A</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.ip}}</b><br>
-                            <b>TXT</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.host}}</b><br>
-                            {{ls.l('CheckCorrectMapping')}} <a target="_blank" href="https://www.ultratools.com/tools/dnsLookupResult">{{ls.l('DNSLookup')}}</a>
+                            OR<br>
+                            <b>CNAME</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.host}}</b><br><br>
+                            {{ls.l('CheckCorrectMapping')}} <a target="_blank" href="https://mxtoolbox.com/DnsLookup.aspx">{{ls.l('DNSLookup')}}</a>
                         </p>
                         <dx-text-box #DomainName 
                                      [placeholder]="ls.l('HostName') + ' (custom.mysite.com)'"

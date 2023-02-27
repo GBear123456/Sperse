@@ -62,24 +62,7 @@ export class AddOrEditSSLBindingModalComponent {
         displayName: this.ls.l('AllOrganizationUnits')
     }];
 
-    envHost = {
-        production: {
-            ip: '52.165.168.40',
-            host: 'sperseprodapiservice.azurewebsites.net'
-        },
-        development: {
-            ip: '40.80.155.102',
-            host: 'testsperseplatformapi.azurewebsites.net'
-        },
-        staging: {
-            ip: '40.80.155.102',
-            host: 'testsperseplatformapi.azurewebsites.net'
-        },
-        beta: {
-            ip: '52.176.6.37',
-            host: 'sperseapi.azurewebsites.net'
-        }
-    }[environment.releaseStage];
+    envHost = environment;
 
     constructor(
         private changeDetection: ChangeDetectorRef,
