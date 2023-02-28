@@ -15,6 +15,7 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { finalize, map, tap } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -69,8 +70,9 @@ export class AddOrEditSSLBindingModalComponent {
         private tenantHostService: TenantHostServiceProxy,
         private tenantSslCertificateService: TenantSslCertificateServiceProxy,
         private notify: NotifyService,
-        public ls: AppLocalizationService,
         private dialogRef: MatDialogRef<AddOrEditSSLBindingModalComponent>,
+        public clipboardService: ClipboardService,
+        public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         if (data.orgUnits && data.orgUnits.length)
@@ -206,5 +208,10 @@ export class AddOrEditSSLBindingModalComponent {
             event.component.option('disabled', true);
             return true;
         }
+    }
+
+    copyToClipboard(value: string) {
+        this.clipboardService.copyFromContent(value.trim());
+        this.notify.info(this.ls.l('SavedToClipboard'));
     }
 }
