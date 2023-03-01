@@ -3,7 +3,7 @@
         <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ widgettitle }}</h2>
         <h3 class="subtitle">{{ subtitle }}</h3>
         <div class="config-wrap">
-            <div class="sperse-toggle" [ngClass]="{'both-active': configurator == 'slider'}">
+            <div class="sperse-toggle">
                 <div class="left" [ngClass]="{ 'active': getActiveStatus('month') }">{{ ls.l('Monthly') }}</div>
                 <mat-slide-toggle
                     [checked]="selectedBillingPeriod === billingPeriod.Yearly"

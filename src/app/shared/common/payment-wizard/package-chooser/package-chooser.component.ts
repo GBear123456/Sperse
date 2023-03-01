@@ -90,7 +90,6 @@ export class PackageChooserComponent implements OnInit {
 
     public freePackages: PackageConfigDto[];
     packagesConfig$: Observable<ProductInfo[]>;// = this.paymentService.packagesConfig$;
-    configurator = 'billingPeriod';
     tenantSubscriptionIsTrial: boolean;
     tenantSubscriptionIsFree: boolean;
 
@@ -135,7 +134,7 @@ export class PackageChooserComponent implements OnInit {
                 this.appService.subscriptionInGracePeriodBySubscription(moduleSubscriptionExpired)
             ) {
                 this.currentProductId = moduleSubscriptionExpired.productId;
-                this.selectedBillingPeriod = this.getBillingPeriod(moduleSubscriptionExpired.paymentPeriodType)
+                this.selectedBillingPeriod = PaymentService.getBillingPeriod(moduleSubscriptionExpired.paymentPeriodType)
             }
 
             if (this.upgradeProductId) {
@@ -154,18 +153,6 @@ export class PackageChooserComponent implements OnInit {
             return;
 
         return this.appService.moduleSubscriptions.find(x => x.productId == productId);
-    }
-
-    private getBillingPeriod(paymentPeriodType: PaymentPeriodType): BillingPeriod {
-        switch (paymentPeriodType)
-        {
-            case PaymentPeriodType.Monthly:
-                return BillingPeriod.Monthly;
-            case PaymentPeriodType.Annual:
-                return BillingPeriod.Yearly;
-            default: 
-                return undefined;
-        }
     }
 
     getProductMonthlyOption(product: ProductInfo) {

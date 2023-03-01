@@ -9,9 +9,12 @@ import { publishReplay, refCount } from 'rxjs/operators';
 /** Application imports */
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import {
+    PaymentPeriodType,
     ProductInfo,
-    ProductServiceProxy
+    ProductServiceProxy,
+    RecurringPaymentFrequency
 } from '@shared/service-proxies/service-proxies';
+import { BillingPeriod } from './models/billing-period.enum';
 
 @Injectable()
 export class PaymentService {
@@ -33,5 +36,31 @@ export class PaymentService {
             publishReplay(),
             refCount()
         );
+    }
+
+    static getBillingPeriod(paymentPeriodType: PaymentPeriodType): BillingPeriod {
+        switch (paymentPeriodType) {
+            case PaymentPeriodType.Monthly:
+                return BillingPeriod.Monthly;
+            case PaymentPeriodType.Annual:
+                return BillingPeriod.Yearly;
+            case PaymentPeriodType.LifeTime:
+                return BillingPeriod.LifeTime;
+            default:
+                return undefined;
+        }
+    }
+
+    static getRecurringPaymentFrequency(billingType: BillingPeriod): RecurringPaymentFrequency {
+        switch (billingType) {
+            case BillingPeriod.Monthly:
+                return RecurringPaymentFrequency.Monthly;
+            case BillingPeriod.Yearly:
+                return RecurringPaymentFrequency.Annual;
+            case BillingPeriod.LifeTime:
+                return RecurringPaymentFrequency.LifeTime;
+            default:
+                return undefined;
+        }
     }
 }

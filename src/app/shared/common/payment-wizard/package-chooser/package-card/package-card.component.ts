@@ -12,6 +12,7 @@ import { PackageEditionConfigDto, ProductInfo, ProductSubscriptionOptionInfo, Re
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { PaymentService } from '../../payment.service';
 
 @Component({
     selector: 'package-card',
@@ -19,17 +20,32 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./package-card.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.Emulated,
-    providers: [ DecimalPipe ]
+    providers: [DecimalPipe]
 })
 export class PackageCardComponent implements OnChanges {
+    currentBillingPeriod: BillingPeriod;
+
     @Input() productInfo: ProductInfo;
-    @Input() billingPeriod: BillingPeriod;
+    @Input() set billingPeriod(value: BillingPeriod) {
+        this.currentBillingPeriod = value;
+
+        if (this.productInfo) {
+            let period = PaymentService.getRecurringPaymentFrequency(value);
+            let hasPeriodConfig = !!this.productInfo.productSubscriptionOptions.find(x => x.frequency == period);
+            this.display = hasPeriodConfig ? 'block' : 'none';
+            this.isActive = hasPeriodConfig;
+        }
+    }
+    get billingPeriod() {
+        return this.currentBillingPeriod;
+    }
     @Input() currencySymbol = '$';
     @Input() usersAmount: number;
     @Input() module: ModuleType;
     @HostBinding('class.isActive') @Input() public isActive: boolean;
     @HostBinding('class.bestValue') @Input() bestValue = false;
     @HostBinding('style.background') @Input() background;
+    @HostBinding('style.display') display = 'block';
 
     saveAmountPerMonth: number;
     baseUrl = AppConsts.appBaseHref;
@@ -83,7 +99,7 @@ export class PackageCardComponent implements OnChanges {
     constructor(
         private decimalPipe: DecimalPipe,
         public ls: AppLocalizationService
-    ) {}
+    ) { }
 
     ngOnChanges(changes) {
         let product = this.products[this.productInfo.code];
