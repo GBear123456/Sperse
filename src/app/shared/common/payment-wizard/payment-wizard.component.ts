@@ -59,6 +59,7 @@ export class PaymentWizardComponent {
         this.appService.getGracePeriodDayCountBySubscription(this.data.subscription) : 0;
     isSubscriptionManagementAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);
     trackingCode: string;
+    selectedUpgradeProductId: number;
 
     constructor(
         private appService: AppService,
@@ -113,7 +114,9 @@ export class PaymentWizardComponent {
         });
     }
 
-    showSubscriptionProducts() {
+    showSubscriptionProducts(data) {
+        this.selectedUpgradeProductId = data && data.upgrade ? data.productId : null;
+
         this.data.showSubscriptions = false;
         this.changeDetectorRef.detectChanges();
     }

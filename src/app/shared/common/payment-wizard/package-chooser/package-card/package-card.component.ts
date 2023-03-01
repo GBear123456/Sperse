@@ -29,7 +29,7 @@ export class PackageCardComponent implements OnChanges {
     @Input() module: ModuleType;
     @HostBinding('class.isActive') @Input() public isActive: boolean;
     @HostBinding('class.bestValue') @Input() bestValue = false;
-    @HostBinding('style.background') background;
+    @HostBinding('style.background') @Input() background;
 
     saveAmountPerMonth: number;
     baseUrl = AppConsts.appBaseHref;

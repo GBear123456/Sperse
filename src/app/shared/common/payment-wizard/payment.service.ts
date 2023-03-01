@@ -26,5 +26,12 @@ export class PaymentService {
 
     constructor(
         private productServiceProxy: ProductServiceProxy
-    ) {}
+    ) { }
+
+    getUpgradeConfig(productId: number): Observable<ProductInfo[]> {
+        return this.productServiceProxy.getUpgradeProductsForProduct(productId).pipe(
+            publishReplay(),
+            refCount()
+        );
+    }
 }

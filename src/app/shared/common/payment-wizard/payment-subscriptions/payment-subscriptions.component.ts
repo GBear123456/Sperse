@@ -70,6 +70,14 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
         this.onShowProducts.emit();
     }
 
+    showUpgradeButton(cell) {
+        return cell.data.statusId == 'A' && cell.data.isUpgradable;
+    }
+
+    upgradeSubscription(data) {
+        this.onShowProducts.emit({ upgrade: true, productId: data.productId });
+    }
+
     cancelSubscription(data) {
         this.dialog.open(CancelSubscriptionDialogComponent, {
             width: '400px',

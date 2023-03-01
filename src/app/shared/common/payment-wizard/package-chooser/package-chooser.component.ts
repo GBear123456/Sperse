@@ -57,6 +57,7 @@ export class PackageChooserComponent implements OnInit {
     @Input() nextButtonPosition: 'right' | 'center' = 'right';
     @Input() showDowngradeLink = false;
     @Input() subscription: any;
+    @Input() upgradeProductId: number;
 
     private _preselect = true;
     @Input('preselect')
@@ -88,10 +89,20 @@ export class PackageChooserComponent implements OnInit {
     private enableSliderScalingChange = false;
 
     public freePackages: PackageConfigDto[];
-    packagesConfig$: Observable<ProductInfo[]> = this.paymentService.packagesConfig$;
+    packagesConfig$: Observable<ProductInfo[]>;// = this.paymentService.packagesConfig$;
     configurator = 'billingPeriod';
     tenantSubscriptionIsTrial: boolean;
     tenantSubscriptionIsFree: boolean;
+
+    backgroundColors: string[] = [
+        '#a27cbf',
+        '#4862aa',
+        '#0079be',
+        '#008dc2',
+        '#7d7483',
+        '#b2a8b8',
+        '#008b7a'
+    ];
 
     constructor(
         public localizationService: AppLocalizationService,
@@ -104,6 +115,12 @@ export class PackageChooserComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        if (this.upgradeProductId) {
+            this.packagesConfig$ = this.paymentService.getUpgradeConfig(this.upgradeProductId);
+        } else {
+            this.packagesConfig$ = this.paymentService.packagesConfig$;
+        }
+
         forkJoin([
             this.localizationResolver.checkLoadLocalization(AppConsts.localization.defaultLocalizationSourceName),
             this.localizationResolver.checkLoadLocalization(AppConsts.localization.CFOLocalizationSourceName),
@@ -113,7 +130,7 @@ export class PackageChooserComponent implements OnInit {
         });
 
         if (this.appService.moduleSubscriptions.length) {
-            let moduleSubscriptionExpired = this.subscription || this.appService.moduleSubscriptions[0];
+            let moduleSubscriptionExpired = this.findSubscriptionByProductId(this.upgradeProductId) || this.subscription || this.appService.moduleSubscriptions[0];
             if (moduleSubscriptionExpired.paymentPeriodType != PaymentPeriodType.OneTime && 
                 this.appService.subscriptionInGracePeriodBySubscription(moduleSubscriptionExpired)
             ) {
@@ -121,10 +138,22 @@ export class PackageChooserComponent implements OnInit {
                 this.selectedBillingPeriod = this.getBillingPeriod(moduleSubscriptionExpired.paymentPeriodType)
             }
 
+            if (this.upgradeProductId) {
+                this.widgettitle = this.ls.l('UpgradeSubscriptionOptions', moduleSubscriptionExpired.productName);
+                this.subtitle = this.ls.l('UpgradeSubscriptionOptionsHint', moduleSubscriptionExpired.productName);
+            }
+
             if (!this.widgettitle) {
                 this.widgettitle = this.ls.l('ModuleExpired', moduleSubscriptionExpired.productName, this.appService.getSubscriptionStatusBySubscription(moduleSubscriptionExpired));
             }
         }
+    }
+
+    private findSubscriptionByProductId(productId: number) {
+        if (!productId)
+            return;
+
+        return this.appService.moduleSubscriptions.find(x => x.productId == productId);
     }
 
     private getBillingPeriod(paymentPeriodType: PaymentPeriodType): BillingPeriod {

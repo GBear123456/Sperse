@@ -26,6 +26,7 @@
                         [productInfo]="package"
                         [billingPeriod]="selectedBillingPeriod"
                         [isActive]="currentProductId == undefined || currentProductId == package.id"
+                        [background]="backgroundColors[i]"
                         [ngClass]="{
                             'selected': selectedPackageIndex === i,
                             'large': packages.length < 3,
