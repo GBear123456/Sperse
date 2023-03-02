@@ -2,19 +2,28 @@
     <ng-container *ngIf="packagesConfig$ | async">
         <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ widgettitle }}</h2>
         <h3 class="subtitle">{{ subtitle }}</h3>
-        <div class="config-wrap">
+        <div *ngIf="upgradeProductId; else sperseToggle" class="three-state-slider">
+            <div class="captions">
+                <div [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }" (click)="toggle(billingPeriod.Monthly)">{{ ls.l('Monthly') }}</div>
+                <div [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }" (click)="toggle(billingPeriod.Yearly)">{{ ls.l('Annually') }}</div>
+                <div [ngClass]="{ 'active': getActiveStatus(billingPeriod.LifeTime) }" (click)="toggle(billingPeriod.LifeTime)">{{ ls.l('Lifetime') }}</div>
+            </div>
+            <mat-slider [value]="selectedBillingPeriod * 50"
+                        [disabled]="true">
+            </mat-slider>
+        </div>
+        <ng-template #sperseToggle class="config-wrap">
             <div class="sperse-toggle">
-                <div class="left" [ngClass]="{ 'active': getActiveStatus('month') }">{{ ls.l('Monthly') }}</div>
-                <mat-slide-toggle
-                    [checked]="selectedBillingPeriod === billingPeriod.Yearly"
-                    (change)="billingPeriodChanged($event)">
+                <div class="left" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }">{{ ls.l('Monthly') }}</div>
+                <mat-slide-toggle [checked]="selectedBillingPeriod === billingPeriod.Yearly"
+                                  (change)="billingPeriodChanged($event)">
                 </mat-slide-toggle>
-                <div class="right" [ngClass]="{ 'active': getActiveStatus('year') }">
+                <div class="right" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }">
                     <p class="year-discount">{{ 'SAVE ' + yearDiscount + '%'}}<span> {{ ls.l('OrMore') }}</span></p>
                     {{ ls.l('Annually') }}
                 </div>
             </div>
-        </div>
+        </ng-template>
     </ng-container>
 </div>
 <ng-container *ngIf="packagesConfig$ | async">

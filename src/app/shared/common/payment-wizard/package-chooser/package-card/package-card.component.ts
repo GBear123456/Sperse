@@ -47,6 +47,7 @@ export class PackageCardComponent implements OnChanges {
     @HostBinding('style.background') @Input() background;
     @HostBinding('style.display') display = 'block';
 
+    billingPeriodEnum = BillingPeriod;
     saveAmountPerMonth: number;
     baseUrl = AppConsts.appBaseHref;
     selectedEdition: PackageEditionConfigDto;
@@ -133,12 +134,12 @@ export class PackageCardComponent implements OnChanges {
     //     return this.selectedOrLastEdition.features;
     // }
 
-    get pricePerMonth(): number {
-        let productMonthly = this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Monthly),
-            productAnnual = this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual);
-        return this.billingPeriod === BillingPeriod.Monthly 
-            ? (productMonthly ? productMonthly.fee : 0)
-            : (productAnnual ? Math.round(productAnnual.fee / 12) : 0)
+    get pricePerPeriod(): number {
+        let recurringFrequency = PaymentService.getRecurringPaymentFrequency(this.billingPeriod);
+        let productFrequencyInfo = this.productInfo.productSubscriptionOptions.find(x => x.frequency == recurringFrequency);
+        return this.billingPeriod === BillingPeriod.Yearly ?
+            (productFrequencyInfo ? Math.round(productFrequencyInfo.fee / 12) : 0) :
+            (productFrequencyInfo ? productFrequencyInfo.fee : 0);
     }
 
     // get editionPricePerMonth(): number {

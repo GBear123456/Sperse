@@ -267,12 +267,7 @@ export class PackageChooserComponent implements OnInit {
 
     billingPeriodChanged(e) {
         this.selectedBillingPeriod = e.checked ? BillingPeriod.Yearly : BillingPeriod.Monthly;
-
-        setTimeout(() => {
-            let paymentOptions = this.getPaymentOptions();
-            if (paymentOptions)
-                this.onPlanChosen.emit(paymentOptions);
-        }, 10);
+        this.emitPlanChange();
     }
 
     selectPackage(packageIndex: number) {
@@ -283,9 +278,21 @@ export class PackageChooserComponent implements OnInit {
         }
     }
 
-    getActiveStatus(status: 'month' | 'year') {
-        return (status === 'month' && this.selectedBillingPeriod === BillingPeriod.Monthly) ||
-            (status === 'year' && this.selectedBillingPeriod === BillingPeriod.Yearly);
+    getActiveStatus(period: BillingPeriod) {
+        return this.selectedBillingPeriod == period;
+    }
+
+    toggle(value: BillingPeriod) {
+        this.selectedBillingPeriod = value;
+        this.emitPlanChange();
+    }
+
+    emitPlanChange() {
+        setTimeout(() => {
+            let paymentOptions = this.getPaymentOptions();
+            if (paymentOptions)
+                this.onPlanChosen.emit(paymentOptions);
+        }, 10);
     }
 
     // onActiveUsersChange(event: MatSliderChange) {
@@ -321,12 +328,6 @@ export class PackageChooserComponent implements OnInit {
     //     this.slider['first']._step = this.sliderStep = step;
     // }
 
-    private getSubscriptionFrequency(): PaymentPeriodType {
-        return this.selectedBillingPeriod === BillingPeriod.Monthly
-            ? PaymentPeriodType.Monthly
-            : PaymentPeriodType.Annual;
-    }
-
     goToNextStep() {
         if (!this.selectedPackageCardComponent) {
             if (!this.selectedPackageIndex) {
@@ -345,8 +346,8 @@ export class PackageChooserComponent implements OnInit {
             const paymentOptions: PaymentOptions = {
                 productId: this.selectedPackageCardComponent.productInfo.id,
                 productName: this.selectedPackageCardComponent.productInfo.name,
-                paymentPeriodType: this.getSubscriptionFrequency(),
-                total: this.selectedPackageCardComponent.pricePerMonth * (
+                paymentPeriodType: PaymentService.getPaymentPeriodType(this.selectedBillingPeriod),
+                total: this.selectedPackageCardComponent.pricePerPeriod * (
                     this.selectedBillingPeriod === BillingPeriod.Yearly ? 12 : 1
                 )
             };

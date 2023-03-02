@@ -17,11 +17,11 @@
         <div class="amountPerMonth">
             <span class="currency-symbol">{{ currencySymbol }}</span>
             <span class="number">
-                {{ pricePerMonth | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
+                {{ pricePerPeriod | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
             </span>
             <div class="number-info">
-                <span class="decimal">{{ pricePerMonth | customNumber: '0.2-2' }}</span>
-                <span>/{{ billingPeriod === 0 ? ls.l('priceMonthly') : ls.l('priceAnnually') }}</span>
+                <span class="decimal">{{ pricePerPeriod | customNumber: '0.2-2' }}</span>
+                <span>/{{ ls.l('price' + billingPeriodEnum[billingPeriod]) }}</span>
             </div>
         </div>
     </div>

@@ -51,6 +51,19 @@ export class PaymentService {
         }
     }
 
+    static getPaymentPeriodType(billingType: BillingPeriod): PaymentPeriodType {
+        switch (billingType) {
+            case BillingPeriod.Monthly:
+                return PaymentPeriodType.Monthly;
+            case BillingPeriod.Yearly:
+                return PaymentPeriodType.Annual;
+            case BillingPeriod.LifeTime:
+                return PaymentPeriodType.LifeTime;
+            default:
+                return undefined;
+        }
+    }
+
     static getRecurringPaymentFrequency(billingType: BillingPeriod): RecurringPaymentFrequency {
         switch (billingType) {
             case BillingPeriod.Monthly:
