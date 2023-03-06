@@ -59,7 +59,7 @@ export class HostLoginVerificationComponent implements OnInit, AfterViewInit {
                 this.isLoggedIn = !!this.appSession.user;
 
                 if (this.isExtLogin && this.isLoggedIn) {
-                        this.loginService.completeSourceEvent();
+                    this.loginService.completeSourceEvent();
                 }
             });
     }
