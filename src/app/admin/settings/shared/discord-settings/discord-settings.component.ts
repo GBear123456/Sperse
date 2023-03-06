@@ -7,19 +7,19 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    LinkedInExternalLoginProviderSettingsDto, TenantSettingsServiceProxy
+    DiscordExternalLoginProviderSettingsDto, TenantSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 
 @Component({
-    selector: 'linkedin-settings',
-    templateUrl: './linkedin-settings.component.html',
-    styleUrls: ['./linkedin-settings.component.less'],
+    selector: 'discord-settings',
+    templateUrl: './discord-settings.component.html',
+    styleUrls: ['./discord-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantSettingsServiceProxy]
 })
-export class LinkedInSettingsComponent extends SettingsComponentBase {
-    linkedInSettings: LinkedInExternalLoginProviderSettingsDto;
+export class DiscordSettingsComponent extends SettingsComponentBase {
+    discordSettings: DiscordExternalLoginProviderSettingsDto;
 
     constructor(
         _injector: Injector,
@@ -30,19 +30,19 @@ export class LinkedInSettingsComponent extends SettingsComponentBase {
 
     ngOnInit(): void {
         this.startLoading();
-        this.tenantSettingsService.getLinkedInSettings()
+        this.tenantSettingsService.getDiscordSettings()
             .pipe(
                 finalize(() => this.finishLoading())
             )
             .subscribe(res => {
-                this.linkedInSettings = res;
+                this.discordSettings = res;
                 this.changeDetection.detectChanges();
             });
     }
 
     isValid(): boolean {
-        let isAppIdSet = !!this.linkedInSettings.settings.appId;
-        let isAppSecret = !!this.linkedInSettings.settings.appSecret;
+        let isAppIdSet = !!this.discordSettings.settings.appId;
+        let isAppSecret = !!this.discordSettings.settings.appSecret;
 
         let isValid = (!isAppIdSet && !isAppSecret) || (isAppIdSet && isAppSecret);
 
@@ -55,6 +55,6 @@ export class LinkedInSettingsComponent extends SettingsComponentBase {
     }
 
     getSaveObs(): Observable<any> {
-        return this.tenantSettingsService.updateLinkedInSettings(this.linkedInSettings);
+        return this.tenantSettingsService.updateDiscordSettings(this.discordSettings);
     }
 }
