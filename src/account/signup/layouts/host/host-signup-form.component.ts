@@ -119,7 +119,7 @@ export class HostSignupFormComponent {
                     let state = paramsMap.get('state');
                     if (!!exchangeCode && !!state) {
                         abp.ui.setBusy();
-                        this.loginService.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state)
+                        this.loginService.clearOAuth2Params()
                             .then(() => {
                                 this.getUserData(exchangeCode, window.location.href)
                                     .pipe(finalize(() => abp.ui.clearBusy()))

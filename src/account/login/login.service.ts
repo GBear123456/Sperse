@@ -20,7 +20,6 @@ import {
     AuthenticateModel,
     AuthenticateResultModel,
     ExternalAuthenticateModel,
-    LinkedInAuthenticateModel,
     ExternalAuthenticateResultModel,
     ExternalLoginProviderInfoModel,
     TokenAuthServiceProxy,
@@ -28,7 +27,8 @@ import {
     AccountServiceProxy,
     SendPasswordResetCodeOutput,
     SignUpMemberResponse,
-    SignUpMemberRequest
+    SignUpMemberRequest,
+    OAuth2ExchangeCodeAuthenticateModel
 } from '@shared/service-proxies/service-proxies';
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -43,6 +43,7 @@ export class ExternalLoginProvider extends ExternalLoginProviderInfoModel {
     static readonly GOOGLE: string = 'Google';
     static readonly MICROSOFT: string = 'Microsoft';
     static readonly LINKEDIN: string = 'LinkedIn';
+    static readonly DISCORD: string = 'Discord';
 
     icon: string;
     initialized = false;
@@ -210,18 +211,26 @@ export class LoginService {
     externalAuthenticate(provider: ExternalLoginProvider): void {
         this.ensureExternalLoginProviderInitialized(provider, () => {
             this.authService.stopTokenCheck();
-            if (provider.name === ExternalLoginProvider.LINKEDIN) {
-                this.linkedInInitLogin(provider);
-            } if (provider.name === ExternalLoginProvider.FACEBOOK) {
-                this.facebookLogin();
-            } else if (provider.name === ExternalLoginProvider.GOOGLE) {
-                gapi.auth2.getAuthInstance().signIn().then(() => {
-                    this.googleLoginStatusChangeCallback(gapi.auth2.getAuthInstance().isSignedIn.get());
-                });
-            } else if (provider.name === ExternalLoginProvider.MICROSOFT) {
-                WL.login({
-                    scope: ['wl.signin', 'wl.basic', 'wl.emails']
-                });
+            switch (provider.name) {
+                case ExternalLoginProvider.LINKEDIN:
+                    this.linkedInInitLogin(provider);
+                    break;
+                case ExternalLoginProvider.FACEBOOK:
+                    this.facebookLogin();
+                    break;
+                case ExternalLoginProvider.GOOGLE:
+                    gapi.auth2.getAuthInstance().signIn().then(() => {
+                        this.googleLoginStatusChangeCallback(gapi.auth2.getAuthInstance().isSignedIn.get());
+                    });
+                    break;
+                case ExternalLoginProvider.MICROSOFT:
+                    WL.login({
+                        scope: ['wl.signin', 'wl.basic', 'wl.emails']
+                    });
+                    break;
+                case ExternalLoginProvider.DISCORD:
+                    this.discordInitLogin(provider);
+                    break;
             }
             this.authService.startTokenCheck();
         });
@@ -246,11 +255,12 @@ export class LoginService {
             '&state=foobar&scope=r_liteprofile%20r_emailaddress';
     }
 
-    clearLinkedInParamsAndGetReturnUrl(exchangeCode: string, state: string): Promise<boolean> {
+    clearOAuth2Params(): Promise<boolean> {
         return this.router.navigate([], {
             queryParams: {
                 'code': null,
-                'state': null
+                'state': null,
+                'provider': null
             },
             queryParamsHandling: 'merge'
         });
@@ -265,9 +275,9 @@ export class LoginService {
     ) {
         abp.ui.setBusy();
         //todo check state
-        this.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state)
+        this.clearOAuth2Params()
             .then(() => {
-                const model = new LinkedInAuthenticateModel();
+                const model = new OAuth2ExchangeCodeAuthenticateModel();
                 model.authProvider = ExternalLoginProvider.LINKEDIN;
                 model.providerAccessCode = '-';
                 model.providerKey = '-';
@@ -278,7 +288,7 @@ export class LoginService {
                 model.exchangeCode = exchangeCode;
                 model.loginReturnUrl = window.location.href;
 
-                this.tokenAuthService.linkedInAuthenticate(model)
+                this.tokenAuthService.oAuth2ExchangeCodeAuthenticate(model)
                     .pipe(finalize(() => abp.ui.clearBusy()))
                     .subscribe((result: ExternalAuthenticateResultModel) => {                       
                         this.linkedInLastAuthResult = result;
@@ -297,6 +307,55 @@ export class LoginService {
                         }
                     });
             });
+    }
+
+    oAuth2Login(
+        providerName: string,
+        code: string,
+        state: string,
+        setCookiesOnly: boolean = false,
+        onSuccessCallback = (result: AuthenticateResultModel) => { }
+    ) {
+        abp.ui.setBusy();
+
+        this.externalLoginProviders$.subscribe(providers => {
+            var provider = providers.find(x => x.name.toLowerCase() == providerName.toLowerCase());
+            if (!provider)
+                return;
+
+            //todo check state
+            this.clearOAuth2Params()
+                .then(() => {
+                    const model = new OAuth2ExchangeCodeAuthenticateModel();
+                    model.authProvider = provider.name;
+                    model.providerAccessCode = '-';
+                    model.providerKey = '-';
+                    model.singleSignIn = UrlHelper.getSingleSignIn();
+                    model.returnUrl = UrlHelper.getReturnUrl();
+                    model.autoDetectTenancy = true;
+                    model.autoRegistration = true;
+
+                    model.exchangeCode = code;
+                    model.loginReturnUrl = `${AppConsts.appBaseUrl}/account/login?provider=discord`;
+
+                    this.tokenAuthService.oAuth2ExchangeCodeAuthenticate(model)
+                        .pipe(finalize(() => abp.ui.clearBusy()))
+                        .subscribe((result: ExternalAuthenticateResultModel) => {
+                            if (!result.userNotFound) {
+                                onSuccessCallback(result);
+                                this.processAuthenticateResult(result,
+                                    result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
+                            }
+                        });
+                });
+        });
+    }
+
+    discordInitLogin(provider: ExternalLoginProvider) {
+        let scopes = ['email', 'identify'];
+        let scopesString = scopes.join('%20');
+        window.location.href = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + provider.clientId +
+            `&redirect_uri=${AppConsts.appBaseUrl}/account/login?provider=discord&state=${new Date().getTime()}&scope=${scopesString}&prompt=none`;
     }
 
     init(): void {
@@ -455,7 +514,7 @@ export class LoginService {
     }
 
     ensureExternalLoginProviderInitialized(loginProvider: ExternalLoginProvider, callback: () => void) {
-        if (loginProvider.initialized || loginProvider.name === ExternalLoginProvider.LINKEDIN) {
+        if (loginProvider.initialized || loginProvider.name === ExternalLoginProvider.LINKEDIN || loginProvider.name == ExternalLoginProvider.DISCORD) {
             callback();
             return;
         }

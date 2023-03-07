@@ -38,7 +38,6 @@ export class HostLoginComponent implements OnInit {
     isExtLogin: boolean = false; 
     showExternalLogin = false;
 
-    linkedIdLoginProvider: ExternalLoginProvider;
     externalLoginProviders: ExternalLoginProvider[];
 
     constructor(
@@ -63,14 +62,20 @@ export class HostLoginComponent implements OnInit {
                 this.loginService.authenticateModel.userNameOrEmailAddress = email;
 
             this.loginService.linkedIdLoginProvider$.subscribe((provider: ExternalLoginProvider) => {
-                this.linkedIdLoginProvider = provider;
-
                 let exchangeCode = paramsMap.get('code');
                 let state = paramsMap.get('state');
+                let providerName = paramsMap.get('provider');
+
                 if (!!exchangeCode && !!state) {
-                    this.loginService.linkedInLogin(this.linkedIdLoginProvider, exchangeCode, state, this.isExtLogin, (result) => {
-                        this.isLoggedIn = result.accessToken && this.isExtLogin;
-                    });
+                    if (providerName) {
+                        this.loginService.oAuth2Login(providerName, exchangeCode, state, this.isExtLogin, (result) => {
+                            this.isLoggedIn = result.accessToken && this.isExtLogin;
+                        });
+                    } else {
+                        this.loginService.linkedInLogin(null, exchangeCode, state, this.isExtLogin, (result) => {
+                            this.isLoggedIn = result.accessToken && this.isExtLogin;
+                        });
+                    }
                 }
             });            
         });
