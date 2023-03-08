@@ -10,6 +10,7 @@ import {
     DiscordExternalLoginProviderSettingsDto, TenantSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'discord-settings',
@@ -52,6 +53,10 @@ export class DiscordSettingsComponent extends SettingsComponentBase {
         }
 
         return isValid;
+    }
+
+    getOAuthRedirectUrl() {
+        return `${AppConsts.appBaseUrl}/account/login?provider=discord`
     }
 
     getSaveObs(): Observable<any> {

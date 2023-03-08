@@ -333,7 +333,6 @@ export class LoginService {
                     model.singleSignIn = UrlHelper.getSingleSignIn();
                     model.returnUrl = UrlHelper.getReturnUrl();
                     model.autoDetectTenancy = true;
-                    model.autoRegistration = true;
 
                     model.exchangeCode = code;
                     model.loginReturnUrl = `${AppConsts.appBaseUrl}/account/login?provider=discord`;
@@ -341,7 +340,9 @@ export class LoginService {
                     this.tokenAuthService.oAuth2ExchangeCodeAuthenticate(model)
                         .pipe(finalize(() => abp.ui.clearBusy()))
                         .subscribe((result: ExternalAuthenticateResultModel) => {
-                            if (!result.userNotFound) {
+                            if (result.userNotFound) {
+                                this.messageService.error('User is not found');
+                            } else {
                                 onSuccessCallback(result);
                                 this.processAuthenticateResult(result,
                                     result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
