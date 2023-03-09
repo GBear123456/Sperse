@@ -68,6 +68,7 @@ import { HostCombinedForgotPasswordComponent } from './password/layouts/host/hos
 import { SigninForgotPasswordComponent } from '@root/account/password/layouts/signin/signin-forgot-password.component';
 import { SigninLoginVerificationComponent } from './password/layouts/signin/signin-login-verification.component';
 import { SigninComponent } from '@root/account/login/layouts/signin/signin.component';
+import { TenantSideRouteGuard } from '@shared/common/auth/tenat-side-route-guard';
 
 @NgModule({
     imports: [
@@ -200,7 +201,8 @@ import { SigninComponent } from '@root/account/login/layouts/signin/signin.compo
     ],
     providers: [
         LoginService,
-        ApplicationServiceProxy
+        ApplicationServiceProxy,
+        TenantSideRouteGuard
     ]
 })
 export class AccountModule {}
