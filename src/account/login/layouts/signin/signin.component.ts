@@ -14,4 +14,6 @@ import { ConditionsType } from '@shared/AppEnums';
     ],
     animations: [accountModuleAnimation()]
 })
-export class SigninComponent extends HostLoginComponent {}
+export class SigninComponent extends HostLoginComponent {
+    get redirectToSignUp() { return true; }
+}

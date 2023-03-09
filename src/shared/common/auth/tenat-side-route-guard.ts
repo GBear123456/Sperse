@@ -18,9 +18,6 @@ export class TenantSideRouteGuard implements CanActivate {
     ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        console.log(route.data)
-        console.log(this.sessionService.tenantId)
-
         if (!route.data) {
             return true;
         }
