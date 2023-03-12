@@ -55,8 +55,12 @@ export class DiscordSettingsComponent extends SettingsComponentBase {
         return isValid;
     }
 
-    getOAuthRedirectUrl() {
-        return `${AppConsts.appBaseUrl}/account/login?provider=discord`
+    getOAuthRedirectUrls(): string[] {
+        return [
+            `${AppConsts.appBaseUrl}/account/login?provider=discord`,
+            `${AppConsts.appBaseUrl}/account/signin?provider=discord`,
+            `${AppConsts.appBaseUrl}/account/signup?provider=discord`,
+        ];
     }
 
     getSaveObs(): Observable<any> {

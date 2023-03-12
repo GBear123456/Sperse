@@ -20,9 +20,12 @@
             <input id="DiscordAppSecret" type="text" name="DiscordAppSecret" class="form-control" [(ngModel)]="discordSettings.settings.appSecret">
         </div>
     </div>
-    <p>
-        <span>URL for redirect - <span class="copy-url"><b>{{getOAuthRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
-    </p>
+    <div>
+        <span>URLs for redirect: </span>
+        <ul>
+            <li *ngFor="let url of getOAuthRedirectUrls()" class="copy-url"><b>{{url}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></li>
+        </ul>
+    </div>
 </div>
 <button class="btn btn-layout" (click)="save()">
     <i class="icon-la la la-floppy-o"></i>

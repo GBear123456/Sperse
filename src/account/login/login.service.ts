@@ -76,8 +76,7 @@ export class LoginService {
     resetPasswordModel: SendPasswordResetCodeInput;
     resetPasswordResult: SendPasswordResetCodeOutput;
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
-    linkedIdLoginProvider$: Observable<ExternalLoginProvider>;
-    linkedInLastAuthResult: ExternalAuthenticateResultModel;
+    lastOAuth2Result: ExternalAuthenticateResultModel;
 
     constructor(
         private tokenAuthService: TokenAuthServiceProxy,
@@ -251,7 +250,7 @@ export class LoginService {
 
     linkedInInitLogin(provider: ExternalLoginProvider) {
         window.location.href = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=' + provider.clientId +
-            '&redirect_uri=' + window.location.href +
+            '&redirect_uri=' + this.getRedirectUrl(provider.name) +
             '&state=foobar&scope=r_liteprofile%20r_emailaddress';
     }
 
@@ -277,17 +276,13 @@ export class LoginService {
         abp.ui.setBusy();
 
         this.externalLoginProviders$.subscribe(providers => {
-            let returnUrl: string;
-            if (providerName) {
-                returnUrl = `${AppConsts.appBaseUrl}/account/login?provider=${providerName.toLowerCase()}`;
-            } else {
-                providerName = ExternalLoginProvider.LINKEDIN;
-                returnUrl = window.location.href;
-            }
-
             var provider = providers.find(x => x.name.toLowerCase() == providerName.toLowerCase());
             if (!provider)
                 return;
+
+            if (!providerName) {
+                providerName = ExternalLoginProvider.LINKEDIN;
+            }
 
             //todo check state
             this.clearOAuth2Params()
@@ -301,14 +296,12 @@ export class LoginService {
                     model.autoDetectTenancy = true;
 
                     model.exchangeCode = code;
-                    model.loginReturnUrl = returnUrl;
+                    model.loginReturnUrl = this.getRedirectUrl(providerName);
 
                     this.tokenAuthService.oAuth2ExchangeCodeAuthenticate(model)
                         .pipe(finalize(() => abp.ui.clearBusy()))
                         .subscribe((result: ExternalAuthenticateResultModel) => {
-                            if (provider.name == ExternalLoginProvider.LINKEDIN) {
-                                this.linkedInLastAuthResult = result;
-                            }
+                            this.lastOAuth2Result = result;
 
                             if (result.userNotFound) {
                                 if (redirectToSignUp) {
@@ -316,7 +309,8 @@ export class LoginService {
                                         queryParams: {
                                             extlogin: setCookiesOnly,
                                             code: code,
-                                            state: state
+                                            state: state,
+                                            provider: provider.name
                                         }
                                     });
                                 } else {
@@ -336,7 +330,17 @@ export class LoginService {
         let scopes = ['email', 'identify'];
         let scopesString = scopes.join('%20');
         window.location.href = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + provider.clientId +
-            `&redirect_uri=${AppConsts.appBaseUrl}/account/login?provider=discord&state=${new Date().getTime()}&scope=${scopesString}&prompt=none`;
+            `&redirect_uri=${this.getRedirectUrl(provider.name)}&state=${new Date().getTime()}&scope=${scopesString}&prompt=none`;
+    }
+
+    getRedirectUrl(providerName: string) {
+        let providerNameLower = providerName.toLowerCase();
+        switch (providerNameLower) {
+            case 'linkedin':
+                return window.location.href;
+            default:
+                return `${AppConsts.appBaseUrl}${location.pathname}?provider=${providerNameLower}`;
+        }
     }
 
     init(): void {
@@ -486,11 +490,6 @@ export class LoginService {
                 publishReplay(),
                 refCount(),
                 map((providers: ExternalLoginProviderInfoModel[]) => providers.map(p => new ExternalLoginProvider(p)))
-            );
-
-        this.linkedIdLoginProvider$ = this.externalLoginProviders$
-            .pipe(
-                map(providers => providers.find(provider => provider.name === ExternalLoginProvider.LINKEDIN))
             );
     }
 
