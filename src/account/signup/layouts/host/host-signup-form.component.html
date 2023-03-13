@@ -34,12 +34,25 @@
     </div>
     <div class="box__right box__item">
       <form *ngIf="!leadRequestXref" id="firstStepForm" #firstStepForm="ngForm" novalidate (ngSubmit)="processTenantRegistrationRequest()">
-        <div class="social_login">
-          <button type="button" class="button_global button_global_blue" [ngClass]="{disabled: !linkedIdLoginProvider}"
-                  (click)="loginService.linkedInInitLogin(linkedIdLoginProvider)">
-            <span class="i-s-linkedin">Sign Up with LinkedIn</span>
-          </button>
-        </div>
+          <div *ngIf="showProviders; else noProviders">
+              <div class="social_login" *ngIf="linkedInProvider">
+                  <button type="button" class="button_global button_global_blue" (click)="loginService.linkedInInitLogin(linkedInProvider)">
+                      <span class="i-s-linkedin">Sign Up with LinkedIn</span>
+                  </button>
+              </div>
+              <div class="social_login" *ngIf="discordProvider">
+                  <button type="button" class="button_global button_global_blue2" (click)="loginService.discordInitLogin(discordProvider)">
+                      <span class="discord-icon">Sign Up with Discord</span>
+                  </button>
+              </div>
+          </div>
+          <ng-template #noProviders>
+              <div class="social_login">
+                  <button type="button" class="button_global button_global_blue" [ngClass]="{disabled: true}">
+                      <span class="i-s-linkedin">Sign Up with LinkedIn</span>
+                  </button>
+              </div>
+          </ng-template>
         <div class="divider">
           <span>Or</span>
         </div>

@@ -9,16 +9,16 @@ import { MessageService, NotifyService } from 'abp-ng2-module';
 import { MatDialog } from '@angular/material/dialog';
 import { first, finalize } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
-import { AbpSessionService } from 'abp-ng2-module';
-import { SessionServiceProxy, LeadServiceProxy, TenantProductInfo, PaymentPeriodType, RecurringPaymentFrequency, 
+import {
+    LeadServiceProxy, TenantProductInfo, PaymentPeriodType, RecurringPaymentFrequency,
     PasswordComplexitySetting, SubmitTenancyRequestOutput, TenantSubscriptionServiceProxy, CompleteTenantRegistrationOutput,
     ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput, ProfileServiceProxy,
-    LinkedInServiceProxy, LinkedInUserData} from '@shared/service-proxies/service-proxies';
+    ExternalUserDataServiceProxy, GetExternalUserDataOutput
+} from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -34,10 +34,10 @@ const psl = require('psl');
         './host-signup-form.component.less',
     ],
     providers: [
-        LeadServiceProxy, 
-        ProductServiceProxy, 
-        TenantSubscriptionServiceProxy, 
-        LinkedInServiceProxy,
+        LeadServiceProxy,
+        ProductServiceProxy,
+        TenantSubscriptionServiceProxy,
+        ExternalUserDataServiceProxy,
         ProfileServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -47,7 +47,7 @@ export class HostSignupFormComponent {
     @ViewChild('secondStepForm') secondStepForm;
     @ViewChild('phoneNumber') phoneNumber;
 
-    isExtLogin: boolean = false; 
+    isExtLogin: boolean = false;
     defaultCountryCode: string;
     selectedCountryCode: string;
 
@@ -63,14 +63,13 @@ export class HostSignupFormComponent {
     congratulationLink: string;
     leadRequestXref: string;
 
-    linkedIdLoginProvider: ExternalLoginProvider;
+    showProviders = false;
+    linkedInProvider: ExternalLoginProvider;
+    discordProvider: ExternalLoginProvider;
     conditions = ConditionsType;
 
     constructor(
-        private notifyService: NotifyService,
-        private sessionService: AbpSessionService,
         private changeDetectorRef: ChangeDetectorRef,
-        private sessionAppService: SessionServiceProxy,
         private tenantProxy: TenantSubscriptionServiceProxy,
         private productProxy: ProductServiceProxy,
         private loadingService: LoadingService,
@@ -81,7 +80,7 @@ export class HostSignupFormComponent {
         public loginService: LoginService,
         public router: Router,
         private activatedRoute: ActivatedRoute,
-        private linkedInService: LinkedInServiceProxy,
+        private externalUserDataService: ExternalUserDataServiceProxy,
         private messageService: MessageService,
         private profileService: ProfileServiceProxy
     ) {
@@ -96,9 +95,9 @@ export class HostSignupFormComponent {
 
         this.productProxy.getSubscriptionProductsByGroupName('Main').subscribe(products => {
             this.signUpProduct = products.sort((prev, next) => {
-                let prevOption = this.getProductMonthlyOption(prev), 
+                let prevOption = this.getProductMonthlyOption(prev),
                     nextOption = this.getProductMonthlyOption(next);
-                return prevOption.fee > nextOption.fee ? 1: -1;
+                return prevOption.fee > nextOption.fee ? 1 : -1;
             })[0];
             if (this.signUpProduct) {
                 let option = this.getProductMonthlyOption(this.signUpProduct);
@@ -109,26 +108,29 @@ export class HostSignupFormComponent {
                     quantity: 1,
                 })];
             }
-            this.loginService.linkedIdLoginProvider$.subscribe((provider: ExternalLoginProvider) => {
-                this.linkedIdLoginProvider = provider;
+            this.loginService.externalLoginProviders$.subscribe((providers: ExternalLoginProvider[]) => {
+                this.linkedInProvider = providers.find(x => x.name == ExternalLoginProvider.LINKEDIN && !!x.clientId);
+                this.discordProvider = providers.find(x => x.name == ExternalLoginProvider.DISCORD && !!x.clientId);
+                this.showProviders = !!this.linkedInProvider || !!this.discordProvider;
 
                 this.activatedRoute.queryParamMap.pipe(
                     first()
                 ).subscribe((paramsMap: ParamMap) => {
                     let exchangeCode = paramsMap.get('code');
                     let state = paramsMap.get('state');
+                    let providerName = paramsMap.get('provider') || ExternalLoginProvider.LINKEDIN;
                     if (!!exchangeCode && !!state) {
                         abp.ui.setBusy();
-                        this.loginService.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state)
+                        this.loginService.clearOAuth2Params()
                             .then(() => {
-                                this.getUserData(exchangeCode, window.location.href)
+                                this.getUserData(exchangeCode, providerName)
                                     .pipe(finalize(() => abp.ui.clearBusy()))
-                                    .subscribe((result: LinkedInUserData) => {
+                                    .subscribe((result: GetExternalUserDataOutput) => {
                                         this.tenancyRequestModel.firstName = result.name;
                                         this.tenancyRequestModel.lastName = result.surname;
                                         this.tenancyRequestModel.email = result.emailAddress;
 
-                                        this.messageService.info('The data provided by LinkedIn has been successfully received. Please check the data and finalize creating Sperse Account.');
+                                        this.messageService.info(`The data provided by ${providerName} has been successfully received. Please check the data and finalize creating Sperse Account.`);
 
                                         this.changeDetectorRef.detectChanges();
                                     });
@@ -147,16 +149,17 @@ export class HostSignupFormComponent {
         });
     }
 
-    getUserData(exchangeCode, url): Observable<LinkedInUserData> {
-        let state = this.loginService.linkedInLastAuthResult;
-        if (state && state.userNotFound)
-            return of(new LinkedInUserData({
+    getUserData(exchangeCode, providerName): Observable<GetExternalUserDataOutput> {
+        let state = this.loginService.lastOAuth2Result;
+        if (state && state.userNotFound) //user was redirected from signin
+            return of(new GetExternalUserDataOutput({
                 name: state.firstName,
                 surname: state.lastName,
                 emailAddress: state.email
             }));
-        else
-            return this.linkedInService.getUserData(exchangeCode, url);
+        else {
+            return this.externalUserDataService.getUserData(providerName, exchangeCode, this.loginService.getRedirectUrl(providerName));
+        }
     }
 
     onFocus(): void {
@@ -205,14 +208,14 @@ export class HostSignupFormComponent {
     }
 
     clearUrlPrefix(url) {
-        return url ? url.replace('http://','').replace('https://','').replace('www.','') : undefined;
+        return url ? url.replace('http://', '').replace('https://', '').replace('www.', '') : undefined;
     }
 
     onBlurSiteUrl() {
         if (this.tenantRegistrationModel && !this.tenantRegistrationModel.tenancyName) {
             let suggestedDomain,
                 psl = require('psl'),
-                parsedDomain = this.tenantRegistrationModel.siteUrl ? 
+                parsedDomain = this.tenantRegistrationModel.siteUrl ?
                     psl.parse(this.clearUrlPrefix(this.tenantRegistrationModel.siteUrl)) : '';
             if (parsedDomain) {
                 suggestedDomain = parsedDomain.sld;
@@ -253,7 +256,7 @@ export class HostSignupFormComponent {
                     abp.appPath
                 );
 
-            this.changeDetectorRef.detectChanges();            
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -263,11 +266,11 @@ export class HostSignupFormComponent {
 
     getApiLink(type: ConditionsType) {
         if (this.appSession.tenant)
-            return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/Get' + 
-                (type == ConditionsType.Policies ? 'PrivacyPolicy' : 'TermsOfService') + 
+            return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/Get' +
+                (type == ConditionsType.Policies ? 'PrivacyPolicy' : 'TermsOfService') +
                 'Document?tenantId=' + this.appSession.tenant.id;
         else
-            return AppConsts.appBaseHref + 'assets/documents/' + 
+            return AppConsts.appBaseHref + 'assets/documents/' +
                 (type == ConditionsType.Terms ? 'SperseTermsOfService.pdf' : 'SpersePrivacyPolicy.pdf');
     }
 }
