@@ -275,6 +275,9 @@ export class LoginService {
     ) {
         abp.ui.setBusy();
 
+        if (abp.session.tenantId)
+            abp.multiTenancy.setTenantIdCookie(abp.session.tenantId);
+
         this.externalLoginProviders$.subscribe(providers => {
             var provider = providers.find(x => x.name.toLowerCase() == providerName.toLowerCase());
             if (!provider)
