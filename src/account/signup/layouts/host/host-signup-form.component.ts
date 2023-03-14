@@ -129,6 +129,7 @@ export class HostSignupFormComponent {
                                         this.tenancyRequestModel.firstName = result.name;
                                         this.tenancyRequestModel.lastName = result.surname;
                                         this.tenancyRequestModel.email = result.emailAddress;
+                                        this.tenancyRequestModel.comments = this.getTenancyRequestComment(result);
 
                                         this.messageService.info(`The data provided by ${providerName} has been successfully received. Please check the data and finalize creating Sperse Account.`);
 
@@ -155,11 +156,25 @@ export class HostSignupFormComponent {
             return of(new GetExternalUserDataOutput({
                 name: state.firstName,
                 surname: state.lastName,
-                emailAddress: state.email
+                emailAddress: state.email,
+                additionalData: null
             }));
         else {
             return this.externalUserDataService.getUserData(providerName, exchangeCode, this.loginService.getRedirectUrl(providerName));
         }
+    }
+
+    getTenancyRequestComment(result: GetExternalUserDataOutput): string {
+        if (result.additionalData) {
+            let discordGuilds: any[] = result.additionalData['DiscordUserGuilds'];
+            if (discordGuilds) {
+                let comment = 'Owned Discord servers:\n';
+                discordGuilds.map(v => comment += `- ${v['name']} (${v['id']})`);
+                return comment;
+            }
+        }
+
+        return null;
     }
 
     onFocus(): void {
