@@ -9,7 +9,8 @@ import { HostLoginComponent } from '../host/host-login.component';
 @Component({
     templateUrl: './signin.component.html',
     styleUrls: [
-        './signin.component.less'
+        './signin.component.less',
+        '../../../../assets/fonts/sperser-extension.css'
     ],
     animations: [accountModuleAnimation()]
 })
