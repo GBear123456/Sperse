@@ -329,8 +329,10 @@ export class LoginService {
         });
     }
 
-    discordInitLogin(provider: ExternalLoginProvider) {
+    discordInitLogin(provider: ExternalLoginProvider, includeGuilds: boolean = false) {
         let scopes = ['email', 'identify'];
+        if (includeGuilds)
+            scopes.push('guilds');
         let scopesString = scopes.join('%20');
         window.location.href = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + provider.clientId +
             `&redirect_uri=${this.getRedirectUrl(provider.name)}&state=${new Date().getTime()}&scope=${scopesString}&prompt=none`;
