@@ -26,7 +26,7 @@ export class TenantSideRouteGuard implements CanActivate {
         let isHost = !this.sessionService.tenantId;
         if (!isHost && route.data.hostOnly) {
             this.router.navigate([route.data.tenantRedirect ? route.data.tenantRedirect : '/app/access-denied'], {
-                queryParams: location.href.includes(AppConsts.defaultDomain) ? {} : {tenantId: this.sessionService.tenantId}
+                queryParams: location.href.includes(AppConsts.defaultDomain) ? {tenantId: this.sessionService.tenantId} : {}
             });
             return false;
         }
