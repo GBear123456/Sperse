@@ -279,13 +279,14 @@ export class LoginService {
             abp.multiTenancy.setTenantIdCookie(abp.session.tenantId);
 
         this.externalLoginProviders$.subscribe(providers => {
-            var provider = providers.find(x => x.name.toLowerCase() == providerName.toLowerCase());
-            if (!provider)
-                return;
-
             if (!providerName) {
                 providerName = ExternalLoginProvider.LINKEDIN;
             }
+
+            let name = providerName.toLowerCase(),
+                provider = providers.find(x => x.name.toLowerCase() == name);
+            if (!provider)
+                return;
 
             //todo check state
             this.clearOAuth2Params()
