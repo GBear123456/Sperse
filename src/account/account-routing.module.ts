@@ -13,11 +13,11 @@ import { SendTwoFactorCodeComponent } from './login/send-two-factor-code.compone
 import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code.component';
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { AccountComponent } from './account.component';
-import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration/complete-tenant-registration.component';
 import { SigninForgotPasswordComponent } from '@root/account/password/layouts/signin/signin-forgot-password.component';
 import { SigninComponent } from '@root/account/login/layouts/signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
+import { TenantSideRouteGuard } from '@shared/common/auth/tenat-side-route-guard';
 
 @NgModule({
     imports: [
@@ -40,9 +40,19 @@ import { SignupComponent } from './signup/signup.component';
                     { path: 'send-code', component: SendTwoFactorCodeComponent },
                     { path: 'verify-code', component: ValidateTwoFactorCodeComponent },
                     { path: 'select-tenant', component: SelectTenantComponent },
-                    { path: 'signin', component: LoginComponent, data: {wrap: false, layoutComponent: SigninComponent}},
-                    { path: 'signup', component: SignupComponent, data: {wrap: false}},
-                    { path: 'signin-forgot-password', component: ForgotPasswordComponent, data: {wrap: false, layoutComponent: SigninForgotPasswordComponent} },
+                    {
+                        path: 'signin',
+                        component: LoginComponent,
+                        data: { wrap: false, layoutComponent: SigninComponent, hostOnly: true, tenantRedirect: 'account/login' },
+                        canActivate: [TenantSideRouteGuard]
+                    },
+                    {
+                        path: 'signup',
+                        component: SignupComponent,
+                        data: { wrap: false, hostOnly: true, tenantRedirect: 'account/login' },
+                        canActivate: [TenantSideRouteGuard]
+                    },
+                    { path: 'signin-forgot-password', component: ForgotPasswordComponent, data: { wrap: false, layoutComponent: SigninForgotPasswordComponent } },
                     { path: 'complete-tenant-registration', component: CompleteTenantRegistrationComponent }
                 ]
             }

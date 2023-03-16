@@ -100,7 +100,8 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
             { key: 'Rapid', visible: this.isRapidTenantLayout },
             { key: 'Sales Talk', visible: !this.appService.isHostTenant && this.isSalesTalkEnabled },
             { key: 'LinkedIn', visible: this.isSocialLoginEnabled('LinkedIn') },
-            { key: 'Facebook', visible: this.isSocialLoginEnabled('Facebook') }
+            { key: 'Facebook', visible: this.isSocialLoginEnabled('Facebook') },
+            { key: 'Discord', visible: this.isSocialLoginEnabled('Discord') }
         ];
 
         this.visibleSettings = this.settingsConfig.filter(v => v.visible);

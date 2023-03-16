@@ -78,6 +78,7 @@ import { StripeSettingsComponent } from './settings/shared/stripe-settings/strip
 import { PaypalSettingsComponent } from './settings/shared/paypal-settings/paypal-settings.component';
 import { FacebookSettingsComponent } from './settings/shared/facebook-settings/facebook-settings.component';
 import { LinkedInSettingsComponent } from './settings/shared/linkedin-settings/linkedin-settings.component';
+import { DiscordSettingsComponent } from './settings/shared/discord-settings/discord-settings.component';
 import { YTelSettingsComponent } from './settings/shared/ytel-settings/ytel-settings.component';
 import { BugsnagSettingsComponent } from './settings/shared/bugsnag-settings/bugsnag-settings.component';
 import { SecuritySettingsComponent } from './settings/shared/security-settings/security-settings.component';
@@ -187,6 +188,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         PaypalSettingsComponent,
         FacebookSettingsComponent,
         LinkedInSettingsComponent,
+        DiscordSettingsComponent,
         YTelSettingsComponent,
         BugsnagSettingsComponent,
         SecuritySettingsComponent,

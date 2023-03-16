@@ -47,7 +47,7 @@ export class FacebookSettingsComponent extends SettingsComponentBase {
         let isValid = (!isAppIdSet && !isAppSecret) || (isAppIdSet && isAppSecret);
 
         if (!isValid) {
-            let fieldName = isAppIdSet ? 'FacebookAppSecret' : 'FacebookAppId';
+            let fieldName = isAppIdSet ? 'AppSecret' : 'AppId';
             this.notify.error(this.l('RequiredField', this.l(fieldName)));
         }
 

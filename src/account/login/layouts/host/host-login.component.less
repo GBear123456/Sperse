@@ -19,6 +19,7 @@
 
 .form-wrapper {
     padding: 0;
+
     h1 {
         margin-top: 90px;
         margin-bottom: 75px;
@@ -27,16 +28,19 @@
         text-align: center;
         color: #424c56;
     }
+
     .login-form {
         max-width: 520px;
         margin: 0 auto;
         padding: 0;
     }
+
     input.form-control {
         font-size: 16px;
         font-weight: 300;
         color: #888d92;
     }
+
     .form-actions {
         .submit {
             min-width: 300px;
@@ -59,6 +63,7 @@
                 opacity: .7;
                 cursor: not-allowed;
             }
+
             img {
                 position: absolute;
                 right: 70px;
@@ -67,6 +72,7 @@
             }
         }
     }
+
     .mt-checkbox-list {
         .mt-checkbox.mt-checkbox-outline {
             margin-bottom: 0;
@@ -75,12 +81,15 @@
             font-weight: 300;
             color: #888d92;
             position: relative;
+
             &:hover {
                 color: darken(#888d92, 20%);
             }
+
             input {
                 display: none;
             }
+
             > span {
                 border-radius: 50%;
                 width: 14px;
@@ -90,6 +99,7 @@
                 position: absolute;
                 left: 6px;
                 top: 2px;
+
                 &::after {
                     border: 1px solid #fff;
                     transform: rotate(-45deg);
@@ -105,20 +115,24 @@
                     // position: absolute;
                 }
             }
+
             > input:checked ~ span {
                 border-color: #00aeef;
                 background-color: #00aeef;
+
                 &::after {
                     border-color: #fff;
                 }
             }
         }
     }
+
     .forget-password {
         padding-top: 10px;
         font-size: 14px;
         font-weight: 300;
         color: #888d92;
+
         &:hover {
             color: darken(#888d92, 20%);
             text-decoration: none;
@@ -147,25 +161,30 @@
         font-size: 15px;
         font-weight: 300;
         color: #888d92;
+
         a {
             font-size: 14px;
             font-weight: 500;
             letter-spacing: 1px;
             color: #00aeef;
+
             &:hover {
                 color: darken(#00aeef, 10%);
             }
         }
     }
+
     .agree-rights {
         font-size: 15px;
         font-weight: 300;
         color: #888d92;
         margin-top: 30px;
         margin-bottom: 75px;
+
         a {
             font-weight: 400;
             color: #888d92;
+
             &:hover {
                 color: darken(#888d92, 20%);
             }
@@ -187,7 +206,7 @@
         width: 100%;
         max-width: 200px;
         padding: 0 10px;
-        list-style-type: none; 
+        list-style-type: none;
     }
 
     .entrance-page__social-link {
@@ -226,6 +245,15 @@
 
     .entrance-page__social-link--linkedin:hover {
         background-color: #005c8c;
+    }
+
+    .entrance-page__social-link--discord {
+        background-color: #404eed;
+        background-image: url(../../../../assets/common/icons/discord-icon.svg);
+    }
+
+    .entrance-page__social-link--discord:hover {
+        opacity: 0.8;
     }
 
     .entrance-page__separator {

@@ -3,7 +3,6 @@
     height: 100vh;
     display: block;
     background: linear-gradient(115.57deg, #C1E1FF 16.28%, #CFE5FA 95.97%);
-
     --title: #021648;
     --text: #10307B;
     --text-light: #7B8390;
@@ -60,8 +59,7 @@
         min-height: calc(100vh - 61px);
 
         &__inner {
-            padding: clamp(20px, 4vw, 50px) clamp(20px, 4vw, 50px)
-                clamp(10px, 2vw, 30px);
+            padding: clamp(20px, 4vw, 50px) clamp(20px, 4vw, 50px) clamp(10px, 2vw, 30px);
             background-color: #fff;
             border-radius: 10px;
             width: clamp(300px, 50vw, 650px);
@@ -90,6 +88,17 @@
                 &:before {
                     font-size: 30px;
                 }
+            }
+
+            .discord-icon:before {
+                content: "";
+                width: 25px;
+                height: 21px;
+                background-image: url(../../../../assets/common/icons/discord-icon.svg);
+            }
+
+            &:hover .discord-icon:before {
+                background-image: url(../../../../assets/common/icons/discord-icon-blue.svg);
             }
         }
     }
@@ -213,6 +222,7 @@
         border-width: 0;
         -webkit-appearance: button;
         font: inherit;
+
         &.disabled {
             cursor: default;
             opacity: 0.5;
@@ -241,14 +251,24 @@
 
         &_green {
             background-color: var(--m-green);
+
             &:hover {
-                color: var(--m-green);                
+                color: var(--m-green);
                 border-color: var(--m-green);
             }
         }
 
         &_blue {
             background-color: var(--m-blue-light);
+
+            &:hover {
+                color: var(--m-blue-light);
+                border-color: var(--m-blue-light);
+            }
+        }
+
+        &_blue2 {
+            background-color: #404eed;
 
             &:hover {
                 color: var(--m-blue-light);
@@ -305,7 +325,7 @@
         }
     }
 
-    .check_wrap__input:checked+.check_wrap__style::before {
+    .check_wrap__input:checked + .check_wrap__style::before {
         content: "";
         position: absolute;
         transform: translate(-50%, -50%) scale(1);
@@ -319,6 +339,7 @@
         width: 100%;
         text-align: center;
         padding-top: 20px;
+
         a {
             font-weight: 600;
             text-decoration: underline;
