@@ -31,15 +31,28 @@
         .dx-row {
             .dx-link.dx-link-edit {
                 width: 19px !important;
+
                 &:before {
                     top: 12px !important;
                 }
             }
+
+            .edit-affiliate {
+                font-style: italic;
+                cursor: pointer;
+
+                i {
+                    margin-left: 8px;
+                    color: #00aeef;
+                }
+            }
         }
+
         div.status-wrapper {
             display: flex;
             justify-content: center;
         }
+
         div.status {
             width: 110px;
             height: 26px;
@@ -55,6 +68,7 @@
             text-transform: uppercase;
             text-align: center;
             color: #40596b;
+
             &:before {
                 content: "\A";
                 width: 7px;
@@ -64,24 +78,31 @@
                 margin-right: 5px;
                 background: #dedede;
             }
+
             &.final:before {
                 background: #1fb430;
             }
+
             &.pending:before {
                 background: #f1a72d;
             }
+
             &.sent:before {
                 background: #fff939;
             }
+
             &.draft:before {
                 background: rgba(64, 89, 107, 0.28);
             }
+
             &.partiallypaid {
                 width: 145px;
+
                 &:before {
                     background: #248392;
                 }
             }
+
             &.paid:before {
                 background: #3acddc;
             }
