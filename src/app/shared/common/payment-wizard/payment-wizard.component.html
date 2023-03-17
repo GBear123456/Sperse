@@ -1,4 +1,4 @@
-<payment-subscriptions *ngIf="data.showSubscriptions; else paymentWizard" (onShowProducts)="showSubscriptionProducts()"></payment-subscriptions>
+<payment-subscriptions *ngIf="data.showSubscriptions; else paymentWizard" (onShowProducts)="showSubscriptionProducts($event)"></payment-subscriptions>
 <ng-template #paymentWizard>
     <div id="paymentWizardComponent" #wizard>
         <mat-dialog-content>
@@ -10,6 +10,7 @@
                         [subtitle]="data?.subtitle"
                         [showBackground]="true"
                         [subscription]="data.subscription"
+                        [upgradeProductId]="selectedUpgradeProductId"
                         [showDowngradeLink]="!subscriptionIsFree"
                         (onPlanChosen)="changePlan($event)"
                         (moveToNextStep)="moveToPaymentOptionsStep()">
