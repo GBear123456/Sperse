@@ -16,7 +16,7 @@ import {
 import { MatSliderChange, MatSlider } from '@angular/material/slider';
 import { Observable, forkJoin } from 'rxjs';
 import { first, concatAll, map, max, pluck, publishReplay, refCount } from 'rxjs/operators';
-import partition from 'lodash/partition';
+import uniqBy from 'lodash/uniqBy';
 
 /** Application imports */
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
@@ -83,6 +83,7 @@ export class PackageChooserComponent implements OnInit {
     selectedPackageCardComponent: PackageCardComponent;
     selectedBillingPeriod = BillingPeriod.Yearly;
     billingPeriod = BillingPeriod;
+    recurringPaymentFrequency = RecurringPaymentFrequency;
     private defaultUsersAmount = 5;
     private currentPackage: PackageConfigDto;
     private currentEdition: PackageEditionConfigDto;
@@ -203,7 +204,7 @@ export class PackageChooserComponent implements OnInit {
 
     /** Preselect package if current edition is in list of not free packages, else - preselect best value package */
     private preselectPackage() {
-        const selectedPackage = this.packages.find(packageConfig => packageConfig.id == this.currentProductId);
+        let selectedPackage = this.packages.find(packageConfig => packageConfig.id == this.currentProductId);            
         if (selectedPackage) {
             this.selectedPackageIndex = this.packages.indexOf(selectedPackage);
             /** Update selected package with the active status to handle next button status */
@@ -211,8 +212,20 @@ export class PackageChooserComponent implements OnInit {
                 this.selectPackage(this.selectedPackageIndex);
                 this.onPlanChosen.emit(this.getPaymentOptions());
             }, 10);
-        }
+        } else
+            selectedPackage = this.packages.reverse()[0];
+
+        let productSubscriptionOption = selectedPackage && selectedPackage.productSubscriptionOptions.reverse()[0];
+        if (productSubscriptionOption)
+            this.selectedBillingPeriod = this.getBillingPeriodByPaymentFrequency(productSubscriptionOption.frequency);
     }
+
+    getBillingPeriodByPaymentFrequency(frequency: RecurringPaymentFrequency): BillingPeriod {
+        return frequency == RecurringPaymentFrequency.Monthly ? 
+            BillingPeriod.Monthly : (
+                frequency == RecurringPaymentFrequency.Annual ? BillingPeriod.Yearly : BillingPeriod.LifeTime
+            );
+    } 
 
     /** Get values of usersAmount and billing period from user previous choice */
     // private changeDefaultSettings(currentSubscriptionInfo: ModuleSubscriptionInfoExtended) {
@@ -280,6 +293,25 @@ export class PackageChooserComponent implements OnInit {
 
     getActiveStatus(period: BillingPeriod) {
         return this.selectedBillingPeriod == period;
+    }
+
+    showSelectedProductPeriod(frequency: RecurringPaymentFrequency): boolean {
+        if (this.packages && this.packages.length)
+            return this.packages.some(product =>
+                product.productSubscriptionOptions && product.productSubscriptionOptions.some(
+                    option => option.frequency == frequency
+                )
+            );
+        else
+            return false;
+    }
+
+    getSliderPointCount() {
+        return this.packages.reduce((acc, val) => {
+            if (val.productSubscriptionOptions)
+                return uniqBy(acc.concat(val.productSubscriptionOptions.map(option => option.frequency)), (val) => val);
+            return acc;
+        }, []).length;
     }
 
     toggle(value: BillingPeriod) {
