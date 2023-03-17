@@ -144,8 +144,6 @@ export class LoginService {
 
     externalAuthenticateByResult(result: ExternalAuthenticateResultModel,
         finallyCallback?: () => void,
-        redirectUrl?: string,
-        autoDetectTenancy: boolean = true,
         setCookiesOnly: boolean = false,
         onSuccessCallback = (result: AuthenticateResultModel) => { }
     ) {
@@ -161,7 +159,8 @@ export class LoginService {
         model.providerKey = '-';
         model.singleSignIn = UrlHelper.getSingleSignIn();
         model.returnUrl = UrlHelper.getReturnUrl();
-        model.autoDetectTenancy = autoDetectTenancy;
+        model.autoDetectTenancy = false;
+        model.isAutoDetected = true;
 
         this.tokenAuthService.externalAuthenticate(model)
             .pipe(finalize(finallyCallback))
@@ -297,7 +296,7 @@ export class LoginService {
                     model.providerKey = '-';
                     model.singleSignIn = UrlHelper.getSingleSignIn();
                     model.returnUrl = UrlHelper.getReturnUrl();
-                    model.autoDetectTenancy = true;
+                    model.autoDetectTenancy = !abp.session.tenantId;;
 
                     model.exchangeCode = code;
                     model.loginReturnUrl = this.getRedirectUrl(providerName);
@@ -547,7 +546,7 @@ export class LoginService {
             model.providerKey = resp.authResponse.userID;
             model.singleSignIn = UrlHelper.getSingleSignIn();
             model.returnUrl = UrlHelper.getReturnUrl();
-            model.autoDetectTenancy = true;
+            model.autoDetectTenancy = !abp.session.tenantId;
 
             this.tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
@@ -568,7 +567,7 @@ export class LoginService {
             model.providerKey = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
             model.singleSignIn = UrlHelper.getSingleSignIn();
             model.returnUrl = UrlHelper.getReturnUrl();
-            model.autoDetectTenancy = true;
+            model.autoDetectTenancy = !abp.session.tenantId;
 
             this.tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
@@ -593,7 +592,7 @@ export class LoginService {
         model.providerKey = WL.getSession().id; // How to get id?
         model.singleSignIn = UrlHelper.getSingleSignIn();
         model.returnUrl = UrlHelper.getReturnUrl();
-        model.autoDetectTenancy = true;
+        model.autoDetectTenancy = !abp.session.tenantId;
 
         this.tokenAuthService.externalAuthenticate(model)
             .subscribe((result: ExternalAuthenticateResultModel) => {
