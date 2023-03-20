@@ -2,13 +2,13 @@
     <ng-container *ngIf="packagesConfig$ | async">
         <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ widgettitle }}</h2>
         <h3 class="subtitle">{{ subtitle }}</h3>
-        <div *ngIf="upgradeProductId; else sperseToggle" class="three-state-slider">
+        <div *ngIf="upgradeProductId; else sperseToggle" class="state-slider point{{getSliderPointCount()}}">
             <div class="captions">
-                <div [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }" (click)="toggle(billingPeriod.Monthly)">{{ ls.l('Monthly') }}</div>
-                <div [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }" (click)="toggle(billingPeriod.Yearly)">{{ ls.l('Annually') }}</div>
-                <div [ngClass]="{ 'active': getActiveStatus(billingPeriod.LifeTime) }" (click)="toggle(billingPeriod.LifeTime)">{{ ls.l('Lifetime') }}</div>
+                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Monthly)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }" (click)="toggle(billingPeriod.Monthly)">{{ ls.l('Monthly') }}</div>
+                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Annual)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }" (click)="toggle(billingPeriod.Yearly)">{{ ls.l('Annually') }}</div>
+                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.LifeTime)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.LifeTime) }" (click)="toggle(billingPeriod.LifeTime)">{{ ls.l('Lifetime') }}</div>
             </div>
-            <mat-slider [value]="selectedBillingPeriod * 50"
+            <mat-slider [value]="selectedBillingPeriod * (getSliderPointCount() == 3 ? 33.4 : 50)"
                         [disabled]="true">
             </mat-slider>
         </div>
