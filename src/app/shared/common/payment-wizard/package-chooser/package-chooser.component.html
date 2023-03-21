@@ -1,8 +1,8 @@
 <div class="packageHeader">
     <ng-container *ngIf="packagesConfig$ | async">
-        <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ widgettitle }}</h2>
+        <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ productsGroupName == PRODUCT_GROUP_ADD_ON ? ls.l('ChooseAddOnPackage'): widgettitle }}</h2>
         <h3 class="subtitle">{{ subtitle }}</h3>
-        <div *ngIf="upgradeProductId; else sperseToggle" class="state-slider point{{getSliderPointCount()}}">
+        <div *ngIf="upgradeProductId || productsGroupName == PRODUCT_GROUP_ADD_ON; else sperseToggle" class="state-slider point{{getSliderPointCount()}}">
             <div class="captions">
                 <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Monthly)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }" (click)="toggle(billingPeriod.Monthly)">{{ ls.l('Monthly') }}</div>
                 <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Annual)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }" (click)="toggle(billingPeriod.Yearly)">{{ ls.l('Annually') }}</div>
@@ -28,8 +28,8 @@
 </div>
 <ng-container *ngIf="packagesConfig$ | async">
     <ng-container *ngIf="packages && packages.length">
-        <dx-scroll-view showScrollbar="onHover" direction="horizontal">
-            <div class="packages">
+        <dx-scroll-view showScrollbar="onHover" [direction]="productsGroupName == PRODUCT_GROUP_ADD_ON ? 'vertical' : 'horizontal'">
+            <div class="packages" [ngStyle]="{'flex-flow': productsGroupName == PRODUCT_GROUP_ADD_ON ? 'wrap' : 'inherit'}">
                 <ng-container *ngFor="let package of packages; let i = index;">
                     <package-card
                         [productInfo]="package"
