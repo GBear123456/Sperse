@@ -43,6 +43,8 @@ export class ContactsHelper {
         input.type = 'checkbox';
         input.id = 'modal-checkbox-' + index;
         input.checked = checkbox.checked;
+        if (checkbox.disabled)
+            input.disabled = true;
         div.appendChild(input);
         let label = document.createElement('label');
         label.htmlFor = 'modal-checkbox-' + index;
