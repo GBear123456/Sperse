@@ -391,6 +391,11 @@ export class PackageChooserComponent implements OnInit {
         }
     }
 
+    isProductPurchased(product) {
+        return product && this.appService.moduleSubscriptions.length && 
+            this.appService.moduleSubscriptions.some(sub => sub.productId == product.id);
+    }
+
     get nextButtonDisabled(): boolean {
         let disabled = false;
         if (!this.preventNextButtonDisabling) {
