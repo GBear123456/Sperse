@@ -392,7 +392,8 @@ export class PackageChooserComponent implements OnInit {
     }
 
     isProductPurchased(product) {
-        return product && this.appService.moduleSubscriptions.length && 
+        return this.productsGroupName == this.PRODUCT_GROUP_ADD_ON &&
+            product && this.appService.moduleSubscriptions.length && 
             this.appService.moduleSubscriptions.some(sub => sub.productId == product.id);
     }
 
