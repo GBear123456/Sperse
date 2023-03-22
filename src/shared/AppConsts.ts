@@ -152,4 +152,5 @@ export class AppConsts {
 
     static readonly PRODUCT_GROUP_MAIN   = 'main';
     static readonly PRODUCT_GROUP_SIGNUP = 'signup';
+    static readonly PRODUCT_GROUP_ADD_ON = 'add-on';
 }

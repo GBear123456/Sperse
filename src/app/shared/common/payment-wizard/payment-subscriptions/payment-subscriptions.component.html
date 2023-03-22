@@ -44,3 +44,4 @@
         <a *ngIf="cellData.data.statusId == 'A'" href="javascript:void(0)" (click)="cancelSubscription(cellData.data)">{{l('Cancel')}}</a>
     </div>
 </dx-data-grid>
+<div *ngIf="(paymentService?.addOnConfig$ | async)?.length"><a href="javascript:void(0);" (click)="showAddOnProducts()">{{l('ClickAddOnFeaturesMessage')}}</a></div>

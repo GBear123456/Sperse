@@ -58,6 +58,7 @@ export class PackageChooserComponent implements OnInit {
     @Input() showDowngradeLink = false;
     @Input() subscription: any;
     @Input() upgradeProductId: number;
+    @Input() productsGroupName: string;
 
     private _preselect = true;
     @Input('preselect')
@@ -104,6 +105,8 @@ export class PackageChooserComponent implements OnInit {
         '#008b7a'
     ];
 
+    PRODUCT_GROUP_ADD_ON = AppConsts.PRODUCT_GROUP_ADD_ON;
+
     constructor(
         public localizationService: AppLocalizationService,
         private localizationResolver: LocalizationResolver,
@@ -118,7 +121,8 @@ export class PackageChooserComponent implements OnInit {
         if (this.upgradeProductId) {
             this.packagesConfig$ = this.paymentService.getUpgradeConfig(this.upgradeProductId);
         } else {
-            this.packagesConfig$ = this.paymentService.packagesConfig$;
+            this.packagesConfig$ = this.productsGroupName == AppConsts.PRODUCT_GROUP_ADD_ON ? 
+                this.paymentService.addOnConfig$ : this.paymentService.packagesConfig$;
         }
 
         forkJoin([
@@ -306,12 +310,12 @@ export class PackageChooserComponent implements OnInit {
             return false;
     }
 
-    getSliderPointCount() {
-        return this.packages.reduce((acc, val) => {
+    getSliderPointCount(): number {
+        return this.packages ? this.packages.reduce((acc, val) => {
             if (val.productSubscriptionOptions)
                 return uniqBy(acc.concat(val.productSubscriptionOptions.map(option => option.frequency)), (val) => val);
             return acc;
-        }, []).length;
+        }, []).length : 0;
     }
 
     toggle(value: BillingPeriod) {

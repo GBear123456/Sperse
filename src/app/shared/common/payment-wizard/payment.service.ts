@@ -2,11 +2,12 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { AppConsts } from '@shared/AppConsts';
 import { publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
+import { environment } from '@root/environments/environment';
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import {
     PaymentPeriodType,
@@ -20,19 +21,32 @@ import { BillingPeriod } from './models/billing-period.enum';
 export class PaymentService {
     _plan: Subject<PaymentOptions> = new Subject();
     plan$: Observable<PaymentOptions> = this._plan.asObservable();
-    packagesConfig$: Observable<ProductInfo[]> = this.productServiceProxy.getSubscriptionProductsByGroupName(
+    packagesConfig$: Observable<ProductInfo[]> = this.getPackagesConfig(
         AppConsts.PRODUCT_GROUP_MAIN
-    ).pipe(
-        publishReplay(),
-        refCount()
     );
+    addOnConfig$: Observable<ProductInfo[]> = of([]);
 
     constructor(
         private productServiceProxy: ProductServiceProxy
-    ) { }
+    ) { 
+        /* Remove condition to enabled Add On Products for all environments */
+        if (environment.releaseStage == 'staging')
+            this.addOnConfig$ = this.getPackagesConfig(
+                AppConsts.PRODUCT_GROUP_ADD_ON
+            ); 
+    }
 
     getUpgradeConfig(productId: number): Observable<ProductInfo[]> {
         return this.productServiceProxy.getUpgradeProductsForProduct(productId).pipe(
+            publishReplay(),
+            refCount()
+        );
+    }
+
+    getPackagesConfig(group: string): Observable<ProductInfo[]> {
+        return this.productServiceProxy.getSubscriptionProductsByGroupName(
+            group
+        ).pipe(
             publishReplay(),
             refCount()
         );
