@@ -40,7 +40,8 @@
                             'selected': selectedPackageIndex === i,
                             'large': packages.length < 3,
                             'last': i === packages.length - 1,
-                            'heightFitContent' : packages.length > 2
+                            'heightFitContent' : packages.length > 2,
+                            'purchased': isProductPurchased(package)
                         }"
                         (click)="selectPackage(i)">
                     </package-card>
