@@ -494,7 +494,7 @@ export class LoginService {
             .pipe(
                 publishReplay(),
                 refCount(),
-                map((providers: ExternalLoginProviderInfoModel[]) => providers.map(p => new ExternalLoginProvider(p)))
+                map((providers: ExternalLoginProviderInfoModel[]) => providers.filter(p => !!p.clientId).map(p => new ExternalLoginProvider(p)))
             );
     }
 
