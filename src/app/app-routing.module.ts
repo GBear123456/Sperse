@@ -22,7 +22,6 @@ import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
-import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Injectable()
 export class ModulePathResolverService implements Resolve<any> {
@@ -98,7 +97,7 @@ export class CfoActivateService implements CanActivate {
                         path: 'pfm',
                         loadChildren: () => import('app/pfm/pfm.module').then(m => m.PfmModule), //Lazy load admin module
                         resolve: { crm: ModulePathResolverService },
-                        data: { feature: 'PFM', permission: AppPermissions.PFM, localizationSource: 'PFM' }
+                        data: { feature: AppFeatures.PFM, permission: AppPermissions.PFM, localizationSource: 'PFM' }
                     },
                     {
                         path: 'cfo',
@@ -107,13 +106,13 @@ export class CfoActivateService implements CanActivate {
                     {
                         path: 'cfo/:instance',
                         loadChildren: () => import('app/cfo/cfo.module').then(m => m.CfoModule), //Lazy load cfo *module
-                        data: { feature: 'CFO', permission: AppPermissions.CFO, localizationSource: 'CFO' },
+                        data: { feature: AppFeatures.CFO, permission: AppPermissions.CFO, localizationSource: 'CFO' },
                         resolve: { cfo: ModulePathResolverService }
                     },
                     {
                         path: 'cfo-portal',
                         loadChildren: () => import('app/cfo-portal/cfo-portal.module').then(m => m.CfoPortalModule), //Lazy load cfo-portal *module
-                        data: { feature: 'CFO.Partner', permission: AppPermissions.CFOMemberAccess, localizationSource: 'CFO' },
+                        data: { feature: AppFeatures.CFOPartner, permission: AppPermissions.CFOMemberAccess, localizationSource: 'CFO' },
                         resolve: { cfo: ModulePathResolverService }
                     },
                     {
