@@ -73,12 +73,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
     }
 
     upgradeSubscription(data) {
-        let params;
-        if (!this.showOneTimeActivate(data)) {
-            params = { upgrade: true, productId: data.productId };
-        }
-
-        this.onShowProducts.emit(params);
+        this.onShowProducts.emit({ upgrade: true, productId: data.productId });
     }
 
     cancelSubscription(data) {
