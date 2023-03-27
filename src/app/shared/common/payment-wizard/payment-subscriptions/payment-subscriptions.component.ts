@@ -1,8 +1,8 @@
 /** Core imports */
-import { 
-    Component,     
+import {
+    Component,
     ChangeDetectionStrategy,
-    ChangeDetectorRef, 
+    ChangeDetectorRef,
     EventEmitter,
     Injector,
     Output
@@ -14,10 +14,10 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import * as moment from 'moment-timezone';
-import { 
+import {
     PaymentPeriodType,
-    CancelSubscriptionInput, 
-    TenantSubscriptionServiceProxy 
+    CancelSubscriptionInput,
+    TenantSubscriptionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
@@ -45,12 +45,12 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
         private subscriptionProxy: TenantSubscriptionServiceProxy,
         private changeDetectionRef: ChangeDetectorRef
     ) {
-        super(injector);               
+        super(injector);
     }
 
     getDistinctList(list) {
         let flags = [], output = [];
-        for(let i = 0; i < list.length; i++)
+        for (let i = 0; i < list.length; i++)
             if (!flags[list[i].id]) {
                 flags[list[i].id] = true;
                 output.push(list[i]);
@@ -59,25 +59,26 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
     }
 
     isExpired(cell) {
-        return (cell.data.paymentPeriodType != PaymentPeriodType.LifeTime || cell.data.isTrial == 'true') && 
+        return (cell.data.paymentPeriodType != PaymentPeriodType.LifeTime || cell.data.isTrial == 'true') &&
             cell.data.endDate && moment(cell.data.endDate).diff(moment(), 'minutes') <= 0;
     }
 
-    showOneTimeActivate(cell) {
-        return cell.data.statusId == 'A' && cell.data.paymentPeriodType == PaymentPeriodType.OneTime && 
+    showOneTimeActivate(data) {
+        return data.statusId == 'A' && data.paymentPeriodType == PaymentPeriodType.OneTime &&
             !this.moduleSubscriptions.some(sub => sub.productGroup && sub.productGroup.toLowerCase() == AppConsts.PRODUCT_GROUP_MAIN && sub.statusId == 'A');
     }
 
-    activateSubscription(data) {
-        this.onShowProducts.emit();
-    }
-
-    showUpgradeButton(cell) {
-        return cell.data.statusId == 'A' && cell.data.isUpgradable;
+    showUpgradeButton(data) {
+        return data.statusId == 'A' && data.isUpgradable;
     }
 
     upgradeSubscription(data) {
-        this.onShowProducts.emit({ upgrade: true, productId: data.productId });
+        let params;
+        if (!this.showOneTimeActivate(data)) {
+            params = { upgrade: true, productId: data.productId };
+        }
+
+        this.onShowProducts.emit(params);
     }
 
     cancelSubscription(data) {
@@ -94,7 +95,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
                         id: data.id,
                         cancellationReason: result.cancellationReason
                     })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
-                        data.statusId = 'C';                        
+                        data.statusId = 'C';
                         abp.notify.success(this.l('Cancelled'));
                         this.changeDetectionRef.detectChanges();
                         setTimeout(() => location.reload(), 1000);
@@ -103,7 +104,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
         });
     }
 
-    showAddOnProducts() { 
+    showAddOnProducts() {
         this.onShowProducts.emit({ productsGroupName: AppConsts.PRODUCT_GROUP_ADD_ON });
     }
 }
