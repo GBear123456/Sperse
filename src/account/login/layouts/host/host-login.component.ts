@@ -39,8 +39,6 @@ export class HostLoginComponent implements OnInit {
     showExternalLogin = false;
     get redirectToSignUp() { return false; }
 
-    externalLoginProviders: ExternalLoginProvider[];
-
     constructor(
         private sessionService: AbpSessionService,
         private sessionAppService: SessionServiceProxy,

@@ -1,5 +1,6 @@
 <h2>{{ l('MySubscriptions') }}</h2>
 <dx-data-grid
+    height="95%"
     class="alone main-component-view"
     keyExpr="id"
     [pager]="{visible: false}"
@@ -39,7 +40,8 @@
     </div>
 
     <div *dxTemplate="let cellData of 'actionCell'">
-        <a *ngIf="showOneTimeActivate(cellData)" href="javascript:void(0)" (click)="activateSubscription(cellData.data)">{{l('Activate')}}</a>&nbsp;
+        <a *ngIf="showOneTimeActivate(cellData.data) || showUpgradeButton(cellData.data)" href="javascript:void(0)" (click)="upgradeSubscription(cellData.data)">{{l('Upgrade')}}&nbsp;</a>
         <a *ngIf="cellData.data.statusId == 'A'" href="javascript:void(0)" (click)="cancelSubscription(cellData.data)">{{l('Cancel')}}</a>
     </div>
 </dx-data-grid>
+<div *ngIf="(paymentService?.addOnConfig$ | async)?.length"><a href="javascript:void(0);" (click)="showAddOnProducts()">{{l('ClickAddOnFeaturesMessage')}}</a></div>

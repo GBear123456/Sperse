@@ -1,11 +1,13 @@
 :host {
+    position: relative;
+    min-height: 222px;
     padding: 20px 26px;
     width: 30%;
     border-radius: 18px;
     box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.1);
     display: block;
     position: relative;
-    margin: 0 10px;
+    margin: 0 10px 10px;
     cursor: default;
     height: 100%;
     border: 3px solid transparent;
@@ -201,6 +203,23 @@
                 }
             }
         }
+    }
+}
+
+:host(.purchased) {
+    pointer-events: none;
+    opacity: 0.7;
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 125px;
+        display: block;
+        background: url(../../../../../../assets/common/images/purchased.png) no-repeat;
+        background-position: center;
+        background-size: contain;
+        bottom: 0px;
     }
 }
 
