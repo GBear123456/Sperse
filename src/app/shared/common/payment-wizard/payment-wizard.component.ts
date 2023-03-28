@@ -29,6 +29,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '../localization/app-localization.service';
 import { MessageService } from 'abp-ng2-module';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'payment-wizard',
@@ -59,6 +60,8 @@ export class PaymentWizardComponent {
         this.appService.getGracePeriodDayCountBySubscription(this.data.subscription) : 0;
     isSubscriptionManagementAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);
     trackingCode: string;
+    selectedUpgradeProductId: number;
+    productsGroupName: string;
 
     constructor(
         private appService: AppService,
@@ -113,7 +116,10 @@ export class PaymentWizardComponent {
         });
     }
 
-    showSubscriptionProducts() {
+    showSubscriptionProducts(data) {
+        this.selectedUpgradeProductId = data && data.upgrade ? data.productId : null;
+        this.productsGroupName = data && data.productsGroupName || AppConsts.PRODUCT_GROUP_MAIN;
+
         this.data.showSubscriptions = false;
         this.changeDetectorRef.detectChanges();
     }

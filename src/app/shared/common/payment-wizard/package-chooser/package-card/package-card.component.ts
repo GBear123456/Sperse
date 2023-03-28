@@ -12,6 +12,7 @@ import { PackageEditionConfigDto, ProductInfo, ProductSubscriptionOptionInfo, Re
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { PaymentService } from '../../payment.service';
 
 @Component({
     selector: 'package-card',
@@ -19,18 +20,34 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./package-card.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.Emulated,
-    providers: [ DecimalPipe ]
+    providers: [DecimalPipe]
 })
 export class PackageCardComponent implements OnChanges {
+    currentBillingPeriod: BillingPeriod;
+
     @Input() productInfo: ProductInfo;
-    @Input() billingPeriod: BillingPeriod;
+    @Input() set billingPeriod(value: BillingPeriod) {
+        this.currentBillingPeriod = value;
+
+        if (this.productInfo) {
+            let period = PaymentService.getRecurringPaymentFrequency(value);
+            let hasPeriodConfig = !!this.productInfo.productSubscriptionOptions.find(x => x.frequency == period);
+            this.display = hasPeriodConfig ? 'block' : 'none';
+            this.isActive = hasPeriodConfig;
+        }
+    }
+    get billingPeriod() {
+        return this.currentBillingPeriod;
+    }
     @Input() currencySymbol = '$';
     @Input() usersAmount: number;
     @Input() module: ModuleType;
     @HostBinding('class.isActive') @Input() public isActive: boolean;
     @HostBinding('class.bestValue') @Input() bestValue = false;
-    @HostBinding('style.background') background;
+    @HostBinding('style.background') @Input() background;
+    @HostBinding('style.display') display = 'block';
 
+    billingPeriodEnum = BillingPeriod;
     saveAmountPerMonth: number;
     baseUrl = AppConsts.appBaseHref;
     selectedEdition: PackageEditionConfigDto;
@@ -83,7 +100,7 @@ export class PackageCardComponent implements OnChanges {
     constructor(
         private decimalPipe: DecimalPipe,
         public ls: AppLocalizationService
-    ) {}
+    ) { }
 
     ngOnChanges(changes) {
         let product = this.products[this.productInfo.code];
@@ -117,12 +134,12 @@ export class PackageCardComponent implements OnChanges {
     //     return this.selectedOrLastEdition.features;
     // }
 
-    get pricePerMonth(): number {
-        let productMonthly = this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Monthly),
-            productAnnual = this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual);
-        return this.billingPeriod === BillingPeriod.Monthly 
-            ? (productMonthly ? productMonthly.fee : 0)
-            : (productAnnual ? Math.round(productAnnual.fee / 12) : 0)
+    get pricePerPeriod(): number {
+        let recurringFrequency = PaymentService.getRecurringPaymentFrequency(this.billingPeriod);
+        let productFrequencyInfo = this.productInfo.productSubscriptionOptions.find(x => x.frequency == recurringFrequency);
+        return this.billingPeriod === BillingPeriod.Yearly ?
+            (productFrequencyInfo ? Math.round(productFrequencyInfo.fee / 12) : 0) :
+            (productFrequencyInfo ? productFrequencyInfo.fee : 0);
     }
 
     // get editionPricePerMonth(): number {
