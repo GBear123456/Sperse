@@ -101,12 +101,12 @@
                                         </div>
                                     </ng-container>
                                 </tab>
-                                <tab [heading]="ls.l('Editions')">
+                                <!--<tab [heading]="ls.l('Editions')">
                                     <modules-editions-select *ngIf="(editionsGroups$ | async) as editionsGroups"
                                                             [editionsGroups]="editionsGroups"
                                                             [(editionsModels)]="editionsModels">
                                     </modules-editions-select>
-                                </tab>
+                                </tab>-->
                             </tabset>
                             <dx-check-box [text]="ls.l('ShouldChangePasswordOnNextLogin')" [(value)]="tenant.shouldChangePasswordOnNextLogin"></dx-check-box>
                             <dx-check-box [text]="ls.l('SendActivationEmail')" [(value)]="tenant.sendActivationEmail"></dx-check-box>

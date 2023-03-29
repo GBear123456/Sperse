@@ -14,21 +14,15 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import {
-    CommonLookupServiceProxy,
     EntityDtoOfInt64,
     NameValueDto,
-    PermissionServiceProxy,
     TenantListDto,
-    TenantServiceProxy,
-    EditionServiceProxy,
-    SubscribableEditionComboboxItemDto
+    TenantServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { CreateTenantModalComponent } from './create-tenant-modal/create-tenant-modal.component';
 import { EditTenantModalComponent } from './edit-tenant-modal/edit-tenant-modal.component';
 import { AppService } from '@app/app.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
-import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
@@ -49,7 +43,6 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent) toolbarComponent: ToolBarComponent;
 
-    private editions: SubscribableEditionComboboxItemDto[] = [];
     private filters: FilterModel[];
     public actionMenuItems: ActionMenuItem[] = [
         {
@@ -121,10 +114,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     constructor(
         injector: Injector,
         private tenantService: TenantServiceProxy,
-        private editionService: EditionServiceProxy,
         private filtersService: FiltersService,
-        private permissionService: PermissionServiceProxy,
-        private commonLookupService: CommonLookupServiceProxy,
         private impersonationService: ImpersonationService,
         private dialog: MatDialog,
         private route: ActivatedRoute,
@@ -134,12 +124,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
-
-        this.editionService.getEditionComboboxItems(0, true, false)
-            .subscribe((editions: SubscribableEditionComboboxItemDto[]) => {
-                this.editions = editions;
-                this.initFilterConfig();
-            });
+        this.initFilterConfig();
 
         this.dataSource = new DataSource({
             key: 'id',
@@ -285,22 +270,6 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                         to: new FilterItemModel()
                     },
                     options: { method: 'getFilterByDate' }
-                }),
-                new FilterModel({
-                    component: FilterRadioGroupComponent,
-                    caption: 'product',
-                    field: 'productId',
-                    items: {
-                        element: new FilterRadioGroupModel({
-                            value: this.productId,
-                            list: this.editions.map((item: SubscribableEditionComboboxItemDto) => {
-                                return {
-                                    id: item.value,
-                                    name: item.displayText
-                                };
-                            })
-                        })
-                    }
                 })
             ]
         );
