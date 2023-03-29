@@ -631,8 +631,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 switchMap((result: ContactInfoDto) => {
                     this.fillContactDetails(result);
                     this.loadLeadData(result.personContactInfo);
-                    if (leadId)
+                    if (leadId) {
                         this.loadLeadsStages();
+                        if (!this.contactInfo['leadId'])
+                            this.contactInfo['leadId'] = leadId;
+                    }
                     if (this.contactGroupId.value == ContactGroup.Partner)
                         return this.partnerService.get(contactId);
                     return of(null);
