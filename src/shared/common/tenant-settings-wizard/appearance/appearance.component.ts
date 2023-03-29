@@ -42,12 +42,15 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     @ViewChild('loginCssUploader') loginCssUploader: UploaderComponent;
     @ViewChild('portalCssUploader') portalCssUploader: UploaderComponent;
     @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
+    @ViewChild('signUpCssUploader') signUpCssUploader: UploaderComponent;
 
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
     maxLogoFileSize = 1024 * 30 /* 30KB */;
     CustomCssType = CustomCssType;
+
+    signUpPagesEnabled = true;
 
     constructor(
         private notify: NotifyService,
@@ -56,7 +59,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
-    ) {}
+    ) { }
 
     save(): Observable<any> {
         return forkJoin(
@@ -69,6 +72,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
             this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
             this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))),
+            this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))),
             this.faviconsUploader.uploadFile().pipe(tap((res) => {
                 if (res && res.result && res.result.faviconBaseUrl && res.result.favicons && res.result.favicons.length) {
                     this.tenant.tenantCustomizations = <any>{ ...this.tenant.tenantCustomizations, ...res.result };
@@ -122,6 +126,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                 break;
             case CustomCssType.Portal:
                 this.tenant.portalCustomCssId = value;
+                break;
+            case CustomCssType.SignUp:
+                this.tenant.signUpCustomCssId = value;
                 break;
         }
     }

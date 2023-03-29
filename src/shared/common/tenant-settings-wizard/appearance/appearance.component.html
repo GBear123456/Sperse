@@ -72,5 +72,21 @@
                 </uploader>
             </div>
         </div>
+        <div class="row m-form" *ngIf="signUpPagesEnabled">
+            <div class="col-md-6">
+                <uploader #signUpCssUploader
+                          [title]="ls.l('CustomSignUpCSS')"
+                          [documentId]="tenant.signUpCustomCssId"
+                          [documentLink]="tenant.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.signUpCustomCssId + '/' + tenant.id : undefined"
+                          documentTemplateLink="assets/common/styles/custom/signup-custom-style.css"
+                          [uploadInfoText]="ls.l('UploadCSS_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=SignUp'"
+                          acceptFileExt=".css"
+                          [maxFileSize]="maxCssFileSize"
+                          (onDocumentClear)="clearCustomCss(CustomCssType.SignUp)">
+                </uploader>
+            </div>
+        </div>
     </ng-container>
 </ng-container>
