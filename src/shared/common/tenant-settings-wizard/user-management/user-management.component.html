@@ -33,6 +33,12 @@
         </dx-check-box>
     </div>
     <div class="form-group">
+        <dx-check-box id="Setting_EnableSignUpPage"
+                      [text]="ls.l('EnableSignUpPage')"
+                      [(value)]="tenantSettings.isSignUpPageEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
         <contact-group-templates [title]="ls.l('UserRegistrationEmail')"
                                  [(customTemplates)]="tenantSettings.customWelcomeEmailTemplates"
                                  [templateType]="EmailTemplateType.WelcomeEmail">
@@ -50,6 +56,12 @@
         <dx-check-box id="Settings_SmsVerificationEnabled"
                       [text]="ls.l('SmsVerificationEnabled')"
                       [(value)]="hostSettings.smsVerificationEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <dx-check-box id="Setting_EnableSignUpPage"
+                      [text]="ls.l('EnableSignUpPage')"
+                      [(value)]="hostSettings.isSignUpPageEnabled">
         </dx-check-box>
     </div>
     <div class="form-group">

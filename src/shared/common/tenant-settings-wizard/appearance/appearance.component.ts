@@ -26,6 +26,7 @@ import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { NotifyService } from 'abp-ng2-module';
+import { SettingService } from 'abp-ng2-module';
 
 @Component({
     selector: 'appearance',
@@ -50,13 +51,14 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     maxLogoFileSize = 1024 * 30 /* 30KB */;
     CustomCssType = CustomCssType;
 
-    signUpPagesEnabled = true;
+    signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
 
     constructor(
         private notify: NotifyService,
         private appSession: AppSessionService,
         private faviconsService: FaviconService,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
+        private settingService: SettingService,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) { }

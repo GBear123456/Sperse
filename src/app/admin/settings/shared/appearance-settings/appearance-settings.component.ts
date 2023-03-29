@@ -17,6 +17,7 @@ import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { AppConsts } from '@shared/AppConsts';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
+import { SettingService } from 'abp-ng2-module';
 
 @Component({
     selector: 'appearance-settings',
@@ -39,12 +40,13 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     maxLogoFileSize = 1024 * 30 /* 30KB */;
     CustomCssType = CustomCssType;
 
-    signUpPagesEnabled = true;
+    signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
 
     constructor(
         _injector: Injector,
         private faviconsService: FaviconService,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
+        private settingService: SettingService
     ) {
         super(_injector);
     }
