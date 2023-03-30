@@ -46,7 +46,7 @@ import { ModulesEditionsSelectComponent } from '../modules-edtions-select/module
         '../modal.less',
         './create-tenant-modal.component.less'
     ],
-    providers: [ TenantsService, ProductServiceProxy ],
+    providers: [TenantsService, ProductServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateTenantModalComponent implements OnInit {
@@ -78,10 +78,10 @@ export class CreateTenantModalComponent implements OnInit {
         private tenantService: TenantServiceProxy,
         private profileService: ProfileServiceProxy,
         private productService: ProductServiceProxy,
-        private tenantsService: TenantsService,
         private notifyService: NotifyService,
         private dialogRef: MatDialogRef<CreateTenantModalComponent>,
         private changeDetectorRef: ChangeDetectorRef,
+        public tenantsService: TenantsService,
         public ls: AppLocalizationService
     ) {}
 
