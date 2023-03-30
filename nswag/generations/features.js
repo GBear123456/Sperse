@@ -6,7 +6,7 @@ fs.readFile('generations/config.json', 'utf8', function(err, config) {
     var remoteServiceBaseUrl = JSON.parse(config).url;
     var xhr = new XMLHttpRequest();
     /** Load permissions list */
-    xhr.open('GET', remoteServiceBaseUrl + apiRelativeLink, false);
+    xhr.open('GET', remoteServiceBaseUrl + apiRelativeLink + '?includeIrrelevant=true', false);
     xhr.send();
     if (xhr.status !== 200) {
         console.log('error', xhr.status + xhr.statusText);

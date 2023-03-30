@@ -229,7 +229,8 @@ export class AppService extends AppServiceBase {
         this.tenantSubscriptionProxy = injector.get(TenantSubscriptionServiceProxy);
         this.isCfoLinkOrVerifyEnabled = this.feature.isEnabled(AppFeatures.CFOPartner)
             && !this.feature.isEnabled(AppFeatures.PFM)
-            && this.permission.isGranted(AppPermissions.CFOMembersAdministration);
+            && this.permission.isGranted(AppPermissions.CFOMembersAdministration)
+            && !!this.appSession.application.modules["CFO"];
 
         this.toolbarSubject = new Subject<undefined>();
         if (!this.isHostTenant && abp.session.userId) {

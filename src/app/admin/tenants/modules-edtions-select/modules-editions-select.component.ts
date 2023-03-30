@@ -77,7 +77,7 @@ export class ModulesEditionsSelectComponent {
 
     moduleIsDisabled(moduleId: string): boolean {
         return this.incompatibleModules[moduleId] && this.incompatibleModules[moduleId].some((incompatibleModule: string) => {
-            const incompatibleModuleIsAssigned = this.editionsModels[incompatibleModule].editionId != 0;
+            const incompatibleModuleIsAssigned = this.editionsModels[incompatibleModule] && this.editionsModels[incompatibleModule].editionId != 0;
             if (incompatibleModuleIsAssigned) {
                 this.editionsModels[moduleId].maxUserCount = null;
                 this.editionsModels[moduleId].trialDayCount = null;
