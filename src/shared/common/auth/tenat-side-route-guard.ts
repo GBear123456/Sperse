@@ -28,8 +28,9 @@ export class TenantSideRouteGuard implements CanActivate {
         }
 
         let isHost = !this.sessionService.tenantId,
-            isSignUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
-        if (!isHost && (route.data.hostOnly || !isSignUpPagesEnabled)) {
+            isPageEnabled: boolean = route.data.checkEnabledOption ? 
+                this.settingService.getBoolean(route.data.checkEnabledOption) : true;
+        if (!isHost && (route.data.hostOnly || !isPageEnabled)) {
             this.router.navigate([route.data.tenantRedirect ? route.data.tenantRedirect : '/app/access-denied'], {
                 queryParams: location.href.includes(AppConsts.defaultDomain) ? {tenantId: this.sessionService.tenantId} : {}
             });
