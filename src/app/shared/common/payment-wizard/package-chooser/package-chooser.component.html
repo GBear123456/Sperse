@@ -1,36 +1,47 @@
 <div class="packageHeader">
     <ng-container *ngIf="packagesConfig$ | async">
-        <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ widgettitle }}</h2>
+        <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ productsGroupName == PRODUCT_GROUP_ADD_ON ? ls.l('ChooseAddOnPackage'): widgettitle }}</h2>
         <h3 class="subtitle">{{ subtitle }}</h3>
-        <div class="config-wrap">
-            <div class="sperse-toggle" [ngClass]="{'both-active': configurator == 'slider'}">
-                <div class="left" [ngClass]="{ 'active': getActiveStatus('month') }">{{ ls.l('Monthly') }}</div>
-                <mat-slide-toggle
-                    [checked]="selectedBillingPeriod === billingPeriod.Yearly"
-                    (change)="billingPeriodChanged($event)">
+        <div *ngIf="upgradeProductId || productsGroupName == PRODUCT_GROUP_ADD_ON; else sperseToggle" class="state-slider point{{getSliderPointCount()}}">
+            <div class="captions">
+                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Monthly)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }" (click)="toggle(billingPeriod.Monthly)">{{ ls.l('Monthly') }}</div>
+                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Annual)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }" (click)="toggle(billingPeriod.Yearly)">{{ ls.l('Annually') }}</div>
+                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.LifeTime)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.LifeTime) }" (click)="toggle(billingPeriod.LifeTime)">{{ ls.l('Lifetime') }}</div>
+            </div>
+            <mat-slider [value]="selectedBillingPeriod * (getSliderPointCount() == 3 ? 33.4 : 50)"
+                        [disabled]="true">
+            </mat-slider>
+        </div>
+        <ng-template #sperseToggle class="config-wrap">
+            <div class="sperse-toggle">
+                <div class="left" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }">{{ ls.l('Monthly') }}</div>
+                <mat-slide-toggle [checked]="selectedBillingPeriod === billingPeriod.Yearly"
+                                  (change)="billingPeriodChanged($event)">
                 </mat-slide-toggle>
-                <div class="right" [ngClass]="{ 'active': getActiveStatus('year') }">
+                <div class="right" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }">
                     <p class="year-discount">{{ 'SAVE ' + yearDiscount + '%'}}<span> {{ ls.l('OrMore') }}</span></p>
                     {{ ls.l('Annually') }}
                 </div>
             </div>
-        </div>
+        </ng-template>
     </ng-container>
 </div>
 <ng-container *ngIf="packagesConfig$ | async">
     <ng-container *ngIf="packages && packages.length">
-        <dx-scroll-view showScrollbar="onHover" direction="horizontal">
-            <div class="packages">
+        <dx-scroll-view showScrollbar="onHover" [direction]="productsGroupName == PRODUCT_GROUP_ADD_ON ? 'vertical' : 'horizontal'">
+            <div class="packages" [ngStyle]="{'flex-flow': productsGroupName == PRODUCT_GROUP_ADD_ON ? 'wrap' : 'inherit'}">
                 <ng-container *ngFor="let package of packages; let i = index;">
                     <package-card
                         [productInfo]="package"
                         [billingPeriod]="selectedBillingPeriod"
                         [isActive]="currentProductId == undefined || currentProductId == package.id"
+                        [background]="backgroundColors[i]"
                         [ngClass]="{
                             'selected': selectedPackageIndex === i,
                             'large': packages.length < 3,
                             'last': i === packages.length - 1,
-                            'heightFitContent' : packages.length > 2
+                            'heightFitContent' : packages.length > 2,
+                            'purchased': isProductPurchased(package)
                         }"
                         (click)="selectPackage(i)">
                     </package-card>

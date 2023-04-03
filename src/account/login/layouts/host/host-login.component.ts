@@ -35,11 +35,9 @@ export class HostLoginComponent implements OnInit {
     loginInProgress = false;
     showPassword = false;
     isLoggedIn: boolean = false;
-    isExtLogin: boolean = false; 
+    isExtLogin: boolean = false;
     showExternalLogin = false;
-
-    linkedIdLoginProvider: ExternalLoginProvider;
-    externalLoginProviders: ExternalLoginProvider[];
+    get redirectToSignUp() { return false; }
 
     constructor(
         private sessionService: AbpSessionService,
@@ -62,17 +60,15 @@ export class HostLoginComponent implements OnInit {
             if (email)
                 this.loginService.authenticateModel.userNameOrEmailAddress = email;
 
-            this.loginService.linkedIdLoginProvider$.subscribe((provider: ExternalLoginProvider) => {
-                this.linkedIdLoginProvider = provider;
+            let exchangeCode = paramsMap.get('code');
+            let state = paramsMap.get('state');
+            let providerName = paramsMap.get('provider');
 
-                let exchangeCode = paramsMap.get('code');
-                let state = paramsMap.get('state');
-                if (!!exchangeCode && !!state) {
-                    this.loginService.linkedInLogin(this.linkedIdLoginProvider, exchangeCode, state, this.isExtLogin, (result) => {
-                        this.isLoggedIn = result.accessToken && this.isExtLogin;
-                    });
-                }
-            });            
+            if (!!exchangeCode && !!state) {
+                this.loginService.oAuth2Login(providerName, exchangeCode, state, this.isExtLogin, this.redirectToSignUp, (result) => {
+                    this.isLoggedIn = result.accessToken && this.isExtLogin;
+                });
+            }
         });
     }
 
@@ -97,21 +93,21 @@ export class HostLoginComponent implements OnInit {
         if (this.isExtLogin)
             window.open(this.getApiLink(type), '_blank');
         else
-            this.dialog.open(ConditionsModalComponent, 
-                { panelClass: ['slider', 'footer-slider'], data: { type: type }}
+            this.dialog.open(ConditionsModalComponent,
+                { panelClass: ['slider', 'footer-slider'], data: { type: type } }
             );
     }
 
     getApiLink(type: ConditionsType) {
-        return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/Get' + 
-            (type == ConditionsType.Policies ? 'PrivacyPolicy' : 'TermsOfService') + 
+        return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/Get' +
+            (type == ConditionsType.Policies ? 'PrivacyPolicy' : 'TermsOfService') +
             'Document?tenantId=' + this.appSession.tenant.id;
     }
 
     login(): void {
         if (this.loginForm.valid) {
             this.loginInProgress = true;
-            this.loginService.authenticate(() => { 
+            this.loginService.authenticate(() => {
                 this.loginInProgress = false;
             }, undefined, true, this.isExtLogin, (result) => {
                 this.isLoggedIn = this.isExtLogin;
@@ -130,7 +126,7 @@ export class HostLoginComponent implements OnInit {
     showHidePassword(event?) {
         this.showPassword = !this.showPassword;
         if (event) {
-            if (event.currentTarget.text) 
+            if (event.currentTarget.text)
                 event.currentTarget.text = this.ls.l((this.showPassword ? 'Hide' : 'Show'));
             this.showPassword
                 ? event.currentTarget.classList.add('visible')

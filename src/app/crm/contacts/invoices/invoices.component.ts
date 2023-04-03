@@ -25,9 +25,10 @@ import {
     ContactInfoDto,
     ContactServiceProxy,
     InvoiceStatus,
-    InvoiceSettings,
     PipelineDto,
-    StageDto
+    StageDto,
+    OrderServiceProxy,
+    UpdateOrderAffiliateContactInput
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
@@ -42,17 +43,20 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { InvoiceGridMenuComponent } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.component';
 import { InvoiceGridMenuDto } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.interface';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: './invoices.component.html',
-    styleUrls: ['./invoices.component.less']
+    styleUrls: ['./invoices.component.less'],
+    providers: [OrderServiceProxy]
 })
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('invoicesDataGrid') dataGrid: DxDataGridComponent;
     @ViewChild('generatedCommissionDataGrid') generatedCommissionDataGrid: DxDataGridComponent;
     @ViewChild(InvoiceGridMenuComponent) invoiceGridMenu: InvoiceGridMenuComponent;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
 
-    private settings = new InvoiceSettings();
     private readonly commissionDataSourceURI = 'Commission';
     private readonly dataSourceURI = 'OrderInvoices';
     private filters: FilterModel[];
@@ -74,6 +78,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     isSendEmailAllowed = false;
 
     hasOrdersManage = this.isGranted(AppPermissions.CRMOrdersManage);
+    affiliateManageAllowed = this.isGranted(AppPermissions.CRMAffiliatesManage);
+
+    selectedOrderId: number = null;
 
     private readonly ident = 'Invoices';
     private _selectedTabIndex = 0;
@@ -118,7 +125,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private pipelineService: PipelineService,
         private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
-        private clientService: ContactsService
+        private clientService: ContactsService,
+        private orderService: OrderServiceProxy
     ) {
         super(injector);
         this.clientService.invalidateSubscribe((area: string) => {
@@ -136,12 +144,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 this.initGeneratedCommissionDataSource(true);
             }
         }, this.ident);
-
-        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(
-            (settings: InvoiceSettings) => {
-                this.settings = settings;
-            }
-        );
     }
 
     ngOnInit(): void {
@@ -298,6 +300,46 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
         event.component.option('disabled', event.component.option('dataSource')
             .some(item => data.value == item.name && item.isFinal));
+    }
+
+    openSourceContactList(event, data: InvoiceDto) {
+        this.selectedOrderId = data.OrderId;
+        if (this.affiliateManageAllowed) {
+            this.sourceComponent.selectedKeys = [];
+            this.sourceComponent.targetSelector = '#affiliateContactLink' + data.Key;
+            this.sourceComponent.toggle();
+            event.stopPropagation();
+        }
+    }
+
+    onSourceContactChanged(contact?) {
+        if (contact) {
+            ContactsHelper.showConfirmMessage(
+                this.l('ReassignAffiliateContact'),
+                (confirmed, [reassign]) => {
+                    if (confirmed) {
+                        this.orderService.updateAffiliateContact(
+                            new UpdateOrderAffiliateContactInput({
+                                orderId: this.selectedOrderId,
+                                affiliateContactId: contact.id,
+                                assignToBuyerContact: reassign
+                            })
+                        ).subscribe(() => {
+                            this.processFilterInternal();
+                            this.notify.info(this.l('SavedSuccessfully'));
+                        });
+                    }
+
+                    this.selectedOrderId = null;
+                },
+                [
+                    { text: this.l('AssignAffiliateContact'), visible: true, checked: true },
+                    { text: this.l('GenerateCommissionsForInvoices'), visible: true, checked: true, disabled: true }
+                ]
+            );
+
+            this.sourceComponent.toggle();
+        }
     }
 
     ngOnDestroy() {

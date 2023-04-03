@@ -59,7 +59,7 @@ export class HostLoginVerificationComponent implements OnInit, AfterViewInit {
                 this.isLoggedIn = !!this.appSession.user;
 
                 if (this.isExtLogin && this.isLoggedIn) {
-                        this.loginService.completeSourceEvent();
+                    this.loginService.completeSourceEvent();
                 }
             });
     }
@@ -120,6 +120,7 @@ export class HostLoginVerificationComponent implements OnInit, AfterViewInit {
             this.loginService.processAuthenticateResult(
                 res, this.appBaseUrl, this.isExtLogin);
         }, () => {
+            this.codeInput.reset();
             this.checkAccessCodeMaxTries();
         });
     }
@@ -134,6 +135,7 @@ export class HostLoginVerificationComponent implements OnInit, AfterViewInit {
 
     requestNewCode() {
         this.onCodeRefresh.emit();
+        this.codeInput.reset();
         setTimeout(() => {
             this.countDownTime = 0;
             this.initCountDownTimer();

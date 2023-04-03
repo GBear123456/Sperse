@@ -61,7 +61,7 @@ export class SelectTenantComponent implements CanActivate, OnInit {
             if (this.loginService.authenticateResult) {
                 let externalAuthResult = this.loginService.authenticateResult as ExternalAuthenticateResultModel;
                 if (!!externalAuthResult.providerAccessCode) {
-                    this.loginService.externalAuthenticateByResult(externalAuthResult, () => { this.saving = false; }, undefined, false, this.isExtLogin,
+                    this.loginService.externalAuthenticateByResult(externalAuthResult, () => { this.saving = false; }, this.isExtLogin,
                         (result) => {
                             if (this.isExtLogin)
                                 location.pathname = '/account/signin';

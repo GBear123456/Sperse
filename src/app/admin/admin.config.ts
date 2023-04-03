@@ -61,11 +61,6 @@ export class AdminConfig implements ConfigInterface {
             permission: AppPermissions.AdministrationHostSettings + '|' + AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationTenantHosts,
             feature: AppFeatures.Admin,
             route: '/app/admin/settings'
-        },
-        {
-            text: 'Products',
-            permission: AppPermissions.Editions,
-            route: '/app/admin/products'
         }
     ];
 }

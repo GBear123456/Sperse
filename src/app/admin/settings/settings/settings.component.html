@@ -126,6 +126,11 @@
                             <facebook-settings></facebook-settings>
                         </ng-container>
                     </mat-step>
+                    <mat-step *ngIf="isSocialLoginEnabled('Discord')" #discordStep>
+                        <ng-container *ngIf="stepper.selected === discordStep">
+                            <discord-settings></discord-settings>
+                        </ng-container>
+                    </mat-step>
                 </mat-vertical-stepper>
             </dx-scroll-view>
         </div>

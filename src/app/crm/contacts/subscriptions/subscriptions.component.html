@@ -58,7 +58,7 @@
             <div class="product-name-wrapper" (click)="toogleMasterDatails(cellData)">
                 <div class="product-name clipboard-holder"                 
                     [title]="cellData.data.productCode ? 'Product Code: ' + cellData.data.productCode : cellData.data.serviceCodeList">
-                    {{cellData.data.productName}}<b *ngIf="!cellData.data.productCode && cellData.data.services[0].levelName">{{' - ' + cellData.data.services[0].levelName}}</b>
+                    {{cellData.data.productName}}<b *ngIf="!cellData.data.productCode && cellData?.data?.services[0]?.levelName">{{' - ' + cellData?.data?.services[0]?.levelName}}</b>
                 </div>
                 <div *ngIf="cellData.data.productCode" class="services" [title]="cellData.data.serviceCodeList">{{cellData.data.serviceList}}</div>
             </div>

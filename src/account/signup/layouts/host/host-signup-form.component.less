@@ -2,7 +2,6 @@
     height: 100vh;
     display: block;
     background: linear-gradient(115.57deg, #C1E1FF 16.28%, #CFE5FA 95.97%);
-
     --main-font: "Outfit", sans-serif;
     --title: #021648;
     --text: #10307B;
@@ -62,6 +61,7 @@
         border-width: 0;
         -webkit-appearance: button;
         font: inherit;
+
         &.disabled {
             cursor: default;
             opacity: 0.5;
@@ -70,39 +70,39 @@
     }
 
     .box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 61px);
-      background: linear-gradient(115.57deg, #C1E1FF 16.28%, #CFE5FA 95.97%);
-      position: relative;
-      z-index: 2;
-      padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 61px);
+        background: linear-gradient(115.57deg, #C1E1FF 16.28%, #CFE5FA 95.97%);
+        position: relative;
+        z-index: 2;
+        padding: 10px;
 
-      &__inner {
-          display: grid;
-          grid-template: 1fr / 1fr 1fr;
-          color: #fff;
-          max-width: 1144px;
-      }
+        &__inner {
+            display: grid;
+            grid-template: 1fr / 1fr 1fr;
+            color: #fff;
+            max-width: 1144px;
+        }
 
-      &__item {
-          padding: clamp(30px, 4vw, 50px) clamp(20px, 3vw, 40px) clamp(10px, 2vw, 30px);
-      }
+        &__item {
+            padding: clamp(30px, 4vw, 50px) clamp(20px, 3vw, 40px) clamp(10px, 2vw, 30px);
+        }
 
-      &__left {
-          background-color: #052163;
-          border-radius: 20px 0px 0px 20px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-      }
+        &__left {
+            background-color: #052163;
+            border-radius: 20px 0px 0px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-      &__right {
-          background-color: #1a99ef;
-          border-radius: 0px 20px 20px 0px;
-      }
+        &__right {
+            background-color: #1a99ef;
+            border-radius: 0px 20px 20px 0px;
+        }
     }
 
     .title {
@@ -125,20 +125,22 @@
 
     .plan {
         margin-bottom: 13px;
+
         .wrapper {
-            box-sizing:border-box;
-            display:inline-block;
-            overflow:hidden;
-            width:initial;
-            height:initial;
-            background:none;
-            opacity:1;
-            border:0;
-            margin:0;
-            padding:0;
-            position:relative;
-            max-width:100%;
+            box-sizing: border-box;
+            display: inline-block;
+            overflow: hidden;
+            width: initial;
+            height: initial;
+            background: none;
+            opacity: 1;
+            border: 0;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            max-width: 100%;
             font-size: 37px;
+
             span {
                 img {
                     width: 100px;
@@ -175,12 +177,12 @@
                 position: relative;
 
                 &::before {
-                  position: absolute;
-                  content: "$";
-                  font-size: 24px;
-                  line-height: 30px;
-                  left: -10px;
-                  top: 10px;
+                    position: absolute;
+                    content: "$";
+                    font-size: 24px;
+                    line-height: 30px;
+                    left: -10px;
+                    top: 10px;
                 }
             }
         }
@@ -242,6 +244,17 @@
                 &:before {
                     font-size: 30px;
                 }
+            }
+
+            .discord-icon:before {
+                content: "";
+                width: 25px;
+                height: 21px;
+                background-image: url(../../../../assets/common/icons/discord-icon.svg);
+            }
+
+            &:hover .discord-icon:before {
+                background-image: url(../../../../assets/common/icons/discord-icon-blue.svg);
             }
         }
     }
@@ -311,9 +324,9 @@
             height: 45px;
 
             &:-webkit-autofill,
-            &:-webkit-autofill:hover, 
-            &:-webkit-autofill:focus, 
-            &:-webkit-autofill:active{
+            &:-webkit-autofill:hover,
+            &:-webkit-autofill:focus,
+            &:-webkit-autofill:active {
                 -webkit-box-shadow: 0 0 0 30px #69bef7 inset !important;
                 -webkit-text-fill-color: #fff !important;
             }
@@ -394,8 +407,9 @@
 
         &_green {
             background-color: var(--m-green);
+
             &:hover {
-                color: var(--m-green);                
+                color: var(--m-green);
                 border-color: var(--m-green);
             }
         }
@@ -408,36 +422,48 @@
                 border-color: var(--m-blue-light);
             }
         }
+
+        &_blue2 {
+            background-color: #404eed;
+
+            &:hover {
+                color: var(--m-blue-light);
+                border-color: var(--m-blue-light);
+            }
+        }
     }
 
     ::ng-deep country-phone-number {
         button {
             height: 45px;
             min-width: auto;
-            background-color: #69bef7!important;    
+            background-color: #69bef7 !important;
         }
+
         span.input-group-addon {
             border-radius: 7px 0 0 7px;
-            background: #69bef7;    
+            background: #69bef7;
         }
+
         input {
             border-radius: 0 7px 7px 0;
             background: #69bef7;
-            color: #FFF!important;
+            color: #FFF !important;
             font-size: 16px;
             font-weight: 500;
 
             &:-webkit-autofill,
-            &:-webkit-autofill:hover, 
-            &:-webkit-autofill:focus, 
-            &:-webkit-autofill:active{
+            &:-webkit-autofill:hover,
+            &:-webkit-autofill:focus,
+            &:-webkit-autofill:active {
                 -webkit-box-shadow: 0 0 0 30px #69bef7 inset !important;
                 -webkit-text-fill-color: #fff !important;
             }
         }
+
         .input-group {
             width: 490px;
-            border-bottom: none!important;
+            border-bottom: none !important;
         }
     }
 
@@ -452,9 +478,9 @@
         font-size: 16px;
         line-height: 20px;
         color: #7B8390;
-        
+
         a {
-            color: #d7dadd!important;
+            color: #d7dadd !important;
         }
 
         &__input {
@@ -493,7 +519,7 @@
         }
     }
 
-    .check_wrap__input:checked+.check_wrap__style::before {
+    .check_wrap__input:checked + .check_wrap__style::before {
         content: "";
         position: absolute;
         transform: translate(-50%, -50%) scale(1);
@@ -508,11 +534,13 @@
 
     #secondStepForm {
         input {
-            padding-left: 20px!important;
+            padding-left: 20px !important;
         }
+
         p > input {
             width: 370px;
         }
+
         .pass {
             position: absolute;
             cursor: pointer;
@@ -523,12 +551,14 @@
 
     .link {
         text-align: center;
+
         h4 {
             text-align: center;
             color: #fff;
             font-size: 22px;
             margin: 30px 0;
         }
+
         a {
             background: #fff;
             font-size: 22px;
@@ -542,6 +572,7 @@
         width: 100%;
         text-align: center;
         padding-top: 20px;
+
         a {
             color: #c8ced3;
             font-weight: 600;
@@ -555,6 +586,7 @@
             padding-left: 35px;
             font-weight: 600;
             position: relative;
+
             &::before {
                 position: absolute;
                 content: "";
@@ -569,11 +601,12 @@
                 background-size: 50%;
             }
 
-            &.valid {                
+            &.valid {
                 &::before {
                     background-image: url(../../../../assets/common/icons/feature-enabled.svg);
                 }
             }
+
             &.invalid {
                 &::before {
                     background-image: url(../../../../assets/common/icons/feature-disabled.svg);

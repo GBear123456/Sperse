@@ -177,7 +177,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private orderSubscriptionStatusFilter = this.getSubscriptionsFilter();
     private subscriptionStatusFilter = this.getSubscriptionsFilter();
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
-    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || ContactGroup.Client);
+    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(
+        this._activatedRoute.snapshot.queryParams.contactGroup || 
+        (this._activatedRoute.snapshot.queryParams.contactGroup == '' ? undefined : ContactGroup.Client)
+    );
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
         this.pipelineService.compactView$,
@@ -843,7 +846,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.selectedOrderType$.subscribe((selectedOrderType: OrderType) => {
             this.changeOrderType(selectedOrderType);
         });
-        this.handleQueryParams();
+        this.handleQueryParams();        
     }
 
     customizeTotal = () => this.totalCount !== undefined ? this.l('Count') + ': ' + this.totalCount : '';
@@ -857,18 +860,35 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             takeUntil(this.destroy$)
         ).subscribe((params: Params) => {
             let isOrderTypeChanged = params.orderType && this.selectedOrderType.value != params.orderType,
+                isContactGroupChanged = (params.contactGroup || params.contactGroup == '') 
+                    && this.selectedContactGroup.value != params.contactGroup,
                 isSearchChanged = params.search && this.searchValue != params.search;
 
             if (isSearchChanged) {
                 this.searchValue = params.search;
             }
-            if (isOrderTypeChanged || isSearchChanged) {
+            if (isOrderTypeChanged || isSearchChanged || isContactGroupChanged) {
                 this.searchClear = false;                
                 this.filtersService.clearAllFilters();
-                this.selectedContactGroup.next(undefined);
+                this.selectedContactGroup.next(params.contactGroup || undefined);
                 this.selectedOrderType.next(+params.orderType || this.selectedOrderType.value);
-            }            
+            }
+
+            this.clearQueryParams();
         });
+    }
+
+    private clearQueryParams() {
+        setTimeout(() =>
+            this._router.navigate([], {
+                relativeTo: this._activatedRoute,
+                queryParams: { 
+                    orderType: null,
+                    contactGroup: null
+                },
+                queryParamsHandling: 'merge'
+            }), 500
+        );
     }
 
     activate() {

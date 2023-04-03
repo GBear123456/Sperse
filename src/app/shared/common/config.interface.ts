@@ -2,7 +2,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
 
-export class ConfigInterface {
+export interface ConfigInterface {
     code?: string;
     name: string;
     displayName?: string;

@@ -1,0 +1,33 @@
+<h2>{{l('Discord')}} {{l('Settings')}}</h2>
+<div *ngIf="discordSettings">
+    <div *ngIf="!isHost">
+        <div class="form-group">
+            <dx-check-box id="DiscordIsDeactivated"
+                          [text]="l('Deactivate')"
+                          [(value)]="discordSettings.isDeactivated">
+            </dx-check-box>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label for="DiscordAppId">{{l("AppId")}}</label>
+            <input id="DiscordAppId" type="text" name="DiscordAppId" class="form-control" [(ngModel)]="discordSettings.settings.appId">
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label for="DiscordAppSecret">{{l("AppSecret")}}</label>
+            <input id="DiscordAppSecret" type="text" name="DiscordAppSecret" class="form-control" [(ngModel)]="discordSettings.settings.appSecret">
+        </div>
+    </div>
+    <div>
+        <span>URLs for redirect: </span>
+        <ul>
+            <li *ngFor="let url of getOAuthRedirectUrls()" class="copy-url"><b>{{url}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></li>
+        </ul>
+    </div>
+</div>
+<button class="btn btn-layout" (click)="save()">
+    <i class="icon-la la la-floppy-o"></i>
+    {{l('Save')}}
+</button>

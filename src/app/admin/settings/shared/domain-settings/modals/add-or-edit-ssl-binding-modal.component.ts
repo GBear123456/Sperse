@@ -15,6 +15,7 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { finalize, map, tap } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -62,32 +63,16 @@ export class AddOrEditSSLBindingModalComponent {
         displayName: this.ls.l('AllOrganizationUnits')
     }];
 
-    envHost = {
-        production: {
-            ip: '52.165.168.40',
-            host: 'sperseprodapiservice.azurewebsites.net'
-        },
-        development: {
-            ip: '40.80.155.102',
-            host: 'testsperseplatformapi.azurewebsites.net'
-        },
-        staging: {
-            ip: '40.80.155.102',
-            host: 'testsperseplatformapi.azurewebsites.net'
-        },
-        beta: {
-            ip: '52.176.6.37',
-            host: 'sperseapi.azurewebsites.net'
-        }
-    }[environment.releaseStage];
+    envHost = environment;
 
     constructor(
         private changeDetection: ChangeDetectorRef,
         private tenantHostService: TenantHostServiceProxy,
         private tenantSslCertificateService: TenantSslCertificateServiceProxy,
         private notify: NotifyService,
-        public ls: AppLocalizationService,
         private dialogRef: MatDialogRef<AddOrEditSSLBindingModalComponent>,
+        public clipboardService: ClipboardService,
+        public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         if (data.orgUnits && data.orgUnits.length)
@@ -223,5 +208,10 @@ export class AddOrEditSSLBindingModalComponent {
             event.component.option('disabled', true);
             return true;
         }
+    }
+
+    copyToClipboard(value: string) {
+        this.clipboardService.copyFromContent(value.trim());
+        this.notify.info(this.ls.l('SavedToClipboard'));
     }
 }
