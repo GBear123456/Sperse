@@ -22,6 +22,12 @@
                           [(value)]="tenantManagementSettings.useCaptchaOnRegistration">
             </dx-check-box>
         </div>
+        <div class="form-group">
+            <dx-check-box id="Setting_UseHostSettingsForExternalProviders"
+                          [text]="l('UseHostSettingsForExternalProviders')"
+                          [(value)]="tenantManagementSettings.useHostSettingsForExternalProviders">
+            </dx-check-box>
+        </div>
     </div>
     <div class="form-group">
         <label for="DefaultEditionId">{{l("Edition")}}</label>
