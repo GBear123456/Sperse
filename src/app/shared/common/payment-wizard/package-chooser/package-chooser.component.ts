@@ -106,6 +106,7 @@ export class PackageChooserComponent implements OnInit {
     ];
 
     PRODUCT_GROUP_ADD_ON = AppConsts.PRODUCT_GROUP_ADD_ON;
+    MAX_PERIOD_COUNT = 3;
 
     constructor(
         public localizationService: AppLocalizationService,
@@ -389,6 +390,26 @@ export class PackageChooserComponent implements OnInit {
             };
             return paymentOptions;
         }
+    }
+
+    getSelectedPeriod(): number {
+        const periodCount = this.getSliderPointCount();
+        
+        if (periodCount == this.MAX_PERIOD_COUNT)
+            return this.selectedBillingPeriod;
+        else if (periodCount == 1)
+            return this.MAX_PERIOD_COUNT - 1;
+        else if (
+            this.showSelectedProductPeriod(RecurringPaymentFrequency.Annual) &&
+            this.showSelectedProductPeriod(RecurringPaymentFrequency.LifeTime)
+        ) return Number(this.selectedBillingPeriod) - 1;
+        else if (
+            this.showSelectedProductPeriod(RecurringPaymentFrequency.Monthly) &&
+            this.showSelectedProductPeriod(RecurringPaymentFrequency.LifeTime)
+        ) return this.selectedBillingPeriod == BillingPeriod.Monthly ? 
+            this.selectedBillingPeriod : (Number(this.selectedBillingPeriod) - 1);
+
+        return this.selectedBillingPeriod;
     }
 
     isProductPurchased(product) {
