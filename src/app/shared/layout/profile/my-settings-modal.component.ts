@@ -169,11 +169,11 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     }
 
     updateQrCodeSetupImageUrl(): void {
-        this.profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
-            this.user.qrCodeSetupImageUrl = result.qrCodeSetupImageUrl;
-            this.isGoogleAuthenticatorEnabled = true;
-            this.changeDetectorRef.detectChanges();
-        });
+        //this.profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
+        //    this.user.qrCodeSetupImageUrl = result.qrCodeSetupImageUrl;
+        //    this.isGoogleAuthenticatorEnabled = true;
+        //    this.changeDetectorRef.detectChanges();
+        //});
     }
 
     smsVerify(): void {
