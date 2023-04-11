@@ -17,7 +17,7 @@
                 <h3>{{ls.l('PlaidConnectorDescription')}}</h3>
             </div>
         </div>
-        <div class="connector" [ngClass]="{selected: selectedConnector.name == accountConnectors.SaltEdge}"
+        <div class="connector disabled" [ngClass]="{selected: selectedConnector.name == accountConnectors.SaltEdge}"
             (click)="selectConnector(connectors[accountConnectors.SaltEdge], true)">
             <img src="assets/common/icons/saltedge-connector.svg" height="25px">
             <div class="title">

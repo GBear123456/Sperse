@@ -76,8 +76,9 @@ export class AccountConnectorChooserComponent implements OnInit {
         }).find((connector: AccountConnector) => !connector.disabled));
     }
 
-    checkDisabled(connectorName: AccountConnectors) {
-        return !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(connectorName));
+    checkDisabled(connectorName: AccountConnectors) {      
+        return connectorName == AccountConnectors.SaltEdge || 
+            !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(connectorName));
     }
 
     selectConnector(connector: AccountConnector, next: boolean = false) {
