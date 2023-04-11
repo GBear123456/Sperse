@@ -3017,6 +3017,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.infoTooltip = new Tooltip(infoTooltip, {
             target: targetCell,
             contentTemplate: contentTemplate,
+            wrapperAttr: {class: infoTooltip.className}
         });
         targetCell.appendChild(infoTooltip);
         this.infoTooltip.show();
