@@ -19,9 +19,9 @@ export const getPipelinesState = createFeatureSelector<State>('pipelines');
 export const getPipelines = (filter?: Filter) => createSelector(
     getPipelinesState,
     (state: State) => {
-        let pipelines = (filter && state.pipelines
+        let pipelines = (filter && state && state.pipelines
             ? state.pipelines.filter(filterCallback.bind(this, filter))
-            : state.pipelines
+            : (state && state.pipelines)
         );
 
         return pipelines ? pipelines.map(pipeline => {
