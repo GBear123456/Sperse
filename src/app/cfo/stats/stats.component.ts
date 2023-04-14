@@ -271,9 +271,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         for (let prop in statsItem) {
                             if (statsItem.hasOwnProperty(prop) && prop !== 'date' && prop !== 'isForecast') {
                                 statsItem['forecast' + this.capitalize(prop)] = statsItem[prop];
-                                const desc = Object.getOwnPropertyDescriptor(statsItem, prop) || {};
-                                if (Boolean(desc.writable))
-                                    delete statsItem[prop];
+                                delete statsItem[prop];
                             }
                         }
                     }

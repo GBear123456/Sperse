@@ -3,13 +3,10 @@ import * as ngCommon from '@angular/common';
 import { NgModule } from '@angular/core';
 
 /** Third party imports */
-import { Store } from '@ngrx/store';
 import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { ClipboardModule } from 'ngx-clipboard';
 
 /** Application imports */
-import { AppStore } from '@app/store';
-import { PipelinesStoreActions } from '@app/crm/store';
 import { AppStoreModule } from '@app/store/app-store.module';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { ExportService } from '@shared/common/export/export.service';
@@ -33,8 +30,6 @@ import { AppStoreService } from '@app/store/app-store.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { SearchTooltipModule } from '@shared/common/dialogs/search-tooltip/search-tooltip.module';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
-import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { AppPermissions } from '@shared/AppPermissions';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'];
@@ -82,15 +77,4 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         EmailSmtpSettingsService
     ]
 })
-export class AppModule {
-    constructor(
-        private permissionService: AppPermissionService,
-        private store$: Store<AppStore.State>
-    ) {
-        if (abp.session.userId) {
-            if (this.permissionService.isGranted(AppPermissions.CRM)) {
-                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
-            }
-        }
-    }
-}
+export class AppModule {}

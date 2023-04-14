@@ -257,6 +257,9 @@ export class CrmModule {
                     else
                         importLeadsService.stopImportCheck();
                 });
+            if (this.permissionService.isGranted(AppPermissions.CRM)) {
+                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
+            }
         }
     }
 }
