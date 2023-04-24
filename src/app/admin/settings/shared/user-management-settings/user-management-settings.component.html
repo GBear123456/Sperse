@@ -25,18 +25,28 @@
             </div>
         </div>
     </div>
-    <div class="form-group">
+    <div class="m-form">
         <h5 class="margin-top-20">{{l("OtherSettings")}}</h5>
-        <dx-check-box id="Setting_IsEmailConfirmationRequiredForLogin"
-                      [text]="l('EmailConfirmationRequiredForLogin')"
-                      [(value)]="tenantSettings.isEmailConfirmationRequiredForLogin">
-        </dx-check-box>
-    </div>
-    <div class="form-group">
-        <contact-group-templates [title]="l('UserRegistrationEmail')"
-                                 [(customTemplates)]="tenantSettings.customWelcomeEmailTemplates"
-                                 [templateType]="EmailTemplateType.WelcomeEmail">
-        </contact-group-templates>
+        <div class="m-checkbox-list">
+            <div class="form-group">
+                <dx-check-box id="Setting_IsEmailConfirmationRequiredForLogin"
+                              [text]="l('EmailConfirmationRequiredForLogin')"
+                              [(value)]="tenantSettings.isEmailConfirmationRequiredForLogin">
+                </dx-check-box>
+            </div>
+            <div class="form-group">
+                <dx-check-box id="Setting_EnableSignUpPage"
+                              [text]="l('EnableSignUpPage')"
+                              [(value)]="tenantSettings.isSignUpPageEnabled">
+                </dx-check-box>
+            </div>
+            <div class="form-group">
+                <contact-group-templates [title]="l('UserRegistrationEmail')"
+                                         [(customTemplates)]="tenantSettings.customWelcomeEmailTemplates"
+                                         [templateType]="EmailTemplateType.WelcomeEmail">
+                </contact-group-templates>
+            </div>
+        </div>
     </div>
 </ng-container>
 <ng-container *ngIf="hostSettings">
@@ -50,6 +60,12 @@
         <dx-check-box id="Settings_SmsVerificationEnabled"
                       [text]="l('SmsVerificationEnabled')"
                       [(value)]="hostSettings.smsVerificationEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <dx-check-box id="Setting_EnableSignUpPage"
+                      [text]="l('EnableSignUpPage')"
+                      [(value)]="hostSettings.isSignUpPageEnabled">
         </dx-check-box>
     </div>
     <div class="form-group">

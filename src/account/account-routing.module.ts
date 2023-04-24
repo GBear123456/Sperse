@@ -49,7 +49,7 @@ import { TenantSideRouteGuard } from '@shared/common/auth/tenat-side-route-guard
                     {
                         path: 'signup',
                         component: SignupComponent,
-                        data: { wrap: false, hostOnly: true, tenantRedirect: 'account/login' },
+                        data: { wrap: false, checkEnabledOption: 'App.UserManagement.IsSignUpPageEnabled', tenantRedirect: 'account/login' },
                         canActivate: [TenantSideRouteGuard]
                     },
                     { path: 'signin-forgot-password', component: ForgotPasswordComponent, data: { wrap: false, layoutComponent: SigninForgotPasswordComponent } },

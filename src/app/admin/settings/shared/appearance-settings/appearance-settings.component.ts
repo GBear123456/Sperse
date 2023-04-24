@@ -17,6 +17,7 @@ import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { AppConsts } from '@shared/AppConsts';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
+import { SettingService } from 'abp-ng2-module';
 
 @Component({
     selector: 'appearance-settings',
@@ -31,6 +32,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     @ViewChild('loginCssUploader') loginCssUploader: UploaderComponent;
     @ViewChild('portalCssUploader') portalCssUploader: UploaderComponent;
     @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
+    @ViewChild('signUpCssUploader') signUpCssUploader: UploaderComponent;
 
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
@@ -38,10 +40,13 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     maxLogoFileSize = 1024 * 30 /* 30KB */;
     CustomCssType = CustomCssType;
 
+    signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
+
     constructor(
         _injector: Injector,
         private faviconsService: FaviconService,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
+        private settingService: SettingService
     ) {
         super(_injector);
     }
@@ -60,6 +65,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
             this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
             this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))),
+            this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))),
             this.faviconsUploader.uploadFile().pipe(tap((res) => {
                 if (res && res.result && res.result.faviconBaseUrl && res.result.favicons && res.result.favicons.length) {
                     this.tenant.tenantCustomizations = <any>{ ...this.tenant.tenantCustomizations, ...res.result };
@@ -113,6 +119,9 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                 break;
             case CustomCssType.Portal:
                 this.tenant.portalCustomCssId = value;
+                break;
+            case CustomCssType.SignUp:
+                this.tenant.signUpCustomCssId = value;
                 break;
         }
     }

@@ -6,8 +6,9 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostSignupFormComponent } from './layouts/host/host-signup-form.component';
 import { BankCodeSignupFormComponent } from './layouts/bank-code/bank-code-signup-form.component';
+import { MemberSignupFormComponent } from './layouts/member/member-signup-form.component';
 
-type SignupFormComponent = HostSignupFormComponent | BankCodeSignupFormComponent;
+type SignupFormComponent = HostSignupFormComponent | BankCodeSignupFormComponent | MemberSignupFormComponent;
 
 @Directive({
     selector: '[ad-signup-host]'
@@ -39,13 +40,16 @@ export class SignupComponent {
         );
     }
 
-    private getLayoutComponent(tenant) {
-        switch (tenant && tenant.customLayoutType) {
-            case LayoutType.BankCode:
-                return BankCodeSignupFormComponent;
-            default:
-                return HostSignupFormComponent;
-        }
+    private getLayoutComponent(tenant): Type<SignupFormComponent> {
+        if (abp.session.tenantId)
+            switch (tenant && tenant.customLayoutType) {
+                case LayoutType.BankCode:
+                    return BankCodeSignupFormComponent;
+                default:
+                    return MemberSignupFormComponent;
+            }
+        else 
+            return HostSignupFormComponent;
     }
 
     private loadLayoutComponent(component: Type<SignupFormComponent>) {

@@ -20,6 +20,7 @@ import { SignupComponent, AdSignupHostDirective } from './signup.component';
 import { HostSignupFormComponent } from './layouts/host/host-signup-form.component';
 import { BankCodeSignupFormComponent } from './layouts/bank-code/bank-code-signup-form.component';
 import { CountryPhoneNumberModule } from '../../shared/common/phone-numbers/country-phone-number.module';
+import { MemberSignupFormComponent } from './layouts/member/member-signup-form.component';
 
 @NgModule({
     imports: [
@@ -40,10 +41,12 @@ import { CountryPhoneNumberModule } from '../../shared/common/phone-numbers/coun
     declarations: [
         BankCodeSignupFormComponent,
         HostSignupFormComponent,
+        MemberSignupFormComponent,
         AdSignupHostDirective,
         SignupComponent
     ],
     entryComponents: [
+        MemberSignupFormComponent,
         BankCodeSignupFormComponent,
         HostSignupFormComponent
     ],
