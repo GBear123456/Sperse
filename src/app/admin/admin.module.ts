@@ -88,6 +88,7 @@ import { TenantManagementSettingsComponent } from './settings/shared/tenant-mana
 import { AppearanceSettingsComponent } from './settings/shared/appearance-settings/appearance-settings.component';
 import { MemberPortalSettingsComponent } from './settings/shared/member-portal-settings/member-portal-settings.component';
 import { SendgridSettingsComponent } from './settings/shared/sendgrid-settings/sendgrid-settings.component';
+import { GmailSettingsComponent } from './settings/shared/gmail-settings/gmail-settings.component';
 import { KlaviyoSettingsComponent } from './settings/shared/klaviyo-settings/klaviyo-settings.component';
 import { EpcvipLinkSettingsComponent } from './settings/shared/epcvip-link-settings/epcvip-link-settings.component';
 import { EpcvipEmailSettingsComponent } from './settings/shared/epcvip-email-settings/epcvip-email-settings.component';
@@ -198,6 +199,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         AppearanceSettingsComponent,
         MemberPortalSettingsComponent,
         SendgridSettingsComponent,
+        GmailSettingsComponent,
         KlaviyoSettingsComponent,
         EpcvipLinkSettingsComponent,
         EpcvipEmailSettingsComponent,
