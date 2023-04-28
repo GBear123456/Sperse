@@ -202,6 +202,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     }
 
     initFilterConfig() {
+        let moduleConfigs = Object.keys(this.appSession.application.modules);
         this.permissionService.getAllPermissions(false).subscribe((res) => {
             this.filtersService.setup(
                 this.filters = [
@@ -228,11 +229,13 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                         items: {
                             element: new FilterRadioGroupModel({
                                 value: this.selectedModule,
-                                list: values(ModuleType).map(module => ({
-                                    id: module,
-                                    name: module,
-                                    displayName: module
-                                }))
+                                list: values(ModuleType)
+                                    .filter(module => !moduleConfigs.some(x => module.indexOf(x) >= 0 && !this.appSession.application.modules[x]))
+                                    .map(module => ({
+                                        id: module,
+                                        name: module,
+                                        displayName: module
+                                    }))
                             })
                         }
                     })

@@ -890,7 +890,7 @@ export class CashflowService {
                 if (level.prefix === CategorizationPrefixes.Category && !isAccountTransaction) {
                     let transactionCategoriesIds = this.getTransactionCategoriesIds(transactionObj.categoryId, this.categoryTree);
                     if (this.userPreferencesService.localPreferences.value.showAccountingTypeTotals) {
-                        const highestCategory = transactionCategoriesIds && transactionCategoriesIds[0]
+                        const highestCategory = this.categoryTree && transactionCategoriesIds && transactionCategoriesIds[0]
                             ? this.categoryTree.categories[transactionCategoriesIds[0]]
                             : null;
                         if (highestCategory && highestCategory.accountingTypeId
@@ -933,7 +933,7 @@ export class CashflowService {
 
     getTransactionCategoriesIds(categoryId: number, categoryTree: GetCategoryTreeOutput): number[] {
         let categoryIds = [ categoryId ];
-        if (categoryTree.categories[categoryId] && categoryTree.categories[categoryId].parentId) {
+        if (categoryTree && categoryTree.categories && categoryTree.categories[categoryId] && categoryTree.categories[categoryId].parentId) {
             categoryIds = [
                 ...this.getTransactionCategoriesIds(categoryTree.categories[categoryId].parentId, categoryTree),
                 ...categoryIds
@@ -956,14 +956,16 @@ export class CashflowService {
             if (level > this.statsCategoriesLevelsCount) {
                  this.statsCategoriesLevelsCount = level;
             }
-            const parentCategoryId = this.categoryTree.categories[categoryId].parentId;
-            const parentAccountingTypeId = this.categoryTree.categories[categoryId].accountingTypeId;
-            if (parentAccountingTypeId) {
-                transaction['accountingTypeId'] = parentAccountingTypeId;
-            }
-            this.statsCategoryTree[categoryId] = parentCategoryId;
-            if (parentCategoryId && !this.statsCategoryTree[parentCategoryId]) {
-                this.updateStatsItemCategoryTree(parentCategoryId, transaction, level + 1);
+            if (this.categoryTree && this.categoryTree.categories) {
+                const parentCategoryId = this.categoryTree.categories[categoryId].parentId;
+                const parentAccountingTypeId = this.categoryTree.categories[categoryId].accountingTypeId;
+                if (parentAccountingTypeId) {
+                    transaction['accountingTypeId'] = parentAccountingTypeId;
+                }
+                this.statsCategoryTree[categoryId] = parentCategoryId;
+                if (parentCategoryId && !this.statsCategoryTree[parentCategoryId]) {
+                    this.updateStatsItemCategoryTree(parentCategoryId, transaction, level + 1);
+                }
             }
         }
     }

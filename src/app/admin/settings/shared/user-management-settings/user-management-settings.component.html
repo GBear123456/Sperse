@@ -74,6 +74,35 @@
                                  [templateType]="EmailTemplateType.WelcomeEmail">
         </contact-group-templates>
     </div>
+    <div class="form-group">
+        <dx-check-box id="Settings_SmsVerificationEnabled"
+                      [text]="l('SmsVerificationEnabled')"
+                      [(value)]="hostSettings.smsVerificationEnabled">
+        </dx-check-box>
+    </div>
+    <h5>{{l("Password")}}</h5>
+    <div class="form-group">
+        <dx-check-box id="Settings_EnableCheckingLastXPasswordWhenPasswordChange"
+                      [text]="l('EnableCheckingLastXPasswordWhenPasswordChangeSettingLabel')"
+                      [(value)]="hostSettings.userPasswordSettings.enableCheckingLastXPasswordWhenPasswordChange">
+        </dx-check-box>
+    </div>
+    <div class="form-group" *ngIf="hostSettings.userPasswordSettings.enableCheckingLastXPasswordWhenPasswordChange">
+        <label for="Setting_CheckingLastXPasswordCount">{{l("CheckingLastXPasswordCountSettingLabel")}}</label>
+        <input id="Setting_CheckingLastXPasswordCount" type="number" name="Setting_CheckingLastXPasswordCount" class="form-control" [ngClass]="{'edited':hostSettings.userPasswordSettings.checkingLastXPasswordCount}"
+               [(ngModel)]="hostSettings.userPasswordSettings.checkingLastXPasswordCount">
+    </div>
+    <div class="form-group">
+        <dx-check-box id="Setting_EnablePasswordExpiration"
+                      [text]="l('EnablePasswordExpirationSettingLabel')"
+                      [(value)]="hostSettings.userPasswordSettings.enablePasswordExpiration">
+        </dx-check-box>
+    </div>
+    <div class="form-group" *ngIf="hostSettings.userPasswordSettings.enablePasswordExpiration">
+        <label for="Setting_PasswordExpirationDayCount">{{l("PasswordExpirationDayCountSettingLabel")}}</label>
+        <input id="Setting_PasswordExpirationDayCount" type="number" name="Setting_PasswordExpirationDayCount" class="form-control" [ngClass]="{'edited':hostSettings.userPasswordSettings.passwordExpirationDayCount}"
+               [(ngModel)]="hostSettings.userPasswordSettings.passwordExpirationDayCount">
+    </div>
 </ng-container>
 <button class="btn btn-layout" (click)="save()">
     <i class="icon-la la la-floppy-o"></i>

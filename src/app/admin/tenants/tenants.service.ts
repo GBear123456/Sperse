@@ -16,16 +16,20 @@ import {
     ModuleType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Injectable()
 export class TenantsService {
     editionsModels: { [name: string]: TenantEditEditionDto } = {};
     private defaultEditionId = '0';
+    CFOModuleEnabled = !!this.appSessionService.application.modules["CFO"];
+    PFMModuleEnabled = !!this.appSessionService.application.modules["PFM"];
 
     constructor(
         private tenantService: TenantServiceProxy,
         private commonLookupService: CommonLookupServiceProxy,
-        private appLocalizationService: AppLocalizationService
+        private appLocalizationService: AppLocalizationService,
+        private appSessionService: AppSessionService
     ) {}
 
     getEditionsGroupsWithDefaultEdition(): Observable<SubscribableEditionComboboxItemDto[][]> {
@@ -45,10 +49,19 @@ export class TenantsService {
     }
 
     getEditionsGroups(defaultEditionName = null): Observable<SubscribableEditionComboboxItemDto[][]>  {
+        let moduleConfigs = Object.keys(this.appSessionService.application.modules);
         return this.commonLookupService.getEditionsForCombobox(false).pipe(
             map(res => res.items),
             concatAll(),
-            filter(edition => !!edition.moduleId),
+            filter(edition => {
+                if (!edition.moduleId)
+                    return false;
+
+                if (moduleConfigs.some(x => edition.moduleId.indexOf(x) >= 0 && !this.appSessionService.application.modules[x]))
+                    return false;
+
+                return true;
+            }),
             groupBy(edition => edition.moduleId),
             mergeMap(group$ => group$.pipe(
                 toArray(),

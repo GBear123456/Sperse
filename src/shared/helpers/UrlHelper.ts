@@ -37,9 +37,9 @@ export class UrlHelper {
     }
 
     static getUrl(uri, params: { [param: string]: string }): string {
-        return uri + '?' + Object.keys(params)
+        return uri + (params ? '?' + Object.keys(params)
             .map((param: string) => encodeURIComponent(param) + '=' + encodeURIComponent(params[param]))
-            .join('&');
+            .join('&') : '');
     }
 
     static getReturnUrl(): string {

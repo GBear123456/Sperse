@@ -1330,7 +1330,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     initFooterToolbar() {
         combineLatest(
             this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean)),
-            this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex), filter(Boolean))
+            this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex), filter(index => !isNaN(index)))
         ).pipe(
             first()
         ).subscribe(([forecastModels, selectedForecastModelIndex]) => {
@@ -3017,6 +3017,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.infoTooltip = new Tooltip(infoTooltip, {
             target: targetCell,
             contentTemplate: contentTemplate,
+            wrapperAttr: {class: infoTooltip.className}
         });
         targetCell.appendChild(infoTooltip);
         this.infoTooltip.show();

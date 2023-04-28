@@ -57,8 +57,9 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             return true;
         }
 
+        let baseFeature = route.data['feature'] && route.data['feature'].split('.')[0];
         if ((!route.data['permission'] || this.permissionChecker.isGranted(route.data['permission']))
-            && (!route.data['feature'] || this.feature.isEnabled(route.data['feature']))
+            && (!route.data['feature'] || (this.feature.isEnabled(route.data['feature']) && (!this.sessionService.application.modules.hasOwnProperty(baseFeature) || !!this.sessionService.application.modules[baseFeature])))
             && (!route.data['layoutType'] || !this.sessionService.tenant || this.sessionService.tenant.customLayoutType === route.data['layoutType'])
             && !isStateRoot
         ) {

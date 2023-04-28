@@ -242,10 +242,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 if (contactInfo.personContactInfo.xref)
                     this.contactXref.next(contactInfo.personContactInfo.xref);
-                this.getCheckStripeSettings().subscribe((isEnabled: boolean) => {
-                    if (isEnabled)
-                        this.stripeCustomerId.next(contactInfo.personContactInfo.stripeCustomerId);
-                });
+                if (contactInfo.personContactInfo.stripeCustomerId)
+                    this.getCheckStripeSettings().subscribe((isEnabled: boolean) => {
+                        if (isEnabled)
+                            this.stripeCustomerId.next(contactInfo.personContactInfo.stripeCustomerId);
+                    });
                 this.contactProxy.getContactLastModificationInfo(
                     contactInfo.id
                 ).subscribe((lastModificationInfo: ContactLastModificationInfoDto) => {
@@ -326,7 +327,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             stripeApiKey = sessionStorage.getItem(storageKey);
         if (stripeApiKey != null)
             return of(!!stripeApiKey);
-        else if (abp.features.isEnabled(AppFeatures.CRMPayments))
+        else if (
+            abp.features.isEnabled(AppFeatures.CRMPayments) && (
+                this.permissionCheckerService.isGranted(AppPermissions.CRMSettingsConfigure) ||
+                this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings) ||
+                this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings)
+            )
+        )
             return this.tenantPaymentSettingsService.getStripeSettings().pipe(map(res => {
                 sessionStorage.setItem(storageKey, res.apiKey || '');
                 return !!res.apiKey;

@@ -10,6 +10,7 @@ import cloneDeep from 'lodash/cloneDeep';
 /** Application imports */
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppSessionService } from './session/app-session.service';
 import { ConfigInterface } from '@app/shared/common/config.interface';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
 import { Module } from './module.interface';
@@ -23,6 +24,7 @@ export abstract class AppServiceBase {
     private configs: { [id: string]: ConfigInterface; };
     featureChecker: FeatureCheckerService;
     permissionChecker: AppPermissionService;
+    appSession: AppSessionService;
 
     public params: any;
 
@@ -34,6 +36,7 @@ export abstract class AppServiceBase {
     ) {
         this.featureChecker = injector.get(FeatureCheckerService);
         this.permissionChecker = injector.get(AppPermissionService);
+        this.appSession = injector.get(AppSessionService);
         this.MODULE_DEFAULT = defaultModuleName;
         this.modules = modules;
         this.configs = configs;
@@ -66,7 +69,8 @@ export abstract class AppServiceBase {
 
     isModuleActive(name: string) {
         let config: ConfigInterface = this.getModuleConfig(name);
-        return (config && typeof (config.navigation) == 'object'
+        let modulesEnabled = !this.appSession.application.modules.hasOwnProperty(name) || this.appSession.application.modules[name];
+        return (modulesEnabled && config && typeof (config.navigation) == 'object'
             && (this.isHostTenant || !config.requiredFeature || this.featureChecker.isEnabled(config.requiredFeature))
             && (!config.requiredPermission || this.permissionChecker.isGranted(config.requiredPermission))
         );

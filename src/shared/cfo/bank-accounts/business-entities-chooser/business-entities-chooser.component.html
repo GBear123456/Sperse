@@ -11,6 +11,7 @@
                 <div class="select-all">
                     <dx-check-box #selectAll
                         width="100px"
+                        accessKey="SelectAll"
                         [text]="ls.l('Select All')"
                         [value]="selectedAll"
                         (onValueChanged)="onSelectAll($event)">

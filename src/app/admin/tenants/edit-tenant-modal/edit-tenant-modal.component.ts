@@ -71,12 +71,12 @@ export class EditTenantModalComponent implements OnInit {
 
     constructor(
         private tenantService: TenantServiceProxy,
-        private tenantsService: TenantsService,
         private notifyService: NotifyService,
         private changeDetectorRef: ChangeDetectorRef,
         private dialogRef: MatDialogRef<EditTenantModalComponent>,
         private messageService: MessageService,
         private dialog: MatDialog,
+        public tenantsService: TenantsService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) { }

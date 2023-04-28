@@ -46,12 +46,11 @@ import { ModulesEditionsSelectComponent } from '../modules-edtions-select/module
         '../modal.less',
         './create-tenant-modal.component.less'
     ],
-    providers: [ TenantsService, ProductServiceProxy ],
+    providers: [TenantsService, ProductServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateTenantModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     setRandomPassword = true;
@@ -78,10 +77,10 @@ export class CreateTenantModalComponent implements OnInit {
         private tenantService: TenantServiceProxy,
         private profileService: ProfileServiceProxy,
         private productService: ProductServiceProxy,
-        private tenantsService: TenantsService,
         private notifyService: NotifyService,
         private dialogRef: MatDialogRef<CreateTenantModalComponent>,
         private changeDetectorRef: ChangeDetectorRef,
+        public tenantsService: TenantsService,
         public ls: AppLocalizationService
     ) {}
 
@@ -111,21 +110,33 @@ export class CreateTenantModalComponent implements OnInit {
     }
 
     save(): void {
-        if (!this.editionsSelect.validateModel())
-            return;
+        if (!this.tenant.tenancyName)
+            return this.notifyService.error(this.ls.l('TenancyNameRequired'));
+
+        if (!this.tenant.name)
+            return this.notifyService.error(this.ls.l('TenantNameCanNotBeEmpty'));
+
+        if (!this.tenant.adminEmailAddress)
+            return this.notifyService.error(this.ls.l('RequiredField', this.ls.l('AdminEmailAddress')));
+
+        if (!this.productId)
+            return this.notifyService.error(this.ls.l('TenantEditionIsNotAssigned'));
+
+        if (!this.paymentPeriodType)
+            return this.notifyService.error(this.ls.l('RequiredField', this.ls.l('PaymentPeriodType')));
 
         this.modalDialog.startLoading();
         if (this.setRandomPassword) {
             this.tenant.adminPassword = null;
         }
         this.tenant.editions = this.tenantsService.getTenantEditions();
-        this.tenant.products = this.productId == undefined 
-            ? undefined 
-            : [ new TenantProductInfo({ 
+        this.tenant.products = this.productId == undefined ? undefined : [ 
+            new TenantProductInfo({ 
                 productId: this.productId,
                 paymentPeriodType: this.mapRecurringPaymentFrequencyToPaymentPeriodType(this.paymentPeriodType),
                 quantity: 1
-        }) ];
+            }) 
+        ];
         this.tenantService.createTenant(this.tenant)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
