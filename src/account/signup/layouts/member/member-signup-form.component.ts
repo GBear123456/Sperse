@@ -191,6 +191,12 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
         }
     }
 
+    getTenantUrl(uri: string) {
+        return AppConsts.appBaseUrl + '/account/' + uri + (
+            this.isDefaultDomain && this.tenantId ? '?tenantId=' + this.tenantId : ''
+        );
+    }
+
     ngOnDestroy() {
         this.lifecycleService.destroy.next();
     }

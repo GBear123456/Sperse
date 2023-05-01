@@ -113,7 +113,7 @@
                         <div class="form-group already-registered">
                             <h3>Do you already have an account?</h3>
                             <p class="links">
-                                <a [href]="'/account/login' + (isDefaultDomain ? '?tenantId=' + tenantId : '')">Click here to login</a> <span>|</span> <a [href]="'/account/forgot-password' + (isDefaultDomain ? '?tenantId=' + tenantId : '')">Reset your password</a>
+                                <a [href]="getTenantUrl('login')">Click here to login</a> <span>|</span> <a [href]="getTenantUrl('forgot-password')">Reset your password</a>
                             </p>
                         </div>
                     </form>
