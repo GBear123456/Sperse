@@ -53,29 +53,33 @@ export class GmailSettingsComponent extends SettingsComponentBase {
             .subscribe(res => {
                 this.gmailSettings = res;
 
-                this.client = google.accounts.oauth2.initCodeClient({
-                    client_id: this.gmailSettings.clientId,
-                    scope: 'https://www.googleapis.com/auth/gmail.send',
-                    ux_mode: 'popup',
+                if (this.gmailSettings.clientId) {
+                    this.client = google.accounts.oauth2.initCodeClient({
+                        client_id: this.gmailSettings.clientId,
+                        scope: 'https://www.googleapis.com/auth/gmail.send',
+                        ux_mode: 'popup',
 
-                    callback: (response) => {
-                        this.startLoading();
-                        this.tenantSettingsService.setupGmail(response.code)
-                            .pipe(
-                                finalize(() => this.finishLoading())
-                            )
-                            .subscribe(() => {
-                                this.gmailSettings.isConfigured = true;
-                                this.changeDetection.detectChanges();
-                            });
-                    },
-                });
+                        callback: (response) => {
+                            this.startLoading();
+                            this.tenantSettingsService.setupGmail(response.code)
+                                .pipe(
+                                    finalize(() => this.finishLoading())
+                                )
+                                .subscribe(() => {
+                                    this.gmailSettings.isConfigured = true;
+                                    this.changeDetection.detectChanges();
+                                });
+                        },
+                    });
+                }
+                
                 this.changeDetection.detectChanges();
             });
     }
 
     getAuthCode() {
-        this.client.requestCode();
+        if (this.client)
+            this.client.requestCode();
     }
 
     getSaveObs(): Observable<any> {
