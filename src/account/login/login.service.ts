@@ -344,7 +344,9 @@ export class LoginService {
             case 'linkedin':
                 return window.location.href;
             default:
-                return `${AppConsts.appBaseUrl}${location.pathname}?provider=${providerNameLower}`;
+                return `${AppConsts.appBaseUrl}${location.pathname}?provider=${providerNameLower}` + (
+                    location.href.includes(AppConsts.defaultDomain) && abp.session.tenantId ? '&tenantId=' + abp.session.tenantId : ''
+                );
         }
     }
 
