@@ -56,6 +56,11 @@
                             <email-settings></email-settings>
                         </ng-container>
                     </mat-step>
+                    <mat-step #gmailStep>
+                        <ng-container *ngIf="stepper.selected === gmailStep">
+                            <gmail-settings></gmail-settings>
+                        </ng-container>
+                    </mat-step>
                     <mat-step *ngIf="!appService.isHostTenant" #sendgridStep>
                         <ng-container *ngIf="stepper.selected === sendgridStep">
                             <sendgrid-settings></sendgrid-settings>
