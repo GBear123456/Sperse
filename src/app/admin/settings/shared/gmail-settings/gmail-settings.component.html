@@ -9,10 +9,10 @@
         </div>
         <div class="google-button-container">
             <button class="btn btn-layout google-button" (click)="getAuthCode()">
-                <img src="../../../../../assets/common/icons/google.svg" />
+                <img src="./assets/common/icons/google.svg" />
                 {{ gmailSettings.isConfigured ? l('Authorized') : l('Authorize') }}
             </button>
-            <img *ngIf="gmailSettings.isConfigured" src="../../../../../assets/common/icons/check-green.svg" />
+            <img *ngIf="gmailSettings.isConfigured" src="./assets/common/icons/check-green.svg" />
         </div>
         <div class="form-group">
             <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
