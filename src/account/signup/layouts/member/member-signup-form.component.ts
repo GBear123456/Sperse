@@ -1,11 +1,12 @@
 /** Core imports */
 import { Component, ChangeDetectionStrategy, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { ActivationEnd, Router } from '@angular/router';
+import { ActivationEnd, ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import capitalize from 'underscore.string/capitalize';
-import { filter, takeUntil } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { first, finalize, filter, takeUntil } from 'rxjs/operators';
 import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
@@ -14,7 +15,8 @@ import { MaskPipe } from 'ngx-mask';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ApplicationServiceProxy, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
+import { ApplicationServiceProxy, SignUpMemberRequest, 
+    GetExternalUserDataOutput, ExternalUserDataServiceProxy } from '@shared/service-proxies/service-proxies';
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ConditionsType } from '@shared/AppEnums';
@@ -27,7 +29,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: [
         './member-signup-form.component.less'
     ],
-    providers: [ ApplicationServiceProxy, LoginService, LifecycleSubjectsService ],
+    providers: [ ApplicationServiceProxy, LoginService, LifecycleSubjectsService, ExternalUserDataServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MemberSignupFormComponent implements OnInit, OnDestroy {
@@ -50,6 +52,7 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
     registerData: SignUpMemberRequest = new SignUpMemberRequest();
     isRoutProcessed = false;
     tenantId = abp.session.tenantId;
+    isDefaultDomain = location.href.includes(AppConsts.defaultDomain);
 
     constructor(
         public loginService: LoginService,
@@ -57,10 +60,55 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
         private router: Router,
         private messageService: MessageService,
         private lifecycleService: LifecycleSubjectsService,
+        private externalUserDataProxy: ExternalUserDataServiceProxy,
+        private activatedRoute: ActivatedRoute,
         private maskPipe: MaskPipe,
         public ls: AppLocalizationService
     ) {
         this.registerData.isUSCitizen = true;
+
+        this.loginService.externalLoginProviders$.subscribe((providers: ExternalLoginProvider[]) => {
+            let linkedInProvider = providers.find(x => x.name == ExternalLoginProvider.LINKEDIN && !!x.clientId);
+            let discordProvider = providers.find(x => x.name == ExternalLoginProvider.DISCORD && !!x.clientId);
+            this.showExternalLogin = !!linkedInProvider || !!discordProvider;
+
+            this.activatedRoute.queryParamMap.pipe(
+                first()
+            ).subscribe((paramsMap: ParamMap) => {
+                let exchangeCode = paramsMap.get('code');
+                let state = paramsMap.get('state');
+                let providerName = paramsMap.get('provider') || ExternalLoginProvider.LINKEDIN;
+                if (!!exchangeCode && !!state) {
+                    abp.ui.setBusy();
+                    this.loginService.clearOAuth2Params()
+                        .then(() => {
+                            this.getUserData(exchangeCode, providerName)
+                                .pipe(finalize(() => abp.ui.clearBusy()))
+                                .subscribe((result: GetExternalUserDataOutput) => {
+                                    this.registerData.firstName = result.name;
+                                    this.registerData.lastName = result.surname;
+                                    this.registerData.email = result.emailAddress;
+
+                                    this.messageService.info(`The data provided by ${providerName} has been successfully received. Please check the data and finalize account creation.`);
+                                });
+                        });
+                }
+            });
+        });
+
+    }
+
+    getUserData(exchangeCode, providerName): Observable<GetExternalUserDataOutput> {
+        let state = this.loginService.lastOAuth2Result;
+        if (state && state.userNotFound) //user was redirected from signin
+            return of(new GetExternalUserDataOutput({
+                name: state.firstName,
+                surname: state.lastName,
+                emailAddress: state.email,
+                additionalData: null
+            }));
+        else
+            return this.externalUserDataProxy.getUserData(providerName, exchangeCode, this.loginService.getRedirectUrl(providerName));
     }
 
     ngOnInit() {
