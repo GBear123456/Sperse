@@ -12,6 +12,7 @@ import * as _ from 'underscore';
 
 /** Core imports */
 import { AppConsts } from '@shared/AppConsts';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { LayoutType, CustomCssType, HostSettingsServiceProxy, MaintenanceSettingsDto } from '@shared/service-proxies/service-proxies';
@@ -85,7 +86,9 @@ export class RootComponent implements OnInit, AfterViewInit {
         //tenant specific custom css
         let tenant = this.SS.tenant;
         if (tenant) {
-            let customCss = abp.session.userId ? tenant.customCssId : tenant.loginCustomCssId;
+            let customCss = abp.session.userId ? tenant.customCssId : (
+                UrlHelper.isSignUpUrl() ?  tenant.signUpCustomCssId : tenant.loginCustomCssId
+            );
             if (customCss)
                 this.addStyleSheet(`${CustomCssType.Platform}CustomCss`, AppConsts.remoteServiceBaseUrl + 
                     '/api/TenantCustomization/GetCustomCss/' + customCss + '/' + tenant.id);

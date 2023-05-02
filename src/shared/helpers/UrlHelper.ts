@@ -79,6 +79,12 @@ export class UrlHelper {
         return url && url.indexOf('personal-finance/sign-up') >= 0;
     }
 
+    static isSignUpUrl(url?: string) {
+        if (!url)
+            url = location.href;
+        return url.includes('signup');
+    }
+
     static isPublicUrl(url) {
         return url && UrlHelper.getQueryParameters()['user-key'] && UrlHelper.publicUrls.some(publicUrl => url.indexOf(publicUrl) >= 0);
     }
