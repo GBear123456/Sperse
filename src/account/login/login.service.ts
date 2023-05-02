@@ -206,7 +206,7 @@ export class LoginService {
             });
     }
 
-    externalAuthenticate(provider: ExternalLoginProvider): void {
+    externalAuthenticate(provider: ExternalLoginProvider, attr?: any): void {
         this.ensureExternalLoginProviderInitialized(provider, () => {
             this.authService.stopTokenCheck();
             switch (provider.name) {
@@ -227,7 +227,7 @@ export class LoginService {
                     });
                     break;
                 case ExternalLoginProvider.DISCORD:
-                    this.discordInitLogin(provider);
+                    this.discordInitLogin(provider, attr);
                     break;
             }
             this.authService.startTokenCheck();
@@ -489,6 +489,9 @@ export class LoginService {
     }
 
     private initExternalLoginProviders() {
+        if (abp.session.tenantId)
+            abp.multiTenancy.setTenantIdCookie(abp.session.tenantId);
+
         this.externalLoginProviders$ = this.tokenAuthService
             .getExternalAuthenticationProviders()
             .pipe(

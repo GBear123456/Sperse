@@ -189,7 +189,7 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
 
     externalLogin(provider: ExternalLoginProvider) {
         if (this.isAgreeWithTerms)
-            this.loginService.externalAuthenticate(provider);
+            this.loginService.externalAuthenticate(provider, true);
         else {
             this.agreeWithTermsCheckBox['validator'].instance.validate();
         }
