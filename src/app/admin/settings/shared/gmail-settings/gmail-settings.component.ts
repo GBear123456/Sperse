@@ -12,7 +12,6 @@ import {
     TenantSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
-import { AppConsts } from '@shared/AppConsts';
 
 declare const google: any;
 
@@ -29,7 +28,7 @@ export class GmailSettingsComponent extends SettingsComponentBase {
 
     constructor(
         _injector: Injector,
-        private tenantSettingsService: TenantSettingsServiceProxy,
+        private tenantSettingsService: TenantSettingsServiceProxy
     ) {
         super(_injector);
     }
@@ -80,6 +79,25 @@ export class GmailSettingsComponent extends SettingsComponentBase {
     getAuthCode() {
         if (this.client)
             this.client.requestCode();
+        else
+            this.message.error(this.l('MailerSettingsAreNotConfigured', 'GMail'));
+    }
+
+    disconnedGmail() {
+        this.message.confirm('', this.l('AreYouSure'), (confirm) => {
+            if (!confirm)
+                return;
+
+            this.startLoading();
+            this.tenantSettingsService.disconnectGmail()
+                .pipe(
+                    finalize(() => this.finishLoading())
+                )
+                .subscribe(() => {
+                    this.gmailSettings.isConfigured = false;
+                    this.changeDetection.detectChanges();
+                });
+        });
     }
 
     getSaveObs(): Observable<any> {

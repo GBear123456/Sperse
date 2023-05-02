@@ -4,7 +4,8 @@
         <div class="form-group">
             <dx-check-box id="GmailIsEnabled"
                           [text]="l('Enabled')"
-                          [(value)]="gmailSettings.isEnabled">
+                          [(value)]="gmailSettings.isEnabled"
+                          [disabled]="!gmailSettings.isEnabled && !gmailSettings.isConfigured">
             </dx-check-box>
         </div>
         <div class="google-button-container">
@@ -13,6 +14,7 @@
                 {{ gmailSettings.isConfigured ? l('Authorized') : l('Authorize') }}
             </button>
             <img *ngIf="gmailSettings.isConfigured" src="./assets/common/icons/check-green.svg" />
+            <span *ngIf="gmailSettings.isConfigured" class="disconnect" (click)="disconnedGmail()">{{l("Disconnect")}}</span>
         </div>
         <div class="form-group">
             <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
@@ -23,7 +25,7 @@
             <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [(ngModel)]="gmailSettings.defaultFromDisplayName" maxlength="100">
         </div>
     </div>
-    <button class="btn btn-layout" [disabled]="!gmailSettings.isConfigured" (click)="save()">
+    <button class="btn btn-layout" (click)="save()">
         <i class="icon-la la la-floppy-o"></i>
         {{l('Save')}}
     </button>
