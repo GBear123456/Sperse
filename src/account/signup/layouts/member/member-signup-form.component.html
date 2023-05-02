@@ -102,7 +102,7 @@
                                         <ng-container *ngFor="let provider of externalLoginProviders">
                                             <li>
                                                 <a class="entrance-page__social-link entrance-page__social-link--{{provider.icon}}"
-                                                   href="javascript:void(0);" (click)="loginService.externalAuthenticate(provider)" title="{{provider.name}}"></a>
+                                                   href="javascript:void(0);" (click)="externalLogin(provider)" title="{{provider.name}}"></a>
                                             </li>
                                         </ng-container>
                                     </ul>
