@@ -80,6 +80,10 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
                 let providerName = paramsMap.get('provider') || ExternalLoginProvider.LINKEDIN;
                 if (!!exchangeCode && !!state) {
                     abp.ui.setBusy();
+
+                    if (abp.session.tenantId)
+                        abp.multiTenancy.setTenantIdCookie(abp.session.tenantId);
+
                     this.loginService.clearOAuth2Params()
                         .then(() => {
                             this.getUserData(exchangeCode, providerName)
