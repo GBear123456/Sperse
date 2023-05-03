@@ -206,7 +206,7 @@ export class LoginService {
             });
     }
 
-    externalAuthenticate(provider: ExternalLoginProvider, attr?: any): void {
+    externalAuthenticate(provider: ExternalLoginProvider): void {
         this.ensureExternalLoginProviderInitialized(provider, () => {
             this.authService.stopTokenCheck();
             switch (provider.name) {
@@ -227,7 +227,7 @@ export class LoginService {
                     });
                     break;
                 case ExternalLoginProvider.DISCORD:
-                    this.discordInitLogin(provider, attr);
+                    this.discordInitLogin(provider);
                     break;
             }
             this.authService.startTokenCheck();
