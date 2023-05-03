@@ -7,8 +7,10 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
+    EmailSettingsTestServiceProxy,
     GmailSettingsDto,
     GmailSettingsEditDto,
+    SendGmailTestEmailInput,
     TenantSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
@@ -25,10 +27,12 @@ declare const google: any;
 export class GmailSettingsComponent extends SettingsComponentBase {
     gmailSettings: GmailSettingsDto = new GmailSettingsDto();
     client;
+    testEmailAddress: string = undefined;
 
     constructor(
         _injector: Injector,
-        private tenantSettingsService: TenantSettingsServiceProxy
+        private tenantSettingsService: TenantSettingsServiceProxy,
+        private emailSettingsTestService: EmailSettingsTestServiceProxy
     ) {
         super(_injector);
     }
@@ -45,6 +49,7 @@ export class GmailSettingsComponent extends SettingsComponentBase {
     }
 
     initClient() {
+        this.testEmailAddress = this.appSession.user.emailAddress;
         this.tenantSettingsService.getGmailSettings()
             .pipe(
                 finalize(() => this.finishLoading())
@@ -71,7 +76,7 @@ export class GmailSettingsComponent extends SettingsComponentBase {
                         },
                     });
                 }
-                
+
                 this.changeDetection.detectChanges();
             });
     }
@@ -98,6 +103,26 @@ export class GmailSettingsComponent extends SettingsComponentBase {
                     this.changeDetection.detectChanges();
                 });
         });
+    }
+
+    sendTestEmail(): void {
+        if (!this.testEmailAddress || !this.gmailSettings.isConfigured)
+            return;
+
+        this.startLoading();
+        this.emailSettingsTestService
+            .sendGmailTestEmail(new SendGmailTestEmailInput({
+                email: this.testEmailAddress,
+                fromEmailAddress: this.gmailSettings.defaultFromAddress,
+                fromDisplayName: this.gmailSettings.defaultFromDisplayName,
+                userSettings: false
+            }))
+            .pipe(
+                finalize(() => this.finishLoading())
+            )
+            .subscribe(() => {
+                this.notify.info(this.l('TestEmailSentSuccessfully'));
+            });
     }
 
     getSaveObs(): Observable<any> {
