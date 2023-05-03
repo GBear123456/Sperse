@@ -1,3 +1,101 @@
-body {
+signup {
+    background: #FFF;
+}
 
+signup member-signup-form h2 {
+    font-family: 'Montserrat', sans-serif!important;
+    text-align: center!important;
+    color: #000!important;
+    font-size: 32px!important;
+    margin-bottom: 0!important;
+}
+
+signup member-signup-form h4 {
+    font-family: 'Montserrat', sans-serif!important;
+    text-align: center!important;
+    text-transform: none!important;
+    font-size: 16px!important;
+    margin-bottom: 0!important;
+    margin-top: 0!important;
+    color: #7a7979!important;
+}
+
+ignup member-signup-form .sign-up .dx-placeholder {
+    font-family: 'Montserrat', sans-serif!important;
+    font-size: 12px!important;
+    font-weight: 400!important;
+    color: #959494!important;
+    transition: 0.2s!important;
+    top: -2px!important;
+    left: -9px!important;
+    height: auto!important;
+    display: block!important;
+}
+
+signup member-signup-form .agreement {
+    font-family: 'Montserrat', sans-serif!important;
+    font-size: 16px!important;
+    line-height: 20px!important;
+    color: #7a7979!important;
+    text-align: left!important;
+}
+
+signup member-signup-form .signup-box {
+    background: #FFF!important;
+    border: solid 1px #ebecec!important;
+}
+
+signup member-signup-form button.submit {
+    font-family: 'Montserrat', sans-serif!important;
+    min-width: 400px!important;
+    border-radius: 100px!important;
+    background-color: #00aeef!important;
+    font-size: 18px!important;
+    font-weight: 500!important;
+    color: #ffffff!important;
+    border: 0!important;
+    box-shadow: none!important;
+    line-height: 54px!important;
+    position: relative!important;
+    cursor: pointer!important;
+}
+
+signup member-signup-form .entrance-page__social {
+    display: block!important;
+    width: 100%!important;
+    margin-bottom: clamp(15px, 3vw, 32px)!important;
+}
+
+signup member-signup-form .already-registered h3 {
+    font-family: 'Montserrat', sans-serif!important;
+    color: #7a7979!important;
+    font-size: 16px!important;
+}
+
+signup member-signup-form .already-registered .links {
+    margin-bottom: 20px!important;
+    color: #7a7979!important;
+    text-align: center!important;
+}
+
+signup member-signup-form .already-registered .links a {
+    font-family: 'Montserrat', sans-serif!important;
+    padding: 0 10px!important;
+    text-decoration: none!important;
+    letter-spacing: 1px!important;
+    font-weight: normal!important;
+    transition: 0.3s!important;
+    color: #000!important;
+}
+
+signup member-signup-form .signup-footer {
+    font-family: 'Montserrat', sans-serif!important;
+    margin-top: auto!important;
+    background: #f8f8f8!important;
+    border-top: 1px solid #d5d5d5!important;
+    padding: 10px!important;
+    display: flex!important;
+    align-items: center!important;
+    justify-content: center!important;
+    color: #959494!important;
 }
