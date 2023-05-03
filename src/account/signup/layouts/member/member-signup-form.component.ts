@@ -96,7 +96,8 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
                                     this.messageService.info(`The data provided by ${providerName} has been successfully received. Please check the data and finalize account creation.`);
                                 });
                         });
-                }
+                } else if (providerName)
+                    this.loginService.clearOAuth2Params();
             });
         });
 

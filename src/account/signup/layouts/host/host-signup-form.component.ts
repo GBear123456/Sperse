@@ -136,7 +136,8 @@ export class HostSignupFormComponent {
                                         this.changeDetectorRef.detectChanges();
                                     });
                             });
-                    }
+                    } else if (providerName)
+                        this.loginService.clearOAuth2Params();
                 });
 
                 this.changeDetectorRef.detectChanges();
