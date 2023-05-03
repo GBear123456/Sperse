@@ -24,6 +24,10 @@
             <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
             <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [(ngModel)]="gmailSettings.defaultFromDisplayName" maxlength="100">
         </div>
+        <div class="form-group">
+            <label for="DefaultReplyTo">{{l("DefaultReplyTo")}}</label>
+            <input id="DefaultReplyTo" type="text" name="DefaultReplyTo" class="form-control" [(ngModel)]="gmailSettings.defaultReplyTo" maxlength="100">
+        </div>
     </div>
     <button class="btn btn-layout" (click)="save()">
         <i class="icon-la la la-floppy-o"></i>
