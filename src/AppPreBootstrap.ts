@@ -49,12 +49,19 @@ export class AppPreBootstrap {
 
     private static processRegularBootstrap(queryStringObj, callback) {
         let tenantId = queryStringObj.tenantId;
+
+        //!!VP handle tenantId for extlogin in development mode
+        if (!tenantId && environment.releaseStage == 'development' && 
+            queryStringObj.state && !isNaN(queryStringObj.state)
+        ) 
+            tenantId = parseInt(queryStringObj.state);
+
         if (tenantId && !queryStringObj['user-key'] && !queryStringObj['switchAccountToken']) {
             if (tenantId != abp.session.tenantId) {
                 AppPreBootstrap.generalInfoClear();
                 abp.auth.clearToken();
             }
-            abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
+            abp.multiTenancy.setTenantIdCookie(tenantId);
         }
         AppPreBootstrap.getUserConfiguration(callback, true, queryStringObj).subscribe();
     }
