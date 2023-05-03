@@ -16,7 +16,7 @@ import { MaskPipe } from 'ngx-mask';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { ApplicationServiceProxy, SignUpMemberRequest, 
-    GetExternalUserDataOutput, ExternalUserDataServiceProxy } from '@shared/service-proxies/service-proxies';
+    GetExternalUserDataOutput, ExternalUserDataServiceProxy, GetExternalUserDataInput } from '@shared/service-proxies/service-proxies';
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ConditionsType } from '@shared/AppEnums';
@@ -112,7 +112,12 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
                 additionalData: null
             }));
         else
-            return this.externalUserDataProxy.getUserData(providerName, exchangeCode, this.loginService.getRedirectUrl(providerName));
+            return this.externalUserDataProxy.getUserData(new GetExternalUserDataInput({
+                provider: providerName,
+                exchangeCode: exchangeCode,
+                loginReturnUrl: this.loginService.getRedirectUrl(providerName),
+                options: undefined
+            }));
     }
 
     ngOnInit() {
@@ -189,7 +194,7 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
 
     externalLogin(provider: ExternalLoginProvider) {
         if (this.isAgreeWithTerms)
-            this.loginService.externalAuthenticate(provider, true);
+            this.loginService.externalAuthenticate(provider);
         else {
             this.agreeWithTermsCheckBox['validator'].instance.validate();
         }
