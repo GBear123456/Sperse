@@ -7,12 +7,12 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { EmailSmtpSettingsServiceProxy, SendTestEmailInput, EmailFromSettings, 
+import { EmailSettingsTestServiceProxy, SendSMTPTestEmailInput, EmailFromSettings, 
     EmailSmtpSettings, EmailSettingsEditDto } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class EmailSmtpSettingsService {
-    private emailSmtpSettingsService: EmailSmtpSettingsServiceProxy;
+    private emailSmtpSettingsService: EmailSettingsTestServiceProxy;
     private notify: NotifyService;
     private ls: AppLocalizationService;
     private smptProviderHelpLinks = {
@@ -21,7 +21,7 @@ export class EmailSmtpSettingsService {
     };
 
     constructor(injector: Injector) {
-        this.emailSmtpSettingsService = injector.get(EmailSmtpSettingsServiceProxy);
+        this.emailSmtpSettingsService = injector.get(EmailSettingsTestServiceProxy);
         this.notify = injector.get(NotifyService);
         this.ls = injector.get(AppLocalizationService);
     }
@@ -34,8 +34,8 @@ export class EmailSmtpSettingsService {
         return '';
     }
 
-    sendTestEmail(input: SendTestEmailInput, finalizeCallback?: () => void, errorCallback?: () => void): void {
-        this.emailSmtpSettingsService.sendTestEmail(input).pipe(
+    sendTestEmail(input: SendSMTPTestEmailInput, finalizeCallback?: () => void, errorCallback?: () => void): void {
+        this.emailSmtpSettingsService.sendSMTPTestEmail(input).pipe(
             finalize(() => finalizeCallback && finalizeCallback())
         ).subscribe((res) => {
             this.notify.info(this.ls.l('TestEmailSentSuccessfully'));
@@ -44,8 +44,8 @@ export class EmailSmtpSettingsService {
         });
     }
 
-    getSendTestEmailInput(emailAddress: string, emailSettings: EmailSettingsEditDto): SendTestEmailInput {
-        let input = new SendTestEmailInput();
+    getSendTestEmailInput(emailAddress: string, emailSettings: EmailSettingsEditDto): SendSMTPTestEmailInput {
+        let input = new SendSMTPTestEmailInput();
         input.emailAddress = emailAddress;
         input.from = new EmailFromSettings();
         input.from.emailAddress = emailSettings.defaultFromAddress;

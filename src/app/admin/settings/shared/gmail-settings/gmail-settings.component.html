@@ -29,6 +29,15 @@
             <input id="DefaultReplyTo" type="text" name="DefaultReplyTo" class="form-control" [(ngModel)]="gmailSettings.defaultReplyTo" maxlength="100">
         </div>
     </div>
+    <h5>{{l("TestEmailSettingsHeader")}}</h5>
+    <div class="row">
+        <div class="form-group col-md-4">
+            <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+        </div>
+        <div class="form-group col-md-2">
+            <button class="btn btn-layout" type="button" [disabled]="!this.testEmailAddress || !this.gmailSettings.isConfigured" (click)="sendTestEmail()">{{l("SendTestEmail")}}</button>
+        </div>
+    </div>
     <button class="btn btn-layout" (click)="save()">
         <i class="icon-la la la-floppy-o"></i>
         {{l('Save')}}
