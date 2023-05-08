@@ -6,6 +6,9 @@ import {
     RouterStateSnapshot
 } from '@angular/router';
 
+/** Third party imports */
+import { SettingService } from 'abp-ng2-module';
+
 /** Application imports */
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -15,6 +18,7 @@ export class TenantSideRouteGuard implements CanActivate {
 
     constructor(
         private router: Router,
+        private settingService: SettingService,
         private sessionService: AppSessionService
     ) {}
 
@@ -23,8 +27,10 @@ export class TenantSideRouteGuard implements CanActivate {
             return true;
         }
 
-        let isHost = !this.sessionService.tenantId;
-        if (!isHost && route.data.hostOnly) {
+        let isHost = !this.sessionService.tenantId,
+            isPageEnabled: boolean = route.data.checkEnabledOption ? 
+                this.settingService.getBoolean(route.data.checkEnabledOption) : true;
+        if (!isHost && (route.data.hostOnly || !isPageEnabled)) {
             this.router.navigate([route.data.tenantRedirect ? route.data.tenantRedirect : '/app/access-denied'], {
                 queryParams: location.href.includes(AppConsts.defaultDomain) ? {tenantId: this.sessionService.tenantId} : {}
             });

@@ -250,7 +250,7 @@ export class LoginService {
     linkedInInitLogin(provider: ExternalLoginProvider) {
         window.location.href = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=' + provider.clientId +
             '&redirect_uri=' + this.getRedirectUrl(provider.name) +
-            '&state=foobar&scope=r_liteprofile%20r_emailaddress';
+            '&state=' + abp.session.tenantId + '&scope=r_liteprofile%20r_emailaddress';
     }
 
     clearOAuth2Params(): Promise<boolean> {
@@ -258,7 +258,9 @@ export class LoginService {
             queryParams: {
                 'code': null,
                 'state': null,
-                'provider': null
+                'provider': null,
+                'error': null,
+                'error_description': null
             },
             queryParamsHandling: 'merge'
         });
@@ -335,14 +337,14 @@ export class LoginService {
             scopes.push('guilds');
         let scopesString = scopes.join('%20');
         window.location.href = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + provider.clientId +
-            `&redirect_uri=${this.getRedirectUrl(provider.name)}&state=${new Date().getTime()}&scope=${scopesString}&prompt=none`;
+            `&redirect_uri=${this.getRedirectUrl(provider.name)}&state=${abp.session.tenantId}&scope=${scopesString}&prompt=none`;
     }
 
     getRedirectUrl(providerName: string) {
         let providerNameLower = providerName.toLowerCase();
         switch (providerNameLower) {
             case 'linkedin':
-                return window.location.href;
+                return window.location.href.split('?').shift();
             default:
                 return `${AppConsts.appBaseUrl}${location.pathname}?provider=${providerNameLower}`;
         }
@@ -489,6 +491,9 @@ export class LoginService {
     }
 
     private initExternalLoginProviders() {
+        if (abp.session.tenantId)
+            abp.multiTenancy.setTenantIdCookie(abp.session.tenantId);
+
         this.externalLoginProviders$ = this.tokenAuthService
             .getExternalAuthenticationProviders()
             .pipe(

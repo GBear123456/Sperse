@@ -17,7 +17,7 @@ import {
     LeadServiceProxy, TenantProductInfo, PaymentPeriodType, RecurringPaymentFrequency,
     PasswordComplexitySetting, SubmitTenancyRequestOutput, TenantSubscriptionServiceProxy, CompleteTenantRegistrationOutput,
     ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput, ProfileServiceProxy,
-    ExternalUserDataServiceProxy, GetExternalUserDataOutput
+    ExternalUserDataServiceProxy, GetExternalUserDataOutput, GetExternalUserDataInput
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -136,7 +136,8 @@ export class HostSignupFormComponent {
                                         this.changeDetectorRef.detectChanges();
                                     });
                             });
-                    }
+                    } else if (providerName)
+                        this.loginService.clearOAuth2Params();
                 });
 
                 this.changeDetectorRef.detectChanges();
@@ -160,7 +161,15 @@ export class HostSignupFormComponent {
                 additionalData: null
             }));
         else {
-            return this.externalUserDataService.getUserData(providerName, exchangeCode, this.loginService.getRedirectUrl(providerName));
+            let options = {};
+            if (providerName == ExternalLoginProvider.DISCORD.toLowerCase())
+                options['IncludeUserGuilds'] = true;
+            return this.externalUserDataService.getUserData(new GetExternalUserDataInput({
+                provider: providerName,
+                exchangeCode: exchangeCode,
+                loginReturnUrl: this.loginService.getRedirectUrl(providerName),
+                options: options
+            }));
         }
     }
 

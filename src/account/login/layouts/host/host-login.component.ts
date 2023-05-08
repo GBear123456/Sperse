@@ -64,11 +64,12 @@ export class HostLoginComponent implements OnInit {
             let state = paramsMap.get('state');
             let providerName = paramsMap.get('provider');
 
-            if (!!exchangeCode && !!state) {
+            if (!!exchangeCode && !!state)
                 this.loginService.oAuth2Login(providerName, exchangeCode, state, this.isExtLogin, this.redirectToSignUp, (result) => {
                     this.isLoggedIn = result.accessToken && this.isExtLogin;
                 });
-            }
+            else if (providerName)
+                this.loginService.clearOAuth2Params();
         });
     }
 
