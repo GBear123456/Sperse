@@ -95,8 +95,8 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     public currentTab = this.ls.l('Profile');
     public _initialUserSettings: any;
     public _initialEmailSettings: any;
-    public _initialGmailSettings: any;
-    public _initialSignatureHtml: any;
+    public _initialGmailSettings: GmailSettingsDto;
+    public _initialSignatureHtml: string;
     private _initialTimezone: string = undefined;
     private testEmailAddress: string = undefined;
     buttons: IDialogButton[] = [
@@ -356,7 +356,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                             finalize(() => this.modalDialog.finishLoading())
                         )
                         .subscribe(() => {
-                            this.gmailSettings.isConfigured = true;
+                            this.gmailSettings.isConfigured = this._initialGmailSettings.isConfigured = true;
                             this.changeDetectorRef.detectChanges();
                         });
                 });
@@ -371,7 +371,8 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
 
     disconnedGmail() {
         this.gmailSettingsService.disconnedGmail(true, () => {
-            this.gmailSettings.isConfigured = false;
+            this.gmailSettings.isConfigured = this._initialGmailSettings.isConfigured = false;
+            this.gmailSettings.isEnabled = this._initialGmailSettings.isEnabled = false;
             this.changeDetectorRef.detectChanges();
         });
     }

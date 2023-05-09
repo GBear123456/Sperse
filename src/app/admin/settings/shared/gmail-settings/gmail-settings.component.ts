@@ -70,6 +70,7 @@ export class GmailSettingsComponent extends SettingsComponentBase {
     disconnedGmail() {
         this.gmailSettingsService.disconnedGmail(false, () => {
             this.gmailSettings.isConfigured = false;
+            this.gmailSettings.isEnabled = false;
             this.changeDetection.detectChanges();
         });
     }
