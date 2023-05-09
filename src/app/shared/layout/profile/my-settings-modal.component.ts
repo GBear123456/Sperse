@@ -83,7 +83,6 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         isUserSmtpEnabled: false,
         from: new EmailFromSettings(),
         smtp: new EmailSmtpSettings(),
-        signatureHtml: undefined
     });
     public isGoogleAuthenticatorEnabled = false;
     public isPhoneNumberConfirmed: boolean;
@@ -97,6 +96,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     public _initialUserSettings: any;
     public _initialEmailSettings: any;
     public _initialGmailSettings: any;
+    public _initialSignatureHtml: any;
     private _initialTimezone: string = undefined;
     private testEmailAddress: string = undefined;
     buttons: IDialogButton[] = [
@@ -108,6 +108,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     ];
 
     gmailSettings: GmailSettingsDto = new GmailSettingsDto();
+    signatureHtml: string;
 
     constructor(
         private dialog: MatDialog,
@@ -176,6 +177,12 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                 this.changeDetectorRef.detectChanges();
             });
         this.gmailSettingsService.initGmail(() => this.initGmailClient());
+        this.profileService.getSignatureHtml()
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe((result) => {
+                this.signatureHtml = result;
+                this._initialSignatureHtml = result;
+            });
 
         this.testEmailAddress = this.appSessionService.user.emailAddress;
     }
@@ -210,7 +217,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     save(): void {
         this.modalDialog.startLoading();
         let saveObs: Observable<void>;
-        if (this.currentTab == this.ls.l('Email')) {
+        if (this.currentTab == this.ls.l('SMTP')) {
             saveObs = this.profileService.updateEmailSettings(this.userEmailSettings).pipe(tap(() => {
                 sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
             }));
@@ -223,6 +230,12 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             obj.init(this.gmailSettings);
             obj.forUser = true;
             saveObs = this.googleService.updateGmailSettings(obj);
+        }
+        else if (this.currentTab == this.ls.l('Signature')) {
+            saveObs = this.profileService.updateSignatureHtml(this.signatureHtml);
+        }
+        else {
+            return;
         }
 
         saveObs
@@ -238,6 +251,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                 this._initialEmailSettings = cloneDeep(this.userEmailSettings);
                 this._initialUserSettings = cloneDeep(this.user);
                 this._initialGmailSettings = cloneDeep(this.gmailSettings);
+                this._initialSignatureHtml = this.signatureHtml;
                 this.modalSave.emit(null);
                 if (abp.clock.provider.supportsMultipleTimezone && this._initialTimezone !== this.user.timezone) {
                     this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
@@ -270,9 +284,13 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         return JSON.stringify(this.gmailSettings) != JSON.stringify(this._initialGmailSettings);
     }
 
+    isSignatureChanged(): boolean {
+        return this._initialSignatureHtml != this.signatureHtml;
+    }
+
     checkTabSwitchAllowed(): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            if (this.currentTab == this.ls.l('Email')) {
+            if (this.currentTab == this.ls.l('SMTP')) {
                 if (this.isEmailSettingsChanged())
                     this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
                         if (isConfirmed) {
@@ -299,6 +317,17 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                     this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
                         if (isConfirmed) {
                             this.gmailSettings = cloneDeep(this._initialGmailSettings);
+                            this.changeDetectorRef.detectChanges();
+                        }
+                        resolve(isConfirmed);
+                    });
+                else
+                    resolve(true);
+            } else if (this.currentTab == this.ls.l('Signature')) {
+                if (this.isSignatureChanged())
+                    this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
+                        if (isConfirmed) {
+                            this.signatureHtml = cloneDeep(this._initialSignatureHtml);
                             this.changeDetectorRef.detectChanges();
                         }
                         resolve(isConfirmed);
@@ -356,13 +385,13 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
 
     onTabChanged(event) {
         this.currentTab = event.tab.textLabel;
-        this.buttons[0].disabled = ![this.ls.l('Email'), this.ls.l('Profile'), this.ls.l('Gmail')].includes(this.currentTab);
+        this.buttons[0].disabled = ![this.ls.l('SMTP'), this.ls.l('Profile'), this.ls.l('Gmail'), this.ls.l('Signature')].includes(this.currentTab);
         this.changeDetectorRef.detectChanges();
     }
 
     checkCloseAllowed = () => {
         return new Promise((resolve, reject) => {
-            if (this.isUserSettingsChanged() || this.isEmailSettingsChanged() || this.isGmailSettingsChanged())
+            if (this.isUserSettingsChanged() || this.isEmailSettingsChanged() || this.isGmailSettingsChanged() || this.isSignatureChanged())
                 this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
                     resolve(isConfirmed);
                 });
