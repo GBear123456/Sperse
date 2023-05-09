@@ -149,6 +149,41 @@
                             <a #tagsButton [class]="'tags-button'" *ngIf="tagsList?.length" (click)="tagsTooltipVisible = true">Tags</a>
                         </div>
                     </mat-tab>
+                    <mat-tab [label]="ls.l('Gmail')" [disabled]="!gmailSettings || !gmailSettings.clientId">
+                        <div class="form-group">
+                            <dx-check-box id="GmailIsEnabled"
+                                            [text]="ls.l('Enabled')"
+                                            [(value)]="gmailSettings.isEnabled"
+                                            [disabled]="!gmailSettings.isEnabled && !gmailSettings.isConfigured">
+                            </dx-check-box>
+                        </div>
+                        <div class="google-button-container">
+                            <button class="btn btn-layout google-button" (click)="getAuthCode()">
+                                <img src="./assets/common/icons/google.svg" />
+                                {{ gmailSettings.isConfigured ? ls.l('Authorized') : ls.l('Authorize') }}
+                            </button>
+                            <img *ngIf="gmailSettings.isConfigured" src="./assets/common/icons/check-green.svg" />
+                            <span *ngIf="gmailSettings.isConfigured" class="disconnect" (click)="disconnedGmail()">{{ls.l("Disconnect")}}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="DefaultFromAddress">{{ls.l("DefaultFromAddress")}}</label>
+                            <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" [(ngModel)]="gmailSettings.defaultFromAddress" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="DefaultFromDisplayName">{{ls.l("DefaultFromDisplayName")}}</label>
+                            <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [(ngModel)]="gmailSettings.defaultFromDisplayName" maxlength="100">
+                        </div>
+
+                        <h5>{{ls.l("TestEmailSettingsHeader")}}</h5>
+                        <div class="row gmail-test-email">
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <button class="btn btn-layout" type="button" [disabled]="!testEmailAddress || !gmailSettings.isConfigured" (click)="sendGmailTestEmail()">{{ls.l("SendTestEmail")}}</button>
+                            </div>
+                        </div>
+                    </mat-tab>
                     <mat-tab [label]="ls.l('TwoFactorLogin')">
                         <div>
                             <h4>
