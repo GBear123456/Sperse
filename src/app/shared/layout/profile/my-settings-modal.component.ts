@@ -23,7 +23,7 @@ import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, UserEmailSettings, EmailFromSettings, EmailSmtpSettings,
-    SendSMTPTestEmailInput, ProfileServiceProxy, GoogleServiceProxy, GmailSettingsDto, GmailSettingsEditDto
+    SendSMTPTestEmailInput, ProfileServiceProxy, GoogleServiceProxy, GmailSettingsDto, GmailSettingsEditDto, UpdateSignatureDto
 } from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
@@ -232,7 +232,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             saveObs = this.googleService.updateGmailSettings(obj);
         }
         else if (this.currentTab == this.ls.l('Signature')) {
-            saveObs = this.profileService.updateSignatureHtml(this.signatureHtml);
+            saveObs = this.profileService.updateSignatureHtml(new UpdateSignatureDto({ signatureHtml: this.signatureHtml }));
         }
         else {
             return;
