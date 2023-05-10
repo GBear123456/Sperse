@@ -7,127 +7,85 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    EmailSettingsTestServiceProxy,
     GmailSettingsDto,
     GmailSettingsEditDto,
-    SendGmailTestEmailInput,
-    TenantSettingsServiceProxy
+    GoogleServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
-
-declare const google: any;
+import { GmailSettingsService } from '@shared/common/settings/gmail-settings.service';
 
 @Component({
     selector: 'gmail-settings',
     templateUrl: './gmail-settings.component.html',
     styleUrls: ['./gmail-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantSettingsServiceProxy]
+    providers: [GoogleServiceProxy, GmailSettingsService]
 })
 export class GmailSettingsComponent extends SettingsComponentBase {
     gmailSettings: GmailSettingsDto = new GmailSettingsDto();
-    client;
     testEmailAddress: string = undefined;
 
     constructor(
         _injector: Injector,
-        private tenantSettingsService: TenantSettingsServiceProxy,
-        private emailSettingsTestService: EmailSettingsTestServiceProxy
+        private googleService: GoogleServiceProxy,
+        private gmailSettingsService: GmailSettingsService
     ) {
         super(_injector);
     }
 
     ngOnInit(): void {
-        this.startLoading();
-        if (!google || !google.accounts) {
-            jQuery.getScript('https://accounts.google.com/gsi/client', () => {
-                this.initClient();
-            });
-        } else {
-            this.initClient();
-        }
+        this.gmailSettingsService.initGmail(() => this.initClient());
     }
 
     initClient() {
         this.testEmailAddress = this.appSession.user.emailAddress;
-        this.tenantSettingsService.getGmailSettings()
+        this.startLoading();
+        this.googleService.getGmailSettings(false)
             .pipe(
                 finalize(() => this.finishLoading())
             )
             .subscribe(res => {
                 this.gmailSettings = res;
 
-                if (this.gmailSettings.clientId) {
-                    this.client = google.accounts.oauth2.initCodeClient({
-                        client_id: this.gmailSettings.clientId,
-                        scope: 'https://www.googleapis.com/auth/gmail.send',
-                        ux_mode: 'popup',
-
-                        callback: (response) => {
-                            this.startLoading();
-                            this.tenantSettingsService.setupGmail(response.code)
-                                .pipe(
-                                    finalize(() => this.finishLoading())
-                                )
-                                .subscribe(() => {
-                                    this.gmailSettings.isConfigured = true;
-                                    this.changeDetection.detectChanges();
-                                });
-                        },
-                    });
-                }
+                this.gmailSettingsService.initGmailClient(this.gmailSettings.clientId, (response) => {
+                    this.startLoading();
+                    this.googleService.setupGmail(false, response.code)
+                        .pipe(
+                            finalize(() => this.finishLoading())
+                        )
+                        .subscribe(() => {
+                            this.gmailSettings.isConfigured = true;
+                            this.changeDetection.detectChanges();
+                        });
+                });
 
                 this.changeDetection.detectChanges();
             });
     }
 
     getAuthCode() {
-        if (this.client)
-            this.client.requestCode();
-        else
-            this.message.error(this.l('MailerSettingsAreNotConfigured', 'GMail'));
+        this.gmailSettingsService.getAuthCode();
     }
 
     disconnedGmail() {
-        this.message.confirm('', this.l('AreYouSure'), (confirm) => {
-            if (!confirm)
-                return;
-
-            this.startLoading();
-            this.tenantSettingsService.disconnectGmail()
-                .pipe(
-                    finalize(() => this.finishLoading())
-                )
-                .subscribe(() => {
-                    this.gmailSettings.isConfigured = false;
-                    this.changeDetection.detectChanges();
-                });
+        this.gmailSettingsService.disconnedGmail(false, () => {
+            this.gmailSettings.isConfigured = false;
+            this.gmailSettings.isEnabled = false;
+            this.changeDetection.detectChanges();
         });
     }
 
     sendTestEmail(): void {
-        if (!this.testEmailAddress || !this.gmailSettings.isConfigured)
+        if (!this.gmailSettings.isConfigured)
             return;
 
-        this.startLoading();
-        this.emailSettingsTestService
-            .sendGmailTestEmail(new SendGmailTestEmailInput({
-                email: this.testEmailAddress,
-                fromEmailAddress: this.gmailSettings.defaultFromAddress,
-                fromDisplayName: this.gmailSettings.defaultFromDisplayName,
-                userSettings: false
-            }))
-            .pipe(
-                finalize(() => this.finishLoading())
-            )
-            .subscribe(() => {
-                this.notify.info(this.l('TestEmailSentSuccessfully'));
-            });
+        this.gmailSettingsService.sendTestEmail(this.testEmailAddress, this.gmailSettings.defaultFromAddress, this.gmailSettings.defaultFromDisplayName, false);
     }
 
     getSaveObs(): Observable<any> {
         let obj = new GmailSettingsEditDto();
         obj.init(this.gmailSettings);
-        return this.tenantSettingsService.updateGmailSettings(obj);
+        obj.forUser = false;
+        return this.googleService.updateGmailSettings(obj);
     }
 }

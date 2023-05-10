@@ -21,8 +21,10 @@ import cloneDeep from 'lodash/cloneDeep';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, UserEmailSettings, EmailFromSettings, EmailSmtpSettings,
-    SendSMTPTestEmailInput, ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
+import {
+    GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, UserEmailSettings, EmailFromSettings, EmailSmtpSettings,
+    SendSMTPTestEmailInput, ProfileServiceProxy, GoogleServiceProxy, GmailSettingsDto, GmailSettingsEditDto, UpdateSignatureDto
+} from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -31,13 +33,16 @@ import { SettingService } from 'abp-ng2-module';
 import { MessageService } from 'abp-ng2-module';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { GmailSettingsService } from '@shared/common/settings/gmail-settings.service';
+import { Observable } from 'rxjs';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
     styleUrls: [
         './my-settings-modal.component.less'
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [GoogleServiceProxy, GmailSettingsService]
 })
 export class MySettingsModalComponent implements OnInit, AfterViewInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
@@ -55,17 +60,17 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         stylesSet: [],
         contentsCss: [],
         toolbar: [
-            { name: 'document', items: [ 'Source', '-', 'Preview'] },
-            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', '-', 'Undo', 'Redo' ] },
-            { name: 'editing', items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
-            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike' ] },
-            { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote' ] },
-            { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+            { name: 'document', items: ['Source', '-', 'Preview'] },
+            { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'PasteText', '-', 'Undo', 'Redo'] },
+            { name: 'editing', items: ['Find', 'Replace', '-', 'SelectAll'] },
+            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote'] },
+            { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
             '/',
-            { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak' ] },
-            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
-            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
-            { name: 'tools', items: [ 'Maximize' ] },
+            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak'] },
+            { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+            { name: 'colors', items: ['TextColor', 'BGColor'] },
+            { name: 'tools', items: ['Maximize'] },
         ],
         removePlugins: 'elementspath',
         extraPlugins: 'preview,colorbutton,font',
@@ -77,8 +82,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     public userEmailSettings: UserEmailSettings = new UserEmailSettings({
         isUserSmtpEnabled: false,
         from: new EmailFromSettings(),
-        smtp:  new EmailSmtpSettings(),
-        signatureHtml: undefined
+        smtp: new EmailSmtpSettings(),
     });
     public isGoogleAuthenticatorEnabled = false;
     public isPhoneNumberConfirmed: boolean;
@@ -91,6 +95,8 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     public currentTab = this.ls.l('Profile');
     public _initialUserSettings: any;
     public _initialEmailSettings: any;
+    public _initialGmailSettings: GmailSettingsDto;
+    public _initialSignatureHtml: string;
     private _initialTimezone: string = undefined;
     private testEmailAddress: string = undefined;
     buttons: IDialogButton[] = [
@@ -100,6 +106,10 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             action: this.save.bind(this)
         }
     ];
+
+    gmailSettings: GmailSettingsDto = new GmailSettingsDto();
+    signatureHtml: string;
+
     constructor(
         private dialog: MatDialog,
         private profileService: ProfileServiceProxy,
@@ -109,8 +119,10 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         private settingService: SettingService,
         private emailSmtpSettingsService: EmailSmtpSettingsService,
         private changeDetectorRef: ChangeDetectorRef,
+        private googleService: GoogleServiceProxy,
+        private gmailSettingsService: GmailSettingsService,
         public ls: AppLocalizationService
-    ) {}
+    ) { }
 
     ngAfterViewInit() {
         setTimeout(() => {
@@ -164,6 +176,13 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                 }, 600);
                 this.changeDetectorRef.detectChanges();
             });
+        this.gmailSettingsService.initGmail(() => this.initGmailClient());
+        this.profileService.getSignatureHtml()
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe((result) => {
+                this.signatureHtml = result;
+                this._initialSignatureHtml = result;
+            });
 
         this.testEmailAddress = this.appSessionService.user.emailAddress;
     }
@@ -197,25 +216,49 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
 
     save(): void {
         this.modalDialog.startLoading();
-        (this.currentTab == this.ls.l('Email') ?
-            this.profileService.updateEmailSettings(this.userEmailSettings).pipe(tap(() => {
+        let saveObs: Observable<void>;
+        if (this.currentTab == this.ls.l('SMTP')) {
+            saveObs = this.profileService.updateEmailSettings(this.userEmailSettings).pipe(tap(() => {
                 sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
-            })) : this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user))
-        ).pipe(finalize(() => this.modalDialog.finishLoading())).subscribe(() => {
-            this.appSessionService.user.name = this.user.name;
-            this.appSessionService.user.surname = this.user.surname;
-            this.appSessionService.user.userName = this.user.name;
-            this.appSessionService.user.emailAddress = this.user.emailAddress;
-            this.notifyService.info(this.ls.l('SavedSuccessfully'));
-            this._initialEmailSettings = cloneDeep(this.userEmailSettings);
-            this._initialUserSettings = cloneDeep(this.user);
-            this.modalSave.emit(null);
-            if (abp.clock.provider.supportsMultipleTimezone && this._initialTimezone !== this.user.timezone) {
-                this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
-                    window.location.reload();
-                });
-            }
-        });
+            }));
+        }
+        else if (this.currentTab == this.ls.l('Profile')) {
+            saveObs = this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user));
+        }
+        else if (this.currentTab == this.ls.l('Gmail')) {
+            let obj = new GmailSettingsEditDto();
+            obj.init(this.gmailSettings);
+            obj.forUser = true;
+            saveObs = this.googleService.updateGmailSettings(obj);
+        }
+        else if (this.currentTab == this.ls.l('Signature')) {
+            saveObs = this.profileService.updateSignatureHtml(new UpdateSignatureDto({ signatureHtml: this.signatureHtml }));
+        }
+        else {
+            return;
+        }
+
+        saveObs
+            .pipe(
+                finalize(() => this.modalDialog.finishLoading())
+            )
+            .subscribe(() => {
+                this.appSessionService.user.name = this.user.name;
+                this.appSessionService.user.surname = this.user.surname;
+                this.appSessionService.user.userName = this.user.name;
+                this.appSessionService.user.emailAddress = this.user.emailAddress;
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                this._initialEmailSettings = cloneDeep(this.userEmailSettings);
+                this._initialUserSettings = cloneDeep(this.user);
+                this._initialGmailSettings = cloneDeep(this.gmailSettings);
+                this._initialSignatureHtml = this.signatureHtml;
+                this.modalSave.emit(null);
+                if (abp.clock.provider.supportsMultipleTimezone && this._initialTimezone !== this.user.timezone) {
+                    this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
+                        window.location.reload();
+                    });
+                }
+            });
     }
 
     sendTestEmail(): void {
@@ -237,9 +280,17 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         return JSON.stringify(this.userEmailSettings) != JSON.stringify(this._initialEmailSettings);
     }
 
+    isGmailSettingsChanged(): boolean {
+        return JSON.stringify(this.gmailSettings) != JSON.stringify(this._initialGmailSettings);
+    }
+
+    isSignatureChanged(): boolean {
+        return this._initialSignatureHtml != this.signatureHtml;
+    }
+
     checkTabSwitchAllowed(): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            if (this.currentTab == this.ls.l('Email')) {
+            if (this.currentTab == this.ls.l('SMTP')) {
                 if (this.isEmailSettingsChanged())
                     this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
                         if (isConfirmed) {
@@ -261,20 +312,87 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                     });
                 else
                     resolve(true);
+            } else if (this.currentTab == this.ls.l('Gmail')) {
+                if (this.isGmailSettingsChanged())
+                    this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
+                        if (isConfirmed) {
+                            this.gmailSettings = cloneDeep(this._initialGmailSettings);
+                            this.changeDetectorRef.detectChanges();
+                        }
+                        resolve(isConfirmed);
+                    });
+                else
+                    resolve(true);
+            } else if (this.currentTab == this.ls.l('Signature')) {
+                if (this.isSignatureChanged())
+                    this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
+                        if (isConfirmed) {
+                            this.signatureHtml = cloneDeep(this._initialSignatureHtml);
+                            this.changeDetectorRef.detectChanges();
+                        }
+                        resolve(isConfirmed);
+                    });
+                else
+                    resolve(true);
             } else
                 resolve(true);
         });
     }
 
+    initGmailClient() {
+        this.modalDialog.startLoading();
+        this.googleService.getGmailSettings(true)
+            .pipe(
+                finalize(() => this.modalDialog.finishLoading())
+            )
+            .subscribe(res => {
+                this.gmailSettings = res;
+                this._initialGmailSettings = cloneDeep(this.gmailSettings);
+
+                this.gmailSettingsService.initGmailClient(this.gmailSettings.clientId, (response) => {
+                    this.modalDialog.startLoading();
+                    this.googleService.setupGmail(true, response.code)
+                        .pipe(
+                            finalize(() => this.modalDialog.finishLoading())
+                        )
+                        .subscribe(() => {
+                            this.gmailSettings.isConfigured = this._initialGmailSettings.isConfigured = true;
+                            this.changeDetectorRef.detectChanges();
+                        });
+                });
+
+                this.changeDetectorRef.detectChanges();
+            });
+    }
+
+    getAuthCode() {
+        this.gmailSettingsService.getAuthCode();
+    }
+
+    disconnedGmail() {
+        this.gmailSettingsService.disconnedGmail(true, () => {
+            this.gmailSettings.isConfigured = this._initialGmailSettings.isConfigured = false;
+            this.gmailSettings.isEnabled = this._initialGmailSettings.isEnabled = false;
+            this.changeDetectorRef.detectChanges();
+        });
+    }
+
+    sendGmailTestEmail(): void {
+        if (!this.gmailSettings.isConfigured)
+            return;
+
+        this.gmailSettingsService.sendTestEmail(this.testEmailAddress, this.gmailSettings.defaultFromAddress, this.gmailSettings.defaultFromDisplayName, true);
+    }
+
     onTabChanged(event) {
         this.currentTab = event.tab.textLabel;
-        this.buttons[0].disabled = ![this.ls.l('Email'), this.ls.l('Profile')].includes(this.currentTab);
+        this.buttons[0].disabled = ![this.ls.l('SMTP'), this.ls.l('Profile'), this.ls.l('Gmail'), this.ls.l('Signature')].includes(this.currentTab);
         this.changeDetectorRef.detectChanges();
     }
 
     checkCloseAllowed = () => {
         return new Promise((resolve, reject) => {
-            if (this.isUserSettingsChanged() || this.isEmailSettingsChanged())
+            if (this.isUserSettingsChanged() || this.isEmailSettingsChanged() || this.isGmailSettingsChanged() || this.isSignatureChanged())
                 this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
                     resolve(isConfirmed);
                 });
