@@ -392,23 +392,16 @@ export class PackageChooserComponent implements OnInit {
         }
     }
 
-    getSelectedPeriod(): number {
+    getSelectedPeriodIndex(): number {
         const periodCount = this.getSliderPointCount();
-        
-        if (periodCount == this.MAX_PERIOD_COUNT)
-            return this.selectedBillingPeriod;
-        else if (periodCount == 1)
+
+        if (periodCount == 1)
             return this.MAX_PERIOD_COUNT - 1;
-        else if (
-            this.showSelectedProductPeriod(RecurringPaymentFrequency.Annual) &&
+        else if (periodCount < this.MAX_PERIOD_COUNT &&
+            this.selectedBillingPeriod != BillingPeriod.Monthly &&
             this.showSelectedProductPeriod(RecurringPaymentFrequency.LifeTime)
         ) return Number(this.selectedBillingPeriod) - 1;
-        else if (
-            this.showSelectedProductPeriod(RecurringPaymentFrequency.Monthly) &&
-            this.showSelectedProductPeriod(RecurringPaymentFrequency.LifeTime)
-        ) return this.selectedBillingPeriod == BillingPeriod.Monthly ? 
-            this.selectedBillingPeriod : (Number(this.selectedBillingPeriod) - 1);
-
+        
         return this.selectedBillingPeriod;
     }
 
