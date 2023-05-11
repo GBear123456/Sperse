@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
 
 /** Third party imports */
 import { Observable, throwError } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError, finalize, tap } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -65,9 +65,14 @@ export class EmailSettingsComponent extends SettingsComponentBase {
     }
 
     getSaveObs(): Observable<any> {
-        return this.tenantSettingsService.updateEmailSettings(this.emailSettings).pipe(catchError(error => {
-            this.checkHandlerErrorWarning(true);
-            return throwError(error);
-        }));
+        return this.tenantSettingsService.updateEmailSettings(this.emailSettings).pipe(
+            catchError(error => {
+                this.checkHandlerErrorWarning(true);
+                return throwError(error);
+            }),
+            tap(() => {
+                sessionStorage.removeItem('SupportedFrom' + this.appSession.userId);
+            })
+        );
     }
 }

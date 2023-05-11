@@ -52,7 +52,7 @@ export class GmailSettingsService {
 
             callback: (response) => {
                 if (!response.scope || response.scope.indexOf('https://www.googleapis.com/auth/gmail.send') < 0) {
-                    this.message.info('Please allow sending email on your behalf');
+                    this.message.info('Please allow sending emails on your behalf');
                     return;
                 }
 
