@@ -54,8 +54,7 @@ export class GmailSettingsComponent extends SettingsComponentBase {
                             finalize(() => this.finishLoading())
                         )
                         .subscribe(() => {
-                            this.gmailSettings.isConfigured = true;
-                            this.changeDetection.detectChanges();
+                            this.initClient();
                         });
                 });
 
@@ -71,6 +70,7 @@ export class GmailSettingsComponent extends SettingsComponentBase {
         this.gmailSettingsService.disconnedGmail(false, () => {
             this.gmailSettings.isConfigured = false;
             this.gmailSettings.isEnabled = false;
+            this.gmailSettings.defaultFromAddress = null;
             this.changeDetection.detectChanges();
         });
     }

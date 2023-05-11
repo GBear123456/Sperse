@@ -356,8 +356,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                             finalize(() => this.modalDialog.finishLoading())
                         )
                         .subscribe(() => {
-                            this.gmailSettings.isConfigured = this._initialGmailSettings.isConfigured = true;
-                            this.changeDetectorRef.detectChanges();
+                            this.initGmailClient();
                         });
                 });
 
@@ -373,6 +372,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.gmailSettingsService.disconnedGmail(true, () => {
             this.gmailSettings.isConfigured = this._initialGmailSettings.isConfigured = false;
             this.gmailSettings.isEnabled = this._initialGmailSettings.isEnabled = false;
+            this.gmailSettings.defaultFromAddress = this._initialGmailSettings.defaultFromAddress = null;
             this.changeDetectorRef.detectChanges();
         });
     }
