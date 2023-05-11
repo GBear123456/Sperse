@@ -41,7 +41,8 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.MemberSettingsServiceProxy,
         ApiServiceProxies.CommissionServiceProxy,
         ApiServiceProxies.TenantHostServiceProxy,
-        ApiServiceProxies.EmailSmtpSettingsServiceProxy,
+        ApiServiceProxies.EmailSettingsTestServiceProxy,
+        ApiServiceProxies.GoogleServiceProxy,
         ApiServiceProxies.EmailTemplateServiceProxy
     ]
 })
