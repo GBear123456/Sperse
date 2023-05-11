@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -86,6 +86,8 @@ export class GmailSettingsComponent extends SettingsComponentBase {
         let obj = new GmailSettingsEditDto();
         obj.init(this.gmailSettings);
         obj.forUser = false;
-        return this.googleService.updateGmailSettings(obj);
+        return this.googleService.updateGmailSettings(obj).pipe(tap(() => {
+            sessionStorage.removeItem('SupportedFrom' + this.appSession.userId);
+        }));
     }
 }

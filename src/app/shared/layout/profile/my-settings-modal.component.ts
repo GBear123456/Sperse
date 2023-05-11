@@ -229,7 +229,9 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             let obj = new GmailSettingsEditDto();
             obj.init(this.gmailSettings);
             obj.forUser = true;
-            saveObs = this.googleService.updateGmailSettings(obj);
+            saveObs = this.googleService.updateGmailSettings(obj).pipe(tap(() => {
+                sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
+            }));
         }
         else if (this.currentTab == this.ls.l('Signature')) {
             saveObs = this.profileService.updateSignatureHtml(new UpdateSignatureDto({ signatureHtml: this.signatureHtml }));
