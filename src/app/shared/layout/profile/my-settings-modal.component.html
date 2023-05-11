@@ -143,7 +143,7 @@
                         </div>
                         <div class="form-group">
                             <label for="DefaultFromAddress">{{ls.l("DefaultFromAddress")}}</label>
-                            <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" [(ngModel)]="gmailSettings.defaultFromAddress" maxlength="100">
+                            <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" disabled [value]="gmailSettings.defaultFromAddress" maxlength="100">
                         </div>
                         <div class="form-group">
                             <label for="DefaultFromDisplayName">{{ls.l("DefaultFromDisplayName")}}</label>

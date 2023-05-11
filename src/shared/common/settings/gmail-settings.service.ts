@@ -26,7 +26,6 @@ export class GmailSettingsService {
         private message: MessageService,
         private loadingService: LoadingService
     ) {
-        console.log(new Date());
     }
 
     initGmail(callback) {
@@ -46,13 +45,17 @@ export class GmailSettingsService {
         if (!clientId)
             return;
 
-        console.log(this.client);
         this.client = google.accounts.oauth2.initCodeClient({
             client_id: clientId,
-            scope: 'https://www.googleapis.com/auth/gmail.send',
+            scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.send',
             ux_mode: 'popup',
 
             callback: (response) => {
+                if (!response.scope || response.scope.indexOf('https://www.googleapis.com/auth/gmail.send') < 0) {
+                    this.message.info('Please allow sending email on your behalf');
+                    return;
+                }
+
                 callback(response);
             },
         });
