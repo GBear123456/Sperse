@@ -55,6 +55,11 @@
                 <email [settings]="emailSettings$ | async"></email>
             </ng-container>
         </mat-step>
+        <mat-step #gmailStep>
+            <ng-container *ngIf="stepper.selected === gmailStep">
+                <gmail-settings></gmail-settings>
+            </ng-container>
+        </mat-step>
         <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #memberPortalStep>
             <member-portal></member-portal>
         </mat-step>
