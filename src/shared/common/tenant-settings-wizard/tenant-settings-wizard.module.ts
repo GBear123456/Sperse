@@ -26,6 +26,7 @@ import { AppearanceComponent } from '@shared/common/tenant-settings-wizard/appea
 import { GeneralSettingsComponent } from '@shared/common/tenant-settings-wizard/general-settings/general-settings.component';
 import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.module';
 import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/email.component';
+import { GmailSettingsComponent } from './gmail-settings/gmail-settings.component';
 import { SecurityComponent } from '@shared/common/tenant-settings-wizard/security/security.component';
 import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard/tenant-management/tenant-management.component';
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
@@ -68,6 +69,7 @@ import { SourceContactListModule } from '@shared/common/source-contact-list/sour
         AppearanceComponent,
         GeneralSettingsComponent,
         EmailComponent,
+        GmailSettingsComponent,
         SecurityComponent,
         TenantManagementComponent,
         MemberPortalComponent,

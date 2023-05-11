@@ -42,6 +42,7 @@ import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
 import { SecurityComponent } from '@shared/common/tenant-settings-wizard/security/security.component';
 import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/email.component';
+import { GmailSettingsComponent } from '@shared/common/tenant-settings-wizard/gmail-settings/gmail-settings.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -64,6 +65,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(UserManagementComponent) userManagementComponent: UserManagementComponent;
     @ViewChild(SecurityComponent) securityComponent: SecurityComponent;
     @ViewChild(EmailComponent) emailComponent: EmailComponent;
+    @ViewChild(GmailSettingsComponent) gmailSettingsComponent: GmailSettingsComponent;
     @ViewChild(MemberPortalComponent) memberPortalComponent: MemberPortalComponent;
     @ViewChild(InvoiceSettingsComponent) invoiceSettingsComponent: InvoiceSettingsComponent;
     @ViewChild(CommissionsComponent) commissionsComponent: CommissionsComponent;
@@ -176,6 +178,13 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 name: 'email',
                 text: this.ls.l('EmailSmtp'),
                 getComponent: () => this.emailComponent,
+                saved: false,
+                visible: true
+            },
+            {
+                name: 'gmail',
+                text: this.ls.l('Gmail'),
+                getComponent: () => this.gmailSettingsComponent,
                 saved: false,
                 visible: true
             },
