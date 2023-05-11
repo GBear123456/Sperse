@@ -291,9 +291,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.Pipeline
     );
     private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
-    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
-        this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
-    }));
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(
+        tap((layoutType) => {
+            this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;        
+            this.initLayoutDataSource();
+        })
+    );
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
         this.pipelineService.compactView$,
@@ -958,9 +961,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private handleDataGridUpdate() {
         this.listenForUpdate(DataLayoutType.DataGrid).pipe(
-            skip(1), debounceTime(300)
+            skip(1), 
+            debounceTime(300)
         ).subscribe(() => {
-            this.processFilterInternal();
+            if (this.isDataLoaded)
+                this.processFilterInternal();
         });
     }
 
@@ -1248,8 +1253,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
         this.initToolbarConfig();
-        this.pipelineService.toggleDataLayoutType(this.dataLayoutType.value);
-        this.initLayoutDataSource();
+        this.pipelineService.toggleDataLayoutType(this.dataLayoutType.value);        
         if (!this.showPipeline) {
             if (this.pipelineComponent) {
                 this.pipelineComponent.deselectAllCards();
