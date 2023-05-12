@@ -77,6 +77,7 @@ import { DomainSettingsComponent } from './settings/shared/domain-settings/domai
 import { StripeSettingsComponent } from './settings/shared/stripe-settings/stripe-settings.component';
 import { PaypalSettingsComponent } from './settings/shared/paypal-settings/paypal-settings.component';
 import { FacebookSettingsComponent } from './settings/shared/facebook-settings/facebook-settings.component';
+import { GoogleSettingsComponent } from './settings/shared/google-settings/google-settings.component';
 import { LinkedInSettingsComponent } from './settings/shared/linkedin-settings/linkedin-settings.component';
 import { DiscordSettingsComponent } from './settings/shared/discord-settings/discord-settings.component';
 import { YTelSettingsComponent } from './settings/shared/ytel-settings/ytel-settings.component';
@@ -188,6 +189,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         StripeSettingsComponent,
         PaypalSettingsComponent,
         FacebookSettingsComponent,
+        GoogleSettingsComponent,
         LinkedInSettingsComponent,
         DiscordSettingsComponent,
         YTelSettingsComponent,
