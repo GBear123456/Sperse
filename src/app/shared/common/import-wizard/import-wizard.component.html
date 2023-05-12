@@ -174,11 +174,11 @@
                 </div>
 
                 <div *dxTemplate="let cellData of 'datetimeCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
-                    {{cellData.value | date : formatting.dateTime : userTimezone}}
+                    {{checkFieldInvalid(cellData) ? cellData.value : (cellData.value | date : formatting.dateTime : userTimezone)}}
                 </div>
 
                 <div *dxTemplate="let cellData of 'dateCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
-                    {{cellData.value | date : formatting.date}}
+                    {{checkFieldInvalid(cellData) ? cellData.value : (cellData.value | date : formatting.date)}}
                 </div>
 
                 <div *dxTemplate="let cellData of 'commonCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
