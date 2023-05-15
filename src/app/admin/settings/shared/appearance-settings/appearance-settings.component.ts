@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import kebabCase from 'lodash/kebabCase';
 
@@ -65,7 +65,8 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
             this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
             this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))),
-            this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))),
+            this.signUpPagesEnabled ?
+                this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
             this.faviconsUploader.uploadFile().pipe(tap((res) => {
                 if (res && res.result && res.result.faviconBaseUrl && res.result.favicons && res.result.favicons.length) {
                     this.tenant.tenantCustomizations = <any>{ ...this.tenant.tenantCustomizations, ...res.result };
