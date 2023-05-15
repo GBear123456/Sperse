@@ -35,7 +35,8 @@
     <div class="form-group">
         <dx-check-box id="Setting_EnableSignUpPage"
                       [text]="ls.l('EnableSignUpPage')"
-                      [(value)]="tenantSettings.isSignUpPageEnabled">
+                      [(value)]="tenantSettings.isSignUpPageEnabled"
+                      (onInitialized)="initSignUpPageEnabled()">
         </dx-check-box>
     </div>
     <div class="form-group">
