@@ -104,6 +104,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     );
     securitySettings$: Observable<SecuritySettingsEditDto> = this.tenantSettingsService.getSecuritySettings();
     emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
+    generalSettingsChanged: Boolean;
     timezoneChanged: Boolean;
     countryChanged: Boolean;
 
@@ -129,7 +130,11 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             if (this.countryChanged)
                 this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Country'))).done(() => {
                     window.location.reload();
-            });
+                });
+            if (this.generalSettingsChanged)
+                this.messageService.info(this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('General'))).done(() => {
+                    window.location.reload();
+                });            
         });
     }
 
@@ -264,6 +269,8 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     }
 
     onOptionChanged(option: string) {
+        if (option == 'SignUpPageEnabled')
+            this.generalSettingsChanged = true;
         if (option == 'timezone')
             this.timezoneChanged = true;
         if (option == 'defaultCountry')

@@ -30,6 +30,7 @@ export class UserManagementSettingsComponent extends SettingsComponentBase {
     hostSettings: HostUserManagementSettingsEditDto;
 
     EmailTemplateType = EmailTemplateType;
+    initialSignUpPageEnabled: boolean;
 
     constructor(
         _injector: Injector,
@@ -59,6 +60,7 @@ export class UserManagementSettingsComponent extends SettingsComponentBase {
                 )
                 .subscribe(res => {
                     this.tenantSettings = res;
+                    this.initialSignUpPageEnabled = res.isSignUpPageEnabled;
                     this.changeDetection.detectChanges();
                 });
         }
@@ -72,5 +74,14 @@ export class UserManagementSettingsComponent extends SettingsComponentBase {
         return this.isHost
             ? this.hostSettingsService.updateUserManagementSettings(this.hostSettings)
             : this.tenantSettingsService.updateUserManagementSettings(this.tenantSettings);
+    }
+
+    afterSave() {
+        if (this.initialSignUpPageEnabled !== this.tenantSettings.isSignUpPageEnabled
+        ) {
+            this.message.info(this.l('SettingsChangedRefreshPageNotification', this.l('General'))).done(function () {
+                window.location.reload();
+            });
+        }
     }
 }

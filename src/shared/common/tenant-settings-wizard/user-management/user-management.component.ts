@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, ViewChild, EventEmitter, AfterViewInit } from '@angular/core';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { Observable, throwError } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
@@ -18,20 +19,26 @@ import { ContactGroupTemplatesComponent } from '@app/crm/shared/email-template-d
     styleUrls: ['../shared/styles/common.less', 'user-management.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserManagementComponent implements ITenantSettingsStepComponent {
+export class UserManagementComponent implements ITenantSettingsStepComponent, AfterViewInit {
     @ViewChild(ContactGroupTemplatesComponent) contactGroupTemplates: ContactGroupTemplatesComponent;
 
     @Input() tenantSettings: TenantUserManagementSettingsEditDto;
     @Input() hostSettings: HostUserManagementSettingsEditDto;
+    @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
 
     EmailTemplateType = EmailTemplateType;
+    initialSignUpPageEnabled: boolean;
 
     constructor(
         private hostSettingsServiceProxy: HostSettingsServiceProxy,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         public ls: AppLocalizationService,
         public dialog: MatDialog
-    ) { }
+    ) {}
+
+    ngAfterViewInit() {
+        this.initialSignUpPageEnabled = this.tenantSettings.isSignUpPageEnabled;
+    }
 
     save(): Observable<void> {
         if (!this.contactGroupTemplates.validate()) {
@@ -39,7 +46,9 @@ export class UserManagementComponent implements ITenantSettingsStepComponent {
         }
 
         return this.tenantSettings
-            ? this.tenantSettingsServiceProxy.updateUserManagementSettings(this.tenantSettings)
-            : this.hostSettingsServiceProxy.updateUserManagementSettings(this.hostSettings);
+            ? this.tenantSettingsServiceProxy.updateUserManagementSettings(this.tenantSettings).pipe(tap(() => {
+                if (this.initialSignUpPageEnabled != this.tenantSettings.isSignUpPageEnabled)
+                    this.onOptionChanged.emit('SignUpPageEnabled');
+            })) : this.hostSettingsServiceProxy.updateUserManagementSettings(this.hostSettings);
     }
 }

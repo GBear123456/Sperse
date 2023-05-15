@@ -39,7 +39,8 @@
             <ng-container *ngIf="stepper.selected === userManagementStep">
                 <dx-scroll-view [height]="529">
                     <user-management [hostSettings]="hostUserManagementSettings$ | async"
-                                     [tenantSettings]="tenantUserManagementSettings$ | async">
+                                     [tenantSettings]="tenantUserManagementSettings$ | async"
+                                     (onOptionChanged)="onOptionChanged($event)">
                     </user-management>
                 </dx-scroll-view>
             </ng-container>
