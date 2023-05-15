@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, Output, ViewChild, EventEmitter, AfterViewInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { Observable, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -19,7 +19,7 @@ import { ContactGroupTemplatesComponent } from '@app/crm/shared/email-template-d
     styleUrls: ['../shared/styles/common.less', 'user-management.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserManagementComponent implements ITenantSettingsStepComponent, AfterViewInit {
+export class UserManagementComponent implements ITenantSettingsStepComponent {
     @ViewChild(ContactGroupTemplatesComponent) contactGroupTemplates: ContactGroupTemplatesComponent;
 
     @Input() tenantSettings: TenantUserManagementSettingsEditDto;
@@ -36,7 +36,7 @@ export class UserManagementComponent implements ITenantSettingsStepComponent, Af
         public dialog: MatDialog
     ) {}
 
-    ngAfterViewInit() {
+    initSignUpPageEnabled() {
         this.initialSignUpPageEnabled = this.tenantSettings.isSignUpPageEnabled;
     }
 
