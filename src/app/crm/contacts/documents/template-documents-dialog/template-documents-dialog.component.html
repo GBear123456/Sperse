@@ -11,16 +11,17 @@
             <dx-file-manager width="360px"
                              [height]="getHeight()"
                              [allowedFileExtensions]="[]"
-                             [fileProvider]="selectedIndex == 1 ? documentsFileProvider : templatesFileProvider"
+                             [fileSystemProvider]="selectedIndex == 1 ? documentsFileProvider : templatesFileProvider"
                              [itemView]="{mode: layout}"
                              (onContentReady)="onContentReady()">
-                <dxo-permissions [create]="false"
-                                 [copy]="false"
-                                 [move]="false"
-                                 [remove]="false"
-                                 [rename]="false"
-                                 [upload]="false"
-                                 [download]="false">
+                <dxo-permissions 
+                             [create]="false"
+                             [copy]="false"
+                             [move]="false"
+                             [delete]="false"
+                             [rename]="false"
+                             [upload]="false"
+                             [download]="false">
                 </dxo-permissions>
             </dx-file-manager>
         </div>
