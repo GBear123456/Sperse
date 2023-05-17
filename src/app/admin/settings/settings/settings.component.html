@@ -131,6 +131,11 @@
                             <facebook-settings></facebook-settings>
                         </ng-container>
                     </mat-step>
+                    <mat-step *ngIf="isSocialLoginEnabled('Google')" #googleStep>
+                        <ng-container *ngIf="stepper.selected === googleStep">
+                            <google-settings></google-settings>
+                        </ng-container>
+                    </mat-step>
                     <mat-step *ngIf="isSocialLoginEnabled('Discord')" #discordStep>
                         <ng-container *ngIf="stepper.selected === discordStep">
                             <discord-settings></discord-settings>

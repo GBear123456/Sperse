@@ -101,6 +101,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
             { key: 'Sales Talk', visible: !this.appService.isHostTenant && this.isSalesTalkEnabled },
             { key: 'LinkedIn', visible: this.isSocialLoginEnabled('LinkedIn') },
             { key: 'Facebook', visible: this.isSocialLoginEnabled('Facebook') },
+            { key: 'Google', visible: this.isSocialLoginEnabled('Google') },
             { key: 'Discord', visible: this.isSocialLoginEnabled('Discord') }
         ];
 
