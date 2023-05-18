@@ -321,7 +321,7 @@
                 </span>
                 </div>
             </dx-validation-group>
-            <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidators')">
+            <dx-validation-group *ngIf="contact?.emails?.length" (onInitialized)="initValidationGroup($event, 'emailValidators')">
                 <div class="field email">
                     <label class="email-label">{{ls.l('Email')}}</label>
                     <div>
@@ -369,7 +369,7 @@
                     </div>
                 </div>
             </dx-validation-group>
-            <dx-validation-group (onInitialized)="initValidationGroup($event, 'phoneValidators')">
+            <dx-validation-group *ngIf="contact?.phones?.length" (onInitialized)="initValidationGroup($event, 'phoneValidators')">
                 <div class="field phone H">
                     <label class="phone-label">{{ls.l('Phone')}}</label>
                     <div>
@@ -425,7 +425,7 @@
                     </div>
                 </div>
             </dx-validation-group>
-            <dx-validation-group *ngIf="!hideLinksField" (onInitialized)="initValidationGroup($event, 'linkValidators')">
+            <dx-validation-group *ngIf="!hideLinksField && contact?.links?.length" (onInitialized)="initValidationGroup($event, 'linkValidators')">
                 <div class="field">
                     <label class="link-label">{{ls.l('Links')}}</label>
                     <div>
@@ -488,7 +488,7 @@
                     </div>
                 </div>
             </dx-validation-group>
-            <dx-validation-group>
+            <dx-validation-group *ngIf="contact?.addresses?.length">
                 <div class="field">
                     <label class="address-label">{{ls.l('Address')}}</label>
                     <div>

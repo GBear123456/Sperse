@@ -3,6 +3,8 @@
     <hr>
     <dx-data-grid 
         [dataSource]="dataSource"
+        [columnChooser]="{enabled: false}"
+        [toolbar]="{disabled: true}"
         [showColumnHeaders]="false"
         [showColumnLines]="false">
         <dxi-column dataField="id" dataType="number" [visible]="false"></dxi-column>
