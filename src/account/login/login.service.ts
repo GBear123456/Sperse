@@ -201,7 +201,7 @@ export class LoginService {
             });
     }
 
-    externalAuthenticate(provider: ExternalLoginProvider): void {
+    externalAuthenticate(provider: ExternalLoginProvider, authCallback: (param: any) => void = null): void {
         this.ensureExternalLoginProviderInitialized(provider, () => {
             this.authService.stopTokenCheck();
             switch (provider.name) {
@@ -220,7 +220,10 @@ export class LoginService {
                                 throw (resp);
                             }
 
-                            this.googleLoginStatusChangeCallback(resp);
+                            if (authCallback)
+                                authCallback(resp.access_token);
+                            else
+                                this.googleLoginStatusChangeCallback(resp);
                         }
                     });
 
