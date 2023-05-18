@@ -1,6 +1,9 @@
 <h2>{{l('Google')}} {{l('Settings')}}</h2>
 <div *ngIf="googleSettings">
     <div *ngIf="!isHost">
+        <div *ngIf="googleSettings.isHostSettingsEnabled">
+            <external-auth-info></external-auth-info>
+        </div>
         <div class="form-group">
             <dx-check-box id="GoogleIsDeactivated"
                           [text]="l('Deactivate')"
