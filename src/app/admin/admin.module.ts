@@ -80,6 +80,7 @@ import { FacebookSettingsComponent } from './settings/shared/facebook-settings/f
 import { GoogleSettingsComponent } from './settings/shared/google-settings/google-settings.component';
 import { LinkedInSettingsComponent } from './settings/shared/linkedin-settings/linkedin-settings.component';
 import { DiscordSettingsComponent } from './settings/shared/discord-settings/discord-settings.component';
+import { ExternalAuthInfoComponent } from './settings/shared/helpers/external-auth-info/external-auth-info.component';
 import { YTelSettingsComponent } from './settings/shared/ytel-settings/ytel-settings.component';
 import { BugsnagSettingsComponent } from './settings/shared/bugsnag-settings/bugsnag-settings.component';
 import { SecuritySettingsComponent } from './settings/shared/security-settings/security-settings.component';
@@ -192,6 +193,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         GoogleSettingsComponent,
         LinkedInSettingsComponent,
         DiscordSettingsComponent,
+        ExternalAuthInfoComponent,
         YTelSettingsComponent,
         BugsnagSettingsComponent,
         SecuritySettingsComponent,
