@@ -15,8 +15,10 @@ import { MaskPipe } from 'ngx-mask';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ApplicationServiceProxy, SignUpMemberRequest, 
-    GetExternalUserDataOutput, ExternalUserDataServiceProxy, GetExternalUserDataInput } from '@shared/service-proxies/service-proxies';
+import {
+    ApplicationServiceProxy, SignUpMemberRequest,
+    GetExternalUserDataOutput, ExternalUserDataServiceProxy, GetExternalUserDataInput
+} from '@shared/service-proxies/service-proxies';
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ConditionsType } from '@shared/AppEnums';
@@ -29,7 +31,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: [
         './member-signup-form.component.less'
     ],
-    providers: [ ApplicationServiceProxy, LoginService, LifecycleSubjectsService, ExternalUserDataServiceProxy ],
+    providers: [ApplicationServiceProxy, LoginService, LifecycleSubjectsService, ExternalUserDataServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MemberSignupFormComponent implements OnInit, OnDestroy {
@@ -70,7 +72,8 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
         this.loginService.externalLoginProviders$.subscribe((providers: ExternalLoginProvider[]) => {
             let linkedInProvider = providers.find(x => x.name == ExternalLoginProvider.LINKEDIN && !!x.clientId);
             let discordProvider = providers.find(x => x.name == ExternalLoginProvider.DISCORD && !!x.clientId);
-            this.showExternalLogin = !!linkedInProvider || !!discordProvider;
+            let googleProvider = providers.find(x => x.name == ExternalLoginProvider.GOOGLE && !!x.clientId);
+            this.showExternalLogin = !!linkedInProvider || !!discordProvider || !!googleProvider;
 
             this.activatedRoute.queryParamMap.pipe(
                 first()
@@ -86,15 +89,7 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
 
                     this.loginService.clearOAuth2Params()
                         .then(() => {
-                            this.getUserData(exchangeCode, providerName)
-                                .pipe(finalize(() => abp.ui.clearBusy()))
-                                .subscribe((result: GetExternalUserDataOutput) => {
-                                    this.registerData.firstName = result.name;
-                                    this.registerData.lastName = result.surname;
-                                    this.registerData.email = result.emailAddress;
-
-                                    this.messageService.info(`The data provided by ${providerName} has been successfully received. Please check the data and finalize account creation.`);
-                                });
+                            this.getUserData(exchangeCode, providerName);
                         });
                 } else if (providerName)
                     this.loginService.clearOAuth2Params();
@@ -103,22 +98,32 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
 
     }
 
-    getUserData(exchangeCode, providerName): Observable<GetExternalUserDataOutput> {
+    getUserData(exchangeCode, providerName) {
         let state = this.loginService.lastOAuth2Result;
+        let observable: Observable<GetExternalUserDataOutput>;
         if (state && state.userNotFound) //user was redirected from signin
-            return of(new GetExternalUserDataOutput({
+            observable = of(new GetExternalUserDataOutput({
                 name: state.firstName,
                 surname: state.lastName,
                 emailAddress: state.email,
                 additionalData: null
             }));
         else
-            return this.externalUserDataProxy.getUserData(new GetExternalUserDataInput({
+            observable = this.externalUserDataProxy.getUserData(new GetExternalUserDataInput({
                 provider: providerName,
                 exchangeCode: exchangeCode,
                 loginReturnUrl: this.loginService.getRedirectUrl(providerName),
                 options: undefined
             }));
+
+        observable.pipe(finalize(() => abp.ui.clearBusy()))
+            .subscribe((result: GetExternalUserDataOutput) => {
+                this.registerData.firstName = result.name;
+                this.registerData.lastName = result.surname;
+                this.registerData.email = result.emailAddress;
+
+                this.messageService.info(`The data provided by ${providerName} has been successfully received. Please check the data and finalize account creation.`);
+            });
     }
 
     ngOnInit() {
@@ -163,7 +168,7 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
             event.preventDefault();
     }
 
-    onZipCodeInput (e) {
+    onZipCodeInput(e) {
         if (this.showZipMask) {
             if (e.event.target.value.length > 10)
                 e.event.target.value = e.event.target.value.slice(0, 10);
@@ -195,7 +200,7 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
 
     externalLogin(provider: ExternalLoginProvider) {
         if (this.isAgreeWithTerms)
-            this.loginService.externalAuthenticate(provider);
+            this.loginService.externalAuthenticate(provider, (token) => this.getUserData(token, provider.name));
         else {
             this.agreeWithTermsCheckBox['validator'].instance.validate();
         }
