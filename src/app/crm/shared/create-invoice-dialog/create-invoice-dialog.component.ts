@@ -1220,8 +1220,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         this.paymentMethodsCheckReload = false;
         this.paymentMethods.forEach(v => v.disabled = true);
-
-        if (!this.contactId || this.lines.length == 0 || this.lines.some(v => (!v['productCode'] && !v['description']) || !v['unitId'] || !v['quantity'] || !v['rate']))
+        if (!this.contactId || this.lines.length == 0 || this.lines.some(v => (!v['productCode'] && !v['description']) || !v['unitId'] || !v['quantity'] || isNaN(v['rate'])))
             return;
 
         this.paymentMethodsCheckLoading = true;

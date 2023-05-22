@@ -119,12 +119,19 @@ export class PackageChooserComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        let packagesConfig$: Observable<ProductInfo[]>;
         if (this.upgradeProductId) {
-            this.packagesConfig$ = this.paymentService.getUpgradeConfig(this.upgradeProductId);
+            packagesConfig$ = this.paymentService.getUpgradeConfig(this.upgradeProductId);
         } else {
-            this.packagesConfig$ = this.productsGroupName == AppConsts.PRODUCT_GROUP_ADD_ON ? 
+            packagesConfig$ = this.productsGroupName == AppConsts.PRODUCT_GROUP_ADD_ON ? 
                 this.paymentService.addOnConfig$ : this.paymentService.packagesConfig$;
         }
+
+        this.packagesConfig$ = packagesConfig$.pipe(map(
+            (products: ProductInfo[]) => {
+                return products.filter((product: ProductInfo) => !product.productSubscriptionOptions.some(option => option.frequency == RecurringPaymentFrequency.OneTime))
+            }
+        ));
 
         forkJoin([
             this.localizationResolver.checkLoadLocalization(AppConsts.localization.defaultLocalizationSourceName),

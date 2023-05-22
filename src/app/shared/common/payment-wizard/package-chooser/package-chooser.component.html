@@ -2,7 +2,7 @@
     <ng-container *ngIf="packagesConfig$ | async">
         <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ productsGroupName == PRODUCT_GROUP_ADD_ON ? ls.l('ChooseAddOnPackage'): widgettitle }}</h2>
         <h3 class="subtitle">{{ subtitle }}</h3>
-        <div *ngIf="upgradeProductId || productsGroupName == PRODUCT_GROUP_ADD_ON; else sperseToggle" class="state-slider point{{getSliderPointCount()}}">
+        <div class="state-slider point{{getSliderPointCount()}}">
             <div class="captions">
                 <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Monthly)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }" (click)="toggle(billingPeriod.Monthly)">{{ ls.l('Monthly') }}</div>
                 <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Annual)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }" (click)="toggle(billingPeriod.Yearly)">{{ ls.l('Annually') }}</div>
@@ -12,18 +12,6 @@
                         [disabled]="true">
             </mat-slider>
         </div>
-        <ng-template #sperseToggle class="config-wrap">
-            <div class="sperse-toggle">
-                <div class="left" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }">{{ ls.l('Monthly') }}</div>
-                <mat-slide-toggle [checked]="selectedBillingPeriod === billingPeriod.Yearly"
-                                  (change)="billingPeriodChanged($event)">
-                </mat-slide-toggle>
-                <div class="right" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }">
-                    <p class="year-discount">{{ 'SAVE ' + yearDiscount + '%'}}<span> {{ ls.l('OrMore') }}</span></p>
-                    {{ ls.l('Annually') }}
-                </div>
-            </div>
-        </ng-template>
     </ng-container>
 </div>
 <ng-container *ngIf="packagesConfig$ | async">
