@@ -96,7 +96,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         ],
         removePlugins: 'elementspath',
         skin: 'moono-lisa', //kama,moono,moono-lisa
-        height: "70px"
+        height: "auto"
     };
     get isDefaultCountryCanada() {
         return AppConsts.defaultCountryCode == Country.Canada;
