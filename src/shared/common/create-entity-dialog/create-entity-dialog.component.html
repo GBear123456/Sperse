@@ -321,8 +321,8 @@
                 </span>
                 </div>
             </dx-validation-group>
-            <dx-validation-group *ngIf="contact?.emails?.length" (onInitialized)="initValidationGroup($event, 'emailValidators')">
-                <div class="field email">
+            <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidators')">
+                <div class="field email" *ngIf="contact?.emails?.length">
                     <label class="email-label">{{ls.l('Email')}}</label>
                     <div>
                         <div *ngFor="let email of contact.emails; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
@@ -369,8 +369,8 @@
                     </div>
                 </div>
             </dx-validation-group>
-            <dx-validation-group *ngIf="contact?.phones?.length" (onInitialized)="initValidationGroup($event, 'phoneValidators')">
-                <div class="field phone H">
+            <dx-validation-group (onInitialized)="initValidationGroup($event, 'phoneValidators')">
+                <div class="field phone H" *ngIf="contact?.phones?.length">
                     <label class="phone-label">{{ls.l('Phone')}}</label>
                     <div>
                         <div *ngFor="let phone of contact.phones; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
@@ -425,8 +425,8 @@
                     </div>
                 </div>
             </dx-validation-group>
-            <dx-validation-group *ngIf="!hideLinksField && contact?.links?.length" (onInitialized)="initValidationGroup($event, 'linkValidators')">
-                <div class="field">
+            <dx-validation-group (onInitialized)="initValidationGroup($event, 'linkValidators')">
+                <div class="field" *ngIf="!hideLinksField && contact?.links?.length">
                     <label class="link-label">{{ls.l('Links')}}</label>
                     <div>
                         <div *ngFor="let link of contact.links; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
@@ -488,8 +488,8 @@
                     </div>
                 </div>
             </dx-validation-group>
-            <dx-validation-group *ngIf="contact?.addresses?.length">
-                <div class="field">
+            <dx-validation-group>
+                <div class="field" *ngIf="contact?.addresses?.length">
                     <label class="address-label">{{ls.l('Address')}}</label>
                     <div>
                         <div *ngFor="let address of contact.addresses; index as i" class="editable-item">

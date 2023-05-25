@@ -36,7 +36,7 @@
                                  (onValueChanged)="updateValue($event.value, field.name)">
                     </dx-date-box>
                     <dx-check-box *ngSwitchCase="'bool'"
-                                  [value]="person[field.name]"
+                                  [value]="!!person[field.name]"
                                   (onValueChanged)="updateValue($event.value, field.name)">
                     </dx-check-box>
                     <dx-tag-box *ngSwitchCase="'list'"

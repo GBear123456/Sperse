@@ -957,11 +957,13 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     onCustomCompanyCreate(e) {
-        if (e.text)
-            setTimeout(() => {
+        this.company = '';
+        setTimeout(() => {
+            if (e.text) {
                 this.company = e.text;
                 this.changeDetectorRef.detectChanges();
-            }, 100);
+            }
+        });
     }
 
     onCommentKeyUp($event) {
