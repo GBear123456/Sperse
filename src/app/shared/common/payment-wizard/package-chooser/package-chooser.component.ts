@@ -177,7 +177,7 @@ export class PackageChooserComponent implements OnInit {
             this.packages = products.sort((prev: ProductInfo, next: ProductInfo) => {
                 let prevOption = this.getProductMonthlyOption(prev), 
                     nextOption = this.getProductMonthlyOption(next);
-                return prevOption.fee > nextOption.fee ? 1: -1;
+                return (prevOption ? prevOption.fee : 0) > (nextOption ? nextOption.fee : 0) ? 1: -1;
             });
             this.preselectPackage();
             // this.splitPackagesForFreeAndNotFree(packagesConfig);
