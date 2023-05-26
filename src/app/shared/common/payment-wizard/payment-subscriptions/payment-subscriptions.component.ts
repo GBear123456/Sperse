@@ -4,6 +4,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     EventEmitter,
+    AfterViewInit,
     Injector,
     Output
 } from '@angular/core';
@@ -32,9 +33,9 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [TenantSubscriptionServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaymentSubscriptionsComponent extends AppComponentBase {
+export class PaymentSubscriptionsComponent extends AppComponentBase implements AfterViewInit {
     formatting = AppConsts.formatting;
-    moduleSubscriptions = this.getDistinctList(this.appService.moduleSubscriptions).filter(item => item.statusId != 'D');
+    moduleSubscriptions: any[];
     @Output() onShowProducts: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(
@@ -46,6 +47,11 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
         private changeDetectionRef: ChangeDetectorRef
     ) {
         super(injector);
+    }
+
+    ngAfterViewInit() {
+        this.moduleSubscriptions = this.getDistinctList(this.appService.moduleSubscriptions).filter(item => item.statusId != 'D');        
+        this.changeDetectionRef.detectChanges();
     }
 
     getDistinctList(list) {
