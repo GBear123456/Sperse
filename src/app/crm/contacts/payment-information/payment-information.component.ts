@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Subscription, Observable, of, combineLatest } from 'rxjs';
@@ -62,12 +62,12 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     private readonly ident = 'PaymentInformation';
     constructor(
         private paymentServiceProxy: PaymentServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
         private contactService: ContactServiceProxy,
         private contactsService: ContactsService,
         private loadingService: LoadingService,
         public ls: AppLocalizationService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.contactInfoSubscription = this.contactsService.contactInfo$.pipe(
@@ -102,6 +102,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
                 const contactId = this.contactService['data'].contactInfo.id;
                 this.totalPaymentAmount = this.paymentServiceProxy['data'][contactId].totalPaymentAmount;
                 this.hasRecurringBilling = this.paymentServiceProxy['data'][contactId].hasRecurringBilling;
+                this.changeDetectorRef.detectChanges();
             }),
             publishReplay(),
             refCount()
