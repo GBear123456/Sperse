@@ -14,4 +14,10 @@
                        [showSpinButtons]="true">
         </dx-number-box>
     </div>
+    <div class="form-group">
+        <dx-check-box [readOnly]="isManageUnallowed"
+                      [text]="ls.l('EnableClientSubscriptionAutomaticCancel')"
+                      [(value)]="subsSettings.enableClientSubscriptionAutomaticCancel">
+        </dx-check-box>
+    </div>
 </div>
