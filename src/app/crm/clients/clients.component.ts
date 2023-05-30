@@ -1021,6 +1021,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             visibleIndex: -1,
             width: 40
         });
+        this.changeDetectorRef.detectChanges();
     }
 
     updateSelectedKeys(keys: number[]) {
