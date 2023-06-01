@@ -33,7 +33,7 @@ export class FilterServicesAndProductsComponent implements FilterComponent, Afte
     private readonly PRODUCTS_TAB_INDEX = 1;
 
     selectedTabIndex = this.PRODUCTS_TAB_INDEX;
-    showFilterTabs = this.userManagementService.isLayout(LayoutType.BankCode);
+    showFilterTabs = false;
 
     constructor(
         public ls: AppLocalizationService,
@@ -48,6 +48,9 @@ export class FilterServicesAndProductsComponent implements FilterComponent, Afte
                 this.selectedTabIndex = this.PRODUCTS_TAB_INDEX;
             else if (services && services.length > 0)
                 this.selectedTabIndex = this.SERVICES_TAB_INDEX;
+
+            this.showFilterTabs = !!services && !!products
+                && this.userManagementService.isLayout(LayoutType.BankCode);
         }
     }
 
