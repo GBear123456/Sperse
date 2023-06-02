@@ -36,7 +36,7 @@ export class WidgetHostTopStatsComponent extends WidgetComponentBaseComponent im
 
     loadHostTopStatsData = () => {
         this._hostDashboardServiceProxy
-            .getTopStatsData(this.selectedDateRange[0], this.selectedDateRange[1])
+            .getTopStatsData(this.selectedDateRange[0].toJSDate(), this.selectedDateRange[1].toJSDate())
             .subscribe((data) => {
                 this.topStatsData = data;
                 this.loading = false;
