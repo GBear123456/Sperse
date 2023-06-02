@@ -279,8 +279,6 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     }
 
     isEmailSettingsChanged(): boolean {
-        if (!this.userEmailSettings.signatureHtml)
-            this.userEmailSettings.signatureHtml = undefined;
         return JSON.stringify(this.userEmailSettings) != JSON.stringify(this._initialEmailSettings);
     }
 
