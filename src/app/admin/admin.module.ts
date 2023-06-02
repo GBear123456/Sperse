@@ -77,8 +77,10 @@ import { DomainSettingsComponent } from './settings/shared/domain-settings/domai
 import { StripeSettingsComponent } from './settings/shared/stripe-settings/stripe-settings.component';
 import { PaypalSettingsComponent } from './settings/shared/paypal-settings/paypal-settings.component';
 import { FacebookSettingsComponent } from './settings/shared/facebook-settings/facebook-settings.component';
+import { GoogleSettingsComponent } from './settings/shared/google-settings/google-settings.component';
 import { LinkedInSettingsComponent } from './settings/shared/linkedin-settings/linkedin-settings.component';
 import { DiscordSettingsComponent } from './settings/shared/discord-settings/discord-settings.component';
+import { ExternalAuthInfoComponent } from './settings/shared/helpers/external-auth-info/external-auth-info.component';
 import { YTelSettingsComponent } from './settings/shared/ytel-settings/ytel-settings.component';
 import { BugsnagSettingsComponent } from './settings/shared/bugsnag-settings/bugsnag-settings.component';
 import { SecuritySettingsComponent } from './settings/shared/security-settings/security-settings.component';
@@ -88,6 +90,7 @@ import { TenantManagementSettingsComponent } from './settings/shared/tenant-mana
 import { AppearanceSettingsComponent } from './settings/shared/appearance-settings/appearance-settings.component';
 import { MemberPortalSettingsComponent } from './settings/shared/member-portal-settings/member-portal-settings.component';
 import { SendgridSettingsComponent } from './settings/shared/sendgrid-settings/sendgrid-settings.component';
+import { GmailSettingsComponent } from './settings/shared/gmail-settings/gmail-settings.component';
 import { KlaviyoSettingsComponent } from './settings/shared/klaviyo-settings/klaviyo-settings.component';
 import { EpcvipLinkSettingsComponent } from './settings/shared/epcvip-link-settings/epcvip-link-settings.component';
 import { EpcvipEmailSettingsComponent } from './settings/shared/epcvip-email-settings/epcvip-email-settings.component';
@@ -187,8 +190,10 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         StripeSettingsComponent,
         PaypalSettingsComponent,
         FacebookSettingsComponent,
+        GoogleSettingsComponent,
         LinkedInSettingsComponent,
         DiscordSettingsComponent,
+        ExternalAuthInfoComponent,
         YTelSettingsComponent,
         BugsnagSettingsComponent,
         SecuritySettingsComponent,
@@ -198,6 +203,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         AppearanceSettingsComponent,
         MemberPortalSettingsComponent,
         SendgridSettingsComponent,
+        GmailSettingsComponent,
         KlaviyoSettingsComponent,
         EpcvipLinkSettingsComponent,
         EpcvipEmailSettingsComponent,

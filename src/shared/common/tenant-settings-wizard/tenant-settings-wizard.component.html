@@ -39,7 +39,8 @@
             <ng-container *ngIf="stepper.selected === userManagementStep">
                 <dx-scroll-view [height]="529">
                     <user-management [hostSettings]="hostUserManagementSettings$ | async"
-                                     [tenantSettings]="tenantUserManagementSettings$ | async">
+                                     [tenantSettings]="tenantUserManagementSettings$ | async"
+                                     (onOptionChanged)="onOptionChanged($event)">
                     </user-management>
                 </dx-scroll-view>
             </ng-container>
@@ -53,6 +54,11 @@
         <mat-step #emailStep>
             <ng-container *ngIf="stepper.selected === emailStep">
                 <email [settings]="emailSettings$ | async"></email>
+            </ng-container>
+        </mat-step>
+        <mat-step #gmailStep>
+            <ng-container *ngIf="stepper.selected === gmailStep">
+                <gmail-settings></gmail-settings>
             </ng-container>
         </mat-step>
         <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #memberPortalStep>

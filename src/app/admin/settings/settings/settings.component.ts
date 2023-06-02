@@ -20,7 +20,6 @@ import {
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppService } from '@app/app.service';
-import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     templateUrl: './settings.component.html',
@@ -86,6 +85,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
             { key: 'Domain', visible: this.isAdminCustomizations && this.isTenantHosts },
             { key: 'MemberPortal', visible: !this.appService.isHostTenant && this.isAdminCustomizations },
             { key: 'EmailSmtp', visible: true },
+            { key: 'Gmail', visible: true },
             { key: 'SendGrid', visible: !this.appService.isHostTenant },
             { key: 'Klaviyo', visible: !this.appService.isHostTenant },
             { key: 'YTel', visible: this.isInboundOutboundSMSEnabled },
@@ -101,6 +101,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
             { key: 'Sales Talk', visible: !this.appService.isHostTenant && this.isSalesTalkEnabled },
             { key: 'LinkedIn', visible: this.isSocialLoginEnabled('LinkedIn') },
             { key: 'Facebook', visible: this.isSocialLoginEnabled('Facebook') },
+            { key: 'Google', visible: this.isSocialLoginEnabled('Google') },
             { key: 'Discord', visible: this.isSocialLoginEnabled('Discord') }
         ];
 

@@ -34,7 +34,7 @@ import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confir
 import { AppFeatures } from '@shared/AppFeatures';
 
 declare const FB: any; // Facebook API
-declare const gapi: any; // Facebook API
+declare const google: any; // Google API
 declare const WL: any; // Microsoft API
 
 export class ExternalLoginProvider extends ExternalLoginProviderInfoModel {
@@ -57,11 +57,6 @@ export class ExternalLoginProvider extends ExternalLoginProviderInfoModel {
 
     private static getSocialIcon(providerName: string): string {
         providerName = providerName.toLowerCase();
-
-        if (providerName === 'google') {
-            providerName = 'googleplus';
-        }
-
         return providerName;
     }
 }
@@ -206,7 +201,7 @@ export class LoginService {
             });
     }
 
-    externalAuthenticate(provider: ExternalLoginProvider): void {
+    externalAuthenticate(provider: ExternalLoginProvider, authCallback: (param: any) => void = null): void {
         this.ensureExternalLoginProviderInitialized(provider, () => {
             this.authService.stopTokenCheck();
             switch (provider.name) {
@@ -217,9 +212,22 @@ export class LoginService {
                     this.facebookLogin();
                     break;
                 case ExternalLoginProvider.GOOGLE:
-                    gapi.auth2.getAuthInstance().signIn().then(() => {
-                        this.googleLoginStatusChangeCallback(gapi.auth2.getAuthInstance().isSignedIn.get());
+                    let gisGoogleTokenClient = google.accounts.oauth2.initTokenClient({
+                        client_id: provider.clientId,
+                        scope: 'openid profile email',
+                        callback: (resp) => {
+                            if (resp.error !== undefined) {
+                                throw (resp);
+                            }
+
+                            if (authCallback)
+                                authCallback(resp.access_token);
+                            else
+                                this.googleLoginStatusChangeCallback(resp);
+                        }
                     });
+
+                    gisGoogleTokenClient.requestAccessToken({ prompt: '' });
                     break;
                 case ExternalLoginProvider.MICROSOFT:
                     WL.login({
@@ -519,17 +527,13 @@ export class LoginService {
                 this.facebookLogin();
             });
         } else if (loginProvider.name === ExternalLoginProvider.GOOGLE) {
-            jQuery.getScript('https://apis.google.com/js/api.js', () => {
-                gapi.load('client:auth2',
-                    () => {
-                        gapi.client.init({
-                            clientId: loginProvider.clientId,
-                            scope: 'openid profile email'
-                        }).then(() => {
-                            callback();
-                        });
-                    });
-            });
+            if (typeof google === 'undefined' || !google.accounts) {
+                jQuery.getScript('https://accounts.google.com/gsi/client', () => {
+                    callback();
+                });
+            } else {
+                callback();
+            }
         } else if (loginProvider.name === ExternalLoginProvider.MICROSOFT) {
             jQuery.getScript('//js.live.net/v5.0/wl.js', () => {
                 WL.Event.subscribe('auth.login', this.microsoftLogin);
@@ -564,26 +568,24 @@ export class LoginService {
         }
     }
 
-    private googleLoginStatusChangeCallback(isSignedIn) {
-        if (isSignedIn) {
-            const model = new ExternalAuthenticateModel();
-            model.authProvider = ExternalLoginProvider.GOOGLE;
-            model.providerAccessCode = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
-            model.providerKey = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
-            model.singleSignIn = UrlHelper.getSingleSignIn();
-            model.returnUrl = UrlHelper.getReturnUrl();
-            model.autoDetectTenancy = !abp.session.tenantId;
+    private googleLoginStatusChangeCallback(response) {
+        const model = new ExternalAuthenticateModel();
+        model.authProvider = ExternalLoginProvider.GOOGLE;
+        model.providerAccessCode = response.access_token;
+        model.providerKey = '-';
+        model.singleSignIn = UrlHelper.getSingleSignIn();
+        model.returnUrl = UrlHelper.getReturnUrl();
+        model.autoDetectTenancy = !abp.session.tenantId;
 
-            this.tokenAuthService.externalAuthenticate(model)
-                .subscribe((result: ExternalAuthenticateResultModel) => {
-                    if (result.waitingForActivation) {
-                        this.messageService.info('You have successfully registered. Waiting for activation!');
-                        return;
-                    }
+        this.tokenAuthService.externalAuthenticate(model)
+            .subscribe((result: ExternalAuthenticateResultModel) => {
+                if (result.waitingForActivation) {
+                    this.messageService.info('You have successfully registered. Waiting for activation!');
+                    return;
+                }
 
-                    this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds, false, '', result.returnUrl);
-                });
-        }
+                this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+            });
     }
 
     /**
