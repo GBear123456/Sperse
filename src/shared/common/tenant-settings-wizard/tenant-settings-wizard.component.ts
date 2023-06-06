@@ -223,7 +223,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             },
             {
                 name: 'others',
-                text: this.ls.l('Other'),
+                text: this.ls.l('SubscriptionManagement'),
                 getComponent: () => this.otherSettingsComponent,
                 saved: false,
                 visible: this.showOtherSettings
