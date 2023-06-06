@@ -239,14 +239,20 @@ export class CustomizableDashboardComponent extends AppComponentBase implements 
 
     private getUserDashboards(): any[] {
         let settings = this.s(
-            'App.DashboardCustomization.Configuration' + '.' + DashboardCustomizationConst.Applications.Angular
+            'App.DashboardCustomization.Configuration' + '.' + 
+            DashboardCustomizationConst.Applications.Angular + '.' + 
+            DashboardCustomizationConst.dashboardNames[abp.session.tenantId ? 'defaultTenantDashboard' : 'defaultHostDashboard']
         );
         let obj = JSON.parse(settings);
         return obj;
     }
 
     private getUserDashboard(name: string) {
-        return this.getUserDashboards().filter((dashboard) => dashboard.DashboardName === name)[0];
+        let dashboards = this.getUserDashboards();
+        if (dashboards && dashboards.filter)
+            return this.getUserDashboards().filter((dashboard) => dashboard.DashboardName === name)[0];
+        else 
+            return dashboards;
     }
 
     private getWidgetViewDefinition(id: string): WidgetViewDefinition {
