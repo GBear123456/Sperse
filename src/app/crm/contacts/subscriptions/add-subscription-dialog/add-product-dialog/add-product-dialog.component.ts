@@ -39,7 +39,6 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from 'devextreme-angular';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
@@ -106,7 +105,6 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         private productProxy: ProductServiceProxy,
         productGroupProxy: ProductGroupServiceProxy,
         private notify: NotifyService,
-        private invoicesService: InvoicesService,
         private changeDetection: ChangeDetectorRef,
         memberServiceProxy: MemberServiceServiceProxy,
         public dialogRef: MatDialogRef<AddProductDialogComponent>,
