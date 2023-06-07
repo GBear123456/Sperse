@@ -79,7 +79,18 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
                 ] : []
             )
         ], [
-            { name: 'Profile Summary', type: 'head', icon: 'blog' },
+            { name: 'Profile Summary', type: 'head', icon: 'blog', 
+              actionSave: () => {
+                let field = 'profileSummary';
+                if (this.htmlFieldOrignValue != this.person[field])
+                    this.updateValue(this.person[field], field, false);
+              }, 
+              actionCancel: (event) => {
+                this.person['profileSummary'] = this.htmlFieldOrignValue;
+                this.htmlFieldOrignValue = undefined;
+                this.changeDetector.detectChanges();
+              }
+            },
             { name: 'profileSummary', type: 'html', multiline: true }
         ], [
             { name: 'Experience', type: 'head', icon: 'blog' },
@@ -96,7 +107,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         ],
         removePlugins: 'elementspath',
         skin: 'moono-lisa', //kama,moono,moono-lisa
-        height: "auto"
+        height: 'auto'
     };
     get isDefaultCountryCanada() {
         return AppConsts.defaultCountryCode == Country.Canada;
@@ -278,12 +289,8 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     }
 
     focusinBindValue(field: string) {
-        this.htmlFieldOrignValue = this.person[field];
-    }
-
-    focusoutBindValue(field: string) {
-        if (this.htmlFieldOrignValue != this.person[field])
-            this.updateValue(this.person[field], field, false);
+        if (!this.htmlFieldOrignValue)
+            this.htmlFieldOrignValue = this.person[field];
     }
 
     updateValue(value: string, field: string, checkInitialValue = true) {
@@ -323,7 +330,11 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
             isActiveMilitaryDuty: this.person.isActiveMilitaryDuty,
             interests: this.person.interests
         })).subscribe(
-            () => this.notifyService.success(this.ls.l('SavedSuccessfully')),
+            () => {
+                this.htmlFieldOrignValue = undefined;
+                this.notifyService.success(this.ls.l('SavedSuccessfully'));
+                this.changeDetector.markForCheck();
+            },
             () => {
                 this.person[field] = initialValue;
                 this.changeDetector.markForCheck();

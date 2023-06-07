@@ -7,7 +7,7 @@
 
     ::ng-deep ckeditor {
         .cke_textarea_inline.cke_editable {
-            height: 150px;
+            min-height: 150px;
         }
     }
 
@@ -69,6 +69,23 @@
                 i.save-to-clipboard {
                     position: absolute;
                     right: 0;
+                }
+            }
+
+            .html-actions {
+                float: right;
+                ::ng-deep .dx-button {
+                    background: transparent;
+                    margin: -5px 5px 5px 0;
+                    height: 35px;
+
+                    &.button-update {
+                        right: 25px;
+                    }
+
+                    &.button-exit {
+                        right: -5px;
+                    }
                 }
             }
 
