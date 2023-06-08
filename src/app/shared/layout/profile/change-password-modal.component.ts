@@ -21,6 +21,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 export class ChangePasswordModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
+    showConfirmErrors = false;
     currentPassword = '';
     password = '';
     confirmPassword = '';
@@ -51,6 +52,11 @@ export class ChangePasswordModalComponent implements OnInit {
     }
 
     save(): void {
+        if (this.confirmPassword != this.password) {
+            this.showConfirmErrors = true;
+            return this.notifyService.error(this.ls.l('PasswordsDontMatch'));
+        }
+
         this.modalDialog.startLoading();
         let input = new ChangePasswordInput();
         input.currentPassword = this.currentPassword;
