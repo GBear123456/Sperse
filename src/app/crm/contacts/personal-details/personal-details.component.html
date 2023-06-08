@@ -1,11 +1,29 @@
 <dx-scroll-view showScrollbar="onHover" *ngIf="person">
     <div class="container" *ngFor="let column of columns">
         <div *ngFor="let field of column" class="item {{field.type}}" [hidden]="field.isVisible && !field.isVisible()">
-            <h3 *ngIf="field.type == 'head'" class="{{field.icon}}">{{ls.l(field.name)}}</h3>
+            <h3 *ngIf="field.type == 'head'" class="{{field.icon}}">
+                {{ls.l(field.name)}}
+            </h3>
             <div *ngIf="field.type != 'head' && column.length > 2" class="item-edit-label">{{ls.l(startCase(field.name))}}:</div>
-            <div *ngIf="!isEditAllowed || (field.confidential && !accessConfidentialData)" class="item-value">{{person[field.name]}}</div>
+            <div *ngIf="!isEditAllowed || (field.confidential && !accessConfidentialData)" class="item-value">
+                {{person[field.name]}}                
+            </div>
             <ng-container *ngIf="isEditAllowed && (!field.confidential || accessConfidentialData)">
                 <div [ngSwitch]="field.type" class="item-value {{field.multiline ? 'multiline' : ''}}">
+                    <div *ngSwitchCase="'head'">
+                        <span class="html-actions" *ngIf="(field.actionSave || field.actionCancel) && htmlFieldOrignValue && htmlFieldOrignValue != person['profileSummary']">
+                            <dx-button *ngIf="field.actionSave"
+                                class="button-update"
+                                icon="todo"
+                                (onClick)="field.actionSave()">
+                            </dx-button>
+                            <dx-button *ngIf="field.actionCancel"
+                                class="button-exit"
+                                icon="refresh"
+                                (onClick)="field.actionCancel($event)">
+                            </dx-button>
+                        </span>
+                    </div>
                     <inplace-edit *ngSwitchCase="'string'"
                                   [isOptional]="true"
                                   [mask]="field.name == 'ssn' ? ssnMask : ''"
@@ -19,8 +37,7 @@
                               [(data)]="person[field.name]"
                               type="inline"
                               [config]="ckConfig"
-                              (focusin)="focusinBindValue(field.name)"
-                              (focusout)="focusoutBindValue(field.name)">
+                              (focusin)="focusinBindValue(field.name)">
                     </ckeditor>
                     <inplace-select *ngSwitchCase="'select'"
                                     width="260px"
