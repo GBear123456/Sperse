@@ -150,7 +150,7 @@
             <div class="field-area flex-space-between date-row">
                 <div class="date-fields-area">
                     <dx-date-box #dateComponent
-                        width="200px"
+                        width="160px"
                         height="41px"
                         type="date"
                         [(value)]="date"
@@ -165,10 +165,21 @@
                         [placeholder]="ls.l('Invoice_DueOnReceipt')"
                         [disabled]="disabledForUpdate || !date"
                         (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                        width="200px"
+                        width="160px"
                         height="41px"
                         [min]="date"
                         [(value)]="dueDate"
+                        (onContentReady)="onDateContentReady($event)">
+                    </dx-date-box>
+                    <dx-date-box #startDateComponent
+                        [placeholder]="ls.l('Subscription Start')"
+                        [disabled]="disabledForUpdate || !hasReccuringSubscription"
+                        (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                        [showClearButton]="true"
+                        width="160px"
+                        height="41px"
+                        [min]="date"
+                        [(value)]="startDate"
                         (onContentReady)="onDateContentReady($event)">
                     </dx-date-box>
                 </div>
@@ -344,7 +355,8 @@
                 * {{ls.l('Invoice_StripeSubsWarning', stripeSubscriptionsLinesCount)}}
             </div>
             <div *ngIf="hasReccuringSubscription" class="col-12">
-                * {{ls.l('Invoice_SubsTaxShippingWarning')}}
+                * {{ls.l('Invoice_SubsTaxShippingWarning')}}<br>
+                * {{ls.l('Invoice_SubsStartWarning')}}
             </div>
         </div>
         <div class="row bottom-container">

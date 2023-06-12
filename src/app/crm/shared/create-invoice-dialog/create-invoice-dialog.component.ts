@@ -104,6 +104,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     @ViewChild(DxValidationGroupComponent) linesValidationGroup: DxValidationGroupComponent;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
+    @ViewChild('startDateComponent') startDateComponent: DxDateBoxComponent;
     @ViewChild('dueDateComponent') dueDateComponent: DxDateBoxComponent;
     @ViewChild('dateComponent') dateComponent: DxDateBoxComponent;
     @ViewChild('invoice') invoiceNoComponent: DxTextBoxComponent;
@@ -137,6 +138,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     lastProductCount: number;
     date = moment().utcOffset(0, true).toDate();
     dueDate;
+    startDate;
     isAddressDialogOpened = false;
     featureMaxProductCount: number = this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount);
 
@@ -347,6 +349,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         this.invoiceNo = invoiceInfo.number;
                         this.date = invoiceInfo.date;
                         this.dueDate = invoiceInfo.dueDate;
+                        this.startDate = invoiceInfo.subscriptionStartOn;
                         if (this.disabledForUpdate) {
                             this.status = invoiceInfo.status;
                             this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
@@ -461,6 +464,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         data.orderNumber = this.orderNumber;
         data.date = this.getDate(this.date);
         data.dueDate = this.getDate(this.dueDate);
+        data.subscriptionStartOn = this.getDate(this.startDate);
         data.description = this.description;
         data.billingAddress = this.selectedBillingAddress &&
             new InvoiceAddressInput(this.selectedBillingAddress);
@@ -779,6 +783,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.customer = undefined;
             this.date = new Date();
             this.dueDate = undefined;
+            this.startDate = undefined;
             this.description = '';
             this.notes = '';
             this.lines = [{ isCrmProduct: !!this.featureMaxProductCount }];
@@ -1051,11 +1056,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 setTimeout(() => {
                     this.hideAddNew = false;
                     this.updateDisabledProducts();
+                    if (!this.hasReccuringSubscription)
+                        this.startDateComponent.instance.reset();
                     this.changeDetectorRef.detectChanges();
                 }, 300);
             });
         } else {
             this.lines = [{ isCrmProduct: !!this.featureMaxProductCount }];
+            this.startDateComponent.instance.reset();
+            this.hasReccuringSubscription = false;
             this.updateDisabledProducts();
             this.changeDetectorRef.detectChanges();
         }
