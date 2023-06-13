@@ -1246,6 +1246,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
         let input = new GetApplicablePaymentMethodsInput({
             contactId: this.contactId,
+            subscriptionStartOn: this.getDate(this.startDate),
             couponId: this.selectedCoupon ? this.selectedCoupon.id : null,
             discountTotal: this.discountTotal,
             shippingTotal: this.shippingTotal,
