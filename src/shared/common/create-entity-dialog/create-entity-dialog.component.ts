@@ -957,9 +957,12 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     onCustomCompanyCreate(e) {
+        this.company = '';
         setTimeout(() => {
-            this.company = e.text;
-            this.changeDetectorRef.detectChanges();
+            if (e.text) {
+                this.company = e.text;
+                this.changeDetectorRef.detectChanges();
+            }
         });
     }
 
@@ -998,35 +1001,37 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     resetFullDialog(showDialog: boolean = false, resetToolbar = true) {
         let resetInternal = () => {
             this.resetComponent(this.emailsComponent);
+
             this.phonesComponent.reset();
             this.addButtonVisible['emails'] = false;
             this.addButtonVisible['phones'] = false;
             this.addButtonVisible['links'] = false;
             this.addButtonVisible['addresses'] = false;
-            this.contact.emails = [ new Email(this.emailsTypeDefault) ];
-            this.contact.phones = [ new Phone(this.phonesTypeDefault) ];
-            this.contact.links = [ new Link(this.linksTypeDefault) ];
-            this.contact.addresses = [ new Address(this.addressesTypeDefault) ];
+            this.contact.emails = [];
+            this.contact.phones = [];
+            this.contact.links = [];
+            this.contact.addresses = [];
             this.notes = undefined;
             this.dealAmount = undefined;
             this.installmentAmount = undefined;
             this.bankCode = '????';
 
             this.person = new PersonInfoDto();
-            this.addressTypesLoad();
             this.company = undefined;
+            this.jobTitle = undefined;
             this.similarCustomers = [];
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;
             this.contactName = '';
+            this.isTitleValid = true;
+            this.resetComponent(this.modalDialog.titleComponent.instance);
             this.partnerTypesComponent && this.partnerTypesComponent.reset();
             if (resetToolbar) {
                 this.sourceContactId = undefined;
                 this.isSourceSelected = false;
                 this.tagsComponent && this.tagsComponent.reset();
                 this.listsComponent && this.listsComponent.reset();
-
                 if (this.userAssignmentComponent) {
                     this.userAssignmentComponent.selectedItemKey = this.currentUserId;
                 }
@@ -1036,11 +1041,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                     : undefined;
                 this.ratingComponent && this.ratingComponent.reset();
             }
-
             this.changeDetectorRef.detectChanges();
             setTimeout(() => {
-                this.isTitleValid = this.modalDialog.titleComponent.isValid = true;
-            });
+                this.contact.emails = [ new Email(this.emailsTypeDefault) ];
+                this.contact.phones = [ new Phone(this.phonesTypeDefault) ];
+                this.contact.links = [ new Link(this.linksTypeDefault) ];
+                this.contact.addresses = [ new Address(this.addressesTypeDefault) ];
+                this.changeDetectorRef.detectChanges();
+            }, 100);
         };
 
         if (showDialog)
@@ -1050,7 +1058,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             });
         else
             resetInternal();
-
     }
 
     onSaveOptionSelectionChanged() {

@@ -29,6 +29,7 @@ import { AppService } from '@app/app.service';
 })
 export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
     uniqId = String(Math.random()).slice(-12);
+    isPagingInProgress = false;
 
     constructor(
         private appService: AppService,
@@ -79,6 +80,9 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
                 this.setForCheckDateCellColumn(event.component);
             }),
             this.component.onOptionChanged.subscribe(event => {
+                if (event.name == 'paging')
+                    this.isPagingInProgress = true;
+
                 if (event.name == 'dataSource' || event.name == 'summary')
                     this.setForCheckDateCellColumn(event.component);
             }),
@@ -112,6 +116,10 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
                 }
             }),
             this.component.onContentReady.subscribe(event => {
+                if (this.isPagingInProgress)
+                    setTimeout(() => this.component.instance.repaint(), 500);
+
+                this.isPagingInProgress = false;
                 if (DomHelper.isDomElementVisible(event.component.element()))
                     this.appService.isClientSearchDisabled = !this.isMainComponentView;
 

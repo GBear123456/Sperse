@@ -36,7 +36,7 @@ export class WidgetEditionStatisticsComponent extends WidgetComponentBaseCompone
 
     showChart = () => {
         this._hostDashboardServiceProxy
-            .getEditionTenantStatistics(this.selectedDateRange[0], this.selectedDateRange[1])
+            .getEditionTenantStatistics(this.selectedDateRange[0].toJSDate(), this.selectedDateRange[1].toJSDate())
             .subscribe((editionTenantStatistics) => {
                 this.editionStatisticsData = this.normalizeEditionStatisticsData(editionTenantStatistics);
                 this.editionStatisticsHasData =

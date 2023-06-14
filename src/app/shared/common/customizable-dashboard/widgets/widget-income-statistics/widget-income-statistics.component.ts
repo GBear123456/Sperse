@@ -49,8 +49,8 @@ export class WidgetIncomeStatisticsComponent extends WidgetComponentBaseComponen
         this._hostDashboardServiceProxy
             .getIncomeStatistics(
                 this.selectedIncomeStatisticsDateInterval,
-                this.selectedDateRange[0],
-                this.selectedDateRange[1]
+                this.selectedDateRange[0].toJSDate(),
+                this.selectedDateRange[1].toJSDate()
             )
             .subscribe((result) => {
                 this.incomeStatisticsData = this.normalizeIncomeStatisticsData(result.incomeStatistics);

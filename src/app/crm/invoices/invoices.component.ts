@@ -119,6 +119,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
+            this.isDataLoaded = false;
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.params.$select = DataGridService.getSelectFields(
                 this.dataGrid,
@@ -144,7 +145,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
                 v['DueStatus'] = invoiceDueInfo.status;
                 v['DueStatusMessage'] = invoiceDueInfo.message;
-            });
+            });           
         },
         errorHandler: (error) => {
             setTimeout(() => this.isDataLoaded = true);
@@ -184,6 +185,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private filtersService: FiltersService,
         private pipelineService: PipelineService,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
+        private changeDetectorRef: ChangeDetectorRef,
         private appService: AppService,
         private currencyPipe: CurrencyPipe,
         public dialog: MatDialog
@@ -269,6 +271,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.setGridDataLoaded();
         if (!this.rowsViewHeight)
             this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
+        this.changeDetectorRef.detectChanges();
     }
 
     invalidate() {

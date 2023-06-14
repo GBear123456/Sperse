@@ -488,6 +488,11 @@ export class ContactsService {
 
                     dataLoader$ = dataLoader$.pipe(
                         map((data: GetEmailDataOutput) => {
+                            if (emailData.cc && emailData.cc.length)
+                                data.cc = [].concat(data.cc, emailData.cc);
+                            if (emailData.bcc && emailData.bcc.length)
+                                data.bcc = [].concat(data.bcc, emailData.bcc);
+
                             Object.assign(emailData, data);
                         })
                     );
@@ -585,6 +590,11 @@ export class ContactsService {
         return this.showEmailDialog(data, 'Email', (tmpId: number, emailData) => {
             return this.invoiceProxy.getEmailData(tmpId, invoiceId).pipe(
                 map((email: GetEmailDataOutput) => {
+                    if (emailData.cc && emailData.cc.length)
+                        data.cc = [].concat(data.cc, emailData.cc);
+                    if (emailData.bcc && emailData.bcc.length)
+                        data.bcc = [].concat(data.bcc, emailData.bcc);
+
                     Object.assign(emailData, email);
                 })
             );

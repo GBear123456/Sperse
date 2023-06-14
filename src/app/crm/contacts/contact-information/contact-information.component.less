@@ -68,8 +68,17 @@
         //align-items: center;
         align-items: flex-start;
 
-        dx-tag-box {
+        .width-percent-35 {
+            width: 35%;
+        }
+
+        ::ng-deep dx-tag-box {
             opacity: 1 !important;
+            .dx-texteditor-input-container {
+                height: 80px;
+                overflow-y: auto;
+                pointer-events: all;
+            }
         }
 
         .item {
@@ -104,10 +113,10 @@
             }
         }
     }
-}
 
-::ng-deep .dx-tag-remove-button {
-    display: none;
+    ::ng-deep .dx-tag-remove-button {
+        display: none;
+    }
 }
 
 ::ng-deep .right-side-opened .socials {

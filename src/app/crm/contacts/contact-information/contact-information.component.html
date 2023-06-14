@@ -83,12 +83,13 @@
     <div class="item">
         <span class="title">Stage:</span> {{ data?.leadInfo.stage }}
     </div>-->
-    <div class="item width-percent-30">
+    <div class="item width-percent-35">
         <div class="title">
             <img src="./assets/common/icons/folder.svg" class="dx-icon" [alt]="ls.l('Lists')">
             {{ls.l('Lists')}}:
         </div>
         <dx-tag-box
+            height="80px"
             [items]="lists$ | async"
             displayExpr="name"
             valueExpr="id"
@@ -101,12 +102,13 @@
             [disabled]="true"
         ></dx-tag-box>
     </div>
-    <div class="item width-percent-40">
+    <div class="item width-percent-35">
         <div class="title">
             <img src="./assets/common/icons/pen.svg" class="dx-icon" [alt]="ls.l('Tags')">
             {{ls.l('Tags')}}:
         </div>
         <dx-tag-box
+            height="80px"
             [dataSource]="tags$ | async"
             displayExpr="name"
             valueExpr="id"

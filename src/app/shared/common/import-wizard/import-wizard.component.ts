@@ -92,7 +92,9 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'rating',
         'gender',
         'stage',
-        'paymentPeriodType'
+        'paymentPeriodType',
+        'date',
+        'dob',
     ];
     private excludeCCValidation = ['UK'];
     private similarFieldsIndex: any = {};
@@ -815,6 +817,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         let value = data[field] && data[field].trim ? data[field].trim() : data[field];
         if (!value)
             return true;
+        if (key == 'date' || key == 'dob')
+            return !isNaN(Date.parse(value));
         if (key == 'phone') {
             let isValid = this.phoneNumberService.isPhoneNumberValid(
                 value, this.getFieldCountryCode(data, field));

@@ -9,6 +9,7 @@
     <h1><i class="{{icon}}"></i>{{title}}</h1>
     <div class="actions" [hidden]="selectedStepIndex == FINISH_STEP_INDEX">
         <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
+        <button class="button-layout button-primary" (click)="stepper.previous()" [hidden]="selectedStepIndex == UPLOAD_STEP_INDEX || selectedStepIndex == FINISH_STEP_INDEX">{{l('Back')}}</button>
         <button class="button-layout button-primary" (click)="next()" [hidden]="isNextButtonHidden">{{selectedStepIndex == REVIEW_STEP_INDEX ? l('Import'): l('Next')}}</button>
         <div class="separator"></div>
         <button class="refresh-button"></button>
@@ -153,6 +154,8 @@
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
+                          [toolbar]="{disabled: true, visible: false}"
+                          [columnChooser]="{enabled: false}"
                           [loadPanel]="{ enabled: false }"
                           [customizeColumns]="customizePreviewColumns"
                           (onCellPrepared)="onReviewCellPrepared($event)">
@@ -174,11 +177,11 @@
                 </div>
 
                 <div *dxTemplate="let cellData of 'datetimeCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
-                    {{cellData.value | date : formatting.dateTime : userTimezone}}
+                    {{checkFieldInvalid(cellData) ? cellData.value : (cellData.value | date : formatting.dateTime : userTimezone)}}
                 </div>
 
                 <div *dxTemplate="let cellData of 'dateCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
-                    {{cellData.value | date : formatting.date}}
+                    {{checkFieldInvalid(cellData) ? cellData.value : (cellData.value | date : formatting.date)}}
                 </div>
 
                 <div *dxTemplate="let cellData of 'commonCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">

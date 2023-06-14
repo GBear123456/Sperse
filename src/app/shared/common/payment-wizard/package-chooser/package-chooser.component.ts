@@ -119,12 +119,19 @@ export class PackageChooserComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        let packagesConfig$: Observable<ProductInfo[]>;
         if (this.upgradeProductId) {
-            this.packagesConfig$ = this.paymentService.getUpgradeConfig(this.upgradeProductId);
+            packagesConfig$ = this.paymentService.getUpgradeConfig(this.upgradeProductId);
         } else {
-            this.packagesConfig$ = this.productsGroupName == AppConsts.PRODUCT_GROUP_ADD_ON ? 
+            packagesConfig$ = this.productsGroupName == AppConsts.PRODUCT_GROUP_ADD_ON ? 
                 this.paymentService.addOnConfig$ : this.paymentService.packagesConfig$;
         }
+
+        this.packagesConfig$ = packagesConfig$.pipe(map(
+            (products: ProductInfo[]) => {
+                return products.filter((product: ProductInfo) => !product.productSubscriptionOptions.some(option => option.frequency == RecurringPaymentFrequency.OneTime))
+            }
+        ));
 
         forkJoin([
             this.localizationResolver.checkLoadLocalization(AppConsts.localization.defaultLocalizationSourceName),
@@ -170,7 +177,7 @@ export class PackageChooserComponent implements OnInit {
             this.packages = products.sort((prev: ProductInfo, next: ProductInfo) => {
                 let prevOption = this.getProductMonthlyOption(prev), 
                     nextOption = this.getProductMonthlyOption(next);
-                return prevOption.fee > nextOption.fee ? 1: -1;
+                return (prevOption ? prevOption.fee : 0) > (nextOption ? nextOption.fee : 0) ? 1: -1;
             });
             this.preselectPackage();
             // this.splitPackagesForFreeAndNotFree(packagesConfig);
@@ -392,23 +399,16 @@ export class PackageChooserComponent implements OnInit {
         }
     }
 
-    getSelectedPeriod(): number {
+    getSelectedPeriodIndex(): number {
         const periodCount = this.getSliderPointCount();
-        
-        if (periodCount == this.MAX_PERIOD_COUNT)
-            return this.selectedBillingPeriod;
-        else if (periodCount == 1)
+
+        if (periodCount == 1)
             return this.MAX_PERIOD_COUNT - 1;
-        else if (
-            this.showSelectedProductPeriod(RecurringPaymentFrequency.Annual) &&
+        else if (periodCount < this.MAX_PERIOD_COUNT &&
+            this.selectedBillingPeriod != BillingPeriod.Monthly &&
             this.showSelectedProductPeriod(RecurringPaymentFrequency.LifeTime)
         ) return Number(this.selectedBillingPeriod) - 1;
-        else if (
-            this.showSelectedProductPeriod(RecurringPaymentFrequency.Monthly) &&
-            this.showSelectedProductPeriod(RecurringPaymentFrequency.LifeTime)
-        ) return this.selectedBillingPeriod == BillingPeriod.Monthly ? 
-            this.selectedBillingPeriod : (Number(this.selectedBillingPeriod) - 1);
-
+        
         return this.selectedBillingPeriod;
     }
 

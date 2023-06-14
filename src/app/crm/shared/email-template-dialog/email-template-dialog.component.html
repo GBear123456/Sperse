@@ -75,7 +75,7 @@
                         </dx-select-box>
                         <ng-template #configure>
                             <a class="config-link" (click)="close()" 
-                                [routerLink]="'app/admin/' + (appService.isHostTenant ? 'host': 'tenant') + 'Settings'" 
+                                [routerLink]="'app/admin/settings'" 
                                 [queryParams]="{tab: 'smtp'}" 
                                 [ngClass]="{disabled: !isSettingsAllowed}">{{ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))}}&nbsp;</a>
                         </ng-template>
