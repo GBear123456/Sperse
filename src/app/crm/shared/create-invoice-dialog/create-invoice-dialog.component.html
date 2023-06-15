@@ -173,7 +173,7 @@
                     </dx-date-box>
                     <dx-date-box #startDateComponent
                         [placeholder]="ls.l('Subscription Start')"
-                        [disabled]="disabledForUpdate || !hasReccuringSubscription"
+                        [disabled]="disabledForUpdate || !hasSubscription"
                         (onKeyDown)="allowDigitsOnly($event, ['/'])"
                         [showClearButton]="true"
                         width="160px"

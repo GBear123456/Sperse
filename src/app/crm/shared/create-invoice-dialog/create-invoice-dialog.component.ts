@@ -161,6 +161,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     isSendEmailAllowed = false;
     disabledForUpdate = false;
     hasReccuringSubscription = false;
+    hasSubscription = false;
     title: string;
     isTitleValid = true;
     buttons: IDialogButton[] = [
@@ -386,6 +387,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
                     this.initContextMenuItems();
                     this.checkSubscriptionsCount();
+                    this.checkReccuringSubscriptionIsSelected(false);
                     this.changeDetectorRef.detectChanges();
                 });
         } else
@@ -901,6 +903,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             line.isCrmProduct &&
             line.productType == 'Subscription' &&
             (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year)
+        );
+        this.hasSubscription = this.hasReccuringSubscription || this.lines.some((line: any) =>
+            line.isCrmProduct && line.productType == 'Subscription' && line.unitId == ProductMeasurementUnit.Piece
         );
 
         if (this.hasReccuringSubscription) {
