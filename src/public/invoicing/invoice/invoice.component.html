@@ -34,6 +34,9 @@
         </div>
     </div>
     <div class="content content-center">
+        <div *ngIf="showSubsScheduledMessage" class="future-subs-scheduled">
+            <span>Subscription is scheduled. Waiting for payment on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy'}}.</span>
+        </div>
         <div class="content-logo">
             <div class="left">
                 <img *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Paid" src="assets/common/images/paid-stamp.png" />
@@ -86,7 +89,9 @@
                 <tr *ngFor="let lineItem of invoiceInfo.invoiceData.items">
                     <td>
                         <span>{{lineItem.description.split('\n').shift()}}</span>
-                        <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">({{lineItem.subscriptionPeriod}})</span>
+                        <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">
+                            ({{lineItem.subscriptionPeriod}}<span *ngIf="invoiceInfo.invoiceData.subscriptionStartOn">, starting on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy'}}</span>)
+                        </span>
                         <pre>{{lineItem.description.split('\n').slice(1).join('\n')}}</pre>
                     </td>
                     <td align="right">{{lineItem.quantity | number: '1.0-2'}}</td>

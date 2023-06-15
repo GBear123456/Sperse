@@ -48,6 +48,8 @@ export class InvoiceComponent implements OnInit {
     dueStatus: InvoiceDueStatus;
     dueStatusMessage;
 
+    showSubsScheduledMessage: boolean = false;
+
     tenantId: number;
     publicId: string;
 
@@ -87,6 +89,7 @@ export class InvoiceComponent implements OnInit {
                 this.showPaymentAdvice = !!(result.paymentSettings && (result.paymentSettings.bankAccountNumber ||
                     result.paymentSettings.bankRoutingNumberForACH ||
                     result.paymentSettings.bankRoutingNumber));
+                this.showSubsScheduledMessage = this.invoiceInfo.invoiceData.status != InvoiceStatus.Paid && this.invoiceInfo.futureSubscriptionIsSetUp;
             });
     }
 
