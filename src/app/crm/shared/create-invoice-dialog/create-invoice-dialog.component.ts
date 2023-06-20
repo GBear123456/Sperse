@@ -137,9 +137,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     lastProductPhrase: string;
     lastProductCount: number;
     date = moment().utcOffset(0, true).toDate();
-    tomorrowDate = moment().add(1, 'days').utcOffset(0, true).toDate();
-    dueDate;
+    tomorrowDate = DateHelper.addTimezoneOffset(moment().add(1, 'days').startOf('day').utcOffset(0, true).toDate());
     startDate;
+    dueDate;
     isAddressDialogOpened = false;
     featureMaxProductCount: number = this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount);
 
@@ -351,7 +351,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         this.invoiceNo = invoiceInfo.number;
                         this.date = invoiceInfo.date;
                         this.dueDate = invoiceInfo.dueDate;
-                        this.startDate = invoiceInfo.subscriptionStartOn;
+                        if (invoiceInfo.subscriptionStartOn)
+                            this.startDate = DateHelper.addTimezoneOffset(new Date(invoiceInfo.subscriptionStartOn), true);
                         if (this.disabledForUpdate) {
                             this.status = invoiceInfo.status;
                             this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
@@ -467,7 +468,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         data.orderNumber = this.orderNumber;
         data.date = this.getDate(this.date);
         data.dueDate = this.getDate(this.dueDate);
-        data.subscriptionStartOn = this.getDate(this.startDate);
+        data.subscriptionStartOn = this.getDate(this.startDate, true, '');
         data.description = this.description;
         data.billingAddress = this.selectedBillingAddress &&
             new InvoiceAddressInput(this.selectedBillingAddress);
@@ -634,6 +635,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         if (!this.validateField(this.ls.l('Date'), this.date))
             return this.dateComponent.instance.option('isValid', false);
+
+        if (!this.startDateComponent.instance.option('isValid'))
+            return this.notifyService.error(this.ls.l('InvalidField', 'subscription Start'));
 
         setTimeout(() => {
             if (!this.linesValidationGroup.instance.validate().isValid)
@@ -908,6 +912,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.hasSubscription = this.hasReccuringSubscription || this.lines.some((line: any) =>
             line.isCrmProduct && line.productType == 'Subscription' && line.unitId == ProductMeasurementUnit.Piece
         );
+        if (!this.disabledForUpdate && (!this.startDate && this.hasSubscription || !this.hasSubscription && this.startDate))
+            this.startDate = this.hasSubscription ? this.tomorrowDate : undefined;
 
         if (this.hasReccuringSubscription) {
             this.shippingTotal = 0;
@@ -1118,7 +1124,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
     }
 
-    onDateContentReady(event) {
+    onDateContentReady(event, showTime = false) {
         new Inputmask('mm/dd/yyyy', {
             showMaskOnHover: false,
             showMaskOnFocus: true
@@ -1251,7 +1257,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
         let input = new GetApplicablePaymentMethodsInput({
             contactId: this.contactId,
-            subscriptionStartOn: this.getDate(this.startDate),
+            subscriptionStartOn: this.getDate(this.startDate, true, ''),
             couponId: this.selectedCoupon ? this.selectedCoupon.id : null,
             discountTotal: this.discountTotal,
             shippingTotal: this.shippingTotal,
