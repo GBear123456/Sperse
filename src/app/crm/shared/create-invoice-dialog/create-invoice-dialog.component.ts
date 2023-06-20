@@ -137,9 +137,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     lastProductPhrase: string;
     lastProductCount: number;
     date = moment().utcOffset(0, true).toDate();
-    tomorrowDate = moment().add(1, 'days').utcOffset(0, true).toDate();
-    dueDate;
+    tomorrowDate = DateHelper.addTimezoneOffset(moment().add(1, 'days').startOf('day').utcOffset(0, true).toDate());
     startDate;
+    dueDate;
     isAddressDialogOpened = false;
     featureMaxProductCount: number = this.contactsService.getFeatureCount(AppFeatures.CRMMaxProductCount);
 
@@ -467,7 +467,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         data.orderNumber = this.orderNumber;
         data.date = this.getDate(this.date);
         data.dueDate = this.getDate(this.dueDate);
-        data.subscriptionStartOn = this.getDate(this.startDate);
+        data.subscriptionStartOn = this.startDate;
         data.description = this.description;
         data.billingAddress = this.selectedBillingAddress &&
             new InvoiceAddressInput(this.selectedBillingAddress);
@@ -908,6 +908,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.hasSubscription = this.hasReccuringSubscription || this.lines.some((line: any) =>
             line.isCrmProduct && line.productType == 'Subscription' && line.unitId == ProductMeasurementUnit.Piece
         );
+        if (!this.startDate && this.hasSubscription || !this.hasSubscription && this.startDate)
+            this.startDate = this.hasSubscription ? this.tomorrowDate : undefined;
 
         if (this.hasReccuringSubscription) {
             this.shippingTotal = 0;
@@ -1118,7 +1120,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
     }
 
-    onDateContentReady(event) {
+    onDateContentReady(event, showTime = false) {
         new Inputmask('mm/dd/yyyy', {
             showMaskOnHover: false,
             showMaskOnFocus: true
@@ -1252,7 +1254,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
         let input = new GetApplicablePaymentMethodsInput({
             contactId: this.contactId,
-            subscriptionStartOn: this.getDate(this.startDate),
+            subscriptionStartOn: this.startDate,
             couponId: this.selectedCoupon ? this.selectedCoupon.id : null,
             discountTotal: this.discountTotal,
             shippingTotal: this.shippingTotal,
