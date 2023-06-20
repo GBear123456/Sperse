@@ -137,6 +137,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     lastProductPhrase: string;
     lastProductCount: number;
     date = moment().utcOffset(0, true).toDate();
+    tomorrowDate = moment().add(1, 'days').utcOffset(0, true).toDate();
     dueDate;
     startDate;
     isAddressDialogOpened = false;
