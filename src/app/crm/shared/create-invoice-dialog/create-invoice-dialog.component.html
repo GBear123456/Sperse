@@ -177,11 +177,12 @@
                         (onKeyDown)="allowDigitsOnly($event, ['/'])"
                         [showClearButton]="true"
                         type="datetime"
-                        width="190px"
+                        width="200px"
                         height="41px"
                         [min]="disabledForUpdate ? undefined : tomorrowDate"
                         [(value)]="startDate"
-                        (onValueChanged)="initiatePaymentMethodsCheck()">
+                        (onOpened)="onStartDateOpened($event)"
+                        (onValueChanged)="this.initiatePaymentMethodsCheck()">
                     </dx-date-box>
                 </div>
                 <order-dropdown [(orderId)]="orderId"

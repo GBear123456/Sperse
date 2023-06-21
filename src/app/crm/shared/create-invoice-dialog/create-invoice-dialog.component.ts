@@ -912,8 +912,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.hasSubscription = this.hasReccuringSubscription || this.lines.some((line: any) =>
             line.isCrmProduct && line.productType == 'Subscription' && line.unitId == ProductMeasurementUnit.Piece
         );
-        if (!this.disabledForUpdate && (!this.startDate && this.hasSubscription || !this.hasSubscription && this.startDate))
-            this.startDate = this.hasSubscription ? this.tomorrowDate : undefined;
+        if (!this.disabledForUpdate && (!this.hasSubscription && this.startDate))
+            this.startDate = undefined;
 
         if (this.hasReccuringSubscription) {
             this.shippingTotal = 0;
@@ -1279,5 +1279,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     }
                 });
         }, timeout);
+    }
+
+    onStartDateOpened(event) {
+        if (!this.startDate)
+            this.startDate = this.hasSubscription ? this.tomorrowDate : undefined;
     }
 }
