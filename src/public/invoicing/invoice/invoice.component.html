@@ -35,7 +35,7 @@
     </div>
     <div class="content content-center">
         <div *ngIf="showSubsScheduledMessage" class="future-subs-scheduled">
-            <span>Subscription is scheduled. Waiting for payment on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy'}}.</span>
+            <span class="timezone-hover-line" title="Your Computer {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a'}}">Subscription is scheduled. Waiting for payment on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a' : 'UTC' }} UTC.</span>
         </div>
         <div class="content-logo">
             <div class="left">
@@ -90,7 +90,7 @@
                     <td>
                         <span>{{lineItem.description.split('\n').shift()}}</span>
                         <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">
-                            ({{lineItem.subscriptionPeriod}}<span *ngIf="invoiceInfo.invoiceData.subscriptionStartOn">, starting on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy'}}</span>)
+                            ({{lineItem.subscriptionPeriod}}<span class="timezone-hover-line" *ngIf="invoiceInfo.invoiceData.subscriptionStartOn" title="Your Computer {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a'}}">, starting on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a' : 'UTC'}} UTC</span>)
                         </span>
                         <pre>{{lineItem.description.split('\n').slice(1).join('\n')}}</pre>
                     </td>
@@ -132,6 +132,8 @@
         </p>
 
         <p *ngIf="invoiceInfo.invoiceData.note" class="pre-line">{{invoiceInfo.invoiceData.note}}</p>
+
+        <span class="delay-note">Please Note, there may be a slight delay in processing your payment and applying the necessary actions. Thank you for your patience and understanding.</span>
 
         <div *ngIf="showPaymentAdvice" class="full-width scissors-block">
             <span class="scissors-icon">&#9986;</span>
