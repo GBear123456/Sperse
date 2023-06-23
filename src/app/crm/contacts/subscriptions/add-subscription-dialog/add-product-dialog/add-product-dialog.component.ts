@@ -34,7 +34,8 @@ import {
     ProductSubscriptionOptionInfo,
     ProductMeasurementUnit,
     SetProductImageInput,
-    ProductUpgradeAssignmentInfo
+    ProductUpgradeAssignmentInfo,
+    CustomPeriodType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -91,6 +92,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     );
     recurringPaymentFrequency = RecurringPaymentFrequency;
     frequencies = Object.keys(RecurringPaymentFrequency);
+    customPeriodTypes = Object.keys(CustomPeriodType);
     gracePeriodDefaultValue: number;
     customGroup: string;
     isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
@@ -319,8 +321,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             options.commissionableSignupFeeAmount = undefined;
             options.trialDayCount = undefined;
             options.signupFee = undefined;
+            options.customPeriodType = CustomPeriodType.Days;
         } else
-            options.activeDayCount = undefined;
+            options.customPeriodCount = undefined;
         
         this.detectChanges();
     }
