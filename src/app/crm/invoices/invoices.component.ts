@@ -129,7 +129,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     FullName: [this.invoiceFields.PhotoPublicId],
                     OrderStageName: [this.invoiceFields.OrderId],
-                    DueStatus: [this.invoiceFields.Date, this.invoiceFields.DueDate, this.invoiceFields.Status],
+                    DueStatus: [this.invoiceFields.Date, this.invoiceFields.DueDate, this.invoiceFields.Status, this.invoiceFields.FutureSubscriptionIsSetUp],
                     LastPaymentType: [this.invoiceFields.LastPaymentDate]
                 }
             );
@@ -137,7 +137,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         },
         onLoaded: (data) => {
             data.forEach((v: InvoiceDto) => {
-                let invoiceDueInfo = InvoiceHelpers.getDueInfo(v.Status, this.invoiceDueGraceDays, v.DueDate, v.Date, this.l.bind(this));
+                let invoiceDueInfo = InvoiceHelpers.getDueInfo(v.Status, this.invoiceDueGraceDays, v.DueDate, v.Date, v.FutureSubscriptionIsSetUp, this.l.bind(this));
 
                 if (invoiceDueInfo == null)
                     return;
