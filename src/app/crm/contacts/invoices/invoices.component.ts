@@ -173,7 +173,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                             this.invoiceFields.InvoiceNumber,
                             this.invoiceFields.InvoiceStatus,
                             this.invoiceFields.InvoicePublicId,
-                            this.invoiceFields.Amount
+                            this.invoiceFields.Amount,
+                            this.invoiceFields.FutureSubscriptionIsSetUp
                         ],
                         this.fieldsDependencies
                     );
@@ -340,6 +341,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
             this.sourceComponent.toggle();
         }
+    }
+
+    showFutureSubscriptionMessage(cellData): boolean {
+        return cellData.data.FutureSubscriptionIsSetUp && cellData.data.InvoiceStatus != InvoiceStatus.Paid;
     }
 
     ngOnDestroy() {

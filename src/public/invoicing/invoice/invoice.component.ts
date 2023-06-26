@@ -98,6 +98,7 @@ export class InvoiceComponent implements OnInit {
             this.setting.getInt('Invoice:DueGracePeriod'),
             invoiceInfo.invoiceData.dueDate,
             invoiceInfo.invoiceData.date,
+            invoiceInfo.futureSubscriptionIsSetUp,
             (key, ...args) => this.ls.l(key, args))
 
         if (invoiceDueInfo == null)
