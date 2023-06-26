@@ -83,7 +83,7 @@
             </div>
             <div class="field">
                 <label for="activationTime">{{ls.l('Unit')}}</label>
-                <dx-select-box [dataSource]="productUnits"
+                <dx-select-box [dataSource]="getProductUnits()"
                                width="300px"
                                placeholder="Select unit..."
                                [(value)]="product.unit"
@@ -222,6 +222,7 @@
                                    mode="number"
                                    format="###0"
                                    valueChangeEvent="keyup"
+                                   [placeholder]="ls.l('Set number of days')"
                                    [(value)]="option.customPeriodCount"
                                    [disabled]="isReadOnly">
                         <dx-validator>

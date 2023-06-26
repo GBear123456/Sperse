@@ -470,4 +470,11 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     detectChanges() {
         this.changeDetection.markForCheck();
     }
+
+    getProductUnits() {
+        if (this.product.type == ProductType.General)        
+            return this.productUnits.filter(unit => unit != this.ls.l('ProductMeasurementUnit_OneTime'));
+        else
+            return this.productUnits;
+    }
 }
