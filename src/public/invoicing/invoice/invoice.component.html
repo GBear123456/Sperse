@@ -34,13 +34,18 @@
         </div>
     </div>
     <div class="content content-center">
+        <div *ngIf="showSubsScheduledMessage" class="future-subs-scheduled">
+            <span class="timezone-hover-line" title="Your Computer {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a'}}">Subscription is scheduled. Waiting for payment on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a' : 'UTC' }} UTC.</span>
+        </div>
         <div class="content-logo">
             <div class="left">
-                <img *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Paid" src="assets/common/images/paid-stamp.png" />
-                <div *ngIf="dueStatusMessage" class="due-info">
-                    <span class="due-status">{{ls.l('DueStatus_' + dueStatus)}}</span>
-                    <span class="due-text">{{dueStatusMessage}}</span>
-                </div>
+                <ng-container *ngIf="!showSubsScheduledMessage">
+                    <img *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Paid" src="assets/common/images/paid-stamp.png" />
+                    <div *ngIf="dueStatusMessage" class="due-info">
+                        <span class="due-status">{{ls.l('DueStatus_' + dueStatus)}}</span>
+                        <span class="due-text">{{dueStatusMessage}}</span>
+                    </div>
+                </ng-container>
             </div>
             <div class="right">
                 <img class="right" src="{{invoiceInfo.tenantLogo}}">
@@ -86,7 +91,9 @@
                 <tr *ngFor="let lineItem of invoiceInfo.invoiceData.items">
                     <td>
                         <span>{{lineItem.description.split('\n').shift()}}</span>
-                        <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">({{lineItem.subscriptionPeriod}})</span>
+                        <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">
+                            ({{lineItem.subscriptionPeriod}}<span class="timezone-hover-line" *ngIf="invoiceInfo.invoiceData.subscriptionStartOn" title="Your Computer {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a'}}">, starting on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a' : 'UTC'}} UTC</span>)
+                        </span>
                         <pre>{{lineItem.description.split('\n').slice(1).join('\n')}}</pre>
                     </td>
                     <td align="right">{{lineItem.quantity | number: '1.0-2'}}</td>
@@ -127,6 +134,8 @@
         </p>
 
         <p *ngIf="invoiceInfo.invoiceData.note" class="pre-line">{{invoiceInfo.invoiceData.note}}</p>
+
+        <span class="delay-note">Please Note, there may be a slight delay in processing your payment and applying the necessary actions. Thank you for your patience and understanding.</span>
 
         <div *ngIf="showPaymentAdvice" class="full-width scissors-block">
             <span class="scissors-icon">&#9986;</span>

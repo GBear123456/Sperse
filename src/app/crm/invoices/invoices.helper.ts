@@ -6,11 +6,17 @@ import { InvoiceStatus } from '@shared/service-proxies/service-proxies';
 import { InvoiceDueStatus } from './invoices-dto.interface';
 
 export class InvoiceHelpers {
-    static getDueInfo(invoiceStatus: InvoiceStatus, invoiceDueGraceDays: number, invoiceDueDate, invoiceDate, l: Function) {
+    static getDueInfo(invoiceStatus: InvoiceStatus, invoiceDueGraceDays: number, invoiceDueDate, invoiceDate, futureSubscriptionIsSetUp: boolean,  l: Function) {
         let todayMoment = moment().endOf('day');
 
         if (invoiceStatus != InvoiceStatus.Sent && invoiceStatus != InvoiceStatus.PartiallyPaid)
             return null;
+
+        if (futureSubscriptionIsSetUp)
+            return {
+                status: InvoiceDueStatus.Pending,
+                message: l('DueStatus_Pending_Message')
+            }
 
         let status: InvoiceDueStatus = null;
         let dateDiffDays: number = null;

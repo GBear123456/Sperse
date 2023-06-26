@@ -56,8 +56,7 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     }
 
     getPayPalWebhookUrl(): string {
-        let key = this.paypalPaymentSettings.webhookKey || '{webhook_key}';
         let tenantId = this.appSession.tenantId || '';
-        return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=${tenantId}&key=${key}`;
+        return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=${tenantId}`;
     }
 }
