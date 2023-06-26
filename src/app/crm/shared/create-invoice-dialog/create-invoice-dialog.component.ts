@@ -881,7 +881,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     checkSubscriptionsCount() {
         if (this.isStripeEnabled) {
             let subsLines = this.lines.filter(
-                (line: any) => line.productType == 'Subscription' && (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year)
+                (line: any) => line.productType == 'Subscription' && (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year || line.unitId == ProductMeasurementUnit.Custom)
             );
 
             this.stripeSubscriptionsLinesCount = subsLines.length;
@@ -895,7 +895,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.hasReccuringSubscription = this.lines.some((line: any) =>
             line.isCrmProduct &&
             line.productType == 'Subscription' &&
-            (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year)
+            (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year || line.unitId == ProductMeasurementUnit.Custom)
         );
 
         if (this.hasReccuringSubscription) {
