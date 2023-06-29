@@ -255,7 +255,7 @@
                         </div>
                         <div *dxTemplate="let cellData of 'quantity'">
                             <dx-number-box
-                                width="110px"
+                                width="80px"
                                 height="32px"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('Value')"
@@ -269,7 +269,7 @@
                         </div>
                         <div *dxTemplate="let cellData of 'rate'">
                             <dx-text-box
-                                width="100px"
+                                width="80px"
                                 height="32px"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [readOnly]="cellData.data.isCrmProduct && cellData.data.productId"
@@ -286,7 +286,7 @@
                         <div *dxTemplate="let cellData of 'unit'">
                             <dx-select-box
                                 name="unit"
-                                width="100px"
+                                width="145px"
                                 height="32px"
                                 displayExpr="unitName"
                                 valueExpr="unitId"
