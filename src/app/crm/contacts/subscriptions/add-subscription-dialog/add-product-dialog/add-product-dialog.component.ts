@@ -38,7 +38,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
-import { DxValidationGroupComponent } from 'devextreme-angular';
+import { DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
@@ -68,6 +68,7 @@ export class FilterAssignmentsPipe implements PipeTransform {
 })
 export class AddProductDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
+    @ViewChild(DxTextAreaComponent) descriptionHtmlComponent: DxTextAreaComponent;
     private slider: any;
 
     isHostTenant = !abp.session.tenantId;
@@ -177,6 +178,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 top: this.data.fullHeigth ? '0px' : '75px',
                 right: '0px'
             });
+        this.descriptionHtmlComponent.instance.repaint();
     }
 
     saveProduct() {
