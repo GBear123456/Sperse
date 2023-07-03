@@ -392,6 +392,7 @@ export class PackageChooserComponent implements OnInit {
                 productId: this.selectedPackageCardComponent.productInfo.id,
                 productName: this.selectedPackageCardComponent.productInfo.name,
                 paymentPeriodType: PaymentService.getPaymentPeriodType(this.selectedBillingPeriod),
+                customPeriodDescription: this.selectedBillingPeriod == BillingPeriod.Custom ? this.selectedPackageCardComponent.getPriceDescription() : null,
                 total: this.selectedPackageCardComponent.pricePerPeriod * (
                     this.selectedBillingPeriod === BillingPeriod.Yearly ? 12 : 1
                 )

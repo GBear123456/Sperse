@@ -115,8 +115,20 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         return billingPeriod === BillingPeriod.Yearly ? 'annually' : 'monthly';
     }
 
-    getProductUnit(paymentPeriodType: PaymentPeriodType) {
-        return paymentPeriodType === PaymentPeriodType.Annual ? 'year' : ( paymentPeriodType === PaymentPeriodType.Monthly ? 'month' : 'life time');
+    getProductUnit() {
+        switch (this.plan.paymentPeriodType) {
+            case PaymentPeriodType.Annual:
+                return 'per year';
+            case PaymentPeriodType.Monthly:
+                return 'per month';
+            case PaymentPeriodType.OneTime:
+            case PaymentPeriodType.LifeTime:
+                return 'per life time';
+            case PaymentPeriodType.Custom:
+                return this.plan.customPeriodDescription.toLowerCase();
+            default:
+                return '';
+        }
     }
 
     selectedTabChange(e) {
