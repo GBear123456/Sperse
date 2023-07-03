@@ -195,7 +195,7 @@
                                    [placeholder]="ls.l('Select') + ' ' + ls.l('PaymentPeriod') + '...'"
                                    [(value)]="option.frequency"
                                    [disabled]="isReadOnly"
-                                   (onValueChanged)="checkOneTimeOption($event)">
+                                   (onValueChanged)="onFrequencyChanged($event, option)">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('PaymentPeriod'))}}."></dxi-validation-rule>
                         </dx-validator>

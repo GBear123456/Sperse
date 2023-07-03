@@ -130,7 +130,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.product = new UpdateProductInput(data.product);
             let options = data.product.productSubscriptionOptions;
             if (options && options[0])
-                this.checkOneTimeOption({ value: options[0].frequency });
+                this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -313,18 +313,17 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         return frequencies;
     }
 
-    checkOneTimeOption(event) {
+    onFrequencyChanged(event, option: ProductSubscriptionOptionInfo) {
         this.isOneTime = event.value == RecurringPaymentFrequency.OneTime;
-        let options = this.product.productSubscriptionOptions[0];
 
         if (this.isOneTime) {
-            options.commissionableSignupFeeAmount = undefined;
-            options.trialDayCount = undefined;
-            options.signupFee = undefined;
-            options.customPeriodType = CustomPeriodType.Days;
+            option.commissionableSignupFeeAmount = undefined;
+            option.trialDayCount = undefined;
+            option.signupFee = undefined;
+            option.customPeriodType = CustomPeriodType.Days;
         } else if (event.value != RecurringPaymentFrequency.Custom) {
-            options.customPeriodCount = undefined;
-            options.customPeriodType = undefined;
+            option.customPeriodCount = undefined;
+            option.customPeriodType = undefined;
         }
 
         this.detectChanges();
