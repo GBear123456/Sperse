@@ -106,7 +106,7 @@ export class PackageChooserComponent implements OnInit {
     ];
 
     PRODUCT_GROUP_ADD_ON = AppConsts.PRODUCT_GROUP_ADD_ON;
-    MAX_PERIOD_COUNT = 3;
+    MAX_PERIOD_COUNT = 4;
 
     constructor(
         public localizationService: AppLocalizationService,
@@ -233,10 +233,16 @@ export class PackageChooserComponent implements OnInit {
     }
 
     getBillingPeriodByPaymentFrequency(frequency: RecurringPaymentFrequency): BillingPeriod {
-        return frequency == RecurringPaymentFrequency.Monthly ? 
-            BillingPeriod.Monthly : (
-                frequency == RecurringPaymentFrequency.Annual ? BillingPeriod.Yearly : BillingPeriod.LifeTime
-            );
+        switch (frequency) {
+            case RecurringPaymentFrequency.Monthly:
+                return BillingPeriod.Monthly;
+            case RecurringPaymentFrequency.Annual:
+                return BillingPeriod.Yearly;
+            case RecurringPaymentFrequency.LifeTime:
+                return BillingPeriod.LifeTime;
+            case RecurringPaymentFrequency.Custom:
+                return BillingPeriod.Custom;
+        }
     } 
 
     /** Get values of usersAmount and billing period from user previous choice */
@@ -289,11 +295,6 @@ export class PackageChooserComponent implements OnInit {
     //         max()
     //     );
     // }
-
-    billingPeriodChanged(e) {
-        this.selectedBillingPeriod = e.checked ? BillingPeriod.Yearly : BillingPeriod.Monthly;
-        this.emitPlanChange();
-    }
 
     selectPackage(packageIndex: number) {
         const selectedPlanCardComponent = this.packageCardComponents.toArray()[packageIndex];
@@ -408,7 +409,7 @@ export class PackageChooserComponent implements OnInit {
             this.selectedBillingPeriod != BillingPeriod.Monthly &&
             this.showSelectedProductPeriod(RecurringPaymentFrequency.LifeTime)
         ) return Number(this.selectedBillingPeriod) - 1;
-        
+
         return this.selectedBillingPeriod;
     }
 

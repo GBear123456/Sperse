@@ -7,8 +7,9 @@
                 <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Monthly)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }" (click)="toggle(billingPeriod.Monthly)">{{ ls.l('Monthly') }}</div>
                 <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Annual)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }" (click)="toggle(billingPeriod.Yearly)">{{ ls.l('Annually') }}</div>
                 <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.LifeTime)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.LifeTime) }" (click)="toggle(billingPeriod.LifeTime)">{{ ls.l('Lifetime') }}</div>
+                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Custom)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Custom) }" (click)="toggle(billingPeriod.Custom)">{{ ls.l('Custom') }}</div>
             </div>
-            <mat-slider [value]="getSelectedPeriodIndex() * (getSliderPointCount() == 3 ? 33.4 : 50)"
+            <mat-slider [value]="getSelectedPeriodIndex() * (getSliderPointCount() == 4 ? 25 : getSliderPointCount() == 3 ? 33.4 : 50)"
                         [disabled]="true">
             </mat-slider>
         </div>
