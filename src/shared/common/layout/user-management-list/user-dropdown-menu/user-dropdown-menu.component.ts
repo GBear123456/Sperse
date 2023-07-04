@@ -38,6 +38,7 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
 import { BankCodeLettersComponent } from '@app/shared/common/bank-code-letters/bank-code-letters.component';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
@@ -103,6 +104,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         private userManagementService: UserManagementService,
         public profileService: ProfileService,
         public appSession: AppSessionService,
+        public layoutService: LayoutService,
         public ls: AppLocalizationService
     ) {
         this.impersonationService = injector.get(ImpersonationService);

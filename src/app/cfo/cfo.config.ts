@@ -13,31 +13,38 @@ export class CfoConfig implements ConfigInterface {
     navigation: ConfigNavigation[] = [
         {
             route: '/app/cfo/:instance/start',
-            alterRoutes: ['/app/cfo/:instance/business-entities', '/app/cfo/:instance/chart-of-accounts']
+            alterRoutes: ['/app/cfo/:instance/business-entities', '/app/cfo/:instance/chart-of-accounts'],
+            icon: 'assets/common/icons/pie-chart.svg'
         },
         {
             text: 'Accounts',
-            route: '/app/cfo/:instance/linkaccounts'
+            route: '/app/cfo/:instance/linkaccounts',
+            icon: 'assets/common/icons/magic-stick-icon.svg'
         },
         {
             text: 'Transactions',
-            route: '/app/cfo/:instance/transactions'
+            route: '/app/cfo/:instance/transactions',
+            icon: 'assets/common/icons/credit-card-icon.svg'
         },
         {
             text: 'Cashflow',
-            route: '/app/cfo/:instance/cashflow'
+            route: '/app/cfo/:instance/cashflow',
+            icon: 'assets/common/icons/chart-icon.svg'
         },
         {
             text: 'Stats',
-            route: '/app/cfo/:instance/stats'
+            route: '/app/cfo/:instance/stats',
+            icon: 'assets/common/icons/pulse-icon.svg'
         },
         {
             text: 'Statements',
-            route: '/app/cfo/:instance/statements'
+            route: '/app/cfo/:instance/statements',
+            icon: 'assets/common/icons/credit-card-icon.svg'
         },
         {
             text: 'Reports',
-            route: '/app/cfo/:instance/reports'
+            route: '/app/cfo/:instance/reports',
+            icon: 'assets/common/icons/credit-card-icon.svg'
         }
     ];
 }

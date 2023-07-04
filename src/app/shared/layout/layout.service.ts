@@ -9,6 +9,9 @@ export class LayoutService {
     public showNotificationsButton = true;
     public showChatButton = true;
     public showUserProfileMenu = true;
+    public showTopBar = true;
+    public showLeftBar = false;
+
     layoutColors = {
         [LayoutType.Default]: {
             historicalCredit: '#00aeef',

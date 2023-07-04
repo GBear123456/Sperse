@@ -1,0 +1,39 @@
+﻿<div class="page-logo" *ngIf="layoutService.showPageLogo">
+    <a (click)="logoClick()">
+        <img *ngIf="!appSessionService.tenant || !appSessionService.tenant.logoId" src="./assets/common/images/sperse-logo.png" alt="logo" class="logo-layout"/>
+        <img *ngIf="appSessionService.tenant && appSessionService.tenant.logoId"
+             [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSessionService.tenant.logoId"
+             alt="logo"
+             class="logo-layout"/>
+    </a>
+</div>
+
+<platform-select></platform-select>
+
+<div class="nav-menu" *ngIf="navbarItems">
+    <dx-menu
+        width="90px"
+        [dataSource]="navbarItems"
+        [selectByClick]="true"
+        [selectionMode]="'single'"
+        [hoverStateEnabled]="true"
+        orientation="vertical"
+        [selectByClick]="true"
+        [adaptivityEnabled]="true"
+        [selectedItem]="selectedItem"
+        [hideSubmenuOnMouseLeave]="true"
+        [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
+        [showSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
+        (onItemClick)="navigate($event)">
+        <div *dxTemplate="let data of 'item'" [title]="data.text">
+            <img [src]="data.icon">
+        </div>
+    </dx-menu>
+</div>
+
+<user-management-list>
+    <user-dropdown-menu *ngIf="layoutService.showUserProfileMenu"
+                        [subtitle]="userCompany$ | async"
+                        [dropdownMenuItems]="dropdownMenuItems">
+    </user-dropdown-menu>
+</user-management-list>

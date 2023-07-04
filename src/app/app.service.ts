@@ -16,6 +16,7 @@ import { PipelinesStoreSelectors } from '@app/crm/store';
 import { AppServiceBase } from '@shared/common/app-service-base';
 import { PanelMenu } from '@app/shared/layout/top-bar/panel-menu';
 import { AppConsts } from '@shared/AppConsts';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     PaymentPeriodType,
@@ -76,6 +77,7 @@ export class AppService extends AppServiceBase {
 
     constructor(
         injector: Injector,
+        private layoutService: LayoutService,
         private store$: Store<AppStore.State>,
         @Inject(DOCUMENT) private document: Document,
     ) {
@@ -444,6 +446,10 @@ export class AppService extends AppServiceBase {
 
     switchModule(name: string, params = {}) {
         this.subscriptionBarVisible = undefined;
+
+        this.layoutService.showLeftBar = name.toLowerCase() == 'cfo';        
+        this.layoutService.showTopBar = !this.layoutService.showLeftBar;
+
         super.switchModule(name, params);
     }
 
