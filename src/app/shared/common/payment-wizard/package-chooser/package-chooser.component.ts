@@ -13,9 +13,9 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { MatSliderChange, MatSlider } from '@angular/material/slider';
+import { MatSlider } from '@angular/material/slider';
 import { Observable, forkJoin } from 'rxjs';
-import { first, concatAll, map, max, pluck, publishReplay, refCount } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import uniqBy from 'lodash/uniqBy';
 
 /** Application imports */
@@ -30,9 +30,7 @@ import {
     PackageConfigDto,
     PackageEditionConfigDto,
     RecurringPaymentFrequency,
-    PackageServiceProxy,
     ProductInfo,
-    ProductServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LocalizationResolver } from '@root/shared/common/localization-resolver';
@@ -85,10 +83,6 @@ export class PackageChooserComponent implements OnInit {
     selectedBillingPeriod = BillingPeriod.Yearly;
     billingPeriod = BillingPeriod;
     recurringPaymentFrequency = RecurringPaymentFrequency;
-    private defaultUsersAmount = 5;
-    private currentPackage: PackageConfigDto;
-    private currentEdition: PackageEditionConfigDto;
-    private enableSliderScalingChange = false;
 
     public freePackages: PackageConfigDto[];
     packagesConfig$: Observable<ProductInfo[]>;// = this.paymentService.packagesConfig$;
@@ -107,23 +101,25 @@ export class PackageChooserComponent implements OnInit {
 
     PRODUCT_GROUP_ADD_ON = AppConsts.PRODUCT_GROUP_ADD_ON;
     MAX_PERIOD_COUNT = 4;
+    static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.Custom];
+    availablePeriods: BillingPeriod[] = [];
+    selectedPeriodIndex = 0;
 
     constructor(
         public localizationService: AppLocalizationService,
         private localizationResolver: LocalizationResolver,
-        private packageServiceProxy: PackageServiceProxy,
         private paymentService: PaymentService,
         private changeDetectionRef: ChangeDetectorRef,
         private appService: AppService,
         public ls: AppLocalizationService
-    ) {}
+    ) { }
 
     ngOnInit() {
         let packagesConfig$: Observable<ProductInfo[]>;
         if (this.upgradeProductId) {
             packagesConfig$ = this.paymentService.getUpgradeConfig(this.upgradeProductId);
         } else {
-            packagesConfig$ = this.productsGroupName == AppConsts.PRODUCT_GROUP_ADD_ON ? 
+            packagesConfig$ = this.productsGroupName == AppConsts.PRODUCT_GROUP_ADD_ON ?
                 this.paymentService.addOnConfig$ : this.paymentService.packagesConfig$;
         }
 
@@ -143,7 +139,7 @@ export class PackageChooserComponent implements OnInit {
 
         if (this.appService.moduleSubscriptions.length) {
             let moduleSubscriptionExpired = this.findSubscriptionByProductId(this.upgradeProductId) || this.subscription || this.appService.moduleSubscriptions[0];
-            if (moduleSubscriptionExpired.paymentPeriodType != PaymentPeriodType.OneTime && 
+            if (moduleSubscriptionExpired.paymentPeriodType != PaymentPeriodType.OneTime &&
                 this.appService.subscriptionInGracePeriodBySubscription(moduleSubscriptionExpired)
             ) {
                 this.currentProductId = moduleSubscriptionExpired.productId;
@@ -175,48 +171,34 @@ export class PackageChooserComponent implements OnInit {
     loadPackages() {
         this.packagesConfig$.pipe(first()).subscribe((products: ProductInfo[]) => {
             this.packages = products.sort((prev: ProductInfo, next: ProductInfo) => {
-                let prevOption = this.getProductMonthlyOption(prev), 
+                let prevOption = this.getProductMonthlyOption(prev),
                     nextOption = this.getProductMonthlyOption(next);
-                return (prevOption ? prevOption.fee : 0) > (nextOption ? nextOption.fee : 0) ? 1: -1;
+                return (prevOption ? prevOption.fee : 0) > (nextOption ? nextOption.fee : 0) ? 1 : -1;
             });
+            this.initAvailablePeriods();
             this.preselectPackage();
-            // this.splitPackagesForFreeAndNotFree(packagesConfig);
-            // this.getCurrentSubscriptionInfo(packagesConfig.currentSubscriptionInfo);
-            // this.getCurrentPackageAndEdition(packagesConfig);
-            // this.changeDefaultSettings(packagesConfig.currentSubscriptionInfo);
-            // if (this.preselectionIsNeeded) {
-            //     this.preselectPackage();
-            // }
             this.changeDetectionRef.detectChanges();
         });
-        // this.getMaxUsersAmount(this.packagesConfig$).subscribe(maxAmount => {
-        //     this.packagesMaxUsersAmount = maxAmount;
-        //     this.changeDetectionRef.detectChanges();
-        // });
     }
 
-    // get preselectionIsNeeded() {
-    //     return this.preselect && !this.tenantSubscriptionIsFree && !this.tenantSubscriptionIsTrial;
-    // }
+    initAvailablePeriods() {
+        let periods: RecurringPaymentFrequency[] = this.packages.reduce((acc, val) => {
+            if (val.productSubscriptionOptions)
+                return uniqBy(acc.concat(val.productSubscriptionOptions.map(option => option.frequency)), (val) => val);
+            return acc;
+        }, []);
 
-    // private getCurrentSubscriptionInfo(currentSubscriptionInfo: ModuleSubscriptionInfoExtended): void {
-    //     if (currentSubscriptionInfo) {
-    //         this.tenantSubscriptionIsTrial = currentSubscriptionInfo.isTrial;
-    //         this.tenantSubscriptionIsFree = this.freePackages && this.freePackages.length ? currentSubscriptionInfo.editionId === this.freePackages[0].editions[0].id : false;
-    //     }
-    // }
-
-    // private getCurrentPackageAndEdition(packagesConfig: GetPackagesConfigOutput): void {
-    //     let currentEditionId = packagesConfig.currentSubscriptionInfo ? packagesConfig.currentSubscriptionInfo.editionId : undefined;
-    //     this.currentPackage = this.packages.find(packageConfig => {
-    //         this.currentEdition = packageConfig.editions.find(edition => edition.id === currentEditionId);
-    //         return !!this.currentEdition;
-    //     });
-    // }
+        let billingPeriods = periods.map(v => this.getBillingPeriodByPaymentFrequency(v));
+        this.availablePeriods = [];
+        PackageChooserComponent.availablePeriodsOrder.forEach(v => {
+            if (billingPeriods.indexOf(v) >= 0)
+                this.availablePeriods.push(v);
+        });
+    }
 
     /** Preselect package if current edition is in list of not free packages, else - preselect best value package */
     private preselectPackage() {
-        let selectedPackage = this.packages.find(packageConfig => packageConfig.id == this.currentProductId);            
+        let selectedPackage = this.packages.find(packageConfig => packageConfig.id == this.currentProductId);
         if (selectedPackage) {
             this.selectedPackageIndex = this.packages.indexOf(selectedPackage);
             /** Update selected package with the active status to handle next button status */
@@ -243,58 +225,7 @@ export class PackageChooserComponent implements OnInit {
             case RecurringPaymentFrequency.Custom:
                 return BillingPeriod.Custom;
         }
-    } 
-
-    /** Get values of usersAmount and billing period from user previous choice */
-    // private changeDefaultSettings(currentSubscriptionInfo: ModuleSubscriptionInfoExtended) {
-    //     this.usersAmount = this.getDefaultUserAmount(currentSubscriptionInfo);
-    //     this.selectedBillingPeriod = this.getDefaultBillingPeriod(currentSubscriptionInfo);
-    // }
-
-    // private getDefaultUserAmount(currentSubscriptionInfo: ModuleSubscriptionInfoExtended): number {
-    //     let usersAmount: number = this.defaultUsersAmount;
-    //     if (!this.tenantSubscriptionIsTrial && !this.tenantSubscriptionIsFree) {
-    //         if (currentSubscriptionInfo) {
-    //             const currentEditionMaxUserCount = this.currentEdition && this.currentEdition.maxUserCount;
-    //             /** If both are available - then exclude case when current subscription value is bigger then in new packages*/
-    //             if (currentSubscriptionInfo.maxUserCount && currentEditionMaxUserCount) {
-    //                 usersAmount = currentSubscriptionInfo.maxUserCount > currentEditionMaxUserCount
-    //                     ? currentEditionMaxUserCount
-    //                     : currentSubscriptionInfo.maxUserCount;
-    //             } else if (currentSubscriptionInfo.maxUserCount || currentEditionMaxUserCount) {
-    //                 usersAmount = currentSubscriptionInfo.maxUserCount || currentEditionMaxUserCount;
-    //             }
-    //         }
-    //         usersAmount = this.round(usersAmount);
-    //         usersAmount = usersAmount > this.sliderInitialMaxValue || usersAmount < this.sliderInitialMinValue
-    //             ? this.sliderInitialMaxValue
-    //             : usersAmount;
-    //     }
-    //     return usersAmount;
-    // }
-
-    // private getDefaultBillingPeriod(currentSubscriptionInfo: ModuleSubscriptionInfoExtended) {
-    //     return currentSubscriptionInfo && currentSubscriptionInfo.frequency === PaymentPeriodType.Monthly
-    //         && !this.tenantSubscriptionIsFree && !this.tenantSubscriptionIsTrial
-    //         ? BillingPeriod.Monthly
-    //         : BillingPeriod.Yearly;
-    // }
-
-    // private round(amount: number): number {
-    //     return Math.ceil(amount / this.sliderInitialStep) * this.sliderInitialStep;
-    // }
-
-    /** Return the highest users count from all packages */
-    // private getMaxUsersAmount(packagesConfig$: Observable<GetPackagesConfigOutput>): Observable<number> {
-    //     return packagesConfig$.pipe(
-    //         pluck('packages'),
-    //         concatAll(),
-    //         map((packageConfig: PackageConfigDto) => packageConfig.editions),
-    //         concatAll(),
-    //         map((edition: PackageEditionConfigDto) => edition.maxUserCount),
-    //         max()
-    //     );
-    // }
+    }
 
     selectPackage(packageIndex: number) {
         const selectedPlanCardComponent = this.packageCardComponents.toArray()[packageIndex];
@@ -308,28 +239,15 @@ export class PackageChooserComponent implements OnInit {
         return this.selectedBillingPeriod == period;
     }
 
-    showSelectedProductPeriod(frequency: RecurringPaymentFrequency): boolean {
-        if (this.packages && this.packages.length)
-            return this.packages.some(product =>
-                product.productSubscriptionOptions && product.productSubscriptionOptions.some(
-                    option => option.frequency == frequency
-                )
-            );
-        else
-            return false;
-    }
-
-    getSliderPointCount(): number {
-        return this.packages ? this.packages.reduce((acc, val) => {
-            if (val.productSubscriptionOptions)
-                return uniqBy(acc.concat(val.productSubscriptionOptions.map(option => option.frequency)), (val) => val);
-            return acc;
-        }, []).length : 0;
-    }
-
     toggle(value: BillingPeriod) {
         this.selectedBillingPeriod = value;
         this.emitPlanChange();
+    }
+
+    getSliderValue(): number {
+        var periodIndex = this.availablePeriods.find(v => v == this.selectedBillingPeriod);
+        var value = periodIndex * (100 / this.availablePeriods.length);
+        return +value.toFixed();
     }
 
     emitPlanChange() {
@@ -339,39 +257,6 @@ export class PackageChooserComponent implements OnInit {
                 this.onPlanChosen.emit(paymentOptions);
         }, 10);
     }
-
-    // onActiveUsersChange(event: MatSliderChange) {
-    //     this.usersAmount = event.value;
-    // }
-
-    // decreaseUserCount() {
-    //     if (this.usersAmount <= this.sliderInitialMinValue) return;
-    //     if (this.enableSliderScalingChange) {
-    //         if (this.sliderStep !== this.sliderInitialStep && this.usersAmount === this.sliderInitialMaxValue) {
-    //             this.repaintSlider(this.sliderInitialMinValue, this.sliderInitialMaxValue, this.sliderInitialStep);
-    //         }
-    //     }
-    //     this.usersAmount = this.usersAmount - this.sliderStep;
-    // }
-
-    // increaseUserCount() {
-    //     if (this.enableSliderScalingChange) {
-    //         if (this.usersAmount >= this.packagesMaxUsersAmount) return;
-    //         if (this.usersAmount > (this.sliderInitialMaxValue - this.sliderStep) && this.packagesMaxUsersAmount > this.sliderInitialMaxValue) {
-    //             const step = (this.packagesMaxUsersAmount - this.sliderInitialMaxValue) / 8;
-    //             this.repaintSlider(this.sliderInitialMaxValue, this.packagesMaxUsersAmount, step);
-    //         }
-    //     } else {
-    //         if (this.usersAmount >= this.sliderInitialMaxValue) return;
-    //     }
-    //     this.usersAmount = this.usersAmount + this.sliderStep;
-    // }
-
-    // repaintSlider(min: number, max: number, step: number) {
-    //     this.slider['first']._min = min;
-    //     this.slider['first']._max = max;
-    //     this.slider['first']._step = this.sliderStep = step;
-    // }
 
     goToNextStep() {
         if (!this.selectedPackageCardComponent) {
@@ -401,22 +286,9 @@ export class PackageChooserComponent implements OnInit {
         }
     }
 
-    getSelectedPeriodIndex(): number {
-        const periodCount = this.getSliderPointCount();
-
-        if (periodCount == 1)
-            return this.MAX_PERIOD_COUNT - 1;
-        else if (periodCount < this.MAX_PERIOD_COUNT &&
-            this.selectedBillingPeriod != BillingPeriod.Monthly &&
-            this.showSelectedProductPeriod(RecurringPaymentFrequency.LifeTime)
-        ) return Number(this.selectedBillingPeriod) - 1;
-
-        return this.selectedBillingPeriod;
-    }
-
     isProductPurchased(product) {
         return this.productsGroupName == this.PRODUCT_GROUP_ADD_ON &&
-            product && this.appService.moduleSubscriptions.length && 
+            product && this.appService.moduleSubscriptions.length &&
             this.appService.moduleSubscriptions.some(sub => sub.productId == product.id);
     }
 
