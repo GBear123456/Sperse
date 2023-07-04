@@ -23,7 +23,7 @@
         <h4 class="planName">{{ plan.productName }}</h4>
         <div *ngIf="plan.total" class="usersAmountAndBilledInfo">
             <span>{{ l('Price') }}: </span>
-            <span>{{ (plan.currencySymbol || '$') + (plan.total | number : '1.2-2') }} per {{ getProductUnit(plan.paymentPeriodType) }}</span>
+            <span>{{ (plan.currencySymbol || '$') + (plan.total | number : '1.2-2') }} {{ getProductUnit(plan) }}</span>
         </div>
         <div *ngIf="plan.total && plan.pricePerUserPerMonth" class="planPrice">
             <div>
