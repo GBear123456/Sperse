@@ -2,14 +2,13 @@
     <ng-container *ngIf="packagesConfig$ | async">
         <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ productsGroupName == PRODUCT_GROUP_ADD_ON ? ls.l('ChooseAddOnPackage'): widgettitle }}</h2>
         <h3 class="subtitle">{{ subtitle }}</h3>
-        <div class="state-slider point{{getSliderPointCount()}}">
+        <div class="state-slider point{{availablePeriods.length}}">
             <div class="captions">
-                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Monthly)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Monthly) }" (click)="toggle(billingPeriod.Monthly)">{{ ls.l('Monthly') }}</div>
-                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Annual)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Yearly) }" (click)="toggle(billingPeriod.Yearly)">{{ ls.l('Annually') }}</div>
-                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.LifeTime)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.LifeTime) }" (click)="toggle(billingPeriod.LifeTime)">{{ ls.l('Lifetime') }}</div>
-                <div *ngIf="showSelectedProductPeriod(recurringPaymentFrequency.Custom)" [ngClass]="{ 'active': getActiveStatus(billingPeriod.Custom) }" (click)="toggle(billingPeriod.Custom)">{{ ls.l('Custom') }}</div>
+                <ng-container *ngFor="let period of availablePeriods; index as i">
+                    <div [ngClass]="{ 'active': getActiveStatus(period) }" (click)="toggle(period)">{{ ls.l(billingPeriod[period]) }}</div>
+                </ng-container>
             </div>
-            <mat-slider [value]="getSelectedPeriodIndex() * (getSliderPointCount() == 4 ? 25 : getSliderPointCount() == 3 ? 33.4 : 50)"
+            <mat-slider [value]="getSliderValue()"
                         [disabled]="true">
             </mat-slider>
         </div>
