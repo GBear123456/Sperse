@@ -21,7 +21,7 @@
             </span>
             <div class="number-info">
                 <span class="decimal">{{ pricePerPeriod | customNumber: '0.2-2' }}</span>
-                <span>/{{ ls.l('price' + billingPeriodEnum[billingPeriod]) }}</span>
+                <span>/{{ getPriceDescription() }}</span>
             </div>
         </div>
     </div>
