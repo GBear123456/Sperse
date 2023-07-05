@@ -34,7 +34,8 @@ import {
     ProductSubscriptionOptionInfo,
     ProductMeasurementUnit,
     SetProductImageInput,
-    ProductUpgradeAssignmentInfo
+    ProductUpgradeAssignmentInfo,
+    CustomPeriodType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -48,9 +49,9 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
-@Pipe({name:'FilterAssignments'})
+@Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
-    transform(products: ProductDto[], excludeIds : number[]){
+    transform(products: ProductDto[], excludeIds: number[]) {
         return products && products.filter(product => excludeIds.indexOf(product.id) == -1);
     }
 }
@@ -77,8 +78,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     amountNullableFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,###.##';
     products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription).pipe(
         map((products: ProductDto[]) => {
-            return this.data.product && this.data.product.id ? 
-                products.filter((product: ProductDto) => product.id != this.data.product.id) : products            
+            return this.data.product && this.data.product.id ?
+                products.filter((product: ProductDto) => product.id != this.data.product.id) : products
         })
     );
     readonly addNewItemId = -1;
@@ -92,6 +93,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     );
     recurringPaymentFrequency = RecurringPaymentFrequency;
     frequencies = Object.keys(RecurringPaymentFrequency);
+    customPeriodTypes = Object.keys(CustomPeriodType);
     gracePeriodDefaultValue: number;
     customGroup: string;
     isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
@@ -99,7 +101,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     isReadOnly = true;
     image: string = null;
     imageChanged: boolean = false;
-    isOneTime = false;   
+    isOneTime = false;
 
     constructor(
         private elementRef: ElementRef,
@@ -129,7 +131,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.product = new UpdateProductInput(data.product);
             let options = data.product.productSubscriptionOptions;
             if (options && options[0])
-                this.checkOneTimeOption({value: options[0].frequency});
+                this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -174,10 +176,10 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     ngAfterViewInit() {
         this.slider.classList.remove('hide');
         this.dialogRef.updateSize(undefined, this.data.fullHeigth ? '100vh' : 'calc(100vh - 75px)');
-            this.dialogRef.updatePosition({
-                top: this.data.fullHeigth ? '0px' : '75px',
-                right: '0px'
-            });
+        this.dialogRef.updatePosition({
+            top: this.data.fullHeigth ? '0px' : '75px',
+            right: '0px'
+        });
         this.descriptionHtmlComponent.instance.repaint();
     }
 
@@ -266,7 +268,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         if (!this.product.productSubscriptionOptions)
             this.product.productSubscriptionOptions = [];
         if (this.product.productSubscriptionOptions.some(item => !item.frequency))
-            return ;
+            return;
         this.product.productSubscriptionOptions.push(
             new ProductSubscriptionOptionInfo()
         );
@@ -276,7 +278,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         if (!this.product.productUpgradeAssignments)
             this.product.productUpgradeAssignments = [];
         if (this.product.productUpgradeAssignments.some(item => !item.upgradeProductId))
-            return ;
+            return;
         this.product.productUpgradeAssignments.push(
             new ProductUpgradeAssignmentInfo()
         );
@@ -303,9 +305,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     getFrequencies(selected) {
         let options = this.product.productSubscriptionOptions,
             frequencies = options ? this.frequencies.filter(item => {
-            return selected.frequency == item ||
-                !options.some(option => option.frequency == item);
-        }) : this.frequencies;
+                return selected.frequency == item ||
+                    !options.some(option => option.frequency == item);
+            }) : this.frequencies;
 
         if (options.length > 1)
             return frequencies.filter(item => item != RecurringPaymentFrequency.OneTime);
@@ -313,17 +315,19 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         return frequencies;
     }
 
-    checkOneTimeOption(event) {
+    onFrequencyChanged(event, option: ProductSubscriptionOptionInfo) {
         this.isOneTime = event.value == RecurringPaymentFrequency.OneTime;
-        let options = this.product.productSubscriptionOptions[0];
 
         if (this.isOneTime) {
-            options.commissionableSignupFeeAmount = undefined;
-            options.trialDayCount = undefined;
-            options.signupFee = undefined;
-        } else
-            options.activeDayCount = undefined;
-        
+            option.commissionableSignupFeeAmount = undefined;
+            option.trialDayCount = undefined;
+            option.signupFee = undefined;
+            option.customPeriodType = CustomPeriodType.Days;
+        } else if (event.value != RecurringPaymentFrequency.Custom) {
+            option.customPeriodCount = undefined;
+            option.customPeriodType = undefined;
+        }
+
         this.detectChanges();
     }
 
@@ -399,9 +403,30 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         };
     }
 
-    validatePeriodDayCount(option) {
+    validatePeriodDayCount(option: ProductSubscriptionOptionInfo) {
         return (event) => {
-            return !this.isOneTime || event.value && event.value > 0;
+            return event.value && event.value > 0;
+        };
+    }
+
+    validateCustomPeriodDayCount(option: ProductSubscriptionOptionInfo) {
+        return (event) => {
+            let isPeriodValid = true;
+            if (option.frequency == RecurringPaymentFrequency.Custom && option.customPeriodType) {
+                switch (option.customPeriodType) {
+                    case CustomPeriodType.Days:
+                        isPeriodValid = event.value <= 365;
+                        break;
+                    case CustomPeriodType.Weeks:
+                        isPeriodValid = event.value <= 52;
+                        break;
+                    case CustomPeriodType.Months:
+                        isPeriodValid = event.value <= 12;
+                        break;
+                }
+            }
+
+            return isPeriodValid;
         };
     }
 
@@ -420,7 +445,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             else
                 return this.image;
         }
-        return showDefault ?  './assets/common/images/product.png' : null;
+        return showDefault ? './assets/common/images/product.png' : null;
     }
 
     openImageSelector() {
@@ -462,7 +487,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             return this.product.productUpgradeAssignments.map(
                 item => option.upgradeProductId == item.upgradeProductId ? undefined : item.upgradeProductId
             ).filter(Boolean);
-        else 
+        else
             return [];
     }
 
@@ -471,7 +496,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     getProductUnits() {
-        if (this.product.type == ProductType.General)        
+        if (this.product.type == ProductType.General)
             return this.productUnits.filter(unit => unit != this.ls.l('ProductMeasurementUnit_OneTime'));
         else
             return this.productUnits;

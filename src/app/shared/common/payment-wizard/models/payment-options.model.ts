@@ -4,5 +4,6 @@ export interface PaymentOptions {
     productId: number;
     productName: string;
     paymentPeriodType: PaymentPeriodType;
+    customPeriodDescription: string;
     total: number;
 }
