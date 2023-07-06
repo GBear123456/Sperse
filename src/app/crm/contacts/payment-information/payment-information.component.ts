@@ -48,6 +48,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     paymentMethods$: Observable<PaymentMethodInfo[]>;
     paymentMethodsTypes = PaymentInfoType;
     paymentsDisplayLimit$: BehaviorSubject<number | null> = new BehaviorSubject<number>(9);
+    selectedPayment: ShortPaymentInfo = null;
     private _refresh: BehaviorSubject<boolean> = new BehaviorSubject(false);
     refresh: Observable<boolean> = this._refresh.asObservable().pipe(
         filter(() => {
@@ -178,6 +179,11 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
 
     paymentMethodsScrollHeight() {
         return document.body.clientHeight - this.paymentMethodsContainer.nativeElement.querySelector('.title').getBoundingClientRect().bottom;
+    }
+
+    highlightPaymentInfo(paymentInfo: ShortPaymentInfo) {
+        this.selectedPayment = this.selectedPayment == paymentInfo ? null : paymentInfo;
+        this.changeDetectorRef.detectChanges();
     }
 
     ngOnDestroy() {

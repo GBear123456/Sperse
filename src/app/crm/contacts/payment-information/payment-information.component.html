@@ -24,10 +24,12 @@
             <dx-scroll-view [height]="paymentsScrollHeight()" [showScrollbar]="'never'">
                 <div *ngIf="(displayedPayments$ | async) as displayedPayments;">
                     <ul>
-                        <li *ngFor="let payment of displayedPayments">
-                            <span class="date">{{ formatDate(payment.date) }}</span>
-                            <span class="amount">{{ payment.amount | currency:amountCurrency:'symbol': '1.2-2' }}</span>
-                        </li>
+                        <ng-container *ngFor="let payment of displayedPayments">
+                            <li [ngClass]="{'active': selectedPayment && selectedPayment == payment}" (click)="highlightPaymentInfo(payment)">
+                                <span class="date">{{ formatDate(payment.date) }}</span>
+                                <span class="amount">{{ payment.amount | currency:amountCurrency:'symbol': '1.2-2' }}</span>
+                            </li>
+                        </ng-container>
                     </ul>
                     <button class="viewAllTransactions" *ngIf="displayedPayments.length < (payments$ | async)?.length" (click)="addNewPaymentMethod()" (click)="viewAllTransactions()">{{ ls.l('ViewAllTransactions') }}</button>
                     <app-no-data *ngIf="displayedPayments && !displayedPayments.length"></app-no-data>
@@ -39,29 +41,35 @@
                 <h3>{{ ls.l('PaymentMethods') }}</h3>
                 <button class="addNewPaymentMethod" *ngIf="false">+{{ ls.l('AddNew') }}</button>
             </div>
-            <dx-scroll-view [height]="paymentMethodsScrollHeight()" [showScrollbar]="'never'"  *ngIf="(paymentMethods$ | async) as paymentMethods">
+            <dx-scroll-view [height]="paymentMethodsScrollHeight()" [showScrollbar]="'never'" *ngIf="(paymentMethods$ | async) as paymentMethods">
                 <ul class="paymentMethodsList">
                     <li *ngFor="let paymentMethod of paymentMethods">
                         <div [ngSwitch]="paymentMethod.type">
                             <ng-container *ngSwitchCase="paymentMethodsTypes.BankCard">
-                                <div [ngClass]="{'active': paymentMethod.active}" class="paymentMethodIcon">
+                                <div [ngClass]="{'active': selectedPayment?.paymentInfoId == paymentMethod.id}" class="paymentMethodIcon">
                                     <img [src]="'./assets/common/images/payments/card-logo/' + getCardType(paymentMethod.bankCardInfo) + '.svg'">
                                 </div>
                                 <div>
-                                    <p class="paymentName">{{ paymentMethod.bankCardInfo.cardNumber }}</p>
+                                    <p class="paymentName">
+                                        {{ paymentMethod.bankCardInfo.cardNumber }}
+                                        <ng-container *ngIf="paymentMethod.bankCardInfo.holderName"><span> ({{ paymentMethod.bankCardInfo.holderName }})</span></ng-container>
+                                    </p>
                                     <p class="paymentExpiration">{{ ls.l('Expires') + ' ' + paymentMethod.bankCardInfo.expirationMonth + '/' + paymentMethod.bankCardInfo.expirationYear }}</p>
                                 </div>
                             </ng-container>
                             <ng-container *ngSwitchCase="paymentMethodsTypes.PayPal">
-                                <div [ngClass]="{'active': paymentMethod.active}" class="paymentMethodIcon">
+                                <div [ngClass]="{'active': selectedPayment?.paymentInfoId == paymentMethod.id}" class="paymentMethodIcon">
                                     <img [src]="'./assets/common/images/payments/card-logo/paypal.svg'">
                                 </div>
                                 <div>
-                                    <p class="paymentName">{{ ls.l('PayPal') }}</p>
+                                    <p class="paymentName">
+                                        {{ paymentMethod.payPalInfo.email || ls.l('PayPal') }}
+                                        <ng-container *ngIf="paymentMethod.payPalInfo.firstName"><span> ({{ paymentMethod.payPalInfo.firstName }} {{ paymentMethod.payPalInfo.lastName }})</span></ng-container>
+                                    </p>
                                 </div>
                             </ng-container>
                             <ng-container *ngSwitchCase="paymentMethodsTypes.ACH">
-                                <div [ngClass]="{'active': paymentMethod.active}" class="achPaymentMethodIcon paymentMethodIcon">{{ ls.l('eCheck') }}</div>
+                                <div [ngClass]="{'active': selectedPayment?.paymentInfoId == paymentMethod.id}" class="achPaymentMethodIcon paymentMethodIcon">{{ ls.l('eCheck') }}</div>
                                 <div>
                                     <p class="paymentName">{{ paymentMethod.achCustomerInfo.bankName + ' ' + paymentMethod.achCustomerInfo.accountNumber }}</p>
                                 </div>
