@@ -41,6 +41,18 @@
                          [disabled]="isReadOnly">
             </dx-text-box>
         </div>
+        <div class="field description-html">
+            <label for="name">{{ls.l('Description')}} Html</label>
+            <dx-text-area name="descriptionHtml"
+                         width="300px"
+                         [inputAttr]="{ id: 'descriptionHtml' }"
+                         [(value)]="product.descriptionHtml"
+                         [autoResizeEnabled]="true"
+                         [maxLength]="8192"
+                         [maxHeight]="150"
+                         [disabled]="isReadOnly">
+            </dx-text-area>
+        </div>
         <div class="field photo">
             <label for="name">{{ls.l('Image')}}</label>
             <img (click)="openImageSelector()" [src]="getProductImage(true)" />

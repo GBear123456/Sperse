@@ -71,6 +71,11 @@
             }
         }
 
+        &.description-html ::ng-deep .dx-texteditor-input {
+            font-size: 16px;
+            font-weight: 400;
+        }
+
         &.system-type {
             margin-bottom: 15px;
         }
@@ -136,6 +141,7 @@
             z-index: 1;
         }
     }
+
     ::ng-deep dx-select-box {
         .dx-icon-clear {
             left: 12px;
@@ -144,8 +150,10 @@
             margin: 0;
             top: 11px;
         }
+
         .dx-texteditor-input-container {
             border-bottom: 1px solid #dfdfdf;
+
             input {
                 width: 240px;
                 border: none;

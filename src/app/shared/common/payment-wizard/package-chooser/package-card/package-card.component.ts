@@ -13,13 +13,14 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PaymentService } from '../../payment.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'package-card',
     templateUrl: './package-card.component.html',
     styleUrls: ['./package-card.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.Emulated,
+    encapsulation: ViewEncapsulation.None,
     providers: [DecimalPipe]
 })
 export class PackageCardComponent implements OnChanges {
@@ -53,6 +54,7 @@ export class PackageCardComponent implements OnChanges {
     selectedEdition: PackageEditionConfigDto;
     price: number;
 
+    descriptionHtml;
     features;
     products = {
         Solo: {
@@ -99,6 +101,7 @@ export class PackageCardComponent implements OnChanges {
 
     constructor(
         private decimalPipe: DecimalPipe,
+        private sanitizer: DomSanitizer,
         public ls: AppLocalizationService
     ) { }
 
@@ -109,6 +112,7 @@ export class PackageCardComponent implements OnChanges {
             this.background = product.background;
             this.features = product.features;
         }
+        this.descriptionHtml = this.productInfo.descriptionHtml && this.sanitizer.bypassSecurityTrustHtml(this.productInfo.descriptionHtml);
 
         //this.selectedEdition = this.getSelectedEdition();
         //this.isActive = this.editions && !!this.selectedEdition;
