@@ -30,7 +30,7 @@ export class PaymentService {
         private productServiceProxy: ProductServiceProxy
     ) {
         /* Remove condition to enabled Add On Products for all environments */
-        if (environment.releaseStage == 'staging')
+        if (['staging', 'development'].includes(environment.releaseStage))
             this.addOnConfig$ = this.getPackagesConfig(
                 AppConsts.PRODUCT_GROUP_ADD_ON
             );
