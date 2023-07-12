@@ -3,6 +3,7 @@
         [width]="width"
         [value]="displayName"
         [items]="moduleItems"
+        [ngStyle]="{background: 'transparent'}"
         (onInitialized)="onDropDownInit($event)">
         <div *dxTemplate="let data of 'content'" class="platform-select-wrapper">
             <div class="top-row">
