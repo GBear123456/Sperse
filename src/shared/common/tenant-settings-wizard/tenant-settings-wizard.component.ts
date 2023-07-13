@@ -54,7 +54,7 @@ import { OtherSettingsComponent } from './other-settings/other-settings.componen
 @Component({
     selector: 'tenant-settings-wizard',
     templateUrl: 'tenant-settings-wizard.component.html',
-    styleUrls: [ 'tenant-settings-wizard.component.less' ],
+    styleUrls: ['tenant-settings-wizard.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantSettingsWizardComponent implements AfterViewInit {
@@ -104,9 +104,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     );
     securitySettings$: Observable<SecuritySettingsEditDto> = this.tenantSettingsService.getSecuritySettings();
     emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
-    generalSettingsChanged: Boolean;
-    timezoneChanged: Boolean;
-    countryChanged: Boolean;
+    changedReloadOption: string;
 
     constructor(
         private featureCheckerService: FeatureCheckerService,
@@ -123,18 +121,28 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         public appService: AppService
     ) {
         this.dialogRef.afterClosed().subscribe(() => {
-            if (this.timezoneChanged)
-                this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
-                    window.location.reload();
-                });
-            if (this.countryChanged)
-                this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Country'))).done(() => {
-                    window.location.reload();
-                });
-            if (this.generalSettingsChanged)
-                this.messageService.info(this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('General'))).done(() => {
-                    window.location.reload();
-                });            
+            if (!this.changedReloadOption)
+                return;
+
+            let message;
+            switch (this.changedReloadOption) {
+                case 'timezone':
+                    message = this.ls.l('TimeZoneSettingChangedRefreshPageNotification');
+                    break;
+                case 'defaultCountry':
+                    message = this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Country'));
+                    break;
+                case 'SignUpPageEnabled':
+                    message = this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('General'));
+                    break;
+                case 'navPosition':
+                    message = this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'));
+                    break;
+            }
+
+            this.messageService.info(message).done(() => {
+                window.location.reload();
+            });
         });
     }
 
@@ -269,11 +277,6 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     }
 
     onOptionChanged(option: string) {
-        if (option == 'SignUpPageEnabled')
-            this.generalSettingsChanged = true;
-        if (option == 'timezone')
-            this.timezoneChanged = true;
-        if (option == 'defaultCountry')
-            this.countryChanged = true;                        
+        this.changedReloadOption = option;
     }
 }
