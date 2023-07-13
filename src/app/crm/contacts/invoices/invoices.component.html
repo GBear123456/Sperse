@@ -23,9 +23,9 @@
             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
 
             <dxi-column [dataField]="invoiceFields.OrderNumber" [caption]="l('OrderNumber')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column [dataField]="invoiceFields.InvoiceId" [caption]="l('Invoice')" width="80px"></dxi-column>
+            <dxi-column [dataField]="invoiceFields.InvoiceNumber" [caption]="l('Invoice No')"></dxi-column>
             <dxi-column [dataField]="invoiceFields.Amount" [caption]="l('Amount')" [format]="currencyFormat" cssClass="clipboard-holder padding-right"></dxi-column>
-            <dxi-column [dataField]="invoiceFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
+            <!--<dxi-column [dataField]="invoiceFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>-->
             <dxi-column [dataField]="invoiceFields.InvoiceStatus" [caption]="l('Status')" alignment="center" cellTemplate="statusCell"></dxi-column>
             <dxi-column [dataField]="invoiceFields.OrderStage" [caption]="l('Stage')" name="stage" cellTemplate="stageCell" width="160px"></dxi-column>
             <dxi-column [dataField]="invoiceFields.Date" [caption]="l('Date')" cellTemplate="datetimeCell"></dxi-column>
