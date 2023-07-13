@@ -8,18 +8,19 @@ import {
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
-import { PackageEditionConfigDto, ProductInfo, ProductSubscriptionOptionInfo, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
+import { CustomPeriodType, PackageEditionConfigDto, ProductInfo, ProductSubscriptionOptionInfo, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PaymentService } from '../../payment.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'package-card',
     templateUrl: './package-card.component.html',
     styleUrls: ['./package-card.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.Emulated,
+    encapsulation: ViewEncapsulation.None,
     providers: [DecimalPipe]
 })
 export class PackageCardComponent implements OnChanges {
@@ -53,6 +54,7 @@ export class PackageCardComponent implements OnChanges {
     selectedEdition: PackageEditionConfigDto;
     price: number;
 
+    descriptionHtml;
     features;
     products = {
         Solo: {
@@ -99,6 +101,7 @@ export class PackageCardComponent implements OnChanges {
 
     constructor(
         private decimalPipe: DecimalPipe,
+        private sanitizer: DomSanitizer,
         public ls: AppLocalizationService
     ) { }
 
@@ -109,6 +112,7 @@ export class PackageCardComponent implements OnChanges {
             this.background = product.background;
             this.features = product.features;
         }
+        this.descriptionHtml = this.productInfo.descriptionHtml && this.sanitizer.bypassSecurityTrustHtml(this.productInfo.descriptionHtml);
 
         //this.selectedEdition = this.getSelectedEdition();
         //this.isActive = this.editions && !!this.selectedEdition;
@@ -135,13 +139,29 @@ export class PackageCardComponent implements OnChanges {
     // }
 
     get pricePerPeriod(): number {
-        let recurringFrequency = PaymentService.getRecurringPaymentFrequency(this.billingPeriod);
-        let productFrequencyInfo = this.productInfo.productSubscriptionOptions.find(x => x.frequency == recurringFrequency);
+        let productFrequencyInfo = this.getFrequencyInfo();
         return this.billingPeriod === BillingPeriod.Yearly ?
             (productFrequencyInfo ? Math.round(productFrequencyInfo.fee / 12) : 0) :
             (productFrequencyInfo ? productFrequencyInfo.fee : 0);
     }
 
+    getPriceDescription(): string {
+        if (this.billingPeriod == BillingPeriod.Custom) {
+            let productFrequencyInfo = this.getFrequencyInfo();
+
+            if (productFrequencyInfo)
+                return this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', productFrequencyInfo.customPeriodCount,
+                    this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[productFrequencyInfo.customPeriodType]));
+            return '';
+        } else {
+            return this.ls.l('price' + BillingPeriod[this.billingPeriod]);
+        }
+    }
+
+    getFrequencyInfo(): ProductSubscriptionOptionInfo {
+        let recurringFrequency = PaymentService.getRecurringPaymentFrequency(this.billingPeriod);
+        return this.productInfo.productSubscriptionOptions.find(x => x.frequency == recurringFrequency);
+    }
     // get editionPricePerMonth(): number {
     //     return this.billingPeriod === BillingPeriod.Monthly ?
     //             this.selectedOrLastEdition.monthlyPrice :

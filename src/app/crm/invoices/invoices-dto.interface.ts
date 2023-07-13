@@ -10,6 +10,7 @@ export interface InvoiceDto {
     Description: string;
     Coupon: string;
     PublicId: string;
+    FutureSubscriptionIsSetUp: boolean;
 
     LastPaymentDate: string;
     LastPaymentGateway: string;
@@ -36,5 +37,6 @@ export enum InvoiceStatusQuickFitler {
 export enum InvoiceDueStatus {
     InTime = 'InTime',
     Due = 'Due',
-    Overdue = 'Overdue'
+    Overdue = 'Overdue',
+    Pending = 'Pending'
 }

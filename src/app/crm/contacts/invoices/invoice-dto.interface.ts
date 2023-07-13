@@ -9,6 +9,7 @@ export interface InvoiceDto {
     InvoiceNumber: string;
     InvoiceStatus: InvoiceStatus;
     InvoicePublicId: string;
+    FutureSubscriptionIsSetUp: boolean;
     Key: string;
     OrderId: number;
     OrderNumber: string;

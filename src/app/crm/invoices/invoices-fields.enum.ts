@@ -11,6 +11,7 @@ export const InvoiceFields: KeysEnum<InvoiceDto> = {
     Description: 'Description',
     Coupon: 'Coupon',
     PublicId: 'PublicId',
+    FutureSubscriptionIsSetUp: 'FutureSubscriptionIsSetUp',
 
     LastPaymentDate: 'LastPaymentDate',
     LastPaymentGateway: 'LastPaymentGateway',

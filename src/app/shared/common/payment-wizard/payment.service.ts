@@ -28,12 +28,12 @@ export class PaymentService {
 
     constructor(
         private productServiceProxy: ProductServiceProxy
-    ) { 
+    ) {
         /* Remove condition to enabled Add On Products for all environments */
         if (environment.releaseStage == 'staging')
             this.addOnConfig$ = this.getPackagesConfig(
                 AppConsts.PRODUCT_GROUP_ADD_ON
-            ); 
+            );
     }
 
     getUpgradeConfig(productId: number): Observable<ProductInfo[]> {
@@ -73,6 +73,8 @@ export class PaymentService {
                 return PaymentPeriodType.Annual;
             case BillingPeriod.LifeTime:
                 return PaymentPeriodType.LifeTime;
+            case BillingPeriod.Custom:
+                return PaymentPeriodType.Custom;
             default:
                 return undefined;
         }
@@ -86,6 +88,8 @@ export class PaymentService {
                 return RecurringPaymentFrequency.Annual;
             case BillingPeriod.LifeTime:
                 return RecurringPaymentFrequency.LifeTime;
+            case BillingPeriod.Custom:
+                return RecurringPaymentFrequency.Custom;
             default:
                 return undefined;
         }
