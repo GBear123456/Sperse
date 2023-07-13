@@ -16,15 +16,33 @@
             <h3>{{ ls.l('Transactions') }}</h3>
             <dx-scroll-view [height]="paymentsScrollHeight()" [showScrollbar]="'never'">
                 <div *ngIf="(displayedPayments$ | async) as displayedPayments;">
-                    <ul>
+                    <div class="container">
+                        <div class="row head">
+                            <div class="col-3 date">
+                                {{ ls.l('Date') }}
+                            </div>
+                            <div class="col-6">
+                                {{ ls.l('Invoice') }}
+                            </div>
+                            <div class="col-3 amount text-right">
+                                {{ ls.l('Amount') }}
+                            </div>
+                        </div>
                         <ng-container *ngFor="let payment of displayedPayments">
-                            <li [ngClass]="{'active': selectedPayment && selectedPayment == payment}" (click)="highlightPaymentInfo(payment)">
-                                <span class="date">{{ formatDate(payment.date) }}</span>
-                                <span class="amount">{{ payment.amount | currency:amountCurrency:'symbol': '1.2-2' }}</span>
-                            </li>
+                            <div class="row" [ngClass]="{'active': selectedPayment && selectedPayment == payment}" (click)="highlightPaymentInfo(payment)">
+                                <div class="col-3 date">
+                                    {{ formatDate(payment.date) }}
+                                </div>
+                                <div class="col-6">
+                                    {{ payment.invoiceNumber }}
+                                </div>
+                                <div class="col-3 amount text-right">
+                                    {{ payment.amount | currency:amountCurrency:'symbol': '1.2-2' }}
+                                </div>
+                            </div>
                         </ng-container>
-                    </ul>
-                    <button class="viewAllTransactions" *ngIf="displayedPayments.length < (payments$ | async)?.length" (click)="addNewPaymentMethod()" (click)="viewAllTransactions()">{{ ls.l('ViewAllTransactions') }}</button>
+                    </div>
+                    <button class="viewAllTransactions" *ngIf="displayedPayments.length < (payments$ | async)?.length" (click)="viewAllTransactions()">{{ ls.l('ViewAllTransactions') }}</button>
                     <app-no-data *ngIf="displayedPayments && !displayedPayments.length"></app-no-data>
                 </div>
             </dx-scroll-view>
