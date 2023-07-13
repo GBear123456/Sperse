@@ -1,4 +1,14 @@
 <h2>{{l('Appearance')}} {{l('Settings')}}</h2>
+<div class="form-group">
+    <h5>{{l("NavigationMenuPosition")}}</h5>
+    <dx-select-box [items]="navPositionOptions"
+                   displayExpr="text"
+                   valueExpr="id"
+                   placeholder=""
+                   [(value)]="navPosition"
+                   stylingMode="outlined">
+    </dx-select-box>
+</div>
 <div class="row m-form file-uploads">
     <div class="col-lg-4 col-md-6 app-logo-upload">
         <uploader #logoUploader
