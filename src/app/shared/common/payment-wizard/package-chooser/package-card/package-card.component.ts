@@ -145,6 +145,16 @@ export class PackageCardComponent implements OnChanges {
             (productFrequencyInfo ? productFrequencyInfo.fee : 0);
     }
 
+    get signupFee(): number {
+        let productFrequencyInfo = this.getFrequencyInfo();
+        return productFrequencyInfo ? productFrequencyInfo.signupFee : 0;
+    }
+
+    get trialDayCount(): number {
+        let productFrequencyInfo = this.getFrequencyInfo();
+        return productFrequencyInfo ? productFrequencyInfo.trialDayCount : 0;
+    }
+
     getPriceDescription(): string {
         if (this.billingPeriod == BillingPeriod.Custom) {
             let productFrequencyInfo = this.getFrequencyInfo();
