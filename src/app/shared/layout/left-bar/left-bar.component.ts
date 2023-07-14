@@ -11,6 +11,8 @@ import { Observable } from 'rxjs';
 import { filter, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { AppFeatures } from '@shared/AppFeatures';
 import { PanelMenu } from '../top-bar/panel-menu';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -48,7 +50,12 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         items: []
     };
 
+    isChatConnected = false;
+    isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
+    unreadChatMessageCount = 0;
+
     constructor(
+        private feature: FeatureCheckerService,
         private authService: AppAuthService,
         public appSessionService: AppSessionService,
         private appService: AppService,
@@ -102,10 +109,23 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         this.userCompany$ = this.commonUserInfoService.getCompany().pipe(
             map(x => isEqual(x, {}) ? null : x)
         );
+        this.registerToEvents();
     }
 
     ngAfterViewInit() {
         this.appService.initModule();
+    }
+
+    registerToEvents() {
+        if (this.isChatEnabled && this.layoutService.showChatButton) {
+            abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
+                this.unreadChatMessageCount = messageCount;
+            });
+
+            abp.event.on('app.chat.connected', () => {
+                this.isChatConnected = true;
+            });
+        }
     }
 
     initMenu(configNavigation: ConfigNavigation[], localizationSource): PanelMenuItem[] {

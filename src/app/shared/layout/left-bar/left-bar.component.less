@@ -26,7 +26,7 @@
     .nav-menu {
         display: flex;
         overflow: hidden;
-        height: calc(100vh - 240px);
+        height: calc(100vh - 300px);
         ::ng-deep dx-menu {
             margin: auto;
             .dx-menu-vertical {
@@ -54,6 +54,17 @@
                 }
             }
         }
+    }
+
+    ::ng-deep user-management-list {
+        .m-topbar__nav.m-nav {
+            flex-direction: column;
+            margin: 0 18px;
+        }
+    }
+
+    ::ng-deep user-dropdown-menu .m-topbar__user-profile--img {
+        margin-left: -6px;
     }
 
     ::ng-deep platform-select {
