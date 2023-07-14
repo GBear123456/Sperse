@@ -1,38 +1,42 @@
-<div class="bestValue" *ngIf="bestValue"><span>{{ ls.l('BestValue') }}</span></div>
-<div class="cardHeader">
-    <h3 class="title">
-        <img *ngIf="productInfo.imageUrl" width="64" height="auto" [src]="productInfo.imageUrl">
-        {{ productInfo.name }}
-    </h3>
-    <div class="price-block">
-        <div *ngIf="saveAmountPerMonth" class="saveAmountPerMonth">
-            <span class="number">
-                {{ currencySymbol }}{{ saveAmountPerMonth | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
-            </span>
-            <div class="number-info">
-                <span class="decimal">{{ saveAmountPerMonth | customNumber: '0.2-2' }}</span>
-                <span>/{{ ls.l('priceMonthly') }}</span>
+<div class="package-card-selector-root">
+    <div class="bestValue" *ngIf="bestValue"><span>{{ ls.l('BestValue') }}</span></div>
+    <div class="cardHeader">
+        <h3 class="title">
+            <img *ngIf="productInfo.imageUrl" width="64" height="auto" [src]="productInfo.imageUrl">
+            {{ productInfo.name }}
+        </h3>
+        <div class="price-block">
+            <div *ngIf="saveAmountPerMonth" class="saveAmountPerMonth">
+                <span class="number">
+                    {{ currencySymbol }}{{ saveAmountPerMonth | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
+                </span>
+                <div class="number-info">
+                    <span class="decimal">{{ saveAmountPerMonth | customNumber: '0.2-2' }}</span>
+                    <span>/{{ ls.l('priceMonthly') }}</span>
+                </div>
+            </div>
+            <div class="amountPerMonth">
+                <span class="currency-symbol">{{ currencySymbol }}</span>
+                <span class="number">
+                    {{ pricePerPeriod | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
+                </span>
+                <div class="number-info">
+                    <span class="decimal">{{ pricePerPeriod | customNumber: '0.2-2' }}</span>
+                    <span>/{{ getPriceDescription() }}</span>
+                </div>
             </div>
         </div>
-        <div class="amountPerMonth">
-            <span class="currency-symbol">{{ currencySymbol }}</span>
-            <span class="number">
-                {{ pricePerPeriod | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
-            </span>
-            <div class="number-info">
-                <span class="decimal">{{ pricePerPeriod | customNumber: '0.2-2' }}</span>
-                <span>/{{ ls.l('price' + billingPeriodEnum[billingPeriod]) }}</span>
-            </div>
+
+        <div *ngIf="descriptionHtml" [innerHtml]="descriptionHtml"></div>
+        <div *ngIf="features && !descriptionHtml" class="features">
+            <ul>
+                <li *ngFor="let feature of features.included">
+                    <span class="included"></span>{{feature}}
+                </li>
+                <li *ngFor="let feature of features.excluded">
+                    <span class="excluded"></span>{{feature}}
+                </li>
+            </ul>
         </div>
-    </div>
-    <div *ngIf="features" class="features">
-        <ul>
-          <li *ngFor="let feature of features.included">
-            <span class="included"></span>{{feature}}
-          </li>
-          <li *ngFor="let feature of features.excluded">
-            <span class="excluded"></span>{{feature}}
-          </li>
-        </ul>
     </div>
 </div>

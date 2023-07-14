@@ -150,7 +150,7 @@
             <div class="field-area flex-space-between date-row">
                 <div class="date-fields-area">
                     <dx-date-box #dateComponent
-                        width="200px"
+                        width="160px"
                         height="41px"
                         type="date"
                         [(value)]="date"
@@ -165,11 +165,24 @@
                         [placeholder]="ls.l('Invoice_DueOnReceipt')"
                         [disabled]="disabledForUpdate || !date"
                         (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                        width="200px"
+                        width="160px"
                         height="41px"
                         [min]="date"
                         [(value)]="dueDate"
                         (onContentReady)="onDateContentReady($event)">
+                    </dx-date-box>
+                    <dx-date-box #startDateComponent
+                        [placeholder]="ls.l('Subscription Start')"
+                        [disabled]="disabledForUpdate || !hasSubscription"
+                        (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                        [showClearButton]="true"
+                        type="datetime"
+                        width="200px"
+                        height="41px"
+                        [min]="disabledForUpdate ? undefined : tomorrowDate"
+                        [(value)]="startDate"
+                        (onOpened)="onStartDateOpened($event)"
+                        (onValueChanged)="this.initiatePaymentMethodsCheck()">
                     </dx-date-box>
                 </div>
                 <order-dropdown [(orderId)]="orderId"
@@ -242,7 +255,7 @@
                         </div>
                         <div *dxTemplate="let cellData of 'quantity'">
                             <dx-number-box
-                                width="110px"
+                                width="80px"
                                 height="32px"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('Value')"
@@ -256,7 +269,7 @@
                         </div>
                         <div *dxTemplate="let cellData of 'rate'">
                             <dx-text-box
-                                width="100px"
+                                width="80px"
                                 height="32px"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [readOnly]="cellData.data.isCrmProduct && cellData.data.productId"
@@ -273,7 +286,7 @@
                         <div *dxTemplate="let cellData of 'unit'">
                             <dx-select-box
                                 name="unit"
-                                width="100px"
+                                width="145px"
                                 height="32px"
                                 displayExpr="unitName"
                                 valueExpr="unitId"
@@ -344,7 +357,8 @@
                 * {{ls.l('Invoice_StripeSubsWarning', stripeSubscriptionsLinesCount)}}
             </div>
             <div *ngIf="hasReccuringSubscription" class="col-12">
-                * {{ls.l('Invoice_SubsTaxShippingWarning')}}
+                * {{ls.l('Invoice_SubsTaxShippingWarning')}}<br>
+                * {{ls.l('Invoice_SubsStartWarning')}}
             </div>
         </div>
         <div class="row bottom-container">

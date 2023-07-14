@@ -10,6 +10,7 @@ export const InvoiceFields: KeysEnum<InvoiceDto> = {
     InvoiceNumber: 'InvoiceNumber',
     InvoiceStatus: 'InvoiceStatus',
     InvoicePublicId: 'InvoicePublicId',
+    FutureSubscriptionIsSetUp: 'FutureSubscriptionIsSetUp',
     Key: 'Key',
     OrderId: 'OrderId',
     OrderNumber: 'OrderNumber',

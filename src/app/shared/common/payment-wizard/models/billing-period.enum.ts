@@ -1,6 +1,7 @@
 export enum BillingPeriod {
     Monthly,
     Yearly,
-    LifeTime
+    LifeTime,
+    Custom
 }
 

@@ -55,6 +55,11 @@ export class ReceiptComponent implements OnInit {
                 switch (result.invoiceStatus) {
                     case InvoiceStatus.Sent:
                         {
+                            if (result.waitingForFutureSubscriptionPayment) {
+                                this.router.navigate(['invoicing/invoice', tenantId, publicId]);
+                                return;
+                            }
+
                             this.currentRetryCount++;
                             if (this.currentRetryCount >= ReceiptComponent.maxRetryCount) {
                                 abp.ui.clearBusy();

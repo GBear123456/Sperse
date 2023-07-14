@@ -26,15 +26,16 @@
     <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="paypalPaymentSettings.clientSecret">
 </div>
 <div class="form-group">
-    <label for="PayPalWebhookKey">{{l("Webhook key")}}</label>
+    <label for="PayPalWebhookKey">{{l("Webhook Id")}}</label>
     <input id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" class="form-control" [(ngModel)]="paypalPaymentSettings.webhookKey" maxlength="128">
 </div>
 <p>
-    <span class="small">* To recieve webhooks from PayPal please enter any secure string above, then add new endpoint on your application using the following info:</span><br />
+    <span class="small">* To recieve webhooks from PayPal please add new endpoint on your application using the following info and save Webhook Id in the field above:</span><br />
     <span class="small">URL - <span class="copy-url"><b>{{getPayPalWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
     <span class="small">
         Events -
-        <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>, <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b>,
+        <b>'Billing subscription activated'</b>, <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>,
+        <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b>,
         <b>'Payment payouts-item succeeded'</b>, <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
     </span>
 </p>

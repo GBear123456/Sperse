@@ -41,6 +41,18 @@
                          [disabled]="isReadOnly">
             </dx-text-box>
         </div>
+        <div class="field description-html">
+            <label for="name">{{ls.l('Description')}} Html</label>
+            <dx-text-area name="descriptionHtml"
+                         width="300px"
+                         [inputAttr]="{ id: 'descriptionHtml' }"
+                         [(value)]="product.descriptionHtml"
+                         [autoResizeEnabled]="true"
+                         [maxLength]="8192"
+                         [maxHeight]="150"
+                         [disabled]="isReadOnly">
+            </dx-text-area>
+        </div>
         <div class="field photo">
             <label for="name">{{ls.l('Image')}}</label>
             <img (click)="openImageSelector()" [src]="getProductImage(true)" />
@@ -83,7 +95,7 @@
             </div>
             <div class="field">
                 <label for="activationTime">{{ls.l('Unit')}}</label>
-                <dx-select-box [dataSource]="productUnits"
+                <dx-select-box [dataSource]="getProductUnits()"
                                width="300px"
                                placeholder="Select unit..."
                                [(value)]="product.unit"
@@ -195,11 +207,41 @@
                                    [placeholder]="ls.l('Select') + ' ' + ls.l('PaymentPeriod') + '...'"
                                    [(value)]="option.frequency"
                                    [disabled]="isReadOnly"
-                                   (onValueChanged)="checkOneTimeOption($event)">
+                                   (onValueChanged)="onFrequencyChanged($event, option)">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('PaymentPeriod'))}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-select-box>
+                </div>
+                <div class="field" *ngIf="option.frequency && option.frequency == recurringPaymentFrequency.Custom">
+                    <label class="wide" for="name">{{ls.l('Period Type')}}</label>
+                    <dx-select-box name="name"
+                                   width="270px"
+                                   [dataSource]="customPeriodTypes"
+                                   [placeholder]="ls.l('Select') + ' ' + ls.l('Type') + '...'"
+                                   [(value)]="option.customPeriodType"
+                                   [disabled]="isReadOnly">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Type'))}}."></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-select-box>
+                </div>
+                <div class="field" *ngIf="isOneTime || (option.frequency && option.frequency == recurringPaymentFrequency.Custom)">
+                    <label class="wide" for="level">{{ls.l('Period')}}</label>
+                    <dx-number-box name="period"
+                                   width="270px"
+                                   [min]="0"
+                                   mode="number"
+                                   format="###0"
+                                   valueChangeEvent="keyup"
+                                   [placeholder]="ls.l('Set number of ') + (option.customPeriodType?.toLowerCase() || 'period')"
+                                   [(value)]="option.customPeriodCount"
+                                   [disabled]="isReadOnly">
+                        <dx-validator>
+                            <dxi-validation-rule type="custom" [validationCallback]="validatePeriodDayCount(option)" message="{{ls.l('RequiredField', ls.l('Period'))}}."></dxi-validation-rule>
+                            <dxi-validation-rule type="custom" [validationCallback]="validateCustomPeriodDayCount(option)" message="{{ls.l('CustomBillingPeriodLengthError')}}."></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-number-box>
                 </div>
                 <div class="field" *ngIf="option.frequency && !isOneTime">
                     <label class="wide" for="level">{{ls.l('TrialDayCount')}}</label>
@@ -238,21 +280,6 @@
                                    [format]="amountNullableFormat"
                                    [(value)]="option.commissionableSignupFeeAmount"
                                    [disabled]="isReadOnly">
-                    </dx-number-box>
-                </div>
-                <div class="field" *ngIf="isOneTime">
-                    <label class="wide" for="level">{{ls.l('Period')}}</label>
-                    <dx-number-box name="period"
-                                   width="270px"
-                                   [min]="0"
-                                   mode="number"
-                                   format="###0"
-                                   valueChangeEvent="keyup"
-                                   [(value)]="option.activeDayCount"
-                                   [disabled]="isReadOnly">
-                        <dx-validator>
-                            <dxi-validation-rule type="custom" [validationCallback]="validatePeriodDayCount(option)" message="{{ls.l('RequiredField', ls.l('Period'))}}."></dxi-validation-rule>
-                        </dx-validator>
                     </dx-number-box>
                 </div>
                 <div class="field">

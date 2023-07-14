@@ -8,10 +8,13 @@ import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
 import {
+    AppearanceSettingsEditDto,
     CustomCssType,
     LayoutType,
+    NavPosition,
     TenantCustomizationServiceProxy,
-    TenantLoginInfoDto
+    TenantLoginInfoDto,
+    TenantSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
@@ -42,10 +45,19 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
 
+    navPosition = this.getNavPosition();
+    navPositionOptions = Object.keys(NavPosition).map(item => {
+        return {
+            id: NavPosition[item],
+            text: this.l('NavPosition_' + item)
+        };
+    });
+
     constructor(
         _injector: Injector,
         private faviconsService: FaviconService,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
+        private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         private settingService: SettingService
     ) {
         super(_injector);
@@ -55,7 +67,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     getSaveObs(): Observable<any> {
-        return forkJoin(
+        let saveObs = [
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
                     this.tenant.logoId = res.result && res.result.id;
@@ -74,7 +86,27 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                     this.changeDetection.detectChanges();
                 }
             }))
-        );
+        ];
+
+        if (this.getNavPosition() != this.navPosition) {
+            saveObs.push(
+                this.tenantSettingsServiceProxy.updateAppearanceSettings(
+                    new AppearanceSettingsEditDto({
+                        navPosition: this.navPosition
+                    })
+                )
+            );
+        }
+
+        return forkJoin(saveObs);
+    }
+
+    afterSave() {
+        if (this.getNavPosition() != this.navPosition) {
+            this.message.info(this.l('SettingsChangedRefreshPageNotification', this.l('NavigationMenuPosition'))).done(function () {
+                window.location.reload();
+            });
+        }
     }
 
     handleCssUpload(cssType: CustomCssType, res: any) {
@@ -134,5 +166,9 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             return basePath + kebabCase(tenant.customLayoutType) + '/style.css'
         else
             return basePath + 'platform-custom-style.css';
+    }
+
+    getNavPosition(): NavPosition {
+        return NavPosition[this.settingService.get('App.Appearance.NavPosition')];
     }
 }
