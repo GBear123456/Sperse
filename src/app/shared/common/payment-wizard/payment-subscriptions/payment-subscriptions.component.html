@@ -1,4 +1,9 @@
 <h2>{{ l('MySubscriptions') }}</h2>
+<action-menu width="150px"
+    [items]="actionMenuItems"
+    target=""
+    (onItemClick)="onMenuItemClick($event)">
+</action-menu>
 <dx-data-grid
     height="95%"
     class="alone main-component-view"
@@ -25,7 +30,12 @@
 
     <dxi-column dataField="endDate" [allowResizing]="false" cellTemplate="dateTimeTemplate" width="150px" cssClass="tabular"></dxi-column>
 
-    <dxi-column [allowResizing]="false" caption="" cellTemplate="actionCell"></dxi-column>
+    <dxi-column
+        alignment="center"
+        width="90px"
+        cellTemplate="actionCell"
+        [allowResizing]="false">
+    </dxi-column>
 
     <div *dxTemplate="let cellData of 'imageTemplate'" class="product-icon">
         <img width="auto" height="64px" [src]="cellData.data.productImageUrl" onerror="this.src='assets/common/images/product.png'">
@@ -40,8 +50,7 @@
     </div>
 
     <div *dxTemplate="let cellData of 'actionCell'">
-        <a *ngIf="showOneTimeActivate(cellData.data) || showUpgradeButton(cellData.data)" href="javascript:void(0)" (click)="upgradeSubscription(cellData.data)">{{l('Upgrade')}}&nbsp;</a>
-        <a *ngIf="cellData.data.statusId == 'A'" href="javascript:void(0)" (click)="cancelSubscription(cellData.data)">{{l('Cancel')}}</a>
+        <a *ngIf="cellData.data.statusId == 'A'" (click)="toggleActionsMenu($event, cellData.data)" class="dx-link dx-link-edit"></a>
     </div>
 </dx-data-grid>
 <div *ngIf="(paymentService?.addOnConfig$ | async)?.length"><a href="javascript:void(0);" (click)="showAddOnProducts()">{{l('ClickAddOnFeaturesMessage')}}</a></div>
