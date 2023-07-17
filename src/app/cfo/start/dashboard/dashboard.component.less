@@ -33,9 +33,15 @@
         @media (min-width: 1200px) {
             padding: 0 48px;
             width: calc(~"100vw - 322px");
+            &.show-left-bar {
+                width: calc(~"100vw - 412px");
+            }            
         }
         &.expanded {
             width: 100vw;
+            &.show-left-bar {
+                width: calc(100vw - 90px);
+            }
         }
 
         section {

@@ -143,5 +143,4 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
         this.onToggle.emit(collapsed);
         this.collapsedChange.emit(collapsed);
     }
-
 }
