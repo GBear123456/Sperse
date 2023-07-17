@@ -15,6 +15,10 @@
                     <span>/{{ ls.l('priceMonthly') }}</span>
                 </div>
             </div>
+            <div class="trial-day-count" *ngIf="trialDayCount">
+                <span *ngIf="signupFee; else free">{{ currencySymbol }}{{signupFee | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span> for {{trialDayCount}}* day(s) then
+                <ng-template #free>{{ls.l('Free')}}</ng-template>
+            </div>
             <div class="amountPerMonth">
                 <span class="currency-symbol">{{ currencySymbol }}</span>
                 <span class="number">
@@ -40,3 +44,4 @@
         </div>
     </div>
 </div>
+<div class="trial-period-note" *ngIf="trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>        
