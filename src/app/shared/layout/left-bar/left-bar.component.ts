@@ -70,21 +70,6 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {
-        this.router.events.pipe(
-            takeUntil(this.lifecycleService.destroy$),
-            filter(event => event instanceof NavigationEnd)
-        ).subscribe((event: any) => {
-            let currModuleName = (this.config ? this.config.name : '').toLowerCase();
-            if (currModuleName && currModuleName != appService.getModule())
-                appService.initModule();
-            setTimeout(() => {
-                let route = event.urlAfterRedirects.split('?').shift();
-                this.menu.items.forEach((item: PanelMenuItem, i: number) => {
-                    if (route === item.route || _.contains(item.alterRoutes, route))
-                        this.selectedItem = item;
-                });
-            });
-        });
         this.appService.subscribeModuleChange((config: ConfigInterface) => {
             this.config = config;
             this.menu = new PanelMenu(
@@ -114,6 +99,14 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.appService.initModule();
+
+        setTimeout(() => {
+            let route = this.router.url.split('?').shift();
+            this.menu.items.forEach((item: PanelMenuItem, i: number) => {
+                if (route === item.route || _.contains(item.alterRoutes, route))
+                    this.selectedItem = item;
+            });
+        });
     }
 
     registerToEvents() {
@@ -171,6 +164,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     navigate(event) {
+        this.selectedItem = event.itemData;
         let route = event.itemData.route;
         /** Avoid redirect to the same route */
         if (route && (location.pathname !== event.itemData.route || location.search != UrlHelper.getUrl('', event.itemData.params))) {

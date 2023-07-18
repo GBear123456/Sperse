@@ -20,13 +20,13 @@
         orientation="vertical"
         [selectByClick]="true"
         [adaptivityEnabled]="true"
-        [selectedItem]="selectedItem"
+        [(selectedItem)]="selectedItem"
         [hideSubmenuOnMouseLeave]="true"
         [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
         [showSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
         (onItemClick)="navigate($event)">
         <div *dxTemplate="let data of 'item'" [title]="data.text">
-            <img [src]="data.icon">
+            <img *ngIf="!data.params" [src]="data.icon"><span style="padding: 10px 0;" *ngIf="!!data.params">{{data.text}}</span>
         </div>
     </dx-menu>
 </div>
