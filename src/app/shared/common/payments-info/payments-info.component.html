@@ -1,0 +1,103 @@
+<div class="main">
+    <div class="summary">
+        <div class="totalPaymentAmount">
+            <h4>{{ ls.l('TotalAmount') }}</h4>
+            {{ totalPaymentAmount | currency:amountCurrency:'symbol': '1.2-2' }}
+        </div>
+        <ul class="paymentStatus">
+            <li *ngIf="hasRecurringBilling">
+                <img src="./assets/common/icons/automatic-payments.svg">
+                {{ ls.l('AutomaticPayments') }}
+            </li>
+        </ul>
+    </div>
+    <div class="details">
+        <div class="transactions" #paymentsContainer>
+            <h3>{{ ls.l('Transactions') }}</h3>
+            <dx-scroll-view [height]="paymentsScrollHeight()" [showScrollbar]="'never'">
+                <div *ngIf="(displayedPayments$ | async) as displayedPayments;">
+                    <div class="container">
+                        <div class="row head">
+                            <div class="col-3 date">
+                                {{ ls.l('Date') }}
+                            </div>
+                            <div class="col-6">
+                                {{ ls.l('Invoice') }}
+                            </div>
+                            <div class="col-3 amount text-right">
+                                {{ ls.l('Amount') }}
+                            </div>
+                        </div>
+                        <ng-container *ngFor="let payment of displayedPayments">
+                            <div class="row" [ngClass]="{'active': selectedPayment && selectedPayment == payment}" (click)="highlightPaymentInfo(payment)">
+                                <div class="col-3 date">
+                                    {{ formatDate(payment.date) }}
+                                </div>
+                                <div class="col-6">
+                                    {{ payment.invoiceNumber }}
+                                </div>
+                                <div class="col-3 amount text-right">
+                                    {{ payment.amount | currency:amountCurrency:'symbol': '1.2-2' }}
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <button class="viewAllTransactions" *ngIf="displayedPayments.length < (payments$ | async)?.length" (click)="viewAllTransactions()">{{ ls.l('ViewAllTransactions') }}</button>
+                    <app-no-data *ngIf="displayedPayments && !displayedPayments.length"></app-no-data>
+                </div>
+            </dx-scroll-view>
+        </div>
+        <div class="paymentMethods" #paymentMethodsContainer>
+            <div class="title">
+                <h3>{{ ls.l('PaymentMethods') }}</h3>
+                <button class="addNewPaymentMethod" *ngIf="false">+{{ ls.l('AddNew') }}</button>
+            </div>
+            <dx-scroll-view [height]="paymentMethodsScrollHeight()" [showScrollbar]="'never'" *ngIf="(paymentMethods$ | async) as paymentMethods">
+                <ul class="paymentMethodsList">
+                    <li *ngFor="let paymentMethod of paymentMethods">
+                        <div [ngSwitch]="paymentMethod.type">
+                            <ng-container *ngSwitchCase="paymentMethodsTypes.BankCard">
+                                <div [ngClass]="{'active': selectedPayment?.paymentInfoId == paymentMethod.id}" class="paymentMethodIcon">
+                                    <img [src]="'./assets/common/images/payments/card-logo/' + getCardType(paymentMethod.bankCardInfo) + '.svg'">
+                                </div>
+                                <div>
+                                    <p class="paymentName">
+                                        {{ paymentMethod.bankCardInfo.cardNumber }}
+                                        <ng-container *ngIf="paymentMethod.bankCardInfo.holderName"><span> ({{ paymentMethod.bankCardInfo.holderName }})</span></ng-container>
+                                    </p>
+                                    <p class="paymentExpiration">{{ ls.l('Expires') + ' ' + paymentMethod.bankCardInfo.expirationMonth + '/' + paymentMethod.bankCardInfo.expirationYear }}</p>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="paymentMethodsTypes.PayPal">
+                                <div [ngClass]="{'active': selectedPayment?.paymentInfoId == paymentMethod.id}" class="paymentMethodIcon">
+                                    <img [src]="'./assets/common/images/payments/card-logo/paypal.svg'">
+                                </div>
+                                <div>
+                                    <p class="paymentName">
+                                        {{ paymentMethod.payPalInfo.email || ls.l('PayPal') }}
+                                        <ng-container *ngIf="paymentMethod.payPalInfo.firstName"><span> ({{ paymentMethod.payPalInfo.firstName }} {{ paymentMethod.payPalInfo.lastName }})</span></ng-container>
+                                    </p>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="paymentMethodsTypes.ACH">
+                                <div [ngClass]="{'active': selectedPayment?.paymentInfoId == paymentMethod.id}" class="achPaymentMethodIcon paymentMethodIcon">{{ ls.l('eCheck') }}</div>
+                                <div>
+                                    <p class="paymentName">{{ paymentMethod.achCustomerInfo.bankName + ' ' + paymentMethod.achCustomerInfo.accountNumber }}</p>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <div class="issue" *ngIf="paymentMethod?.issues">
+                            <img src="./assets/common/icons/red-warning-icon.svg">
+                            {{ paymentMethod.issues.length + ' ' + ls.l('Issue') }}
+                        </div>
+                        <div class="actions" *ngIf="false">
+                            <button (click)="editPaymentMethod()"><img src="./assets/common/icons/edit-pencil-icon.svg"></button>
+                            <button (click)="removePaymentMethod()"><img src="./assets/common/icons/delete-icon.svg"></button>
+                        </div>
+                    </li>
+                </ul>
+                <app-no-data *ngIf="paymentMethods && !paymentMethods.length"></app-no-data>
+            </dx-scroll-view>
+        </div>
+    </div>
+</div>

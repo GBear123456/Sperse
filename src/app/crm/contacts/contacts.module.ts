@@ -157,6 +157,8 @@ import { PersonHistoryDialogComponent } from './personal-details/personal-detail
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 import { PropertyInformationComponent } from '@app/crm/contacts/property-information/property-information.component';
 import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity-dialog/create-activity-dialog.component';
+import { PaymentsInfoService } from '@app/shared/common/payments-info/payments-info.service';
+import { ContactPaymentsInfoService } from './payment-information/payments-info.service';
 
 @NgModule({
     declarations: [
@@ -347,7 +349,8 @@ import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity
         PersonalDetailsService,
         DocumentsService,
         InvoicesService,
-        CrmService
+        CrmService,
+        { provide: PaymentsInfoService, useClass: ContactPaymentsInfoService }
     ],
     exports: [
         ContactGroupTemplatesComponent,
