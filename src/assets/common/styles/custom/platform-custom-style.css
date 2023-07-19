@@ -20,6 +20,16 @@ body .top-bar-nav .dx-tabs-wrapper .dx-menu-items-container .dx-menu-item-wrappe
 body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-items-container .dx-menu-item-wrapper .dx-menu-item-content .dx-menu-item-popout:before{
   color: #000 !important;
 }
+body .dx-submenu .dx-menu-items-container {
+  background: transparent!important;
+}
+body .dx-submenu .dx-item.dx-menu-item.dx-menu-item-has-text {
+  color: #333;
+}
+body .dx-submenu .dx-item.dx-menu-item.dx-menu-item-has-text.dx-state-hover {
+  background: rgba(0,0,0,.04)!important;
+  color: #333;
+}
 body app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text {
   color: #333 !important;
 }
