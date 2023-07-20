@@ -38,6 +38,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './chat-bar.component.html',
@@ -133,8 +134,13 @@ export class ChatBarComponent implements OnInit, AfterViewInit {
         private dialog: MatDialog,
         private feature: FeatureCheckerService,
         private notify: NotifyService,
+        private appService: AppService,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        this.quickSideBarChat.isOpened$.subscribe(isOpened => {
+            this.isOpen = isOpened;
+        });
+    }
 
     shareCurrentLink() {
         this.chatMessage = '[link]{"message":"' + window.location.href + '"}';
@@ -482,11 +488,6 @@ export class ChatBarComponent implements OnInit, AfterViewInit {
             this.showFriendsPanel();
         });
 
-        const $sidebarTogglers = $('#m_quick_sidebar_toggle');
-        $sidebarTogglers.on('click', () => {
-            this.isOpen = $('body').hasClass('m-quick-sidebar--on');
-        });
-
         $(window as any).on('resize', () => {
             this.initConversationScrollbar();
         });
@@ -496,7 +497,6 @@ export class ChatBarComponent implements OnInit, AfterViewInit {
         if (!this.isOpen || this.pinned || event.target.closest('div.m-quick-sidebar') || event.target.closest('#m_quick_sidebar_toggle')) {
             return;
         }
-
         this.quickSideBarChat.hide();
         this.isOpen = false;
         this.adjustNotifyPosition();

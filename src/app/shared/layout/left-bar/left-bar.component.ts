@@ -32,6 +32,8 @@ import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { environment } from '@root/environments/environment';
 import { AppPermissions } from '@shared/AppPermissions';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { ChatSignalrService } from '../chat/chat-signalr.service';
+import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
 
 @Component({
     templateUrl: './left-bar.component.html',
@@ -50,7 +52,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         items: []
     };
 
-    isChatConnected = false;
+    isChatConnected = this.chatSignalrService.isChatConnected;
     isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
     unreadChatMessageCount = 0;
 
@@ -65,6 +67,8 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         private commonUserInfoService: CommonUserInfoServiceProxy,
         public userManagementService: UserManagementService,
         public layoutService: LayoutService,
+        public quickSideBarChat: QuickSideBarChat,
+        private chatSignalrService: ChatSignalrService,        
         private router: Router,
         private route: ActivatedRoute,
         public ls: AppLocalizationService,
@@ -114,10 +118,10 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
             abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
                 this.unreadChatMessageCount = messageCount;
             });
-
-            abp.event.on('app.chat.connected', () => {
-                this.isChatConnected = true;
-            });
+            if (!this.isChatConnected)
+                abp.event.on('app.chat.connected', () => {
+                    this.isChatConnected = true;
+                });
         }
     }
 
