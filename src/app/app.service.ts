@@ -74,7 +74,6 @@ export class AppService extends AppServiceBase {
     public isCfoLinkOrVerifyEnabled: boolean;
     public isClientSearchDisabled = true;
     public defaultSubscriptionModule = ModuleType.CRM;
-    public leftNavigationModules = [ModuleType.CRM, ModuleType.CFO];
 
     constructor(
         injector: Injector,
@@ -448,8 +447,7 @@ export class AppService extends AppServiceBase {
     switchModule(name: string, params = {}) {
         this.subscriptionBarVisible = undefined;
 
-        this.layoutService.showLeftBar = this.leftNavigationModules.includes(ModuleType[name.toUpperCase()]);
-        this.layoutService.showTopBar = !this.layoutService.showLeftBar;
+        this.layoutService.checkSetModuleSettings(name);
 
         super.switchModule(name, params);
     }

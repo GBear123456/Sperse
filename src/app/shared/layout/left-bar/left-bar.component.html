@@ -49,7 +49,7 @@
         </a>
     </li>
     <li *ngIf="isChatEnabled && isChatConnected && layoutService.showChatButton"
-        id="m_quick_sidebar_toggle"
+        (click)="quickSideBarChat.toggle()"
         class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center  m-dropdown--mobile-full-width">
         <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
             <span class="m-nav__link-icon">

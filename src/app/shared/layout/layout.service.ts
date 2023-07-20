@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { LayoutType, ModuleType, NavPosition } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class LayoutService {
@@ -55,6 +55,8 @@ export class LayoutService {
         [LayoutType.AdvicePeriod]: [ '#9fcbdc', '#91c4d7', '#84bdd2', '#76b5cd', '#68aec9', '#5aa6c4', '#4d9fbf', '#4296b7' ]
     };
 
+    public supportLeftNavigationModules = [ModuleType.CRM, ModuleType.CFO];
+
     constructor(private appSessionService: AppSessionService) {}
 
     displayDefaultPageHeader(value: boolean = false) {
@@ -70,5 +72,16 @@ export class LayoutService {
 
     getMapPalette(): string[] {
         return this.mapPalette[this.appSessionService.layoutType] || this.mapPalette[LayoutType.Default];
+    }
+
+    checkSetModuleSettings(moduleName: string) {
+        if (this.supportLeftNavigationModules.includes(ModuleType[moduleName.toUpperCase()])) {
+            let navPosition = abp.setting.get('App.Appearance.NavPosition');
+            this.showTopBar = !navPosition || navPosition == NavPosition.Horizontal;        
+            this.showLeftBar = !this.showTopBar;
+        } else {
+            this.showTopBar = true;
+            this.showLeftBar = false;
+        }        
     }
 }
