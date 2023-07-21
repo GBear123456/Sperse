@@ -11,7 +11,7 @@
         <synch-progress class="synch-progress" (onComplete)="refreshWidgets()"></synch-progress>
         <calendar-button></calendar-button>
     </app-headline>
-    <div class="content" #content>
+    <div class="content" [ngClass]="{'show-left-bar': layoutService.showLeftBar}" #content>
         <cfo-left-menu #leftMenu
                        [showIntroductionTourLink]="true">
         </cfo-left-menu>

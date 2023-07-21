@@ -42,6 +42,22 @@
     position: relative;
     height: calc(~"100% - 75px");
 
+    &.show-left-bar {
+        height: 100vh;
+        .cashflow {
+            .cashflow-scroll {
+                height: calc(~'100vh - 140px')!important;
+            }
+            .dx-resizable {
+                left: 80px;
+                width: calc(100% - 80px);
+            }
+            .cashflow-wrap {
+                height: calc(100% - 74px);
+            }
+        }
+    }
+
     .sidebar-calculator-widget {
         position: absolute;
         top: 0;

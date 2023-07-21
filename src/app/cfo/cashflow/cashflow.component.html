@@ -21,11 +21,12 @@
             <app-toolbar [config]="categoryToolbarConfig" [compact]="true"></app-toolbar>
         </div>
 
-        <dx-resizable *ngIf="statsDetailResult !== undefined" class="cashflow-wrap"
-                      [maxHeight]="788"
-                      (onResize)="onTransactionDetailsResize()"
-                      (onResizeEnd)="onTransactionDetailsResizeEnd($event)"
-                      handles="top">
+        <dx-resizable *ngIf="statsDetailResult !== undefined" 
+                class="cashflow-wrap"
+                [maxHeight]="layoutService.showLeftBar ? 863 : 788"
+                (onResize)="onTransactionDetailsResize()"
+                (onResizeEnd)="onTransactionDetailsResizeEnd($event)"
+                handles="top">
             <div class="resize-buttons noselect">....</div>
             <div class="configBlock">
                 <dx-tabs *ngIf="detailsContainsForecasts && detailsContainsHistorical"

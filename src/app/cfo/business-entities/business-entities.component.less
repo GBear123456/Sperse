@@ -1,6 +1,12 @@
 :host {
     position: relative;
 
+    &.show-left-bar {
+        ::ng-deep ghost-list ul, ::ng-deep #gridContainer {
+            height: calc(100vh - 90px)!important;
+        }
+    }
+
     .content-wrap {
         display: flex;
     }
@@ -120,7 +126,7 @@
     }
 
     ::ng-deep ghost-list ul {
-        height: calc(100vh - 166px) !important;
+        height: calc(100vh - 166px)!important;
     }
 
     i.arrow {
