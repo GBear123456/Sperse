@@ -161,6 +161,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
             && (configCode === 'CRM' || configCode === 'Slice')) {
             configNavigation.unshift({
                 text: MENU_HOME,
+                icon: 'assets/common/icons/crm/portal.png',
                 route: '/code-breaker'
             });
         }
