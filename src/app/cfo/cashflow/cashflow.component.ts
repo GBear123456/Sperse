@@ -142,6 +142,7 @@ import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 /** Constants */
 const StartedBalance    = CashflowTypes.StartedBalance,
@@ -194,7 +195,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @HostBinding('class.show-left-bar') showLeftBar = this.layoutService.showLeftBar;
     @HostBinding('class.toolbar-is-shown') toolbarIsShown;
+
     transactionId: any;
     selectedBankAccountsIds;
 
@@ -750,6 +753,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         public dialog: MatDialog,
         public userPreferencesService: UserPreferencesService,
         public appService: AppService,
+        public layoutService: LayoutService,
         @Inject(DOCUMENT) private document: any
     ) {
         super(injector);
@@ -3998,7 +4002,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let height = this.cacheService.get(this.cashflowDetailsGridSessionIdentifier);
             if (height) {
                 let cashflowWrapElement = <HTMLElement>this.document.querySelector('.cashflow-wrap');
-                cashflowWrapElement.style.height = height + 'px';
+                cashflowWrapElement.style.height = height + (this.layoutService.showLeftBar ? 74 : 0) + 'px';
             }
             this.handleBottomHorizontalScrollPosition();
             this.handleVerticalScrollPosition();
@@ -4011,7 +4015,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onTransactionDetailsResizeEnd($event) {
-        this.cacheService.set(this.cashflowDetailsGridSessionIdentifier, $event.height);
+        this.cacheService.set(this.cashflowDetailsGridSessionIdentifier, $event.height - (this.layoutService.showLeftBar ? 74 : 0));
     }
 
     saveForecast() {

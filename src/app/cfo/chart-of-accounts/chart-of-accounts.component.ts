@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 import { SyncTypeIds } from '@shared/AppEnums';
@@ -41,6 +42,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
 
     constructor(
         injector: Injector,
+        public layoutService: LayoutService,
         private categoryTreeServiceProxy: CategoryTreeServiceProxy
     ) {
         super(injector);

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { Component, HostBinding, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -25,6 +25,7 @@ import { BusinessEntityDto } from '@app/cfo/business-entities/business-entity-dt
 import { BusinessEntityFields } from '@app/cfo/business-entities/business-entity-fields.enum';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'business-entities',
@@ -33,6 +34,7 @@ import { FieldDependencies } from '@app/shared/common/data-grid.service/field-de
     providers: [ BusinessEntityServiceProxy ]
 })
 export class BusinessEntitiesComponent extends CFOComponentBase implements OnInit, OnDestroy {
+    @HostBinding('class.show-left-bar') showLeftBar;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     private readonly dataSourceURI = 'BusinessEntity';
@@ -47,7 +49,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     ];
     private lastSelectedBusinessEntity: BusinessEntityDto;
     contentWidth$: Observable<number> = this.leftMenuService.collapsed$.pipe(
-        map((collapsed: boolean) => window.innerWidth - (collapsed || AppConsts.isMobile ? 0 : 324 ))
+        map((collapsed: boolean) => window.innerWidth - (collapsed || AppConsts.isMobile ? (this.layoutService.showLeftBar ? 90 : 0) : (this.layoutService.showLeftBar ? 415 : 324) ))
     );
     readonly businessEntityFields: KeysEnum<BusinessEntityDto> = BusinessEntityFields;
     private fieldsDependencies: FieldDependencies = {
@@ -63,6 +65,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         private businessEntityService: BusinessEntityServiceProxy,
         private bankAccountsService: BankAccountsService,
         private leftMenuService: LeftMenuService,
+        public layoutService: LayoutService,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -71,6 +74,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     ngOnInit() {
         this.rootComponent.overflowHidden(true);
+        this.showLeftBar = this.layoutService.showLeftBar;
         this.dataSource = new DataSource({
             key: this.businessEntityFields.Id,
             store: new ODataStore({
