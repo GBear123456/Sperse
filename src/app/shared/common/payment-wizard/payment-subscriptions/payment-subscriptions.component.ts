@@ -4,15 +4,17 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     EventEmitter,
-    AfterViewInit,
     Injector,
     Output,
-    ViewChild
+    ViewChild,
+    OnInit
 } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { CreditCard } from 'angular-cc-library';
 
 /** Application imports */
 import * as moment from 'moment-timezone';
@@ -20,7 +22,10 @@ import {
     PaymentPeriodType,
     CancelSubscriptionInput,
     TenantSubscriptionServiceProxy,
-    ModuleSubscriptionInfoDto
+    ModuleSubscriptionInfoDto,
+    PaymentMethodInfo,
+    PaymentInfoType,
+    BankCardShortInfo
 } from '@shared/service-proxies/service-proxies';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
@@ -29,6 +34,8 @@ import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
+import { AppPermissions } from '@root/shared/AppPermissions';
+import { PaymentsInfoService } from '../../payments-info/payments-info.service';
 
 @Component({
     selector: 'payment-subscriptions',
@@ -37,19 +44,29 @@ import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.
     providers: [TenantSubscriptionServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaymentSubscriptionsComponent extends AppComponentBase implements AfterViewInit {
+export class PaymentSubscriptionsComponent extends AppComponentBase implements OnInit {
     @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
     @Output() onShowProducts: EventEmitter<any> = new EventEmitter<any>();
     
     formatting = AppConsts.formatting;
+    paymentMethodsTypes = PaymentInfoType;
     moduleSubscriptions: ModuleSubscriptionInfoDto[];
+    subscriptionLastPaymentInfos: {[id: number]: PaymentMethodInfo} = {};
+
+    hasManagePaymentsPermission = this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagementPayments);
 
     actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('Upgrade'),
-            class: 'edit',
+            class: 'notes',
             checkVisible: () => this.showOneTimeActivate(this.actionRecordData) || this.showUpgradeButton(this.actionRecordData),
             action: this.upgradeSubscription.bind(this)
+        },
+        {
+            text: this.l('PaymentMethod'),
+            class: 'edit',
+            visible: this.hasManagePaymentsPermission,
+            action: this.redirectToPortal.bind(this),
         },
         {
             text: this.l('Cancel'),
@@ -65,17 +82,40 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements A
         public paymentService: PaymentService,
         private dialog: MatDialog,
         private subscriptionProxy: TenantSubscriptionServiceProxy,
+        private paymentInfoService: PaymentsInfoService,
         private changeDetectionRef: ChangeDetectorRef
     ) {
         super(injector);
     }
 
-    ngAfterViewInit() {
-        this.moduleSubscriptions = this.getDistinctList(this.appService.moduleSubscriptions).filter(item => item.statusId != 'D');
-        this.changeDetectionRef.detectChanges();
+    ngOnInit() {
+        let subscriptions = this.getDistinctList(this.appService.moduleSubscriptions).filter(item => item.statusId != 'D');
+        let subscriptionIds = subscriptions.map(v => v.id);
+
+        if (this.hasManagePaymentsPermission)
+        {
+            this.startLoading();
+            forkJoin([
+                this.paymentInfoService.getPaymentMethodsObserverable(),
+                this.subscriptionProxy.getSubscriptionsLastPaymentInfo(subscriptionIds)
+            ]).subscribe(([allPaymentMethods, lastPayments]) => {
+                subscriptionIds.forEach(v => {
+                    let paymentInfo = lastPayments.subscriptionsLastPayment[v];
+                    if (paymentInfo){
+                        this.subscriptionLastPaymentInfos[v] = allPaymentMethods.find(v => v.id == paymentInfo);
+                    }
+                });
+                this.moduleSubscriptions = subscriptions;
+                this.finishLoading();
+                this.changeDetectionRef.detectChanges();
+            });
+        } else {
+            this.moduleSubscriptions = subscriptions;
+            this.changeDetectionRef.detectChanges();
+        }
     }
 
-    getDistinctList(list) {
+    getDistinctList(list): ModuleSubscriptionInfoDto[] {
         let flags = [], output = [];
         for (let i = 0; i < list.length; i++)
             if (!flags[list[i].id]) {
@@ -139,7 +179,22 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements A
         });
     }
 
+    redirectToPortal(mode: number) {
+        this.subscriptionProxy.getUpdatePaymentLink(this.actionRecordData.id)
+            .subscribe(res => {
+                location.href = res;
+            });
+    }
+
     showAddOnProducts() {
         this.onShowProducts.emit({ productsGroupName: AppConsts.PRODUCT_GROUP_ADD_ON });
+    }
+
+    getCardType(cardInfo: BankCardShortInfo): string {
+        if (cardInfo.network)
+            return cardInfo.network;
+
+        let numberInfo = CreditCard.cardFromNumber(cardInfo.cardNumber);
+        return numberInfo && numberInfo.type || 'credit-card';
     }
 }
