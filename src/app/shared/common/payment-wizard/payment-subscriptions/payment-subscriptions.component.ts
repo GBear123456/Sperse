@@ -36,6 +36,7 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { AppPermissions } from '@root/shared/AppPermissions';
 import { PaymentsInfoService } from '../../payments-info/payments-info.service';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 @Component({
     selector: 'payment-subscriptions',
@@ -45,6 +46,7 @@ import { PaymentsInfoService } from '../../payments-info/payments-info.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentSubscriptionsComponent extends AppComponentBase implements OnInit {
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
     @Output() onShowProducts: EventEmitter<any> = new EventEmitter<any>();
     
@@ -108,11 +110,17 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
                 this.moduleSubscriptions = subscriptions;
                 this.finishLoading();
                 this.changeDetectionRef.detectChanges();
+                this.repaintGrid();
             });
         } else {
             this.moduleSubscriptions = subscriptions;
             this.changeDetectionRef.detectChanges();
+            this.repaintGrid();
         }
+    }
+
+    repaintGrid() {
+        setTimeout(() => this.dataGrid.instance.repaint(), 100);
     }
 
     getDistinctList(list): ModuleSubscriptionInfoDto[] {
