@@ -36,6 +36,7 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { AppPermissions } from '@root/shared/AppPermissions';
 import { PaymentsInfoService } from '../../payments-info/payments-info.service';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 @Component({
     selector: 'payment-subscriptions',
@@ -45,6 +46,7 @@ import { PaymentsInfoService } from '../../payments-info/payments-info.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentSubscriptionsComponent extends AppComponentBase implements OnInit {
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
     @Output() onShowProducts: EventEmitter<any> = new EventEmitter<any>();
     
@@ -65,7 +67,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
         {
             text: this.l('PaymentMethod'),
             class: 'edit',
-            visible: this.hasManagePaymentsPermission,
+            checkVisible: () => this.showPaymentMethodMenuOption(this.actionRecordData),
             action: this.redirectToPortal.bind(this),
         },
         {
@@ -102,17 +104,27 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
                 subscriptionIds.forEach(v => {
                     let paymentInfo = lastPayments.subscriptionsLastPayment[v];
                     if (paymentInfo){
-                        this.subscriptionLastPaymentInfos[v] = allPaymentMethods.find(v => v.id == paymentInfo);
+                        let paymentMethod = allPaymentMethods.find(v => v.id == paymentInfo.paymentInfoId);
+                        if (paymentMethod) {
+                            paymentMethod['gateway'] = paymentInfo.gateway;
+                            this.subscriptionLastPaymentInfos[v] = paymentMethod;
+                        }
                     }
                 });
                 this.moduleSubscriptions = subscriptions;
                 this.finishLoading();
                 this.changeDetectionRef.detectChanges();
+                this.repaintGrid();
             });
         } else {
             this.moduleSubscriptions = subscriptions;
             this.changeDetectionRef.detectChanges();
+            this.repaintGrid();
         }
+    }
+
+    repaintGrid() {
+        setTimeout(() => this.dataGrid.instance.repaint(), 100);
     }
 
     getDistinctList(list): ModuleSubscriptionInfoDto[] {
@@ -148,6 +160,12 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
 
     showUpgradeButton(data: ModuleSubscriptionInfoDto) {
         return data.statusId == 'A' && data.isUpgradable;
+    }
+
+    showPaymentMethodMenuOption(actionRecordData: ModuleSubscriptionInfoDto): boolean {
+        return this.hasManagePaymentsPermission && 
+               [PaymentPeriodType.OneTime, PaymentPeriodType.LifeTime].indexOf(actionRecordData.paymentPeriodType) < 0 && 
+               this.subscriptionLastPaymentInfos[actionRecordData.id] && this.subscriptionLastPaymentInfos[actionRecordData.id]['gateway'];
     }
 
     upgradeSubscription() {
