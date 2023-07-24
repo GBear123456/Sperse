@@ -6,7 +6,7 @@
     <div class="content-wrap">
         <cfo-left-menu #leftMenu [selectedItemIndex]="2"></cfo-left-menu>
         <div class="grid-wrapper" [ngStyle]="{ flex: isInstanceAdmin ? 'unset': 1 }">
-            <categorization [width]="'calc(100vw - ' + (leftMenu.collapsed || isMobile ? 420 : 744) + 'px)'"
+            <categorization [width]="'calc(100vw - ' + (leftMenu.collapsed || isMobile ? (layoutService.showLeftBar ? 510 : 420) : (layoutService.showLeftBar ? 851 : 744)) + 'px)'"
                             [height]="'calc(100vh - ' + (layoutService.showLeftBar ? 160 : 218) + 'px)'"
                             [showTitle]="false"
                             [showHeader]="true"
