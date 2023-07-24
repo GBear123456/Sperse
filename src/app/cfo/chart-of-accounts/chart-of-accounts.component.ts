@@ -35,6 +35,7 @@ class UploadCategoryModel {
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(CategorizationComponent, { static: true }) categorizationComponent: CategorizationComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+
     override = false;
     syncTypeIds = SyncTypeIds;
     isMobile = AppConsts.isMobile;
