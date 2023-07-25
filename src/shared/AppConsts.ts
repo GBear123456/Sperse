@@ -107,6 +107,7 @@ export class AppConsts {
         ein: /^\d{2}\-?\d{7}$/,
         duns: /^\d{2}\-?\d{3}-?\d{4}$/,
         siteUrl: /^(http:\/\/|https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
+        sitePath: /^[a-zA-Z0-9-._~]*$/,
         zipUsPattern: /^\d{5}(?:-\d{4})?$/,
         notSupportedDocuments: /\.(ade|adp|apk|bat|chm|cmd|com|cpl|dll|dmg|exe|hta|ins|isp|jar|js|jse|lib|lnk|mde|msc|msi|msp|mst|nsh|pif|scr|sct|shb|sys|vb|vbe|vbs|vxd|wsc|wsf|wsh|cab)$/i
     };
