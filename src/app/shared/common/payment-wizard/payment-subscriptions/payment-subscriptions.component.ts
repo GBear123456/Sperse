@@ -197,10 +197,12 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
         });
     }
 
-    redirectToPortal(mode: number) {
+    redirectToPortal() {
         this.subscriptionProxy.getUpdatePaymentLink(this.actionRecordData.id)
             .subscribe(res => {
-                location.href = res;
+                if (!window.open(res, '_blank')){
+                    this.notify.info(this.l('TurnOffPopupBlockerMessage'));
+                }
             });
     }
 
