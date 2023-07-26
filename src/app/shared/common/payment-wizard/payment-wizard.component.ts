@@ -146,6 +146,7 @@ export class PaymentWizardComponent {
 
     showSubscriptions() {
         this.data.showSubscriptions = true;
+        this.dialogRef.disableClose = false;
         this.changeDetectorRef.detectChanges();
     }
 }
