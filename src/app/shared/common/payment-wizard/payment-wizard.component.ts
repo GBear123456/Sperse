@@ -143,4 +143,10 @@ export class PaymentWizardComponent {
             ? this.reloadAfterClosed()
             : this.dialogRef.close();
     }
+
+    showSubscriptions() {
+        this.data.showSubscriptions = true;
+        this.dialogRef.disableClose = false;
+        this.changeDetectorRef.detectChanges();
+    }
 }
