@@ -12,7 +12,7 @@
 
 <div class="nav-menu" *ngIf="navbarItems">
     <dx-menu
-        width="90px"
+        [width]="width"
         [dataSource]="navbarItems"
         [selectByClick]="true"
         [selectionMode]="'single'"
@@ -22,11 +22,13 @@
         [adaptivityEnabled]="true"
         [(selectedItem)]="selectedItem"
         [hideSubmenuOnMouseLeave]="true"
-        [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
-        [showSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
+        [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 200, show: 600 }}"
+        [showSubmenuMode]="{ name: 'onHover', delay: { hide: 200, show: 0 }}"
+        (onSubmenuShowing)="onSubmenuShowing($event)"
+        (onSubmenuHiding)="onSubmenuHiding($event)"
         (onItemClick)="navigate($event)">
         <div *dxTemplate="let data of 'item'" [title]="data.text">
-            <img *ngIf="!data.params" [src]="data.icon"><span style="padding: 10px 0;" *ngIf="!!data.params">{{data.text}}</span>
+            <img *ngIf="!data.params" [src]="data.icon"><span class="caption" style="padding: 10px 0;" *ngIf="!!data.params || expanded || isSubMenuOpen">{{data.text}}</span><span class="triangle" *ngIf="!data.params && data?.items?.length">&#9658;</span>
         </div>
     </dx-menu>
 </div>

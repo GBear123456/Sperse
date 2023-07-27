@@ -1,6 +1,6 @@
-:host {
+ :host {
+    transition: width 0.5s;
     height: 100vh;
-    width: 90px;
     z-index: 999;
     border-right: 1px solid #dedede;
     background: #F4F5F7;
@@ -13,7 +13,7 @@
         width: 80px;
         height: 80px;
         overflow: hidden;
-        margin: auto;
+        margin: auto auto auto 5px;
         display: flex;
         justify-content: center;
         flex-direction: column;
@@ -28,32 +28,50 @@
         overflow: hidden;
         height: calc(100vh - 300px);
         ::ng-deep dx-menu {
-            margin: auto;
+            margin: auto auto auto 0;
+            .dx-menu-items-container {
+                width: 100%;
+            }
             .dx-menu-vertical {
                 text-align: center;    
             }
             .dx-menu-item {
-                border-radius: 50%;
-                border: 3px solid transparent;
+                background: transparent;
                 &.dx-menu-item-selected, &.dx-state-hover {
-                    background-color: transparent;
-                    border: 3px solid #d0d3e7;
+                    .dx-item-content.dx-menu-item-content {
+                        img {
+                            border: 3px solid #d0d3e7;
+                        }
+                    }
                 }
-            }
-            .dx-item-content.dx-menu-item-content {
-                display: flex;
-                justify-content: center;
-                width: 56px;
-                height: 56px;
-                padding: 0;
-                img {
-                    margin: auto;
-                    max-width: 52px;
-                    border-radius: 50%;
+
+                .dx-item-content.dx-menu-item-content {
+                    display: flex;
+                    justify-content: left;
+                    height: 56px;
+                    padding: 0;
+                    img {
+                        margin: auto;
+                        max-width: 52px;
+                        border-radius: 50%;
+                        border: 3px solid transparent;
+                        margin: auto 19px;
+                    }
+                    .caption {
+                        font-size: 16px;
+                        font-weight: 600;
+                        margin: auto 0;
+                    }
+                    .triangle {
+                        width: 100%;
+                        text-align: right;
+                        margin: auto 10px;
+                    }
+                    .dx-menu-item-text {
+                        display: none;
+                    }
                 }
-                .dx-menu-item-text {
-                    display: none;
-                }
+
             }
             .dx-context-menu-container-border {
                 border: 0;
@@ -63,6 +81,10 @@
     }
 
     ::ng-deep user-management-list {
+        display: block;
+        width: 90px!important;
+        margin-right: auto;
+        margin-left: 0px;        
         .m-topbar__nav.m-nav {
             flex-direction: column;
             margin: 0 18px;
@@ -74,6 +96,7 @@
     }
 
     ::ng-deep platform-select {
+        width: 90px;
         height: 75px;
         display: block;
     }

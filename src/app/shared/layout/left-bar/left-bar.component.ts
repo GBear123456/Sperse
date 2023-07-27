@@ -1,9 +1,11 @@
 /** Core imports */
-import { Component, Inject, OnDestroy, AfterViewInit, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, HostListener, HostBinding, 
+    OnDestroy, AfterViewInit, OnInit, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 /** Third party imports */
+import { DxMenuComponent } from 'devextreme-angular/ui/menu';
 import { DxNavBarComponent } from 'devextreme-angular/ui/nav-bar';
 import * as _ from 'underscore';
 import isEqual from 'lodash/isEqual';
@@ -55,6 +57,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     isChatConnected = this.chatSignalrService.isChatConnected;
     isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
     unreadChatMessageCount = 0;
+    expanded = false;
 
     constructor(
         private feature: FeatureCheckerService,
@@ -220,5 +223,32 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     logoClick() {
         location.href = origin;
+    }
+
+    @HostBinding('style.width') width: string = '90px';
+    @HostListener('mouseover')
+    onHover = () => {
+        this.expanded = true;
+        this.width = '210px';
+    }
+
+    @HostListener('mouseleave')
+    onBlur = () => {
+        this.expanded = false;
+        if (!this.isSubMenuOpen) {
+            this.width = '90px';
+        }
+    }
+
+    isSubMenuOpen = false;
+    onSubmenuShowing($event) {
+        this.isSubMenuOpen = true;
+    }
+
+    onSubmenuHiding($event) {
+        this.isSubMenuOpen = false;
+        if (!this.expanded && !$event.cancel) {
+            this.width = '90px';
+        }
     }
 }
