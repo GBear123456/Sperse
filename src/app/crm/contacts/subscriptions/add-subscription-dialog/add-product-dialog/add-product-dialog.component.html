@@ -133,6 +133,18 @@
                            [disabled]="isReadOnly">
             </dx-number-box>
         </div>
+        <div class="field">
+            <label for="publicName">{{ls.l('PublicName')}}</label>
+            <dx-text-box name="publicName"
+                         width="300px"
+                         [inputAttr]="{ id: 'publicName' }"
+                         [(value)]="product.publicName"
+                         [disabled]="isReadOnly">
+                    <dx-validator>
+                        <dxi-validation-rule type="pattern" [pattern]="regexPatterns.sitePath"></dxi-validation-rule>
+                    </dx-validator>
+            </dx-text-box>
+        </div>
         <div *ngIf="product.type == defaultProductType && isHostTenant" class="field">
             <label for="name">{{ls.l('Downgrade Product')}}</label>
             <dx-select-box name="name"
