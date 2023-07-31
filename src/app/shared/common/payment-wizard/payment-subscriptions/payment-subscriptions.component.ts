@@ -163,9 +163,11 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
     }
 
     showPaymentMethodMenuOption(actionRecordData: ModuleSubscriptionInfoDto): boolean {
-        return this.hasManagePaymentsPermission && 
-               [PaymentPeriodType.OneTime, PaymentPeriodType.LifeTime].indexOf(actionRecordData.paymentPeriodType) < 0 && 
-               this.subscriptionLastPaymentInfos[actionRecordData.id] && this.subscriptionLastPaymentInfos[actionRecordData.id]['gateway'];
+        let showPaymentMethod = this.hasManagePaymentsPermission &&
+            [PaymentPeriodType.OneTime, PaymentPeriodType.LifeTime].indexOf(actionRecordData.paymentPeriodType) < 0 &&
+            this.subscriptionLastPaymentInfos[actionRecordData.id] && this.subscriptionLastPaymentInfos[actionRecordData.id]['gateway'];
+
+        return !!showPaymentMethod;
     }
 
     upgradeSubscription() {

@@ -5,7 +5,7 @@
         </mat-tab>
         <mat-tab label="{{ ls.l('Payments') }}" *ngIf="isSubscriptionPaymentsAllowed">
             <ng-template matTabContent>
-                <payments-info paymentInfoScrollHeight="525"></payments-info>
+                <payments-info amountCurrency="USD" paymentInfoScrollHeight="525"></payments-info>
             </ng-template>
         </mat-tab>
     </mat-tab-group>
