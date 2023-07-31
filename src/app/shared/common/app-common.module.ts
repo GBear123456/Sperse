@@ -96,6 +96,7 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
 import { AppRatingModule } from './rating/app-rating.module';
 import { CalendarButtonComponent } from '@app/shared/common/calendar-button/calendar-button.component';
 import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.module';
+import { ActionMenuModule } from './action-menu/action-menu.module';
 
 @NgModule({
     imports: [
@@ -164,7 +165,8 @@ import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.mo
         ModalDialogModule,
         AppRatingModule,
         GooglePlaceModule,
-        TimeZoneComboModule
+        TimeZoneComboModule,
+        ActionMenuModule
     ],
     declarations: [
         TimeAgoPipe,

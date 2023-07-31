@@ -1,3 +1,8 @@
+<action-menu [width]="hasManagePaymentsPermission ? '200px' : '150px'"
+    [items]="actionMenuItems"
+    target=""
+    (onItemClick)="onMenuItemClick($event)">
+</action-menu>
 <dx-data-grid
     height="95%"
     class="alone main-component-view"
@@ -20,11 +25,18 @@
 
     <dxi-column dataField="isTrial" [caption]="l('Trial')" dataType="boolean"></dxi-column>
 
-    <dxi-column dataField="statusId" [allowResizing]="false" [caption]="l('Status')" cellTemplate="statusCell" width="130px"></dxi-column>
+    <dxi-column dataField="statusId" [allowResizing]="false" [caption]="l('Status')" cellTemplate="statusCell" width="100px"></dxi-column>
 
-    <dxi-column dataField="endDate" [allowResizing]="false" cellTemplate="dateTimeTemplate" width="150px" cssClass="tabular"></dxi-column>
+    <dxi-column dataField="endDate" [allowResizing]="false" cellTemplate="dateTimeTemplate" width="100px" cssClass="tabular"></dxi-column>
 
-    <dxi-column [allowResizing]="false" caption="" cellTemplate="actionCell"></dxi-column>
+    <dxi-column *ngIf="hasManagePaymentsPermission" [caption]="l('LastPaymentHeader')" width="200px" cellTemplate="lastPaymentCell"></dxi-column>
+
+    <dxi-column
+        alignment="center"
+        width="50px"
+        cellTemplate="actionCell"
+        [allowResizing]="false">
+    </dxi-column>
 
     <div *dxTemplate="let cellData of 'imageTemplate'" class="product-icon">
         <img width="auto" height="64px" [src]="cellData.data.productImageUrl" onerror="this.src='assets/common/images/product.png'">
@@ -38,9 +50,44 @@
         {{cellData.value == 'A' ? l(isExpired(cellData) ? 'Expired' : 'Active') : (cellData.value == 'D' ? l('Draft') : l('Cancelled'))}}
     </div>
 
+    <div *dxTemplate="let cellData of 'lastPaymentCell'">
+        <div *ngIf="subscriptionLastPaymentInfos[cellData.data.id]">
+            <div [ngSwitch]="subscriptionLastPaymentInfos[cellData.data.id].type" class="payment-method">
+                <ng-container *ngSwitchCase="paymentMethodsTypes.BankCard">
+                    <div class="paymentMethodIcon">
+                        <img [src]="'./assets/common/images/payments/card-logo/' + getCardType(subscriptionLastPaymentInfos[cellData.data.id].bankCardInfo) + '.svg'">
+                    </div>
+                    <div>
+                        <div class="paymentName">
+                            {{ subscriptionLastPaymentInfos[cellData.data.id].bankCardInfo.cardNumber }}
+                        </div>
+                        <div class="paymentExpiration">{{ l('Expires') + ' ' + subscriptionLastPaymentInfos[cellData.data.id].bankCardInfo.expirationMonth + '/' + subscriptionLastPaymentInfos[cellData.data.id].bankCardInfo.expirationYear }}</div>
+                    </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="paymentMethodsTypes.PayPal">
+                    <div class="paymentMethodIcon">
+                        <img [src]="'./assets/common/images/payments/card-logo/paypal.svg'">
+                    </div>
+                    <div>
+                        <div class="paymentName" title="{{ subscriptionLastPaymentInfos[cellData.data.id].payPalInfo.email || l('PayPal') }}">
+                            {{ subscriptionLastPaymentInfos[cellData.data.id].payPalInfo.email || l('PayPal') }}
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="paymentMethodsTypes.ACH">
+                    <div class="achPaymentMethodIcon paymentMethodIcon">{{ l('eCheck') }}</div>
+                    <div>
+                        <div class="paymentName" title="{{ subscriptionLastPaymentInfos[cellData.data.id].achCustomerInfo.bankName + ' ' + subscriptionLastPaymentInfos[cellData.data.id].achCustomerInfo.accountNumber }}">
+                            {{ subscriptionLastPaymentInfos[cellData.data.id].achCustomerInfo.bankName + ' ' + subscriptionLastPaymentInfos[cellData.data.id].achCustomerInfo.accountNumber }}
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+
     <div *dxTemplate="let cellData of 'actionCell'">
-        <a *ngIf="showOneTimeActivate(cellData.data) || showUpgradeButton(cellData.data)" href="javascript:void(0)" (click)="upgradeSubscription(cellData.data)">{{l('Upgrade')}}&nbsp;</a>
-        <a *ngIf="cellData.data.statusId == 'A'" href="javascript:void(0)" (click)="cancelSubscription(cellData.data)">{{l('Cancel')}}</a>
+        <a *ngIf="cellData.data.statusId == 'A'" (click)="toggleActionsMenu($event, cellData.data)" class="dx-link dx-link-edit"></a>
     </div>
 </dx-data-grid>
 <div *ngIf="(paymentService?.addOnConfig$ | async)?.length"><a href="javascript:void(0);" (click)="showAddOnProducts()">{{l('ClickAddOnFeaturesMessage')}}</a></div>

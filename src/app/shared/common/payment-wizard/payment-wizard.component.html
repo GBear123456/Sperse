@@ -40,7 +40,7 @@
                     <div *ngIf="subscriptionIsActiveExpired" class="rejectSubscriptionBlock">
                         <h2 class="title">{{ ls.l('SubscriptionActiveExpiredTitle') }}</h2>
                         <h3 class="message">{{ ls.l((isSubscriptionManagementAllowed ? '' : 'User') + 'SubscriptionActiveExpiredMessage', productName) }}</h3>
-                        <button (click)="close()" class="btn btn-layout">{{ ls.l('Close') }}</button>
+                        <button (click)="showSubscriptions()" class="btn btn-layout">{{ ls.l('MySubscriptions') }}</button>
                         <span class="bottom-message" *ngIf="cancellationDayCount > 0">{{ ls.l('SubscriptionCancellationMessage', cancellationDayCount) }}</span>
                     </div>
                 </mat-step>
