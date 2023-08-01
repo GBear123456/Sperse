@@ -72,6 +72,12 @@ const routes: Routes = [
         data: { localizationSource: 'Platform' }
     },
     {
+        path: 'p',
+        canActivate: [LocalizationResolver],
+        loadChildren: async () => (await import('public/products/public-products.module')).PublicProductsModule,
+        data: { localizationSource: 'Platform' }
+    },
+    {
         path: '**',
         canActivateChild: [LocalizationResolver],
         loadChildren: async () => (await import('shared/not-found/not-found.module')).NotFoundModule,
