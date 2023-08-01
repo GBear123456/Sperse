@@ -1,0 +1,80 @@
+<div class="box">
+    <div class="title">
+        <h1 class="title title--h1"> {{productInfo?.name}}</h1>
+    </div>
+    <p class="subtitle">{{productInfo?.description}}</p>
+    <div class="box__inner">
+        <div class="box__left box__item">
+            <div class="plan">
+                <span class="wrapper">
+                    <span>
+                        <img *ngIf="productInfo?.imageUrl" aria-hidden="true" [src]="productInfo?.imageUrl">
+                    </span>
+                </span>
+            </div>
+            <div class="price">
+                <div class="price__new">
+                    <span>{{productInfo?.price}}</span>
+                </div>
+            </div>
+            <ul class="list">
+                <li>Description HTML</li>
+                <li>Manage contacts with ease using Sperse CRM.</li>
+                <li>Add up to 1,000 contacts. Upgrade for more.</li>
+                <li>One-click Save option to save you time!</li>
+                <li>Auto-fill contact info for accuracy and speed.</li>
+                <li>Connect your calendar to follow up with leads.</li>
+                <li>Get our mobile app to access contacts on the go.</li>
+            </ul>
+        </div>
+        <div class="box__right box__item">
+            <form id="firstStepForm" #firstStepForm="ngForm" novalidate (ngSubmit)="submitRequest()">
+                <div class="name">
+                    <div class="input name__input">
+                        <label>
+                            First Name <input #firstNameInput="ngModel" type="text" placeholder="" name="firstName" [(ngModel)]="requestInfo.firstName" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="nameRegexp" required>
+                            <validation-messages [formCtrl]="firstNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('FirstName'))}]"></validation-messages>
+                        </label>
+                    </div>
+                    <div class="input name__input">
+                        <label>
+                            Last Name <input #lastNameInput="ngModel" type="text" placeholder="" name="lastName" [(ngModel)]="requestInfo.lastName" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="nameRegexp" required>
+                            <validation-messages [formCtrl]="lastNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('LastName'))}]"></validation-messages>
+                        </label>
+                    </div>
+                </div>
+                <div class="phone">
+                    <span class="phone__label">Phone</span>
+                    <div>
+                        <country-phone-number #phoneNumber
+                                              [required]="false"
+                                              [(phoneNumber)]="requestInfo.phone">
+                        </country-phone-number>
+                    </div>
+                </div>
+                <div class="input">
+                    <label class="email">
+                        Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="requestInfo.email" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="emailRegexp" required>
+                        <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
+                    </label>
+                </div>
+                <div class="actions">
+                    <div>
+                        <label class="check_wrap">
+                            <input class="check_wrap__input" type="checkbox" [(ngModel)]="agreedTermsAndServices" [ngModelOptions]="{standalone: true}">
+                            <span class="check_wrap__style"></span>
+                            <div>
+                                By using this page, you agree to <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">Sperse Terms of Service</a> and <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="login_btn">
+                    <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !agreedTermsAndServices || !firstStepForm.valid}">
+                        <span>Let's Go'</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
