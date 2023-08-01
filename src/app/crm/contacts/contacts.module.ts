@@ -150,6 +150,7 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
 import { AddProductDialogComponent, FilterAssignmentsPipe } from './subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
+import { CreateProductDialogComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './subscriptions/add-subscription-dialog/add-member-service-dialog/add-member-service-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { AffiliateHistoryDialogComponent } from './personal-details/personal-details-dialog/affiliate-history-dialog/affiliate-history-dialog.component';
@@ -219,6 +220,7 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
         CreateInvoiceDialogComponent,
         LeadRelatedContactsComponent,
         AddProductDialogComponent,
+        CreateProductDialogComponent,
         FilterAssignmentsPipe,
         AddMemberServiceDialogComponent,
         TemplateDocumentsDialogComponent,
@@ -318,6 +320,7 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
         AddProductDialogComponent,
+        CreateProductDialogComponent,
         AddMemberServiceDialogComponent,
         TemplateDocumentsDialogComponent,
         AffiliateHistoryDialogComponent,

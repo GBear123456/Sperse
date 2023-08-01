@@ -1,0 +1,401 @@
+<modal-dialog [title]="title"
+              [titleClearButton]="false"
+              [buttons]="buttons"
+              [isTitleValid]="true"
+              [editTitle]="false"
+              (onContextItemChanged)="onSaveOptionSelectionChanged()">
+
+    <dx-scroll-view showScrollbar="onHover">
+        <dx-validation-group>
+            <div class="wrapper">
+                <div class="content">
+                    <div class="left">
+                        <div class="block" [ngClass]="{selected: product.type == productType.Subscription}" (click)="product.type = productType.Subscription">
+                            <img class="head" src="assets/common/icons/team.svg"> 
+                            <h3>{{ls.l('Membership or Subscription')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                            <p>{{ls.l('Selling memberships or subscriptions enable you to sell regularly delivered products with recurring payments.')}}</p>
+                        </div>
+                        <div class="block disabled"> 
+                            <img class="head" src="assets/common/icons/group.svg">
+                            <h3>{{ls.l('Digital Download Product')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                            <p>{{ls.l('Sell digital downloadable such as Software, eBooks, PDFs, templates, music, videos, or anything else digital.')}}</p>
+                        </div>
+                        <div class="block" [ngClass]="{selected: product.type == productType.General}" (click)="product.type = productType.General">
+                            <img class="head" src="assets/common/icons/open-book.svg">
+                            <h3>{{ls.l('Physical Product')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                            <p>{{ls.l('Sell books, merchandise, mugs, t-shirts, art, or any other product that requires shipping.')}}</p>
+                        </div>
+                        <div class="block disabled">
+                            <img class="head" src="assets/common/icons/fireworks.svg">
+                            <h3>{{ls.l('Event Tickets')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                            <p>{{ls.l('Sell event tickets and highlight benefits to get event-goers interested to attend.')}}</p>
+                        </div>
+                    </div>
+                    <div class="middle">
+                        <div class="block">
+                            <h3>{{ls.l('Product')}}</h3>
+                            <hr>
+                            <div class="product-ident">
+                                <div>    
+                                    <label>{{ls.l('Product/service name')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
+                                    <dx-text-box name="name"
+                                                 width="100%"
+                                                 [inputAttr]="{ id: 'name' }"
+                                                 [(value)]="product.name"
+                                                 [disabled]="isReadOnly">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                                <div>
+                                    <label>{{ls.l('Product SKU or unique code')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
+                                    <dx-text-box name="code"
+                                                 width="100%"
+                                                 [inputAttr]="{ id: 'code' }"
+                                                 [(value)]="product.code"
+                                                 [disabled]="isReadOnly">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Code'))}}."></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                            </div>
+                            <div *ngIf="tenantId">
+                                <inplace-edit [id]="'product-url'"
+                                              [value]="'https://app.sperse.com/p/' + tenantId + '/my-fancy-product'"
+                                              [validationRules]="urlValidationRules"
+                                              [isReadOnlyField]="isReadOnly"
+                                              lEntityName="Product Url"
+                                              [editPlaceholder]="ls.l('ProductUrl')"
+                                              [isEditDialogEnabled]="false"
+                                              [isHistoryEnabled]="false"
+                                              (valueChanged)="updateProductUrl($event)">
+                                </inplace-edit>
+                            </div>
+                            <div>
+                                <label for="name">{{ls.l('Description')}}</label>
+                                <dx-text-box name="description"
+                                             width="100%"
+                                             [inputAttr]="{ id: 'description' }"
+                                             [(value)]="product.description"
+                                             [disabled]="isReadOnly">
+                                </dx-text-box>
+                            </div>
+                            <div>
+                                <label>{{ls.l('Description')}} Html <img class="info" src="assets/common/icons/info-circle.svg"></label>
+                                <dx-text-area name="descriptionHtml"
+                                             width="100%"
+                                             [inputAttr]="{ id: 'descriptionHtml' }"
+                                             [(value)]="product.descriptionHtml"
+                                             [autoResizeEnabled]="true"
+                                             [maxLength]="8192"
+                                             [maxHeight]="150"
+                                             [minHeight]="100"
+                                             [disabled]="isReadOnly">
+                                </dx-text-area>
+                            </div>
+                        </div>
+                        <div class="block">
+                            <h3>{{ls.l('Price settings')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                            <ng-container *ngIf="product.type != defaultProductType">
+                                <div>
+                                    <label>{{ls.l('Price')}}</label>
+                                    <dx-number-box name="price"
+                                                   width="100%"
+                                                   [format]="amountFormat"
+                                                   [(value)]="product.price"
+                                                   [disabled]="isReadOnly"
+                                                   (onValueChanged)="checkShowAmountChangeWarrning()">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Price'))}}."></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-number-box>
+                                </div>
+                                <div>
+                                    <label for="activationTime">{{ls.l('Unit')}}</label>
+                                    <dx-select-box [dataSource]="getProductUnits()"
+                                                   width="100%"
+                                                   placeholder="Select unit..."
+                                                   [(value)]="product.unit"
+                                                   [disabled]="isReadOnly">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-select-box>
+                                </div>
+                                <div *ngIf="isCommissionsEnabled">
+                                    <label>{{ls.l('CommissionableAmount')}}</label>
+                                    <dx-number-box name="commissionableAmount"
+                                                   width="100%"
+                                                   [format]="amountNullableFormat"
+                                                   [(value)]="product.commissionableAmount"
+                                                   [disabled]="isReadOnly">
+                                    </dx-number-box>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="product.type == defaultProductType">
+                                <div class="services-header">
+                                    <label>{{ls.l('PaymentOptions')}}:</label>
+                                    <div class="field">
+                                        <div *ngIf="!isReadOnly && !isOneTime" class="add-new-button" (click)="addNewPaymentPeriod()"><span>+ {{ls.l('Add')}}</span></div>
+                                    </div>
+                                </div>
+                                <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
+                                    <i *ngIf="!isReadOnly" class="fa fa-close" (click)="removePaymentPeriod(i)"></i>
+                                    <div class="field">
+                                        <label class="wide" for="name">{{ls.l('PaymentPeriod')}}</label>
+                                        <dx-select-box name="name"
+                                                       [dataSource]="getFrequencies(option)"
+                                                       [placeholder]="ls.l('Select') + ' ' + ls.l('PaymentPeriod') + '...'"
+                                                       [(value)]="option.frequency"
+                                                       [disabled]="isReadOnly"
+                                                       (onValueChanged)="onFrequencyChanged($event, option)">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('PaymentPeriod'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-select-box>
+                                    </div>
+                                    <div class="field" *ngIf="option.frequency && option.frequency == recurringPaymentFrequency.Custom">
+                                        <label class="wide" for="name">{{ls.l('Period Type')}}</label>
+                                        <dx-select-box name="name"
+                                                       [dataSource]="customPeriodTypes"
+                                                       [placeholder]="ls.l('Select') + ' ' + ls.l('Type') + '...'"
+                                                       [(value)]="option.customPeriodType"
+                                                       [disabled]="isReadOnly">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Type'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-select-box>
+                                    </div>
+                                    <div class="field" *ngIf="isOneTime || (option.frequency && option.frequency == recurringPaymentFrequency.Custom)">
+                                        <label class="wide" for="level">{{ls.l('Period')}}</label>
+                                        <dx-number-box name="period"
+                                                       [min]="0"
+                                                       mode="number"
+                                                       format="###0"
+                                                       valueChangeEvent="keyup"
+                                                       [placeholder]="ls.l('Set number of ') + (option.customPeriodType?.toLowerCase() || 'period')"
+                                                       [(value)]="option.customPeriodCount"
+                                                       [disabled]="isReadOnly">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="custom" [validationCallback]="validatePeriodDayCount(option)" message="{{ls.l('RequiredField', ls.l('Period'))}}."></dxi-validation-rule>
+                                                <dxi-validation-rule type="custom" [validationCallback]="validateCustomPeriodDayCount(option)" message="{{ls.l('CustomBillingPeriodLengthError')}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-number-box>
+                                    </div>
+                                    <div class="field" *ngIf="option.frequency && !isOneTime">
+                                        <label class="wide" for="level">{{ls.l('TrialDayCount')}}</label>
+                                        <dx-number-box name="count"
+                                                       [min]="0"
+                                                       mode="number"
+                                                       format="###0"
+                                                       valueChangeEvent="keyup"
+                                                       [placeholder]="ls.l('ByDefault', 0)"
+                                                       [(value)]="option.trialDayCount"
+                                                       [disabled]="isReadOnly"
+                                                       (onValueChanged)="option.signupFee = $event.value ? option.signupFee : 0">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="custom" [validationCallback]="validateTrialDayCount(option)" message="{{ls.l('TrialDayCountRequired')}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-number-box>
+                                    </div>
+                                    <div class="field" *ngIf="option.frequency && !isOneTime && option.trialDayCount">
+                                        <label class="wide">{{ls.l('SignupFee')}}</label>
+                                        <dx-number-box name="price"
+                                                       [format]="amountFormat"
+                                                       [(value)]="option.signupFee"
+                                                       [disabled]="isReadOnly"
+                                                       (onValueChanged)="checkShowAmountChangeWarrning()">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-number-box>
+                                    </div>
+                                    <div *ngIf="option.frequency && !isOneTime && isCommissionsEnabled && option.trialDayCount" class="field">
+                                        <label class="wide">{{ls.l('CommissionableAmount')}}</label>
+                                        <dx-number-box name="commissionableSignupFeeAmount"
+                                                       [format]="amountNullableFormat"
+                                                       [(value)]="option.commissionableSignupFeeAmount"
+                                                       [disabled]="isReadOnly">
+                                        </dx-number-box>
+                                    </div>
+                                    <div class="field">
+                                        <label class="wide">{{ls.l('Fee')}}</label>
+                                        <dx-number-box name="price"
+                                                       [format]="amountFormat"
+                                                       [(value)]="option.fee"
+                                                       [disabled]="isReadOnly"
+                                                       (onValueChanged)="checkShowAmountChangeWarrning()">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="custom" [validationCallback]="validateFee(option)" message="{{ls.l('RequiredField', ls.l('Fee'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-number-box>
+                                    </div>
+                                    <div *ngIf="isCommissionsEnabled" class="field">
+                                        <label class="wide">{{ls.l('CommissionableAmount')}}</label>
+                                        <dx-number-box name="commissionableFeeAmount"
+                                                       [format]="amountNullableFormat"
+                                                       [(value)]="option.commissionableFeeAmount"
+                                                       [disabled]="isReadOnly">
+                                        </dx-number-box>
+                                    </div>
+                                    <div class="field">
+                                        <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">{{ls.l('GracePeriodDayCount')}}</label>
+                                        <dx-number-box name="gracePeriodDayCount"
+                                                       [placeholder]="ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)"
+                                                       [min]="0"
+                                                       format="###0"
+                                                       mode="number"
+                                                       [(value)]="option.gracePeriodDayCount"
+                                                       [disabled]="isReadOnly">
+                                        </dx-number-box>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <div *ngIf="isCommissionsEnabled">
+                                <label>{{ls.l('MaxCommissionRate')}}</label>
+                                <dx-number-box name="maxCommissionRate"
+                                               width="100%"
+                                               format="#.##%"
+                                               [(value)]="product.maxCommissionRate"
+                                               [disabled]="isReadOnly">
+                                </dx-number-box>
+                            </div>
+                            <div *ngIf="isCommissionsEnabled">
+                                <label>{{ls.l('MaxCommissionRateTier2')}}</label>
+                                <dx-number-box name="maxCommissionRate2"
+                                               width="100%"
+                                               format="#.##%"
+                                               [(value)]="product.maxCommissionRateTier2"
+                                               [disabled]="isReadOnly">
+                                </dx-number-box>
+                            </div>
+                        </div>
+                        <div class="block" *ngIf="product.type == defaultProductType">
+                            <h3>{{ls.l('Product Services & Features')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                            <div class="services-header">
+                                <label>{{ls.l('Services')}}:</label>
+                                <div class="field">
+                                    <div *ngIf="!isReadOnly" class="add-new-button" (click)="addNewServiceFields()"><span>+ {{ls.l('Add')}}</span></div>
+                                </div>
+                            </div>
+                            <div class="services" *ngFor="let service of product.productServices; let i = index">
+                                <i *ngIf="!isReadOnly" class="fa fa-close" (click)="removeServiceFields(i)"></i>
+                                <div class="field">
+                                    <label for="name">{{ls.l('Name')}}</label>
+                                    <div class="name-wrapper">
+                                        <dx-select-box #cmp name="name"
+                                                       width="270px"
+                                                       valueExpr="id"
+                                                       displayExpr="name"
+                                                       [dataSource]="services"
+                                                       placeholder="Select service..."
+                                                       [(value)]="service.memberServiceId"
+                                                       [disabled]="isReadOnly"
+                                                       (onValueChanged)="onServiceChanged($event, service)">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-select-box>
+                                        <i *ngIf="service.memberServiceId" class="edit fa" [ngClass]="{'fa-pencil': !isReadOnly, 'fa-info-circle': isReadOnly}" aria-hidden="true" (click)="showEditMemberServiceDialog(service, cmp)"></i>
+                                    </div>
+                                </div>
+                                <div class="field" *ngIf="getServiceLevels(service.memberServiceId) as levels">
+                                    <label *ngIf="levels.length" for="level">{{ls.l('Level')}}</label>
+                                    <dx-select-box *ngIf="levels.length"
+                                                   name="level"
+                                                   width="270px"
+                                                   valueExpr="id"
+                                                   displayExpr="name"
+                                                   [dataSource]="levels"
+                                                   placeholder="Select level..."
+                                                   [(value)]="service.memberServiceLevelId"
+                                                   [disabled]="isReadOnly">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Level'))}}."></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-select-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="block" *ngIf="false">
+                            <h3>{{ls.l('Stock')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                        </div>
+                        <div class="block" *ngIf="false">
+                            <h3>{{ls.l('Variants')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                        </div>
+                        <div class="block" *ngIf="false">
+                            <h3>{{ls.l('Shipping')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                        </div>
+                        <div class="block" *ngIf="false">
+                            <h3>{{ls.l('Add digital files (optional)')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                        </div>
+                        <div class="block" *ngIf="false">
+                            <h3>{{ls.l('Location')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                        </div>
+                    </div>
+                    <div class="right">
+                        <div class="block" *ngIf="false">
+                            <h3>{{ls.l('Product Status')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                        </div>
+                        <div class="block" >
+                            <h3>{{ls.l('Product photos videos')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                            <div>
+                                <label>{{ls.l('Image')}}</label>
+                                <img class="product" (click)="openImageSelector()" [src]="getProductImage(true)" />
+                            </div>
+                        </div>
+                        <div class="block" *ngIf="false">
+                            <h3>{{ls.l('Product category')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                        </div>
+                        <div class="block" *ngIf="false">
+                            <h3>{{ls.l('Product Tags')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                        </div>
+                        <div class="block" *ngIf="product.type == defaultProductType && isHostTenant">
+                            <h3>{{ls.l('Upgrade/Downgrade Options')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                            <div>
+                                <label>{{ls.l('Downgrade Product')}}</label>
+                                <dx-select-box name="name"
+                                               width="100%"
+                                               valueExpr="id"
+                                               displayExpr="name"
+                                               [showClearButton]="true"
+                                               [dataSource]="products$ | async"
+                                               [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
+                                               [(value)]="product.downgradeProductId"
+                                               [disabled]="isReadOnly">
+                                </dx-select-box>
+                            </div>
+                            <div class="services-header">
+                                <label>{{ls.l('UpgradeToProducts')}}:</label>
+                                <div class="field">
+                                    <div *ngIf="!isReadOnly" class="add-new-button" (click)="addUpgradeToProduct()"><span>+ {{ls.l('Add')}}</span></div>
+                                </div>
+                            </div>
+                            <div class="services" *ngFor="let option of product.productUpgradeAssignments; let i = index">
+                                <i *ngIf="!isReadOnly" class="fa fa-close" (click)="removeUpgradeToProduct(i)"></i>
+                                <div class="field">
+                                    <label class="wide" for="name">{{ls.l('Name')}}</label>
+                                    <dx-select-box name="name"
+                                                   width="100%"
+                                                   valueExpr="id"
+                                                   displayExpr="name"
+                                                   [dataSource]="products$ | async | FilterAssignments: getAssignementIds(option)"
+                                                   [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
+                                                   [(value)]="option.upgradeProductId"
+                                                   [disabled]="isReadOnly">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Product'))}}."></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-select-box>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer"></div>
+            </div>
+        </dx-validation-group>
+    </dx-scroll-view>
+</modal-dialog>

@@ -26,6 +26,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { AddProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
+import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ProductServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -200,7 +201,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             product: product,
             isReadOnly: this.isReadOnly
         };
-        this.dialog.open(AddProductDialogComponent, {
+        this.dialog.open(CreateProductDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
