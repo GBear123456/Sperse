@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { LocalizationResolver } from '@shared/common/localization-resolver';
 import { SingleProductComponent } from './single-product/single-product.component';
 
 @NgModule({
@@ -8,13 +9,13 @@ import { SingleProductComponent } from './single-product/single-product.componen
             {
                 path: ':tenantId/:productPublicName',
                 component: SingleProductComponent,
-                canActivate: [],
+                canActivate: [LocalizationResolver],
                 canActivateChild: [],
                 data: { localizationSource: 'CRM' }
             }
         ])
     ],
-    exports: [ RouterModule ],
+    exports: [RouterModule],
     providers: []
 })
-export class PublicProductsRoutingModule {}
+export class PublicProductsRoutingModule { }

@@ -4,6 +4,7 @@ import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
+import { MatSliderModule } from '@angular/material/slider';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -22,7 +23,8 @@ import { PublicProductServiceProxy } from '@root/shared/service-proxies/service-
         CommonModule,
         PublicProductsRoutingModule,
         CountryPhoneNumberModule,
-        UtilsModule
+        UtilsModule,
+        MatSliderModule
     ],
     exports: [],
     declarations: [

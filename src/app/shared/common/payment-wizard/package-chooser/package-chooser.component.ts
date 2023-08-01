@@ -188,7 +188,7 @@ export class PackageChooserComponent implements OnInit {
             return acc;
         }, []);
 
-        let billingPeriods = periods.map(v => this.getBillingPeriodByPaymentFrequency(v));
+        let billingPeriods = periods.map(v => PaymentService.getBillingPeriodByPaymentFrequency(v));
         this.availablePeriods = [];
         PackageChooserComponent.availablePeriodsOrder.forEach(v => {
             if (billingPeriods.indexOf(v) >= 0)
@@ -211,20 +211,7 @@ export class PackageChooserComponent implements OnInit {
 
         let productSubscriptionOption = selectedPackage && selectedPackage.productSubscriptionOptions.reverse()[0];
         if (productSubscriptionOption)
-            this.selectedBillingPeriod = this.getBillingPeriodByPaymentFrequency(productSubscriptionOption.frequency);
-    }
-
-    getBillingPeriodByPaymentFrequency(frequency: RecurringPaymentFrequency): BillingPeriod {
-        switch (frequency) {
-            case RecurringPaymentFrequency.Monthly:
-                return BillingPeriod.Monthly;
-            case RecurringPaymentFrequency.Annual:
-                return BillingPeriod.Yearly;
-            case RecurringPaymentFrequency.LifeTime:
-                return BillingPeriod.LifeTime;
-            case RecurringPaymentFrequency.Custom:
-                return BillingPeriod.Custom;
-        }
+            this.selectedBillingPeriod = PaymentService.getBillingPeriodByPaymentFrequency(productSubscriptionOption.frequency);
     }
 
     selectPackage(packageIndex: number) {
