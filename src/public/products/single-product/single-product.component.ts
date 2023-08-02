@@ -71,6 +71,7 @@ export class SingleProductComponent implements OnInit {
         private sanitizer: DomSanitizer,
         public ls: AppLocalizationService,
     ) {
+        this.requestInfo.quantity = 1;
     }
 
     ngOnInit(): void {
@@ -119,7 +120,6 @@ export class SingleProductComponent implements OnInit {
         this.requestInfo.tenantId = this.tenantId;
         this.requestInfo.paymentGateway = 'Stripe';
         this.requestInfo.productId = this.productInfo.id;
-        this.requestInfo.quantity = 1;
 
         switch (this.productInfo.type) {
             case ProductType.General:
@@ -204,5 +204,9 @@ export class SingleProductComponent implements OnInit {
         } else {
             return this.ls.l('price' + BillingPeriod[this.selectedBillingPeriod]);
         }
+    }
+
+    changeQuantity(quantity: number) {
+        this.requestInfo.quantity = quantity;
     }
 }
