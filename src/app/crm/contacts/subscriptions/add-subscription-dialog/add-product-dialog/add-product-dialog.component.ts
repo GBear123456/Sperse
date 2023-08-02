@@ -99,6 +99,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     gracePeriodDefaultValue: number;
     customGroup: string;
     isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
+    isPublicProductEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
     title: string;
     isReadOnly = true;
     image: string = null;
