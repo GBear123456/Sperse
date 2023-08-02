@@ -1,19 +1,27 @@
 /** Core imports */
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
+    CustomPeriodType,
+    ProductType,
     PublicProductInfo,
     PublicProductServiceProxy,
+    PublicProductSubscriptionOptionInfo,
+    RecurringPaymentFrequency,
     SubmitProductRequestInput
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
+import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
+import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Component({
     selector: 'single-product',
@@ -28,6 +36,8 @@ export class SingleProductComponent implements OnInit {
     @ViewChild('phoneNumber') phoneNumber;
 
     currentYear: number = new Date().getFullYear();
+    currencySymbol = '$';
+    submitTitle = 'Purchase';
 
     tenantId: number;
     productPublicName: string;
@@ -40,10 +50,25 @@ export class SingleProductComponent implements OnInit {
     emailRegexp = AppConsts.regexPatterns.email;
     conditions = ConditionsType;
 
+    descriptionHtml: SafeHtml;
+
+    showNotFound = false;
+    productType = ProductType;
+    billingPeriod = BillingPeriod;
+
+    selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
+    static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.Custom];
+    availablePeriods: BillingPeriod[] = [];
+    selectedBillingPeriod;
+
+
     constructor(
         private route: ActivatedRoute,
+        private titleService: Title,
         private publicProductService: PublicProductServiceProxy,
+        private appHttpConfiguration: AppHttpConfiguration,
         private changeDetector: ChangeDetectorRef,
+        private sanitizer: DomSanitizer,
         public ls: AppLocalizationService,
     ) {
     }
@@ -57,19 +82,30 @@ export class SingleProductComponent implements OnInit {
 
     getProductInfo() {
         abp.ui.setBusy();
+        this.appHttpConfiguration.avoidErrorHandling = true;
         this.publicProductService
             .getProductInfo(this.tenantId, this.productPublicName)
             .pipe(
-                finalize(() => abp.ui.clearBusy())
+                finalize(() => {
+                    this.appHttpConfiguration.avoidErrorHandling = false;
+                    abp.ui.clearBusy();
+                })
             )
             .subscribe(result => {
-                if (result) {
+                if (result.id) {
                     this.productInfo = result;
-                    this.changeDetector.detectChanges();
-
+                    this.titleService.setTitle(this.productInfo.name);
+                    if (result.descriptionHtml)
+                        this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
+                    this.initSubscriptionProduct();
                 } else {
-                    //TODO: What else ???
+                    this.showNotFound = true;
                 }
+
+                this.changeDetector.detectChanges();
+            }, () => {
+                this.showNotFound = true;
+                this.changeDetector.detectChanges();
             });
     }
 
@@ -83,8 +119,17 @@ export class SingleProductComponent implements OnInit {
         this.requestInfo.tenantId = this.tenantId;
         this.requestInfo.paymentGateway = 'Stripe';
         this.requestInfo.productId = this.productInfo.id;
-        this.requestInfo.unit = this.productInfo.unit;
         this.requestInfo.quantity = 1;
+
+        switch (this.productInfo.type) {
+            case ProductType.General:
+                this.requestInfo.unit = this.productInfo.unit;
+                break;
+            case ProductType.Subscription:
+                this.requestInfo.optionId = this.selectedSubscriptionOption.id;
+                this.requestInfo.unit = PaymentService.getProductMeasurementUnit(this.selectedSubscriptionOption.frequency);
+                break;
+        };
 
         this.requestInfo.successUrl = AppConsts.appBaseUrl;
         this.requestInfo.cancelUrl = location.href;
@@ -107,5 +152,57 @@ export class SingleProductComponent implements OnInit {
         else
             return AppConsts.appBaseHref + 'assets/documents/' +
                 (type == ConditionsType.Terms ? 'SperseTermsOfService.pdf' : 'SpersePrivacyPolicy.pdf');
+    }
+
+    initSubscriptionProduct() {
+        if (this.productInfo.type != ProductType.Subscription)
+            return;
+
+        this.submitTitle = 'Subscribe';
+
+        let periods: RecurringPaymentFrequency[] = this.productInfo.productSubscriptionOptions.map(v => v.frequency);
+
+        let billingPeriods = periods.map(v => PaymentService.getBillingPeriodByPaymentFrequency(v));
+        this.availablePeriods = [];
+        SingleProductComponent.availablePeriodsOrder.forEach(v => {
+            if (billingPeriods.indexOf(v) >= 0)
+                this.availablePeriods.push(v);
+        });
+        this.selectedBillingPeriod = this.availablePeriods[0];
+        this.updateSelectedSubscriptionOption();
+    }
+
+    getActiveStatus(period: BillingPeriod) {
+        return this.selectedBillingPeriod == period;
+    }
+
+    toggle(value: BillingPeriod) {
+        this.selectedBillingPeriod = value;
+        this.updateSelectedSubscriptionOption();
+    }
+
+    getSliderValue(): number {
+        var periodIndex = this.availablePeriods.find(v => v == this.selectedBillingPeriod);
+        var value = periodIndex * (100 / this.availablePeriods.length);
+        return +value.toFixed();
+    }
+
+    updateSelectedSubscriptionOption() {
+        this.selectedSubscriptionOption = this.productInfo.productSubscriptionOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
+    }
+
+    getPricePerPeriod(): number {
+        return this.selectedBillingPeriod === BillingPeriod.Yearly ?
+            Math.round(this.selectedSubscriptionOption.fee / 12) :
+            this.selectedSubscriptionOption.fee;
+    }
+
+    getPriceDescription(): string {
+        if (this.selectedBillingPeriod == BillingPeriod.Custom) {
+            return this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', this.selectedSubscriptionOption.customPeriodCount,
+                this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[this.selectedSubscriptionOption.customPeriodType]));
+        } else {
+            return this.ls.l('price' + BillingPeriod[this.selectedBillingPeriod]);
+        }
     }
 }
