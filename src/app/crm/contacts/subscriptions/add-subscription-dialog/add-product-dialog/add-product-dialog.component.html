@@ -133,7 +133,7 @@
                            [disabled]="isReadOnly">
             </dx-number-box>
         </div>
-        <div class="field">
+        <div class="field" *ngIf="isPublicProductEnabled">
             <label for="publicName">{{ls.l('PublicName')}}</label>
             <dx-text-box name="publicName"
                          width="300px"
