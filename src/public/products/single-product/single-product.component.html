@@ -44,9 +44,19 @@
                     <div class="trial-period-note" *ngIf="selectedSubscriptionOption.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
                 </div>
             </ng-container>
-            <ng-template #generalProduct class="price">
-                <div class="price__new">
-                    <span>{{productInfo.price}}</span>
+            <ng-template #generalProduct>
+                <div class="price">
+                    <div class="quantity">
+                        <div class="quantity-title">Quantity</div>
+                        <div class="quantity-controls">
+                            <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>
+                            <span class="value">{{requestInfo.quantity}}</span>
+                            <span (click)="changeQuantity(requestInfo.quantity + 1)">+</span>
+                        </div>
+                    </div>
+                    <div class="price__new">
+                        <span>{{productInfo.price * requestInfo.quantity}}</span>
+                    </div>
                 </div>
             </ng-template>
             <div *ngIf="descriptionHtml" class="description-html" [innerHtml]="descriptionHtml"></div>
