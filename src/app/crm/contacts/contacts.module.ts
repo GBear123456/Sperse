@@ -37,6 +37,7 @@ import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
 import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
+import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxFileManagerModule } from 'devextreme-angular';
 
 import { NgxFileDropModule } from 'ngx-file-drop';
@@ -266,6 +267,7 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
         DxTreeViewModule,
         DxTagBoxModule,
         DxTabsModule,
+        DxSwitchModule,
         RoundProgressModule,
         PipelineModule,
         DxRadioGroupModule,

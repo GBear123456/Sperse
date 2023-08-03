@@ -222,7 +222,7 @@ export class InplaceEditComponent extends AppComponentBase {
     }
 
     copyItem(event) {
-        this.clipboardService.copyFromContent(this.value);
+        this.clipboardService.copyFromContent(this.displayValue || this.value);
         this.notifyService.info(this.l('SavedToClipboard'));
         event.stopPropagation();
     }

@@ -15,6 +15,7 @@ import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { DxValidatorComponent, DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable, of, zip } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -39,7 +40,6 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
-import { DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
@@ -74,6 +74,8 @@ export class FilterAssignmentsPipe implements PipeTransform {
 export class CreateProductDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(DxTextAreaComponent) descriptionHtmlComponent: DxTextAreaComponent;
+    @ViewChild('customPeriodValidator') customPeriodValidator: DxValidatorComponent;
+
     private slider: any;
 
     urlValidationRules = [
@@ -81,8 +83,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
         { type: 'pattern', pattern: AppConsts.regexPatterns.url, message: this.ls.l('UrlIsNotValid') }
     ];
 
-    tenantId = abp.session.tenantId;
+    tenantId = abp.session.tenantId || 0;
+    productUri = 'my-fancy-product';
 
+    trialEnabled: boolean = true;
+    gracePeriodEnabled: boolean = false;
+    enableCommissions: boolean = true;
     isReadOnly = !!this.data.isReadOnly;
     saveButtonId = 'saveProductOptions';
     selectedOption: ContextMenuItem;
@@ -195,7 +201,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-
+        this.addNewPaymentPeriod();
     }
 
     checkAddManageOption(options) {
@@ -353,6 +359,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
         } else if (event.value != RecurringPaymentFrequency.Custom) {
             option.customPeriodCount = undefined;
             option.customPeriodType = undefined;
+
+            this.customPeriodValidator.instance.reset();
         }
 
         this.detectChanges();
