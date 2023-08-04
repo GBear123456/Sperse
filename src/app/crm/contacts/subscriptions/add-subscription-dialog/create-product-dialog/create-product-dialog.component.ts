@@ -14,6 +14,7 @@ import {
 import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
+import { CacheService } from 'ng2-cache-service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { DxValidatorComponent, DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable, of, zip } from 'rxjs';
@@ -78,15 +79,15 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
     private slider: any;
 
-    urlValidationRules = [
+    publicNameValidationRules = [
         { type: 'required', message: this.ls.l('UrlIsRequired') },
-        { type: 'pattern', pattern: AppConsts.regexPatterns.url, message: this.ls.l('UrlIsNotValid') }
+        { type: 'pattern', pattern: AppConsts.regexPatterns.sitePath, message: this.ls.l('UrlIsNotValid') }
     ];
 
     tenantId = abp.session.tenantId || 0;
-    productUri = 'my-fancy-product';
+    defaultProductUri = 'my-fancy-product';
 
-    trialEnabled: boolean = true;
+    trialEnabled: boolean = false;
     gracePeriodEnabled: boolean = false;
     enableCommissions: boolean = true;
     isReadOnly = !!this.data.isReadOnly;
@@ -169,6 +170,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
         private setting: SettingService,
         private feature: FeatureCheckerService,
         private cacheHelper: CacheHelper,
+        private cacheService: CacheService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef.addPanelClass('new-product');
@@ -183,6 +185,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
                 this.product.type = this.defaultProductType;
+                this.product.publicName = this.defaultProductUri;
             }
         }
 
@@ -201,7 +204,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-        this.addNewPaymentPeriod();
+        if (!this.data.product || !this.data.product.id)
+            this.addNewPaymentPeriod();
+
+        let contextMenu = this.buttons[0].contextMenu;
+        if (this.cacheService.exists(contextMenu.cacheKey))
+            this.selectedOption = contextMenu.items[this.cacheService.get(contextMenu.cacheKey)];
+        else
+            this.selectedOption = contextMenu.items[contextMenu.defaultIndex];
     }
 
     checkAddManageOption(options) {
@@ -360,7 +370,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
             option.customPeriodCount = undefined;
             option.customPeriodType = undefined;
 
-            this.customPeriodValidator.instance.reset();
+            if (this.customPeriodValidator)
+                this.customPeriodValidator.instance.reset();
         }
 
         this.detectChanges();
@@ -434,34 +445,41 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
     validateTrialDayCount(option) {
         return (event) => {
-            return !option.signupFee || event.value && event.value > 0;
+            if (option.frequency && !this.isOneTime)
+                return !option.signupFee || event.value && event.value > 0;
+            return true;
         };
     }
 
     validatePeriodDayCount(option: ProductSubscriptionOptionInfo) {
         return (event) => {
-            return event.value && event.value > 0;
+            if (this.isOneTime || (option.frequency && option.frequency == RecurringPaymentFrequency.Custom))
+                return event.value && event.value > 0;
+            return true;
         };
     }
 
     validateCustomPeriodDayCount(option: ProductSubscriptionOptionInfo) {
         return (event) => {
-            let isPeriodValid = true;
-            if (option.frequency == RecurringPaymentFrequency.Custom && option.customPeriodType) {
-                switch (option.customPeriodType) {
-                    case CustomPeriodType.Days:
-                        isPeriodValid = event.value <= 365;
-                        break;
-                    case CustomPeriodType.Weeks:
-                        isPeriodValid = event.value <= 52;
-                        break;
-                    case CustomPeriodType.Months:
-                        isPeriodValid = event.value <= 12;
-                        break;
+            if (this.isOneTime || (option.frequency && option.frequency == RecurringPaymentFrequency.Custom)) {
+                let isPeriodValid = true;
+                if (option.frequency == RecurringPaymentFrequency.Custom && option.customPeriodType) {
+                    switch (option.customPeriodType) {
+                        case CustomPeriodType.Days:
+                            isPeriodValid = event.value <= 365;
+                            break;
+                        case CustomPeriodType.Weeks:
+                            isPeriodValid = event.value <= 52;
+                            break;
+                        case CustomPeriodType.Months:
+                            isPeriodValid = event.value <= 12;
+                            break;
+                    }
                 }
-            }
 
-            return isPeriodValid;
+                return isPeriodValid;
+            }
+            return true;
         };
     }
 
@@ -542,7 +560,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
         this.saveProduct();
     }
 
-    updateProductUrl(event) {
+    updateProductUrl(value) {
+        this.product.publicName = value;
+    }
 
+    disabledValidationCallback() {
+        return true;
     }
 }

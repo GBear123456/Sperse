@@ -1,5 +1,5 @@
 :host {
-    width: 80vw;
+    width: 85vw;
     display: block;
 
     .wrapper {
@@ -17,10 +17,10 @@
             height: 100%;
         }
         .left, .right {
-            width: 30%;
+            width: 28%;
         }
         .middle {
-            width: 40%;
+            width: 44%;
             margin: 0 30px;
         }
         .left {
@@ -51,6 +51,7 @@
                 vertical-align: top;
             }
             img.product {
+                max-width: 250px;
                 margin: 30px 0 30px 60px;
             }
             h3 {
@@ -203,7 +204,7 @@
         margin-bottom: 15px;
 
         .service {
-            .prices, .periods, .trials {
+            .prices, .periods, .trials, .grace {
                 display: flex;
                 justify-content: space-between;
                 & > div {
@@ -216,9 +217,25 @@
                 }
             }
             .prices {
+                & > div {
+                    width: 50%;
+                }
                 label {
                     white-space: nowrap;
                 }
+            }
+            .periods {
+                & > div {
+                    &:first-child {
+                        width: 40%;
+                    }
+                    &:last-child {
+                        width: 30%;
+                    }
+                }
+            }
+            span {
+                cursor: pointer;
             }
         }
 
