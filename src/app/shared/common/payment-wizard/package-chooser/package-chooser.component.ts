@@ -232,7 +232,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     getSliderValue(): number {
-        var periodIndex = this.availablePeriods.find(v => v == this.selectedBillingPeriod);
+        var periodIndex = this.availablePeriods.findIndex(v => v == this.selectedBillingPeriod);
         var value = periodIndex * (100 / this.availablePeriods.length);
         return +value.toFixed();
     }
