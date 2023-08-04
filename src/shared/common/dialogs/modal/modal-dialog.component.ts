@@ -190,8 +190,10 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
         let buttonItem = button.contextMenu.items[contextItemIndex];
         if (buttonItem.disabled)
             buttonItem = button.contextMenu.items.find(item => !item.disabled);
-        button.title = buttonItem.text;
-        buttonItem.selected = true;
+        if (buttonItem) {
+            button.title = buttonItem.text;
+            buttonItem.selected = true;
+        }
     }
 
     buttonClick(e, button: IDialogButton) {

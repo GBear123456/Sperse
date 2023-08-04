@@ -1,0 +1,288 @@
+:host {
+    width: 80vw;
+    display: block;
+
+    .wrapper {
+        height: calc(100vh - 80px);
+    }
+
+    .content {
+        width: 100%;
+        padding: 2%;
+        display: flex;
+        justify-content: space-between; 
+        .left, .middle, .right {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .left, .right {
+            width: 30%;
+        }
+        .middle {
+            width: 40%;
+            margin: 0 30px;
+        }
+        .left {
+            .block {
+                &.disabled {
+                    opacity: 0.5;
+                    cursor: default;
+                    pointer-events: none;
+                }
+                &.selected {
+                    border: 1px solid #00aeef;
+                }
+            }
+        }
+        .block {
+            padding: 20px;
+            cursor: pointer;
+            background: #FFF;
+            min-height: 100px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            img.head {
+                padding: 15px;
+            }
+            img.info {
+                display: inline;
+                cursor: pointer;
+                vertical-align: top;
+            }
+            img.product {
+                margin: 30px 0 30px 60px;
+            }
+            h3 {
+                font-family: Poppins;
+                font-size: 19px;
+                font-weight: 500;
+            }
+            label {
+                font-family: Poppins;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            p {
+                font-family: Poppins;
+                font-size: 13px;
+                font-weight: 400;
+            }
+            hr.wide {
+                margin-right: -20px;
+                margin-left: -20px;
+            }
+            .commissions {
+                display: flex;
+                justify-content: space-around;
+                &.disabled {
+                    opacity: 0.5;
+                    pointer-events: none;
+                }
+                & > div {
+                    margin: 10px;
+                }
+            }            
+            span.enable-commissions {
+                font-family: Poppins;
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 21px;
+                letter-spacing: 0em;
+                text-align: left;
+                padding-left: 10px;
+            }
+            p.enable-commissions-info {
+                font-family: Poppins;
+                font-size: 12px;
+                font-weight: 400;
+                line-height: 15px;
+                letter-spacing: 0em;
+                text-align: left;
+                margin: 10px 0;
+            }
+            .product-ident {
+                & > div {
+                    display: inline-block;
+                    &:first-child {
+                        width: 56%;
+                        padding-right: 10px;
+                    }
+                    &:last-child {
+                        width: 44%;
+                    }
+                }
+            }
+            .field {
+                ::ng-deep dx-text-area, ::ng-deep dx-number-box, ::ng-deep dx-select-box {
+                    min-width: 250px;
+                }
+            }
+            ::ng-deep dx-text-box, ::ng-deep dx-number-box, ::ng-deep dx-select-box, ::ng-deep dx-text-area {
+                .dx-texteditor-input-container {
+                    border: 1px solid #dfdfdf!important;
+                }
+                input, textarea {
+                    font-family: Poppins;
+                    font-size: 13px;
+                    font-weight: 400;
+                    border: none;
+                }
+                .dx-placeholder {
+                    font-size: 14px;
+                }
+            }
+            ::ng-deep dx-switch {
+                &.dx-switch-on-value {
+                    .dx-switch-container {
+                        background: #68ACE9;
+                    }
+                }
+                .dx-switch-container {
+                    border-radius: 18px;
+                    background: #E0E3E6;
+                    border: 1px solid #FFF;
+                }
+                .dx-switch-handle {
+                    width: 18px;
+                    height: 18px;
+                    &:before {
+                        width: 17px;
+                        height: 17px;
+                        border-radius: 10px;
+                        background-color: #FFF;
+                    }
+                }
+            }
+        }
+    }
+
+    ::ng-deep inplace-edit {
+        margin-top: 10px;
+        display: block;
+        height: 45px;
+        .inplace-edit-view-mode a {
+            font-weight: 600;
+        }
+    }
+    
+    .footer {
+        width: 100%;
+        height: 50px;
+    }
+
+    .remove-button {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .services-header {
+        margin: 17px 0;
+        font: 600 17px Poppins;
+        position: relative; 
+
+        .add-new-button {
+            position: absolute;
+            top: -4px;
+            right: 0;
+            width: 29px;
+            height: 29px;
+            border: 1px solid #E6E9EC;
+            text-align: center;
+            span {
+                font-size: 20px;
+                font-weight: 400;
+                line-height: 28px;
+            }
+        }
+    }
+
+    .services {
+        position: relative;
+        margin-bottom: 15px;
+
+        .service {
+            .prices, .periods, .trials {
+                display: flex;
+                justify-content: space-between;
+                & > div {
+                    margin: 10px;
+                }
+                & > .disabled {
+                    opacity: 0.5;
+                    cursor: default;
+                    pointer-events: none;
+                }
+            }
+            .prices {
+                label {
+                    white-space: nowrap;
+                }
+            }
+        }
+
+        .field-wrapper {
+            width: 100%;
+            white-space: nowrap;
+            position: relative;
+
+            dx-select-box[name="name"] {
+                display: inline-block;
+            }
+
+            .fa-pencil, .fa-info-circle {
+                width: 15px;
+                cursor: pointer;
+                display: inline-block;
+                position: absolute;
+                right: -20px;
+                top: 20px;
+            }
+        }
+
+        .fa-close {
+            position: absolute;
+            font-size: 16px;
+            right: -6px;
+            top: -6px;
+            color: red;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .field-50 {
+            display: inline-block;
+            width: 50%;
+            padding-left: 10px;
+            &:first-child {
+                padding-left: 0px;
+                padding-right: 10px;
+            }
+        }
+    }
+
+    ::ng-deep dx-select-box {
+        .dx-icon-clear {
+            left: 12px;
+            font-size: 18px;
+            line-height: 10px;
+            margin: 0;
+            top: 11px;
+        }
+
+        .dx-texteditor-input-container {
+            border-bottom: 1px solid #dfdfdf;
+
+            input {
+                border: none;
+            }
+        }
+    }
+}
+
+::ng-deep {
+    .cdk-overlay-pane.new-product mat-dialog-container {
+        background: #F4F7FA;
+    }
+}
