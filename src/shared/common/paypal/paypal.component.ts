@@ -1,17 +1,33 @@
-import { Component, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
     selector: 'pay-pal',
-    template: '<div id="paypal-button"></div>',
+    templateUrl: 'paypal.component.html',
+    styleUrls: ['./paypal.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: []
 })
 export class PayPalComponent {
+    @Input() set disabled(value: boolean) {
+        this.isDisabled = value;
+        if (this.actions) {
+            if (value)
+                this.actions.disable();
+            else
+                this.actions.enable();
+        }
+    }
+    @Input() height;
     @Output() onApprove: EventEmitter<any> = new EventEmitter();
 
+    initialized: boolean = false;
+
+    isDisabled: boolean;
     isSubscription: boolean;
     requestPayment: () => Promise<string>;
     requestSubscription: () => Promise<string>;
+
+    actions: any;
 
     constructor(
     ) { }
@@ -45,7 +61,13 @@ export class PayPalComponent {
                 color: 'gold',
                 label: 'pay',
                 tagline: false,
-                height: 38
+                height: self.height
+            },
+            onInit(data, actions) {
+                self.actions = actions;
+                if (self.isDisabled) {
+                    actions.disable();
+                }
             },
             onApprove(data, actions) {
                 return actions.order.capture().then(function (details) {
@@ -60,6 +82,8 @@ export class PayPalComponent {
             this.preparePaymentConfig(configObject);
 
         (<any>window).paypal.Buttons(configObject).render('#paypal-button');
+
+        this.initialized = true;
     }
 
     prepareSubscriptionConfig(configObject) {
