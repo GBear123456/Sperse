@@ -22,6 +22,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
+import { PayPalComponent } from '@shared/common/paypal/paypal.component';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'single-product',
@@ -34,10 +36,15 @@ import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 export class SingleProductComponent implements OnInit {
     @ViewChild('firstStepForm') firstStepForm;
     @ViewChild('phoneNumber') phoneNumber;
+    @ViewChild(PayPalComponent) set paypPalComponent(paypalComp: PayPalComponent) {
+        this.payPal = paypalComp;
+        this.initializePayPal();
+    };
+
+    private payPal: PayPalComponent;
 
     currentYear: number = new Date().getFullYear();
     currencySymbol = '$';
-    submitTitle = 'Purchase';
 
     tenantId: number;
     productPublicName: string;
@@ -81,6 +88,14 @@ export class SingleProductComponent implements OnInit {
         this.getProductInfo();
     }
 
+    initializePayPal() {
+        if (this.payPal && this.productInfo && !this.payPal.initialized) {
+            this.payPal.initialize(this.productInfo.data.paypalClientId, this.productInfo.type == ProductType.Subscription,
+                () => this.getSubmitRequest('PayPal').toPromise(),
+                () => this.getSubmitRequest('PayPal').toPromise());
+        }
+    }
+
     getProductInfo() {
         abp.ui.setBusy();
         this.appHttpConfiguration.avoidErrorHandling = true;
@@ -99,6 +114,7 @@ export class SingleProductComponent implements OnInit {
                     if (result.descriptionHtml)
                         this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
                     this.initSubscriptionProduct();
+                    this.initializePayPal();
                 } else {
                     this.showNotFound = true;
                 }
@@ -110,15 +126,27 @@ export class SingleProductComponent implements OnInit {
             });
     }
 
-    submitRequest() {
-        if (!this.firstStepForm.valid || (this.phoneNumber && !this.phoneNumber.isValid()))
+    submitStripeRequest() {
+        this.getSubmitRequest('Stripe')
+            .subscribe(res => {
+                location.href = res;
+            });
+    }
+
+    isFormValid(): boolean {
+        var isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid());
+        return !!isValidObj;
+    }
+
+    getSubmitRequest(paymentGateway: string): Observable<string> {
+        if (!this.isFormValid())
             return;
 
         if (this.phoneNumber && this.phoneNumber.isEmpty())
             this.requestInfo.phone = undefined;
 
         this.requestInfo.tenantId = this.tenantId;
-        this.requestInfo.paymentGateway = 'Stripe';
+        this.requestInfo.paymentGateway = paymentGateway;
         this.requestInfo.productId = this.productInfo.id;
 
         switch (this.productInfo.type) {
@@ -129,15 +157,16 @@ export class SingleProductComponent implements OnInit {
                 this.requestInfo.optionId = this.selectedSubscriptionOption.id;
                 this.requestInfo.unit = PaymentService.getProductMeasurementUnit(this.selectedSubscriptionOption.frequency);
                 break;
-        };
+        }
 
         this.requestInfo.successUrl = AppConsts.appBaseUrl;
         this.requestInfo.cancelUrl = location.href;
 
-        this.publicProductService.submitProductRequest(this.requestInfo)
-            .subscribe(res => {
-                location.href = res;
-            });
+        return this.publicProductService.submitProductRequest(this.requestInfo);
+    }
+
+    onPayPalApprove() {
+
     }
 
     openConditionsDialog(type: ConditionsType) {
@@ -157,8 +186,6 @@ export class SingleProductComponent implements OnInit {
     initSubscriptionProduct() {
         if (this.productInfo.type != ProductType.Subscription)
             return;
-
-        this.submitTitle = 'Subscribe';
 
         let periods: RecurringPaymentFrequency[] = this.productInfo.productSubscriptionOptions.map(v => v.frequency);
 
@@ -182,7 +209,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     getSliderValue(): number {
-        var periodIndex = this.availablePeriods.find(v => v == this.selectedBillingPeriod);
+        var periodIndex = this.availablePeriods.findIndex(v => v == this.selectedBillingPeriod);
         var value = periodIndex * (100 / this.availablePeriods.length);
         return +value.toFixed();
     }

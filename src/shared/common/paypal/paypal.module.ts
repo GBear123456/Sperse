@@ -1,8 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { PayPalComponent } from './paypal.component';
 
 @NgModule({
-    imports: [],
+    imports: [CommonModule],
     exports: [PayPalComponent],
     declarations: [PayPalComponent],
     providers: [],

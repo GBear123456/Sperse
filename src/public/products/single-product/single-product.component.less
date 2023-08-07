@@ -276,10 +276,18 @@
     }
 
     .login_btn {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+
         button {
-            width: 100%;
-            font-size: 25px;
+            height: 57px;
+            font-size: 20px;
             font-weight: 600;
+        }
+
+        pay-pal {
+            width: 220px;
         }
     }
 
@@ -298,14 +306,6 @@
         border: 1px solid transparent;
         transition: color 0.3s, background-color 0.3s, border-color 0.3s;
         color: #fff;
-
-        span {
-            display: flex;
-            column-gap: 12px;
-            align-items: baseline;
-            text-align: center;
-            justify-content: center;
-        }
 
         &:hover {
             background-color: #fff;
@@ -335,6 +335,15 @@
             &:hover {
                 color: var(--m-blue-light);
                 border-color: var(--m-blue-light);
+            }
+        }
+
+        &_purple {
+            background-color: #635fcc;
+
+            &:hover {
+                background-color: #635fcc;
+                opacity: 0.9;
             }
         }
     }

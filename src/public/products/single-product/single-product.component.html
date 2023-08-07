@@ -62,7 +62,7 @@
             <div *ngIf="descriptionHtml" class="description-html" [innerHtml]="descriptionHtml"></div>
         </div>
         <div class="box__right box__item">
-            <form id="firstStepForm" #firstStepForm="ngForm" novalidate (ngSubmit)="submitRequest()">
+            <form id="firstStepForm" #firstStepForm="ngForm" novalidate>
                 <div class="name">
                     <div class="input name__input">
                         <label>
@@ -104,9 +104,14 @@
                     </div>
                 </div>
                 <div class="login_btn">
-                    <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !agreedTermsAndServices || !firstStepForm.valid}">
-                        <span>{{submitTitle}}</span>
+                    <button class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
+                        Pay with <img src="assets/common/images/stripe.svg" />
                     </button>
+                    <pay-pal *ngIf="productInfo.data.paypalClientId"
+                             [height]="55"
+                             [disabled]="!isFormValid()"
+                             (onApprove)="onPayPalApprove()">
+                    </pay-pal>
                 </div>
             </form>
         </div>
