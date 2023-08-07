@@ -48,6 +48,7 @@ export class SingleProductComponent implements OnInit {
 
     tenantId: number;
     productPublicName: string;
+    ref: string;
 
     productInfo: PublicProductInfo;
     requestInfo: SubmitProductRequestInput = new SubmitProductRequestInput();
@@ -84,6 +85,7 @@ export class SingleProductComponent implements OnInit {
     ngOnInit(): void {
         this.tenantId = +this.route.snapshot.paramMap.get('tenantId');
         this.productPublicName = this.route.snapshot.paramMap.get('productPublicName');
+        this.ref = this.route.snapshot.queryParamMap.get('ref');
 
         this.getProductInfo();
     }
@@ -146,6 +148,7 @@ export class SingleProductComponent implements OnInit {
             this.requestInfo.phone = undefined;
 
         this.requestInfo.tenantId = this.tenantId;
+        this.requestInfo.affiliateCode = this.ref;
         this.requestInfo.paymentGateway = paymentGateway;
         this.requestInfo.productId = this.productInfo.id;
 
