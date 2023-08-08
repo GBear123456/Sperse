@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 
 /** Third party imports */
-import { finalize } from 'rxjs/operators';
+import { finalize, map, tap } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -14,7 +14,8 @@ import {
     PublicProductServiceProxy,
     PublicProductSubscriptionOptionInfo,
     RecurringPaymentFrequency,
-    SubmitProductRequestInput
+    SubmitProductRequestInput,
+    SubmitProductRequestOutput
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
@@ -69,6 +70,7 @@ export class SingleProductComponent implements OnInit {
     availablePeriods: BillingPeriod[] = [];
     selectedBillingPeriod;
 
+    initialInvoiceXref: string = null;
 
     constructor(
         private route: ActivatedRoute,
@@ -93,9 +95,18 @@ export class SingleProductComponent implements OnInit {
     initializePayPal() {
         if (this.payPal && this.productInfo && !this.payPal.initialized) {
             this.payPal.initialize(this.productInfo.data.paypalClientId, this.productInfo.type == ProductType.Subscription,
-                () => this.getSubmitRequest('PayPal').toPromise(),
-                () => this.getSubmitRequest('PayPal').toPromise());
+                this.getPayPalRequest.bind(this),
+                this.getPayPalRequest.bind(this));
         }
+    }
+
+    getPayPalRequest(): Promise<string> {
+        return this.getSubmitRequest('PayPal')
+            .pipe(
+                tap(v => { this.initialInvoiceXref = v.initialInvoicePublicId }),
+                map(v => v.paymentData)
+            )
+            .toPromise();
     }
 
     getProductInfo() {
@@ -131,7 +142,7 @@ export class SingleProductComponent implements OnInit {
     submitStripeRequest() {
         this.getSubmitRequest('Stripe')
             .subscribe(res => {
-                location.href = res;
+                location.href = res.paymentData;
             });
     }
 
@@ -140,7 +151,7 @@ export class SingleProductComponent implements OnInit {
         return !!isValidObj;
     }
 
-    getSubmitRequest(paymentGateway: string): Observable<string> {
+    getSubmitRequest(paymentGateway: string): Observable<SubmitProductRequestOutput> {
         if (!this.isFormValid())
             return;
 
@@ -162,14 +173,14 @@ export class SingleProductComponent implements OnInit {
                 break;
         }
 
-        this.requestInfo.successUrl = AppConsts.appBaseUrl;
+        this.requestInfo.successUrl = `${AppConsts.appBaseUrl}/receipt/${this.tenantId}/{initialInvoiceXref}`;
         this.requestInfo.cancelUrl = location.href;
 
         return this.publicProductService.submitProductRequest(this.requestInfo);
     }
 
     onPayPalApprove() {
-
+        location.href = `${AppConsts.appBaseUrl}/receipt/${this.tenantId}/${this.initialInvoiceXref}`;
     }
 
     openConditionsDialog(type: ConditionsType) {
