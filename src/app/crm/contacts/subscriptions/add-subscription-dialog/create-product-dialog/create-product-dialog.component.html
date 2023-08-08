@@ -4,7 +4,6 @@
               [isTitleValid]="true"
               [editTitle]="false"
               (onContextItemChanged)="onSaveOptionSelectionChanged()">
-
     <dx-scroll-view showScrollbar="onHover">
         <dx-validation-group>
             <div class="wrapper">
@@ -52,9 +51,11 @@
                                     <label>{{ls.l('Product SKU or unique code')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
                                     <dx-text-box name="code"
                                                  width="100%"
+                                                 valueChangeEvent="keyup"
                                                  [inputAttr]="{ id: 'code' }"
-                                                 [(value)]="product.code"
-                                                 [disabled]="isReadOnly">
+                                                 [(value)]="product.code"                                
+                                                 [disabled]="isReadOnly"
+                                                 (onValueChanged)="onProductCodeChanged($event)">
                                         <dx-validator>
                                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Code'))}}."></dxi-validation-rule>
                                         </dx-validator>
@@ -64,7 +65,7 @@
                             <inplace-edit [id]="'product-url'"
                                           [value]="product.publicName"
                                           [showInlineEditButton]="true"
-                                          [displayValue]="'https://app.sperse.com/p/' + tenantId + '/' + product.publicName"
+                                          [displayValue]="baseUrl + '/p/' + tenantId + '/' + (product.publicName || '')"
                                           [validationRules]="publicNameValidationRules"
                                           [isReadOnlyField]="isReadOnly"
                                           lEntityName="Product Url"
@@ -101,7 +102,7 @@
                                 <h3>{{ls.l('Price settings')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                                 <div *ngIf="!isReadOnly && !isOneTime && product.type == defaultProductType" class="add-new-button" (click)="addNewPaymentPeriod()"><span>+</span></div>
                             </div>
-                            <hr>
+                            <hr class="wide">
                             <ng-container *ngIf="product.type != defaultProductType">
                                 <div>
                                     <label>{{ls.l('Price')}}</label>
@@ -131,9 +132,9 @@
                             </ng-container>
                             <ng-container *ngIf="product.type == defaultProductType">
                                 <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
-                                    <hr *ngIf="i">
-                                    <i *ngIf="!isReadOnly && i" class="fa fa-close" (click)="removePaymentPeriod(i)"></i>
-                                    
+                                    <hr *ngIf="i" class="wide">
+                                    <div *ngIf="!isReadOnly && i" class="remove-button" (click)="removePaymentPeriod(i)"><span>-</span></div>
+
                                     <div class="service">
                                         <div class="prices">
                                             <div>
@@ -210,10 +211,12 @@
                                         <div class="trials">
                                             <div [ngClass]="{disabled: !(option.frequency && !isOneTime)}">
                                                 <label class="wide" for="level">
-                                                    <dx-switch switchedOffText="" 
+                                                    <dx-switch #trialSwitch
+                                                               switchedOffText="" 
                                                                switchedOnText="" 
-                                                               [(value)]="trialEnabled">
-                                                    </dx-switch>&nbsp;<span (click)="trialEnabled = !trialEnabled">{{ls.l('TrialDayCount')}}</span>
+                                                               [(value)]="option.trialEnabled"
+                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount">
+                                                    </dx-switch>&nbsp;<span (click)="option.trialEnabled = !option.trialEnabled">{{ls.l('TrialDayCount')}}</span>
                                                 </label>
                                                 <dx-number-box name="count"
                                                                [min]="0"
@@ -223,7 +226,7 @@
                                                                valueChangeEvent="keyup"
                                                                [placeholder]="ls.l('ByDefault', 0)"
                                                                [(value)]="option.trialDayCount"
-                                                               [disabled]="isReadOnly || !trialEnabled"
+                                                               [disabled]="isReadOnly || !option.trialEnabled"
                                                                (onValueChanged)="option.signupFee = $event.value ? option.signupFee : 0">
                                                     <dx-validator>
                                                         <dxi-validation-rule type="custom" [validationCallback]="validateTrialDayCount(option)" message="{{ls.l('TrialDayCountRequired')}}."></dxi-validation-rule>
@@ -236,7 +239,7 @@
                                                                width="100%"
                                                                [format]="amountFormat"
                                                                [(value)]="option.signupFee"
-                                                               [disabled]="isReadOnly"
+                                                               [disabled]="isReadOnly || !option.trialEnabled"
                                                                (onValueChanged)="checkShowAmountChangeWarrning()">
                                                     <dx-validator>
                                                         <dxi-validation-rule [type]="option.frequency && !isOneTime && option.trialDayCount ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
@@ -249,7 +252,7 @@
                                                                width="100%"
                                                                [format]="amountNullableFormat"
                                                                [(value)]="option.commissionableSignupFeeAmount"
-                                                               [disabled]="isReadOnly">
+                                                               [disabled]="isReadOnly || !option.trialEnabled">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -259,8 +262,9 @@
                                                 <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">
                                                     <dx-switch switchedOffText="" 
                                                                switchedOnText="" 
-                                                               [(value)]="gracePeriodEnabled">
-                                                    </dx-switch>&nbsp;<span (click)="gracePeriodEnabled = !gracePeriodEnabled">{{ls.l('GracePeriodDayCount')}}</span>
+                                                               [(value)]="option.gracePeriodEnabled"
+                                                               (onInitialized)="option.gracePeriodEnabled = !!option.gracePeriodDayCount">
+                                                    </dx-switch>&nbsp;<span (click)="option.gracePeriodEnabled = !option.gracePeriodEnabled">{{ls.l('GracePeriodDayCount')}}</span>
                                                 </label>
                                                 <dx-number-box name="gracePeriodDayCount"
                                                                [placeholder]="ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)"
@@ -268,7 +272,7 @@
                                                                format="###0"
                                                                mode="number"
                                                                [(value)]="option.gracePeriodDayCount"
-                                                               [disabled]="isReadOnly || !gracePeriodEnabled">
+                                                               [disabled]="isReadOnly || !option.gracePeriodEnabled">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -322,7 +326,8 @@
                                 <div *ngIf="!isReadOnly" class="add-new-button" (click)="addNewServiceFields()"><span>+</span></div>
                             </div>
                             <div class="services" *ngFor="let service of product.productServices; let i = index">
-                                <i *ngIf="!isReadOnly" class="fa fa-close" (click)="removeServiceFields(i)"></i>
+                                <div *ngIf="!isReadOnly" class="remove-button" (click)="removeServiceFields(i)"><span>-</span></div>
+
                                 <div class="field-wrapper">
                                     <div class="field-50">
                                         <dx-select-box #cmp name="name"
@@ -377,12 +382,30 @@
                         <div class="block" *ngIf="false">
                             <h3>{{ls.l('Product Status')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                         </div>
-                        <div class="block" >
+                        <div class="block">
                             <h3>{{ls.l('Product Logo')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
-                            <div>
-                                <label>{{ls.l('Image')}}</label>
-                                <img class="product" (click)="openImageSelector()" [src]="getProductImage(true)" />
+                            <div class="logo-wrapper">
+                                <img *ngIf="image; else upload" class="product" (click)="openImageSelector()" [src]="getProductImage(true)">
                             </div>
+                            <ng-template #upload>
+                                <div class="upload-logo">
+                                    <div class="browse-file">
+                                        <ngx-file-drop [showBrowseBtn]="true" [browseBtnLabel]="ls.l('Browse on your device')" (onFileDrop)="fileDropped($event)">
+                                        </ngx-file-drop>                                        
+                                    </div>
+                                    <span>{{ls.l('or')}}</span>
+                                    <div class="add-link">
+                                        <dx-text-box name="file"
+                                                     width="80%"
+                                                     [placeholder]="ls.l('Add Link')"
+                                                     [inputAttr]="{ id: 'logo' }"
+                                                     [(value)]="uploadFileUrl"
+                                                     [disabled]="isReadOnly">
+                                        </dx-text-box>
+                                        <div class="add-button" (click)="addExternalLogo()">{{ls.l('Add')}}</div>
+                                    </div>
+                                </div>
+                            </ng-template>
                         </div>
                         <div class="block" *ngIf="false">
                             <h3>{{ls.l('Product category')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
@@ -391,7 +414,7 @@
                             <h3>{{ls.l('Product Tags')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                         </div>
                         <div class="block" *ngIf="product.type == defaultProductType && isHostTenant">
-                            <h3>{{ls.l('Downgrade to Options')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                            <h3>{{ls.l('Downgrade to Option')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                             <div>
                                 <dx-select-box name="name"
                                                width="100%"
@@ -409,8 +432,8 @@
                                 <div *ngIf="!isReadOnly" class="add-new-button" (click)="addUpgradeToProduct()"><span>+</span></div>
                             </div>
                             <div class="services" *ngFor="let option of product.productUpgradeAssignments; let i = index">
-                                <i *ngIf="!isReadOnly" class="fa fa-close" (click)="removeUpgradeToProduct(i)"></i>
-                                <div>
+                                <div *ngIf="!isReadOnly" class="remove-button" (click)="removeUpgradeToProduct(i)"><span>-</span></div>
+                                <div class="upgrade-field">
                                     <dx-select-box name="name"
                                                    width="100%"
                                                    valueExpr="id"

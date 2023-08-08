@@ -79,13 +79,16 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
     private slider: any;
 
+    baseUrl = AppConsts.remoteServiceBaseUrl;
+
     publicNameValidationRules = [
         { type: 'required', message: this.ls.l('UrlIsRequired') },
         { type: 'pattern', pattern: AppConsts.regexPatterns.sitePath, message: this.ls.l('UrlIsNotValid') }
     ];
 
+    uploadFileUrl: string;
     tenantId = abp.session.tenantId || 0;
-    defaultProductUri = 'my-fancy-product';
+    defaultProductUri = '';
 
     trialEnabled: boolean = false;
     gracePeriodEnabled: boolean = false;
@@ -179,13 +182,17 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
             this.image = data.product.imageUrl;
             this.product = new UpdateProductInput(data.product);
             let options = data.product.productSubscriptionOptions;
+            this.defaultProductUri = this.product.publicName;
             if (options && options[0])
                 this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
+            if (!this.product.productUpgradeAssignments)
+                this.addUpgradeToProduct();
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
                 this.product.type = this.defaultProductType;
                 this.product.publicName = this.defaultProductUri;
+                this.addUpgradeToProduct();
             }
         }
 
@@ -225,7 +232,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     ngAfterViewInit() {
-        this.descriptionHtmlComponent.instance.repaint();
+        setTimeout(() => this.descriptionHtmlComponent.instance.repaint());
     }
 
     saveProduct() {
@@ -251,6 +258,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                     if (item.trialDayCount == null || isNaN(item.trialDayCount))
                         item.trialDayCount = 0;
                 });
+
+            let upgradeProducts = this.product.productUpgradeAssignments;
+            if (upgradeProducts && upgradeProducts.length == 1 && !upgradeProducts[0].upgradeProductId)
+                this.product.productUpgradeAssignments = undefined;
 
             if (this.product instanceof UpdateProductInput) {
                 this.productProxy.updateProduct(this.product).pipe(
@@ -501,12 +512,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
         return showDefault ? './assets/common/images/product.png' : null;
     }
 
-    openImageSelector() {
+    openImageSelector(source?: string) {
         if (this.isReadOnly)
             return;
 
+        let imageSource = source || this.getProductImage(false);
         const uploadPhotoData: UploadPhotoData = {
-            source: this.getProductImage(false),
+            fileUrl: imageSource ? undefined : this.uploadFileUrl,
+            source: imageSource,
             maxSizeBytes: 1048576,
             title: this.ls.l('AddProductImage')
         };
@@ -561,10 +574,42 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     updateProductUrl(value) {
-        this.product.publicName = value;
+        this.defaultProductUri = this.product.publicName = value;
     }
 
     disabledValidationCallback() {
         return true;
+    }
+
+    onProductCodeChanged(event) {
+        if (!this.defaultProductUri && (!this.data.product || !this.data.product.id))
+            this.product.publicName = event.value.replace(/[^a-zA-Z0-9-._~]+/, '');
+    }
+
+    fileSelected($event) {
+        if ($event.target.files.length)
+            this.fileDropped($event.target.files);
+    }
+
+    fileDropped(event) {
+        const file = event[0];
+        if (file.fileEntry)
+            file.fileEntry['file'](this.loadFileContent.bind(this));
+        else
+            this.loadFileContent(file);
+    }
+
+    loadFileContent(file) {
+        let reader: FileReader = new FileReader();
+        let image = new Image();
+        reader.onload = (loadEvent: any) => {
+            this.openImageSelector(loadEvent.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    addExternalLogo() {
+        if (this.uploadFileUrl)
+            this.openImageSelector();
     }
 }

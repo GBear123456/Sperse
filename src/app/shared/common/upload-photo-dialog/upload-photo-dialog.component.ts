@@ -32,6 +32,9 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
 export class UploadPhotoDialogComponent implements AfterViewInit {
     @ViewChild('cropper') cropper: ImageCropperComponent;
 
+    private readonly TAB_INDEX_BROWSE = 0;
+    private readonly TAB_INDEX_UPLOAD = 1;
+
     croppedWidth: number;
     croppedHeight: number;
     fileUrlFormControl = new FormControl('', [
@@ -42,6 +45,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     private imageData: string;
     private thumbData: string;
     title: string = this.data.title;
+    selectedTabIndex = this.TAB_INDEX_BROWSE;
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -63,7 +67,12 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
                 this.cropper['loadImageFromURL'](image.src);
                 this.clearDisabled = false;
             };
-        }
+         } else if (this.data.fileUrl) {
+            this.selectedTabIndex = this.TAB_INDEX_UPLOAD;
+            this.fileUrlFormControl.setValue(this.data.fileUrl);
+            this.changeDetectorRef.detectChanges();
+            this.loadFile(true);
+         }
     }
 
     fileSelected($event) {
