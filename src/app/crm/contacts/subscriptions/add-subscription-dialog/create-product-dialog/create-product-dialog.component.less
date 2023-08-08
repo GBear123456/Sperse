@@ -74,6 +74,80 @@
                 margin-right: -20px;
                 margin-left: -20px;
             }
+            .slider-wrapper {
+                position: absolute;
+                width: 100%;
+                top: 0;
+            }
+            .state-slider {
+                position: relative;
+                width: 110px;
+                height: 25px;
+                margin: 0px auto;
+                background: #F4F7FA;
+                border-radius: 19px;
+                cursor: pointer;
+
+                &.point {
+                    ::ng-deep .mat-slider {
+                        .mat-slider-thumb {
+                            width: 50%;
+                            right: -50%;
+                        }
+                    }
+                }
+
+                .captions {
+                    position: absolute;
+                    display: flex;
+                    width: 100%;
+                    height: 100%;
+                    justify-content: space-around;
+                    font-family: Poppins;
+                    font-size: 12px;
+                    font-weight: 400;
+                    line-height: 18px;
+                    letter-spacing: 0em;
+                    color: #000;
+                    z-index: 2;
+
+                    div {
+                        padding-top: 0px;
+                        text-align: center;
+                        line-height: 25px;
+                    }
+
+                    .active {
+                        color: #fff;
+                    }
+                }
+
+                ::ng-deep .mat-slider {
+                    width: 110px;
+                    height: 25px;
+
+                    .mat-slider-wrapper {
+                        left: 0px;
+                        width: 110px;
+                    }
+
+                    .mat-slider-track-wrapper {
+                        display: none;
+                    }
+
+                    .mat-slider-thumb {
+                        width: 33%;
+                        height: 25px;
+                        right: -33%;
+                        bottom: 0px;
+                        border-radius: 19px;
+                        background-color: #1A1A1A;
+                        border-color: transparent;
+                        transform: none;
+                    }
+                }
+            }
+
             .commissions {
                 display: flex;
                 justify-content: space-around;

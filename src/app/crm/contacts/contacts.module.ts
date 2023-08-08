@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSliderModule } from '@angular/material/slider';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -295,6 +296,7 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
         MatExpansionModule,
         GooglePlaceModule,
         MatTooltipModule,
+        MatSliderModule,
         FeaturesModule,
         InvoiceGridMenuModule
     ],
