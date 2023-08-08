@@ -42,6 +42,13 @@
             min-height: 100px;
             margin-bottom: 20px;
             border: 1px solid transparent;
+
+            div.disabled {
+                opacity: 0.5;
+                cursor: default;
+                pointer-events: none;
+            }
+
             img.head {
                 padding: 15px;
             }
@@ -187,6 +194,10 @@
                     }
                 }
             }
+            .general-product {
+                display: flex;
+                justify-content: space-around;
+            }
             .field {
                 ::ng-deep dx-text-area, ::ng-deep dx-number-box, ::ng-deep dx-select-box {
                     min-width: 250px;
@@ -228,6 +239,45 @@
                     }
                 }
             }
+            ::ng-deep dx-select-box, ::ng-deep dx-number-box.label {
+                height: 65px;
+                input {
+                    height: 40px;
+                    top: 20px;
+                    position: relative;
+                }
+                .dx-button-content {
+                    position: relative;
+                    border-radius: 50%;
+                    border: 1px solid #E0E3E6;
+                    overflow: hidden;
+                    width: 29px;
+                    height: 29px;
+                    right: 10px;
+                    top: 17px;
+                    .dx-dropdowneditor-icon {
+                        width: 29px;
+                        &:before {
+                            margin-top: -8px;
+                        }
+                    }
+                }
+                div.dx-placeholder {
+                    width: calc(100% - 42px);
+                    font-family: Poppins;
+                    font-size: 13px;
+                    font-weight: 400;
+                    line-height: 20px;
+                    letter-spacing: 0em;
+                    text-align: left;
+                    color: #919698;
+                    &.dx-state-invisible {
+                        display: block!important;
+                        opacity: 1!important;
+                        top: -10px!important;
+                    }
+                }
+            }
             .add-new-button, .remove-button {
                 position: absolute;
                 top: -4px;
@@ -244,6 +294,9 @@
             }
             .remove-button {
                 top: 7px;
+                span {
+                    line-height: 24px;
+                }
             }
             .logo-wrapper {
                 margin: auto;
@@ -350,11 +403,6 @@
                     &:last-child {
                         margin-right: 0;
                     }
-                }
-                & > .disabled {
-                    opacity: 0.5;
-                    cursor: default;
-                    pointer-events: none;
                 }
             }
             .prices {
