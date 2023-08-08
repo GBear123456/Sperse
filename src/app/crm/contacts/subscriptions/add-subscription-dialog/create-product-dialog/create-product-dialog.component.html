@@ -427,24 +427,27 @@
                         </div>
                         <div class="block" *ngIf="product.type == defaultProductType && isHostTenant">
                             <h3>{{ls.l('Downgrade to Option')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
-                            <div>
-                                <dx-select-box name="name"
-                                               width="100%"
-                                               valueExpr="id"
-                                               displayExpr="name"
-                                               [showClearButton]="true"
-                                               [dataSource]="products$ | async"
-                                               [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
-                                               [(value)]="product.downgradeProductId"
-                                               [disabled]="isReadOnly">
-                                </dx-select-box>
+                            <div class="services">
+                                <div *ngIf="!isReadOnly" class="remove-button" (click)="product.downgradeProductId = undefined"><span>-</span></div>
+                                <div class="upgrade-field">
+                                    <dx-select-box name="name"
+                                                   width="100%"
+                                                   valueExpr="id"
+                                                   displayExpr="name"
+                                                   [showClearButton]="false"
+                                                   [dataSource]="products$ | async"
+                                                   [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
+                                                   [(value)]="product.downgradeProductId"
+                                                   [disabled]="isReadOnly">
+                                    </dx-select-box>
+                                </div>
                             </div>
                             <div class="services-header">
                                 <h3>{{ls.l('Upgrade to Options')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                                 <div *ngIf="!isReadOnly" class="add-new-button" (click)="addUpgradeToProduct()"><span>+</span></div>
                             </div>
                             <div class="services" *ngFor="let option of product.productUpgradeAssignments; let i = index">
-                                <div *ngIf="!isReadOnly" class="remove-button" (click)="removeUpgradeToProduct(i)"><span>-</span></div>
+                                <div *ngIf="!isReadOnly" class="remove-button" (click)="removeUpgradeToProduct(i, option)"><span>-</span></div>
                                 <div class="upgrade-field">
                                     <dx-select-box name="name"
                                                    width="100%"
@@ -454,7 +457,7 @@
                                                    [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
                                                    [(value)]="option.upgradeProductId"
                                                    [disabled]="isReadOnly">
-                                        <dx-validator>
+                                        <dx-validator *ngIf="i">
                                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Product'))}}."></dxi-validation-rule>
                                         </dx-validator>
                                     </dx-select-box>

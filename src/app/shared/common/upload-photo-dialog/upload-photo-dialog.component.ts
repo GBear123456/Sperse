@@ -71,7 +71,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
             this.selectedTabIndex = this.TAB_INDEX_UPLOAD;
             this.fileUrlFormControl.setValue(this.data.fileUrl);
             this.changeDetectorRef.detectChanges();
-            this.loadFile(true);
+            this.loadFile();
          }
     }
 

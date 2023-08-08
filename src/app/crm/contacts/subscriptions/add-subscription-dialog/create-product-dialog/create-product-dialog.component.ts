@@ -353,8 +353,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
         }
     }
 
-    removeUpgradeToProduct(index) {
-        this.product.productUpgradeAssignments.splice(index, 1);
+    removeUpgradeToProduct(index, option) {
+        if (index)
+            this.product.productUpgradeAssignments.splice(index, 1);
+        else
+            option.upgradeProductId = undefined;
         this.detectChanges();
     }
 
