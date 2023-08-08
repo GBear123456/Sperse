@@ -79,6 +79,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
     private slider: any;
 
+    isFreePriceType = false;
     baseUrl = AppConsts.remoteServiceBaseUrl;
 
     publicNameValidationRules = [
@@ -183,8 +184,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
             this.product = new UpdateProductInput(data.product);
             let options = data.product.productSubscriptionOptions;
             this.defaultProductUri = this.product.publicName;
-            if (options && options[0])
+            if (options && options[0]) {
+                this.isFreePriceType = !options[0].fee;
                 this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
+            }
             if (!this.product.productUpgradeAssignments)
                 this.addUpgradeToProduct();
         } else {
@@ -247,6 +250,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
             this.product.productSubscriptionOptions = undefined;
             this.product.productUpgradeAssignments = undefined;
             this.product.downgradeProductId = undefined;
+        }
+
+        if (this.isFreePriceType) {
+            this.product.price = 0;            
         }
 
         if (this.validationGroup.instance.validate().isValid) {
@@ -362,6 +369,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                 return selected.frequency == item ||
                     !options.some(option => option.frequency == item);
             }) : this.frequencies;
+
+        if (this.isFreePriceType)
+            frequencies = frequencies.filter(item => 
+                [RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.OneTime].includes(RecurringPaymentFrequency[item]));
 
         if (options.length > 1)
             return frequencies.filter(item => item != RecurringPaymentFrequency.OneTime);
@@ -611,5 +622,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
     addExternalLogo() {
         if (this.uploadFileUrl)
             this.openImageSelector();
+    }
+
+    togglePriceType() {
+        this.isFreePriceType = !this.isFreePriceType
+    }
+
+    getSliderValue() {
+        return Number(!this.isFreePriceType) * 50;
     }
 }

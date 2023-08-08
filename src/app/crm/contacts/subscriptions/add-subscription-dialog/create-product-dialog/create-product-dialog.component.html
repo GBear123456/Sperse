@@ -99,12 +99,24 @@
                         </div>
                         <div class="block">
                             <div class="services-header">
-                                <h3>{{ls.l('Price settings')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                                <h3>{{ls.l('Price settings')}} <img class="info" src="assets/common/icons/info-circle.svg">
+                                    <div class="slider-wrapper">
+                                        <div class="state-slider point">
+                                            <div class="captions">
+                                                <div [ngClass]="{active: isFreePriceType}" (click)="togglePriceType()">{{ ls.l('Free') }}</div>
+                                                <div [ngClass]="{active: !isFreePriceType}" (click)="togglePriceType()">{{ ls.l('Paid') }}</div>
+                                            </div>
+                                            <mat-slider [value]="getSliderValue()"
+                                                        [disabled]="true">
+                                            </mat-slider>
+                                        </div>
+                                    </div>
+                                </h3> 
                                 <div *ngIf="!isReadOnly && !isOneTime && product.type == defaultProductType" class="add-new-button" (click)="addNewPaymentPeriod()"><span>+</span></div>
                             </div>
                             <hr class="wide">
                             <ng-container *ngIf="product.type != defaultProductType">
-                                <div>
+                                <div [ngClass]="{disabled: isFreePriceType}">
                                     <label>{{ls.l('Price')}}</label>
                                     <dx-number-box name="price"
                                                    width="100%"
@@ -137,7 +149,7 @@
 
                                     <div class="service">
                                         <div class="prices">
-                                            <div>
+                                            <div [ngClass]="{disabled: isFreePriceType}">
                                                 <label class="wide">{{ls.l('Fee')}}</label>
                                                 <dx-number-box name="price"
                                                                width="100%"
@@ -150,7 +162,7 @@
                                                     </dx-validator>
                                                 </dx-number-box>
                                             </div>
-                                            <div [ngClass]="{disabled: !isCommissionsEnabled}">
+                                            <div [ngClass]="{disabled: !isCommissionsEnabled || isFreePriceType}">
                                                 <label class="wide">{{ls.l('CommissionableAmount')}}</label>
                                                 <dx-number-box name="commissionableFeeAmount"
                                                                width="100%"
@@ -209,7 +221,7 @@
                                         <hr>
         
                                         <div class="trials">
-                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime)}">
+                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime) || isFreePriceType}">
                                                 <label class="wide" for="level">
                                                     <dx-switch #trialSwitch
                                                                switchedOffText="" 
@@ -233,7 +245,7 @@
                                                     </dx-validator>
                                                 </dx-number-box>
                                             </div>
-                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime && option.trialDayCount)}">
+                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime && option.trialDayCount) || isFreePriceType}">
                                                 <label class="wide">{{ls.l('SignupFee')}}</label>
                                                 <dx-number-box name="price"
                                                                width="100%"
@@ -246,7 +258,7 @@
                                                     </dx-validator>
                                                 </dx-number-box>
                                             </div>
-                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime && isCommissionsEnabled && option.trialDayCount)}">
+                                            <div [ngClass]="{disabled: isFreePriceType || !(option.frequency && !isOneTime && isCommissionsEnabled && option.trialDayCount)}">
                                                 <label class="wide">{{ls.l('CommissionableAmount')}}</label>
                                                 <dx-number-box name="commissionableSignupFeeAmount"
                                                                width="100%"
