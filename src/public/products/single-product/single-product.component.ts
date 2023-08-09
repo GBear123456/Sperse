@@ -55,7 +55,7 @@ export class SingleProductComponent implements OnInit {
     requestInfo: SubmitProductRequestInput = new SubmitProductRequestInput();
 
     agreedTermsAndServices: boolean = false;
-    nameRegexp = AppConsts.regexPatterns.name;
+    nameRegexp = /^[a-zA-Z-.' ]+$/;
     emailRegexp = AppConsts.regexPatterns.email;
     conditions = ConditionsType;
 
