@@ -366,15 +366,15 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
         return service ? service.memberServiceLevels : [];
     }
 
-    getFrequencies(selected) {
+    getFrequencies(selected, index) {
         let options = this.product.productSubscriptionOptions,
             frequencies = options ? this.frequencies.filter(item => {
                 return selected.frequency == item ||
                     !options.some(option => option.frequency == item);
             }) : this.frequencies;
 
-        if (this.isFreePriceType)
-            frequencies = frequencies.filter(item => 
+        if (!index && this.isFreePriceType)
+            return frequencies.filter(item => 
                 [RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.OneTime].includes(RecurringPaymentFrequency[item]));
 
         if (options.length > 1)
@@ -628,7 +628,17 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     togglePriceType() {
-        this.isFreePriceType = !this.isFreePriceType
+        if (this.isFreePriceType = !this.isFreePriceType) {
+            this.product.price = 0;
+            let options = this.product.productSubscriptionOptions;
+            if (options && options[0]) {
+                options[0].fee = undefined;
+                options[0].commissionableFeeAmount = undefined;
+                options[0].trialDayCount = undefined;
+                options[0].signupFee = undefined;
+                options[0].commissionableSignupFeeAmount = undefined;
+            }
+        }
     }
 
     getSliderValue() {

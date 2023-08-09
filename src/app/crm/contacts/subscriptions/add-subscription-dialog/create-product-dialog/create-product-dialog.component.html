@@ -150,7 +150,7 @@
 
                                     <div class="service">
                                         <div class="prices">
-                                            <div [ngClass]="{disabled: isFreePriceType}">
+                                            <div [ngClass]="{disabled: !i && isFreePriceType}">
                                                 <label class="wide">{{ls.l('Fee')}}</label>
                                                 <dx-number-box name="price"
                                                                width="100%"
@@ -163,7 +163,7 @@
                                                     </dx-validator>
                                                 </dx-number-box>
                                             </div>
-                                            <div [ngClass]="{disabled: !isCommissionsEnabled || isFreePriceType}">
+                                            <div [ngClass]="{disabled: !isCommissionsEnabled || (!i && isFreePriceType)}">
                                                 <label class="wide">{{ls.l('CommissionableAmount')}}</label>
                                                 <dx-number-box name="commissionableFeeAmount"
                                                                width="100%"
@@ -177,7 +177,7 @@
                                         <div class="periods">
                                             <div>
                                                 <dx-select-box name="name"
-                                                               [dataSource]="getFrequencies(option)"
+                                                               [dataSource]="getFrequencies(option, i)"
                                                                [placeholder]="ls.l('PaymentPeriod')"
                                                                [(value)]="option.frequency"
                                                                [disabled]="isReadOnly"
@@ -220,7 +220,7 @@
                                         <hr>
         
                                         <div class="trials">
-                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime) || isFreePriceType}">
+                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime) || (!i && isFreePriceType)}">
                                                 <label class="wide" for="level">
                                                     <dx-switch #trialSwitch
                                                                switchedOffText="" 
@@ -244,7 +244,7 @@
                                                     </dx-validator>
                                                 </dx-number-box>
                                             </div>
-                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime && option.trialDayCount) || isFreePriceType}">
+                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime && option.trialDayCount) || (!i && isFreePriceType)}">
                                                 <label class="wide">{{ls.l('SignupFee')}}</label>
                                                 <dx-number-box name="price"
                                                                width="100%"
@@ -257,7 +257,7 @@
                                                     </dx-validator>
                                                 </dx-number-box>
                                             </div>
-                                            <div [ngClass]="{disabled: isFreePriceType || !(option.frequency && !isOneTime && isCommissionsEnabled && option.trialDayCount)}">
+                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !(option.frequency && !isOneTime && isCommissionsEnabled && option.trialDayCount)}">
                                                 <label class="wide">{{ls.l('CommissionableAmount')}}</label>
                                                 <dx-number-box name="commissionableSignupFeeAmount"
                                                                width="100%"
