@@ -394,6 +394,19 @@
                             <h3>{{ls.l('Product Status')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                         </div>
                         <div class="block">
+                            <h3>{{ls.l('Product Group')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                            <dx-select-box [dataSource]="productGroups"
+                                           [acceptCustomValue]="true"
+                                           width="100%"
+                                           displayExpr="name"
+                                           valueExpr="id"
+                                           placeholder="Select group..."
+                                           [(value)]="product.groupId"
+                                           [disabled]="isReadOnly"
+                                           (onCustomItemCreating)="onCustomGroupCreating($event)">
+                            </dx-select-box>
+                        </div>
+                        <div class="block">
                             <h3>{{ls.l('Product Logo')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                             <div class="logo-wrapper">
                                 <img *ngIf="image; else upload" class="product" (click)="openImageSelector()" [src]="getProductImage(true)">
