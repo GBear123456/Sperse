@@ -36,6 +36,7 @@
             }
         }
         .block {
+            position: relative;
             padding: 20px;
             cursor: pointer;
             background: #FFF;
@@ -78,6 +79,22 @@
             }
             hr.wide {
                 border: 2px solid rgba(0,0,0,.1);
+            }
+            .add-group-button {
+                position: absolute;
+                background: #F4F7FA;
+                padding: 4px 8px;
+                top: 18px;
+                right: 70px;
+                span {
+                    font-family: Poppins;
+                    font-size: 13px;
+                    font-weight: 400;
+                    line-height: 20px;
+                    letter-spacing: 0em;
+                    text-align: left;
+                    color: #000;
+                }
             }
             .slider-wrapper {
                 position: absolute;
@@ -377,13 +394,13 @@
         height: 50px;
     }
 
-    .services-header {
+    .options-header {
         margin: 17px 0;
         font: 600 17px Poppins;
         position: relative; 
     }
 
-    .services {
+    .options {
         position: relative;
         margin-bottom: 15px;
 
@@ -391,7 +408,7 @@
             width: calc(100% - 50px);
         }
 
-        .service {
+        .option {
             .prices, .periods, .trials, .grace {
                 display: flex;
                 justify-content: space-between;
