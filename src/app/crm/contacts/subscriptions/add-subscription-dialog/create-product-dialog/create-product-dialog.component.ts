@@ -188,7 +188,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                 this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
             } else 
                 this.isFreePriceType = !data.product.price;
-            if (!this.product.productUpgradeAssignments)
+            if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
                 this.addUpgradeToProduct();
         } else {
             this.product = new CreateProductInput(data.product);
