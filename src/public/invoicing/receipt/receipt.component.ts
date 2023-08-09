@@ -52,6 +52,11 @@ export class ReceiptComponent implements OnInit {
         this.userInvoiceService
             .getInvoiceReceiptInfo(tenantId, publicId)
             .subscribe(result => {
+                if (!Object.keys(result).length) {
+                    this.retryDataRequest(tenantId, publicId);
+                    return;
+                }
+
                 switch (result.invoiceStatus) {
                     case InvoiceStatus.Sent:
                         {
@@ -60,15 +65,7 @@ export class ReceiptComponent implements OnInit {
                                 return;
                             }
 
-                            this.currentRetryCount++;
-                            if (this.currentRetryCount >= ReceiptComponent.maxRetryCount) {
-                                abp.ui.clearBusy();
-                                this.failedToLoad = true;
-                                this.failMessage = 'Failed to load payment information. Please refresh the page or try again later.';
-                            }
-                            else {
-                                setTimeout(() => this.getInvoiceInfo(tenantId, publicId), ReceiptComponent.retryDelay);
-                            }
+                            this.retryDataRequest(tenantId, publicId);
                             return;
                         }
                     case InvoiceStatus.Paid:
@@ -88,6 +85,18 @@ export class ReceiptComponent implements OnInit {
                         }
                 }
             });
+    }
+
+    retryDataRequest(tenantId, publicId) {
+        this.currentRetryCount++;
+        if (this.currentRetryCount >= ReceiptComponent.maxRetryCount) {
+            abp.ui.clearBusy();
+            this.failedToLoad = true;
+            this.failMessage = 'Failed to load payment information. Please refresh the page or try again later.';
+        }
+        else {
+            setTimeout(() => this.getInvoiceInfo(tenantId, publicId), ReceiptComponent.retryDelay);
+        }
     }
 
     setReturnLinkInfo() {
