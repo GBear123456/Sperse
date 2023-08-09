@@ -98,7 +98,7 @@
                             </div>
                         </div>
                         <div class="block">
-                            <div class="services-header">
+                            <div class="options-header">
                                 <h3>{{ls.l('Price settings')}} <img class="info" src="assets/common/icons/info-circle.svg">
                                     <div class="slider-wrapper">
                                         <div class="state-slider point">
@@ -144,11 +144,11 @@
                                 </div>
                             </div>
                             <ng-container *ngIf="product.type == defaultProductType">
-                                <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
+                                <div class="options" *ngFor="let option of product.productSubscriptionOptions; let i = index">
                                     <hr *ngIf="i" class="wide">
                                     <div *ngIf="!isReadOnly && i" class="remove-button" (click)="removePaymentPeriod(i)"><span>-</span></div>
 
-                                    <div class="service">
+                                    <div class="option">
                                         <div class="prices">
                                             <div [ngClass]="{disabled: !i && isFreePriceType}">
                                                 <label class="wide">{{ls.l('Fee')}}</label>
@@ -332,11 +332,11 @@
                             <p class="enable-commissions-info">{{ls.l('This product will be included in the commissions calculations for your affiliates, resellers and partners')}}</p>
                         </div>
                         <div class="block" *ngIf="product.type == defaultProductType">
-                            <div class="services-header">
+                            <div class="options-header">
                                 <h3>{{ls.l('Product Services & Features')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                                 <div *ngIf="!isReadOnly" class="add-new-button" (click)="addNewServiceFields()"><span>+</span></div>
                             </div>
-                            <div class="services" *ngFor="let service of product.productServices; let i = index">
+                            <div class="options" *ngFor="let service of product.productServices; let i = index">
                                 <div *ngIf="!isReadOnly" class="remove-button" (click)="removeServiceFields(i)"><span>-</span></div>
 
                                 <div class="field-wrapper">
@@ -394,19 +394,6 @@
                             <h3>{{ls.l('Product Status')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                         </div>
                         <div class="block">
-                            <h3>{{ls.l('Product Group')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
-                            <dx-select-box [dataSource]="productGroups"
-                                           [acceptCustomValue]="true"
-                                           width="100%"
-                                           displayExpr="name"
-                                           valueExpr="id"
-                                           placeholder="Select group..."
-                                           [(value)]="product.groupId"
-                                           [disabled]="isReadOnly"
-                                           (onCustomItemCreating)="onCustomGroupCreating($event)">
-                            </dx-select-box>
-                        </div>
-                        <div class="block">
                             <h3>{{ls.l('Product Logo')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                             <div class="logo-wrapper">
                                 <img *ngIf="image; else upload" class="product" (click)="openImageSelector()" [src]="getProductImage(true)">
@@ -431,6 +418,26 @@
                                 </div>
                             </ng-template>
                         </div>
+                        <div class="block">
+                            <h3>{{ls.l('Product Group')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                            <div *ngIf="!isReadOnly" class="add-group-button" (click)="groupSelectBox.instance.focus()"><span>+ Add</span></div>
+                            <div class="options">
+                                <div *ngIf="!isReadOnly" class="remove-button" (click)="product.groupId = undefined"><span>-</span></div>
+                                <div class="upgrade-field">
+                                    <dx-select-box #groupSelectBox
+                                                   [dataSource]="productGroups"
+                                                   [acceptCustomValue]="true"
+                                                   width="100%"
+                                                   displayExpr="name"
+                                                   valueExpr="id"
+                                                   placeholder="Select group..."
+                                                   [(value)]="product.groupId"
+                                                   [disabled]="isReadOnly"
+                                                   (onCustomItemCreating)="onCustomGroupCreating($event)">
+                                    </dx-select-box>
+                                </div>
+                            </div>
+                        </div>
                         <div class="block" *ngIf="false">
                             <h3>{{ls.l('Product category')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                         </div>
@@ -439,7 +446,7 @@
                         </div>
                         <div class="block" *ngIf="product.type == defaultProductType && isHostTenant">
                             <h3>{{ls.l('Downgrade to Option')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
-                            <div class="services">
+                            <div class="options">
                                 <div *ngIf="!isReadOnly" class="remove-button" (click)="product.downgradeProductId = undefined"><span>-</span></div>
                                 <div class="upgrade-field">
                                     <dx-select-box name="name"
@@ -454,11 +461,11 @@
                                     </dx-select-box>
                                 </div>
                             </div>
-                            <div class="services-header">
+                            <div class="options-header">
                                 <h3>{{ls.l('Upgrade to Options')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                                 <div *ngIf="!isReadOnly" class="add-new-button" (click)="addUpgradeToProduct()"><span>+</span></div>
                             </div>
-                            <div class="services" *ngFor="let option of product.productUpgradeAssignments; let i = index">
+                            <div class="options" *ngFor="let option of product.productUpgradeAssignments; let i = index">
                                 <div *ngIf="!isReadOnly" class="remove-button" (click)="removeUpgradeToProduct(i, option)"><span>-</span></div>
                                 <div class="upgrade-field">
                                     <dx-select-box name="name"
