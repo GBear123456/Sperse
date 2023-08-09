@@ -83,7 +83,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
     baseUrl = AppConsts.remoteServiceBaseUrl;
 
     publicNameValidationRules = [
-        { type: 'required', message: this.ls.l('UrlIsRequired') },
         { type: 'pattern', pattern: AppConsts.regexPatterns.sitePath, message: this.ls.l('UrlIsNotValid') }
     ];
 
@@ -187,7 +186,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
             if (options && options[0]) {
                 this.isFreePriceType = !options[0].fee;
                 this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
-            }
+            } else 
+                this.isFreePriceType = !data.product.price;
             if (!this.product.productUpgradeAssignments)
                 this.addUpgradeToProduct();
         } else {
