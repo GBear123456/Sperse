@@ -115,11 +115,13 @@
                                 <div *ngIf="!isReadOnly && !isOneTime && product.type == defaultProductType" class="add-new-button" (click)="addNewPaymentPeriod()"><span>+</span></div>
                             </div>
                             <hr class="wide">
-                            <ng-container *ngIf="product.type != defaultProductType">
+                            <div class="general-product" *ngIf="product.type != defaultProductType">
                                 <div [ngClass]="{disabled: isFreePriceType}">
-                                    <label>{{ls.l('Price')}}</label>
                                     <dx-number-box name="price"
                                                    width="100%"
+                                                   height="65px"
+                                                   class="label"
+                                                   [placeholder]="ls.l('Price')"
                                                    [format]="amountFormat"
                                                    [(value)]="product.price"
                                                    [disabled]="isReadOnly"
@@ -130,10 +132,9 @@
                                     </dx-number-box>
                                 </div>
                                 <div>
-                                    <label for="activationTime">{{ls.l('Unit')}}</label>
                                     <dx-select-box [dataSource]="getProductUnits()"
                                                    width="100%"
-                                                   placeholder="Select unit..."
+                                                   [placeholder]="ls.l('Unit')"
                                                    [(value)]="product.unit"
                                                    [disabled]="isReadOnly">
                                         <dx-validator>
@@ -141,7 +142,7 @@
                                         </dx-validator>
                                     </dx-select-box>
                                 </div>
-                            </ng-container>
+                            </div>
                             <ng-container *ngIf="product.type == defaultProductType">
                                 <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
                                     <hr *ngIf="i" class="wide">
@@ -175,10 +176,9 @@
 
                                         <div class="periods">
                                             <div>
-                                                <label class="wide" for="name">{{ls.l('PaymentPeriod')}}</label>
                                                 <dx-select-box name="name"
                                                                [dataSource]="getFrequencies(option)"
-                                                               [placeholder]="ls.l('Select') + ' ' + ls.l('PaymentPeriod') + '...'"
+                                                               [placeholder]="ls.l('PaymentPeriod')"
                                                                [(value)]="option.frequency"
                                                                [disabled]="isReadOnly"
                                                                (onValueChanged)="onFrequencyChanged($event, option)">
@@ -188,10 +188,9 @@
                                                 </dx-select-box>
                                             </div>
                                             <div [ngClass]="{disabled: !(option.frequency && option.frequency == recurringPaymentFrequency.Custom)}">
-                                                <label class="wide" for="name">{{ls.l('Period Type')}}</label>
                                                 <dx-select-box name="name"
                                                                [dataSource]="customPeriodTypes"
-                                                               [placeholder]="ls.l('Select') + ' ' + ls.l('Type') + '...'"
+                                                               [placeholder]="ls.l('Period Type')"
                                                                [(value)]="option.customPeriodType"
                                                                [disabled]="isReadOnly">
                                                     <dx-validator #customPeriodValidator>
@@ -200,11 +199,11 @@
                                                 </dx-select-box>
                                             </div>
                                             <div [ngClass]="{disabled: !(isOneTime || (option.frequency && option.frequency == recurringPaymentFrequency.Custom))}">
-                                                <label class="wide" for="level">{{ls.l('Period')}}</label>
                                                 <dx-number-box name="period"
                                                                [min]="0"
                                                                mode="number"
                                                                format="###0"
+                                                               class="label"                                            
                                                                valueChangeEvent="keyup"
                                                                [placeholder]="ls.l('Set number of ') + (option.customPeriodType?.toLowerCase() || 'period')"
                                                                [(value)]="option.customPeriodCount"
@@ -427,24 +426,27 @@
                         </div>
                         <div class="block" *ngIf="product.type == defaultProductType && isHostTenant">
                             <h3>{{ls.l('Downgrade to Option')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
-                            <div>
-                                <dx-select-box name="name"
-                                               width="100%"
-                                               valueExpr="id"
-                                               displayExpr="name"
-                                               [showClearButton]="true"
-                                               [dataSource]="products$ | async"
-                                               [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
-                                               [(value)]="product.downgradeProductId"
-                                               [disabled]="isReadOnly">
-                                </dx-select-box>
+                            <div class="services">
+                                <div *ngIf="!isReadOnly" class="remove-button" (click)="product.downgradeProductId = undefined"><span>-</span></div>
+                                <div class="upgrade-field">
+                                    <dx-select-box name="name"
+                                                   width="100%"
+                                                   valueExpr="id"
+                                                   displayExpr="name"
+                                                   [showClearButton]="false"
+                                                   [dataSource]="products$ | async"
+                                                   [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
+                                                   [(value)]="product.downgradeProductId"
+                                                   [disabled]="isReadOnly">
+                                    </dx-select-box>
+                                </div>
                             </div>
                             <div class="services-header">
                                 <h3>{{ls.l('Upgrade to Options')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                                 <div *ngIf="!isReadOnly" class="add-new-button" (click)="addUpgradeToProduct()"><span>+</span></div>
                             </div>
                             <div class="services" *ngFor="let option of product.productUpgradeAssignments; let i = index">
-                                <div *ngIf="!isReadOnly" class="remove-button" (click)="removeUpgradeToProduct(i)"><span>-</span></div>
+                                <div *ngIf="!isReadOnly" class="remove-button" (click)="removeUpgradeToProduct(i, option)"><span>-</span></div>
                                 <div class="upgrade-field">
                                     <dx-select-box name="name"
                                                    width="100%"
@@ -454,7 +456,7 @@
                                                    [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
                                                    [(value)]="option.upgradeProductId"
                                                    [disabled]="isReadOnly">
-                                        <dx-validator>
+                                        <dx-validator *ngIf="i">
                                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Product'))}}."></dxi-validation-rule>
                                         </dx-validator>
                                     </dx-select-box>
