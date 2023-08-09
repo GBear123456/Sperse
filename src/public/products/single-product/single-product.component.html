@@ -55,7 +55,7 @@
                         </div>
                     </div>
                     <div class="price__new">
-                        <span>{{productInfo.price * requestInfo.quantity}}</span>
+                        <span>{{ (productInfo.price * requestInfo.quantity) | number : '1.0-2'}}</span>
                     </div>
                 </div>
             </ng-template>
