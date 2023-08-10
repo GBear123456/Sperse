@@ -284,6 +284,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                     switchMap((res) => zip(of(res), this.getUpdateProductImageObservable(res.productId)))
                 ).subscribe(([res,]) => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
+                    this.product = new UpdateProductInput({id: res.productId, ...this.product});
                     if (this.selectedOption.data.close)
                         this.dialogRef.close(new ProductDto({
                             id: res.productId,
@@ -629,7 +630,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
     togglePriceType() {
         if (this.isFreePriceType = !this.isFreePriceType) {
-            this.product.price = 0;
+            this.product.price = undefined;
             let options = this.product.productSubscriptionOptions;
             if (options && options[0]) {
                 options[0].fee = undefined;
