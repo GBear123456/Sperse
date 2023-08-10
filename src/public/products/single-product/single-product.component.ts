@@ -140,7 +140,11 @@ export class SingleProductComponent implements OnInit {
     }
 
     submitStripeRequest() {
+        abp.ui.setBusy();
         this.getSubmitRequest('Stripe')
+            .pipe(
+                finalize(() => abp.ui.clearBusy())
+            )
             .subscribe(res => {
                 location.href = res.paymentData;
             });
