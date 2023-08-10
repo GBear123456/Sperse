@@ -630,7 +630,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
     togglePriceType() {
         if (this.isFreePriceType = !this.isFreePriceType) {
-            this.product.price = 0;
+            this.product.price = undefined;
             let options = this.product.productSubscriptionOptions;
             if (options && options[0]) {
                 options[0].fee = undefined;
