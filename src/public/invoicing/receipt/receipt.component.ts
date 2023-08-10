@@ -52,11 +52,6 @@ export class ReceiptComponent implements OnInit {
         this.userInvoiceService
             .getInvoiceReceiptInfo(tenantId, publicId)
             .subscribe(result => {
-                if (!Object.keys(result).length) {
-                    this.retryDataRequest(tenantId, publicId);
-                    return;
-                }
-
                 switch (result.invoiceStatus) {
                     case InvoiceStatus.Sent:
                         {
@@ -78,9 +73,7 @@ export class ReceiptComponent implements OnInit {
                         }
                     default:
                         {
-                            abp.ui.clearBusy();
-                            this.failedToLoad = true;
-                            this.failMessage = `Invoice in status ${result.invoiceStatus} could not be paid`;
+                            this.retryDataRequest(tenantId, publicId);
                             return;
                         }
                 }
