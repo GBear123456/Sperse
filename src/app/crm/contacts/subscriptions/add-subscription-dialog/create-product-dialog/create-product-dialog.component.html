@@ -36,7 +36,7 @@
                             <hr>
                             <div class="product-ident">
                                 <div>    
-                                    <label>{{ls.l('Product/service name')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
+                                    <label>{{ls.l('Product name')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
                                     <dx-text-box name="name"
                                                  width="100%"
                                                  [inputAttr]="{ id: 'name' }"
@@ -151,7 +151,7 @@
                                     <div class="option">
                                         <div class="prices">
                                             <div [ngClass]="{disabled: !i && isFreePriceType}">
-                                                <label class="wide">{{ls.l('Fee')}}</label>
+                                                <label class="wide">{{ls.l('Subscription fee')}}</label>
                                                 <dx-number-box name="price"
                                                                width="100%"
                                                                [format]="amountFormat"
@@ -227,7 +227,7 @@
                                                                switchedOnText="" 
                                                                [(value)]="option.trialEnabled"
                                                                (onInitialized)="option.trialEnabled = !!option.trialDayCount">
-                                                    </dx-switch>&nbsp;<span (click)="option.trialEnabled = !option.trialEnabled">{{ls.l('TrialDayCount')}}</span>
+                                                    </dx-switch>&nbsp;<span (click)="option.trialEnabled = !option.trialEnabled">{{ls.l('Add Trial Period')}}</span>
                                                 </label>
                                                 <dx-number-box name="count"
                                                                [min]="0"
@@ -275,7 +275,7 @@
                                                                switchedOnText="" 
                                                                [(value)]="option.gracePeriodEnabled"
                                                                (onInitialized)="option.gracePeriodEnabled = !!option.gracePeriodDayCount">
-                                                    </dx-switch>&nbsp;<span (click)="option.gracePeriodEnabled = !option.gracePeriodEnabled">{{ls.l('GracePeriodDayCount')}}</span>
+                                                    </dx-switch>&nbsp;<span (click)="option.gracePeriodEnabled = !option.gracePeriodEnabled">{{ls.l('Custom Grace Period')}}</span>
                                                 </label>
                                                 <dx-number-box name="gracePeriodDayCount"
                                                                [placeholder]="ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)"
@@ -306,7 +306,7 @@
                                     </dx-number-box>
                                 </div>
                                 <div>
-                                    <label>{{ls.l('MaxCommissionRate')}}</label>
+                                    <label>{{ls.l('Tier 1 Max Commission Rate')}}</label>
                                     <dx-number-box name="maxCommissionRate"
                                                    width="100%"
                                                    format="#.##%"
@@ -315,7 +315,7 @@
                                     </dx-number-box>
                                 </div>
                                 <div>
-                                    <label>{{ls.l('MaxCommissionRateTier2')}}</label>
+                                    <label>{{ls.l('Tier 2 Max Commission Rate')}}</label>
                                     <dx-number-box name="maxCommissionRate2"
                                                    width="100%"
                                                    format="#.##%"

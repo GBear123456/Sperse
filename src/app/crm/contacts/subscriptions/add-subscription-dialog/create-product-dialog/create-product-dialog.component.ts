@@ -284,6 +284,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                     switchMap((res) => zip(of(res), this.getUpdateProductImageObservable(res.productId)))
                 ).subscribe(([res,]) => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
+                    this.product = new UpdateProductInput({id: res.productId, ...this.product});
                     if (this.selectedOption.data.close)
                         this.dialogRef.close(new ProductDto({
                             id: res.productId,
