@@ -250,10 +250,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
             this.product.productSubscriptionOptions = undefined;
             this.product.productUpgradeAssignments = undefined;
             this.product.downgradeProductId = undefined;
-        }
 
-        if (this.isFreePriceType) {
-            this.product.price = 0;            
+            if (this.isFreePriceType)
+                this.product.price = 0;            
         }
 
         if (this.validationGroup.instance.validate().isValid) {
