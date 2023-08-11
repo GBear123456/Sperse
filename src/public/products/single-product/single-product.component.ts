@@ -69,6 +69,7 @@ export class SingleProductComponent implements OnInit {
     static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.Custom];
     availablePeriods: BillingPeriod[] = [];
     selectedBillingPeriod;
+    isFreeProductSelected = false;
 
     initialInvoiceXref: string = null;
 
@@ -103,7 +104,6 @@ export class SingleProductComponent implements OnInit {
     getPayPalRequest(): Promise<string> {
         return this.getSubmitRequest('PayPal')
             .pipe(
-                tap(v => { this.initialInvoiceXref = v.initialInvoicePublicId }),
                 map(v => v.paymentData)
             )
             .toPromise();
@@ -132,6 +132,7 @@ export class SingleProductComponent implements OnInit {
                     this.showNotFound = true;
                 }
 
+                this.checkIsFree();
                 this.changeDetector.detectChanges();
             }, () => {
                 this.showNotFound = true;
@@ -147,6 +148,17 @@ export class SingleProductComponent implements OnInit {
             )
             .subscribe(res => {
                 location.href = res.paymentData;
+            });
+    }
+
+    submitFreeRequest() {
+        abp.ui.setBusy();
+        this.getSubmitRequest(null)
+            .pipe(
+                finalize(() => abp.ui.clearBusy())
+            )
+            .subscribe(() => {
+                location.href = this.getReceiptUrl();
             });
     }
 
@@ -180,11 +192,17 @@ export class SingleProductComponent implements OnInit {
         this.requestInfo.successUrl = `${AppConsts.appBaseUrl}/receipt/${this.tenantId}/{initialInvoiceXref}`;
         this.requestInfo.cancelUrl = location.href;
 
-        return this.publicProductService.submitProductRequest(this.requestInfo);
+        return this.publicProductService.submitProductRequest(this.requestInfo).pipe(
+            tap(v => { this.initialInvoiceXref = v.initialInvoicePublicId })
+        );
     }
 
     onPayPalApprove() {
-        location.href = `${AppConsts.appBaseUrl}/receipt/${this.tenantId}/${this.initialInvoiceXref}`;
+        location.href = this.getReceiptUrl();
+    }
+
+    getReceiptUrl() {
+        return `${AppConsts.appBaseUrl}/receipt/${this.tenantId}/${this.initialInvoiceXref}`;
     }
 
     openConditionsDialog(type: ConditionsType) {
@@ -217,6 +235,17 @@ export class SingleProductComponent implements OnInit {
         this.updateSelectedSubscriptionOption();
     }
 
+    checkIsFree() {
+        switch (this.productInfo.type) {
+            case ProductType.General:
+                this.isFreeProductSelected = this.productInfo.price == 0;
+                break;
+            case ProductType.Subscription:
+                this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0;
+                break;
+        }
+    }
+
     getActiveStatus(period: BillingPeriod) {
         return this.selectedBillingPeriod == period;
     }
@@ -224,6 +253,7 @@ export class SingleProductComponent implements OnInit {
     toggle(value: BillingPeriod) {
         this.selectedBillingPeriod = value;
         this.updateSelectedSubscriptionOption();
+        this.checkIsFree();
     }
 
     getSliderValue(): number {
