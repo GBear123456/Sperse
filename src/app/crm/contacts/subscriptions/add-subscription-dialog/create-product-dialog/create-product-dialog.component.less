@@ -377,6 +377,110 @@
                     color: #919698;
                 }
             }
+
+            .share-link {
+                height: 240px;
+                margin-top: 15px;
+                padding: 40px 30px;
+                text-align: center;
+                border: 1px dashed #dedede;
+                border-radius: 0px;
+            
+                img {
+                    margin: 0 0 15px;
+                }
+                h3 {
+                    font-family: Poppins;
+                    font-size: 17px;
+                    font-weight: 500;
+                    line-height: 26px;
+                    letter-spacing: 0em;
+                    text-align: center;
+                    color: #000;
+                }
+                p {
+                    font-family: Poppins;
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 19px;
+                    letter-spacing: 0em;
+                    text-align: center;
+                    color: #919698;
+                }
+                .share-add-link {
+                    position: relative;
+                    .add-group-button {
+                        top: 9px;
+                        right: 10px;
+                    }
+                }
+            }
+
+            .upload-files {
+                .browse-file {
+                    width: 100%;
+                    height: 250px;
+                }
+
+                ::ng-deep ngx-file-drop {
+                    .ngx-file-drop__drop-zone {
+                        border: 1px dashed #dedede;
+                        border-radius: 0px;
+                        height: 250px;
+                    }
+
+                    .ngx-file-drop__content {
+                        height: 250px;
+                        flex-direction: column;
+                        img {
+                            margin: 0 0 15px;
+                        }
+                        h3 {
+                            font-family: Poppins;
+                            font-size: 17px;
+                            font-weight: 500;
+                            line-height: 26px;
+                            letter-spacing: 0em;
+                            text-align: left;
+                            color: #000000;                
+                        }
+                        span {
+                            padding: 10px 0;
+                            font-family: Poppins;
+                            font-size: 14px;
+                            font-weight: 400;
+                            line-height: 19px;
+                            letter-spacing: 0em;
+                            text-align: center;
+                            color: #919698;
+                        }
+                        .buttons {
+                            font-family: Poppins;
+                            font-size: 13px;
+                            font-weight: 400;
+                            line-height: 19px;
+                            letter-spacing: 0em;
+                            text-align: left;
+                            color: #919698;
+                        }
+                        button {
+                            width: 220px;
+                            height: 42px;
+                            font-family: Poppins;
+                            font-size: 14px;
+                            font-weight: 500;
+                            line-height: 21px;
+                            letter-spacing: -0.01em;                            
+                            text-align: center;
+                            &.button-default {
+                                border: 1px solid #68ACE9;
+                                color: #68ACE9;
+                                border-radius: 20px;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

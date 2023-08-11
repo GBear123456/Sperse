@@ -14,7 +14,7 @@
                             <h3>{{ls.l('Membership or Subscription')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <p>{{ls.l('Selling memberships or subscriptions enable you to sell regularly delivered products with recurring payments.')}}</p>
                         </div>
-                        <div class="block disabled"> 
+                        <div class="block" [ngClass]="{selected: product.type == productType.Digital}" (click)="product.type = productType.Digital">
                             <img class="head" src="assets/common/icons/group.svg">
                             <h3>{{ls.l('Digital Download Product')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <p>{{ls.l('Sell digital downloadable such as Software, eBooks, PDFs, templates, music, videos, or anything else digital.')}}</p>
@@ -382,8 +382,38 @@
                         <div class="block" *ngIf="false">
                             <h3>{{ls.l('Shipping')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                         </div>
-                        <div class="block" *ngIf="false">
-                            <h3>{{ls.l('Add digital files (optional)')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                        <div class="block" *ngIf="product.type == productType.Digital">
+                            <h3>{{ls.l('Add digital files')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+
+                            <div class="upload-files">
+                                <div class="browse-file">
+                                    <ngx-file-drop (onFileDrop)="fileDropped($event)">
+                                        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                                            <img class="upload" src="assets/common/icons/upload.svg">                                            
+                                            <h3>{{ls.l('Drag & Drop Upload Content')}}</h3>
+                                            <div class="buttons">
+                                                <button class="btn btn-layout" (click)="openFileSelector()">{{ls.l('Browse on your computer')}}</button> or <button class="button-layout button-default" (click)="showDocumentsDialog()">{{ls.l('Select from uploaded')}}</button>
+                                            </div>
+                                            <span>{{ls.l('Upload up to 50 files with a combined size of 10GB or fewer')}}<br>{{ls.l('Supported files: JPG, PNG, MP3, MP4, MOV, DOCX, PDF, ZIP, CSV, TXT')}}</span>
+                                        </ng-template>
+                                    </ngx-file-drop>                                        
+                                </div>
+                            </div>
+
+                            <div class="share-link">
+                                <img class="share" src="assets/common/icons/share.svg">                                            
+                                <h3>{{ls.l('Share a Link')}}</h3>
+                                <p>{{ls.l('Direct your members to YouTube, Google Drive or articles')}}</p>
+                                <div class="share-add-link">
+                                    <dx-text-box
+                                        [placeholder]="ls.l('Add Link')"
+                                    ></dx-text-box>
+                                    <div class="add-group-button" >
+                                        <span>+ {{ls.l('Add')}}</span>
+                                    </div>
+                                </div>
+                            </div>
+    
                         </div>
                         <div class="block" *ngIf="false">
                             <h3>{{ls.l('Location')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
