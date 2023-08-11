@@ -253,51 +253,55 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
             this.product.productUpgradeAssignments = undefined;
             this.product.downgradeProductId = undefined;
 
-            if (this.isFreePriceType)
-                this.product.price = 0;            
+            if (this.isFreePriceType) {
+                this.product.price = 0;
+                this.detectChanges();
+            }            
         }
+        
+        setTimeout(() => {
+            if (this.validationGroup.instance.validate().isValid) {
+                if (!this.product.groupId)
+                    this.product.groupName = this.customGroup;
 
-        if (this.validationGroup.instance.validate().isValid) {
-            if (!this.product.groupId)
-                this.product.groupName = this.customGroup;
+                if (this.product.productSubscriptionOptions)
+                    this.product.productSubscriptionOptions.forEach(item => {
+                        if (item.trialDayCount == null || isNaN(item.trialDayCount))
+                            item.trialDayCount = 0;
+                    });
 
-            if (this.product.productSubscriptionOptions)
-                this.product.productSubscriptionOptions.forEach(item => {
-                    if (item.trialDayCount == null || isNaN(item.trialDayCount))
-                        item.trialDayCount = 0;
-                });
+                let upgradeProducts = this.product.productUpgradeAssignments;
+                if (upgradeProducts && upgradeProducts.length == 1 && !upgradeProducts[0].upgradeProductId)
+                    this.product.productUpgradeAssignments = undefined;
 
-            let upgradeProducts = this.product.productUpgradeAssignments;
-            if (upgradeProducts && upgradeProducts.length == 1 && !upgradeProducts[0].upgradeProductId)
-                this.product.productUpgradeAssignments = undefined;
-
-            if (this.product instanceof UpdateProductInput) {
-                this.productProxy.updateProduct(this.product).pipe(
-                    switchMap(() => this.getUpdateProductImageObservable((<any>this.product).id))
-                ).subscribe(() => {
-                    this.notify.info(this.ls.l('SavedSuccessfully'));
-                    if (this.selectedOption.data.close)
-                        this.dialogRef.close();
-                });
+                if (this.product instanceof UpdateProductInput) {
+                    this.productProxy.updateProduct(this.product).pipe(
+                        switchMap(() => this.getUpdateProductImageObservable((<any>this.product).id))
+                    ).subscribe(() => {
+                        this.notify.info(this.ls.l('SavedSuccessfully'));
+                        if (this.selectedOption.data.close)
+                            this.dialogRef.close();
+                    });
+                }
+                else {
+                    this.productProxy.createProduct(this.product).pipe(
+                        switchMap((res) => zip(of(res), this.getUpdateProductImageObservable(res.productId)))
+                    ).subscribe(([res,]) => {
+                        this.notify.info(this.ls.l('SavedSuccessfully'));
+                        this.product = new UpdateProductInput({id: res.productId, ...this.product});
+                        if (this.selectedOption.data.close)
+                            this.dialogRef.close(new ProductDto({
+                                id: res.productId,
+                                group: this.product.groupName,
+                                name: this.product.name,
+                                code: this.product.code,
+                                paymentPeriodTypes: this.product.productSubscriptionOptions &&
+                                    this.product.productSubscriptionOptions.map(item => item.frequency)
+                            }));
+                    });
+                }
             }
-            else {
-                this.productProxy.createProduct(this.product).pipe(
-                    switchMap((res) => zip(of(res), this.getUpdateProductImageObservable(res.productId)))
-                ).subscribe(([res,]) => {
-                    this.notify.info(this.ls.l('SavedSuccessfully'));
-                    this.product = new UpdateProductInput({id: res.productId, ...this.product});
-                    if (this.selectedOption.data.close)
-                        this.dialogRef.close(new ProductDto({
-                            id: res.productId,
-                            group: this.product.groupName,
-                            name: this.product.name,
-                            code: this.product.code,
-                            paymentPeriodTypes: this.product.productSubscriptionOptions &&
-                                this.product.productSubscriptionOptions.map(item => item.frequency)
-                        }));
-                });
-            }
-        }
+        });
     }
 
     getUpdateProductImageObservable(productId: number) {
@@ -649,5 +653,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
     showDocumentsDialog() {
         this.contactsService.showTemplateDocumentsDialog(undefined, () => {}, false, true);
+    }
+
+    onProductTypeChanged(productType: ProductType) {
+        let options = this.product.productSubscriptionOptions;
+        if (productType == ProductType.Subscription && (!options || !options.length))
+            this.addNewPaymentPeriod();
+
+        this.product.type = productType;
+        this.detectChanges();
     }
 }

@@ -9,17 +9,17 @@
             <div class="wrapper">
                 <div class="content">
                     <div class="left">
-                        <div class="block" [ngClass]="{selected: product.type == productType.Subscription}" (click)="product.type = productType.Subscription">
+                        <div class="block" [ngClass]="{selected: product.type == productType.Subscription}" (click)="onProductTypeChanged(productType.Subscription)">
                             <img class="head" src="assets/common/icons/team.svg"> 
                             <h3>{{ls.l('Membership or Subscription')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <p>{{ls.l('Selling memberships or subscriptions enable you to sell regularly delivered products with recurring payments.')}}</p>
                         </div>
-                        <div class="block" [ngClass]="{selected: product.type == productType.Digital}" (click)="product.type = productType.Digital">
+                        <div class="block" [ngClass]="{selected: product.type == productType.Digital}" (click)="onProductTypeChanged(productType.Digital)">
                             <img class="head" src="assets/common/icons/group.svg">
                             <h3>{{ls.l('Digital Download Product')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <p>{{ls.l('Sell digital downloadable such as Software, eBooks, PDFs, templates, music, videos, or anything else digital.')}}</p>
                         </div>
-                        <div class="block" [ngClass]="{selected: product.type == productType.General}" (click)="product.type = productType.General">
+                        <div class="block" [ngClass]="{selected: product.type == productType.General}" (click)="onProductTypeChanged(productType.General)">
                             <img class="head" src="assets/common/icons/open-book.svg">
                             <h3>{{ls.l('Physical Product')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <p>{{ls.l('Sell books, merchandise, mugs, t-shirts, art, or any other product that requires shipping.')}}</p>
