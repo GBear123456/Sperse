@@ -68,17 +68,26 @@
                 font-weight: 500;
             }
             label {
+                height: 23px;
+                white-space: nowrap;
                 font-family: Poppins;
                 font-size: 13px;
                 font-weight: 500;
+                margin: 10px 0 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
             }
             p {
                 font-family: Poppins;
                 font-size: 13px;
                 font-weight: 400;
             }
-            hr.wide {
-                border: 2px solid rgba(0,0,0,.1);
+            hr {
+                margin: 10px 0;
+                &.wide {
+                    border: 2px solid rgba(0,0,0,.1);
+                }
             }
             .add-group-button {
                 position: absolute;
@@ -172,13 +181,14 @@
 
             .commissions {
                 display: flex;
+                flex-wrap: wrap;
                 justify-content: space-around;
                 &.disabled {
                     opacity: 0.5;
                     pointer-events: none;
                 }
                 & > div {
-                    margin: 10px;
+                    margin: 0 10px 10px;
                 }
             }            
             span.enable-commissions {
@@ -235,6 +245,7 @@
                 }
             }
             ::ng-deep dx-switch {
+                height: 23px;
                 &.dx-switch-on-value {
                     .dx-switch-container {
                         background: #68ACE9;
@@ -413,7 +424,7 @@
                 display: flex;
                 justify-content: space-between;
                 & > div {
-                    margin: 10px;
+                    margin: 0 10px 20px;
                     &:first-child {
                         margin-left: 0;
                     }
