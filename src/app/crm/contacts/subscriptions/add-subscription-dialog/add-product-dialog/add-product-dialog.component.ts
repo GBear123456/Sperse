@@ -17,6 +17,8 @@ import { getCurrencySymbol } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Observable, of, zip } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
+import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
 
 /** Application imports */
 import {
@@ -39,10 +41,9 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
-import { DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
+import { AppConsts } from '@shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
-import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
@@ -91,12 +92,14 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     productUnits = Object.keys(ProductMeasurementUnit).map(
         key => this.ls.l('ProductMeasurementUnit_' + key)
     );
+    regexPatterns = AppConsts.regexPatterns;
     recurringPaymentFrequency = RecurringPaymentFrequency;
     frequencies = Object.keys(RecurringPaymentFrequency);
     customPeriodTypes = Object.keys(CustomPeriodType);
     gracePeriodDefaultValue: number;
     customGroup: string;
     isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
+    isPublicProductEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
     title: string;
     isReadOnly = true;
     image: string = null;

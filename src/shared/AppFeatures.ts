@@ -29,6 +29,7 @@ export enum AppFeatures {
     CRMMaxProductCount = 'CRM.MaxProductCount',
     CRMMaxUserCount = 'CRM.MaxUserCount',
     CRMPayments = 'CRM.Payments',
+    CRMPublicProducts = 'CRM.PublicProducts',
     CRMSalesTalk = 'CRM.SalesTalk',
     CRMSubscriptionManagementSystem = 'CRM.SubscriptionManagementSystem',
     CRMWooCommerceSynchronization = 'CRM.WooCommerceSynchronization',

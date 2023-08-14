@@ -16,7 +16,7 @@ import { ContditionsModalData } from '../../../shared/common/conditions-modal/co
 import { GetPublicInvoiceInfoOutput, UserInvoiceServiceProxy, InvoiceStatus, PayPalServiceProxy, InvoicePaypalPaymentInfo } from '@root/shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PayPalComponent } from './pay-pal/pay-pal.component';
+import { PayPalComponent } from '@shared/common/paypal/paypal.component';
 import { InvoiceDueStatus } from '@app/crm/invoices/invoices-dto.interface';
 import { InvoiceHelpers } from '@app/crm/invoices/invoices.helper';
 
@@ -124,8 +124,10 @@ export class InvoiceComponent implements OnInit {
     }
 
     initializePayPal() {
-        if (this.payPalInfo && this.payPal) {
-            this.payPal.initialize(this.tenantId, this.publicId, this.payPalInfo)
+        if (this.payPalInfo && this.payPal && this.payPalInfo.isApplicable && !this.payPal.initialized) {
+            this.payPal.initialize(this.payPalInfo.clientId, this.payPalInfo.isSubscription,
+                () => this.paypalServiceProxy.requestPayment(this.tenantId, this.publicId).toPromise(),
+                () => this.paypalServiceProxy.requestSubscription(this.tenantId, this.publicId).toPromise());
         }
     }
 

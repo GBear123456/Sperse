@@ -12,6 +12,7 @@ import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment
 import {
     PaymentPeriodType,
     ProductInfo,
+    ProductMeasurementUnit,
     ProductServiceProxy,
     RecurringPaymentFrequency
 } from '@shared/service-proxies/service-proxies';
@@ -60,6 +61,38 @@ export class PaymentService {
                 return BillingPeriod.Yearly;
             case PaymentPeriodType.LifeTime:
                 return BillingPeriod.LifeTime;
+            default:
+                return undefined;
+        }
+    }
+
+    static getBillingPeriodByPaymentFrequency(frequency: RecurringPaymentFrequency): BillingPeriod {
+        switch (frequency) {
+            case RecurringPaymentFrequency.Monthly:
+                return BillingPeriod.Monthly;
+            case RecurringPaymentFrequency.Annual:
+                return BillingPeriod.Yearly;
+            case RecurringPaymentFrequency.LifeTime:
+                return BillingPeriod.LifeTime;
+            case RecurringPaymentFrequency.Custom:
+                return BillingPeriod.Custom;
+            default:
+                return undefined;
+        }
+    }
+
+    static getProductMeasurementUnit(frequency: RecurringPaymentFrequency): ProductMeasurementUnit {
+        switch (frequency) {
+            case RecurringPaymentFrequency.Monthly:
+                return ProductMeasurementUnit.Month;
+            case RecurringPaymentFrequency.Annual:
+                return ProductMeasurementUnit.Year;
+            case RecurringPaymentFrequency.LifeTime:
+                return ProductMeasurementUnit.Piece;
+            case RecurringPaymentFrequency.OneTime:
+                return ProductMeasurementUnit.OneTime;
+            case RecurringPaymentFrequency.Custom:
+                return ProductMeasurementUnit.Custom;
             default:
                 return undefined;
         }

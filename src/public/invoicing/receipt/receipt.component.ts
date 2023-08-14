@@ -60,15 +60,7 @@ export class ReceiptComponent implements OnInit {
                                 return;
                             }
 
-                            this.currentRetryCount++;
-                            if (this.currentRetryCount >= ReceiptComponent.maxRetryCount) {
-                                abp.ui.clearBusy();
-                                this.failedToLoad = true;
-                                this.failMessage = 'Failed to load payment information. Please refresh the page or try again later.';
-                            }
-                            else {
-                                setTimeout(() => this.getInvoiceInfo(tenantId, publicId), ReceiptComponent.retryDelay);
-                            }
+                            this.retryDataRequest(tenantId, publicId);
                             return;
                         }
                     case InvoiceStatus.Paid:
@@ -81,13 +73,23 @@ export class ReceiptComponent implements OnInit {
                         }
                     default:
                         {
-                            abp.ui.clearBusy();
-                            this.failedToLoad = true;
-                            this.failMessage = `Invoice in status ${result.invoiceStatus} could not be paid`;
+                            this.retryDataRequest(tenantId, publicId);
                             return;
                         }
                 }
             });
+    }
+
+    retryDataRequest(tenantId, publicId) {
+        this.currentRetryCount++;
+        if (this.currentRetryCount >= ReceiptComponent.maxRetryCount) {
+            abp.ui.clearBusy();
+            this.failedToLoad = true;
+            this.failMessage = 'Failed to load payment information. Please refresh the page or try again later.';
+        }
+        else {
+            setTimeout(() => this.getInvoiceInfo(tenantId, publicId), ReceiptComponent.retryDelay);
+        }
     }
 
     setReturnLinkInfo() {
