@@ -27,26 +27,28 @@
                                     [disabled]="true">
                         </mat-slider>
                     </div>
-                    <div class="trial-day-count" *ngIf="selectedSubscriptionOption.trialDayCount">
-                        <span *ngIf="selectedSubscriptionOption.signupFee; else free">{{ currencySymbol }}{{selectedSubscriptionOption.signupFee | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
-                        <ng-template #free>{{ls.l('Free')}}</ng-template>
+                    <div class="price-wrapper">
+                        <div class="trial-day-count" *ngIf="selectedSubscriptionOption.trialDayCount">
+                            <span *ngIf="selectedSubscriptionOption.signupFee; else free">{{ currencySymbol }}{{selectedSubscriptionOption.signupFee | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
+                            <ng-template #free>{{ls.l('Free')}}</ng-template>
+                        </div>
+                        <div class="amountPerMonth">
+                            <ng-container *ngIf="!isFreeProductSelected else freeOption">
+                                <span class="currency-symbol">{{ currencySymbol }}</span>
+                                <span class="number">
+                                    {{ getPricePerPeriod() | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
+                                </span>
+                                <div class="number-info">
+                                    <span class="decimal">{{ getPricePerPeriod() | customNumber: '0.2-2' }}</span>
+                                    <span>/{{ getPriceDescription() }}</span>
+                                </div>
+                            </ng-container>
+                            <ng-template #freeOption>
+                                <span class="number">{{ls.l('Free')}}</span>
+                            </ng-template>
+                        </div>
+                        <div class="trial-period-note" *ngIf="selectedSubscriptionOption.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
                     </div>
-                    <div class="amountPerMonth">
-                        <ng-container *ngIf="!isFreeProductSelected else freeOption">
-                            <span class="currency-symbol">{{ currencySymbol }}</span>
-                            <span class="number">
-                                {{ getPricePerPeriod() | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
-                            </span>
-                            <div class="number-info">
-                                <span class="decimal">{{ getPricePerPeriod() | customNumber: '0.2-2' }}</span>
-                                <span>/{{ getPriceDescription() }}</span>
-                            </div>
-                        </ng-container>
-                        <ng-template #freeOption>
-                            <span class="number">{{ls.l('Free')}}</span>
-                        </ng-template>
-                    </div>
-                    <div class="trial-period-note" *ngIf="selectedSubscriptionOption.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
                 </div>
             </ng-container>
             <ng-template #generalProduct>
