@@ -31,12 +31,12 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class PaymentsInfoComponent implements OnInit {
     @Input() paymentInfoScrollHeight: number;
+    @Input() amountCurrency = SettingsHelper.getCurrency();
 
     @ViewChild('paymentsContainer', { static: true }) paymentsContainer: ElementRef;
     @ViewChild('paymentMethodsContainer', { static: true }) paymentMethodsContainer: ElementRef;
     totalPaymentAmount: number;
     hasRecurringBilling: boolean;
-    amountCurrency = SettingsHelper.getCurrency();
     payments$: Observable<ShortPaymentInfo[]>;
     displayedPayments$: Observable<ShortPaymentInfo[]>;
     paymentMethods$: Observable<PaymentMethodInfo[]>;
