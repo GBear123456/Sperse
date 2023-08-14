@@ -2,7 +2,7 @@
     <h2 mat-dialog-title>{{ title }}</h2>
 </header>
 <mat-dialog-content>
-    <mat-tab-group>
+    <mat-tab-group [selectedIndex]="selectedTabIndex">
         <mat-tab [label]="ls.l('FromComputer').toUpperCase()">
             <div class="file-loading">
                 <span>{{ ls.l('SelectPhotoToApply') }}</span>

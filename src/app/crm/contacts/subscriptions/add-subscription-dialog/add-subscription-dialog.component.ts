@@ -35,7 +35,7 @@ import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dro
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
+import { CreateProductDialogComponent } from './create-product-dialog/create-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './add-member-service-dialog/add-member-service-dialog.component';
 import { BulkProgressDialogComponent } from '@shared/common/dialogs/bulk-progress/bulk-progress-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -292,8 +292,8 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     }
 
     showAddProductDialog(component, previousValue: string) {
-        this.dialog.open(AddProductDialogComponent, {
-            panelClass: 'slider',
+        this.dialog.open(CreateProductDialogComponent, {
+            panelClass: ['slider'],
             disableClose: true,
             closeOnNavigation: false,
             data: {

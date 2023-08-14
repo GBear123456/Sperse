@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSliderModule } from '@angular/material/slider';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -37,6 +38,7 @@ import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
 import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
+import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxFileManagerModule } from 'devextreme-angular';
 
 import { NgxFileDropModule } from 'ngx-file-drop';
@@ -150,6 +152,7 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
 import { AddProductDialogComponent, FilterAssignmentsPipe } from './subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
+import { CreateProductDialogComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './subscriptions/add-subscription-dialog/add-member-service-dialog/add-member-service-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { AffiliateHistoryDialogComponent } from './personal-details/personal-details-dialog/affiliate-history-dialog/affiliate-history-dialog.component';
@@ -219,6 +222,7 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
         CreateInvoiceDialogComponent,
         LeadRelatedContactsComponent,
         AddProductDialogComponent,
+        CreateProductDialogComponent,
         FilterAssignmentsPipe,
         AddMemberServiceDialogComponent,
         TemplateDocumentsDialogComponent,
@@ -264,6 +268,7 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
         DxTreeViewModule,
         DxTagBoxModule,
         DxTabsModule,
+        DxSwitchModule,
         RoundProgressModule,
         PipelineModule,
         DxRadioGroupModule,
@@ -291,6 +296,7 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
         MatExpansionModule,
         GooglePlaceModule,
         MatTooltipModule,
+        MatSliderModule,
         FeaturesModule,
         InvoiceGridMenuModule
     ],
@@ -318,6 +324,7 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
         AddProductDialogComponent,
+        CreateProductDialogComponent,
         AddMemberServiceDialogComponent,
         TemplateDocumentsDialogComponent,
         AffiliateHistoryDialogComponent,
