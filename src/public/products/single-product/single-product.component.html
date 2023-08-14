@@ -32,31 +32,41 @@
                         <ng-template #free>{{ls.l('Free')}}</ng-template>
                     </div>
                     <div class="amountPerMonth">
-                        <span class="currency-symbol">{{ currencySymbol }}</span>
-                        <span class="number">
-                            {{ getPricePerPeriod() | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
-                        </span>
-                        <div class="number-info">
-                            <span class="decimal">{{ getPricePerPeriod() | customNumber: '0.2-2' }}</span>
-                            <span>/{{ getPriceDescription() }}</span>
-                        </div>
+                        <ng-container *ngIf="!isFreeProductSelected else freeOption">
+                            <span class="currency-symbol">{{ currencySymbol }}</span>
+                            <span class="number">
+                                {{ getPricePerPeriod() | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
+                            </span>
+                            <div class="number-info">
+                                <span class="decimal">{{ getPricePerPeriod() | customNumber: '0.2-2' }}</span>
+                                <span>/{{ getPriceDescription() }}</span>
+                            </div>
+                        </ng-container>
+                        <ng-template #freeOption>
+                            <span class="number">{{ls.l('Free')}}</span>
+                        </ng-template>
                     </div>
                     <div class="trial-period-note" *ngIf="selectedSubscriptionOption.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
                 </div>
             </ng-container>
             <ng-template #generalProduct>
                 <div class="price">
-                    <div class="quantity">
-                        <div class="quantity-title">Quantity</div>
-                        <div class="quantity-controls">
-                            <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>
-                            <span class="value">{{requestInfo.quantity}}</span>
-                            <span (click)="changeQuantity(requestInfo.quantity + 1)">+</span>
+                    <ng-container *ngIf="!isFreeProductSelected else freeProduct">
+                        <div class="quantity">
+                            <div class="quantity-title">Quantity</div>
+                            <div class="quantity-controls">
+                                <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>
+                                <span class="value">{{requestInfo.quantity}}</span>
+                                <span (click)="changeQuantity(requestInfo.quantity + 1)">+</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="price__new">
-                        <span>{{ (productInfo.price * requestInfo.quantity) | number : '1.0-2'}}</span>
-                    </div>
+                        <div class="price__new">
+                            <span>{{ (productInfo.price * requestInfo.quantity) | number : '1.0-2'}}</span>
+                        </div>
+                    </ng-container>
+                    <ng-template #freeProduct>
+                        <div class="free-product">{{ls.l('Free')}}</div>
+                    </ng-template>
                 </div>
             </ng-template>
             <div *ngIf="descriptionHtml" class="description-html" [innerHtml]="descriptionHtml"></div>
@@ -104,14 +114,21 @@
                     </div>
                 </div>
                 <div class="login_btn">
-                    <button class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
-                        Pay with <img src="assets/common/images/stripe.svg" />
-                    </button>
-                    <pay-pal *ngIf="productInfo.data.paypalClientId"
-                             [height]="55"
-                             [disabled]="!isFormValid()"
-                             (onApprove)="onPayPalApprove()">
-                    </pay-pal>
+                    <div [style.display]="isFreeProductSelected ? 'block' : 'none'">
+                        <button class="button_global button_global_green" [ngClass]="{disabled: !isFormValid()}" (click)="submitFreeRequest()">
+                            {{ productInfo.type == productType.Subscription ? 'Subscribe' : 'Purchase' }}
+                        </button>
+                    </div>
+                    <div class="gateways" [style.display]="!isFreeProductSelected ? 'flex' : 'none'">
+                        <button class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
+                            Pay with <img src="assets/common/images/stripe.svg" />
+                        </button>
+                        <pay-pal *ngIf="productInfo.data.paypalClientId"
+                                 [height]="55"
+                                 [disabled]="!isFormValid()"
+                                 (onApprove)="onPayPalApprove()">
+                        </pay-pal>
+                    </div>
                 </div>
             </form>
         </div>
