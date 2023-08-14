@@ -11,6 +11,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { PublicProductsRoutingModule } from './public-products-routing.module';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
 import { UtilsModule } from '@shared/utils/utils.module';
+import { PaypalModule } from '@shared/common/paypal/paypal.module';
 
 import { SingleProductComponent } from './single-product/single-product.component';
 
@@ -24,7 +25,8 @@ import { PublicProductServiceProxy } from '@root/shared/service-proxies/service-
         PublicProductsRoutingModule,
         CountryPhoneNumberModule,
         UtilsModule,
-        MatSliderModule
+        MatSliderModule,
+        PaypalModule
     ],
     exports: [],
     declarations: [
