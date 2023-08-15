@@ -445,23 +445,25 @@
                         <div class="block" *ngIf="false">
                             <h3>{{ls.l('Product Tags')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                         </div>
-                        <div class="block" *ngIf="product.type == defaultProductType && isHostTenant">
-                            <h3>{{ls.l('Downgrade to Option')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
-                            <div class="options">
-                                <div *ngIf="!isReadOnly" class="remove-button" (click)="product.downgradeProductId = undefined"><span>-</span></div>
-                                <div class="upgrade-field">
-                                    <dx-select-box name="name"
-                                                   width="100%"
-                                                   valueExpr="id"
-                                                   displayExpr="name"
-                                                   [showClearButton]="false"
-                                                   [dataSource]="products$ | async"
-                                                   [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
-                                                   [(value)]="product.downgradeProductId"
-                                                   [disabled]="isReadOnly">
-                                    </dx-select-box>
+                        <div class="block" *ngIf="product.type == defaultProductType">
+                            <ng-container *ngIf="isHostTenant">
+                                <h3>{{ls.l('Downgrade to Option')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                                <div class="options">
+                                    <div *ngIf="!isReadOnly" class="remove-button" (click)="product.downgradeProductId = undefined"><span>-</span></div>
+                                    <div class="upgrade-field">
+                                        <dx-select-box name="name"
+                                                       width="100%"
+                                                       valueExpr="id"
+                                                       displayExpr="name"
+                                                       [showClearButton]="false"
+                                                       [dataSource]="products$ | async"
+                                                       [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
+                                                       [(value)]="product.downgradeProductId"
+                                                       [disabled]="isReadOnly">
+                                        </dx-select-box>
+                                    </div>
                                 </div>
-                            </div>
+                            </ng-container>
                             <div class="options-header">
                                 <h3>{{ls.l('Upgrade to Options')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                                 <div *ngIf="!isReadOnly" class="add-new-button" (click)="addUpgradeToProduct()"><span>+</span></div>
