@@ -276,6 +276,8 @@ export class SingleProductComponent implements OnInit {
         if (this.selectedBillingPeriod == BillingPeriod.Custom) {
             return this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', this.selectedSubscriptionOption.customPeriodCount,
                 this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[this.selectedSubscriptionOption.customPeriodType]));
+        } else if (this.selectedBillingPeriod == BillingPeriod.OneTime) {
+            return this.ls.l('price' + BillingPeriod[this.selectedBillingPeriod], this.selectedSubscriptionOption.customPeriodCount);
         } else {
             return this.ls.l('price' + BillingPeriod[this.selectedBillingPeriod]);
         }
