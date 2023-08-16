@@ -128,11 +128,11 @@ export class SingleProductComponent implements OnInit {
                         this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
                     this.initSubscriptionProduct();
                     this.initializePayPal();
+                    this.checkIsFree();
                 } else {
                     this.showNotFound = true;
                 }
 
-                this.checkIsFree();
                 this.changeDetector.detectChanges();
             }, () => {
                 this.showNotFound = true;
@@ -238,10 +238,10 @@ export class SingleProductComponent implements OnInit {
     checkIsFree() {
         switch (this.productInfo.type) {
             case ProductType.General:
-                this.isFreeProductSelected = (this.productInfo && this.productInfo.price == 0);
+                this.isFreeProductSelected = this.productInfo.price == 0;
                 break;
             case ProductType.Subscription:
-                this.isFreeProductSelected = (this.selectedSubscriptionOption && this.selectedSubscriptionOption.fee == 0);
+                this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0;
                 break;
         }
     }
