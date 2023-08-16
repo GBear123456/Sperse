@@ -160,6 +160,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         })
     );
     readonly addNewItemId = -1;
+    isPublicProductsEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
     productTypes: string[] = Object.keys(ProductType).filter(item => item == 'Subscription' ? this.isSubscriptionManagementEnabled : true);
     defaultProductType = this.isSubscriptionManagementEnabled ? ProductType.Subscription : ProductType.General;
@@ -219,7 +220,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
                 this.product.type = this.defaultProductType;
-                this.product.publicName = this.defaultProductUri;
+                if (this.isPublicProductsEnabled)
+                    this.product.publicName = this.defaultProductUri;
                 this.addUpgradeToProduct();
             }
         }
@@ -296,7 +298,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.detectChanges();
             }            
         }
-    
+
         this.resourceLinkUrl = '';
         setTimeout(() => {
             if (this.validationGroup.instance.validate().isValid) {
@@ -645,7 +647,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     updateProductUrl(value) {
-        this.defaultProductUri = this.product.publicName = value;
+        if (this.isPublicProductsEnabled)
+            this.defaultProductUri = this.product.publicName = value;
     }
 
     disabledValidationCallback() {
@@ -653,7 +656,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     onProductCodeChanged(event) {
-        if (!this.defaultProductUri && (!this.data.product || !this.data.product.id))
+        if (this.isPublicProductsEnabled && !this.defaultProductUri && (!this.data.product || !this.data.product.id))
             this.product.publicName = event.value.replace(/[^a-zA-Z0-9-._~]+/, '');
     }
 
