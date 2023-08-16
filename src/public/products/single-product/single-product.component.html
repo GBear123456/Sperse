@@ -28,8 +28,8 @@
                         </mat-slider>
                     </div>
                     <div class="price-wrapper">
-                        <div class="trial-day-count" *ngIf="selectedSubscriptionOption.trialDayCount">
-                            <span *ngIf="selectedSubscriptionOption.signupFee; else free">{{ currencySymbol }}{{selectedSubscriptionOption.signupFee | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
+                        <div class="trial-day-count" *ngIf="selectedSubscriptionOption?.trialDayCount">
+                            <span *ngIf="selectedSubscriptionOption?.signupFee; else free">{{ currencySymbol }}{{selectedSubscriptionOption.signupFee | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
                             <ng-template #free>{{ls.l('Free')}}</ng-template>
                         </div>
                         <div class="amountPerMonth">
@@ -47,7 +47,7 @@
                                 <span class="number">{{ls.l('Free')}}</span>
                             </ng-template>
                         </div>
-                        <div class="trial-period-note" *ngIf="selectedSubscriptionOption.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
+                        <div class="trial-period-note" *ngIf="selectedSubscriptionOption?.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
                     </div>
                 </div>
             </ng-container>

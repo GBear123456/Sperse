@@ -66,7 +66,7 @@ export class SingleProductComponent implements OnInit {
     billingPeriod = BillingPeriod;
 
     selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
-    static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.Custom];
+    static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.OneTime, BillingPeriod.Custom];
     availablePeriods: BillingPeriod[] = [];
     selectedBillingPeriod;
     isFreeProductSelected = false;
@@ -238,10 +238,10 @@ export class SingleProductComponent implements OnInit {
     checkIsFree() {
         switch (this.productInfo.type) {
             case ProductType.General:
-                this.isFreeProductSelected = this.productInfo.price == 0;
+                this.isFreeProductSelected = (this.productInfo && this.productInfo.price == 0);
                 break;
             case ProductType.Subscription:
-                this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0;
+                this.isFreeProductSelected = (this.selectedSubscriptionOption && this.selectedSubscriptionOption.fee == 0);
                 break;
         }
     }

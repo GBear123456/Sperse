@@ -74,6 +74,8 @@ export class PaymentService {
                 return BillingPeriod.Yearly;
             case RecurringPaymentFrequency.LifeTime:
                 return BillingPeriod.LifeTime;
+            case RecurringPaymentFrequency.OneTime:
+                return BillingPeriod.OneTime;
             case RecurringPaymentFrequency.Custom:
                 return BillingPeriod.Custom;
             default:
@@ -106,6 +108,8 @@ export class PaymentService {
                 return PaymentPeriodType.Annual;
             case BillingPeriod.LifeTime:
                 return PaymentPeriodType.LifeTime;
+            case BillingPeriod.OneTime:
+                return PaymentPeriodType.OneTime;
             case BillingPeriod.Custom:
                 return PaymentPeriodType.Custom;
             default:
@@ -121,6 +125,8 @@ export class PaymentService {
                 return RecurringPaymentFrequency.Annual;
             case BillingPeriod.LifeTime:
                 return RecurringPaymentFrequency.LifeTime;
+            case BillingPeriod.OneTime:
+                return RecurringPaymentFrequency.OneTime;
             case BillingPeriod.Custom:
                 return RecurringPaymentFrequency.Custom;
             default:
