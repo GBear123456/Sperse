@@ -12,11 +12,12 @@ import { NotifyService } from 'abp-ng2-module';
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { ContditionsModalData } from '../../../shared/common/conditions-modal/conditions-modal-data';
+import { ContditionsModalData } from '@shared/common/conditions-modal/conditions-modal-data';
 import { GetPublicInvoiceInfoOutput, UserInvoiceServiceProxy, InvoiceStatus, PayPalServiceProxy, InvoicePaypalPaymentInfo } from '@root/shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PayPalComponent } from '@shared/common/paypal/paypal.component';
+import { ButtonType } from '@shared/common/paypal/button-type.enum';
 import { InvoiceDueStatus } from '@app/crm/invoices/invoices-dto.interface';
 import { InvoiceHelpers } from '@app/crm/invoices/invoices.helper';
 
@@ -125,7 +126,8 @@ export class InvoiceComponent implements OnInit {
 
     initializePayPal() {
         if (this.payPalInfo && this.payPal && this.payPalInfo.isApplicable && !this.payPal.initialized) {
-            this.payPal.initialize(this.payPalInfo.clientId, this.payPalInfo.isSubscription,
+            let type = this.payPalInfo.isSubscription ? ButtonType.Subscription : ButtonType.Payment;
+            this.payPal.initialize(this.payPalInfo.clientId, type,
                 () => this.paypalServiceProxy.requestPayment(this.tenantId, this.publicId).toPromise(),
                 () => this.paypalServiceProxy.requestSubscription(this.tenantId, this.publicId).toPromise());
         }

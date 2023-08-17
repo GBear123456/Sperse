@@ -1,13 +1,16 @@
 /** Core imports */
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GetInvoiceReceiptInfoOutput, InvoiceStatus, UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-proxies';
+import { GetInvoiceReceiptInfoOutput, InvoiceStatus, 
+    UserInvoiceServiceProxy, InvoiceReceiptResource } from '@root/shared/service-proxies/service-proxies';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ContditionsModalData } from '../../../shared/common/conditions-modal/conditions-modal-data';
 
@@ -36,7 +39,9 @@ export class ReceiptComponent implements OnInit {
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute,
+        public ls: AppLocalizationService,
         private userInvoiceService: UserInvoiceServiceProxy,
+        private clipboardService: ClipboardService,
         private dialog: MatDialog
     ) {
     }
@@ -120,5 +125,22 @@ export class ReceiptComponent implements OnInit {
                 onlyHost: true
             }
         });
+    }
+
+    resourceClick(event, resource) {
+        if (resource.url) {
+            this.clipboardService.copyFromContent(resource.url);
+            abp.notify.info(this.ls.l('SavedToClipboard'));
+        } else {
+            const tenantId: any = this.activatedRoute.snapshot.paramMap.get('tenantId');
+            const publicId = this.activatedRoute.snapshot.paramMap.get('publicId');
+
+            this.userInvoiceService.getInvoiceResourceUrl(tenantId, publicId, resource.id).subscribe(url => {
+                window.open(url, '_blank');
+            });
+        }
+
+        event.stopPropagation();
+        event.preventDefault();
     }
 }

@@ -125,7 +125,7 @@ export class RootComponent implements OnInit, AfterViewInit {
         this.uiCustomizationService.overflowHidden(value);
     }
 
-    public addScriptLink(src: String, type: String = 'text/javascript', callback = null): void {
+    public addScriptLink(src: String, type: String = 'text/javascript', callback = null, data = {}): void {
         if (Array.prototype.some.call(this.document.scripts, (script) => {
             return script.src == src;
         })) return ;
@@ -133,6 +133,9 @@ export class RootComponent implements OnInit, AfterViewInit {
         let script = this.document.createElement('script');
         script.type = type;
         script.src = src;
+        for (const prop in data)
+            script.dataset[prop] = data[prop];
+
         if (callback)
             script.addEventListener('load', callback);
         this.document.head.append(script);
