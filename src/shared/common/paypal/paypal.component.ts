@@ -1,4 +1,8 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
+import { RootComponent } from '@root/root.component';
+
+import { ButtonType } from './button-type.enum';
+import { ButtonConfigInterface } from './button-config.interface';
 
 @Component({
     selector: 'pay-pal',
@@ -10,47 +14,93 @@ import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from 
 export class PayPalComponent {
     @Input() set disabled(value: boolean) {
         this.isDisabled = value;
-        if (this.actions) {
-            if (value)
-                this.actions.disable();
-            else
-                this.actions.enable();
+        for (let config of this.getConfigsArray()) {
+            if (config.actions) {
+                if (value)
+                    config.actions.disable();
+                else
+                    config.actions.enable();
+            }
         }
     }
     @Input() height;
+    @Input() showButtonType: ButtonType = null;
     @Output() onApprove: EventEmitter<any> = new EventEmitter();
 
-    initialized: boolean = false;
+    buttonType = ButtonType;
 
     isDisabled: boolean;
-    isSubscription: boolean;
+    type: ButtonType;
     requestPayment: () => Promise<string>;
     requestSubscription: () => Promise<string>;
 
-    actions: any;
+    paymentButtonId = 'paypal-button-payment';
+    subscriptionButtonId = 'paypal-button-subscription';
+
+    config: { [id in ButtonType]?: ButtonConfigInterface } = {
+        [ButtonType.Payment]: {
+            isEnabled: false,
+            namespace: 'paypal_payment',
+            buttonId: this.paymentButtonId,
+            initialized: false,
+        },
+        [ButtonType.Subscription]: {
+            isEnabled: false,
+            namespace: 'paypal_subscription',
+            buttonId: this.subscriptionButtonId,
+            initialized: false
+        }
+    };
 
     constructor(
+        private root: RootComponent
     ) { }
 
-    initialize(clientId: string, isSubscription: boolean, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>) {
-        this.isSubscription = isSubscription;
+    get initialized(): boolean {
+        let enbaledConfigs = this.getConfigsArray();
+        if (enbaledConfigs.length == 0)
+            return false;
+
+        return enbaledConfigs.reduce((prev, curr) => prev && curr.initialized, true);
+    }
+
+    initialize(clientId: string, type: ButtonType, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>) {
+        this.type = type;
         this.requestPayment = requestPayment;
         this.requestSubscription = requestSubscription;
 
-        if ((<any>window)['paypal'])
-            setTimeout(() => { this.preparePaypalButton(); });
-        else {
-            jQuery.ajaxSetup({ cache: true });
-            let payPalUrl = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
-            if (isSubscription)
-                payPalUrl += '&vault=true&intent=subscription';
+        if (type == ButtonType.Subscription || type == ButtonType.Both) {
+            this.initializeScript(clientId, ButtonType.Subscription);
+        }
 
-            jQuery.getScript(payPalUrl).done(() => { this.preparePaypalButton(); });
-            jQuery.ajaxSetup({ cache: false });
+        if (type == ButtonType.Payment || type == ButtonType.Both) {
+            this.initializeScript(clientId, ButtonType.Payment);
         }
     }
 
-    preparePaypalButton(): void {
+    private initializeScript(clientId: string, type: ButtonType) {
+        let typeConfig = this.config[type];
+        typeConfig.isEnabled = true;
+
+        if ((<any>window)[typeConfig.namespace])
+            setTimeout(() => {
+                this.preparePaypalButton(type, typeConfig.namespace, typeConfig.buttonId);
+            });
+        else {
+            let payPalUrl = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
+            if (type == ButtonType.Subscription)
+                payPalUrl += '&vault=true&intent=subscription';
+
+            let data = {
+                namespace: typeConfig.namespace
+            };
+            this.root.addScriptLink(payPalUrl, 'text/javascript', () => {
+                this.preparePaypalButton(type, typeConfig.namespace, typeConfig.buttonId);
+            }, data);
+        }
+    }
+
+    preparePaypalButton(type: ButtonType, namespace: string, buttonId: string): void {
         const self = this;
 
         //https://developer.paypal.com/sdk/js/reference/#link-paypalbuttonsoptions
@@ -64,26 +114,21 @@ export class PayPalComponent {
                 height: self.height
             },
             onInit(data, actions) {
-                self.actions = actions;
+                self.config[type].actions = actions;
                 if (self.isDisabled) {
                     actions.disable();
                 }
-            },
-            onApprove(data, actions) {
-                return actions.order.capture().then(function (details) {
-                    self.onApprove.emit();
-                });
             }
         };
 
-        if (this.isSubscription)
+        if (type == ButtonType.Subscription)
             this.prepareSubscriptionConfig(configObject);
         else
             this.preparePaymentConfig(configObject);
 
-        (<any>window).paypal.Buttons(configObject).render('#paypal-button');
+        (<any>window)[namespace].Buttons(configObject).render(`#${buttonId}`);
 
-        this.initialized = true;
+        this.config[type].initialized = true;
     }
 
     prepareSubscriptionConfig(configObject) {
@@ -106,5 +151,24 @@ export class PayPalComponent {
                 self.onApprove.emit();
             });
         }
+    }
+
+    checkHide(type: ButtonType) {
+        if (this.showButtonType == null || this.showButtonType == ButtonType.Both)
+            return false;
+
+        return type != this.showButtonType;
+    }
+
+    private getConfigsArray(): ButtonConfigInterface[] {
+        let array: ButtonConfigInterface[] = [];
+        let paymentConfig = this.config[ButtonType.Payment];
+        let subscriptionConfig = this.config[ButtonType.Subscription];
+
+        if (paymentConfig.isEnabled)
+            array.push(paymentConfig);
+        if (subscriptionConfig.isEnabled)
+            array.push(subscriptionConfig);
+        return array;
     }
 }
