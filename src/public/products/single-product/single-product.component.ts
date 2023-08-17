@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 
 /** Third party imports */
+import { Observable } from 'rxjs';
 import { finalize, map, tap } from 'rxjs/operators';
 
 /** Application imports */
@@ -24,7 +25,7 @@ import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { PayPalComponent } from '@shared/common/paypal/paypal.component';
-import { Observable } from 'rxjs';
+import { ButtonType } from '@shared/common/paypal/button-type.enum';
 
 @Component({
     selector: 'single-product',
@@ -43,6 +44,7 @@ export class SingleProductComponent implements OnInit {
     };
 
     private payPal: PayPalComponent;
+    paypalButtonType: ButtonType = null;
 
     currentYear: number = new Date().getFullYear();
     currencySymbol = '$';
@@ -95,7 +97,24 @@ export class SingleProductComponent implements OnInit {
 
     initializePayPal() {
         if (this.payPal && this.productInfo && !this.payPal.initialized) {
-            this.payPal.initialize(this.productInfo.data.paypalClientId, this.productInfo.type == ProductType.Subscription,
+            let type: ButtonType;
+            if (this.productInfo.type == ProductType.General)
+                type = ButtonType.Payment;
+            else {
+                let hasPayment = false;
+                let hasRecurring = false;
+                let singlePaymentOptions = [RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.OneTime];
+                this.productInfo.productSubscriptionOptions.map(v => {
+                    if (singlePaymentOptions.includes(v.frequency))
+                        hasPayment = true
+                    else
+                        hasRecurring = true;
+                });
+
+                type = hasRecurring && hasPayment ? ButtonType.Both :
+                    hasRecurring ? ButtonType.Subscription : ButtonType.Payment;
+            }
+            this.payPal.initialize(this.productInfo.data.paypalClientId, type,
                 this.getPayPalRequest.bind(this),
                 this.getPayPalRequest.bind(this));
         }
@@ -231,8 +250,7 @@ export class SingleProductComponent implements OnInit {
             if (billingPeriods.indexOf(v) >= 0)
                 this.availablePeriods.push(v);
         });
-        this.selectedBillingPeriod = this.availablePeriods[0];
-        this.updateSelectedSubscriptionOption();
+        this.toggle(this.availablePeriods[0]);
     }
 
     checkIsFree() {
@@ -253,6 +271,7 @@ export class SingleProductComponent implements OnInit {
     toggle(value: BillingPeriod) {
         this.selectedBillingPeriod = value;
         this.updateSelectedSubscriptionOption();
+        this.updateSubscriptionOptionPaypalButton();
         this.checkIsFree();
     }
 
@@ -264,6 +283,12 @@ export class SingleProductComponent implements OnInit {
 
     updateSelectedSubscriptionOption() {
         this.selectedSubscriptionOption = this.productInfo.productSubscriptionOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
+    }
+
+    updateSubscriptionOptionPaypalButton() {
+        this.paypalButtonType = this.selectedBillingPeriod == BillingPeriod.OneTime || this.selectedBillingPeriod == BillingPeriod.LifeTime ?
+            ButtonType.Payment :
+            ButtonType.Subscription;
     }
 
     getPricePerPeriod(): number {

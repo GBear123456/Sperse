@@ -127,6 +127,7 @@
                         </button>
                         <pay-pal *ngIf="productInfo.data.paypalClientId"
                                  [height]="55"
+                                 [showButtonType]="paypalButtonType"
                                  [disabled]="!isFormValid()"
                                  (onApprove)="onPayPalApprove()">
                         </pay-pal>
