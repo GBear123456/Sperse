@@ -388,6 +388,124 @@
                     color: #919698;
                 }
             }
+
+            .share-link {
+                min-height: 240px;
+                margin-top: 15px;
+                padding: 40px 30px 0;
+                text-align: center;
+                border: 1px dashed #dedede;
+                border-radius: 0px;
+            
+                img {
+                    margin: 0 0 15px;
+                }
+                h3 {
+                    font-family: Poppins;
+                    font-size: 17px;
+                    font-weight: 500;
+                    line-height: 26px;
+                    letter-spacing: 0em;
+                    text-align: center;
+                    color: #000;
+                }
+                p {
+                    font-family: Poppins;
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 19px;
+                    letter-spacing: 0em;
+                    text-align: center;
+                    color: #919698;
+                }
+                .share-add-link {
+                    position: relative;
+                    .add-group-button {
+                        top: 9px;
+                        right: 10px;
+                    }
+                }
+                ::ng-deep dx-text-box {
+                    &.dx-invalid.dx-texteditor.dx-editor-outlined.dx-show-invalid-badge {
+                        .dx-texteditor-input-container::after {
+                            right: 70px;
+                        }
+                    }
+                }
+                .link {
+                    text-align: left;
+                    padding: 10px 0;
+                }
+            }
+
+            .upload-files {
+                .browse-file {
+                    width: 100%;
+                    min-height: 250px;
+                }
+
+                ::ng-deep ngx-file-drop {
+                    .ngx-file-drop__drop-zone {
+                        height: auto;
+                        border: 1px dashed #dedede;
+                        border-radius: 0px;
+                        min-height: 250px;
+                    }
+
+                    .ngx-file-drop__content {
+                        height: auto;
+                        padding: 10px;
+                        min-height: 250px;
+                        flex-direction: column;
+                        img {
+                            margin: 0 0 15px;
+                        }
+                        h3 {
+                            font-family: Poppins;
+                            font-size: 17px;
+                            font-weight: 500;
+                            line-height: 26px;
+                            letter-spacing: 0em;
+                            text-align: left;
+                            color: #000000;                
+                        }
+                        span {
+                            padding: 10px 0;
+                            font-family: Poppins;
+                            font-size: 14px;
+                            font-weight: 400;
+                            line-height: 19px;
+                            letter-spacing: 0em;
+                            text-align: center;
+                            color: #919698;
+                        }
+                        .buttons {
+                            font-family: Poppins;
+                            font-size: 13px;
+                            font-weight: 400;
+                            line-height: 19px;
+                            letter-spacing: 0em;
+                            text-align: left;
+                            color: #919698;
+                        }
+                        button {
+                            width: 220px;
+                            height: 42px;
+                            font-family: Poppins;
+                            font-size: 14px;
+                            font-weight: 500;
+                            line-height: 21px;
+                            letter-spacing: -0.01em;                            
+                            text-align: center;
+                            &.button-default {
+                                border: 1px solid #68ACE9;
+                                color: #68ACE9;
+                                border-radius: 20px;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -510,6 +628,38 @@
 
             input {
                 border: none;
+            }
+        }
+    }
+
+    .resources {
+        border-bottom: none;
+        .resource {
+            background: linear-gradient(to right, #00ef0c47, #00ef0c47);
+            background-repeat: no-repeat;
+            display: inline-block;
+            padding: 5px;
+            border-radius: 15px;
+            margin: 5px;
+            border: 1px dashed #646464;
+            float: left;
+            i.delete {
+                color: #58a3dcb8;
+                cursor: pointer;
+                padding-left: 5px;
+            }
+            &.progress {
+                &:before {
+                    top: 4px;
+                    content: '';
+                    width: 21px;
+                    height: 15px;
+                    margin: 0 5px;
+                    position: relative;
+                    display: inline-block;
+                    background: url(../../../../../../assets/common/icons/spinner-48px.gif) no-repeat;
+                    background-size: contain;
+                }
             }
         }
     }

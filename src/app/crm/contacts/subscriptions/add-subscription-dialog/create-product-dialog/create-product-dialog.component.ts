@@ -6,23 +6,27 @@ import {
     Inject,
     OnInit,
     ViewChild,
+    OnDestroy,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     PipeTransform,
     Pipe
 } from '@angular/core';
 import { getCurrencySymbol } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
+import { NgxFileDropEntry } from 'ngx-file-drop';
 import { CacheService } from 'ng2-cache-service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { DxValidatorComponent, DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable, of, zip } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
     ProductServiceProxy,
+    ProductResourceServiceProxy,
     ProductGroupServiceProxy,
     MemberServiceServiceProxy,
     MemberServiceDto,
@@ -37,7 +41,10 @@ import {
     ProductMeasurementUnit,
     SetProductImageInput,
     ProductUpgradeAssignmentInfo,
-    CustomPeriodType
+    DocumentTemplatesServiceProxy,
+    CustomPeriodType,
+    ProductResourceDto,
+    FileParameter
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -52,6 +59,7 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.interface';
+import { ContactsService } from '../../../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 
 @Pipe({ name: 'FilterAssignments' })
@@ -69,10 +77,17 @@ export class FilterAssignmentsPipe implements PipeTransform {
         '../../../../../shared/common/styles/form.less',
         './create-product-dialog.component.less'
     ],
-    providers: [CacheHelper, ProductServiceProxy, ProductGroupServiceProxy, MemberServiceServiceProxy],
+    providers: [
+        CacheHelper, 
+        ProductServiceProxy, 
+        ProductGroupServiceProxy, 
+        MemberServiceServiceProxy, 
+        DocumentTemplatesServiceProxy,
+        ProductResourceServiceProxy
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateProductDialogComponent implements AfterViewInit, OnInit {
+export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(DxTextAreaComponent) descriptionHtmlComponent: DxTextAreaComponent;
     @ViewChild('customPeriodValidator') customPeriodValidator: DxValidatorComponent;
@@ -81,7 +96,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
     isFreePriceType = false;
     baseUrl = AppConsts.remoteServiceBaseUrl;
+    productTemplates: ProductResourceDto[] = [];
+    productFiles: ProductResourceDto[] = [];
+    productLinks: ProductResourceDto[] = [];
+    resourceLinkUrl: string;
 
+    urlRegexPattern = AppConsts.regexPatterns.url;
     publicNameValidationRules = [
         { type: 'pattern', pattern: AppConsts.regexPatterns.sitePath, message: this.ls.l('UrlIsNotValid') }
     ];
@@ -168,7 +188,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
         private notify: NotifyService,
         private changeDetection: ChangeDetectorRef,
         memberServiceProxy: MemberServiceServiceProxy,
+        public contactsService: ContactsService,
+        private domSanitizer: DomSanitizer,
         public dialogRef: MatDialogRef<CreateProductDialogComponent>,
+        private productResourceProxy: ProductResourceServiceProxy,
+        private documentProxy: DocumentTemplatesServiceProxy,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         private setting: SettingService,
@@ -191,6 +215,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                 this.isFreePriceType = !data.product.price;
             if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
                 this.addUpgradeToProduct();
+            this.initProductResources();
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -226,6 +251,21 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
             this.selectedOption = contextMenu.items[contextMenu.defaultIndex];
     }
 
+    initProductResources() {
+        let resources = this.product.productResources;
+        if (resources && resources.length) {
+            this.productFiles = [];
+            this.productLinks = [];
+            this.productTemplates = [];
+            resources.forEach(resource => {
+                if (resource.fileId)
+                    this.productFiles.push(resource);
+                else
+                    this.productLinks.push(resource);
+            });
+        }
+    }
+
     checkAddManageOption(options) {
         if (!this.isReadOnly) {
             let addNewItemElement: any = {
@@ -258,7 +298,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                 this.detectChanges();
             }            
         }
-        
+
+        this.resourceLinkUrl = '';
         setTimeout(() => {
             if (this.validationGroup.instance.validate().isValid) {
                 if (!this.product.groupId)
@@ -274,6 +315,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                 if (upgradeProducts && upgradeProducts.length == 1 && !upgradeProducts[0].upgradeProductId)
                     this.product.productUpgradeAssignments = undefined;
 
+                if (this.productTemplates.length || this.productFiles.length || this.productLinks.length)
+                    this.product.productResources = this.productTemplates.concat(this.productFiles, this.productLinks).map((item: any) => {
+                        if (item.fileId)
+                            item.url = undefined;
+                        return new ProductResourceDto(item);
+                    });
+
                 if (this.product instanceof UpdateProductInput) {
                     this.productProxy.updateProduct(this.product).pipe(
                         switchMap(() => this.getUpdateProductImageObservable((<any>this.product).id))
@@ -288,7 +336,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                         switchMap((res) => zip(of(res), this.getUpdateProductImageObservable(res.productId)))
                     ).subscribe(([res,]) => {
                         this.notify.info(this.ls.l('SavedSuccessfully'));
-                        this.product = new UpdateProductInput({id: res.productId, ...this.product});
                         if (this.selectedOption.data.close)
                             this.dialogRef.close(new ProductDto({
                                 id: res.productId,
@@ -298,6 +345,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                                 paymentPeriodTypes: this.product.productSubscriptionOptions &&
                                     this.product.productSubscriptionOptions.map(item => item.frequency)
                             }));
+                        else
+                            this.productProxy.getProductInfo(res.productId).subscribe((product: any) => {
+                                this.product = new UpdateProductInput({id: res.productId, ...product});
+                                this.initProductResources();
+                                this.detectChanges();
+                            });
                     });
                 }
             }
@@ -612,17 +665,82 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
             this.fileDropped($event.target.files);
     }
 
+    addResources(files: NgxFileDropEntry[]) {
+        if (files.length)
+            files.forEach((file: NgxFileDropEntry) => {
+                if (file.fileEntry)
+                    file.fileEntry['file'](this.uploadFile.bind(this));
+                else
+                    this.uploadFile(file);
+            });
+    }
+
+    uploadFile(file) {
+        if (file.size > 25 * 1024 * 1024)
+            return this.notify.warn(this.ls.l('FilesizeLimitWarn', 25));
+
+        let resource: any = {
+            name: file.name
+        };
+
+        resource.url = this.domSanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(file));
+        resource.loader = this.sendResource(file, resource).subscribe((res: any) => {
+            if (res) {
+                if (res.result)
+                    resource.fileId = res.result;
+                else {
+                    resource.progress = res.loaded == res.total ? 0 :
+                        Math.round(res.loaded / res.total * 100);
+                    this.detectChanges();
+                }
+            }
+        }, res => {
+            this.productFiles = this.productFiles.filter(item => item.name != file.name);
+            this.notify.error(res.error.message);
+            this.detectChanges();
+        }, () => {
+            resource.loader = undefined;
+            this.detectChanges();
+        });
+        this.productFiles.push(resource);
+        this.detectChanges();
+    }
+
+    sendResource(file, resource) {
+        return new Observable(subscriber => {
+            let xhr = new XMLHttpRequest(),
+                formData = new FormData();
+            formData.append('file', file);
+            xhr.open('POST', AppConsts.remoteServiceBaseUrl + '/api/services/CRM/ProductResource/SaveProductFile');
+            xhr.setRequestHeader('Authorization', 'Bearer ' + abp.auth.getToken());
+
+            xhr.upload.addEventListener('progress', event => {
+                subscriber.next(event);
+            });
+
+            xhr.addEventListener('load', () => {
+                let responce = JSON.parse(xhr.responseText);
+                if (xhr.status === 200)
+                    subscriber.next(responce);
+                else
+                    subscriber.error(responce);
+                subscriber.complete();
+            });
+            resource.xhr = xhr;
+            xhr.send(formData);
+        });
+    }
+
     fileDropped(event) {
         const file = event[0];
         if (file.fileEntry)
-            file.fileEntry['file'](this.loadFileContent.bind(this));
+            file.fileEntry['file'](file => this.loadFileContent(file));
         else
             this.loadFileContent(file);
     }
 
     loadFileContent(file) {
         let reader: FileReader = new FileReader();
-        let image = new Image();
         reader.onload = (loadEvent: any) => {
             this.openImageSelector(loadEvent.target.result);
         };
@@ -652,6 +770,29 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
         return Number(!this.isFreePriceType) * 50;
     }
 
+    showDocumentsDialog() {
+        this.contactsService.showTemplateDocumentsDialog(undefined, () => {
+        }, false, true, undefined, false).afterClosed().subscribe(files => {
+            if (files && files.length) {
+                this.productTemplates = this.productTemplates.concat(
+                    files.map(item => {
+                        let fileId = item.key.split('_').shift();
+                        if (this.productTemplates.every(temp => temp.fileId != fileId)) {
+                            let parent = item.pathInfo.pop();
+                            return <any>{
+                                parent: parent && parent.key,
+                                url: undefined,
+                                fileId: fileId,
+                                name: item.name
+                            };
+                        }
+                    }).filter(Boolean)
+                );
+                this.detectChanges();
+            }
+        });
+    }
+
     onProductTypeChanged(productType: ProductType) {
         let options = this.product.productSubscriptionOptions;
         if (productType == ProductType.Subscription && (!options || !options.length))
@@ -659,5 +800,85 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
         this.product.type = productType;
         this.detectChanges();
+    }
+
+    templateClick(event, resource) {
+        if (!resource.url) {
+            abp.ui.setBusy();
+            this.documentProxy.getUrl(resource.parent, resource.name, false).pipe(
+                finalize(() => abp.ui.clearBusy())
+            ).subscribe(res => {
+                resource.url = res.url;
+                window.open(res.url, '_blank');
+            });
+
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    }
+
+    removeTemplate(index) {
+        if (index != undefined) {
+            this.productTemplates.splice(index, 1);
+            this.detectChanges();
+        }
+    }
+
+    fileClick(event, resource) {
+        if (!resource.url && resource.id) {
+            abp.ui.setBusy();
+            this.productResourceProxy.getProductFileLink(resource.id).pipe(
+                finalize(() => abp.ui.clearBusy())
+            ).subscribe(res => {
+                resource.url = res;
+                window.open(res, '_blank');
+            });
+
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    }
+
+    removeFile(resource, index?) {
+        if (index != undefined) {
+            this.productFiles.splice(index, 1);
+            if (resource.fileId)
+                this.productResourceProxy.deleteProductFile(
+                    resource.fileId).subscribe(() => {});
+            this.detectChanges();
+        }
+    }
+
+    addLink(resourceLinkCmp) {
+        if (this.resourceLinkUrl && 
+            resourceLinkCmp.instance.option('isValid') &&
+            this.productLinks.every(link => link.url != this.resourceLinkUrl)
+        ) {
+            this.productLinks.push(
+                new ProductResourceDto({
+                    id: undefined,
+                    url: this.resourceLinkUrl,
+                    fileId: undefined,
+                    name: undefined
+                })
+            );
+            this.resourceLinkUrl = '';
+            this.detectChanges();
+        }
+    }
+
+    removeLink(index) {
+        if (index != undefined) {
+            this.productLinks.splice(index, 1);
+            this.changeDetection.markForCheck();
+        }
+    }
+
+    ngOnDestroy() {
+        if (this.productFiles && this.productFiles.length)
+            this.productFiles.forEach(file => {
+                if (!file.id && file.fileId)
+                    this.productResourceProxy.deleteProductFile(file.fileId).subscribe(() => {});
+            });
     }
 }

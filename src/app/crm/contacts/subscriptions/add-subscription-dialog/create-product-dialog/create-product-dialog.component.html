@@ -14,7 +14,7 @@
                             <h3>{{ls.l('Membership or Subscription')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <p>{{ls.l('Selling memberships or subscriptions enable you to sell regularly delivered products with recurring payments.')}}</p>
                         </div>
-                        <div class="block disabled"> 
+                        <div class="block" [ngClass]="{selected: product.type == productType.Digital}" (click)="onProductTypeChanged(productType.Digital)">
                             <img class="head" src="assets/common/icons/group.svg">
                             <h3>{{ls.l('Digital Download Product')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <p>{{ls.l('Sell digital downloadable such as Software, eBooks, PDFs, templates, music, videos, or anything else digital.')}}</p>
@@ -116,7 +116,7 @@
                                 <div *ngIf="!isReadOnly && !isOneTime && product.type == productType.Subscription" class="add-new-button" (click)="addNewPaymentPeriod()"><span>+</span></div>
                             </div>
                             <hr class="wide">
-                            <div class="general-product" *ngIf="product.type == productType.General">
+                            <div class="general-product" *ngIf="product.type == productType.General || product.type == productType.Digital">
                                 <div [ngClass]="{disabled: isFreePriceType}">
                                     <dx-number-box name="price"
                                                    width="100%"
@@ -297,7 +297,7 @@
                             <h3>{{ls.l('Commission Calculations')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                             <hr>
                             <div class="commissions" [ngClass]="{disabled: !enableCommissions}">
-                                <div *ngIf="product.type == productType.General">
+                                <div *ngIf="product.type == productType.General || product.type == productType.Digital">
                                     <label>{{ls.l('CommissionableAmount')}}</label>
                                     <dx-number-box name="commissionableAmount"
                                                    width="100%"
@@ -383,8 +383,62 @@
                         <div class="block" *ngIf="false">
                             <h3>{{ls.l('Shipping')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                         </div>
-                        <div class="block" *ngIf="false">
-                            <h3>{{ls.l('Add digital files (optional)')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                        <div class="block" *ngIf="product.type == productType.Digital">
+                            <h3>{{ls.l('Add digital files')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+
+                            <div class="upload-files">
+                                <div class="browse-file">
+                                    <ngx-file-drop (onFileDrop)="addResources($event)">
+                                        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                                            <img class="upload" src="assets/common/icons/upload.svg">                                            
+                                            <h3>{{ls.l('Drag & Drop Upload Content')}}</h3>
+                                            <div class="buttons">
+                                                <button class="btn btn-layout" (click)="openFileSelector()">{{ls.l('Browse on your computer')}}</button> or <button class="button-layout button-default" (click)="showDocumentsDialog()">{{ls.l('Select from uploaded')}}</button>
+                                            </div>
+                                            <span>{{ls.l('Upload up to 50 files with a combined size of 10GB or fewer')}}<br>{{ls.l('Supported files: JPG, PNG, MP3, MP4, MOV, DOCX, PDF, ZIP, CSV, TXT')}}</span>
+
+                                            <div class="field-area resources" *ngIf="productTemplates.length || productFiles.length">
+                                                <div *ngFor="let resource of productTemplates; let i = index" class="resource" [ngStyle]="{'background-size': '0%'}">
+                                                    <a target="_blank" [download]="resource.name" [href]="resource.url" (click)="templateClick($event, resource)" class="name">{{resource.name}}</a>&nbsp;<i (click)="removeTemplate(i)" aria-hidden="true" class="delete fa fa-times"></i>
+                                                </div>
+
+                                                <div *ngFor="let resource of productFiles; let i = index" class="resource" [ngClass]="{'progress': !!resource.loader}" [ngStyle]="{'background-size': (resource.progress || 0) + '%'}">
+                                                    <a target="_blank" [download]="resource.name" [href]="resource.url" (click)="fileClick($event, resource)" class="name">{{resource.name}}</a>&nbsp;<i (click)="removeFile(resource, i)" aria-hidden="true" class="delete fa fa-times"></i>
+                                                </div>
+                                            </div>
+
+                                        </ng-template>
+                                    </ngx-file-drop>                                        
+                                </div>
+                            </div>
+
+                            <div class="share-link">
+                                <img class="share" src="assets/common/icons/share.svg">                                            
+                                <h3>{{ls.l('Share a Link')}}</h3>
+                                <p>{{ls.l('Direct your members to YouTube, Google Drive or articles')}}</p>
+                                <div class="share-add-link">
+                                    <dx-text-box #resourceLinkCmp
+                                        valueChangeEvent="keyup"
+                                        [(value)]="resourceLinkUrl"
+                                        [placeholder]="ls.l('Add Link')">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="pattern"
+                                                [pattern]="urlRegexPattern"
+                                                [message]="ls.l('Invalid_PublicSiteUrl')">
+                                            </dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                    <div class="add-group-button" >
+                                        <span (click)="addLink(resourceLinkCmp)">+ {{ls.l('Add')}}</span>
+                                    </div>
+                                </div>
+
+                                <div *ngFor="let link of productLinks; let i = index" class="link">
+                                    <a target="_blank" [href]="link.url">{{link.url}}</a>&nbsp;<i (click)="removeLink(i)" aria-hidden="true" class="delete fa fa-times"></i>
+                                </div>
+
+                            </div>
+    
                         </div>
                         <div class="block" *ngIf="false">
                             <h3>{{ls.l('Location')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
