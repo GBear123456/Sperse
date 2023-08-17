@@ -116,7 +116,7 @@
                                 <div *ngIf="!isReadOnly && !isOneTime && product.type == productType.Subscription" class="add-new-button" (click)="addNewPaymentPeriod()"><span>+</span></div>
                             </div>
                             <hr class="wide">
-                            <div class="general-product" *ngIf="product.type == productType.General">
+                            <div class="general-product" *ngIf="product.type == productType.General || product.type == productType.Digital">
                                 <div [ngClass]="{disabled: isFreePriceType}">
                                     <dx-number-box name="price"
                                                    width="100%"
@@ -297,7 +297,7 @@
                             <h3>{{ls.l('Commission Calculations')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
                             <hr>
                             <div class="commissions" [ngClass]="{disabled: !enableCommissions}">
-                                <div *ngIf="product.type == productType.General">
+                                <div *ngIf="product.type == productType.General || product.type == productType.Digital">
                                     <label>{{ls.l('CommissionableAmount')}}</label>
                                     <dx-number-box name="commissionableAmount"
                                                    width="100%"
