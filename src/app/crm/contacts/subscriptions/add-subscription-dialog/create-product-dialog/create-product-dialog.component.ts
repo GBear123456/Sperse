@@ -797,6 +797,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         let options = this.product.productSubscriptionOptions;
         if (productType == ProductType.Subscription && (!options || !options.length))
             this.addNewPaymentPeriod();
+        else if (productType == ProductType.Digital)
+            this.product.unit = ProductMeasurementUnit.Unit;
 
         this.product.type = productType;
         this.detectChanges();

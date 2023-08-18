@@ -132,7 +132,7 @@
                                         </dx-validator>
                                     </dx-number-box>
                                 </div>
-                                <div>
+                                <div *ngIf="product.type == productType.General">
                                     <dx-select-box [dataSource]="getProductUnits()"
                                                    width="100%"
                                                    [placeholder]="ls.l('Unit')"
