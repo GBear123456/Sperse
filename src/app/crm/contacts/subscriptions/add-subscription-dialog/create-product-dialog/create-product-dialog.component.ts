@@ -93,7 +93,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     isFreePriceType = false;
     baseUrl = AppConsts.remoteServiceBaseUrl;
-    maxFilesCount = 2;
+    maxFilesCount = 25;
     productTemplates: ProductResourceDto[] = [];
     productFiles: ProductResourceDto[] = [];
     productLinks: ProductResourceDto[] = [];
