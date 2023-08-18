@@ -20,6 +20,7 @@ import { forkJoin, of } from 'rxjs';
 import { finalize, first, switchMap, filter } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 import cloneDeep from 'lodash/cloneDeep';
+import round from 'lodash/round';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -832,9 +833,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     calcuateDiscount() {
         let coupon = this.selectedCoupon;
         if (coupon) {
-            this.discountTotal = coupon.type == CouponDiscountType.Fixed ?
+            let discountTotal = coupon.type == CouponDiscountType.Fixed ?
                 this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff :
                 this.subTotal * (coupon.percentOff / 100);
+            this.discountTotal = round(discountTotal, 2);
         }
         else {
             this.discountTotal = 0;
