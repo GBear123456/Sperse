@@ -363,14 +363,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.customer = invoiceInfo.contactName;
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
                     this.selectedShippingAddress = invoiceInfo.shippingAddress;
-                    this.lines = invoiceInfo.lines.map((res: any) => {
-                        let description = res.description.split('\n').shift();
+                    this.lines = invoiceInfo.lines.map((res) => {
+                        let lineDescription = res.description || res.productName || '<No description>';
+                        let description = lineDescription.split('\n').shift();
                         return {
                             isCrmProduct: !!res.productCode,
                             Quantity: res.quantity,
                             Rate: res.rate,
                             Description: description,
-                            details: res.description.split('\n').slice(1).join('\n'),
+                            details: lineDescription.split('\n').slice(1).join('\n'),
                             units: res.productType == 'Subscription' ? [{
                                 unitId: res.unitId,
                                 unitName: res.unitName
