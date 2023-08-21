@@ -19,6 +19,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dial
 import { DxValidatorComponent, DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable, of, zip } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import * as moment from 'moment';
 
 /** Application imports */
 import {
@@ -52,6 +53,7 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.interface';
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
 
 @Pipe({ name: 'FilterAssignments' })
@@ -81,7 +83,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
     isFreePriceType = false;
     baseUrl = AppConsts.remoteServiceBaseUrl;
-
+    publishDate: Date;
     publicNameValidationRules = [
         { type: 'pattern', pattern: AppConsts.regexPatterns.sitePath, message: this.ls.l('UrlIsNotValid') }
     ];
@@ -191,6 +193,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                 this.isFreePriceType = !data.product.price;
             if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
                 this.addUpgradeToProduct();
+            if (this.product.publishDate)
+                this.publishDate = DateHelper.addTimezoneOffset(new Date(this.product.publishDate), true);
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -269,6 +273,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
                         if (item.trialDayCount == null || isNaN(item.trialDayCount))
                             item.trialDayCount = 0;
                     });
+                
+                if (this.publishDate)
+                    this.product.publishDate = DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '')
+                else 
+                    this.product.publishDate = undefined;
 
                 let upgradeProducts = this.product.productUpgradeAssignments;
                 if (upgradeProducts && upgradeProducts.length == 1 && !upgradeProducts[0].upgradeProductId)
@@ -659,5 +668,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit {
 
         this.product.type = productType;
         this.detectChanges();
+    }
+
+    onPublishDateOpened() {
+        if (!this.publishDate) {
+            this.publishDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());
+            this.detectChanges();
+        }
     }
 }

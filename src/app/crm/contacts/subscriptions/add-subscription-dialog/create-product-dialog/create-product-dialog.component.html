@@ -391,8 +391,33 @@
                         </div>
                     </div>
                     <div class="right">
-                        <div class="block" *ngIf="false">
+                        <div class="block status">
                             <h3>{{ls.l('Product Status')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
+                            <p>
+                                <img class="info" src="assets/common/icons/edit-status.svg"> {{ls.l('Status')}}: <span>{{product.isPublished ? 'Published' : 'Unpublished'}}</span>
+                                <dx-switch switchedOffText="" 
+                                       switchedOnText="" 
+                                       [(value)]="product.isPublished">
+                                </dx-switch>
+                            </p>
+                            <p>
+                                <img class="info" src="assets/common/icons/calendar3.svg"> {{ls.l('Published on')}}: <span *ngIf="publishDate">{{publishDate | date:'MMM d, y, h:mm a'}} <img class="delete" (click)="publishDate=undefined" src="assets/common/icons/delete-icon.svg"></span> <a href="javascript:void(0)" (click)="publishDateComponent.instance.open()">Edit</a>
+                                <dx-date-box #publishDateComponent
+                                    type="datetime"
+                                    width="0px"
+                                    height="0px"
+                                    [(value)]="publishDate"
+                                    (onOpened)="onPublishDateOpened()">
+                                </dx-date-box>
+                            </p>
+                            <hr>
+                            <p>
+                                Require user creation <img class="info" src="assets/common/icons/info-circle.svg">
+                                <dx-switch switchedOffText="" 
+                                       switchedOnText="" 
+                                       [(value)]="product.createUser">
+                                </dx-switch>
+                            </p>
                         </div>
                         <div class="block">
                             <h3>{{ls.l('Product Logo')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3> 
