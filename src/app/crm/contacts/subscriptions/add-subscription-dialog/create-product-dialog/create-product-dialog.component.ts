@@ -43,8 +43,7 @@ import {
     ProductUpgradeAssignmentInfo,
     DocumentTemplatesServiceProxy,
     CustomPeriodType,
-    ProductResourceDto,
-    FileParameter
+    ProductResourceDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -92,10 +91,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     @ViewChild(DxTextAreaComponent) descriptionHtmlComponent: DxTextAreaComponent;
     @ViewChild('customPeriodValidator') customPeriodValidator: DxValidatorComponent;
 
-    private slider: any;
-
     isFreePriceType = false;
     baseUrl = AppConsts.remoteServiceBaseUrl;
+    maxFilesCount = 25;
     productTemplates: ProductResourceDto[] = [];
     productFiles: ProductResourceDto[] = [];
     productLinks: ProductResourceDto[] = [];
@@ -666,18 +664,24 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     addResources(files: NgxFileDropEntry[]) {
-        if (files.length)
+        if (files.length) {
+            if (this.productFiles.length + this.productTemplates.length + files.length > this.maxFilesCount) {
+                this.notify.warn(`Exceeded ${this.maxFilesCount} file limit`);
+                return;
+            }
+
             files.forEach((file: NgxFileDropEntry) => {
                 if (file.fileEntry)
                     file.fileEntry['file'](this.uploadFile.bind(this));
                 else
                     this.uploadFile(file);
             });
+        }
     }
 
     uploadFile(file) {
-        if (file.size > 25 * 1024 * 1024)
-            return this.notify.warn(this.ls.l('FilesizeLimitWarn', 25));
+        if (file.size > 100 * 1024 * 1024)
+            return this.notify.warn(this.ls.l('FilesizeLimitWarn', 100));
 
         let resource: any = {
             name: file.name
@@ -771,6 +775,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     showDocumentsDialog() {
+        if (this.productFiles.length + this.productTemplates.length >= this.maxFilesCount) {
+            this.notify.warn(`Exceeded ${this.maxFilesCount} file limit`);
+            return;
+        }
+
         this.contactsService.showTemplateDocumentsDialog(undefined, () => {
         }, false, true, undefined, false).afterClosed().subscribe(files => {
             if (files && files.length) {
