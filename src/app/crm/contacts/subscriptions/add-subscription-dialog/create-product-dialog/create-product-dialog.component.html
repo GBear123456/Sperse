@@ -395,7 +395,7 @@
                                             <div class="buttons">
                                                 <button class="btn btn-layout" (click)="openFileSelector()">{{ls.l('Browse on your computer')}}</button> or <button class="button-layout button-default" (click)="showDocumentsDialog()">{{ls.l('Select from uploaded')}}</button>
                                             </div>
-                                            <span>{{ls.l('Upload up to 25 files with a maximum size of each 100MB or fewer')}}<br>{{ls.l('Supported files: JPG, PNG, MP3, MP4, MOV, DOCX, PDF, ZIP, CSV, TXT and others')}}</span>
+                                            <span>{{ls.l('Upload up to 25 files, each with a maximum size of 100MB or less.')}}<br>{{ls.l('Supported file types: JPG, PNG, MP3, MP4, MOV, DOCX, PDF, ZIP, CSV, TXT, and others.')}}</span>
 
                                             <div class="field-area resources" *ngIf="productTemplates.length || productFiles.length">
                                                 <div *ngFor="let resource of productTemplates; let i = index" class="resource" [ngStyle]="{'background-size': '0%'}">
