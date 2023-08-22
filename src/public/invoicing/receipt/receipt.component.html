@@ -58,7 +58,7 @@
             <h1>Downloads</h1>
             <hr>
             <div *ngFor="let resource of invoiceInfo.resources; let i = index" class="resource">
-                <a target="_blank" [download]="resource.name" [href]="resource.url" class="{{resource.url ? 'link' : 'file'}}">{{resource.url || resource.name}}</a><button (click)="resourceClick($event, resource)">{{resource.url ? 'Copy' : 'Download'}}</button>
+                <a target="_blank" [download]="resource.name" [href]="resource.url" class="{{resource.url ? 'link' : 'file'}}">{{resource.name || resource.url}}</a><button (click)="resourceClick($event, resource)">{{resource.url ? 'Copy' : 'Download'}}</button>
             </div>
         </div>
         <div class="footer gray">

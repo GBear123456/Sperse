@@ -98,7 +98,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     productFiles: ProductResourceDto[] = [];
     productLinks: ProductResourceDto[] = [];
     resourceLinkUrl: string;
+    resourceLinkName: string;
 
+    nameRegexPattern = AppConsts.regexPatterns.linkName;
     urlRegexPattern = AppConsts.regexPatterns.url;
     publicNameValidationRules = [
         { type: 'pattern', pattern: AppConsts.regexPatterns.sitePath, message: this.ls.l('UrlIsNotValid') }
@@ -296,6 +298,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.detectChanges();
             }            
         }
+
 
         this.resourceLinkUrl = '';
         setTimeout(() => {
@@ -863,20 +866,22 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
     }
 
-    addLink(resourceLinkCmp) {
+    addLink(resourceLinkNameCmp, resourceLinkCmp) {
         if (this.resourceLinkUrl && 
             resourceLinkCmp.instance.option('isValid') &&
-            this.productLinks.every(link => link.url != this.resourceLinkUrl)
+            this.productLinks.every(link => link.url != this.resourceLinkUrl) &&
+            resourceLinkNameCmp.instance.option('isValid')
         ) {
             this.productLinks.push(
                 new ProductResourceDto({
                     id: undefined,
                     url: this.resourceLinkUrl,
                     fileId: undefined,
-                    name: undefined
+                    name: this.resourceLinkName
                 })
             );
             this.resourceLinkUrl = '';
+            this.resourceLinkName = '';
             this.detectChanges();
         }
     }

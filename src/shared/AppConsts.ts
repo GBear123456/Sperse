@@ -96,6 +96,7 @@ export class AppConsts {
 
     static readonly regexPatterns = {
         name: /^[A-Z][a-zA-Z]+$/,
+        linkName: /^[a-zA-Z ]+$/,
         email: new RegExp(`^${AppConsts.emailRegexString}$`),
         emailWithName: new RegExp(`^((("[^"]+")|([a-zA-Z\\s]+))\\s*<(?=.+>$)|(?!.+>$))${AppConsts.emailRegexString}>?$`),
         phone: /^[\d\+\-\(\)\s]{10,24}$/,
