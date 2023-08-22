@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { finalize, map, tap } from 'rxjs/operators';
 
 /** Application imports */
@@ -187,8 +187,10 @@ export class SingleProductComponent implements OnInit {
     }
 
     getSubmitRequest(paymentGateway: string): Observable<SubmitProductRequestOutput> {
-        if (!this.isFormValid())
-            return;
+        if (!this.isFormValid()) {
+            abp.notify.error(this.ls.l('SaleProductValidationError'));
+            return of();
+        }
 
         if (this.phoneNumber && this.phoneNumber.isEmpty())
             this.requestInfo.phone = undefined;
