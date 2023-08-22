@@ -319,6 +319,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                             item.url = undefined;
                         return new ProductResourceDto(item);
                     });
+            
+                if (this.product.type == ProductType.Digital && (!this.product.productResources || !this.product.productResources.length))
+                    return this.notify.error(this.ls.l('DigitalProductError'));
 
                 if (this.product instanceof UpdateProductInput) {
                     this.productProxy.updateProduct(this.product).pipe(
