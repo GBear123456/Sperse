@@ -417,10 +417,22 @@
                                 <h3>{{ls.l('Share a Link')}}</h3>
                                 <p>{{ls.l('Direct your members to YouTube, Google Drive or articles')}}</p>
                                 <div class="share-add-link">
+                                    <dx-text-box #resourceLinkNameCmp
+                                        width="30%"
+                                        [(value)]="resourceLinkName"
+                                        [placeholder]="ls.l('Link Name')">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="pattern"
+                                                [pattern]="nameRegexPattern"
+                                                [message]="ls.l('InvalidFieldValue', 'Link Name')">
+                                            </dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
                                     <dx-text-box #resourceLinkCmp
+                                        width="60%"
                                         valueChangeEvent="keyup"
                                         [(value)]="resourceLinkUrl"
-                                        [placeholder]="ls.l('Add Link')">
+                                        [placeholder]="ls.l('Link URL')">
                                         <dx-validator>
                                             <dxi-validation-rule type="pattern"
                                                 [pattern]="urlRegexPattern"
@@ -428,13 +440,13 @@
                                             </dxi-validation-rule>
                                         </dx-validator>
                                     </dx-text-box>
-                                    <div class="add-group-button" >
-                                        <span (click)="addLink(resourceLinkCmp)">+ {{ls.l('Add')}}</span>
+                                    <div class="add-new-button" >
+                                        <span (click)="addLink(resourceLinkNameCmp, resourceLinkCmp)">+</span>
                                     </div>
                                 </div>
 
                                 <div *ngFor="let link of productLinks; let i = index" class="link">
-                                    <a target="_blank" [href]="link.url">{{link.url}}</a>&nbsp;<i (click)="removeLink(i)" aria-hidden="true" class="delete fa fa-times"></i>
+                                    <a target="_blank" [href]="link.url" [title]="link.url">{{link.name || link.url}}</a>&nbsp;<i (click)="removeLink(i)" aria-hidden="true" class="delete fa fa-times"></i>
                                 </div>
 
                             </div>
