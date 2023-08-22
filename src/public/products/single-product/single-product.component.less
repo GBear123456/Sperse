@@ -12,6 +12,7 @@
     --m-red: #ff0000;
     --divider: #AAC1D7;
     --br: 10px;
+    --error-color: gold;
 
     input,
     textarea {
@@ -165,11 +166,14 @@
         margin-bottom: 6px;
         font-weight: 500;
         width: 100%;
+        font-size: 12px;
 
         &__new {
+            text-align: center;
             font-size: 24px;
             line-height: 30px;
             margin-bottom: 6px;
+            width: 60%;
 
             span {
                 display: inline-block;
@@ -190,18 +194,27 @@
 
         .quantity {
             user-select: none;
-            margin-right: 50px;
             text-align: center;
-            width: 33%;
+            width: 20%;
 
             .quantity-controls {
-                font-size: 32px;
+                font-size: 24px;
 
                 .value {
                     display: inline-block;
                     min-width: 45px;
                     margin: 0 5px;
                 }
+            }
+        }
+
+        .discount-info {
+            width: 20%;
+            text-align: right;
+
+            .save-line {
+                font-weight: bold;
+                color: var(--m-green);
             }
         }
 
@@ -267,6 +280,36 @@
             &:focus {
                 border-color: #fff;
             }
+        }
+
+        .coupon-row {
+            display: flex;
+            gap: 20px;
+
+            .fa-spinner {
+                position: absolute;
+                right: 11px;
+                bottom: 16px;
+                font-size: 16px;
+            }
+
+            .coupon-input {
+                position: relative;
+                width: 100%;
+
+                .fa-close {
+                    position: absolute;
+                    top: 11px;
+                    font-size: 21px;
+                    right: 11px;
+                    color: #cc1a1a;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .error {
+            color: var(--error-color);
         }
     }
 
@@ -455,7 +498,7 @@
 
     ::ng-deep validation-messages {
         .form-control-feedback {
-            color: red;
+            color: var(--error-color);
             font-weight: 600;
         }
     }
@@ -464,12 +507,15 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        width: 100%;
 
         .price-wrapper {
+            width: 100%;
             height: 108px;
             text-align: center;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .trial-day-count {
@@ -513,6 +559,18 @@
             color: #FFF;
             font-style: italic;
             margin: 5px;
+        }
+
+        .coupon-info {
+            position: absolute;
+            right: 0;
+            top: 20px;
+            font-size: 12px;
+
+            .save-line {
+                font-weight: bold;
+                color: var(--m-green);
+            } 
         }
 
         .state-slider {

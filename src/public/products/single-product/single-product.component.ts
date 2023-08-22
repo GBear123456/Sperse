@@ -6,11 +6,14 @@ import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { finalize, map, tap } from 'rxjs/operators';
+import round from 'lodash/round';
 
 /** Application imports */
 import {
+    CouponDiscountDuration,
     CustomPeriodType,
     ProductType,
+    PublicCouponInfo,
     PublicProductInfo,
     PublicProductServiceProxy,
     PublicProductSubscriptionOptionInfo,
@@ -74,6 +77,11 @@ export class SingleProductComponent implements OnInit {
     isFreeProductSelected = false;
 
     initialInvoiceXref: string = null;
+
+    couponLoading: boolean = false;
+    showCouponError: boolean = false;
+    couponInfo: PublicCouponInfo = null;
+    couponInfoCache: { [code: string]: PublicCouponInfo } = {};
 
     constructor(
         private route: ActivatedRoute,
@@ -182,7 +190,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        var isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid());
+        let isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid());
         return !!isValidObj;
     }
 
@@ -197,6 +205,8 @@ export class SingleProductComponent implements OnInit {
         this.requestInfo.affiliateCode = this.ref;
         this.requestInfo.paymentGateway = paymentGateway;
         this.requestInfo.productId = this.productInfo.id;
+        if (this.isFreeProductSelected)
+            this.requestInfo.couponCode = null;
 
         switch (this.productInfo.type) {
             case ProductType.General:
@@ -264,6 +274,11 @@ export class SingleProductComponent implements OnInit {
         }
     }
 
+    showPayPalButton() {
+        return this.productInfo.data.paypalClientId &&
+            (!this.couponInfo || this.couponInfo.duration == CouponDiscountDuration.Forever);
+    }
+
     getActiveStatus(period: BillingPeriod) {
         return this.selectedBillingPeriod == period;
     }
@@ -276,8 +291,8 @@ export class SingleProductComponent implements OnInit {
     }
 
     getSliderValue(): number {
-        var periodIndex = this.availablePeriods.findIndex(v => v == this.selectedBillingPeriod);
-        var value = periodIndex * (100 / this.availablePeriods.length);
+        let periodIndex = this.availablePeriods.findIndex(v => v == this.selectedBillingPeriod);
+        let value = periodIndex * (100 / this.availablePeriods.length);
         return +value.toFixed();
     }
 
@@ -291,10 +306,20 @@ export class SingleProductComponent implements OnInit {
             ButtonType.Subscription;
     }
 
-    getPricePerPeriod(): number {
+    getPricePerPeriod(includeCoupon: boolean): number {
+        let price = this.selectedSubscriptionOption.fee;
+        if (includeCoupon)
+            price = this.applyCoupon(price);
         return this.selectedBillingPeriod === BillingPeriod.Yearly ?
-            Math.round(this.selectedSubscriptionOption.fee / 12) :
-            this.selectedSubscriptionOption.fee;
+            round(price / 12, 2) :
+            price;
+    }
+
+    getSignUpFee(includeCoupon: boolean): number {
+        let fee = this.selectedSubscriptionOption.signupFee;
+        if (includeCoupon)
+            fee = this.applyCoupon(fee);
+        return fee;
     }
 
     getPriceDescription(): string {
@@ -308,7 +333,79 @@ export class SingleProductComponent implements OnInit {
         }
     }
 
+    getGeneralPrice(includeCoupon: boolean): number {
+        let price = this.productInfo.price * this.requestInfo.quantity;
+        if (includeCoupon)
+            price = this.applyCoupon(price);
+        return price;
+    }
+
+    getDiscount(): number {
+        if (this.productInfo.type == ProductType.Subscription) {
+            return this.getPricePerPeriod(false) - this.getPricePerPeriod(true);
+        }
+
+        return this.getGeneralPrice(false) - this.getGeneralPrice(true);
+    }
+
     changeQuantity(quantity: number) {
         this.requestInfo.quantity = quantity;
+    }
+
+    couponChange() {
+        this.showCouponError = false;
+    }
+
+    loadCouponInfo() {
+        if (!this.requestInfo.couponCode)
+            return;
+
+        if (this.couponInfoCache.hasOwnProperty(this.requestInfo.couponCode)) {
+            this.couponInfo = this.couponInfoCache[this.requestInfo.couponCode];
+            this.changeDetector.detectChanges();
+            return;
+        }
+
+        this.couponLoading = true;
+        this.publicProductService.getCouponInfo(this.tenantId, this.requestInfo.couponCode)
+            .pipe(
+                finalize(() => {
+                    this.couponLoading = false;
+                    this.changeDetector.detectChanges();
+                })
+            )
+            .subscribe(info => {
+                info = Object.keys(info).length == 0 ? null : info;
+                if (info) {
+                    this.setCouponDescription(info);
+                } else {
+                    this.showCouponError = true;
+                }
+                this.couponInfo = info;
+                this.couponInfoCache[this.requestInfo.couponCode] = info;
+            });
+    }
+
+    setCouponDescription(coupon: PublicCouponInfo): void {
+        let description = coupon.percentOff ?
+            `${coupon.percentOff}%` : `${coupon.amountOff} ${this.currencySymbol}`;
+
+        coupon['description'] = `${description} Off ${coupon.duration}`;
+    }
+
+    applyCoupon(amount: number): number {
+        if (!this.couponInfo)
+            return amount;
+
+        if (this.couponInfo.amountOff)
+            return amount - this.couponInfo.amountOff > 0 ? amount - this.couponInfo.amountOff : 0;
+
+        return round(amount * (1 - this.couponInfo.percentOff / 100), 2);
+    }
+
+    clearCoupon() {
+        this.couponInfo = null;
+        this.requestInfo.couponCode = null;
+        this.showCouponError = false;
     }
 }
