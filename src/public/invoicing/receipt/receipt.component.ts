@@ -1,13 +1,16 @@
 /** Core imports */
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GetInvoiceReceiptInfoOutput, InvoiceStatus, UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-proxies';
+import { GetInvoiceReceiptInfoOutput, InvoiceStatus, 
+    UserInvoiceServiceProxy, InvoiceReceiptResource } from '@root/shared/service-proxies/service-proxies';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ContditionsModalData } from '../../../shared/common/conditions-modal/conditions-modal-data';
 
@@ -33,19 +36,23 @@ export class ReceiptComponent implements OnInit {
     failedToLoad: boolean = false;
     failMessage: string = '';
 
+    tenantId: any = this.activatedRoute.snapshot.paramMap.get('tenantId');
+    publicId = this.activatedRoute.snapshot.paramMap.get('publicId');
+
+
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute,
+        public ls: AppLocalizationService,
         private userInvoiceService: UserInvoiceServiceProxy,
+        private clipboardService: ClipboardService,
         private dialog: MatDialog
     ) {
     }
 
     ngOnInit(): void {
-        const tenantId: any = this.activatedRoute.snapshot.paramMap.get('tenantId');
-        const publicId = this.activatedRoute.snapshot.paramMap.get('publicId');
         abp.ui.setBusy();
-        this.getInvoiceInfo(tenantId, publicId);
+        this.getInvoiceInfo(this.tenantId, this.publicId);
     }
 
     getInvoiceInfo(tenantId, publicId) {
@@ -120,5 +127,23 @@ export class ReceiptComponent implements OnInit {
                 onlyHost: true
             }
         });
+    }
+
+    resourceClick(event, resource: any) {
+        if (resource.url) {
+            this.clipboardService.copyFromContent(resource.url);
+            abp.notify.info(this.ls.l('SavedToClipboard'));
+        } else {
+            if (resource.fileUrl)
+                window.open(resource.fileUrl, '_blank');
+            else
+                this.userInvoiceService.getInvoiceResourceUrl(this.tenantId, this.publicId, resource.id).subscribe(url => {
+                    resource.fileUrl = url;
+                    window.open(url, '_blank');
+                });
+        }
+
+        event.stopPropagation();
+        event.preventDefault();
     }
 }
