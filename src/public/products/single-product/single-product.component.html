@@ -140,12 +140,12 @@
                     </div>
                 </div>
                 <div class="login_btn">
-                    <div [style.display]="isFreeProductSelected ? 'block' : 'none'">
+                    <div [style.display]="showSubmitButton() ? 'block' : 'none'">
                         <button class="button_global button_global_green" [ngClass]="{disabled: !isFormValid()}" (click)="submitFreeRequest()">
                             {{ productInfo.type == productType.Subscription ? 'Subscribe' : 'Purchase' }}
                         </button>
                     </div>
-                    <div class="gateways" [style.display]="!isFreeProductSelected ? 'flex' : 'none'">
+                    <div class="gateways" [style.display]="!showSubmitButton() ? 'flex' : 'none'">
                         <button class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
                             Pay with <img src="assets/common/images/stripe.svg" />
                         </button>

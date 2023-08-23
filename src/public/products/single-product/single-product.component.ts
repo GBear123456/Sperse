@@ -275,8 +275,29 @@ export class SingleProductComponent implements OnInit {
     }
 
     showPayPalButton() {
+        if (this.productInfo.type == ProductType.Subscription &&
+            this.couponInfo &&
+            this.getPricePerPeriod(true) == 0)
+            return false;
+
         return this.productInfo.data.paypalClientId &&
             (!this.couponInfo || this.couponInfo.duration == CouponDiscountDuration.Forever);
+    }
+
+    showSubmitButton() {
+        if (this.isFreeProductSelected)
+            return true;
+
+        if (this.productInfo.type == ProductType.Subscription && this.couponInfo &&
+            (this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.OneTime ||
+                this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.LifeTime) &&
+            this.getPricePerPeriod(true) == 0)
+            return true;
+
+        if (this.productInfo.type != ProductType.Subscription && this.couponInfo && this.getGeneralPrice(true) == 0)
+            return true;
+
+        return false;
     }
 
     getActiveStatus(period: BillingPeriod) {
