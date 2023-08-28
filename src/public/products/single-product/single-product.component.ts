@@ -67,6 +67,7 @@ export class SingleProductComponent implements OnInit {
     descriptionHtml: SafeHtml;
 
     showNotFound = false;
+    showNoPaymentSystems = false;
     productType = ProductType;
     billingPeriod = BillingPeriod;
 
@@ -150,6 +151,7 @@ export class SingleProductComponent implements OnInit {
             .subscribe(result => {
                 if (result.id) {
                     this.productInfo = result;
+                    this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
                     this.titleService.setTitle(this.productInfo.name);
                     if (result.descriptionHtml)
                         this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
@@ -168,6 +170,9 @@ export class SingleProductComponent implements OnInit {
     }
 
     submitStripeRequest() {
+        if (!this.productInfo.data.stripeConfigured)
+            return;
+
         abp.ui.setBusy();
         this.getSubmitRequest('Stripe')
             .pipe(
@@ -275,10 +280,15 @@ export class SingleProductComponent implements OnInit {
     }
 
     showPayPalButton() {
-        if (this.productInfo.type == ProductType.Subscription &&
-            this.couponInfo &&
-            this.getPricePerPeriod(true) == 0)
-            return false;
+        if (this.productInfo.type == ProductType.Subscription) {
+            if (this.selectedSubscriptionOption.trialDayCount > 0 &&
+                (this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.LifeTime ||
+                    this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.OneTime))
+                return false;
+
+            if (this.couponInfo && this.getPricePerPeriod(true) == 0)
+                return false;
+        }
 
         return this.productInfo.data.paypalClientId &&
             (!this.couponInfo || this.couponInfo.duration == CouponDiscountDuration.Forever);

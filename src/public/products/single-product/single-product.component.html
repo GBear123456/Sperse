@@ -146,15 +146,18 @@
                         </button>
                     </div>
                     <div class="gateways" [style.display]="!showSubmitButton() ? 'flex' : 'none'">
-                        <button class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
+                        <button *ngIf="productInfo.data.stripeConfigured" class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
                             Pay with <img src="assets/common/images/stripe.svg" />
                         </button>
-                        <pay-pal *ngIf="showPayPalButton()"
+                        <pay-pal [style.display]="showPayPalButton() ? 'block' : 'none'"
                                  [height]="55"
                                  [showButtonType]="paypalButtonType"
                                  [disabled]="!isFormValid()"
                                  (onApprove)="onPayPalApprove()">
                         </pay-pal>
+                        <div *ngIf="showNoPaymentSystems" class="no-payment-systems">
+                            Payment systems are not configured
+                        </div>
                     </div>
                 </div>
             </form>
