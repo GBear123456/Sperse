@@ -29,23 +29,27 @@
                     </div>
                     <div class="price-wrapper">
                         <div class="trial-day-count" *ngIf="selectedSubscriptionOption.trialDayCount">
-                            <span *ngIf="selectedSubscriptionOption.signupFee; else free">{{ currencySymbol }}{{selectedSubscriptionOption.signupFee | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
+                            <span *ngIf="selectedSubscriptionOption.signupFee; else free">{{ currencySymbol }}{{getSignUpFee(true) | customNumber: '1.0-1' | currency: 'USD' : '' : '1.0-1'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
                             <ng-template #free>{{ls.l('Free')}}</ng-template>
                         </div>
                         <div class="amountPerMonth">
                             <ng-container *ngIf="!isFreeProductSelected else freeOption">
                                 <span class="currency-symbol">{{ currencySymbol }}</span>
                                 <span class="number">
-                                    {{ getPricePerPeriod() | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
+                                    {{ getPricePerPeriod(true) | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
                                 </span>
                                 <div class="number-info">
-                                    <span class="decimal">{{ getPricePerPeriod() | customNumber: '0.2-2' }}</span>
+                                    <span class="decimal">{{ getPricePerPeriod(true) | customNumber: '0.2-2' }}</span>
                                     <span>/{{ getPriceDescription() }}</span>
                                 </div>
                             </ng-container>
                             <ng-template #freeOption>
                                 <span class="number">{{ls.l('Free')}}</span>
                             </ng-template>
+                        </div>
+                        <div class="coupon-info" *ngIf="couponInfo && !isFreeProductSelected">
+                            <div>Coupon applied</div>
+                            <div class="save-line">You saved: {{currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
                         </div>
                         <div class="trial-period-note" *ngIf="selectedSubscriptionOption.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
                     </div>
@@ -63,7 +67,11 @@
                             </div>
                         </div>
                         <div class="price__new">
-                            <span>{{ (productInfo.price * requestInfo.quantity) | number : '1.0-2'}}</span>
+                            <span>{{ getGeneralPrice(true) | number : '1.0-2'}}</span>
+                        </div>
+                        <div *ngIf="couponInfo" class="discount-info">
+                            <div>Coupon applied</div>
+                            <div class="save-line">You saved: {{currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
                         </div>
                     </ng-container>
                     <ng-template #freeProduct>
@@ -104,6 +112,22 @@
                         <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
                     </label>
                 </div>
+                <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected">
+                    <label class="coupon">
+                        Coupon
+                    </label>
+                    <div class="coupon-row">
+                        <div class="coupon-input">
+                            <input type="text" placeholder="" name="coupon" maxlength="36" [(ngModel)]="requestInfo.couponCode"
+                                   (change)="couponChange()" [attr.disabled]="couponLoading || couponInfo ? true : null">
+                            <i *ngIf="couponInfo" class="fa fa-close" (click)="clearCoupon()"></i>
+                        </div>
+                        <i *ngIf="couponLoading" class="fa fa-spinner fa-spin"></i>
+                        <button class="button_global button_global_green" [ngClass]="{disabled: !requestInfo.couponCode || couponLoading}" (click)="loadCouponInfo()">Apply</button>
+                    </div>
+                    <div *ngIf="couponInfo">Applied {{couponInfo['description']}}</div>
+                    <div *ngIf="showCouponError" class="error">Coupon is invalid</div>
+                </div>
                 <div class="actions">
                     <div>
                         <label class="check_wrap">
@@ -116,21 +140,24 @@
                     </div>
                 </div>
                 <div class="login_btn">
-                    <div [style.display]="isFreeProductSelected ? 'block' : 'none'">
+                    <div [style.display]="showSubmitButton() ? 'block' : 'none'">
                         <button class="button_global button_global_green" [ngClass]="{disabled: !isFormValid()}" (click)="submitFreeRequest()">
                             {{ productInfo.type == productType.Subscription ? 'Subscribe' : 'Purchase' }}
                         </button>
                     </div>
-                    <div class="gateways" [style.display]="!isFreeProductSelected ? 'flex' : 'none'">
-                        <button class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
+                    <div class="gateways" [style.display]="!showSubmitButton() ? 'flex' : 'none'">
+                        <button *ngIf="productInfo.data.stripeConfigured" class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
                             Pay with <img src="assets/common/images/stripe.svg" />
                         </button>
-                        <pay-pal *ngIf="productInfo.data.paypalClientId"
+                        <pay-pal [style.display]="showPayPalButton() ? 'block' : 'none'"
                                  [height]="55"
                                  [showButtonType]="paypalButtonType"
                                  [disabled]="!isFormValid()"
                                  (onApprove)="onPayPalApprove()">
                         </pay-pal>
+                        <div *ngIf="showNoPaymentSystems" class="no-payment-systems">
+                            Payment systems are not configured
+                        </div>
                     </div>
                 </div>
             </form>
