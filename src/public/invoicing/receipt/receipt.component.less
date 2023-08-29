@@ -20,7 +20,8 @@ public-receipt {
 
     .main-container {
         width: 443px;
-        margin: 158px auto 48px;
+        margin: auto;
+        padding: 20px 0 0;
 
         .header {
             display: flex;
@@ -121,6 +122,47 @@ public-receipt {
                     margin-right: 10px;
                 }
             }
+        }
+    }
+
+    .downloads {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        background: #fff;
+        border-radius: 10px;
+        h1 {
+            font-size: 20px;
+        }
+        .resource {
+            padding: 10px 5px;
+            border: 1px solid #dedede;
+            margin: 5px 0;
+            border-radius: 5px;        
+            .link {
+                width: 75%;
+                display: inline-block;
+                overflow: hidden;
+                height: 20px;
+                text-overflow: ellipsis;
+            }
+        }
+        .file {
+            color: #000;
+            text-decoration: none;
+            pointer-events: none;
+        }
+        button {
+            width: 85px;
+            border: 1px solid #dedede;
+            background: #fff;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 5px;
+            float: right;
+            height: 22px;
+            cursor: pointer;
+            outline: none;
         }
     }
 
