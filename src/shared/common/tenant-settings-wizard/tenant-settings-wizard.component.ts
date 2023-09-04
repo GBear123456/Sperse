@@ -50,6 +50,7 @@ import { InvoiceSettingsComponent } from './invoice-settings/invoice-settings.co
 import { CommissionsComponent } from './commissions/commissions.component';
 import { BankTransferComponent } from './bank-transfer/bank-transfer.component';
 import { OtherSettingsComponent } from './other-settings/other-settings.component';
+import { LandingPageComponent } from './landing-page/landing-page.component';
 
 @Component({
     selector: 'tenant-settings-wizard',
@@ -71,6 +72,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(CommissionsComponent) commissionsComponent: CommissionsComponent;
     @ViewChild(BankTransferComponent) bankTransferComponent: BankTransferComponent;
     @ViewChild(OtherSettingsComponent) otherSettingsComponent: OtherSettingsComponent;
+    @ViewChild(LandingPageComponent) landingPageComponent: LandingPageComponent;
     hasCustomizationsFeture = this.featureCheckerService.isEnabled(AppFeatures.AdminCustomizations);
     hasHostPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings);
     hasTenantPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings);
@@ -81,6 +83,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         (this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasHostPermission || this.hasTenantPermission);
     showBankTransferSettings = this.hasHostTenantOrCRMSettings;
     showOtherSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && (this.hasHostPermission || this.hasTenantPermission);
+    showLandingPageSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMTenantLandingPage) && this.permissionCheckerService.isGranted(AppPermissions.AdministrationUsers);
 
     steps: TenantSettingsStep[];
     generalSettings$: Observable<GeneralSettingsEditDto> = this.tenantSettingsService.getGeneralSettings();
@@ -227,6 +230,13 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 getComponent: () => this.otherSettingsComponent,
                 saved: false,
                 visible: this.showOtherSettings
+            },
+            {
+                name: 'landingPage',
+                text: this.ls.l('LandingPage'),
+                getComponent: () => this.landingPageComponent,
+                saved: false,
+                visible: this.showLandingPageSettings
             }
         ];
     }

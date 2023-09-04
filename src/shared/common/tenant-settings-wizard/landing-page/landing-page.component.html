@@ -1,0 +1,30 @@
+<h2>{{ ls.l('LandingPage') }}</h2>
+<ng-container *ngIf="settings">
+    <div class="form-group">
+        <label>{{ls.l('LandingPageContact')}}</label>
+        <div class="landing-contact">
+            <img [src]="profileService.getContactPhotoUrl(settings.contactPhotoId, true)" onerror="this.src='assets/common/images/no-photo.png';" alt="Person Photo">
+            <span *ngIf="settings.contactId else noContact">{{settings.contactFullName}}</span>
+            <ng-template #noContact>
+                <span class="empty">{{(ls.l('Set') + ' ' + ls.l('LandingPageContact'))}}</span>
+            </ng-template>
+            <i class="fa fa-pencil" (click)="toggleContactLists()"></i>
+            <i *ngIf="settings.contactId" class="remove fa fa-times" (click)="removeContact()"></i>
+        </div>
+    </div>
+
+    <app-static-list #contactsList
+                     [width]="'330px'"
+                     [height]="440"
+                     [targetSelector]="'.landing-contact'"
+                     [title]="ls.l('Contacts')"
+                     [showConfirmation]="false"
+                     [highlightSelected]="true"
+                     [selectedKeys]="[settings.contactId]"
+                     [searchEnabled]="true"
+                     [customSearchEnabled]="true"
+                     (onItemSelected)="onContactSelected($event)"
+                     (onListFiltered)="onListFiltered($event)"
+                     [list]="contacts">
+    </app-static-list>
+</ng-container>

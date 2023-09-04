@@ -1,0 +1,43 @@
+:host {
+    .form-group {
+        display: flex;
+        height: 44px;
+
+        .landing-contact {
+            display: flex;
+            align-items: center;
+            padding-left: 30px;
+            border-bottom: 1px solid #dfdfdf;
+            width: 66%;
+
+            img {
+                border-radius: 50%;
+                height: 35px;
+                width: 35px;
+                background-color: #fff;
+                margin-right: 7px;
+            }
+
+            .empty {
+                font-style: italic;
+                color: #aaa;
+            }
+
+            i {
+                margin-left: 7px;
+                font-size: 18px;
+                cursor: pointer;
+
+                &.fa-pencil {
+                    color: #00aeef;
+                }
+
+                &.fa-times {
+                    font-weight: 100;
+                    font-size: 20px;
+                    color: red;
+                }
+            }
+        }
+    }
+}
