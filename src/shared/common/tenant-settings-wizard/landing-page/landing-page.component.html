@@ -12,6 +12,30 @@
             <i *ngIf="settings.contactId" class="remove fa fa-times" (click)="removeContact()"></i>
         </div>
     </div>
+    <div class="form-group">
+        <label>{{ls.l('SenjaPrivateAPIKey')}}</label>
+        <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                     [(value)]="settings.senjaPrivateAPIKey">
+        </dx-text-box>
+    </div>
+    <div class="form-group">
+        <label>{{ls.l('SenjaReviewsWidgetID')}}</label>
+        <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                     [(value)]="settings.senjaReviewsWidgetID">
+        </dx-text-box>
+    </div>
+    <div class="form-group">
+        <label>{{ls.l('SenjaAverageScoreID')}}</label>
+        <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                     [(value)]="settings.senjaAverageScoreID">
+        </dx-text-box>
+    </div>
+    <div class="form-group">
+        <label>{{ls.l('YoutubeWidgetLink')}}</label>
+        <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                     [(value)]="settings.youtubeWidgetLink">
+        </dx-text-box>
+    </div>
 
     <app-static-list #contactsList
                      [width]="'330px'"
