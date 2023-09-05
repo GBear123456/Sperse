@@ -146,7 +146,7 @@
                         </button>
                     </div>
                     <div class="gateways" [style.display]="!showSubmitButton() ? 'flex' : 'none'">
-                        <button *ngIf="productInfo.data.stripeConfigured" class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
+                        <button *ngIf="showStripeButton()" class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
                             Pay with <img src="assets/common/images/stripe.svg" />
                         </button>
                         <pay-pal [style.display]="showPayPalButton() ? 'block' : 'none'"

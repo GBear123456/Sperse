@@ -283,6 +283,17 @@ export class SingleProductComponent implements OnInit {
         }
     }
 
+    showStripeButton() {
+        if (this.productInfo.type == ProductType.Subscription) {
+            if (this.selectedSubscriptionOption.trialDayCount > 0 &&
+                (this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.LifeTime ||
+                    this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.OneTime))
+                return false;
+        }
+
+        return this.productInfo.data.stripeConfigured;
+    }
+
     showPayPalButton() {
         if (this.productInfo.type == ProductType.Subscription) {
             if (this.selectedSubscriptionOption.trialDayCount > 0 &&
