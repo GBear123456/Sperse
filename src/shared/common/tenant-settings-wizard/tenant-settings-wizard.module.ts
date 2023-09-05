@@ -31,6 +31,7 @@ import { SecurityComponent } from '@shared/common/tenant-settings-wizard/securit
 import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard/tenant-management/tenant-management.component';
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
 import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
+import { LandingPageComponent } from '@shared/common/tenant-settings-wizard/landing-page/landing-page.component';
 import { ContactsModule } from '@app/crm/contacts/contacts.module';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
 import { InvoiceSettingsComponent } from './invoice-settings/invoice-settings.component';
@@ -38,6 +39,7 @@ import { CommissionsComponent } from './commissions/commissions.component';
 import { BankTransferComponent } from './bank-transfer/bank-transfer.component';
 import { OtherSettingsComponent } from './other-settings/other-settings.component';
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
+import { StaticListModule } from '@app/shared/common/static-list/static-list.module'; 
 
 @NgModule({
     imports: [
@@ -61,7 +63,8 @@ import { SourceContactListModule } from '@shared/common/source-contact-list/sour
         NgxFileDropModule,
         ContactsModule,
         CountryPhoneNumberModule,
-        SourceContactListModule
+        SourceContactListModule,
+        StaticListModule
     ],
     exports: [TenantSettingsWizardComponent],
     declarations: [
@@ -77,7 +80,8 @@ import { SourceContactListModule } from '@shared/common/source-contact-list/sour
         InvoiceSettingsComponent,
         CommissionsComponent,
         BankTransferComponent,
-        OtherSettingsComponent
+        OtherSettingsComponent,
+        LandingPageComponent
     ],
     entryComponents: [
         TenantSettingsWizardComponent

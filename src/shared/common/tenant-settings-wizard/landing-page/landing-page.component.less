@@ -1,0 +1,67 @@
+:host {
+    .form-group {
+        display: flex;
+        height: 44px;
+
+        label {
+            width: 40%;
+        }
+
+        dx-text-box, .landing-contact {
+            width: 60%;
+        }
+
+        ::ng-deep dx-text-box {
+            .dx-placeholder, input, textarea {
+                font-size: 15px;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+                color: #424c56;
+            }
+
+            .dx-placeholder {
+                font-style: italic;
+                color: lightgray;
+            }
+
+            &.dx-texteditor-empty.dx-state-focused .dx-placeholder {
+                font-size: 11px;
+            }
+        }
+
+        .landing-contact {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #dfdfdf;
+
+            img {
+                border-radius: 50%;
+                height: 35px;
+                width: 35px;
+                background-color: #fff;
+                margin-right: 7px;
+            }
+
+            .empty {
+                font-style: italic;
+                color: #aaa;
+            }
+
+            i {
+                margin-left: 7px;
+                font-size: 18px;
+                cursor: pointer;
+
+                &.fa-pencil {
+                    color: #00aeef;
+                }
+
+                &.fa-times {
+                    font-weight: 100;
+                    font-size: 20px;
+                    color: red;
+                }
+            }
+        }
+    }
+}

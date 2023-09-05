@@ -75,7 +75,7 @@ export class EditContactDialog {
             select(ContactLinkTypesStoreSelectors.getContactLinkTypes),
             filter(types => !!types)
         ).subscribe(types => {
-            this.types = types;
+            this.types = _.sortBy(types, "name");
             if (!this.data.usageTypeId)
                 this.data.usageTypeId = this.types[0].id;
         });
