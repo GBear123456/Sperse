@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -21,6 +21,9 @@ import {
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { UploaderComponent } from '@shared/common/uploader/uploader.component';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'landing-page',
@@ -34,15 +37,22 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 })
 export class LandingPageComponent implements ITenantSettingsStepComponent {
     @ViewChild('contactsList') contactsList: StaticListComponent;
+    @ViewChild('coverLogoUploader') coverLogoUploader: UploaderComponent;
 
     settings: ContactLandingPageSettingDto;
 
     private listFilterTimeout: any;
     contacts: EntityContactInfo[];
 
+    remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
+    tenantIdString: string = this.appSession.tenantId ? this.appSession.tenantId.toString() : '';
+    coverLogoMaxSize = 10 * 1024 * 1024;
+    initialCoverLogoId = null;
+
     constructor(
         private landingPageProxy: ContactLandingPageServiceProxy,
         private contactsServiceProxy: ContactServiceProxy,
+        private appSession: AppSessionService,
         public profileService: ProfileService,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
@@ -50,6 +60,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         this.landingPageProxy.getLandingPageSettings().subscribe(
             (settings) => {
                 this.settings = settings;
+                this.initialCoverLogoId = settings.coverLogoFileObjectId;
                 this.changeDetectorRef.detectChanges();
             }
         );
@@ -99,8 +110,19 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         return this.contactsServiceProxy.getAllByPhrase(search, 20, undefined, undefined, false, false);
     }
 
+    clearCoverLogo() {
+        this.settings.coverLogoFileObjectId = null;
+        this.changeDetectorRef.detectChanges();
+    }
+
     save(): Observable<any> {
         let settings = ContactLandingPageSetting.fromJS(this.settings);
-        return this.landingPageProxy.updateLandingPageSettings(settings);
+        let obersvables = [this.landingPageProxy.updateLandingPageSettings(settings)];
+        if (this.coverLogoUploader.file)
+            obersvables.push(this.coverLogoUploader.uploadFile());
+        else if (this.initialCoverLogoId && !settings.coverLogoFileObjectId)
+            obersvables.push(this.landingPageProxy.clearCoverLogo());
+
+        return forkJoin(obersvables);
     }
 }

@@ -15,19 +15,22 @@
     <div class="form-group">
         <label>{{ls.l('SenjaPrivateAPIKey')}}</label>
         <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
-                     [(value)]="settings.senjaPrivateAPIKey">
+                     [(value)]="settings.senjaPrivateAPIKey"
+                     [maxLength]="512">
         </dx-text-box>
     </div>
     <div class="form-group">
         <label>{{ls.l('SenjaReviewsWidgetID')}}</label>
         <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
-                     [(value)]="settings.senjaReviewsWidgetID">
+                     [(value)]="settings.senjaReviewsWidgetID"
+                     [maxLength]="512">
         </dx-text-box>
     </div>
     <div class="form-group">
         <label>{{ls.l('SenjaAverageScoreID')}}</label>
         <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
-                     [(value)]="settings.senjaAverageScoreID">
+                     [(value)]="settings.senjaAverageScoreID"
+                     [maxLength]="512">
         </dx-text-box>
     </div>
     <div class="form-group">
@@ -36,6 +39,18 @@
                      [(value)]="settings.youtubeWidgetLink">
         </dx-text-box>
     </div>
+
+    <uploader #coverLogoUploader
+              [title]="ls.l('CoverLogo')"
+              [documentId]="settings.coverLogoFileObjectId"
+              [documentLink]="settings.coverLogoFileObjectId ? remoteServiceBaseUrl + '/api/ContactLandingPage/GetCoverPhoto?tenantId=' +  tenantIdString : undefined"
+              [uploadInfoText]="ls.l('CoverLogo_Info')"
+              [uploadButtonText]="ls.l('FileUpload')"
+              [uploadUrl]="remoteServiceBaseUrl + '/api/ContactLandingPage/UploadCoverPhoto'"
+              acceptFileExt=".jpg,.jpeg,.png,.gif"
+              [maxFileSize]="coverLogoMaxSize"
+              (onDocumentClear)="clearCoverLogo()">
+    </uploader>
 
     <app-static-list #contactsList
                      [width]="'330px'"
