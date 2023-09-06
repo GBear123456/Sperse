@@ -13,8 +13,8 @@ import { forkJoin, Observable } from 'rxjs';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     ContactLandingPageServiceProxy,
-    ContactLandingPageSettingDto,
-    ContactLandingPageSetting,
+    LandingPageSettingsDto,
+    GetLandingPageSettingsDto,
     ContactServiceProxy,
     EntityContactInfo
 } from '@shared/service-proxies/service-proxies';
@@ -39,7 +39,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     @ViewChild('contactsList') contactsList: StaticListComponent;
     @ViewChild('coverLogoUploader') coverLogoUploader: UploaderComponent;
 
-    settings: ContactLandingPageSettingDto;
+    settings: GetLandingPageSettingsDto;
 
     private listFilterTimeout: any;
     contacts: EntityContactInfo[];
@@ -116,7 +116,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     }
 
     save(): Observable<any> {
-        let settings = ContactLandingPageSetting.fromJS(this.settings);
+        let settings = LandingPageSettingsDto.fromJS(this.settings);
         let obersvables = [this.landingPageProxy.updateLandingPageSettings(settings)];
         if (this.coverLogoUploader.file)
             obersvables.push(this.coverLogoUploader.uploadFile());
