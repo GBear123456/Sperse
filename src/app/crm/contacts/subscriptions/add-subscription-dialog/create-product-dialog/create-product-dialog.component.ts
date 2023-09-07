@@ -21,6 +21,7 @@ import { CacheService } from 'ng2-cache-service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { DxValidatorComponent, DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable, of, zip } from 'rxjs';
+import * as moment from 'moment';
 import { map, switchMap, finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -58,6 +59,7 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.interface';
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactsService } from '../../../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -93,6 +95,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     isFreePriceType = false;
     baseUrl = AppConsts.remoteServiceBaseUrl;
+
+    publishDate: Date;
     maxFilesCount = 25;
     productTemplates: ProductResourceDto[] = [];
     productFiles: ProductResourceDto[] = [];
@@ -215,6 +219,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.isFreePriceType = !data.product.price;
             if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
                 this.addUpgradeToProduct();
+            if (this.product.publishDate)
+                this.publishDate = DateHelper.addTimezoneOffset(new Date(this.product.publishDate), true);
             this.initProductResources();
         } else {
             this.product = new CreateProductInput(data.product);
@@ -311,6 +317,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         if (item.trialDayCount == null || isNaN(item.trialDayCount))
                             item.trialDayCount = 0;
                     });
+                
+                if (this.publishDate)
+                    this.product.publishDate = DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '')
+                else 
+                    this.product.publishDate = undefined;
 
                 let upgradeProducts = this.product.productUpgradeAssignments;
                 if (upgradeProducts && upgradeProducts.length == 1 && !upgradeProducts[0].upgradeProductId)
@@ -817,6 +828,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
         this.product.type = productType;
         this.detectChanges();
+    }
+
+    onPublishDateOpened() {
+        if (!this.publishDate) {
+            this.publishDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());
+            this.detectChanges();
+        }
     }
 
     templateClick(event, resource) {

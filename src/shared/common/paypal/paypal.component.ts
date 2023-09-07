@@ -65,6 +65,9 @@ export class PayPalComponent {
     }
 
     initialize(clientId: string, type: ButtonType, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>) {
+        if (!clientId)
+            return;
+
         this.type = type;
         this.requestPayment = requestPayment;
         this.requestSubscription = requestSubscription;
