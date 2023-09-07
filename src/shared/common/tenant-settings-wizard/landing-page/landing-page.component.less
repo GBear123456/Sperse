@@ -1,17 +1,18 @@
 :host {
     .form-group {
         display: flex;
-        height: 44px;
 
         label {
             width: 40%;
+            margin-right: 10px;
         }
 
-        dx-text-box, .landing-contact {
+        dx-text-box, dx-text-area, .landing-contact {
             width: 60%;
         }
 
-        ::ng-deep dx-text-box {
+        ::ng-deep dx-text-box,
+        ::ng-deep dx-text-area {
             .dx-placeholder, input, textarea {
                 font-size: 15px;
                 font-weight: 500;
@@ -32,6 +33,7 @@
         .landing-contact {
             display: flex;
             align-items: center;
+            height: 44px;
             border-bottom: 1px solid #dfdfdf;
 
             img {
