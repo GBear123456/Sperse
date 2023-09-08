@@ -44,6 +44,35 @@
             margin-bottom: 20px;
             border: 1px solid transparent;
 
+            &.status {
+                p {
+                    margin: 15px 0 0;
+
+                    img {
+                        vertical-align: bottom;
+                        &.delete {
+                            display: inline;
+                            cursor: pointer;
+                            vertical-align: sub;
+                        }
+                    }
+                    ::ng-deep dx-switch {
+                        float: right;
+                        vertical-align: bottom;
+                    }
+                    span {
+                        font-weight: 600;
+                    }
+                    a {
+                        float: right;
+                        padding: 0 8px;
+                    }
+                    ::ng-deep dx-date-box {
+                        float: right;
+                    }
+                }
+            }
+
             div.disabled {
                 opacity: 0.5;
                 cursor: default;
