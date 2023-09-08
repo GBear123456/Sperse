@@ -8,6 +8,8 @@ import {
 
 /** Third party imports */
 import { forkJoin, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import DataSource from 'devextreme/data/data_source';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -16,7 +18,9 @@ import {
     LandingPageSettingsDto,
     GetLandingPageSettingsDto,
     ContactServiceProxy,
-    EntityContactInfo
+    EntityContactInfo,
+    ProductDto,
+    ProductServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -33,7 +37,7 @@ import { AppConsts } from '@shared/AppConsts';
         'landing-page.component.less'
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ContactLandingPageServiceProxy, ContactServiceProxy]
+    providers: [ContactLandingPageServiceProxy, ContactServiceProxy, ProductServiceProxy]
 })
 export class LandingPageComponent implements ITenantSettingsStepComponent {
     @ViewChild('contactsList') contactsList: StaticListComponent;
@@ -49,10 +53,25 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     coverLogoMaxSize = 10 * 1024 * 1024;
     initialCoverLogoId = null;
 
+    products$: Observable<DataSource<ProductDto, number>> = this.productProxy.getProducts(undefined)
+        .pipe(
+            map(v => {
+                let data = v.filter(p => p.isPublished == true).map(x => {
+                    x.group = x.group || "No Group";
+                    x.name = `${x.name} (${x.type})`;
+                    return x;
+                });
+                let dataSource = new DataSource(data);
+                dataSource.loadOptions().group = 'group';
+                return dataSource;
+            })
+        );
+
     constructor(
         private landingPageProxy: ContactLandingPageServiceProxy,
         private contactsServiceProxy: ContactServiceProxy,
         private appSession: AppSessionService,
+        private productProxy: ProductServiceProxy,
         public profileService: ProfileService,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService

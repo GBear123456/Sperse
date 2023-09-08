@@ -7,12 +7,13 @@
             margin-right: 10px;
         }
 
-        dx-text-box, dx-text-area, .landing-contact {
+        dx-text-box, dx-text-area, dx-tag-box, .landing-contact {
             width: 60%;
         }
 
         ::ng-deep dx-text-box,
-        ::ng-deep dx-text-area {
+        ::ng-deep dx-text-area,
+        ::ng-deep dx-tag-box {
             .dx-placeholder, input, textarea {
                 font-size: 15px;
                 font-weight: 500;
@@ -27,6 +28,16 @@
 
             &.dx-texteditor-empty.dx-state-focused .dx-placeholder {
                 font-size: 11px;
+            }
+        }
+
+        ::ng-deep dx-tag-box {
+            .dx-texteditor-input-container {
+                border-bottom: 1px solid #dfdfdf;
+
+                input {
+                    border: 0;
+                }
             }
         }
 
