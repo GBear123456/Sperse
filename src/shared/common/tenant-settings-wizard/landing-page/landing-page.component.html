@@ -71,6 +71,17 @@
                           [maxLength]="4096">
             </dx-text-area>
         </div>
+        <div class="form-group">
+            <label>{{ls.l('Products')}}</label>
+            <dx-tag-box [dataSource]="products$ | async"
+                        displayExpr="name"
+                        valueExpr="id"
+                        [grouped]="true"
+                        [searchEnabled]="true"
+                        [showDropDownButton]="true"
+                        [(value)]="settings.productIds">
+            </dx-tag-box>
+        </div>
 
         <app-static-list #contactsList
                          [width]="'330px'"
