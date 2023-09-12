@@ -7,9 +7,10 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
+import { DxValidationGroupComponent } from 'devextreme-angular/ui/validation-group';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -20,7 +21,8 @@ import {
     ContactServiceProxy,
     EntityContactInfo,
     ProductDto,
-    ProductServiceProxy
+    ProductServiceProxy,
+    LandingPageSettingsQuestionDto
 } from '@shared/service-proxies/service-proxies';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -42,6 +44,7 @@ import { AppConsts } from '@shared/AppConsts';
 export class LandingPageComponent implements ITenantSettingsStepComponent {
     @ViewChild('contactsList') contactsList: StaticListComponent;
     @ViewChild('coverLogoUploader') coverLogoUploader: UploaderComponent;
+    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent
 
     settings: GetLandingPageSettingsDto;
 
@@ -134,7 +137,18 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         this.changeDetectorRef.detectChanges();
     }
 
+    addQuestion() {
+        this.settings.faq.push(new LandingPageSettingsQuestionDto());
+    }
+
+    removeQuestion(index: number) {
+        this.settings.faq.splice(index, 1);
+    }
+
     save(): Observable<any> {
+        if (!this.validationGroup.instance.validate().isValid)
+            return throwError('');
+
         let settings = LandingPageSettingsDto.fromJS(this.settings);
         let obersvables = [this.landingPageProxy.updateLandingPageSettings(settings)];
         if (this.coverLogoUploader.file)
