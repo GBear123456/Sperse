@@ -143,7 +143,7 @@ export class AppConsts {
     /** 2 hours */
     static readonly generalDictionariesCacheLifetime = 2 * 60 * 60 * 1000;
 
-    static readonly maxImageSize = 5242880;
+    static readonly maxImageSize = 1048576;
 
     static readonly maxDocumentSizeMB = 100;
     static readonly maxDocumentSizeBytes = 1024 * 1024 * AppConsts.maxDocumentSizeMB;

@@ -606,10 +606,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
         let imageSource = source || this.getProductImage(false);
         const uploadPhotoData: UploadPhotoData = {
+            title: this.ls.l('AddProductImage'),
             fileUrl: imageSource ? undefined : this.uploadFileUrl,
             source: imageSource,
-            maxSizeBytes: 1048576,
-            title: this.ls.l('AddProductImage')
+            maxSizeBytes: AppConsts.maxImageSize
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: uploadPhotoData,

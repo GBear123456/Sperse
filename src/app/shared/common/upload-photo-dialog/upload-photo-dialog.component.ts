@@ -121,7 +121,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     onSave() {
         if (this.data.maxSizeBytes && this.imageData) {
             const fileBytes = window.atob(StringHelper.getBase64(this.imageData)).length;
-            if (fileBytes > this.data.maxSizeBytes) {
+            if (fileBytes > (this.data.maxSizeBytes * 6)) { //Image becomes larger after ngx-image-cropper processing. Will be compressed on server side.
                 abp.message.error(
                     this.ls.l(
                         'ResizedProfilePicture_Warn_SizeLimit',
