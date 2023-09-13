@@ -354,8 +354,10 @@ export class SingleProductComponent implements OnInit {
 
     getPricePerPeriod(includeCoupon: boolean): number {
         let price = this.selectedSubscriptionOption.fee;
-        if (includeCoupon)
-            price = this.applyCoupon(price);
+        if (includeCoupon) {
+            if (!this.selectedSubscriptionOption.signupFee || (this.couponInfo && this.couponInfo.duration != CouponDiscountDuration.Once))
+                price = this.applyCoupon(price);
+        }
         return this.selectedBillingPeriod === BillingPeriod.Yearly ?
             round(price / 12, 2) :
             price;
@@ -388,7 +390,10 @@ export class SingleProductComponent implements OnInit {
 
     getDiscount(): number {
         if (this.productInfo.type == ProductType.Subscription) {
-            return this.getPricePerPeriod(false) - this.getPricePerPeriod(true);
+            let amount = this.getPricePerPeriod(false) - this.getPricePerPeriod(true);
+            if (this.selectedSubscriptionOption.trialDayCount)
+                amount = amount + this.getSignUpFee(false) - this.getSignUpFee(true);
+            return amount;
         }
 
         return this.getGeneralPrice(false) - this.getGeneralPrice(true);
