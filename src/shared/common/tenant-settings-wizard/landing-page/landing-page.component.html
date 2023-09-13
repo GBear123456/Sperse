@@ -83,6 +83,38 @@
             </dx-tag-box>
         </div>
 
+        <div class="faq-container">
+            <h5>{{ls.l('FAQ')}}</h5>
+            <dx-validation-group>
+                <div *ngFor="let question of settings.faq; let i = index">
+                    <div class="form-group">
+                        <label>{{ls.l('Question')}}</label>
+                        <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                                     [(value)]="question.title">
+                            <dx-validator>
+                                <dxi-validation-rule type="required"
+                                                     [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ls.l('Answer')}}</label>
+                        <dx-text-area height="155px"
+                                      [placeholder]="ls.l('EditValuePlaceholder')"
+                                      [(value)]="question.text"
+                                      [maxLength]="1000">
+                            <dx-validator>
+                                <dxi-validation-rule type="required"
+                                                     [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-area>
+                    </div>
+                    <div class="remove-question" (click)="removeQuestion(i)">{{ls.l('Remove')}}</div>
+                </div>
+            </dx-validation-group>
+            <div class="add-question" (click)="addQuestion()">{{ls.l('Add new question +')}}</div>
+        </div>
+
         <app-static-list #contactsList
                          [width]="'330px'"
                          [height]="440"
