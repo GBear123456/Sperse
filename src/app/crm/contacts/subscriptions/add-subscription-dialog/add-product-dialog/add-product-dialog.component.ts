@@ -458,9 +458,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             return;
 
         const uploadPhotoData: UploadPhotoData = {
+            title: this.ls.l('AddProductImage'),
             source: this.getProductImage(false),
-            maxSizeBytes: 1048576,
-            title: this.ls.l('AddProductImage')
+            maxSizeBytes: AppConsts.maxImageSize
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: uploadPhotoData,

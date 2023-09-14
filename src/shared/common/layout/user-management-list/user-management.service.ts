@@ -254,9 +254,9 @@ export class UserManagementService {
 
     changeProfilePicture(e): void {
         const uploadPhotoData: UploadPhotoData = {
+            title: this.ls.l('ChangeProfilePicture'),
             source: this.profileService.getProfilePictureUrl(this.appSession.user.profilePictureId),
-            maxSizeBytes: AppConsts.maxImageSize,
-            title: this.ls.l('ChangeProfilePicture')
+            maxSizeBytes: AppConsts.maxImageSize
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: uploadPhotoData,

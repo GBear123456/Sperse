@@ -272,9 +272,9 @@ export class CreateUserDialogComponent implements OnInit {
 
     showUploadPhoto($event) {
         const uploadPhotoData: UploadPhotoData = {
+            title: this.ls.l('AddUserLogo'),
             source: this.photoOriginalData,
-            maxSizeBytes: AppConsts.maxImageSize,
-            title: this.ls.l('AddUserLogo')
+            maxSizeBytes: AppConsts.maxImageSize
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: uploadPhotoData,

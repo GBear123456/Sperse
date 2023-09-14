@@ -444,8 +444,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
         this.dialog.closeAll();
         let data: UploadPhotoData = {
+            title: this.ls.l('ChangeContactPhoto'),
             ...this.getPhotoSrc(this.data, isCompany),
-            title: this.ls.l('ChangeContactPhoto')
+            maxSizeBytes: AppConsts.maxImageSize
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
