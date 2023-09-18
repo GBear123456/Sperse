@@ -15,6 +15,7 @@ import { EmailUsageTypesStoreModule } from '@root/store/email-usage-types-store'
 import { AddressUsageTypesStoreModule } from '@root/store/address-usage-types-store';
 import { PhoneUsageTypesStoreModule } from '@root/store/phone-usage-types-store';
 import { CountriesStoreModule } from '@root/store/countries-store';
+import { LanguagesStoreModule } from '@root/store/languages-store';
 
 /** For storing some entities in local storage */
 export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
@@ -24,6 +25,7 @@ export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionRedu
         keys: [
             'addressUsageTypes',
             'countries',
+            'languages',
             'contactLinkTypes',
             'emailUsageTypes',
             'states',
@@ -53,6 +55,7 @@ const metaReducers: Array<MetaReducer<any, any>> = [ localStorageSyncReducer ];
         AddressUsageTypesStoreModule,
         PhoneUsageTypesStoreModule,
         CountriesStoreModule,
+        LanguagesStoreModule,
         StoreModule.forRoot({}, { 
             metaReducers: metaReducers,
             runtimeChecks: {
