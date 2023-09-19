@@ -20,7 +20,8 @@ import {
     ContactServiceProxy,
     EntityContactInfo,
     ProductDto,
-    ProductServiceProxy
+    ProductServiceProxy,
+    LandingPageOnlineStatus
 } from '@shared/service-proxies/service-proxies';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -29,6 +30,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { AppConsts } from '@shared/AppConsts';
 import { WordingListComponent } from './wording-list/wording-list.component';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     selector: 'landing-page',
@@ -70,6 +72,13 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             })
         );
 
+    onlineStatusOptions = Object.keys(LandingPageOnlineStatus).map(item => {
+        return {
+            id: LandingPageOnlineStatus[item],
+            text: item
+        };
+    });
+
     constructor(
         private landingPageProxy: ContactLandingPageServiceProxy,
         private contactsServiceProxy: ContactServiceProxy,
@@ -81,6 +90,8 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     ) {
         this.landingPageProxy.getLandingPageSettings().subscribe(
             (settings) => {
+                if (settings.memberSince)
+                    settings.memberSince = DateHelper.addTimezoneOffset(new Date(settings.memberSince), true);
                 this.settings = settings;
                 this.initialCoverLogoId = settings.coverLogoFileObjectId;
                 this.changeDetectorRef.detectChanges();
@@ -142,6 +153,8 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             return throwError('');
 
         let settings = LandingPageSettingsDto.fromJS(this.settings);
+        if (settings.memberSince)
+            settings.memberSince = DateHelper.removeTimezoneOffset(new Date(settings.memberSince), true);
         let obersvables = [this.landingPageProxy.updateLandingPageSettings(settings)];
         if (this.coverLogoUploader.file)
             obersvables.push(this.coverLogoUploader.uploadFile());

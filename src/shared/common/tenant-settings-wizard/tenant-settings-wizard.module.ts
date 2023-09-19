@@ -17,6 +17,7 @@ import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
 import { NgxFileDropModule } from 'ngx-file-drop';
@@ -60,6 +61,7 @@ import { StaticListModule } from '@app/shared/common/static-list/static-list.mod
         DxTextBoxModule,
         DxTextAreaModule,
         DxTagBoxModule,
+        DxDateBoxModule,
         DxValidatorModule,
         DxValidationGroupModule,
         MatInputModule,
