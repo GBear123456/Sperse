@@ -5,7 +5,8 @@
             <div class="form-group">
                 <label>{{itemTitle}}</label>
                 <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
-                             [(value)]="wording.title">
+                             [(value)]="wording.title"
+                             [maxLength]="1024">
                     <dx-validator>
                         <dxi-validation-rule type="required"
                                              [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
@@ -18,7 +19,7 @@
                 <dx-text-area height="155px"
                               [placeholder]="ls.l('EditValuePlaceholder')"
                               [(value)]="wording.text"
-                              [maxLength]="1000">
+                              [maxLength]="4096">
                     <dx-validator>
                         <dxi-validation-rule type="required"
                                              [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>

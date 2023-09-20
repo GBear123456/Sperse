@@ -37,8 +37,48 @@
         <div class="form-group">
             <label>{{ls.l('YoutubeWidgetLink')}}</label>
             <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
-                         [(value)]="settings.youtubeWidgetLink">
+                         [(value)]="settings.youtubeWidgetLink"
+                         [maxLength]="512">
             </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('DiscordJoinLink')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.discordJoinLink"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('TelegramJoinLink')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.telegramJoinLink"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('WhatsAppJoinLink')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.whatsAppJoinLink"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('OnlineStatus')}}</label>
+            <dx-select-box [items]="onlineStatusOptions"
+                           displayExpr="text"
+                           valueExpr="id"
+                           placeholder=""
+                           [(value)]="settings.onlineStatus">
+            </dx-select-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('MemberSince')}}</label>
+            <dx-date-box type="date"
+                         [acceptCustomValue]="false"
+                         [openOnFieldClick]="true"
+                         [showClearButton]="true"
+                         [(value)]="settings.memberSince">
+            </dx-date-box>
         </div>
         <uploader #coverLogoUploader
                   [title]="ls.l('CoverLogo')"
