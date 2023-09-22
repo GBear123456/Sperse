@@ -58,6 +58,9 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     coverLogoMaxSize = 10 * 1024 * 1024;
     initialCoverLogoId = null;
 
+    isDeployInitiating = false;
+    isDeployInitiated = false;
+
     products$: Observable<DataSource<ProductDto, number>> = this.productProxy.getProducts(undefined)
         .pipe(
             map(v => {
@@ -148,8 +151,25 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         this.changeDetectorRef.detectChanges();
     }
 
+    deployPage() {
+        if (this.isDeployInitiating || this.isDeployInitiated)
+            return;
+
+        this.isDeployInitiating = true;
+        this.landingPageProxy.deployToVercel()
+            .subscribe(url => {
+                this.settings.vercelUrl = url;
+                this.isDeployInitiated = true;
+                this.isDeployInitiating = false;
+                this.changeDetectorRef.detectChanges();
+            }, () => {
+                this.isDeployInitiating = false;
+                this.changeDetectorRef.detectChanges();
+            })
+    }
+
     save(): Observable<any> {
-        if (!this.faqComponent.isValid() || !this.tabsComponent.isValid())
+        if (this.isDeployInitiating || !this.faqComponent.isValid() || !this.tabsComponent.isValid())
             return throwError('');
 
         let settings = LandingPageSettingsDto.fromJS(this.settings);

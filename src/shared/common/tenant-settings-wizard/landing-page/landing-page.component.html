@@ -134,6 +134,27 @@
                       [title]="ls.l('Tabs')">
         </wording-list>
 
+
+        <div class="form-group">
+            <label>
+                {{settings.isDeployed ? ls.l('Deployed page url') : ls.l('Deployment status')}}
+            </label>
+            <div class="right-side">
+                <div *ngIf="settings.isDeployed; else deploy">
+                    <a href="{{settings.vercelUrl}}" target="_blank">{{settings.vercelUrl}}</a>
+                </div>
+                <ng-template #deploy>
+                    <button *ngIf="!isDeployInitiated; else deployInitiated" class="btn btn-layout next" (click)="deployPage()">
+                        {{isDeployInitiating ? ls.l('Deploying') : ls.l('Deploy')}}<i [ngClass]="{ 'fa fa-spinner fa-spin': isDeployInitiating }"></i>
+                    </button>
+                    <ng-template #deployInitiated>
+                        <div>{{ls.l('Your page will be available soon')}}</div>
+                        <div><a href="{{settings.vercelUrl}}" target="_blank">{{settings.vercelUrl}}</a></div>
+                    </ng-template>
+                </ng-template>
+            </div>
+        </div>
+
         <app-static-list #contactsList
                          [width]="'330px'"
                          [height]="440"
