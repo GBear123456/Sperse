@@ -137,11 +137,11 @@
 
         <div class="form-group">
             <label>
-                {{settings.isDeployed ? ls.l('Deployed page url') : ls.l('Deployment status')}}
+                {{ls.l('Deployment status')}}
             </label>
             <div class="right-side">
                 <div *ngIf="settings.isDeployed; else deploy">
-                    <a href="{{settings.vercelUrl}}" target="_blank">{{settings.vercelUrl}}</a>
+                    {{ls.l('Deployed')}}
                 </div>
                 <ng-template #deploy>
                     <button *ngIf="!isDeployInitiated; else deployInitiated" class="btn btn-layout next" (click)="deployPage()">
@@ -149,9 +149,53 @@
                     </button>
                     <ng-template #deployInitiated>
                         <div>{{ls.l('Your page will be available soon')}}</div>
-                        <div><a href="{{settings.vercelUrl}}" target="_blank">{{settings.vercelUrl}}</a></div>
                     </ng-template>
                 </ng-template>
+            </div>
+        </div>
+        <div *ngIf="settings.isDeployed || isDeployInitiated" class="domains">
+            <h5>{{ls.l("Domains")}}</h5>
+            <div class="new-domain">
+                <dx-text-box #newDomain
+                             valueChangeEvent="keyup"
+                             placeholder="Domain name">
+                </dx-text-box>
+                <button class="btn btn-layout" [disabled]="!newDomain.value" (click)="addDomain(newDomain)">
+                    Add <i [ngClass]="{ 'fa fa-spinner fa-spin': isNewDomainAdding }"></i>
+                </button>
+            </div>
+            <div *ngFor="let domain of settings.landingPageDomains; index as i" class="domain">
+                <div class="domain-info">
+                    <div class="domain-name">
+                        {{domain.name}}
+                        <i *ngIf="domain.isValid" class="fa fa-check"></i>
+                        <i *ngIf="!domain.isValid" class="fa fa-times"></i>
+                    </div>
+                    <div class="buttons">
+                        <span *ngIf="!domain.isValid" class="verify" (click)="verifyDomain(domain)">
+                            Verify <i [ngClass]="{ 'fa fa-spinner fa-spin': domain.isValidating }"></i>
+                        </span>
+                        <span class="delete" (click)="deleteDomain(domain, i)">
+                            Delete <i [ngClass]="{ 'fa fa-spinner fa-spin': domain.isDeleting }"></i>
+                        </span>
+                    </div>
+                </div>
+                <div *ngIf="!domain.isVaid && domain.configRecords && domain.configRecords.length" class="domain-dns-info">
+                    <div>Set the following record on your DNS provider to continue:</div>
+                    <div class="container">
+                        <div class="row header-row">
+                            <div class="col-2">Type</div>
+                            <div class="col-4">Name</div>
+                            <div class="col-6">Value</div>
+                        </div>
+                        <div *ngFor="let dnsRecord of domain.configRecords" class="row">
+                            <div class="col-2">{{dnsRecord.type}}</div>
+                            <div class="col-4">{{dnsRecord.name}}</div>
+                            <div class="col-6">{{dnsRecord.value}}</div>
+                        </div>
+                    </div>
+                    <div>Depending on your provider, it might take some time for the DNS records to apply.</div>
+                </div>
             </div>
         </div>
 
