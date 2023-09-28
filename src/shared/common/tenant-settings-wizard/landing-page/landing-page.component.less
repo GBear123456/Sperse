@@ -102,6 +102,91 @@
         }
     }
 
+    .domains {
+        .new-domain {
+            display: flex;
+            margin-bottom: 10px;
+
+            ::ng-deep dx-text-box {
+                width: 100%;
+
+                input {
+                    padding: 5px 10px;
+                }
+
+                .dx-placeholder {
+                    font-style: italic;
+                    color: lightgray;
+                }
+            }
+
+            button {
+                width: 150px;
+                height: 30px;
+                padding: 0 10px;
+            }
+        }
+
+        .domain {
+            .domain-info {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 5px 0;
+
+                .domain-name {
+                    font-weight: 500;
+
+                    i {
+                        margin-right: 10px;
+                    }
+
+                    .fa-check {
+                        color: green;
+                    }
+
+                    .fa-times {
+                        color: red;
+                    }
+                }
+
+                .buttons {
+                    margin-right: 15px;
+
+                    span {
+                        border-bottom: 1px solid;
+                        cursor: pointer;
+                        margin-left: 5px;
+                    }
+
+                    .verify {
+                        border-color: #00aeef;
+                        color: #00aeef;
+                    }
+
+                    .delete {
+                        border-color: red;
+                        color: red;
+                    }
+                }
+            }
+
+            .domain-dns-info {
+                border: 1px solid lightgray;
+                border-radius: 10px;
+                padding: 5px;
+
+                .container {
+                    margin: 10px 0;
+
+                    .header-row {
+                        font-weight: bold;
+                        background-color: lightgray;
+                    }
+                }
+            }
+        }
+    }
+
     ::ng-deep wording-list {
         .wording-container {
             margin-bottom: 21px;
