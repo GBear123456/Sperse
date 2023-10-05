@@ -87,6 +87,9 @@ export class StartComponent extends CFOComponentBase implements AfterViewInit, O
     }
 
     openDialog() {
+        if (this.appService.isHostTenant)
+            return;
+
         let tenant = this.appSessionService.tenant;
         if (!tenant || !tenant.customLayoutType || tenant.customLayoutType == LayoutType.Default) {
             const dialogConfig: MatDialogConfig = {

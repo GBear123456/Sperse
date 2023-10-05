@@ -10,7 +10,7 @@
     <calendar-button *ngIf="hasAccessibleCG"></calendar-button>
 </app-headline>
 <div>
-  <crm-left-menu [showIntroductionTour]="true"
+  <crm-left-menu [showIntroductionTour]="!appService.isHostTenant"
                  [currentContactGroup]="filterModelContactGroup.items.element.value"
                  (openIntro)="openDialog()">
   </crm-left-menu>
