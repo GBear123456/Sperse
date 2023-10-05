@@ -13,7 +13,7 @@
     </app-headline>
     <div class="content" #content>
         <cfo-left-menu #leftMenu
-                       [showIntroductionTourLink]="true">
+                       [showIntroductionTourLink]="!appService.isHostTenant">
         </cfo-left-menu>
         <div class="right">
             <dx-scroll-view [useNative]="false" [showScrollbar]="dashboard.offsetHeight > content.offsetHeight ? 'onHover' : 'Never'">

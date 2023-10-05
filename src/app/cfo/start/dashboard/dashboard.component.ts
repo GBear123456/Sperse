@@ -41,7 +41,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     constructor(
         injector: Injector,
-        private appService: AppService,
+        public appService: AppService,
         private dashboardService: DashboardService,
         public bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
