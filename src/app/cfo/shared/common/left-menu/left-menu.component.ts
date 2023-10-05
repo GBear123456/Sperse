@@ -24,6 +24,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
 import { GetStatusOutput } from '@shared/service-proxies/service-proxies';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -52,6 +53,7 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
     constructor(
         injector: Injector,
         public layoutService: LayoutService,
+        private appService: AppService,
         private appSessionService: AppSessionService,
         public dialog: MatDialog,
         public cfoService: CFOService
@@ -135,6 +137,9 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
     }
 
     showIntro() {
+        if (this.appService.isHostTenant)
+            return;
+
         this.dialogConfig.height = '655px';
         this.dialogConfig.width = '880px';
         this.dialogConfig.id = this.dialogConfig.backdropClass = 'cfo-intro';
