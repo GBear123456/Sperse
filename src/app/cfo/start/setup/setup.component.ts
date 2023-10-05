@@ -20,6 +20,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
+import { AppService } from '../../../app.service';
 
 @Component({
     selector: 'setup',
@@ -38,6 +39,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
 
     constructor(
         injector: Injector,
+        public appService: AppService,
         private instanceServiceProxy: InstanceServiceProxy,
         public dialog: MatDialog
     ) {

@@ -256,6 +256,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     openDialog() {
+        if (this.appService.isHostTenant)
+            return;
+
         let tenant = this.appSessionService.tenant;
         if (!tenant || !tenant.customLayoutType || tenant.customLayoutType == LayoutType.Default) {
             this.dialogConfig.height = '650px';
