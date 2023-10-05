@@ -6,6 +6,16 @@
                   [(value)]="stripePaymentSettings.isEnabled">
     </dx-check-box>
 </div>
+<div *ngIf="!isHost" class="stripe-button-container">
+    <button class="btn btn-layout stripe-button" (click)="createConnectedAccount()">
+        {{ stripePaymentSettings.isConnectedAccountSetUpCompleted ? l('Connected with') : stripePaymentSettings.connectedAccountId ? l('Finish onboarding with') : l('Connect with') }}
+        <img src="./assets/common/images/stripe.svg" />
+    </button>
+    <!--<ng-container *ngIf="stripePaymentSettings.isConnectedAccountSetUpCompleted">
+        <span class="disconnect" (click)="disconnedConnectedAccount()">{{l("Disconnect")}}</span>
+    </ng-container>-->
+</div>
+<hr />
 <div class="form-group">
     <label for="StripeSecretKey">{{l("Secret key")}}</label>
     <input id="StripeSecretKey" type="text" name="StripeSecretKey" class="form-control" [(ngModel)]="stripePaymentSettings.apiKey">
