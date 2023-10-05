@@ -45,6 +45,24 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         }
     }
 
+    createConnectedAccount() {
+        this.message.confirm('', this.l('Do you want to connect Stripe account ?'), (isConfirmed) => {
+            if (isConfirmed) {
+                this.startLoading();
+                this.tenantPaymentSettingsService.connectStripeAccount()
+                    .pipe(
+                        finalize(() => this.finishLoading())
+                    ).subscribe((url) => {
+                        window.location.href = url;
+                    });
+            }
+        });
+    }
+
+    disconnedConnectedAccount() {
+        alert('disconnectConnectedAccount');
+    }
+
     getSaveObs(): Observable<any> {
         return this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings);
     }
