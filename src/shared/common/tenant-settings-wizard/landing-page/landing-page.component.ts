@@ -24,7 +24,8 @@ import {
     ProductServiceProxy,
     LandingPageOnlineStatus,
     LandingPageSettingsDomainDto,
-    AddVercelDomainInput
+    AddVercelDomainInput,
+    LandingPageColorScheme
 } from '@shared/service-proxies/service-proxies';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -34,7 +35,6 @@ import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { AppConsts } from '@shared/AppConsts';
 import { WordingListComponent } from './wording-list/wording-list.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { DxTagBoxComponent } from 'devextreme-angular';
 
 @Component({
     selector: 'landing-page',
@@ -85,6 +85,12 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             })
         );
 
+    defaultSchemeOptions = Object.keys(LandingPageColorScheme).map(item => {
+        return {
+            id: LandingPageColorScheme[item],
+            text: this.ls.l(item)
+        };
+    });
     onlineStatusOptions = Object.keys(LandingPageOnlineStatus).map(item => {
         return {
             id: LandingPageOnlineStatus[item],

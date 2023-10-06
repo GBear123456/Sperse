@@ -14,6 +14,15 @@
             </div>
         </div>
         <div class="form-group">
+            <label>{{ls.l('DefaultColorScheme')}}</label>
+            <dx-select-box [items]="defaultSchemeOptions"
+                           displayExpr="text"
+                           valueExpr="id"
+                           placeholder=""
+                           [(value)]="settings.defaultColorScheme">
+            </dx-select-box>
+        </div>
+        <div class="form-group">
             <label>{{ls.l('SenjaPrivateAPIKey')}}</label>
             <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
                          [(value)]="settings.senjaPrivateAPIKey"
