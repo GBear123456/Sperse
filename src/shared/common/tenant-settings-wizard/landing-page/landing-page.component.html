@@ -63,6 +63,23 @@
             </dx-text-box>
         </div>
         <div class="form-group">
+            <label>{{ls.l('MetaKeywords')}}</label>
+            <dx-tag-box [placeholder]="ls.l('EditValuePlaceholder')"
+                        [openOnFieldClick]="false"
+                        [acceptCustomValue]="true"
+                        [(value)]="metaKeywords"
+                        [maxLength]="50"
+                        (onValueChanged)="metaKeywordChanged($event)">
+            </dx-tag-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('MetaDescription')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.metaDescription"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
             <label>{{ls.l('OnlineStatus')}}</label>
             <dx-select-box [items]="onlineStatusOptions"
                            displayExpr="text"

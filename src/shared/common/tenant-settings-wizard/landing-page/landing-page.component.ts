@@ -34,6 +34,7 @@ import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { AppConsts } from '@shared/AppConsts';
 import { WordingListComponent } from './wording-list/wording-list.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { DxTagBoxComponent } from 'devextreme-angular';
 
 @Component({
     selector: 'landing-page',
@@ -64,6 +65,8 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     isDeployInitiating = false;
     isDeployInitiated = false;
     isNewDomainAdding = false;
+
+    metaKeywords: string[] = [];
 
     products$: Observable<DataSource<ProductDto, number>> = this.productProxy.getProducts(undefined)
         .pipe(
@@ -101,6 +104,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
                 if (settings.memberSince)
                     settings.memberSince = DateHelper.addTimezoneOffset(new Date(settings.memberSince), true);
                 this.settings = settings;
+                this.setMetaKeywords();
                 this.initialCoverLogoId = settings.coverLogoFileObjectId;
                 this.changeDetectorRef.detectChanges();
             }
@@ -154,6 +158,25 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     clearCoverLogo() {
         this.settings.coverLogoFileObjectId = null;
         this.changeDetectorRef.detectChanges();
+    }
+
+    setMetaKeywords() {
+        if (this.settings.metaKeywords && this.settings.metaKeywords.length) {
+            this.metaKeywords = this.settings.metaKeywords.split(', ');
+        }
+    }
+
+    metaKeywordChanged(event) {
+        if (event.value.length == 10)
+            event.component.option("acceptCustomValue", false);
+        else
+            event.component.option("acceptCustomValue", true);
+    }
+
+    getMetaKeywordsString(): string {
+        if (this.metaKeywords.length)
+            return this.metaKeywords.join(', ');
+        return null;
     }
 
     deployPage() {
@@ -242,6 +265,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             return throwError('');
 
         let settings = LandingPageSettingsDto.fromJS(this.settings);
+        settings.metaKeywords = this.getMetaKeywordsString();
         if (settings.memberSince)
             settings.memberSince = DateHelper.removeTimezoneOffset(new Date(settings.memberSince), true);
         let obersvables = [this.landingPageProxy.updateLandingPageSettings(settings)];
