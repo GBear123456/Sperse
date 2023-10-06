@@ -48,6 +48,7 @@ import { DxTagBoxComponent } from 'devextreme-angular';
 })
 export class LandingPageComponent implements ITenantSettingsStepComponent {
     @ViewChild('contactsList') contactsList: StaticListComponent;
+    @ViewChild('logoUploader') logoUploader: UploaderComponent;
     @ViewChild('coverLogoUploader') coverLogoUploader: UploaderComponent;
     @ViewChild('faq', { static: false }) faqComponent: WordingListComponent;
     @ViewChild('tabs', { static: false }) tabsComponent: WordingListComponent;
@@ -59,7 +60,9 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
 
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     tenantIdString: string = this.appSession.tenantId ? this.appSession.tenantId.toString() : '';
+    logoMaxSize = 5 * 1024 * 1024;
     coverLogoMaxSize = 10 * 1024 * 1024;
+    initialLogoId = null;
     initialCoverLogoId = null;
 
     isDeployInitiating = false;
@@ -105,6 +108,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
                     settings.memberSince = DateHelper.addTimezoneOffset(new Date(settings.memberSince), true);
                 this.settings = settings;
                 this.setMetaKeywords();
+                this.initialLogoId = settings.logoFileObjectId;
                 this.initialCoverLogoId = settings.coverLogoFileObjectId;
                 this.changeDetectorRef.detectChanges();
             }
@@ -153,6 +157,11 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
 
     getAllByPhraseObserverable(search = undefined) {
         return this.contactsServiceProxy.getAllByPhrase(search, 20, undefined, undefined, false, false);
+    }
+
+    clearLogo() {
+        this.settings.logoFileObjectId = null;
+        this.changeDetectorRef.detectChanges();
     }
 
     clearCoverLogo() {
@@ -269,6 +278,10 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         if (settings.memberSince)
             settings.memberSince = DateHelper.removeTimezoneOffset(new Date(settings.memberSince), true);
         let obersvables = [this.landingPageProxy.updateLandingPageSettings(settings)];
+        if (this.logoUploader.file)
+            obersvables.push(this.logoUploader.uploadFile());
+        else if (this.initialLogoId && !settings.logoFileObjectId)
+            obersvables.push(this.landingPageProxy.clearLogo());
         if (this.coverLogoUploader.file)
             obersvables.push(this.coverLogoUploader.uploadFile());
         else if (this.initialCoverLogoId && !settings.coverLogoFileObjectId)

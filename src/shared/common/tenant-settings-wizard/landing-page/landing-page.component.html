@@ -111,11 +111,22 @@
                          [(value)]="settings.memberSince">
             </dx-date-box>
         </div>
+        <uploader #logoUploader
+                  [title]="ls.l('Logo')"
+                  [documentId]="settings.logoFileObjectId"
+                  [documentLink]="settings.logoFileObjectId ? remoteServiceBaseUrl + '/api/ContactLandingPage/GetLogo?tenantId=' +  tenantIdString : undefined"
+                  [uploadInfoText]="ls.l('LandingPageLogo_Info', 5)"
+                  [uploadButtonText]="ls.l('FileUpload')"
+                  [uploadUrl]="remoteServiceBaseUrl + '/api/ContactLandingPage/UploadLogo'"
+                  acceptFileExt=".jpg,.jpeg,.png,.gif"
+                  [maxFileSize]="logoMaxSize"
+                  (onDocumentClear)="clearLogo()">
+        </uploader>
         <uploader #coverLogoUploader
                   [title]="ls.l('CoverLogo')"
                   [documentId]="settings.coverLogoFileObjectId"
                   [documentLink]="settings.coverLogoFileObjectId ? remoteServiceBaseUrl + '/api/ContactLandingPage/GetCoverPhoto?tenantId=' +  tenantIdString : undefined"
-                  [uploadInfoText]="ls.l('CoverLogo_Info')"
+                  [uploadInfoText]="ls.l('LandingPageLogo_Info', 10)"
                   [uploadButtonText]="ls.l('FileUpload')"
                   [uploadUrl]="remoteServiceBaseUrl + '/api/ContactLandingPage/UploadCoverPhoto'"
                   acceptFileExt=".jpg,.jpeg,.png,.gif"
