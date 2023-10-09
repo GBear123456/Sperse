@@ -30,7 +30,7 @@ export class GmailSettingsService {
 
     initGmail(callback) {
         this.loadingService.startLoading();
-        if (!google || !google.accounts) {
+        if (!window['google'] || !window['google']['accounts']) {
             jQuery.getScript('https://accounts.google.com/gsi/client', () => {
                 this.loadingService.finishLoading();
                 callback();
