@@ -24,7 +24,8 @@ import {
     ProductServiceProxy,
     LandingPageOnlineStatus,
     LandingPageSettingsDomainDto,
-    AddVercelDomainInput
+    AddVercelDomainInput,
+    LandingPageColorScheme
 } from '@shared/service-proxies/service-proxies';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -47,6 +48,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 })
 export class LandingPageComponent implements ITenantSettingsStepComponent {
     @ViewChild('contactsList') contactsList: StaticListComponent;
+    @ViewChild('logoUploader') logoUploader: UploaderComponent;
     @ViewChild('coverLogoUploader') coverLogoUploader: UploaderComponent;
     @ViewChild('faq', { static: false }) faqComponent: WordingListComponent;
     @ViewChild('tabs', { static: false }) tabsComponent: WordingListComponent;
@@ -58,12 +60,16 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
 
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     tenantIdString: string = this.appSession.tenantId ? this.appSession.tenantId.toString() : '';
+    logoMaxSize = 5 * 1024 * 1024;
     coverLogoMaxSize = 10 * 1024 * 1024;
+    initialLogoId = null;
     initialCoverLogoId = null;
 
     isDeployInitiating = false;
     isDeployInitiated = false;
     isNewDomainAdding = false;
+
+    metaKeywords: string[] = [];
 
     products$: Observable<DataSource<ProductDto, number>> = this.productProxy.getProducts(undefined)
         .pipe(
@@ -79,6 +85,12 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             })
         );
 
+    defaultSchemeOptions = Object.keys(LandingPageColorScheme).map(item => {
+        return {
+            id: LandingPageColorScheme[item],
+            text: this.ls.l(item)
+        };
+    });
     onlineStatusOptions = Object.keys(LandingPageOnlineStatus).map(item => {
         return {
             id: LandingPageOnlineStatus[item],
@@ -101,6 +113,8 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
                 if (settings.memberSince)
                     settings.memberSince = DateHelper.addTimezoneOffset(new Date(settings.memberSince), true);
                 this.settings = settings;
+                this.setMetaKeywords();
+                this.initialLogoId = settings.logoFileObjectId;
                 this.initialCoverLogoId = settings.coverLogoFileObjectId;
                 this.changeDetectorRef.detectChanges();
             }
@@ -151,9 +165,33 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         return this.contactsServiceProxy.getAllByPhrase(search, 20, undefined, undefined, false, false);
     }
 
+    clearLogo() {
+        this.settings.logoFileObjectId = null;
+        this.changeDetectorRef.detectChanges();
+    }
+
     clearCoverLogo() {
         this.settings.coverLogoFileObjectId = null;
         this.changeDetectorRef.detectChanges();
+    }
+
+    setMetaKeywords() {
+        if (this.settings.metaKeywords && this.settings.metaKeywords.length) {
+            this.metaKeywords = this.settings.metaKeywords.split(', ');
+        }
+    }
+
+    metaKeywordChanged(event) {
+        if (event.value.length == 10)
+            event.component.option("acceptCustomValue", false);
+        else
+            event.component.option("acceptCustomValue", true);
+    }
+
+    getMetaKeywordsString(): string {
+        if (this.metaKeywords.length)
+            return this.metaKeywords.join(', ');
+        return null;
     }
 
     deployPage() {
@@ -242,9 +280,14 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             return throwError('');
 
         let settings = LandingPageSettingsDto.fromJS(this.settings);
+        settings.metaKeywords = this.getMetaKeywordsString();
         if (settings.memberSince)
             settings.memberSince = DateHelper.removeTimezoneOffset(new Date(settings.memberSince), true);
         let obersvables = [this.landingPageProxy.updateLandingPageSettings(settings)];
+        if (this.logoUploader.file)
+            obersvables.push(this.logoUploader.uploadFile());
+        else if (this.initialLogoId && !settings.logoFileObjectId)
+            obersvables.push(this.landingPageProxy.clearLogo());
         if (this.coverLogoUploader.file)
             obersvables.push(this.coverLogoUploader.uploadFile());
         else if (this.initialCoverLogoId && !settings.coverLogoFileObjectId)

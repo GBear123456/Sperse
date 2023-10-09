@@ -14,6 +14,15 @@
             </div>
         </div>
         <div class="form-group">
+            <label>{{ls.l('DefaultColorScheme')}}</label>
+            <dx-select-box [items]="defaultSchemeOptions"
+                           displayExpr="text"
+                           valueExpr="id"
+                           placeholder=""
+                           [(value)]="settings.defaultColorScheme">
+            </dx-select-box>
+        </div>
+        <div class="form-group">
             <label>{{ls.l('SenjaPrivateAPIKey')}}</label>
             <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
                          [(value)]="settings.senjaPrivateAPIKey"
@@ -63,6 +72,37 @@
             </dx-text-box>
         </div>
         <div class="form-group">
+            <label>{{ls.l('ShareWidgetSuggestedCopy')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.shareWidgetSuggestedCopy"
+                         [maxLength]="260">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('ShareWidgetOpenAIKey')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.shareWidgetOpenAIKey"
+                         [maxLength]="256">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('MetaKeywords')}}</label>
+            <dx-tag-box [placeholder]="ls.l('EditValuePlaceholder')"
+                        [openOnFieldClick]="false"
+                        [acceptCustomValue]="true"
+                        [(value)]="metaKeywords"
+                        [maxLength]="50"
+                        (onValueChanged)="metaKeywordChanged($event)">
+            </dx-tag-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('MetaDescription')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.metaDescription"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
             <label>{{ls.l('OnlineStatus')}}</label>
             <dx-select-box [items]="onlineStatusOptions"
                            displayExpr="text"
@@ -80,11 +120,22 @@
                          [(value)]="settings.memberSince">
             </dx-date-box>
         </div>
+        <uploader #logoUploader
+                  [title]="ls.l('Logo')"
+                  [documentId]="settings.logoFileObjectId"
+                  [documentLink]="settings.logoFileObjectId ? remoteServiceBaseUrl + '/api/ContactLandingPage/GetLogo?tenantId=' +  tenantIdString : undefined"
+                  [uploadInfoText]="ls.l('LandingPageLogo_Info', 5)"
+                  [uploadButtonText]="ls.l('FileUpload')"
+                  [uploadUrl]="remoteServiceBaseUrl + '/api/ContactLandingPage/UploadLogo'"
+                  acceptFileExt=".jpg,.jpeg,.png,.gif"
+                  [maxFileSize]="logoMaxSize"
+                  (onDocumentClear)="clearLogo()">
+        </uploader>
         <uploader #coverLogoUploader
                   [title]="ls.l('CoverLogo')"
                   [documentId]="settings.coverLogoFileObjectId"
                   [documentLink]="settings.coverLogoFileObjectId ? remoteServiceBaseUrl + '/api/ContactLandingPage/GetCoverPhoto?tenantId=' +  tenantIdString : undefined"
-                  [uploadInfoText]="ls.l('CoverLogo_Info')"
+                  [uploadInfoText]="ls.l('LandingPageLogo_Info', 10)"
                   [uploadButtonText]="ls.l('FileUpload')"
                   [uploadUrl]="remoteServiceBaseUrl + '/api/ContactLandingPage/UploadCoverPhoto'"
                   acceptFileExt=".jpg,.jpeg,.png,.gif"
