@@ -92,6 +92,7 @@
                         [acceptCustomValue]="true"
                         [(value)]="metaKeywords"
                         [maxLength]="50"
+                        (onKeyDown)="metaKeywordKeyDown($event)"
                         (onValueChanged)="metaKeywordChanged($event)">
             </dx-tag-box>
         </div>

@@ -8,7 +8,7 @@ import {
 
 /** Third party imports */
 import { forkJoin, Observable, throwError } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
 import { MessageService } from 'abp-ng2-module';
 
@@ -182,10 +182,26 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     }
 
     metaKeywordChanged(event) {
+        let changed = false;
+        event.value.forEach((val: string, i, arr: string[]) => {
+            if (val.indexOf(",") >= 0) {
+                arr[i] = arr[i].replace(/,/g, "");
+                changed = true;
+            }
+        });
+        if (changed)
+            event.component.repaint();
+
         if (event.value.length == 10)
             event.component.option("acceptCustomValue", false);
         else
             event.component.option("acceptCustomValue", true);
+    }
+
+    metaKeywordKeyDown(event) {
+        if (event.event.keyCode == 188) { //comma
+            event.event.preventDefault();
+        }
     }
 
     getMetaKeywordsString(): string {
@@ -283,16 +299,17 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         settings.metaKeywords = this.getMetaKeywordsString();
         if (settings.memberSince)
             settings.memberSince = DateHelper.removeTimezoneOffset(new Date(settings.memberSince), true);
-        let obersvables = [this.landingPageProxy.updateLandingPageSettings(settings)];
-        if (this.logoUploader.file)
-            obersvables.push(this.logoUploader.uploadFile());
-        else if (this.initialLogoId && !settings.logoFileObjectId)
-            obersvables.push(this.landingPageProxy.clearLogo());
-        if (this.coverLogoUploader.file)
-            obersvables.push(this.coverLogoUploader.uploadFile());
-        else if (this.initialCoverLogoId && !settings.coverLogoFileObjectId)
-            obersvables.push(this.landingPageProxy.clearCoverLogo());
 
-        return forkJoin(obersvables);
+        let obs = this.landingPageProxy.updateLandingPageSettings(settings);
+        if (this.logoUploader.file)
+            obs = obs.pipe(switchMap(() => this.logoUploader.uploadFile()));
+        else if (this.initialLogoId && !settings.logoFileObjectId)
+            obs = obs.pipe(switchMap(() => this.landingPageProxy.clearLogo()));
+        if (this.coverLogoUploader.file)
+            obs = obs.pipe(switchMap(() => this.coverLogoUploader.uploadFile()));
+        else if (this.initialCoverLogoId && !settings.coverLogoFileObjectId)
+            obs = obs.pipe(switchMap(() => this.landingPageProxy.clearCoverLogo()));
+
+        return obs;
     }
 }
