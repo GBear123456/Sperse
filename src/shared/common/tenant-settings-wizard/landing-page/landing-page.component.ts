@@ -194,7 +194,6 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         if (changed)
             event.component.repaint();
         totalLength += (event.value.length * 2 - 2);
-        console.log(totalLength);
 
         if (event.value.length == 10 || totalLength > 170)
             event.component.option("acceptCustomValue", false);
@@ -218,17 +217,19 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         if (this.settings.isDeployed || this.isDeployInitiating || this.isDeployInitiated)
             return;
 
+        let savePageObs = this.save();
         this.isDeployInitiating = true;
-        this.landingPageProxy.deployToVercel()
-            .subscribe(domains => {
-                this.settings.landingPageDomains = domains;
-                this.isDeployInitiated = true;
-                this.isDeployInitiating = false;
-                this.changeDetectorRef.detectChanges();
-            }, () => {
-                this.isDeployInitiating = false;
-                this.changeDetectorRef.detectChanges();
-            })
+        savePageObs.pipe(
+            switchMap(() => this.landingPageProxy.deployToVercel())
+        ).subscribe(domains => {
+            this.settings.landingPageDomains = domains;
+            this.isDeployInitiated = true;
+            this.isDeployInitiating = false;
+            this.changeDetectorRef.detectChanges();
+        }, () => {
+            this.isDeployInitiating = false;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 
     addDomain(inputComponent) {
