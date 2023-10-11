@@ -86,12 +86,20 @@
             </dx-text-box>
         </div>
         <div class="form-group">
+            <label>{{ls.l('HtmlTitle')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.htmlTitle"
+                         [maxLength]="200">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
             <label>{{ls.l('MetaKeywords')}}</label>
             <dx-tag-box [placeholder]="ls.l('EditValuePlaceholder')"
                         [openOnFieldClick]="false"
                         [acceptCustomValue]="true"
                         [(value)]="metaKeywords"
-                        [maxLength]="50"
+                        [maxLength]="30"
+                        (onKeyDown)="metaKeywordKeyDown($event)"
                         (onValueChanged)="metaKeywordChanged($event)">
             </dx-tag-box>
         </div>
@@ -99,7 +107,7 @@
             <label>{{ls.l('MetaDescription')}}</label>
             <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
                          [(value)]="settings.metaDescription"
-                         [maxLength]="512">
+                         [maxLength]="200">
             </dx-text-box>
         </div>
         <div class="form-group">
