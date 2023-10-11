@@ -183,7 +183,9 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
 
     metaKeywordChanged(event) {
         let changed = false;
+        let totalLength = 0;
         event.value.forEach((val: string, i, arr: string[]) => {
+            totalLength += val.length;
             if (val.indexOf(",") >= 0) {
                 arr[i] = arr[i].replace(/,/g, "");
                 changed = true;
@@ -191,8 +193,10 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         });
         if (changed)
             event.component.repaint();
+        totalLength += (event.value.length * 2 - 2);
+        console.log(totalLength);
 
-        if (event.value.length == 10)
+        if (event.value.length == 10 || totalLength > 170)
             event.component.option("acceptCustomValue", false);
         else
             event.component.option("acceptCustomValue", true);
