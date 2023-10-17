@@ -135,7 +135,7 @@
                   [uploadInfoText]="ls.l('LandingPageLogo_Info', 5)"
                   [uploadButtonText]="ls.l('FileUpload')"
                   [uploadUrl]="remoteServiceBaseUrl + '/api/ContactLandingPage/UploadLogo'"
-                  acceptFileExt=".jpg,.jpeg,.png,.gif"
+                  acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
                   [maxFileSize]="logoMaxSize"
                   (onDocumentClear)="clearLogo()">
         </uploader>
@@ -146,7 +146,7 @@
                   [uploadInfoText]="ls.l('LandingPageLogo_Info', 10)"
                   [uploadButtonText]="ls.l('FileUpload')"
                   [uploadUrl]="remoteServiceBaseUrl + '/api/ContactLandingPage/UploadCoverPhoto'"
-                  acceptFileExt=".jpg,.jpeg,.png,.gif"
+                  acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
                   [maxFileSize]="coverLogoMaxSize"
                   (onDocumentClear)="clearCoverLogo()">
         </uploader>
