@@ -7,10 +7,10 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { forkJoin, Observable, throwError } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { finalize, map, switchMap } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
-import { MessageService } from 'abp-ng2-module';
+import { MessageService, NotifyService } from 'abp-ng2-module';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -65,8 +65,6 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     initialLogoId = null;
     initialCoverLogoId = null;
 
-    isDeployInitiating = false;
-    isDeployInitiated = false;
     isNewDomainAdding = false;
 
     metaKeywords: string[] = [];
@@ -104,6 +102,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         private appSession: AppSessionService,
         private productProxy: ProductServiceProxy,
         private message: MessageService,
+        private notify: NotifyService,
         public profileService: ProfileService,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
@@ -213,22 +212,26 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         return null;
     }
 
-    deployPage() {
-        if (this.settings.isDeployed || this.isDeployInitiating || this.isDeployInitiated)
+    generateDomain() {
+        if (this.settings.landingPageDomains.length || this.isNewDomainAdding)
             return;
 
         let savePageObs = this.save();
-        this.isDeployInitiating = true;
+        this.isNewDomainAdding = true;
         savePageObs.pipe(
-            switchMap(() => this.landingPageProxy.deployToVercel())
-        ).subscribe(domains => {
-            this.settings.landingPageDomains = domains;
-            this.isDeployInitiated = true;
-            this.isDeployInitiating = false;
-            this.changeDetectorRef.detectChanges();
-        }, () => {
-            this.isDeployInitiating = false;
-            this.changeDetectorRef.detectChanges();
+            switchMap(() => this.landingPageProxy.generateVercelDomain()),
+            finalize(() => {
+                this.isNewDomainAdding = false;
+                this.changeDetectorRef.detectChanges();
+            })
+        ).subscribe(res => {
+            let domainDto = new LandingPageSettingsDomainDto({
+                name: res.domainName,
+                isValid: res.isValid
+            });
+            domainDto['configRecords'] = res.configRecords;
+            this.settings.landingPageDomains.unshift(domainDto);
+            this.notify.info(this.ls.l('SavedSuccessfully'));
         });
     }
 
@@ -239,28 +242,26 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             return;
         }
 
+        let savePageObs = this.save();
         this.isNewDomainAdding = true;
         inputComponent.disabled = true;
-
-        this.landingPageProxy.addVercelDomain(new AddVercelDomainInput({ domainName: inputComponent.value }))
-            .subscribe(res => {
-                let domainDto = new LandingPageSettingsDomainDto({
-                    name: inputComponent.value,
-                    isValid: res.isValid
-                });
-                domainDto['configRecords'] = res.configRecords;
-                this.settings.landingPageDomains.unshift(domainDto);
-                inputComponent.value = '';
-                this.isNewDomainAdding = false;
-                inputComponent.disabled = false;
-                this.settings.landingPageDomains.unshift();
-
-                this.changeDetectorRef.detectChanges();
-            }, () => {
+        savePageObs.pipe(
+            switchMap(() => this.landingPageProxy.addVercelDomain(new AddVercelDomainInput({ domainName: inputComponent.value }))),
+            finalize(() => {
                 this.isNewDomainAdding = false;
                 inputComponent.disabled = false;
                 this.changeDetectorRef.detectChanges();
+            })
+        ).subscribe(res => {
+            let domainDto = new LandingPageSettingsDomainDto({
+                name: inputComponent.value,
+                isValid: res.isValid
             });
+            domainDto['configRecords'] = res.configRecords;
+            this.settings.landingPageDomains.unshift(domainDto);
+            inputComponent.value = '';
+            this.notify.info(this.ls.l('SavedSuccessfully'));
+        });
     }
 
     verifyDomain(domain: LandingPageSettingsDomainDto) {
@@ -269,15 +270,13 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
 
         domain['isValidating'] = true;
         this.landingPageProxy.validateDomain(domain.name)
-            .subscribe(configInfo => {
+            .pipe(finalize(() => {
                 domain['isValidating'] = false;
+                this.changeDetectorRef.detectChanges();
+            }))
+            .subscribe(configInfo => {
                 domain.isValid = configInfo.isValid;
                 domain['configRecords'] = configInfo.configRecords;
-
-                this.changeDetectorRef.detectChanges();
-            }, () => {
-                domain['isValidating'] = false;
-                this.changeDetectorRef.detectChanges();
             });
     }
 
@@ -287,18 +286,21 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
 
         domain['isDeleting'] = true;
         this.landingPageProxy.deleteDomain(domain.name)
-            .subscribe(() => {
-                this.settings.landingPageDomains.splice(index, 1);
-                this.changeDetectorRef.detectChanges();
-            }, () => {
+            .pipe(finalize(() => {
                 domain['isDeleting'] = false;
                 this.changeDetectorRef.detectChanges();
-            })
+            }))
+            .subscribe(() => {
+                this.settings.landingPageDomains.splice(index, 1);
+                this.notify.info(this.ls.l('SuccessfullyDeleted'));
+            });
     }
 
     save(): Observable<any> {
-        if (this.isDeployInitiating || !this.faqComponent.isValid() || !this.tabsComponent.isValid())
+        if (this.isNewDomainAdding || !this.faqComponent.isValid() || !this.tabsComponent.isValid()) {
+            this.notify.warn('Please correct invalid values');
             return throwError('');
+        }
 
         let settings = LandingPageSettingsDto.fromJS(this.settings);
         settings.metaKeywords = this.getMetaKeywordsString();

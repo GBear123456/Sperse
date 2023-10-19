@@ -193,27 +193,11 @@
                       [title]="ls.l('Tabs')">
         </wording-list>
 
-
-        <div class="form-group">
-            <label>
-                {{ls.l('Deployment status')}}
-            </label>
-            <div class="right-side">
-                <div *ngIf="settings.isDeployed; else deploy">
-                    {{ls.l('Deployed')}}
-                </div>
-                <ng-template #deploy>
-                    <button *ngIf="!isDeployInitiated; else deployInitiated" class="btn btn-layout next" (click)="deployPage()">
-                        {{isDeployInitiating ? ls.l('Deploying') : ls.l('Deploy')}}<i [ngClass]="{ 'fa fa-spinner fa-spin': isDeployInitiating }"></i>
-                    </button>
-                    <ng-template #deployInitiated>
-                        <div>{{ls.l('Your page will be available soon')}}</div>
-                    </ng-template>
-                </ng-template>
+        <div class="domains">
+            <div class="domains-caption">
+                <h5>{{ls.l("Domains")}}</h5>
+                <span *ngIf="!settings.landingPageDomains.length && !isNewDomainAdding" class="generate-domain" (click)="generateDomain()">{{ls.l('Generate +')}}</span>
             </div>
-        </div>
-        <div *ngIf="settings.isDeployed || isDeployInitiated" class="domains">
-            <h5>{{ls.l("Domains")}}</h5>
             <div class="new-domain">
                 <dx-text-box #newDomain
                              valueChangeEvent="keyup"
