@@ -133,6 +133,13 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         this.settings.contactPhotoId = null;
     }
 
+    openContactLink() {
+        if (!this.settings.contactId)
+            return;
+
+        window.open(location.origin + `/app/crm/contact/${this.settings.contactId}`, '_blank');
+    }
+
     onListFiltered(event) {
         clearTimeout(this.listFilterTimeout);
         this.listFilterTimeout = setTimeout(() => {
