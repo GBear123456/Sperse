@@ -5,7 +5,9 @@
             <label>{{ls.l('LandingPageContact')}}</label>
             <div class="landing-contact">
                 <img [src]="profileService.getContactPhotoUrl(settings.contactPhotoId, true)" onerror="this.src='assets/common/images/no-photo.png';" alt="Person Photo">
-                <span *ngIf="settings.contactId else noContact">{{settings.contactFullName}}</span>
+                <span *ngIf="settings.contactId else noContact">
+                    <span class="contact-name" (click)="openContactLink()">{{settings.contactFullName}}</span>
+                </span>
                 <ng-template #noContact>
                     <span class="empty">{{(ls.l('Set') + ' ' + ls.l('LandingPageContact'))}}</span>
                 </ng-template>
@@ -210,9 +212,13 @@
             <div *ngFor="let domain of settings.landingPageDomains; index as i" class="domain">
                 <div class="domain-info">
                     <div class="domain-name">
-                        {{domain.name}}
-                        <i *ngIf="domain.isValid" class="fa fa-check"></i>
-                        <i *ngIf="!domain.isValid" class="fa fa-times"></i>
+                        <ng-container *ngIf="domain.isValid else invalidDomain">
+                            <a href="https://{{domain.name}}" target="_blank">{{domain.name}}</a>
+                            <i class="fa fa-check"></i>
+                        </ng-container>
+                        <ng-template #invalidDomain>
+                            {{domain.name}} <i class="fa fa-times"></i>
+                        </ng-template>
                     </div>
                     <div class="buttons">
                         <span *ngIf="!domain.isValid" class="verify" (click)="verifyDomain(domain)">
