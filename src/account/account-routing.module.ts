@@ -18,6 +18,7 @@ import { SigninForgotPasswordComponent } from '@root/account/password/layouts/si
 import { SigninComponent } from '@root/account/login/layouts/signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
 import { TenantSideRouteGuard } from '@shared/common/auth/tenat-side-route-guard';
+import { LocalizationResolver } from '@shared/common/localization-resolver';
 
 @NgModule({
     imports: [
@@ -49,8 +50,8 @@ import { TenantSideRouteGuard } from '@shared/common/auth/tenat-side-route-guard
                     {
                         path: 'signup',
                         component: SignupComponent,
-                        data: { wrap: false, checkEnabledOption: 'App.UserManagement.IsSignUpPageEnabled', tenantRedirect: 'account/login' },
-                        canActivate: [TenantSideRouteGuard]
+                        data: { wrap: false, checkEnabledOption: 'App.UserManagement.IsSignUpPageEnabled', tenantRedirect: 'account/login', localizationSource: 'CRM' },
+                        canActivate: [TenantSideRouteGuard, LocalizationResolver]
                     },
                     { path: 'signin-forgot-password', component: ForgotPasswordComponent, data: { wrap: false, layoutComponent: SigninForgotPasswordComponent } },
                     { path: 'complete-tenant-registration', component: CompleteTenantRegistrationComponent }

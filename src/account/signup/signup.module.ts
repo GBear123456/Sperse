@@ -21,6 +21,7 @@ import { HostSignupFormComponent } from './layouts/host/host-signup-form.compone
 import { BankCodeSignupFormComponent } from './layouts/bank-code/bank-code-signup-form.component';
 import { CountryPhoneNumberModule } from '../../shared/common/phone-numbers/country-phone-number.module';
 import { MemberSignupFormComponent } from './layouts/member/member-signup-form.component';
+import { ProductOptionSelectorModule } from '@app/crm/shared/product-option-selector/product-option-selector.module';
 
 @NgModule({
     imports: [
@@ -36,7 +37,8 @@ import { MemberSignupFormComponent } from './layouts/member/member-signup-form.c
         DxCheckBoxModule,
         DxButtonModule,
         NgxMaskModule.forRoot(),
-        CountryPhoneNumberModule
+        CountryPhoneNumberModule,
+        ProductOptionSelectorModule
     ],
     declarations: [
         BankCodeSignupFormComponent,
