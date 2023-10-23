@@ -5,7 +5,7 @@ import { Component, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { MessageService, NotifyService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
 import { MatDialog } from '@angular/material/dialog';
 import { first, finalize } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
@@ -47,6 +47,8 @@ export class HostSignupFormComponent {
     @ViewChild('secondStepForm') secondStepForm;
     @ViewChild('phoneNumber') phoneNumber;
 
+    hostName = AppConsts.defaultTenantName;
+    isSperseHost = AppConsts.defaultTenantName == 'Sperse';
     isExtLogin: boolean = false;
     defaultCountryCode: string;
     selectedCountryCode: string;
@@ -59,7 +61,7 @@ export class HostSignupFormComponent {
 
     nameRegexp = AppConsts.regexPatterns.name;
     emailRegexp = AppConsts.regexPatterns.email;
-    agreedTermsAndServices: boolean = false;
+    agreedTermsAndServices: boolean = !this.isSperseHost;
     congratulationLink: string;
     leadRequestXref: string;
 
