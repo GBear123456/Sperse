@@ -84,7 +84,7 @@
             display: grid;
             grid-template: 1fr / 1fr 1fr;
             color: #fff;
-            max-width: 1144px;
+            width: 1144px;
         }
 
         &__item {
@@ -556,6 +556,18 @@
     }
 
     #secondStepForm {
+        height: 100%;
+
+        .second-step {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+            .login_btn {
+                margin-top: auto;
+            }
+        }
+
         input {
             padding-left: 20px !important;
         }

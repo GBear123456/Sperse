@@ -109,7 +109,7 @@
                 <div class="has-account">Already have an account? <a routerLink="/account/signin" [queryParams]="{extlogin: isExtLogin}">Sign in</a></div>
             </form>
             <form *ngIf="leadRequestXref" id="secondStepForm" #secondStepForm="ngForm" novalidate (ngSubmit)="completeTenantRegistrationRequest()">
-                <div *ngIf="!congratulationLink; else congratulation">
+                <div class="second-step" *ngIf="!congratulationLink; else congratulation">
                     <div class="input">
                         <label>
                             Your business name <input #businessNameInput="ngModel" type="text" name="businessName" [(ngModel)]="tenantRegistrationModel.tenantName" [ngModelOptions]="{updateOn: 'blur'}" autoComplete="off" required>
