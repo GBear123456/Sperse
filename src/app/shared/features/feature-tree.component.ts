@@ -216,10 +216,13 @@ export class FeatureTreeComponent implements AfterViewInit {
                     $nodeA.find('.jstree-checkbox').hide();
 
                     let inputType = 'text';
+                    let inputDecimalPlaces = 0;
                     const validator = (feature.inputType.validator as any);
                     if (feature.inputType.validator) {
-                        if (feature.inputType.validator.name === 'NUMERIC') {
+                        if (feature.inputType.validator.name === 'NUMERIC' || feature.inputType.validator.name === 'FLOAT') {
                             inputType = 'number';
+                            if (feature.inputType.validator.name === 'FLOAT')
+                                inputDecimalPlaces = feature.inputType.validator.attributes['DecimalPlaces'];
                         }
                     }
 
@@ -234,6 +237,20 @@ export class FeatureTreeComponent implements AfterViewInit {
                     if (inputType === 'number') {
                         $textbox.attr('min', validator.minValue || validator.attributes['MinValue']);
                         $textbox.attr('max', validator.maxValue || validator.attributes['MaxValue']);
+
+                        if (inputDecimalPlaces === 0) {
+                            $textbox.attr('step', '1');
+                        } else
+                            if (inputDecimalPlaces) {
+                                let step = '.';
+                                let k = 1;
+                                while (k < inputDecimalPlaces) {
+                                    step += '0';
+                                    k++;
+                                }
+                                step += '1';
+                                $textbox.attr('step', step);
+                            }
                     } else {
                         if (feature.inputType.validator && feature.inputType.validator.name === 'STRING') {
                             if (validator.maxLength > 0) {
@@ -250,11 +267,17 @@ export class FeatureTreeComponent implements AfterViewInit {
 
                     $textbox.on('input propertychange paste', () => {
                         const value = $textbox.val() as string;
+
                         if (self.isFeatureValueValid(featureName, value)) {
                             self.setFeatureValueByName(featureName, value);
                             $textbox.removeClass('feature-tree-textbox-invalid');
                         } else {
-                            $textbox.addClass('feature-tree-textbox-invalid');
+                            if (value) {
+                                $textbox.val(self.getFeatureValueByName(featureName));
+                            }
+                            else {
+                                $textbox.addClass('feature-tree-textbox-invalid');
+                            }
                         }
                     });
 
@@ -368,24 +391,33 @@ export class FeatureTreeComponent implements AfterViewInit {
             if (validator.regularExpression) {
                 return (new RegExp(validator.regularExpression)).test(value);
             }
-        } else if (validator.name === 'NUMERIC') {
-            const numValue = parseInt(value);
+        } else if (validator.name === 'NUMERIC' || validator.name === 'FLOAT') {
+            if (feature.inputType.validator.attributes.AllowNulls && (value === undefined || value === null || value == '')) {
+                return true;
+            }
 
+            const numValue = parseFloat(value);
             if (isNaN(numValue)) {
                 return false;
             }
 
-            const minValue = validator.minValue;
+            const minValue = validator.attributes.MinValue;
             if (minValue > numValue) {
                 return false;
             }
 
-            const maxValue = validator.maxValue;
+            const maxValue = validator.attributes.MaxValue;
             if (maxValue > 0 && numValue > maxValue) {
                 return false;
             }
-        }
 
+            let regexStr = `^\\d+`;
+            if (validator.name == 'FLOAT') {
+                regexStr += `\\.?\\d{0,${validator.attributes.DecimalPlaces}}`;
+            }
+            regexStr += '$';
+            return (new RegExp(regexStr)).test(value);
+        }
         return true;
     }
 

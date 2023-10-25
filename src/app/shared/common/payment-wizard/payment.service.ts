@@ -14,7 +14,8 @@ import {
     ProductInfo,
     ProductMeasurementUnit,
     ProductServiceProxy,
-    RecurringPaymentFrequency
+    RecurringPaymentFrequency,
+    TenantSubscriptionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { BillingPeriod } from './models/billing-period.enum';
 
@@ -28,7 +29,8 @@ export class PaymentService {
     addOnConfig$: Observable<ProductInfo[]> = of([]);
 
     constructor(
-        private productServiceProxy: ProductServiceProxy
+        private productServiceProxy: ProductServiceProxy,
+        private tenantSubscriptionProxy: TenantSubscriptionServiceProxy
     ) {
         /* Remove condition to enabled Add On Products for all environments */
         if (['staging', 'development'].includes(environment.releaseStage))
@@ -47,6 +49,15 @@ export class PaymentService {
     getPackagesConfig(group: string): Observable<ProductInfo[]> {
         return this.productServiceProxy.getSubscriptionProductsByGroupName(
             group
+        ).pipe(
+            publishReplay(),
+            refCount()
+        );
+    }
+
+    getProductInfo(productId: number): Observable<ProductInfo> {
+        return this.tenantSubscriptionProxy.getHostProductInfo(
+            productId
         ).pipe(
             publishReplay(),
             refCount()

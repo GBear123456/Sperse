@@ -293,6 +293,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.unit = undefined;
             this.product.price = undefined;
+            if (this.isHostTenant) {
+                this.product.publicName = undefined;
+            }
         } else {
             this.product.productServices = undefined;
             this.product.productSubscriptionOptions = undefined;
@@ -908,6 +911,16 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         if (index != undefined) {
             this.productLinks.splice(index, 1);
             this.changeDetection.markForCheck();
+        }
+    }
+
+    isConfigPublicNameEnabled() {
+        return this.isPublicProductsEnabled && (!this.isHostTenant || this.product.type != ProductType.Subscription);
+    }
+
+    onIsPublishedChanged() {
+        if (this.product.isPublished && !this.publishDate) {
+            this.publishDate = new Date();
         }
     }
 

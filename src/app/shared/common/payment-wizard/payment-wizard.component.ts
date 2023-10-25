@@ -13,8 +13,8 @@ import {
 import * as moment from 'moment-timezone';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { Observable } from 'rxjs';
-import { first, finalize } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { first, finalize, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -38,7 +38,7 @@ import { PaymentWizardPaymentsInfoService } from './payments-info/payments-info.
     templateUrl: './payment-wizard.component.html',
     styleUrls: ['./payment-wizard.component.less'],
     encapsulation: ViewEncapsulation.None,
-    providers: [PaymentService, PackageServiceProxy, ProductServiceProxy, { provide: PaymentsInfoService, useClass: PaymentWizardPaymentsInfoService } ],
+    providers: [PaymentService, PackageServiceProxy, ProductServiceProxy, TenantSubscriptionServiceProxy, { provide: PaymentsInfoService, useClass: PaymentWizardPaymentsInfoService } ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentWizardComponent {
@@ -102,9 +102,16 @@ export class PaymentWizardComponent {
     }
 
     activateSubscription() {
-        this.packagesConfig$.pipe(first()).subscribe((products: ProductInfo[]) => {
-            let product = products.find(item => item.id == this.data.subscription.productId),
-                pricePerMonth = product ? (this.data.subscription.paymentPeriodType === 'Monthly' ?
+        this.packagesConfig$.pipe(
+            first(),
+            switchMap((products: ProductInfo[]) => {
+                let product = products.find(item => item.id == this.data.subscription.productId);
+                if (product)
+                    return of(product);
+                return this.paymentService.getProductInfo(this.data.subscription.productId);
+            })
+        ).subscribe((product: ProductInfo) => {
+            let pricePerMonth = product ? (this.data.subscription.paymentPeriodType === 'Monthly' ?
                     product.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Monthly).fee :
                     Math.round(product.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual).fee / 12)
                 ) : 0;
