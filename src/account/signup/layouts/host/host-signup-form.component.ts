@@ -50,6 +50,7 @@ export class HostSignupFormComponent {
     @ViewChild('phoneNumber') phoneNumber;
 
     hostName = AppConsts.defaultTenantName;
+    // @ts-ignore:  This condition will always return 'false' ... for Custom Hosts
     isSperseHost = AppConsts.defaultTenantName == 'Sperse';
     isExtLogin: boolean = false;
     defaultCountryCode: string;
