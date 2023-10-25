@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { ExternalLoginProvider } from '../../login.service';
 import { HostLoginComponent } from '../host/host-login.component';
@@ -17,6 +18,7 @@ import { HostLoginComponent } from '../host/host-login.component';
 export class SigninComponent extends HostLoginComponent implements OnInit {
     get redirectToSignUp() { return true; }
 
+    hostName = AppConsts.defaultTenantName;
     showProviders = false;
     linkedInProvider: ExternalLoginProvider;
     discordProvider: ExternalLoginProvider;

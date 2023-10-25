@@ -3,12 +3,14 @@
 /** Core imports */
 import { Component, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 /** Third party imports */
-import { MessageService, NotifyService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
 import { MatDialog } from '@angular/material/dialog';
 import { first, finalize } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import round from 'lodash/round';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -17,7 +19,7 @@ import {
     LeadServiceProxy, TenantProductInfo, PaymentPeriodType, RecurringPaymentFrequency,
     PasswordComplexitySetting, SubmitTenancyRequestOutput, TenantSubscriptionServiceProxy, CompleteTenantRegistrationOutput,
     ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput, ProfileServiceProxy,
-    ExternalUserDataServiceProxy, GetExternalUserDataOutput, GetExternalUserDataInput
+    ExternalUserDataServiceProxy, GetExternalUserDataOutput, GetExternalUserDataInput, ProductSubscriptionOptionInfo, PublicProductSubscriptionOptionInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -47,6 +49,8 @@ export class HostSignupFormComponent {
     @ViewChild('secondStepForm') secondStepForm;
     @ViewChild('phoneNumber') phoneNumber;
 
+    hostName = AppConsts.defaultTenantName;
+    isSperseHost = AppConsts.defaultTenantName == 'Sperse';
     isExtLogin: boolean = false;
     defaultCountryCode: string;
     selectedCountryCode: string;
@@ -56,10 +60,14 @@ export class HostSignupFormComponent {
     tenancyRequestModel = new SubmitTenancyRequestInput();
     tenantRegistrationModel = new CompleteTenantRegistrationInput();
     signUpProduct: ProductInfo;
+    selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
+    descriptionHtml: SafeHtml;
+    currencySymbol = '$';
+    buttonText = '';
 
     nameRegexp = AppConsts.regexPatterns.name;
     emailRegexp = AppConsts.regexPatterns.email;
-    agreedTermsAndServices: boolean = false;
+    agreedTermsAndServices: boolean = !this.isSperseHost;
     congratulationLink: string;
     leadRequestXref: string;
 
@@ -82,7 +90,8 @@ export class HostSignupFormComponent {
         private activatedRoute: ActivatedRoute,
         private externalUserDataService: ExternalUserDataServiceProxy,
         private messageService: MessageService,
-        private profileService: ProfileServiceProxy
+        private profileService: ProfileServiceProxy,
+        private sanitizer: DomSanitizer
     ) {
         this.tenancyRequestModel.tag = 'Demo Request';
         this.tenancyRequestModel.stage = 'Interested';
@@ -95,18 +104,13 @@ export class HostSignupFormComponent {
 
         this.productProxy.getSubscriptionProductsByGroupName('Main').subscribe(products => {
             this.signUpProduct = products.sort((prev, next) => {
-                let prevOption = this.getProductMonthlyOption(prev),
-                    nextOption = this.getProductMonthlyOption(next);
+                let prevOption = this.getProductMonthlyOrFirstOption(prev),
+                    nextOption = this.getProductMonthlyOrFirstOption(next);
                 return prevOption.fee > nextOption.fee ? 1 : -1;
             })[0];
             if (this.signUpProduct) {
-                let option = this.getProductMonthlyOption(this.signUpProduct);
-                this.signUpProduct.price = option.fee;
-                this.tenancyRequestModel.products = [new TenantProductInfo({
-                    productId: this.signUpProduct.id,
-                    paymentPeriodType: option && PaymentPeriodType[option.frequency],
-                    quantity: 1,
-                })];
+                if (this.signUpProduct.descriptionHtml)
+                    this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(this.signUpProduct.descriptionHtml);
             }
             this.loginService.externalLoginProviders$.subscribe((providers: ExternalLoginProvider[]) => {
                 this.linkedInProvider = providers.find(x => x.name == ExternalLoginProvider.LINKEDIN && !!x.clientId);
@@ -190,8 +194,30 @@ export class HostSignupFormComponent {
         this.showPasswordComplexity = true;
     }
 
-    getProductMonthlyOption(product) {
-        return product.productSubscriptionOptions.filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
+    getProductMonthlyOrFirstOption(product: ProductInfo): ProductSubscriptionOptionInfo {
+        let monthly = product.productSubscriptionOptions.filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
+        return monthly || product.productSubscriptionOptions[0];
+    }
+
+    onProductOptionSelect(event: { period, option: PublicProductSubscriptionOptionInfo }) {
+        this.selectedSubscriptionOption = event.option;
+
+        let buttonText = 'Start ';
+        if (this.selectedSubscriptionOption.trialDayCount) {
+            buttonText += 'Your ';
+            if (!this.selectedSubscriptionOption.signupFee)
+                buttonText += ' Free ';
+            buttonText += `${this.selectedSubscriptionOption.trialDayCount}-Day Trial `;
+        }
+        buttonText += 'Today!';
+        this.buttonText = buttonText;
+    }
+
+    getPricePerPeriod(): number {
+        let price = this.selectedSubscriptionOption.fee;
+        return this.selectedSubscriptionOption.frequency === RecurringPaymentFrequency.Annual ?
+            round(price / 12, 2) :
+            price;
     }
 
     startLoading() {
@@ -223,6 +249,12 @@ export class HostSignupFormComponent {
         this.tenancyRequestModel.email = this.tenancyRequestModel.email.trim();
         this.tenancyRequestModel.lastName = this.tenancyRequestModel.lastName.trim();
         this.tenancyRequestModel.firstName = this.tenancyRequestModel.firstName.trim();
+        this.tenancyRequestModel.products = [new TenantProductInfo({
+            productId: this.signUpProduct.id,
+            paymentPeriodType: PaymentPeriodType[this.selectedSubscriptionOption.frequency],
+            quantity: 1,
+        })];
+
         this.leadProxy.submitTenancyRequest(this.tenancyRequestModel).pipe(
             finalize(() => this.finishLoading())
         ).subscribe((responce: SubmitTenancyRequestOutput) => {

@@ -1,219 +1,228 @@
 <div class="box">
-  <div class="title">
-    <h1 class="title title--h1">Create Your Sperse Account</h1>
-  </div>
-  <p class="subtitle">Unmatched power to grow your business connections!</p>
-  <div class="box__inner">
-    <div class="box__left box__item">
-      <div class="plan">
-        <span class="wrapper">
-          <span>
-            <img *ngIf="signUpProduct?.imageUrl" aria-hidden="true" [src]="signUpProduct?.imageUrl">
-          </span>
-          {{signUpProduct?.name}}
-        </span>
-      </div>
-      <div class="price">
-        <span class="price__old">$159/mo</span>
-        <div class="price__new">
-          <span>{{signUpProduct?.price}}</span>/mo
-        </div>
-      </div>
-      <div class="start">
-        <span> Start For Free</span>
-      </div>
-      <ul class="list">
-        <li>Chrome extension to connect LinkedIn API.</li>
-        <li>Manage contacts with ease using Sperse CRM.</li>
-        <li>Add up to 1,000 contacts. Upgrade for more.</li>
-        <li>One-click Save option to save you time!</li>
-        <li>Auto-fill contact info for accuracy and speed.</li>
-        <li>Connect your calendar to follow up with leads.</li>
-        <li>Get our mobile app to access contacts on the go.</li>
-      </ul>
+    <div class="title">
+        <h1 class="title title--h1">Create Your {{hostName}} Account</h1>
     </div>
-    <div class="box__right box__item">
-      <form *ngIf="!leadRequestXref" id="firstStepForm" #firstStepForm="ngForm" novalidate (ngSubmit)="processTenantRegistrationRequest()">
-          <div *ngIf="showProviders; else noProviders">
-              <div class="social_login" *ngIf="linkedInProvider">
-                  <button type="button" class="button_global button_global_blue" (click)="loginService.linkedInInitLogin(linkedInProvider)">
-                      <span class="i-s-linkedin">Sign Up with LinkedIn</span>
-                  </button>
-              </div>
-              <div class="social_login" *ngIf="discordProvider">
-                  <button type="button" class="button_global button_global_blue2" (click)="loginService.discordInitLogin(discordProvider, true)">
-                      <span class="discord-icon">Sign Up with Discord</span>
-                  </button>
-              </div>
-          </div>
-          <ng-template #noProviders>
-              <div class="social_login">
-                  <button type="button" class="button_global button_global_blue" [ngClass]="{disabled: true}">
-                      <span class="i-s-linkedin">Sign Up with LinkedIn</span>
-                  </button>
-              </div>
-          </ng-template>
-        <div class="divider">
-          <span>Or</span>
-        </div>
-        <div class="name">
-          <div class="input name__input">
-            <label>First Name <input #firstNameInput="ngModel" type="text" placeholder="" name="firstName" [(ngModel)]="tenancyRequestModel.firstName" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="nameRegexp" required>
-                <validation-messages [formCtrl]="firstNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('FirstName'))}]"></validation-messages>
-            </label>
-          </div>
-          <div class="input name__input">
-            <label>Last Name <input #lastNameInput="ngModel" type="text" placeholder="" name="lastName" [(ngModel)]="tenancyRequestModel.lastName" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="nameRegexp" required>
-                <validation-messages [formCtrl]="lastNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('LastName'))}]"></validation-messages>
-            </label>
-          </div>
-        </div>
-        <div class="phone">
-          <span class="phone__label">Phone</span>
-          <div>
-              <country-phone-number #phoneNumber
-                [required]="false"
-                [(phoneNumber)]="tenancyRequestModel.phone"
-                (onInitialized)="getDefaultCode($event)"
-                (phoneCountryChange)="getChangedCountry($event)">
-              </country-phone-number>
-          </div>
-        </div>
-        <div class="input">
-          <label class="email">Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="tenancyRequestModel.email" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="emailRegexp" required>
-            <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
-          </label>
-        </div>
-        <div class="actions">
-          <label>
-            <div>
-              <label class="check_wrap">
-                <input class="check_wrap__input" type="checkbox" [(ngModel)]="agreedTermsAndServices" [ngModelOptions]="{standalone: true}">
-                <span class="check_wrap__style"></span><div>By using this extension, you agree to <a href="https://www.linkedin.com/legal/user-agreement" target="_blank">LinkedIn's Terms</a> of Use and to <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">Sperse Terms of Service</a> and <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.</div>
-              </label>
+    <p class="subtitle">Unmatched power to grow your business connections!</p>
+    <div class="box__inner">
+        <div class="box__left box__item" *ngIf="signUpProduct">
+            <div class="plan">
+                <span class="wrapper">
+                    <span>
+                        <img *ngIf="signUpProduct.imageUrl" aria-hidden="true" [src]="signUpProduct.imageUrl">
+                    </span>
+                    {{signUpProduct.name}}
+                </span>
             </div>
-          </label>
+            <div class="subscription-price">
+                <product-option-selector #optionSelector
+                                         [productSubscriptionOptions]="signUpProduct.productSubscriptionOptions"
+                                         (onSelect)="onProductOptionSelect($event)">
+                </product-option-selector>
+                <div class="price-wrapper" *ngIf="selectedSubscriptionOption">
+                    <div class="trial-day-count" *ngIf="selectedSubscriptionOption.trialDayCount">
+                        <span *ngIf="selectedSubscriptionOption.signupFee; else free">{{ currencySymbol }}{{selectedSubscriptionOption.signupFee | customNumber: '1.0-1' | currency: 'USD' : '' : '1.0-1'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
+                        <ng-template #free>{{ls.l('Free')}}</ng-template>
+                    </div>
+                    <div class="amountPerMonth">
+                        <ng-container *ngIf="this.selectedSubscriptionOption.fee else freeOption">
+                            <span class="currency-symbol">{{ currencySymbol }}</span>
+                            <span class="number">
+                                {{ getPricePerPeriod() | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
+                            </span>
+                            <div class="number-info">
+                                <span class="decimal">{{ getPricePerPeriod() | customNumber: '0.2-2' }}</span>
+                                <span>/{{ optionSelector.selectedOptionDescription }}</span>
+                            </div>
+                        </ng-container>
+                        <ng-template #freeOption>
+                            <span class="number">{{ls.l('Free')}}</span>
+                        </ng-template>
+                    </div>
+                    <div class="trial-period-note" *ngIf="selectedSubscriptionOption.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
+                </div>
+            </div>
+            <div *ngIf="descriptionHtml" class="description-html" [innerHtml]="descriptionHtml"></div>
         </div>
-        <div class="login_btn">
-          <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !agreedTermsAndServices || !firstStepForm.valid}">
-            <span>Start Your Free 7-Day Trial Today!</span>
-          </button>
-        </div>
-        <div class="has-account">Already have an account? <a routerLink="/account/signin" [queryParams]="{extlogin: isExtLogin}">Sign in</a></div>
-      </form>
-      <form *ngIf="leadRequestXref" id="secondStepForm" #secondStepForm="ngForm" novalidate (ngSubmit)="completeTenantRegistrationRequest()">
-        <div *ngIf="!congratulationLink; else congratulation">
-          <div class="input">
-            <label>Your business name <input #businessNameInput="ngModel" type="text" name="businessName" [(ngModel)]="tenantRegistrationModel.tenantName" [ngModelOptions]="{updateOn: 'blur'}" autoComplete="off" required>
-                <validation-messages [formCtrl]="businessNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('BusinessName'))}]"></validation-messages>
-            </label>
-          </div>
-          <div class="input">
-            <label>Website URL <input #websiteUrlInput="ngModel" type="text" name="websiteUrl" [(ngModel)]="tenantRegistrationModel.siteUrl" (blur)="onBlurSiteUrl()" autoComplete="off">
-            </label>
-          </div>
-          <div class="input">
-            <label>Choose your password 
-                <input #passwordInput="ngModel"
-                    [requireDigit]="passwordComplexitySetting.requireDigit"
-                    [requireLowercase]="passwordComplexitySetting.requireLowercase"
-                    [requireUppercase]="passwordComplexitySetting.requireUppercase"
-                    [requireNonAlphanumeric]="passwordComplexitySetting.requireNonAlphanumeric"
-                    [requiredLength]="passwordComplexitySetting.requiredLength" 
-                    [type]="showPassword ? 'text' : 'password'" 
-                    name="password" 
-                    [(ngModel)]="tenantRegistrationModel.adminPassword"
-                    (focus)="onFocus()"
-                    reverse="true"
-                    autoComplete="off" 
-                    required>
-                <span class="pass" (click)="showPassword = !showPassword">{{ls.l(showPassword ? 'hide' : 'show')}}</span>
-                <validation-messages [formCtrl]="passwordInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('Password'))}]"></validation-messages>
-            </label>
-            <ng-container *ngIf="passwordInput.errors && passwordInput.value">
-                <div id="message"
-                     class="entrance-page__form-validator"
-                     [class.is-active]="showPasswordComplexity">
-                    <div class="message-inner">
-                        <p id="letter"
-                           class="validator-rule"
-                           *ngIf="passwordComplexitySetting.requireLowercase"
-                           [ngClass]="{
+        <div class="box__right box__item">
+            <form *ngIf="!leadRequestXref" id="firstStepForm" #firstStepForm="ngForm" novalidate (ngSubmit)="processTenantRegistrationRequest()">
+                <div *ngIf="showProviders">
+                    <div class="social_login" *ngIf="linkedInProvider">
+                        <button type="button" class="button_global button_global_blue" (click)="loginService.linkedInInitLogin(linkedInProvider)">
+                            <span class="i-s-linkedin">Sign Up with LinkedIn</span>
+                        </button>
+                    </div>
+                    <div class="social_login" *ngIf="discordProvider">
+                        <button type="button" class="button_global button_global_blue2" (click)="loginService.discordInitLogin(discordProvider, true)">
+                            <span class="discord-icon">Sign Up with Discord</span>
+                        </button>
+                    </div>
+                    <div class="divider">
+                        <span>Or</span>
+                    </div>
+                </div>
+                <div class="name">
+                    <div class="input name__input">
+                        <label>
+                            First Name <input #firstNameInput="ngModel" type="text" placeholder="" name="firstName" [(ngModel)]="tenancyRequestModel.firstName" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="nameRegexp" required>
+                            <validation-messages [formCtrl]="firstNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('FirstName'))}]"></validation-messages>
+                        </label>
+                    </div>
+                    <div class="input name__input">
+                        <label>
+                            Last Name <input #lastNameInput="ngModel" type="text" placeholder="" name="lastName" [(ngModel)]="tenancyRequestModel.lastName" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="nameRegexp" required>
+                            <validation-messages [formCtrl]="lastNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('LastName'))}]"></validation-messages>
+                        </label>
+                    </div>
+                </div>
+                <div class="phone">
+                    <span class="phone__label">Phone</span>
+                    <div>
+                        <country-phone-number #phoneNumber
+                                              [required]="false"
+                                              [(phoneNumber)]="tenancyRequestModel.phone"
+                                              (onInitialized)="getDefaultCode($event)"
+                                              (phoneCountryChange)="getChangedCountry($event)">
+                        </country-phone-number>
+                    </div>
+                </div>
+                <div class="input">
+                    <label class="email">
+                        Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="tenancyRequestModel.email" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="emailRegexp" required>
+                        <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
+                    </label>
+                </div>
+                <div class="actions" *ngIf="isSperseHost">
+                    <label>
+                        <div>
+                            <label class="check_wrap">
+                                <input class="check_wrap__input" type="checkbox" [(ngModel)]="agreedTermsAndServices" [ngModelOptions]="{standalone: true}">
+                                <span class="check_wrap__style"></span><div>By using this extension, you agree to <a href="https://www.linkedin.com/legal/user-agreement" target="_blank">LinkedIn's Terms</a> of Use and to <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">{{hostName}} Terms of Service</a> and <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.</div>
+                            </label>
+                        </div>
+                    </label>
+                </div>
+                <div class="login_btn">
+                    <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !agreedTermsAndServices || !firstStepForm.valid}">
+                        <span>{{buttonText}}</span>
+                    </button>
+                </div>
+                <div class="has-account">Already have an account? <a routerLink="/account/signin" [queryParams]="{extlogin: isExtLogin}">Sign in</a></div>
+            </form>
+            <form *ngIf="leadRequestXref" id="secondStepForm" #secondStepForm="ngForm" novalidate (ngSubmit)="completeTenantRegistrationRequest()">
+                <div class="second-step" *ngIf="!congratulationLink; else congratulation">
+                    <div class="input">
+                        <label>
+                            Your business name <input #businessNameInput="ngModel" type="text" name="businessName" [(ngModel)]="tenantRegistrationModel.tenantName" [ngModelOptions]="{updateOn: 'blur'}" autoComplete="off" required>
+                            <validation-messages [formCtrl]="businessNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('BusinessName'))}]"></validation-messages>
+                        </label>
+                    </div>
+                    <div class="input">
+                        <label>
+                            Website URL <input #websiteUrlInput="ngModel" type="text" name="websiteUrl" [(ngModel)]="tenantRegistrationModel.siteUrl" (blur)="onBlurSiteUrl()" autoComplete="off">
+                        </label>
+                    </div>
+                    <div class="input">
+                        <label>
+                            Choose your password
+                            <input #passwordInput="ngModel"
+                                   [requireDigit]="passwordComplexitySetting.requireDigit"
+                                   [requireLowercase]="passwordComplexitySetting.requireLowercase"
+                                   [requireUppercase]="passwordComplexitySetting.requireUppercase"
+                                   [requireNonAlphanumeric]="passwordComplexitySetting.requireNonAlphanumeric"
+                                   [requiredLength]="passwordComplexitySetting.requiredLength"
+                                   [type]="showPassword ? 'text' : 'password'"
+                                   name="password"
+                                   [(ngModel)]="tenantRegistrationModel.adminPassword"
+                                   (focus)="onFocus()"
+                                   reverse="true"
+                                   autoComplete="off"
+                                   required>
+                            <span class="pass" (click)="showPassword = !showPassword">{{ls.l(showPassword ? 'hide' : 'show')}}</span>
+                            <validation-messages [formCtrl]="passwordInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('Password'))}]"></validation-messages>
+                        </label>
+                        <ng-container *ngIf="passwordInput.errors && passwordInput.value">
+                            <div id="message"
+                                 class="entrance-page__form-validator"
+                                 [class.is-active]="showPasswordComplexity">
+                                <div class="message-inner">
+                                    <p id="letter"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireLowercase"
+                                       [ngClass]="{
                             'invalid': (passwordInput?.errors && passwordInput?.errors?.requireLowercase) || !passwordInput.value,
                             'valid': !passwordInput?.errors?.requireLowercase
                            }">
-                            {{ls.l('PasswordComplexity_RequireLowercase_Hint')}}
-                        </p>
-                        <p id="capital"
-                           class="validator-rule"
-                           *ngIf="passwordComplexitySetting.requireUppercase"
-                           [ngClass]="{
+                                        {{ls.l('PasswordComplexity_RequireLowercase_Hint')}}
+                                    </p>
+                                    <p id="capital"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireUppercase"
+                                       [ngClass]="{
                             'invalid': (passwordInput?.errors && passwordInput?.errors?.requireUppercase) || !passwordInput.value,
                             'valid': !passwordInput?.errors?.requireUppercase
                            }">
-                            {{ls.l('PasswordComplexity_RequireUppercase_Hint')}}
-                        </p>
-                        <p id="number"
-                           class="validator-rule"
-                           *ngIf="passwordComplexitySetting.requireDigit"
-                           [ngClass]="{
+                                        {{ls.l('PasswordComplexity_RequireUppercase_Hint')}}
+                                    </p>
+                                    <p id="number"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireDigit"
+                                       [ngClass]="{
                             'invalid': (passwordInput?.errors && passwordInput?.errors?.requireDigit) || !passwordInput.value,
                             'valid': !passwordInput?.errors?.requireDigit
                            }">
-                            {{ls.l('PasswordComplexity_RequireDigit_Hint')}}
-                        </p>
-                        <p id="length"
-                           class="validator-rule"
-                           *ngIf="passwordComplexitySetting.requiredLength"
-                           [ngClass]="{
+                                        {{ls.l('PasswordComplexity_RequireDigit_Hint')}}
+                                    </p>
+                                    <p id="length"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requiredLength"
+                                       [ngClass]="{
                             'invalid': (passwordInput?.errors && passwordInput?.errors?.requiredLength) || !passwordInput.value,
                             'valid': !passwordInput?.errors?.requiredLength
                            }">
-                            {{ls.l('PasswordComplexity_RequiredLength_Hint', passwordComplexitySetting.requiredLength)}}
-                        </p>
-                        <p id="special"
-                           class="validator-rule"
-                           *ngIf="passwordComplexitySetting.requireNonAlphanumeric"
-                           [ngClass]="{
+                                        {{ls.l('PasswordComplexity_RequiredLength_Hint', passwordComplexitySetting.requiredLength)}}
+                                    </p>
+                                    <p id="special"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireNonAlphanumeric"
+                                       [ngClass]="{
                             'invalid': (passwordInput?.errors && passwordInput?.errors?.requireNonAlphanumeric) || !passwordInput.value,
                             'valid': !passwordInput?.errors?.requireNonAlphanumeric
                             }">
-                            {{ls.l('PasswordComplexity_RequireNonAlphanumeric_Hint')}}
-                        </p>
+                                        {{ls.l('PasswordComplexity_RequireNonAlphanumeric_Hint')}}
+                                    </p>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <!--<div class="input">
+                        <label>
+                            Select your handle <p><input #handleInput="ngModel" type="text" name="handle" [(ngModel)]="tenantRegistrationModel.tenancyName" autoComplete="off"><span class="sperse-domain">.sperse.com</span></p>
+                        </label>
+                    </div>-->
+                    <div class="login_btn">
+                        <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !tenantRegistrationModel.tenantName || !passwordInput.value || passwordInput.errors}">
+                            <span>Complete Registration</span>
+                        </button>
                     </div>
                 </div>
-            </ng-container>
-          </div>
-          <div class="input">
-            <label>Select your handle <p><input #handleInput="ngModel" type="text" name="handle" [(ngModel)]="tenantRegistrationModel.tenancyName" autoComplete="off"><span class="sperse-domain">.sperse.com</span></p>
-            </label>
-          </div>
-          <div class="login_btn">
-            <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !tenantRegistrationModel.tenantName || !passwordInput.value || passwordInput.errors}">
-              <span>Complete Registration</span>
-            </button>
-          </div>
+                <ng-template #congratulation>
+                    <div class="link">
+                        <img src="assets/common/images/congratulations.svg"
+                             alt="Congratulations"
+                             width="136"
+                             height="152" />
+                        <h3>
+                            Congratulations!
+                            <br />
+                            Your account is ready
+                        </h3>
+                        <h4>Check your email for your account details</h4>
+                        <a [href]="congratulationLink" target="_blank">
+                            Continue
+                        </a>
+                    </div>
+                </ng-template>
+            </form>
         </div>
-        <ng-template #congratulation>
-          <div class="link">
-            <img
-              src="assets/common/images/congratulations.svg"
-              alt="Congratulations"
-              width="136"
-              height="152"
-            />
-            <h3>
-              Congratulations!
-              <br />
-              Your account is ready
-            </h3>
-            <h4>Check your email for your account details</h4>
-            <a [href]="congratulationLink" target="_blank">
-              Continue
-            </a>
-          </div>
-        </ng-template>
-      </form>
     </div>
-  </div>
 </div>

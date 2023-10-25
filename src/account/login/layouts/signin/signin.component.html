@@ -7,9 +7,9 @@
             </div>
             <ng-template #defaultForm>
                 <div class="box__title">
-                    <h1 class="title title--h1">Login To Your Sperse Account</h1>
+                    <h1 class="title title--h1">Login To Your {{hostName}} Account</h1>
                 </div>
-                <div *ngIf="showProviders; else noProviders">
+                <div *ngIf="showProviders">
                     <div class="social_login" *ngIf="linkedInProvider">
                         <button type="button" class="button_global button_global_blue" (click)="loginService.linkedInInitLogin(linkedInProvider)">
                             <span class="i-s-linkedin">Sign In with LinkedIn</span>
@@ -20,16 +20,9 @@
                             <span class="discord-icon">Sign In with Discord</span>
                         </button>
                     </div>
-                </div>
-                <ng-template #noProviders>
-                    <div class="social_login">
-                        <button type="button" class="button_global button_global_blue" [ngClass]="{disabled: true}">
-                            <span class="i-s-linkedin">Sign In with LinkedIn</span>
-                        </button>
+                    <div class="divider">
+                        <span>Or</span>
                     </div>
-                </ng-template>
-                <div class="divider">
-                    <span>Or</span>
                 </div>
                 <div class="input">
                     <label>
@@ -55,10 +48,10 @@
                 </div>
                 <div class="login_btn">
                     <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: loginInProgress || !loginForm.form.valid}">
-                        <span>Login To Your Sperse Account</span>
+                        <span>Login To Your {{hostName}} Account</span>
                     </button>
                 </div>
-                <span class="no-account">Don't have a Sperse account? <a routerLink="/account/signup" [queryParams]="{extlogin: isExtLogin}">Sign up</a></span>
+                <span class="no-account">Don't have a {{hostName}} account? <a routerLink="/account/signup" [queryParams]="{extlogin: isExtLogin}">Sign up</a></span>
             </ng-template>
         </div>
     </form>
