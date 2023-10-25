@@ -131,7 +131,7 @@
             </dx-date-box>
         </div>
         <uploader #logoUploader
-                  [title]="ls.l('Logo')"
+                  [title]="ls.l('Icon')"
                   [documentId]="settings.logoFileObjectId"
                   [documentLink]="settings.logoFileObjectId ? remoteServiceBaseUrl + '/api/ContactLandingPage/GetLogo?tenantId=' +  tenantIdString : undefined"
                   [uploadInfoText]="ls.l('LandingPageLogo_Info', 5)"
