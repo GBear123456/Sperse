@@ -7,4 +7,5 @@ export * from './email-usage-types-store/index';
 export * from './address-usage-types-store/index';
 export * from './phone-usage-types-store/index';
 export * from './countries-store/index';
+export * from './languages-store/index';
 export { RootStoreModule, RootStore };

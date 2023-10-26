@@ -84,6 +84,11 @@
                 <other-settings></other-settings>
             </ng-container>
         </mat-step>
+        <mat-step *ngIf="showLandingPageSettings" #landingPageStep>
+            <ng-container *ngIf="stepper.selected === landingPageStep">
+                <landing-page></landing-page>
+            </ng-container>
+        </mat-step>
     </mat-vertical-stepper>
     <div mat-dialog-actions>
         <button mat-button class="skip" (click)="next()">{{ ls.l('SkipForNow') }}</button>

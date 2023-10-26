@@ -228,6 +228,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                         group: this.product.groupName,
                         name: this.product.name,
                         code: this.product.code,
+                        type: this.product.type,
+                        isPublished: this.product.isPublished,
                         paymentPeriodTypes: this.product.productSubscriptionOptions &&
                             this.product.productSubscriptionOptions.map(item => item.frequency)
                     }));

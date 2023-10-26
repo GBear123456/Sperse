@@ -33,6 +33,7 @@ export enum AppFeatures {
     CRMPublicProducts = 'CRM.PublicProducts',
     CRMSalesTalk = 'CRM.SalesTalk',
     CRMSubscriptionManagementSystem = 'CRM.SubscriptionManagementSystem',
+    CRMTenantLandingPage = 'CRM.TenantLandingPage',
     CRMWooCommerceSynchronization = 'CRM.WooCommerceSynchronization',
     HUB = 'HUB',
     InboundOutboundSMS = 'InboundOutboundSMS',

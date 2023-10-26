@@ -10,7 +10,7 @@
                           [uploadInfoText]="ls.l('UploadLogo_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
                           [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo'"
-                          acceptFileExt=".jpg,.jpeg,.png,.gif"
+                          acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
                           [maxFileSize]="maxLogoFileSize"
                           (onDocumentClear)="clearLogo()">
                 </uploader>

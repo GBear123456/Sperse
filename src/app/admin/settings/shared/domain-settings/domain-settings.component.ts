@@ -1,5 +1,5 @@
 /** Core imports */
-import {Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, Input} from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, Input } from '@angular/core';
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
@@ -26,7 +26,7 @@ import { AppService } from '@app/app.service';
     templateUrl: './domain-settings.component.html',
     styleUrls: ['../../../../shared/common/styles/checkbox-radio.less', './domain-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
+    providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy]
 })
 export class DomainSettingsComponent implements OnInit {
     @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
@@ -34,9 +34,11 @@ export class DomainSettingsComponent implements OnInit {
     public sslGridDataSource: TenantSslCertificateInfo[];
     public sslBindingsDataSource: TenantSslBindingInfo[];
 
-    hostTypes = Object.keys(TenantHostType).map(item => {
-        return {id: item, name: this.ls.l('HostType_' + item)};
-    });
+    hostTypes = Object.keys(TenantHostType)
+        .filter(item => item != TenantHostType.LandingPage)
+        .map(item => {
+            return { id: item, name: this.ls.l('HostType_' + item) };
+        });
 
     orgUnits = [];
     tenantHostsEnabled = abp.features.isEnabled(AppFeatures.AdminCustomizations)
@@ -143,9 +145,9 @@ export class DomainSettingsComponent implements OnInit {
 
     getOrgUnitName(id) {
         if (id) {
-          for (let i = 0; i < this.orgUnits.length; i++)
-              if (this.orgUnits[i].id == id)
-                  return this.orgUnits[i].displayName;
+            for (let i = 0; i < this.orgUnits.length; i++)
+                if (this.orgUnits[i].id == id)
+                    return this.orgUnits[i].displayName;
         }
         return this.ls.l('AllOrganizationUnits');
     }

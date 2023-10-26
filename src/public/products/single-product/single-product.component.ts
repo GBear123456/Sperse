@@ -83,6 +83,7 @@ export class SingleProductComponent implements OnInit {
     showCouponError: boolean = false;
     couponInfo: PublicCouponInfo = null;
     couponInfoCache: { [code: string]: PublicCouponInfo } = {};
+    optionId: number;
 
     constructor(
         private route: ActivatedRoute,
@@ -100,6 +101,7 @@ export class SingleProductComponent implements OnInit {
         this.tenantId = +this.route.snapshot.paramMap.get('tenantId');
         this.productPublicName = this.route.snapshot.paramMap.get('productPublicName');
         this.ref = this.route.snapshot.queryParamMap.get('ref');
+        this.optionId = Number(this.route.snapshot.queryParamMap.get('optionId'));
 
         this.getProductInfo();
     }
@@ -268,7 +270,15 @@ export class SingleProductComponent implements OnInit {
             if (billingPeriods.indexOf(v) >= 0)
                 this.availablePeriods.push(v);
         });
-        this.toggle(this.availablePeriods[0]);
+
+        let selectedBillingPeriod = this.availablePeriods[0];
+        if (this.optionId) {
+            const selectedOption = this.productInfo.productSubscriptionOptions.find(v => v.id == this.optionId);
+            if (selectedOption)
+                selectedBillingPeriod = PaymentService.getBillingPeriodByPaymentFrequency(selectedOption.frequency);
+        }
+
+        this.toggle(selectedBillingPeriod);
     }
 
     checkIsFree() {
