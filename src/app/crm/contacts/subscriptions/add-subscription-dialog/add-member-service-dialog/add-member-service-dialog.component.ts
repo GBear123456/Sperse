@@ -148,12 +148,11 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
             });
 
             const featureValues = this.featureTree.getGrantedFeatures();
+            if (!this.featureTree.areAllValuesValid()) {
+                this.notify.warn(this.ls.l('InvalidFeaturesWarning'));
+                return;
+            }
             if (ArrayHelper.dataChanged(this.featureTree.initialGrantedFeatures, featureValues)) {
-                if (!this.featureTree.areAllValuesValid()) {
-                    this.notify.warn(this.ls.l('InvalidFeaturesWarning'));
-                    return;
-                }
-
                 featureValues.forEach((feature, index) => {
                     if (feature.value == this.featuresData.features[index].defaultValue || feature.value == '')
                         this.memberService.features[feature.name] = undefined;

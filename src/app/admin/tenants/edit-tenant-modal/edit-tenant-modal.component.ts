@@ -83,21 +83,21 @@ export class EditTenantModalComponent implements OnInit {
 
     ngOnInit() {
         this.modalDialog.startLoading();
-            this.tenantService.getTenantForEdit(this.tenantId)
-        .pipe(
-            finalize(() => this.modalDialog.finishLoading())
-        ).subscribe((tenantResult) => {
-            if (tenantResult.editions && tenantResult.editions.length) {
-                this.tenantsService.getEditionsGroups().subscribe((editionsGroups) => {
-                    this.editionsGroups = editionsGroups;
-                    this.editionsModels = this.tenantsService.getEditionsModels(editionsGroups, tenantResult);
-                    this.changeDetectorRef.detectChanges();
-                });
-            }
-            this.initialTenant = cloneDeep(tenantResult);
-            this.tenant = cloneDeep(tenantResult);
-            this.changeDetectorRef.detectChanges();
-        });
+        this.tenantService.getTenantForEdit(this.tenantId)
+            .pipe(
+                finalize(() => this.modalDialog.finishLoading())
+            ).subscribe((tenantResult) => {
+                if (tenantResult.editions && tenantResult.editions.length) {
+                    this.tenantsService.getEditionsGroups().subscribe((editionsGroups) => {
+                        this.editionsGroups = editionsGroups;
+                        this.editionsModels = this.tenantsService.getEditionsModels(editionsGroups, tenantResult);
+                        this.changeDetectorRef.detectChanges();
+                    });
+                }
+                this.initialTenant = cloneDeep(tenantResult);
+                this.tenant = cloneDeep(tenantResult);
+                this.changeDetectorRef.detectChanges();
+            });
     }
 
     resetFeatures(e): void {
@@ -154,11 +154,12 @@ export class EditTenantModalComponent implements OnInit {
 
         /** if features changed */
         const featureValues = this.featureTree.getGrantedFeatures();
+        if (!this.featureTree.areAllValuesValid()) {
+            this.messageService.warn(this.ls.l('InvalidFeaturesWarning'));
+            this.modalDialog.finishLoading();
+            return;
+        }
         if (ArrayHelper.dataChanged(this.featureTree.initialGrantedFeatures, featureValues)) {
-            if (!this.featureTree.areAllValuesValid()) {
-                this.messageService.warn(this.ls.l('InvalidFeaturesWarning'));
-                return;
-            }
             const updateFeaturesInput = new UpdateTenantFeaturesInput();
             updateFeaturesInput.id = this.tenantId;
             updateFeaturesInput.featureValues = featureValues;
