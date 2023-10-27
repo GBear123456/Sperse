@@ -411,7 +411,11 @@ export class FeatureTreeComponent implements AfterViewInit {
                 return false;
             }
 
-            let regexStr = `^\\d+`;
+            let regexStr = '^';
+            if (minValue < 0) {
+                regexStr += '-?';
+            }
+            regexStr += '\\d+';
             if (validator.name == 'FLOAT') {
                 regexStr += `\\.?\\d{0,${validator.attributes.DecimalPlaces}}`;
             }
