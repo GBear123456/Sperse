@@ -418,8 +418,14 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onCellClick(event) {
-        if (event.rowType == 'data' && event.data)
-            this.editProduct(event.data.Id);
+        if (event.rowType == 'data' && event.data) {
+            if (event.column.cellTemplate == 'actionTemplate')
+                this.toggleActionsMenu(event);            
+            else if (event.column.cellTemplate == 'shareTemplate')
+                window.open(''); //!!VP should be product link added
+            else
+                this.editProduct(event.data.Id);
+        }
     }
 
     toggleActionsMenu(event) {
