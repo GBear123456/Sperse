@@ -7,6 +7,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { finalize } from 'rxjs/operators';
 import { DataSource } from 'devextreme/data/data_source/data_source';
 import ODataStore from 'devextreme/data/odata/store';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -59,6 +60,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     headerOptions = [this.l("Products"), this.l("Coupons")];
     activeHeaderOption = this.headerOptions[0];
     public headlineButtons: HeadlineButton[] = [];
+    formatting = AppConsts.formatting;
 
     actionEvent: any;
     actionMenuGroups: ActionMenuItem[] = [
@@ -103,7 +105,14 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.params.$select = DataGridService.getSelectFields(
-                this.dataGrid, [this.productFields.Id]
+                this.dataGrid, [
+                    this.productFields.Id, 
+                    this.productFields.PublicName,
+                    this.productFields.CreateUser,
+                    this.productFields.AllowCoupon,
+                    this.productFields.IsPublished,
+                    this.productFields.PublishDate
+                ]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         },
@@ -114,6 +123,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
+        private clipboardService: ClipboardService,
         private filtersService: FiltersService,
         private productProxy: ProductServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
@@ -133,6 +143,19 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnInit() {
         this.activate();
+    }
+
+    copyToClipbord(event, data) {
+        this.clipboardService.copyFromContent(this.getProductPublicLink(data));
+        this.notify.info(this.l('SavedToClipboard'));
+    }
+
+    openProductPage(event, data) {
+        window.open(this.getProductPublicLink(data));
+    }
+
+    getProductPublicLink(data) {
+        return location.origin + '/p/' + (abp.session.tenantId || 0) + '/' + data.PublicName;
     }
 
     toggleToolbar() {
@@ -422,7 +445,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             if (event.column.cellTemplate == 'actionTemplate')
                 this.toggleActionsMenu(event);            
             else if (event.column.cellTemplate == 'shareTemplate')
-                window.open(''); //!!VP should be product link added
+                return ;
             else
                 this.editProduct(event.data.Id);
         }

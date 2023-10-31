@@ -8,4 +8,9 @@ export interface ProductDto {
     Price: number;
     Unit: string;
     ThumbnailUrl: string;
+    PublicName: string;
+    CreateUser: boolean;
+    IsPublished: boolean;
+    AllowCoupon: boolean;
+    PublishDate: string;
 }

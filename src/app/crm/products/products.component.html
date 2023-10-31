@@ -78,9 +78,20 @@
                     <dxi-column [dataField]="productFields.Price" [caption]="l('Price')" cellTemplate="amountTemplate" cssClass="price"></dxi-column>
                     <dxi-column [dataField]="productFields.Type" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [caption]="l('Share')" cellTemplate="shareTemplate" [width]="80"></dxi-column>
+                    <dxi-column [dataField]="productFields.PublicName" [caption]="l('PublicName')" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="productFields.CreateUser" [caption]="l('Create User')" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="productFields.AllowCoupon" [caption]="l('Allow Coupon')" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="productFields.IsPublished" [caption]="l('IsPublished')" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="productFields.PublishDate" [caption]="l('Publish Date')" [visible]="false" cellTemplate="dateCell"></dxi-column>                    
                     <dxi-column caption="" cellTemplate="actionTemplate" [width]="60"></dxi-column>
+                    <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                        {{cellData.value | datetime: formatting.dateTimeMoment }}
+                    </div>
                     <div *dxTemplate="let cell of 'shareTemplate'" class="share">
-                        <img src="assets/common/icons/share.png" />
+                        <ng-container *ngIf="cell.data.PublicName">
+                            <img src="assets/common/icons/share-black.svg" (click)="openProductPage($event, cell.data)" />
+                            <img src="assets/common/icons/copy-black.svg" (click)="copyToClipbord($event, cell.data)" />
+                        </ng-container>
                     </div>
                     <div *dxTemplate="let cell of 'actionTemplate'" 
                         class="dx-link dx-link-edit">
