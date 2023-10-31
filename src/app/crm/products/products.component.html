@@ -1,7 +1,7 @@
 <div>
     <app-headline icon="people"
                   [buttons]="headlineButtons"
-                  [showToggleCompactViewButton]="true"
+                  [showToggleCompactViewButton]="false"
                   [showToggleToolbarButton]="true"
                   [showReloadButton]="ui.showReload"
                   [showToggleFullScreenButton]="true"
@@ -38,8 +38,8 @@
                               [columnAutoWidth]="true"
                               [allowColumnResizing]="true"
                               [columnChooser]="{
-                                    height: rowsViewHeight
-                                }"
+                                  height: rowsViewHeight
+                              }"
                               [remoteOperations]="{ filtering: false }"
                               [loadPanel]="{ enabled: false }"
                               [pager]="defaultGridPagerConfig"
@@ -53,34 +53,42 @@
                                    mode="none">
                     </dxo-selection>
                     <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
-                    <dxo-editing mode="popup"
+                    <!--dxo-editing mode="popup"
                                  [texts]="{ editRow: '' }"
                                  [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                                  [allowUpdating]="!isReadOnly">
-                    </dxo-editing>
+                    </dxo-editing -->
                     <dxi-column [dataField]="productFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                     <dxi-column [dataField]="productFields.ThumbnailUrl"
                                 cellTemplate="imageTemplate"
                                 caption=""
-                                [width]="50"
+                                [width]="82"
                                 [showInColumnChooser]="false"
                                 [allowReordering]="false"
                                 [allowExporting]="false"
                                 [allowGrouping]="false"
-                                [allowSorting]="false">
+                                [allowSorting]="false"
+                                [allowResizing]="false">
                     </dxi-column>
-                    <dxi-column [dataField]="productFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="productFields.Name" [caption]="l('Customer.Name')" cssClass="name clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.Code" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.Description" [caption]="l('Description')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.Group" [caption]="l('Group')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [dataField]="productFields.Type" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [dataField]="productFields.Price" [caption]="l('Price')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column [dataField]="productFields.Unit" [caption]="l('Unit')"></dxi-column>
-
-                    <div *dxTemplate="let cell of 'imageTemplate'" class="image-column">
-                        <img *ngIf="cell.data.ThumbnailUrl" [src]="cell.data.ThumbnailUrl" />
+                    <dxi-column [dataField]="productFields.Price" [caption]="l('Price')" cellTemplate="amountTemplate" cssClass="price"></dxi-column>
+                    <dxi-column [dataField]="productFields.Type" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [caption]="l('Share')" cellTemplate="shareTemplate" [width]="80"></dxi-column>
+                    <dxi-column caption="" cellTemplate="actionTemplate" [width]="60"></dxi-column>
+                    <div *dxTemplate="let cell of 'shareTemplate'" class="share">
+                        <img src="assets/common/icons/share.png" />
                     </div>
-                    <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
+                    <div *dxTemplate="let cell of 'actionTemplate'" 
+                        class="dx-link dx-link-edit">
+                    </div>
+                    <div *dxTemplate="let cell of 'imageTemplate'" class="image-column {{cell.data.ThumbnailUrl ? '' : 'no-image'}}">
+                        <img [src]="cell.data.ThumbnailUrl || 'assets/common/images/no-image.svg'" />
+                    </div>
+                    <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder price-column">
                         <span> {{ cell.data.Price | currency:currency:'symbol':'1.2-2' }} </span>
                     </div>
 
