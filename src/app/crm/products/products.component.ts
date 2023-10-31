@@ -110,7 +110,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                     this.productFields.PublicName,
                     this.productFields.CreateUser,
                     this.productFields.AllowCoupon,
-                    this.productFields.IsPublished,
                     this.productFields.PublishDate
                 ]
             );

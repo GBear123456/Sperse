@@ -30,6 +30,7 @@
             <div class="portlet-body">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
                 <dx-data-grid class="main-component-view"
+                              hint="Products"
                               accesskey="narrowHeaderPanel"
                               [renderAsync]="true"
                               [dataSource]="dataSource"
@@ -77,11 +78,11 @@
                     <dxi-column [dataField]="productFields.Unit" [caption]="l('Unit')"></dxi-column>
                     <dxi-column [dataField]="productFields.Price" [caption]="l('Price')" cellTemplate="amountTemplate" cssClass="price"></dxi-column>
                     <dxi-column [dataField]="productFields.Type" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="productFields.IsPublished" [caption]="l('IsPublished')"></dxi-column>
                     <dxi-column [caption]="l('Share')" cellTemplate="shareTemplate" [width]="80"></dxi-column>
                     <dxi-column [dataField]="productFields.PublicName" [caption]="l('PublicName')" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.CreateUser" [caption]="l('Create User')" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.AllowCoupon" [caption]="l('Allow Coupon')" [visible]="false"></dxi-column>
-                    <dxi-column [dataField]="productFields.IsPublished" [caption]="l('IsPublished')" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.PublishDate" [caption]="l('Publish Date')" [visible]="false" cellTemplate="dateCell"></dxi-column>                    
                     <dxi-column caption="" cellTemplate="actionTemplate" [width]="60"></dxi-column>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
