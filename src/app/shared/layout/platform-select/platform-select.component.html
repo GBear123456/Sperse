@@ -13,15 +13,13 @@
                             <h2 class="top__item_title">
                                 {{item.name}}
                             </h2>
-                            <div class="top__item_descr">
-                                {{ls.l(item.code + 'ModuleDescription')}}
-                            </div>
                             <div class="top__item_image-wrapper">
                                 <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.png"
-                                     class="top__item_image"
-                                     width="210"
-                                     height="139"
+                                     class="top__item_image {{item.name.toLowerCase()}}"
                                      [alt]="item.name">
+                            </div>
+                            <div class="top__item_descr">
+                                {{ls.l(item.code + 'ModuleDescription')}}
                             </div>
                             <div class="coming-soon" *ngIf="item.isComingSoon">
                                 Coming soon...
