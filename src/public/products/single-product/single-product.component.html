@@ -97,6 +97,12 @@
                         </label>
                     </div>
                 </div>
+                <div class="input" *ngIf="productInfo.data.hasTenantService">
+                    <label class="company">
+                        Company <input #businessNameInput="ngModel" type="text" name="businessName" [(ngModel)]="tenantRegistrationModel.tenantName" [ngModelOptions]="{updateOn: 'blur'}" autoComplete="off" required>
+                        <validation-messages [formCtrl]="businessNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('BusinessName'))}]"></validation-messages>
+                    </label>
+                </div>
                 <div class="phone">
                     <span class="phone__label">Phone</span>
                     <div>
@@ -111,6 +117,80 @@
                         Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="requestInfo.email" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="emailRegexp" required>
                         <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
                     </label>
+                </div>
+                <div class="input" *ngIf="productInfo.data.hasTenantService && passwordComplexitySetting">
+                    <label>
+                        Choose your password
+                    </label>
+                    <div class="password-row">
+                        <div>
+                            <input #passwordInput="ngModel"
+                                   [requireDigit]="passwordComplexitySetting.requireDigit"
+                                   [requireLowercase]="passwordComplexitySetting.requireLowercase"
+                                   [requireUppercase]="passwordComplexitySetting.requireUppercase"
+                                   [requireNonAlphanumeric]="passwordComplexitySetting.requireNonAlphanumeric"
+                                   [requiredLength]="passwordComplexitySetting.requiredLength"
+                                   [type]="showPassword ? 'text' : 'password'"
+                                   name="password"
+                                   [(ngModel)]="tenantRegistrationModel.adminPassword"
+                                   reverse="true"
+                                   autoComplete="off"
+                                   required>
+                            <span class="pass" (click)="showPassword = !showPassword">{{ls.l(showPassword ? 'hide' : 'show')}}</span>
+                            <validation-messages [formCtrl]="passwordInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('Password'))}]"></validation-messages>
+                        </div>
+                        <ng-container *ngIf="passwordInput.errors && passwordInput.value">
+                            <div id="message" class="entrance-page__form-validator is-active">
+                                <div class="message-inner">
+                                    <p id="letter"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireLowercase"
+                                       [ngClass]="{
+                                        'invalid': (passwordInput?.errors && passwordInput?.errors?.requireLowercase) || !passwordInput.value,
+                                        'valid': !passwordInput?.errors?.requireLowercase
+                                        }">
+                                        {{ls.l('PasswordComplexity_RequireLowercase_Hint')}}
+                                    </p>
+                                    <p id="capital"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireUppercase"
+                                       [ngClass]="{
+                                        'invalid': (passwordInput?.errors && passwordInput?.errors?.requireUppercase) || !passwordInput.value,
+                                        'valid': !passwordInput?.errors?.requireUppercase
+                                       }">
+                                        {{ls.l('PasswordComplexity_RequireUppercase_Hint')}}
+                                    </p>
+                                    <p id="number"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireDigit"
+                                       [ngClass]="{
+                                        'invalid': (passwordInput?.errors && passwordInput?.errors?.requireDigit) || !passwordInput.value,
+                                        'valid': !passwordInput?.errors?.requireDigit
+                                       }">
+                                        {{ls.l('PasswordComplexity_RequireDigit_Hint')}}
+                                    </p>
+                                    <p id="length"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requiredLength"
+                                       [ngClass]="{
+                                        'invalid': (passwordInput?.errors && passwordInput?.errors?.requiredLength) || !passwordInput.value,
+                                        'valid': !passwordInput?.errors?.requiredLength
+                                       }">
+                                        {{ls.l('PasswordComplexity_RequiredLength_Hint', passwordComplexitySetting.requiredLength)}}
+                                    </p>
+                                    <p id="special"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireNonAlphanumeric"
+                                       [ngClass]="{
+                                        'invalid': (passwordInput?.errors && passwordInput?.errors?.requireNonAlphanumeric) || !passwordInput.value,
+                                        'valid': !passwordInput?.errors?.requireNonAlphanumeric
+                                        }">
+                                        {{ls.l('PasswordComplexity_RequireNonAlphanumeric_Hint')}}
+                                    </p>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
                 </div>
                 <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected">
                     <label class="coupon">
@@ -140,25 +220,34 @@
                     </div>
                 </div>
                 <div class="login_btn">
-                    <div [style.display]="showSubmitButton() ? 'block' : 'none'">
-                        <button class="button_global button_global_green" [ngClass]="{disabled: !isFormValid()}" (click)="submitFreeRequest()">
-                            {{ productInfo.type == productType.Subscription ? 'Subscribe' : 'Purchase' }}
-                        </button>
-                    </div>
-                    <div class="gateways" [style.display]="!showSubmitButton() ? 'flex' : 'none'">
-                        <button *ngIf="showStripeButton()" class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
-                            Pay with <img src="assets/common/images/stripe.svg" />
-                        </button>
-                        <pay-pal [style.display]="showPayPalButton() ? 'block' : 'none'"
-                                 [height]="55"
-                                 [showButtonType]="paypalButtonType"
-                                 [disabled]="!isFormValid()"
-                                 (onApprove)="onPayPalApprove()">
-                        </pay-pal>
-                        <div *ngIf="showNoPaymentSystems" class="no-payment-systems">
-                            Payment systems are not configured
+                    <ng-container *ngIf="!productInfo.data.hasTenantService else tenantSubmit">
+                        <div [style.display]="showSubmitButton() ? 'block' : 'none'">
+                            <button class="button_global button_global_green" [ngClass]="{disabled: !isFormValid()}" (click)="submitFreeRequest()">
+                                {{ productInfo.type == productType.Subscription ? 'Subscribe' : 'Purchase' }}
+                            </button>
                         </div>
-                    </div>
+                        <div class="gateways" [style.display]="!showSubmitButton() ? 'flex' : 'none'">
+                            <button *ngIf="showStripeButton()" class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
+                                Pay with <img src="assets/common/images/stripe.svg" />
+                            </button>
+                            <pay-pal [style.display]="showPayPalButton() ? 'block' : 'none'"
+                                     [height]="55"
+                                     [showButtonType]="paypalButtonType"
+                                     [disabled]="!isFormValid()"
+                                     (onApprove)="onPayPalApprove()">
+                            </pay-pal>
+                            <div *ngIf="showNoPaymentSystems" class="no-payment-systems">
+                                Payment systems are not configured
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #tenantSubmit>
+                        <div>
+                            <button class="button_global button_global_green" [ngClass]="{disabled: !isFormValid()}" (click)="submitTenant()">
+                                {{getTenantButtonText()}}
+                            </button>
+                        </div>
+                    </ng-template>
                 </div>
             </form>
         </div>
