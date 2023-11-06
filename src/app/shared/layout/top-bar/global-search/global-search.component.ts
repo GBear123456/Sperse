@@ -34,6 +34,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { ContactGroup } from '@shared/AppEnums';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 class CustomHttpParameterCodec implements HttpParameterCodec {
     encodeKey(key: string): string {
@@ -67,7 +68,7 @@ export class GlobalSearchComponent implements OnInit {
         tap(() => {
             this.isTooltipVisible = false;
             this.searchGroups = [];
-            this.loadingService.startLoading(this.elementRef.nativeElement);
+            this.loadingService.startLoading(this.elementRef.nativeElement.getElementsByClassName('global-search-container')[0]);
         }),
         switchMap((search: string) => {
             return combineLatest(
@@ -106,6 +107,7 @@ export class GlobalSearchComponent implements OnInit {
         private elementRef: ElementRef,
         private itemDetailsService: ItemDetailsService,
         private permissionService: AppPermissionService,
+        private layoutService: LayoutService,
         public ls: AppLocalizationService
     ) {}
 
@@ -310,9 +312,14 @@ export class GlobalSearchComponent implements OnInit {
     }
 
     onFocusIn() {
+        this.layoutService.showPlatformSelectMenu = false;
         if (this.itemsFound) {
             this.isTooltipVisible = true;
         }
+    }
+
+    onFocusOut() {
+        this.layoutService.showPlatformSelectMenu = true;
     }
 
     valueChanged(e) {

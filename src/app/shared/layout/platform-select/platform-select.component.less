@@ -5,8 +5,13 @@
 @admin-color: linear-gradient(221deg, #cae4cf, #538da9);
 
 ::ng-deep platform-select, .module-select-item {
-    &.admin input {
-        background-image: linear-gradient(221deg, #cae4cf, #538da9);
+    &.admin {
+        .dx-texteditor-container:after {
+            left: 62px!important;
+        }
+        input {
+            background: linear-gradient(109.96deg, #6687EF 5.14%, #A6C0F8 87.12%);
+        }
     }
 
     &.api input {
@@ -14,11 +19,11 @@
     }
 
     &.cfo input {
-        background-image: linear-gradient(41deg, #f76b1c, #fad961);
+        background: linear-gradient(109.96deg, #f76b1c 5.14%, #fad961 87.12%);
     }
 
     &.crm input {
-        background-image: linear-gradient(41deg, #3023ae, #c86dd7);
+        background: linear-gradient(109.96deg, #3D32AD 5.14%, #935EC5 87.12%);
     }
 
     &.cloud input {
@@ -188,8 +193,8 @@
 
 :host {
     .platform-select-component {
-        width: 66px;
-        min-width: 66px;
+        width: 81px;
+        min-width: 81px;
         float: right;
         overflow: hidden;
         padding-top: 20px;
@@ -202,29 +207,29 @@
                 dispaly: none;
             }
             .dx-texteditor-input {
-                margin-bottom: 0 !important;
-                border-radius: 14px;
-                width: 66px;
-                height: 28px;
+                font-family: Poppins;
+                font-size: 15px;
+                font-weight: 500;
+                line-height: 23px;
+                letter-spacing: -0.02em;
                 text-align: center;
+                margin-bottom: 0 !important;
+                border-radius: 25px;
+                width: 81px;
+                height: 36px;
                 padding: 0;
                 margin: 0;
-                font-size: 10px;
-                line-height: 2.4;
-                letter-spacing: 0.2px;
                 cursor: pointer;
                 color: #ffffff;
                 padding-top: 0;
                 padding-bottom: 2px;
+                padding-right: 15px;
             }
             &:after {
-                content: '';
-                left: 53px;
-                top: 14px;
+                content: url('../../../../assets/common/icons/arrow.png');
+                left: 56px;
+                top: 6px;
                 position: absolute;
-                border-left: 3px solid transparent;
-                border-right: 3px solid transparent;
-                border-top: 3px solid #FFF;
             }
         }
     }

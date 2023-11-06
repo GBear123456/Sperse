@@ -5,6 +5,7 @@
     justify-content: flex-start;
     white-space: nowrap;
     height: 75px;
+    width: 100%;
 
     @media (max-width: 580px) {
         width: calc(~"100% - 320px");
@@ -20,15 +21,21 @@
     }
 
     .top-bar-nav {
+        margin-left: auto;
         padding: 0 10px;
         &:after {
             right: 40px;
+        }
+
+        ::ng-deep dx-nav-bar {
+            width: max-content;
         }
 
         ::ng-deep .dx-tabs-wrapper {
             display: flex;
             justify-content: flex-end;
             overflow: hidden;
+            width: fit-content;
 
             .dx-state-disabled {
                 .dx-item-content {
