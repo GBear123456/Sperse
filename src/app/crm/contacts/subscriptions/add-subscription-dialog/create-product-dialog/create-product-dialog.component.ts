@@ -220,7 +220,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
                 this.addUpgradeToProduct();
             if (this.product.publishDate)
-                this.publishDate = new Date(this.product.publishDate);
+                this.publishDate = DateHelper.addTimezoneOffset(new Date(this.product.publishDate), true);
             this.initProductResources();
         } else {
             this.product = new CreateProductInput(data.product);
@@ -321,9 +321,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                             item.trialDayCount = 0;
                     });
 
-                if (this.publishDate) {
-                    this.product.publishDate = this.publishDate;
-                }   
+                if (this.publishDate)
+                    this.product.publishDate = DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '');
                 else
                     this.product.publishDate = undefined;
 
@@ -838,7 +837,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     onPublishDateOpened() {
         if (!this.publishDate) {
-            this.publishDate = new Date();
+            this.publishDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());
             this.detectChanges();
         }
     }
