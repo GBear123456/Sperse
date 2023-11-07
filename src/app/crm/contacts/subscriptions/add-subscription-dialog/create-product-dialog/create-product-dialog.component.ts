@@ -915,7 +915,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     onIsPublishedChanged() {
         if (this.product.isPublished && !this.publishDate) {
-            this.publishDate = new Date();
+            this.publishDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());
         }
     }
 
