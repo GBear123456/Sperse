@@ -44,6 +44,16 @@
                     </li>
                 </ul>
             </div>
+            <div class="shortcuts" *ngIf="appMemberPortalUrl">
+                <div class="shortcuts_head">
+                    <h3>{{ls.l('My Link Shortcuts')}}</h3><p class="shortcuts_ref">{{ls.l('Include Affiliate ID in links')}}: <span>[ref={{affiliateIRefId}}]</span></p>
+                </div>
+                <div class="shortcuts_portal_field">
+                    <img class="icon" src="./assets/common/images/platform-select/portal.png"><span>{{appMemberPortalUrl}}</span>
+                    <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(appMemberPortalUrl)">
+                    <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(appMemberPortalUrl)">
+                </div>
+            </div>
             <footer *ngIf="modules.footerItems.length">
                 <ul class="footer__items">
                     <li class="footer__item {{item.code | lowercase }}" *ngFor="let item of modules.footerItems">

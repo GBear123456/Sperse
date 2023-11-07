@@ -23,6 +23,7 @@ import { Module } from '@shared/common/module.interface';
 import { AppSessionService } from '@root/shared/common/session/app-session.service';
 import { LayoutType } from '@root/shared/service-proxies/service-proxies';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
+import { ClipboardService } from 'ngx-clipboard';
 
 interface ModuleConfig extends Module {
     code: string;
@@ -47,11 +48,14 @@ export class PlatformSelectComponent {
     activeModuleCount = 0;
     permissions = AppPermissions;
     width: string = AppConsts.isMobile ? '100vw' : '760px';
+    affiliateIRefId: string = '';
+
+    appMemberPortalUrl = AppConsts.appMemberPortalUrl;
 
     moduleItems: string[];
 
     constructor(
-        private appService: AppService,
+        public appService: AppService,
         private authService: AppAuthService,
         private impersonationService: ImpersonationService,
         private userManagementService: UserManagementService,
@@ -60,6 +64,7 @@ export class PlatformSelectComponent {
         private router: Router,
         private titleService: TitleService,
         private appSessionService: AppSessionService,
+        public clipboardService: ClipboardService,
         public layoutService: LayoutService,
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
@@ -197,5 +202,14 @@ export class PlatformSelectComponent {
                 }
             });
         }
+    }
+
+    copyToClipboard(value: string) {
+        this.clipboardService.copyFromContent(value);
+        abp.notify.info(this.ls.l('SavedToClipboard'));
+    }
+
+    openLink(link: string) {
+        window.open(link);
     }
 }
