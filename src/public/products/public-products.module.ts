@@ -15,7 +15,11 @@ import { PaypalModule } from '@shared/common/paypal/paypal.module';
 
 import { SingleProductComponent } from './single-product/single-product.component';
 
-import { PublicProductServiceProxy } from '@root/shared/service-proxies/service-proxies';
+import {
+    LeadServiceProxy,
+    PublicProductServiceProxy,
+    TenantSubscriptionServiceProxy
+} from '@root/shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [
@@ -33,7 +37,9 @@ import { PublicProductServiceProxy } from '@root/shared/service-proxies/service-
         SingleProductComponent
     ],
     providers: [
-        PublicProductServiceProxy
+        PublicProductServiceProxy,
+        LeadServiceProxy,
+        TenantSubscriptionServiceProxy
     ]
 })
 export class PublicProductsModule { }

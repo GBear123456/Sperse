@@ -10,16 +10,24 @@ import round from 'lodash/round';
 
 /** Application imports */
 import {
+    CompleteTenantRegistrationInput,
     CouponDiscountDuration,
     CustomPeriodType,
+    LeadServiceProxy,
+    PasswordComplexitySetting,
+    PaymentPeriodType,
     ProductType,
+    ProfileServiceProxy,
     PublicCouponInfo,
     PublicProductInfo,
     PublicProductServiceProxy,
     PublicProductSubscriptionOptionInfo,
     RecurringPaymentFrequency,
     SubmitProductRequestInput,
-    SubmitProductRequestOutput
+    SubmitProductRequestOutput,
+    SubmitTenancyRequestInput,
+    TenantProductInfo,
+    TenantSubscriptionServiceProxy
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
@@ -58,6 +66,8 @@ export class SingleProductComponent implements OnInit {
 
     productInfo: PublicProductInfo;
     requestInfo: SubmitProductRequestInput = new SubmitProductRequestInput();
+    tenantRegistrationModel = new CompleteTenantRegistrationInput();
+    passwordComplexitySetting: PasswordComplexitySetting;
 
     agreedTermsAndServices: boolean = false;
     nameRegexp = /^[a-zA-Z-.' ]+$/;
@@ -89,9 +99,12 @@ export class SingleProductComponent implements OnInit {
         private route: ActivatedRoute,
         private titleService: Title,
         private publicProductService: PublicProductServiceProxy,
+        private leadProxy: LeadServiceProxy,
+        private tenantProxy: TenantSubscriptionServiceProxy,
         private appHttpConfiguration: AppHttpConfiguration,
         private changeDetector: ChangeDetectorRef,
         private sanitizer: DomSanitizer,
+        private profileService: ProfileServiceProxy,
         public ls: AppLocalizationService,
     ) {
         this.requestInfo.quantity = 1;
@@ -131,6 +144,13 @@ export class SingleProductComponent implements OnInit {
         }
     }
 
+    initializePasswordComplexity() {
+        this.profileService.getPasswordComplexitySetting().subscribe(result => {
+            this.passwordComplexitySetting = result.setting;
+            this.changeDetector.detectChanges();
+        });
+    }
+
     getPayPalRequest(): Promise<string> {
         return this.getSubmitRequest('PayPal')
             .pipe(
@@ -157,6 +177,8 @@ export class SingleProductComponent implements OnInit {
                     this.titleService.setTitle(this.productInfo.name);
                     if (result.descriptionHtml)
                         this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
+                    if (result.data.hasTenantService)
+                        this.initializePasswordComplexity();
                     this.initSubscriptionProduct();
                     this.initializePayPal();
                     this.checkIsFree();
@@ -194,6 +216,45 @@ export class SingleProductComponent implements OnInit {
             .subscribe(() => {
                 location.href = this.getReceiptUrl();
             });
+    }
+
+    submitTenant() {
+        if (!this.isFormValid()) {
+            abp.notify.error(this.ls.l('SaleProductValidationError'));
+            return of();
+        }
+
+        if (this.phoneNumber && this.phoneNumber.isEmpty())
+            this.requestInfo.phone = undefined;
+
+        abp.ui.setBusy();
+        let tenancyRequestModel = new SubmitTenancyRequestInput();
+        tenancyRequestModel.email = this.requestInfo.email.trim();
+        tenancyRequestModel.lastName = this.requestInfo.lastName;
+        tenancyRequestModel.firstName = this.requestInfo.firstName;
+        tenancyRequestModel.phone = this.requestInfo.phone;
+        tenancyRequestModel.products = [new TenantProductInfo({
+            productId: this.productInfo.id,
+            paymentPeriodType: PaymentPeriodType[this.selectedSubscriptionOption.frequency],
+            quantity: 1
+        })];
+        tenancyRequestModel.couponCode = this.isFreeProductSelected ? null : this.requestInfo.couponCode;
+        tenancyRequestModel.affiliateCode = this.ref;
+
+        this.leadProxy.submitTenancyRequest(tenancyRequestModel).subscribe(response => {
+            this.completeTenantRegistration(response.leadRequestXref);
+        }, () => abp.ui.clearBusy());
+    }
+
+    completeTenantRegistration(leadRequestXref: string) {
+        this.tenantRegistrationModel.requestXref = leadRequestXref;
+        this.tenantRegistrationModel.returnBearerToken = false;
+
+        this.tenantProxy.completeTenantRegistration(this.tenantRegistrationModel).pipe(
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe(res => {
+            window.location.href = res.loginLink;
+        });
     }
 
     isFormValid(): boolean {
@@ -468,5 +529,17 @@ export class SingleProductComponent implements OnInit {
         this.couponInfo = null;
         this.requestInfo.couponCode = null;
         this.showCouponError = false;
+    }
+
+    getTenantButtonText(): string {
+        let buttonText = 'Start ';
+        if (this.selectedSubscriptionOption.trialDayCount) {
+            buttonText += 'Your ';
+            if (!this.selectedSubscriptionOption.signupFee)
+                buttonText += ' Free ';
+            buttonText += `${this.selectedSubscriptionOption.trialDayCount}-Day Trial `;
+        }
+        buttonText += 'Today!';
+        return buttonText;
     }
 }
