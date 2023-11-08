@@ -196,9 +196,12 @@
                 </dx-check-box>
             </div>
             <div class="col">
-                <div class="agreements">
-                    {{ls.l("ByContinueIAgree")}} <a (click)="openConditionsDialog(conditions.Terms)" [title]="ls.l('TermsOfService')">{{ls.l("TermsOfService")}}</a>
-                    {{ls.l("And")}} <a (click)="openConditionsDialog(conditions.Policies)" [title]="ls.l('PrivacyPolicy')">{{ls.l("PrivacyPolicy")}}</a>
+                <div *ngIf="conditionsModalService.hasTermsOrPolicy()" class="agreements">
+                    {{ls.l("ByContinueIAgree")}}
+                    <ng-container *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)">
+                        <a (click)="openConditionsDialog(conditions.Terms)" [title]="ls.l('TermsOfService')">{{ls.l("TermsOfService")}}</a><span *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"> {{ls.l("And")}} </span>
+                    </ng-container>
+                    <a *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)" (click)="openConditionsDialog(conditions.Policies)" [title]="ls.l('PrivacyPolicy')">{{ls.l("PrivacyPolicy")}}</a>
                 </div>
             </div>
         </div>

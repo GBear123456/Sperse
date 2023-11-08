@@ -7,10 +7,10 @@
     <div class="column left">
         <h2>{{ls.l('DirectlyConnect')}}</h2>
         <p>
-           {{ls.l('SelectWorldwideInstitutions')}}
+            {{ls.l('SelectWorldwideInstitutions')}}
         </p>
-        <div class="connector" [ngClass]="{selected: selectedConnector.name == accountConnectors.Plaid}" 
-            (click)="selectConnector(connectors[accountConnectors.Plaid], true)">
+        <div class="connector" [ngClass]="{selected: selectedConnector.name == accountConnectors.Plaid}"
+             (click)="selectConnector(connectors[accountConnectors.Plaid], true)">
             <img src="assets/common/icons/plaid-connector.svg" height="40px">
             <div class="title">
                 <h2>{{ls.l('PlaidConnectorTitle')}}</h2>
@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="connector disabled" [ngClass]="{selected: selectedConnector.name == accountConnectors.SaltEdge}"
-            (click)="selectConnector(connectors[accountConnectors.SaltEdge], true)">
+             (click)="selectConnector(connectors[accountConnectors.SaltEdge], true)">
             <img src="assets/common/icons/saltedge-connector.svg" height="25px">
             <div class="title">
                 <h2>{{ls.l('SaltEdgeConnectorTitle')}}</h2>
@@ -32,7 +32,7 @@
             {{ls.l('ImportFromQuickBooks')}}
         </p>
         <div class="connector" [ngClass]="{selected: selectedConnector.name == accountConnectors.QuickBook}"
-            (click)="selectConnector(connectors[accountConnectors.QuickBook], true)">
+             (click)="selectConnector(connectors[accountConnectors.QuickBook], true)">
             <img src="assets/common/icons/quick-book-connector.svg" height="50px">
             <div class="title">
                 <h3>{{ls.l('QuickBookConnectorDescription')}}</h3>
@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="connector" [ngClass]="{selected: selectedConnector.name == accountConnectors.XeroOAuth2}"
-            (click)="selectConnector(connectors[accountConnectors.XeroOAuth2], true)">
+             (click)="selectConnector(connectors[accountConnectors.XeroOAuth2], true)">
             <img src="assets/common/icons/xero-connector.svg" height="50px">
             <div class="title">
                 <h3>{{ls.l('XeroConnectorDescription')}}</h3>
@@ -51,9 +51,15 @@
 </div>
 
 <div class="footer">
-    <div class="privacy-policy">
+    <div *ngIf="conditionsModalService.hasTermsOrPolicy()" class="privacy-policy">
         <img src="assets/common/icons/c-info.svg">
-        <p>{{ls.l('ContinuingAgreeProviders')}} <a (click)="openTermsModal(conditionsType.Terms)">{{ls.l('TermsOfService')}}</a> {{ls.l('and')}} <a (click)="openTermsModal(conditionsType.Policies)">{{ls.l('PrivacyPolicy')}}</a>.</p>
+        <p>
+            {{ls.l('ContinuingAgreeProviders')}}
+            <ng-container *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)">
+                <a (click)="openTermsModal(conditionsType.Terms)">{{ls.l('TermsOfService')}}</a><span *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"> {{ls.l('and')}}</span>
+            </ng-container>
+            <a *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)" (click)="openTermsModal(conditionsType.Policies)">{{ls.l('PrivacyPolicy')}}</a>.
+        </p>
     </div>
     <button (click)="next()" [disabled]="!selectedConnector">{{ ls.l('Next') }}</button>
 </div>

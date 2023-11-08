@@ -6,8 +6,8 @@
         </p>
         <ul class="footer-menu">
             <li><a href="/" onclick="return false">Support</a></li>
-            <li><a (click)="openConditionsDialog(conditions.Policies)">Privacy policy</a></li>
-            <li><a (click)="openConditionsDialog(conditions.Terms)">Terms and Conditions</a></li>
+            <li *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"><a (click)="openConditionsDialog(conditions.Policies)">Privacy policy</a></li>
+            <li *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)"><a (click)="openConditionsDialog(conditions.Terms)">Terms and Conditions</a></li>
         </ul>
     </div>
 </div>

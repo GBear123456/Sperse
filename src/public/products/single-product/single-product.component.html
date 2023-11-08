@@ -208,13 +208,18 @@
                     <div *ngIf="couponInfo">Applied {{couponInfo['description']}}</div>
                     <div *ngIf="showCouponError" class="error">Coupon is invalid</div>
                 </div>
-                <div class="actions">
+                <div *ngIf="hasToSOrPolicy" class="actions">
                     <div>
                         <label class="check_wrap">
                             <input class="check_wrap__input" type="checkbox" [(ngModel)]="agreedTermsAndServices" [ngModelOptions]="{standalone: true}">
                             <span class="check_wrap__style"></span>
                             <div>
-                                By using this page, you agree to <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">Sperse Terms of Service</a> and <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
+                                By using this page, you agree to
+                                <ng-container *ngIf="productInfo.data.tenantHasTerms">
+                                    <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">Terms of Service</a>
+                                    <span *ngIf="productInfo.data.tenantHasPrivacyPolicy"> and </span>
+                                </ng-container>
+                                <a *ngIf="productInfo.data.tenantHasPrivacyPolicy" href="javascript:void(0);" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
                             </div>
                         </label>
                     </div>

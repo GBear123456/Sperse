@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
 import { ConditionsType } from '@shared/AppEnums';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { MatDialog } from '@angular/material/dialog';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -15,12 +14,18 @@ export class PaymentOptionsFooterComponent {
     @Input() submitButtonDisabled = false;
     @Output() onSubmit: EventEmitter<null> = new EventEmitter();
 
+
+    conditions = ConditionsType;
+
     constructor(
-        private dialog: MatDialog,
+        public conditionsModalService: ConditionsModalService,
         public ls: AppLocalizationService
     ) {}
 
     openTermsModal() {
-        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type: ConditionsType.Terms } });
+        this.conditionsModalService.openModal({
+            panelClass: ['slider'],
+            data: { type: ConditionsType.Terms }
+        });
     }
 }

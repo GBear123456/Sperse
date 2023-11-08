@@ -3,7 +3,6 @@ import { Component, ChangeDetectionStrategy, ViewChild, OnInit, OnDestroy } from
 import { ActivationEnd, ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
 import capitalize from 'underscore.string/capitalize';
 import { Observable, of } from 'rxjs';
 import { first, finalize, filter, takeUntil } from 'rxjs/operators';
@@ -20,7 +19,7 @@ import {
     GetExternalUserDataOutput, ExternalUserDataServiceProxy, GetExternalUserDataInput
 } from '@shared/service-proxies/service-proxies';
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { ConditionsType } from '@shared/AppEnums';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -58,7 +57,7 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
 
     constructor(
         public loginService: LoginService,
-        private dialog: MatDialog,
+        public conditionsModalService: ConditionsModalService,
         private router: Router,
         private messageService: MessageService,
         private lifecycleService: LifecycleSubjectsService,
@@ -195,7 +194,10 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
 
 
     openConditionsDialog(type: any) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type } });
+        this.conditionsModalService.openModal({
+            panelClass: ['slider', 'footer-slider'],
+            data: { type: type }
+        });
     }
 
     externalLogin(provider: ExternalLoginProvider) {

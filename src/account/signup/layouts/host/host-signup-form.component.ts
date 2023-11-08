@@ -25,6 +25,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ExternalLoginProvider, LoginService } from '../../../login/login.service';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 
 const psl = require('psl');
 
@@ -50,8 +51,7 @@ export class HostSignupFormComponent {
     @ViewChild('phoneNumber') phoneNumber;
 
     hostName = AppConsts.defaultTenantName;
-    // @ts-ignore:  This condition will always return 'false' ... for Custom Hosts
-    isSperseHost = AppConsts.defaultTenantName == 'Sperse';
+    isSperseHost = AppConsts.isSperseHost;
     isExtLogin: boolean = false;
     defaultCountryCode: string;
     selectedCountryCode: string;
@@ -68,7 +68,7 @@ export class HostSignupFormComponent {
 
     nameRegexp = AppConsts.regexPatterns.name;
     emailRegexp = AppConsts.regexPatterns.email;
-    agreedTermsAndServices: boolean = !this.isSperseHost;
+    agreedTermsAndServices: boolean = !AppConsts.isSperseHost;
     congratulationLink: string;
     leadRequestXref: string;
 
@@ -88,6 +88,7 @@ export class HostSignupFormComponent {
         public ls: AppLocalizationService,
         public loginService: LoginService,
         public router: Router,
+        public conditionsModalService: ConditionsModalService,
         private activatedRoute: ActivatedRoute,
         private externalUserDataService: ExternalUserDataServiceProxy,
         private messageService: MessageService,
@@ -318,16 +319,6 @@ export class HostSignupFormComponent {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        window.open(this.getApiLink(type), '_blank');
-    }
-
-    getApiLink(type: ConditionsType) {
-        if (this.appSession.tenant)
-            return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/Get' +
-                (type == ConditionsType.Policies ? 'PrivacyPolicy' : 'TermsOfService') +
-                'Document?tenantId=' + this.appSession.tenant.id;
-        else
-            return AppConsts.appBaseHref + 'assets/documents/' +
-                (type == ConditionsType.Terms ? 'SperseTermsOfService.pdf' : 'SpersePrivacyPolicy.pdf');
+        window.open(this.conditionsModalService.getHtmlUrl(type), '_blank');
     }
 }
