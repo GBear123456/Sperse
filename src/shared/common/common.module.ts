@@ -25,12 +25,12 @@ import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { BulkProgressDialogComponent } from '@shared/common/dialogs/bulk-progress/bulk-progress-dialog.component';
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.directive';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
-import { AppConsts } from '@shared/AppConsts';
 import { GhostListModule } from '@app/shared/common/ghost-list/ghost-list.module';
 import { ModalDialogModule } from './dialogs/modal/modal-dialog.module';
 import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.module';
@@ -67,7 +67,6 @@ import { NgxFileDropModule } from 'ngx-file-drop';
         InfoComponent,
         TitleCasePipe,
         DxDataGridDirective,
-        ConditionsModalComponent,
         NoDataModule,
         GhostListModule,
         DateTimePipe,
@@ -90,14 +89,14 @@ import { NgxFileDropModule } from 'ngx-file-drop';
     ],
     entryComponents: [
         RegisterConfirmComponent,
-        ConditionsModalComponent,
         BulkProgressDialogComponent
     ],
     providers: [
         AppUrlService,
         CellsCopyingService,
         CacheHelper,
-        PrimengTableHelper
+        PrimengTableHelper,
+        ConditionsModalService
     ]
 })
 export class CommonModule {}

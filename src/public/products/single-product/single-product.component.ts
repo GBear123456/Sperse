@@ -37,6 +37,7 @@ import { PaymentService } from '@app/shared/common/payment-wizard/payment.servic
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { PayPalComponent } from '@shared/common/paypal/paypal.component';
 import { ButtonType } from '@shared/common/paypal/button-type.enum';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 
 @Component({
     selector: 'single-product',
@@ -70,6 +71,7 @@ export class SingleProductComponent implements OnInit {
     passwordComplexitySetting: PasswordComplexitySetting;
 
     agreedTermsAndServices: boolean = false;
+    hasToSOrPolicy: boolean = false;
     nameRegexp = /^[a-zA-Z-.' ]+$/;
     emailRegexp = AppConsts.regexPatterns.email;
     conditions = ConditionsType;
@@ -106,6 +108,7 @@ export class SingleProductComponent implements OnInit {
         private sanitizer: DomSanitizer,
         private profileService: ProfileServiceProxy,
         public ls: AppLocalizationService,
+        public conditionsModalService: ConditionsModalService
     ) {
         this.requestInfo.quantity = 1;
     }
@@ -179,6 +182,7 @@ export class SingleProductComponent implements OnInit {
                         this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
                     if (result.data.hasTenantService)
                         this.initializePasswordComplexity();
+                    this.initConditions();
                     this.initSubscriptionProduct();
                     this.initializePayPal();
                     this.checkIsFree();
@@ -306,17 +310,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        window.open(this.getApiLink(type), '_blank');
-    }
-
-    getApiLink(type: ConditionsType) {
-        if (this.tenantId)
-            return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/Get' +
-                (type == ConditionsType.Policies ? 'PrivacyPolicy' : 'TermsOfService') +
-                'Document?tenantId=' + this.tenantId;
-        else
-            return AppConsts.appBaseHref + 'assets/documents/' +
-                (type == ConditionsType.Terms ? 'SperseTermsOfService.pdf' : 'SpersePrivacyPolicy.pdf');
+        window.open(this.conditionsModalService.getHtmlUrl(type, this.tenantId), '_blank');
     }
 
     initSubscriptionProduct() {
@@ -351,6 +345,16 @@ export class SingleProductComponent implements OnInit {
             case ProductType.Subscription:
                 this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0;
                 break;
+        }
+    }
+
+    initConditions() {
+        if (!this.tenantId) {
+            this.hasToSOrPolicy = AppConsts.isSperseHost;
+            this.agreedTermsAndServices = !AppConsts.isSperseHost;
+        } else {
+            this.hasToSOrPolicy = this.productInfo.data.tenantHasTerms || this.productInfo.data.tenantHasPrivacyPolicy;
+            this.agreedTermsAndServices = !this.hasToSOrPolicy;
         }
     }
 

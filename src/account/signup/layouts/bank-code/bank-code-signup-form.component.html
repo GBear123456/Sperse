@@ -78,7 +78,7 @@
                                 Yes, send me updates and special offers.
                             </p>
                         </div>
-                        <div class="form-group d-flex">
+                        <div *ngIf="conditionsModalService.hasTermsOrPolicy()" class="form-group d-flex">
                             <div>
                                 <dx-check-box #agreeWithTermsCheckBox
                                               class="privacy-term"
@@ -91,8 +91,11 @@
                                 </dx-check-box>
                             </div>
                             <p class="agreement">
-                                Yes, I agree to the <a (click)="openConditionsDialog(conditions.Terms)">Terms of Use</a> and <a
-                                (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
+                                Yes, I agree to the
+                                <ng-container *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)">
+                                    <a (click)="openConditionsDialog(conditions.Terms)">Terms of Use</a><span *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"> and </span>
+                                </ng-container>
+                                <a *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
                             </p>
                         </div>
                         <div class="dx-field actions-field align-items-center">

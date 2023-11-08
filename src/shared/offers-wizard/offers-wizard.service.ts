@@ -30,7 +30,7 @@ import {
     TimeOfDay,
     TimingServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
@@ -80,6 +80,7 @@ export class OffersWizardService {
 
     constructor(
         public ls: AppLocalizationService,
+        public conditionsModalService: ConditionsModalService,
         private offersServiceProxy: OfferServiceProxy,
         private _timingService: TimingServiceProxy,
         private appHttpConfiguration: AppHttpConfiguration,
@@ -123,7 +124,10 @@ export class OffersWizardService {
     }
 
     openConditionsDialog(data: any) {
-        this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
+        this.conditionsModalService.openModal({
+            panelClass: ['slider', 'footer-slider'],
+            data: data
+        });
     }
 
     isEmailChanged() {
