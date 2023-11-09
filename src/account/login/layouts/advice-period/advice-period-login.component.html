@@ -37,7 +37,13 @@
             </button>
         </div>
     </form>
-    <div class="login-terms-and-condition">
-        <span>{{ls.l('ByContinuingYouAgree')}} <br><a (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfUse')}}</a> {{ls.l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a></span>
+    <div *ngIf="conditionsModalService.hasTermsOrPolicy()" class="login-terms-and-condition">
+        <span>
+            {{ls.l('ByContinuingYouAgree')}} <br>
+            <ng-container *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)">
+                <a (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfUse')}}</a><span *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"> {{ls.l('and')}} </span>
+            </ng-container>
+            <a *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)" (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a>
+        </span>
     </div>
 </div>

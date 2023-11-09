@@ -1,7 +1,6 @@
 import { Component, HostBinding } from '@angular/core';
 import { ConditionsType } from '@shared/AppEnums';
-import { MatDialog } from '@angular/material/dialog';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { LayoutType } from '../service-proxies/service-proxies';
 import { FeatureCheckerService } from 'abp-ng2-module';
@@ -19,9 +18,9 @@ export class PersonalFinanceFooterComponent {
     currentYear = new Date().getFullYear();
     conditions = ConditionsType;
     constructor(
-        private dialog: MatDialog,
         private feature: FeatureCheckerService,
-        private appSession: AppSessionService
+        private appSession: AppSessionService,
+        public conditionsModalService: ConditionsModalService
     ) {
         this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications) && this.appSession.tenant.customLayoutType == LayoutType.LendSpace;
         this.showDefaultFooter = this.isMemberArea() && !this.hasPfmAppFeature;
@@ -32,6 +31,9 @@ export class PersonalFinanceFooterComponent {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type: type }});
+        this.conditionsModalService.openModal({
+            panelClass: ['slider'],
+            data: { type: type }
+        });
     }
 }

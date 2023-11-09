@@ -4,15 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 import { SettingService } from 'abp-ng2-module';
 import { NotifyService } from 'abp-ng2-module';
 
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { ContditionsModalData } from '@shared/common/conditions-modal/conditions-modal-data';
 import { GetPublicInvoiceInfoOutput, UserInvoiceServiceProxy, InvoiceStatus, PayPalServiceProxy, InvoicePaypalPaymentInfo } from '@root/shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -20,6 +17,8 @@ import { PayPalComponent } from '@shared/common/paypal/paypal.component';
 import { ButtonType } from '@shared/common/paypal/button-type.enum';
 import { InvoiceDueStatus } from '@app/crm/invoices/invoices-dto.interface';
 import { InvoiceHelpers } from '@app/crm/invoices/invoices.helper';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'public-invoice',
@@ -42,7 +41,9 @@ export class InvoiceComponent implements OnInit {
     loading: boolean = true;
     invoiceInfo: GetPublicInvoiceInfoOutput;
     showPaymentAdvice = false;
+    hostName = AppConsts.defaultTenantName;
     currentYear: number = new Date().getFullYear();
+    hasToSOrPolicy: boolean = AppConsts.isSperseHost;
     conditions = ConditionsType;
     invoiceStatuses = InvoiceStatus;
 
@@ -61,11 +62,11 @@ export class InvoiceComponent implements OnInit {
         private router: Router,
         private userInvoiceService: UserInvoiceServiceProxy,
         private paypalServiceProxy: PayPalServiceProxy,
-        private dialog: MatDialog,
         private clipboard: Clipboard,
         private setting: SettingService,
         private notifyService: NotifyService,
-        private ls: AppLocalizationService
+        private ls: AppLocalizationService,
+        public conditionsModalService: ConditionsModalService
     ) {
     }
 
@@ -155,7 +156,7 @@ export class InvoiceComponent implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open<ConditionsModalComponent, ContditionsModalData>(ConditionsModalComponent, {
+        this.conditionsModalService.openModal({
             panelClass: ['slider', 'footer-slider'],
             data: {
                 type: type,

@@ -2,17 +2,16 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GetInvoiceReceiptInfoOutput, InvoiceStatus, 
-    UserInvoiceServiceProxy, InvoiceReceiptResource } from '@root/shared/service-proxies/service-proxies';
+    UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-proxies';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { ContditionsModalData } from '../../../shared/common/conditions-modal/conditions-modal-data';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'public-receipt',
@@ -27,7 +26,9 @@ export class ReceiptComponent implements OnInit {
     loading: boolean = true;
     invoiceInfo: GetInvoiceReceiptInfoOutput;
     returnText: string = '';
+    hostName = AppConsts.defaultTenantName;
     currentYear: number = new Date().getFullYear();
+    hasToSOrPolicy: boolean = AppConsts.isSperseHost;
     conditions = ConditionsType;
 
     static retryDelay: number = 4000;
@@ -46,7 +47,7 @@ export class ReceiptComponent implements OnInit {
         public ls: AppLocalizationService,
         private userInvoiceService: UserInvoiceServiceProxy,
         private clipboardService: ClipboardService,
-        private dialog: MatDialog
+        public conditionsModalService: ConditionsModalService
     ) {
     }
 
@@ -120,7 +121,7 @@ export class ReceiptComponent implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open<ConditionsModalComponent, ContditionsModalData>(ConditionsModalComponent, {
+        this.conditionsModalService.openModal({
             panelClass: ['slider', 'footer-slider'],
             data: {
                 type: type,

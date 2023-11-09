@@ -10,16 +10,24 @@ import round from 'lodash/round';
 
 /** Application imports */
 import {
+    CompleteTenantRegistrationInput,
     CouponDiscountDuration,
     CustomPeriodType,
+    LeadServiceProxy,
+    PasswordComplexitySetting,
+    PaymentPeriodType,
     ProductType,
+    ProfileServiceProxy,
     PublicCouponInfo,
     PublicProductInfo,
     PublicProductServiceProxy,
     PublicProductSubscriptionOptionInfo,
     RecurringPaymentFrequency,
     SubmitProductRequestInput,
-    SubmitProductRequestOutput
+    SubmitProductRequestOutput,
+    SubmitTenancyRequestInput,
+    TenantProductInfo,
+    TenantSubscriptionServiceProxy
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
@@ -29,6 +37,7 @@ import { PaymentService } from '@app/shared/common/payment-wizard/payment.servic
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { PayPalComponent } from '@shared/common/paypal/paypal.component';
 import { ButtonType } from '@shared/common/paypal/button-type.enum';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 
 @Component({
     selector: 'single-product',
@@ -49,6 +58,7 @@ export class SingleProductComponent implements OnInit {
     private payPal: PayPalComponent;
     paypalButtonType: ButtonType = null;
 
+    hostName = AppConsts.defaultTenantName;
     currentYear: number = new Date().getFullYear();
     currencySymbol = '$';
 
@@ -58,8 +68,11 @@ export class SingleProductComponent implements OnInit {
 
     productInfo: PublicProductInfo;
     requestInfo: SubmitProductRequestInput = new SubmitProductRequestInput();
+    tenantRegistrationModel = new CompleteTenantRegistrationInput();
+    passwordComplexitySetting: PasswordComplexitySetting;
 
     agreedTermsAndServices: boolean = false;
+    hasToSOrPolicy: boolean = false;
     nameRegexp = /^[a-zA-Z-.' ]+$/;
     emailRegexp = AppConsts.regexPatterns.email;
     conditions = ConditionsType;
@@ -89,10 +102,14 @@ export class SingleProductComponent implements OnInit {
         private route: ActivatedRoute,
         private titleService: Title,
         private publicProductService: PublicProductServiceProxy,
+        private leadProxy: LeadServiceProxy,
+        private tenantProxy: TenantSubscriptionServiceProxy,
         private appHttpConfiguration: AppHttpConfiguration,
         private changeDetector: ChangeDetectorRef,
         private sanitizer: DomSanitizer,
+        private profileService: ProfileServiceProxy,
         public ls: AppLocalizationService,
+        public conditionsModalService: ConditionsModalService
     ) {
         this.requestInfo.quantity = 1;
     }
@@ -131,6 +148,13 @@ export class SingleProductComponent implements OnInit {
         }
     }
 
+    initializePasswordComplexity() {
+        this.profileService.getPasswordComplexitySetting().subscribe(result => {
+            this.passwordComplexitySetting = result.setting;
+            this.changeDetector.detectChanges();
+        });
+    }
+
     getPayPalRequest(): Promise<string> {
         return this.getSubmitRequest('PayPal')
             .pipe(
@@ -157,6 +181,9 @@ export class SingleProductComponent implements OnInit {
                     this.titleService.setTitle(this.productInfo.name);
                     if (result.descriptionHtml)
                         this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
+                    if (result.data.hasTenantService)
+                        this.initializePasswordComplexity();
+                    this.initConditions();
                     this.initSubscriptionProduct();
                     this.initializePayPal();
                     this.checkIsFree();
@@ -194,6 +221,45 @@ export class SingleProductComponent implements OnInit {
             .subscribe(() => {
                 location.href = this.getReceiptUrl();
             });
+    }
+
+    submitTenant() {
+        if (!this.isFormValid()) {
+            abp.notify.error(this.ls.l('SaleProductValidationError'));
+            return of();
+        }
+
+        if (this.phoneNumber && this.phoneNumber.isEmpty())
+            this.requestInfo.phone = undefined;
+
+        abp.ui.setBusy();
+        let tenancyRequestModel = new SubmitTenancyRequestInput();
+        tenancyRequestModel.email = this.requestInfo.email.trim();
+        tenancyRequestModel.lastName = this.requestInfo.lastName;
+        tenancyRequestModel.firstName = this.requestInfo.firstName;
+        tenancyRequestModel.phone = this.requestInfo.phone;
+        tenancyRequestModel.products = [new TenantProductInfo({
+            productId: this.productInfo.id,
+            paymentPeriodType: PaymentPeriodType[this.selectedSubscriptionOption.frequency],
+            quantity: 1
+        })];
+        tenancyRequestModel.couponCode = this.isFreeProductSelected ? null : this.requestInfo.couponCode;
+        tenancyRequestModel.affiliateCode = this.ref;
+
+        this.leadProxy.submitTenancyRequest(tenancyRequestModel).subscribe(response => {
+            this.completeTenantRegistration(response.leadRequestXref);
+        }, () => abp.ui.clearBusy());
+    }
+
+    completeTenantRegistration(leadRequestXref: string) {
+        this.tenantRegistrationModel.requestXref = leadRequestXref;
+        this.tenantRegistrationModel.returnBearerToken = false;
+
+        this.tenantProxy.completeTenantRegistration(this.tenantRegistrationModel).pipe(
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe(res => {
+            window.location.href = res.loginLink;
+        });
     }
 
     isFormValid(): boolean {
@@ -245,17 +311,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        window.open(this.getApiLink(type), '_blank');
-    }
-
-    getApiLink(type: ConditionsType) {
-        if (this.tenantId)
-            return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/Get' +
-                (type == ConditionsType.Policies ? 'PrivacyPolicy' : 'TermsOfService') +
-                'Document?tenantId=' + this.tenantId;
-        else
-            return AppConsts.appBaseHref + 'assets/documents/' +
-                (type == ConditionsType.Terms ? 'SperseTermsOfService.pdf' : 'SpersePrivacyPolicy.pdf');
+        window.open(this.conditionsModalService.getHtmlUrl(type, this.tenantId), '_blank');
     }
 
     initSubscriptionProduct() {
@@ -290,6 +346,16 @@ export class SingleProductComponent implements OnInit {
             case ProductType.Subscription:
                 this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0;
                 break;
+        }
+    }
+
+    initConditions() {
+        if (!this.tenantId) {
+            this.hasToSOrPolicy = AppConsts.isSperseHost;
+            this.agreedTermsAndServices = !AppConsts.isSperseHost;
+        } else {
+            this.hasToSOrPolicy = this.productInfo.data.tenantHasTerms || this.productInfo.data.tenantHasPrivacyPolicy;
+            this.agreedTermsAndServices = !this.hasToSOrPolicy;
         }
     }
 
@@ -468,5 +534,17 @@ export class SingleProductComponent implements OnInit {
         this.couponInfo = null;
         this.requestInfo.couponCode = null;
         this.showCouponError = false;
+    }
+
+    getTenantButtonText(): string {
+        let buttonText = 'Start ';
+        if (this.selectedSubscriptionOption.trialDayCount) {
+            buttonText += 'Your ';
+            if (!this.selectedSubscriptionOption.signupFee)
+                buttonText += ' Free ';
+            buttonText += `${this.selectedSubscriptionOption.trialDayCount}-Day Trial `;
+        }
+        buttonText += 'Today!';
+        return buttonText;
     }
 }

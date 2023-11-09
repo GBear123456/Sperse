@@ -1,13 +1,12 @@
 import { Component, Injector, HostBinding } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { environment } from 'environments/environment';
 import { AppFeatures } from '@shared/AppFeatures';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 
 @Component({
     selector: 'app-pages-footer',
@@ -77,7 +76,7 @@ export class PagesFooterComponent extends AppComponentBase {
 
     constructor(
         injector: Injector,
-        private dialog: MatDialog
+        public conditionsModalService: ConditionsModalService,
     ) {
         super(injector);
 
@@ -87,6 +86,9 @@ export class PagesFooterComponent extends AppComponentBase {
     }
 
     openConditionsDialog(data: any) {
-        this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
+        this.conditionsModalService.openModal({
+            panelClass: ['slider', 'footer-slider'],
+            data: data
+        });
     }
 }

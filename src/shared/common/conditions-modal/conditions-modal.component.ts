@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, Inject, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -9,10 +9,6 @@ import { finalize, map } from 'rxjs/operators';
 import printJS from 'print-js';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
-import { ConditionsType } from '@shared/AppEnums';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ContditionsModalData } from './conditions-modal-data'
@@ -26,24 +22,6 @@ import { ContditionsModalData } from './conditions-modal-data'
 export class ConditionsModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     conditionBody$: Observable<SafeHtml>;
-    private conditionsOptions = {
-        [ConditionsType.Terms]: {
-            title: this.ls.l('TermsOfService'),
-            bodyLink: 'terms.html',
-            apiBodyLink: 'GetTermsOfServiceDocument',
-            downloadLink: 'DownloadTermsOfServicePdf',
-            tenantProperty: 'customToSDocumentId',
-            defaultLink: 'SperseTermsOfService.pdf'
-        },
-        [ConditionsType.Policies]: {
-            title: this.ls.l('PrivacyPolicy'),
-            bodyLink: 'privacy.html',
-            apiBodyLink: 'GetPrivacyPolicyDocument',
-            downloadLink: 'DownloadPrivacyPolicyPdf',
-            tenantProperty: 'customPrivacyPolicyDocumentId',
-            defaultLink: 'SpersePrivacyPolicy.pdf'
-        }
-    };
     title: string;
     buttons: IDialogButton[] = [
         {
@@ -55,16 +33,13 @@ export class ConditionsModalComponent implements OnInit {
     ];
 
     constructor(
-        private element: ElementRef,
         private sanitizer: DomSanitizer,
-        private ls: AppLocalizationService,
-        private appSession: AppSessionService,
         @Inject(MAT_DIALOG_DATA) private data: ContditionsModalData
     ) {}
 
     ngOnInit() {
         this.modalDialog.startLoading();
-        this.title = this.data.title || this.conditionsOptions[this.data.type].title;
+        this.title = this.data.title;
         if (!this.data.downloadDisabled)
             this.buttons.unshift({
                 id: 'download',
@@ -72,15 +47,10 @@ export class ConditionsModalComponent implements OnInit {
                 class: 'icon',
                 action: this.download.bind(this)
             });
-        const bodyUrl = this.data.bodyUrl || (
-                this.isTenantDocumentAvailable()
-                    ? this.getApiLink('apiBodyLink')
-                    : this.getDefaultLink('bodyLink')
-                );
 
         this.conditionBody$ = from(
             $.ajax({
-                url: bodyUrl,
+                url: this.data.bodyUrl,
                 method: 'GET'
             })
         ).pipe(
@@ -92,21 +62,7 @@ export class ConditionsModalComponent implements OnInit {
     }
 
     download() {
-        window.open(this.isTenantDocumentAvailable()
-            ? this.getApiLink('downloadLink')
-            : this.getDefaultLink('defaultLink'), '_blank');
-    }
-
-    getApiLink(link) {
-        return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/' + this.conditionsOptions[this.data.type][link] + '?tenantId=' + this.appSession.tenant.id;
-    }
-
-    getDefaultLink(link) {
-        return AppConsts.appBaseHref + 'assets/documents/' + this.conditionsOptions[this.data.type][link];
-    }
-
-    isTenantDocumentAvailable() {
-        return !this.data.onlyHost && this.appSession.tenant && this.appSession.tenant[this.conditionsOptions[this.data.type].tenantProperty];
+        window.open(this.data.downloadLink, '_blank');
     }
 
     printContent() {

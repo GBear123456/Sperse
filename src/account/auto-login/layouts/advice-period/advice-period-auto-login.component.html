@@ -1,25 +1,24 @@
 <div [@routerTransition]>
     <i class="name"></i>
     <h1 class="sign-in">{{ls.l("Auto Login")}}</h1>
-    <form *ngIf="isLinkSent || !isInstantForm || detectedTenancies?.length"  #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
+    <form *ngIf="isLinkSent || !isInstantForm || detectedTenancies?.length" #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
         <div class="form-group clearfix options row" [innerHTML]="ls.l(isLinkSent || isInstantForm ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></div>
         <div class="form-actions">
             <ng-container *ngIf="isLinkSent && accessCodeMaxTriesCount">
-                <dx-text-box
-                    width="115px"
-                    height="40px"
-                    mask="000-000"
-                    [(value)]="accessCode"
-                    accessKey="AccessCode"
-                    validationMessageMode="always"
-                    [placeholder]="ls.l('EnterCode')"
-                    (onFocusOut)="onAutoLoginCodeFocusOut($event)"
-                    (onKeyUp)="onAutoLoginCodeChanged($event)">
+                <dx-text-box width="115px"
+                             height="40px"
+                             mask="000-000"
+                             [(value)]="accessCode"
+                             accessKey="AccessCode"
+                             validationMessageMode="always"
+                             [placeholder]="ls.l('EnterCode')"
+                             (onFocusOut)="onAutoLoginCodeFocusOut($event)"
+                             (onKeyUp)="onAutoLoginCodeChanged($event)">
                 </dx-text-box>
-                <dx-button icon="check" 
-                    height="40px"
-                    accessKey="AccessCode"
-                    (onClick)="onAccessCodeProcess()">
+                <dx-button icon="check"
+                           height="40px"
+                           accessKey="AccessCode"
+                           (onClick)="onAccessCodeProcess()">
                 </dx-button>
             </ng-container>
             <ng-container *ngIf="accessCodeMaxTriesCount <= 0">
@@ -31,7 +30,13 @@
             </button>
         </div>
     </form>
-    <div class="login-terms-and-condition">
-        <span>{{ls.l('ByContinuingYouAgree')}} <br><a (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfUse')}}</a> {{ls.l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a></span>
+    <div *ngIf="conditionsModalService.hasTermsOrPolicy()" class="login-terms-and-condition">
+        <span>
+            {{ls.l('ByContinuingYouAgree')}} <br>
+            <ng-container *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)">
+                <a (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfUse')}}</a><span *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"> {{ls.l('and')}} </span>
+            </ng-container>
+            <a *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)" (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a>
+        </span>
     </div>
 </div>

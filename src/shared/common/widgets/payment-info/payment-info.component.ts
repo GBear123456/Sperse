@@ -2,7 +2,6 @@
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Address } from 'ngx-google-places-autocomplete/objects/address';
@@ -14,7 +13,7 @@ import {
     CountryStateDto
 } from '@shared/service-proxies/service-proxies';
 import { ConditionsType } from '@shared/AppEnums';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { InputStatusesService } from '@shared/utils/input-statuses.service';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { StatesService } from '@root/store/states-store/states.service';
@@ -41,17 +40,17 @@ export class PaymentInfoComponent {
     public options = {
         types: ['address'],
         componentRestrictions: {
-            country: [ Country.USA, Country.Canada ]
+            country: [Country.USA, Country.Canada]
         }
     };
 
     constructor(
         private store$: Store<RootStore.State>,
-        private dialog: MatDialog,
         private statesService: StatesService,
         public ls: AppLocalizationService,
-        public inputStatusesService: InputStatusesService
-    ) {}
+        public inputStatusesService: InputStatusesService,
+        public conditionsModalService: ConditionsModalService,
+    ) { }
 
     initValidationGroup(event) {
         this.validationGroup = event.component;
@@ -104,6 +103,9 @@ export class PaymentInfoComponent {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: {type: type} });
+        this.conditionsModalService.openModal({
+            panelClass: ['slider'],
+            data: { type: type }
+        });
     }
 }

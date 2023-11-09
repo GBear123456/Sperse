@@ -97,7 +97,7 @@
         }
 
         &__item {
-            padding: clamp(30px, 4vw, 50px) clamp(20px, 3vw, 40px) clamp(10px, 2vw, 30px);
+            padding: clamp(10px, 4vw, 40px) clamp(20px, 3vw, 40px) clamp(10px, 2vw, 30px);
         }
 
         &__left {
@@ -241,7 +241,6 @@
     }
 
     .input {
-        margin-bottom: 20px;
         position: relative;
 
         label {
@@ -283,9 +282,66 @@
             }
         }
 
+        .company input {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .password-row {
+            position: relative;
+            margin-bottom: 10px;
+
+            input {
+                background-image: url(../../../assets/common/icons/password_w.svg);
+            }
+
+            .pass {
+                position: absolute;
+                cursor: pointer;
+                right: 20px;
+                top: 12px;
+            }
+
+            #message {
+                margin-top: 12px;
+
+                p {
+                    padding-left: 35px;
+                    font-weight: 600;
+                    position: relative;
+
+                    &::before {
+                        position: absolute;
+                        content: "";
+                        left: 0;
+                        border-radius: 50%;
+                        width: 20px;
+                        height: 20px;
+                        background-color: #ffffff;
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-size: 66%;
+                    }
+
+                    &.valid {
+                        &::before {
+                            background-image: url(../../../assets/common/icons/feature-enabled.svg);
+                        }
+                    }
+
+                    &.invalid {
+                        &::before {
+                            background-image: url(../../../assets/common/icons/feature-disabled.svg);
+                        }
+                    }
+                }
+            }
+        }
+
         .coupon-row {
             display: flex;
             gap: 20px;
+            margin-bottom: 10px;
 
             .fa-spinner {
                 position: absolute;
@@ -315,7 +371,7 @@
     }
 
     .actions {
-        margin-bottom: clamp(20px, 2vw, 30px);
+        margin-bottom: 10px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -702,10 +758,10 @@
                 padding: 0;
                 box-sizing: border-box;
                 white-space: nowrap;
-                font-size: 11px;
+                font-size: 14px;
                 color: #fff;
                 margin: auto;
-                width: 50%;
+                width: 60%;
 
                 span {
                     flex-shrink: 0;

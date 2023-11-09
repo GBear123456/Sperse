@@ -83,7 +83,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         (this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasHostPermission || this.hasTenantPermission);
     showBankTransferSettings = this.hasHostTenantOrCRMSettings;
     showOtherSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && (this.hasHostPermission || this.hasTenantPermission);
-    showLandingPageSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMTenantLandingPage) && this.permissionCheckerService.isGranted(AppPermissions.AdministrationUsers);
+    showLandingPageSettings = !this.appService.isHostTenant && this.featureCheckerService.isEnabled(AppFeatures.CRMTenantLandingPage) && this.permissionCheckerService.isGranted(AppPermissions.AdministrationUsers);
 
     steps: TenantSettingsStep[];
     generalSettings$: Observable<GeneralSettingsEditDto> = this.tenantSettingsService.getGeneralSettings();

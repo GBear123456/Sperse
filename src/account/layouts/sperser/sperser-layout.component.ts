@@ -1,13 +1,11 @@
 /** Core imports */
 import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 
-import { MatDialog } from '@angular/material/dialog';
-
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ConditionsType } from '@shared/AppEnums';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 
 @Component({
     templateUrl: './sperser-layout.component.html',
@@ -22,8 +20,8 @@ export class SperserLayoutComponent implements OnInit {
 
     constructor(
         public appSession: AppSessionService,
-        public dialog: MatDialog
-    ) {}
+        public conditionsModalService: ConditionsModalService
+    ) { }
 
     ngOnInit(): void {
         let tenant = this.appSession.tenant;
@@ -32,12 +30,9 @@ export class SperserLayoutComponent implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open(
-            ConditionsModalComponent,
-            {
-                panelClass: ['slider', 'footer-slider'],
-                data: { type: type }
-            }
-        );
+        this.conditionsModalService.openModal({
+            panelClass: ['slider', 'footer-slider'],
+            data: { type: type }
+        });
     }
 }

@@ -79,10 +79,10 @@ export class FilterAssignmentsPipe implements PipeTransform {
         './create-product-dialog.component.less'
     ],
     providers: [
-        CacheHelper, 
-        ProductServiceProxy, 
-        ProductGroupServiceProxy, 
-        MemberServiceServiceProxy, 
+        CacheHelper,
+        ProductServiceProxy,
+        ProductGroupServiceProxy,
+        MemberServiceServiceProxy,
         DocumentTemplatesServiceProxy,
         ProductResourceServiceProxy
     ],
@@ -215,7 +215,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             if (options && options[0]) {
                 this.isFreePriceType = !options[0].fee;
                 this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
-            } else 
+            } else
                 this.isFreePriceType = !data.product.price;
             if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
                 this.addUpgradeToProduct();
@@ -293,9 +293,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.unit = undefined;
             this.product.price = undefined;
-            if (this.isHostTenant) {
-                this.product.publicName = undefined;
-            }
         } else {
             this.product.productServices = undefined;
             this.product.productSubscriptionOptions = undefined;
@@ -305,7 +302,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             if (this.isFreePriceType) {
                 this.product.price = 0;
                 this.detectChanges();
-            }            
+            }
         }
 
 
@@ -320,10 +317,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         if (item.trialDayCount == null || isNaN(item.trialDayCount))
                             item.trialDayCount = 0;
                     });
-                
+
                 if (this.publishDate)
-                    this.product.publishDate = DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '')
-                else 
+                    this.product.publishDate = DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '');
+                else
                     this.product.publishDate = undefined;
 
                 let upgradeProducts = this.product.productUpgradeAssignments;
@@ -336,7 +333,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                             item.url = undefined;
                         return new ProductResourceDto(item);
                     });
-            
+
                 if (this.product.type == ProductType.Digital && (!this.product.productResources || !this.product.productResources.length))
                     return this.notify.error(this.ls.l('DigitalProductError'));
 
@@ -367,7 +364,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                             }));
                         else
                             this.productProxy.getProductInfo(res.productId).subscribe((product: any) => {
-                                this.product = new UpdateProductInput({id: res.productId, ...product});
+                                this.product = new UpdateProductInput({ id: res.productId, ...product });
                                 this.initProductResources();
                                 this.detectChanges();
                             });
@@ -453,7 +450,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             }) : this.frequencies;
 
         if (!index && this.isFreePriceType)
-            return frequencies.filter(item => 
+            return frequencies.filter(item =>
                 [RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.OneTime].includes(RecurringPaymentFrequency[item]));
 
         if (options.length > 1)
@@ -884,13 +881,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.productFiles.splice(index, 1);
             if (resource.fileId)
                 this.productResourceProxy.deleteProductFile(
-                    resource.fileId).subscribe(() => {});
+                    resource.fileId).subscribe(() => { });
             this.detectChanges();
         }
     }
 
     addLink(resourceLinkNameCmp, resourceLinkCmp) {
-        if (this.resourceLinkUrl && 
+        if (this.resourceLinkUrl &&
             resourceLinkCmp.instance.option('isValid') &&
             this.productLinks.every(link => link.url != this.resourceLinkUrl) &&
             resourceLinkNameCmp.instance.option('isValid')
@@ -916,13 +913,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
     }
 
-    isConfigPublicNameEnabled() {
-        return this.isPublicProductsEnabled && (!this.isHostTenant || this.product.type != ProductType.Subscription);
-    }
-
     onIsPublishedChanged() {
         if (this.product.isPublished && !this.publishDate) {
-            this.publishDate = new Date();
+            this.publishDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());
         }
     }
 
@@ -930,7 +923,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         if (this.productFiles && this.productFiles.length)
             this.productFiles.forEach(file => {
                 if (!file.id && file.fileId)
-                    this.productResourceProxy.deleteProductFile(file.fileId).subscribe(() => {});
+                    this.productResourceProxy.deleteProductFile(file.fileId).subscribe(() => { });
             });
     }
 }
