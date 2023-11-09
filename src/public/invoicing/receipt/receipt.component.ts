@@ -26,6 +26,7 @@ export class ReceiptComponent implements OnInit {
     loading: boolean = true;
     invoiceInfo: GetInvoiceReceiptInfoOutput;
     returnText: string = '';
+    hostName = AppConsts.defaultTenantName;
     currentYear: number = new Date().getFullYear();
     hasToSOrPolicy: boolean = AppConsts.isSperseHost;
     conditions = ConditionsType;

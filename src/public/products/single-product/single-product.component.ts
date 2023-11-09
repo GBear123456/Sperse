@@ -58,6 +58,7 @@ export class SingleProductComponent implements OnInit {
     private payPal: PayPalComponent;
     paypalButtonType: ButtonType = null;
 
+    hostName = AppConsts.defaultTenantName;
     currentYear: number = new Date().getFullYear();
     currencySymbol = '$';
 
