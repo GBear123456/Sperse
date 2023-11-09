@@ -10,29 +10,34 @@
     <div class="main-container">
         <div class="header">
             <img src="{{invoiceInfo.tenantLogoUrl}}">
-            <div class="tenant-name">{{invoiceInfo.tenantName}}</div>
         </div>
         <div class="content">
             <div class="summary">
                 <div class="icon">
-                    <i class="fa fa-file-text file"></i>
-                    <i class="fa fa-check-circle-o check"></i>
+                    <img src="assets/common/images/success.png">
                 </div>
-                <div class="gray">Invoice paid</div>
-                <div class="amount">{{invoiceInfo.invoiceAmount | currency:'USD':'symbol':'1.2-2'}}</div>
+                <div class="top">Thank You</div>
+                <div class="bottom">Your payment is complete</div>
+            </div>
+            <div class="approved">
+                <img src="assets/common/images/approved.png">        
+                <div class="amount">
+                    <p>Invoice paid</p>
+                    <span>{{invoiceInfo.invoiceAmount | currency:'USD':'symbol':'1.2-2'}}</span>
+                </div>
             </div>
             <div class="details">
                 <div class="row">
-                    <div class="col-6 gray">Invoice number</div>
-                    <div class="col-6 text-right text-overflow" title="{{invoiceInfo.invoiceNumber}}">{{invoiceInfo.invoiceNumber}}</div>
+                    <div class="col-6 gray caption">Invoice number</div>
+                    <div class="col-6 text-right text-overflow gray value" title="{{invoiceInfo.invoiceNumber}}">{{invoiceInfo.invoiceNumber}}</div>
                 </div>
                 <div class="row">
-                    <div class="col-6 gray">Payment date</div>
-                    <div class="col-6 text-right">{{invoiceInfo.paymentDate | date}}</div>
+                    <div class="col-6 gray caption">Payment date</div>
+                    <div class="col-6 text-right gray value">{{invoiceInfo.paymentDate | date}}</div>
                 </div>
                 <div class="row" *ngIf="invoiceInfo.paymentCardNumber">
-                    <div class="col-6 gray">Payment method</div>
-                    <div class="col-6 text-right">
+                    <div class="col-6 gray caption">Payment method</div>
+                    <div class="col-6 text-right gray value">
                         <span class="card-network">{{invoiceInfo.paymentCardNetwork?.toUpperCase()}}</span>
                         {{invoiceInfo.paymentCardNumber}}
                     </div>
@@ -40,15 +45,16 @@
                 <div class="row top-indent">
                     <div class="col-6">
                         <a role="button" class="btn btn-secondary" href="{{invoiceInfo.downloadInvoiceUrl}}" target="_blank">
-                            Download invoice
+                            <img src="assets/common/icons/clipboard-import.png">Download invoice
                         </a>
                     </div>
                     <div class="col-6 text-right">
                         <a role="button" class="btn btn-secondary" href="{{invoiceInfo.downloadReceiptUrl}}" [ngClass]="{'disabled':!invoiceInfo.downloadReceiptUrl}" target="_blank">
-                            Download receipt
+                            <img src="assets/common/icons/clipboard-import.png">Download receipt
                         </a>
                     </div>
                 </div>
+                <div class="sms-row"><img src="assets/common/icons/sms.png">Check your email for your account details</div>
                 <div *ngIf="returnText" class="row top-indent login-row">
                     <a (click)="returnLinkClick()">{{returnText}}</a>
                 </div>
@@ -56,9 +62,8 @@
         </div>
         <div class="downloads" *ngIf="invoiceInfo.resources && invoiceInfo.resources.length">
             <h1>Downloads</h1>
-            <hr>
             <div *ngFor="let resource of invoiceInfo.resources; let i = index" class="resource">
-                <a target="_blank" [href]="resource.url" class="{{resource.url ? 'link' : 'file'}}">{{resource.name || resource.url}}</a><button (click)="resourceClick($event, resource)">{{resource.url ? 'Copy' : 'Download'}}</button>
+                <img src="assets/common/icons/{{resource.url ? 'link.png' : 'files.svg'}}"><a target="_blank" [href]="resource.url" class="{{resource.url ? 'link' : 'file'}}">{{resource.name || resource.url}}</a><button (click)="resourceClick($event, resource)"><img src="assets/common/icons/{{resource.url ? 'copy-reciept' : 'download'}}.png">{{resource.url ? 'Copy' : 'Download'}}</button>
             </div>
         </div>
         <div class="footer gray">
