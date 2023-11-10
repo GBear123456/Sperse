@@ -5,64 +5,78 @@
         [items]="moduleItems"
         (onInitialized)="onDropDownInit($event)">
         <div *dxTemplate="let data of 'content'" class="platform-select-wrapper">
-            <div class="top-row">
-                <ul class="top__items">
-                    <li class="top__item {{item.code | lowercase }}" *ngFor="let item of modules.topItems">
-                        <a (click)="onItemClick(item)"
-                           [class]="isDisabled(item.name) || item.isComingSoon || (item.name == 'CFO' && !permission.isGranted(permissions.CFOMainInstanceAccess)) ? 'top__link disabled' : 'top__link'">
-                            <h2 class="top__item_title">
-                                {{item.name}}
-                            </h2>
-                            <div class="top__item_image-wrapper">
-                                <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.png"
-                                     class="top__item_image {{item.name.toLowerCase()}}"
-                                     [alt]="item.name">
-                            </div>
-                            <div class="top__item_descr">
-                                {{ls.l(item.code + 'ModuleDescription')}}
-                            </div>
-                            <div class="coming-soon" *ngIf="item.isComingSoon">
-                                Coming soon...
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="menu-row">
-                <ul class="menu__items">
-                    <li class="menu__item {{item.code | lowercase }}" *ngFor="let item of modules.items" [hidden]="isDisabled(item.name) || item.isComingSoon">
-                        <a (click)="onItemClick(item)"
-                           [class]="isDisabled(item.name) || item.isComingSoon ? 'menu__link disabled' : 'menu__link'">
-                            <h2 class="menu__item_title">{{item.name}}</h2>
-                            <div class="menu__item_descr">
-                                {{ls.l(item.code + 'ModuleDescription')}}
-                            </div>
-                            <div class="coming-soon" *ngIf="item.isComingSoon">
-                                Coming soon...
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="shortcuts" *ngIf="appMemberPortalUrl">
-                <div class="shortcuts_head">
-                    <h3>{{ls.l('My Link Shortcuts')}}</h3><p class="shortcuts_ref">{{ls.l('Include Affiliate ID in links')}}: <span>[ref={{affiliateIRefId}}]</span></p>
+            <dx-scroll-view showScrollbar="onHover">
+                <div class="top-row">
+                    <ul class="top__items">
+                        <li class="top__item {{item.code | lowercase }}" *ngFor="let item of modules.topItems">
+                            <a (click)="onItemClick(item)"
+                               [class]="isDisabled(item.name) || item.isComingSoon || (item.name == 'CFO' && !permission.isGranted(permissions.CFOMainInstanceAccess)) ? 'top__link disabled' : 'top__link'">
+                                <h2 class="top__item_title">
+                                    {{item.name}}
+                                </h2>
+                                <div class="top__item_image-wrapper">
+                                    <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.png"
+                                         class="top__item_image {{item.name.toLowerCase()}}"
+                                         [alt]="item.name">
+                                </div>
+                                <div class="top__item_descr">
+                                    {{ls.l(item.code + 'ModuleDescription')}}
+                                </div>
+                                <div class="coming-soon" *ngIf="item.isComingSoon">
+                                    Coming soon...
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                <div class="shortcuts_portal_field">
-                    <img class="icon" src="./assets/common/images/platform-select/portal.png"><span>{{appMemberPortalUrl}}</span>
-                    <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(appMemberPortalUrl)">
-                    <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(appMemberPortalUrl)">
+                <div class="menu-row">
+                    <ul class="menu__items">
+                        <li class="menu__item {{item.code | lowercase }}" *ngFor="let item of modules.items" [hidden]="isDisabled(item.name) || item.isComingSoon">
+                            <a (click)="onItemClick(item)"
+                               [class]="isDisabled(item.name) || item.isComingSoon ? 'menu__link disabled' : 'menu__link'">
+                                <h2 class="menu__item_title">{{item.name}}</h2>
+                                <div class="menu__item_descr">
+                                    {{ls.l(item.code + 'ModuleDescription')}}
+                                </div>
+                                <div class="coming-soon" *ngIf="item.isComingSoon">
+                                    Coming soon...
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </div>
-            <footer *ngIf="modules.footerItems.length">
-                <ul class="footer__items">
-                    <li class="footer__item {{item.code | lowercase }}" *ngFor="let item of modules.footerItems">
-                        <a class="footer__link" (click)="onItemClick(item)">
-                            {{ls.l(item.name + 'FooterModuleText')}}
-                        </a>
-                    </li>
-                </ul>
-            </footer>
+                <div class="shortcuts" *ngIf="appMemberPortalUrl || (landingPageDomains && landingPageDomains.length)">
+                    <div class="shortcuts_head">
+                        <h3>{{ls.l('My Link Shortcuts')}}</h3><p class="shortcuts_ref" *ngIf="enabledAffiliate">{{ls.l('Include Affiliate ID in links')}}: 
+                            <inplace-edit [value]="affiliateRefId"
+                                          [isCopyEnabled]="true"
+                                          [isEditDialogEnabled]="true"
+                                          [showEditModeOnEditButtonClick]="true"
+                                          [validationRules]="accessCodeValidationRules"
+                                          (valueChanged)="affiliateCodeChanged($event)">
+                            </inplace-edit></p>
+                    </div>
+                    <div class="shortcuts_portal_field" *ngIf="appMemberPortalUrl">
+                        <img class="icon" src="./assets/common/images/platform-select/portal.png"><span>{{appMemberPortalUrl}}</span>
+                        <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(appMemberPortalUrl)">
+                        <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(appMemberPortalUrl)">
+                    </div>
+                    <div class="shortcuts_portal_field" *ngIf="landingPageDomains && landingPageDomains.length">
+                        <img class="icon" src="./assets/common/images/platform-select/landing.png"><select [(ngModel)]="selectedlandingPage"><option *ngFor="let domain of landingPageDomains" [value]="domain">{{domain}}</option></select>
+                        <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(selectedlandingPage)">
+                        <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(selectedlandingPage)">
+                    </div>
+                </div>
+                <!-- footer *ngIf="modules.footerItems.length">
+                    <ul class="footer__items">
+                        <li class="footer__item {{item.code | lowercase }}" *ngFor="let item of modules.footerItems">
+                            <a class="footer__link" (click)="onItemClick(item)">
+                                {{ls.l(item.name + 'FooterModuleText')}}
+                            </a>
+                        </li>
+                    </ul>
+                </footer -->
+            </dx-scroll-view>
         </div>
     </dx-drop-down-box>
 </div>

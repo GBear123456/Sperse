@@ -34,6 +34,7 @@ import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { UserManagementModule } from '@shared/common/layout/user-management-list/user-management.module';
+import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 
 /** @todo Used for chart bar and dropdown. Reimplement in future */
 import 'assets/metronic/src/js/framework/base/util.js';
@@ -65,6 +66,7 @@ let COMPONENTS = [
         UtilsModule,
         FiltersModule,
         LayoutCommonModule,
+        InplaceEditModule,
 
         DxListModule,
         DxMenuModule,
