@@ -14,15 +14,13 @@
                             <h2 class="top__item_title">
                                 {{item.name}}
                             </h2>
-                            <div class="top__item_descr">
-                                {{ls.l(item.code + 'ModuleDescription')}}
-                            </div>
                             <div class="top__item_image-wrapper">
                                 <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.png"
-                                     class="top__item_image"
-                                     width="210"
-                                     height="139"
+                                     class="top__item_image {{item.name.toLowerCase()}}"
                                      [alt]="item.name">
+                            </div>
+                            <div class="top__item_descr">
+                                {{ls.l(item.code + 'ModuleDescription')}}
                             </div>
                             <div class="coming-soon" *ngIf="item.isComingSoon">
                                 Coming soon...
@@ -46,6 +44,16 @@
                         </a>
                     </li>
                 </ul>
+            </div>
+            <div class="shortcuts" *ngIf="appMemberPortalUrl">
+                <div class="shortcuts_head">
+                    <h3>{{ls.l('My Link Shortcuts')}}</h3><p class="shortcuts_ref">{{ls.l('Include Affiliate ID in links')}}: <span>[ref={{affiliateIRefId}}]</span></p>
+                </div>
+                <div class="shortcuts_portal_field">
+                    <img class="icon" src="./assets/common/images/platform-select/portal.png"><span>{{appMemberPortalUrl}}</span>
+                    <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(appMemberPortalUrl)">
+                    <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(appMemberPortalUrl)">
+                </div>
             </div>
             <footer *ngIf="modules.footerItems.length">
                 <ul class="footer__items">

@@ -245,7 +245,7 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     getAvailableWidth() {
-        return this.getNavBarElement().offsetWidth;
+        return innerWidth - 848;
     }
 
     onNavBarInitialized() {
