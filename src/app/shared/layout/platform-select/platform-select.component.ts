@@ -21,7 +21,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ConfigInterface } from '@app/shared/common/config.interface';
 import { Module } from '@shared/common/module.interface';
 import { AppSessionService } from '@root/shared/common/session/app-session.service';
-import { LayoutType } from '@root/shared/service-proxies/service-proxies';
+import { UpdateUserAffiliateCodeDto, MemberSettingsServiceProxy, LayoutType } from '@root/shared/service-proxies/service-proxies';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { ClipboardService } from 'ngx-clipboard';
 
@@ -32,6 +32,7 @@ interface ModuleConfig extends Module {
 @Component({
     templateUrl: './platform-select.component.html',
     styleUrls: ['./platform-select.component.less'],
+    providers: [MemberSettingsServiceProxy],
     selector: 'platform-select'
 })
 export class PlatformSelectComponent {
@@ -48,11 +49,32 @@ export class PlatformSelectComponent {
     activeModuleCount = 0;
     permissions = AppPermissions;
     width: string = AppConsts.isMobile ? '100vw' : '760px';
-    affiliateIRefId: string = '';
+    affiliateRefId = this.appSessionService.user &&
+        this.appSessionService.user.affiliateCode;
+
+    accessCodeValidationRules = [
+        {
+            type: 'pattern',
+            pattern: AppConsts.regexPatterns.affiliateCode,
+            message: this.ls.l('AccessCodeIsNotValid')
+        },
+        {
+            type: 'stringLength',
+            max: AppConsts.maxAffiliateCodeLength,
+            message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateCodeLength)
+        }
+    ];
 
     appMemberPortalUrl = AppConsts.appMemberPortalUrl;
+    landingPageDomains = this.appSessionService.tenant && 
+        this.appSessionService.tenant.landingPageDomains
+            .sort((a, b) => a.includes('vercel.app') > b.includes('vercel.app') ? 1 : -1)
+            .map(domain => 'https://' + domain);
+    selectedlandingPage: string = this.landingPageDomains[0];
 
     moduleItems: string[];
+
+    enabledAffiliate = this.feature.isEnabled(AppFeatures.CRMCommissions);
 
     constructor(
         public appService: AppService,
@@ -64,6 +86,7 @@ export class PlatformSelectComponent {
         private router: Router,
         private titleService: TitleService,
         private appSessionService: AppSessionService,
+        private memberSettingsProxy: MemberSettingsServiceProxy,
         public clipboardService: ClipboardService,
         public layoutService: LayoutService,
         public ls: AppLocalizationService,
@@ -211,5 +234,13 @@ export class PlatformSelectComponent {
 
     openLink(link: string) {
         window.open(link);
+    }
+
+    affiliateCodeChanged(affiliateCode: string) {
+        this.memberSettingsProxy.updateAffiliateCode(
+            new UpdateUserAffiliateCodeDto({affiliateCode: affiliateCode})
+        ).subscribe(() => {
+            this.affiliateRefId = affiliateCode;
+        });
     }
 }
