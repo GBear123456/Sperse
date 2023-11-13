@@ -1,8 +1,10 @@
 /** Core imports */
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GetInvoiceReceiptInfoOutput, InvoiceStatus, 
-    UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-proxies';
+import {
+    GetInvoiceReceiptInfoOutput, InvoiceStatus,
+    UserInvoiceServiceProxy
+} from '@root/shared/service-proxies/service-proxies';
 
 /** Third party imports */
 import { ClipboardService } from 'ngx-clipboard';
@@ -39,7 +41,6 @@ export class ReceiptComponent implements OnInit {
 
     tenantId: any = this.activatedRoute.snapshot.paramMap.get('tenantId');
     publicId = this.activatedRoute.snapshot.paramMap.get('publicId');
-
 
     constructor(
         private router: Router,
