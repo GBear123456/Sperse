@@ -68,7 +68,7 @@ export class GlobalSearchComponent implements OnInit {
         tap(() => {
             this.isTooltipVisible = false;
             this.searchGroups = [];
-            this.loadingService.startLoading(this.elementRef.nativeElement.getElementsByClassName('global-search-container')[0]);
+            this.loadingService.startLoading(this.getLoadingElement());
         }),
         switchMap((search: string) => {
             return combineLatest(
@@ -291,7 +291,11 @@ export class GlobalSearchComponent implements OnInit {
     }
 
     private hideSpinner() {
-        this.loadingService.finishLoading(this.elementRef.nativeElement);
+        this.loadingService.finishLoading(this.getLoadingElement());
+    }
+
+    getLoadingElement() {
+        return this.elementRef.nativeElement.getElementsByClassName('global-search-container')[0];
     }
 
     getOptions(search: string, params?: Params): any {
@@ -314,7 +318,10 @@ export class GlobalSearchComponent implements OnInit {
     onFocusIn() {
         this.layoutService.showPlatformSelectMenu = false;
         if (this.itemsFound) {
-            this.isTooltipVisible = true;
+            setTimeout(() => {
+                this.isTooltipVisible = true;
+                this.changeDetectorRef.detectChanges();
+            }, 100);
         }
     }
 
