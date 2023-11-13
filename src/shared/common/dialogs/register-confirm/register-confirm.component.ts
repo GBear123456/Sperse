@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { ConditionsModalComponent } from 'shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { environment } from 'environments/environment';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -19,15 +19,18 @@ export class RegisterConfirmComponent implements OnInit {
         lender: { title: 'Lender Terms', bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/lender.html', downloadDisabled: true }
     };
     constructor(
-        private dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public conditionsModalService: ConditionsModalService
     ) {}
 
     ngOnInit() {}
 
     openConditionsDialog(event, data: any) {
         event.preventDefault();
-        this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
+        this.conditionsModalService.openModal({
+            panelClass: ['slider', 'footer-slider'],
+            data: data
+        });
     }
 }

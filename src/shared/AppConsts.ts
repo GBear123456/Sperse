@@ -3,6 +3,8 @@ export class AppConsts {
     static readonly defaultTenantName = 'Sperse';
     static readonly defaultDomain = 'sperse.com';
     static readonly tenantHostType = 1;
+    // @ts-ignore:  This condition will always return 'false' ... for Custom Hosts
+    static readonly isSperseHost = AppConsts.defaultTenantName == 'Sperse';
 
     static readonly googleMapsApiUrl = 'https://maps.googleapis.com/maps/api/js?key={KEY}&libraries=places&language=en';
     static readonly isMobile = RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini', 'i').test(navigator.userAgent);
@@ -96,6 +98,7 @@ export class AppConsts {
 
     static readonly regexPatterns = {
         name: /^[A-Z][a-zA-Z]+$/,
+        linkName: /^[a-zA-Z ]+$/,
         email: new RegExp(`^${AppConsts.emailRegexString}$`),
         emailWithName: new RegExp(`^((("[^"]+")|([a-zA-Z\\s]+))\\s*<(?=.+>$)|(?!.+>$))${AppConsts.emailRegexString}>?$`),
         phone: /^[\d\+\-\(\)\s]{10,24}$/,
@@ -107,6 +110,7 @@ export class AppConsts {
         ein: /^\d{2}\-?\d{7}$/,
         duns: /^\d{2}\-?\d{3}-?\d{4}$/,
         siteUrl: /^(http:\/\/|https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
+        sitePath: /^[a-zA-Z0-9-._~]*$/,
         zipUsPattern: /^\d{5}(?:-\d{4})?$/,
         notSupportedDocuments: /\.(ade|adp|apk|bat|chm|cmd|com|cpl|dll|dmg|exe|hta|ins|isp|jar|js|jse|lib|lnk|mde|msc|msi|msp|mst|nsh|pif|scr|sct|shb|sys|vb|vbe|vbs|vxd|wsc|wsf|wsh|cab)$/i
     };
@@ -141,7 +145,7 @@ export class AppConsts {
     /** 2 hours */
     static readonly generalDictionariesCacheLifetime = 2 * 60 * 60 * 1000;
 
-    static readonly maxImageSize = 5242880;
+    static readonly maxImageSize = 1048576;
 
     static readonly maxDocumentSizeMB = 100;
     static readonly maxDocumentSizeBytes = 1024 * 1024 * AppConsts.maxDocumentSizeMB;

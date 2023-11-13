@@ -5,6 +5,7 @@ import { RouteGuard } from '@shared/common/auth/route-guard';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AccountModule } from './account/account.module';
+import { DisableTokenCheckRouteGuard } from '@shared/common/auth/disable-token-check-route-guard';
 
 @Injectable()
 export class AppPreloadingStrategy implements PreloadingStrategy {
@@ -61,14 +62,20 @@ const routes: Routes = [
     },
     {
         path: 'invoicing',
-        canActivate: [LocalizationResolver],
+        canActivate: [DisableTokenCheckRouteGuard, LocalizationResolver],
         loadChildren: async () => (await import('public/invoicing/invoicing.module')).InvoicingModule,
         data: { localizationSource: 'Platform' }
     },
     {
         path: 'receipt',
-        canActivate: [LocalizationResolver],
+        canActivate: [DisableTokenCheckRouteGuard, LocalizationResolver],
         loadChildren: async () => (await import('public/invoicing/invoicing.module')).InvoicingModule,
+        data: { localizationSource: 'Platform' }
+    },
+    {
+        path: 'p',
+        canActivate: [DisableTokenCheckRouteGuard, LocalizationResolver],
+        loadChildren: async () => (await import('public/products/public-products.module')).PublicProductsModule,
         data: { localizationSource: 'Platform' }
     },
     {
@@ -88,7 +95,7 @@ const routes: Routes = [
     exports: [
         RouterModule
     ],
-    providers: [LocalizationResolver]
+    providers: [LocalizationResolver, DisableTokenCheckRouteGuard]
 })
 export class RootRoutingModule implements AfterViewInit {
     constructor(

@@ -1,20 +1,30 @@
-<payment-subscriptions *ngIf="data.showSubscriptions; else paymentWizard" (onShowProducts)="showSubscriptionProducts($event)"></payment-subscriptions>
+<div class="my-subscriptions-header">
+    <mat-tab-group *ngIf="data.showSubscriptions; else paymentWizard" mat-stretch-tabs="true" mat-align-tabs="center">
+        <mat-tab label="{{ ls.l('MySubscriptions') }}">
+            <payment-subscriptions (onShowProducts)="showSubscriptionProducts($event)"></payment-subscriptions>
+        </mat-tab>
+        <mat-tab label="{{ ls.l('Payments') }}" *ngIf="isSubscriptionPaymentsAllowed">
+            <ng-template matTabContent>
+                <payments-info amountCurrency="USD" paymentInfoScrollHeight="525"></payments-info>
+            </ng-template>
+        </mat-tab>
+    </mat-tab-group>
+</div>
 <ng-template #paymentWizard>
     <div id="paymentWizardComponent" #wizard>
         <mat-dialog-content>
             <mat-horizontal-stepper #stepper>
                 <mat-step>
-                    <package-chooser
-                        *ngIf="isSubscriptionManagementAllowed && !subscriptionIsDraft && !subscriptionIsTrialExpired && !subscriptionIsActiveExpired"
-                        [widgettitle]="data?.title"
-                        [subtitle]="data?.subtitle"
-                        [showBackground]="true"
-                        [productsGroupName]="productsGroupName"
-                        [subscription]="data.subscription"
-                        [upgradeProductId]="selectedUpgradeProductId"
-                        [showDowngradeLink]="!subscriptionIsFree"
-                        (onPlanChosen)="changePlan($event)"
-                        (moveToNextStep)="moveToPaymentOptionsStep()">
+                    <package-chooser *ngIf="isSubscriptionManagementAllowed && !subscriptionIsDraft && !subscriptionIsTrialExpired && !subscriptionIsActiveExpired"
+                                     [widgettitle]="data?.title"
+                                     [subtitle]="data?.subtitle"
+                                     [showBackground]="true"
+                                     [productsGroupName]="productsGroupName"
+                                     [subscription]="data.subscription"
+                                     [upgradeProductId]="selectedUpgradeProductId"
+                                     [showDowngradeLink]="!subscriptionIsFree"
+                                     (onPlanChosen)="changePlan($event)"
+                                     (moveToNextStep)="moveToPaymentOptionsStep()">
                     </package-chooser>
                     <div *ngIf="subscriptionIsDraft || !isSubscriptionManagementAllowed && !subscriptionIsTrialExpired && !subscriptionIsActiveExpired" class="rejectSubscriptionBlock">
                         <h2 class="title">{{ ls.l(isSubscriptionManagementAllowed ? 'SubscriptionDraftTitle' : 'UserNoSubscriptiontTitle') }}</h2>
@@ -30,19 +40,18 @@
                     <div *ngIf="subscriptionIsActiveExpired" class="rejectSubscriptionBlock">
                         <h2 class="title">{{ ls.l('SubscriptionActiveExpiredTitle') }}</h2>
                         <h3 class="message">{{ ls.l((isSubscriptionManagementAllowed ? '' : 'User') + 'SubscriptionActiveExpiredMessage', productName) }}</h3>
-                        <button (click)="close()" class="btn btn-layout">{{ ls.l('Close') }}</button>
+                        <button (click)="showSubscriptions()" class="btn btn-layout">{{ ls.l('MySubscriptions') }}</button>
                         <span class="bottom-message" *ngIf="cancellationDayCount > 0">{{ ls.l('SubscriptionCancellationMessage', cancellationDayCount) }}</span>
                     </div>
                 </mat-step>
                 <mat-step>
                     <ng-container *ngIf="(plan$ | async) as plan">
-                        <payment-options
-                            *ngIf="stepper.selectedIndex != 0"
-                            [plan]="plan"
-                            (onChangeStep)="stepper.selectedIndex = $event"
-                            (onClose)="close()"
-                            (onStatusChange)="changeStatus($event)"
-                            (refreshAfterClose)="setRefreshAfterClose()">
+                        <payment-options *ngIf="stepper.selectedIndex != 0"
+                                         [plan]="plan"
+                                         (onChangeStep)="stepper.selectedIndex = $event"
+                                         (onClose)="close()"
+                                         (onStatusChange)="changeStatus($event)"
+                                         (refreshAfterClose)="setRefreshAfterClose()">
                         </payment-options>
                     </ng-container>
                 </mat-step>

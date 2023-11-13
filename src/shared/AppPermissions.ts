@@ -30,6 +30,7 @@ export enum AppPermissions {
     AdministrationWorkflowEventsManage = 'Pages.Administration.WorkflowEvents.Manage',
     AdministrationTenantSettings = 'Pages.Administration.Tenant.Settings',
     AdministrationTenantSubscriptionManagement = 'Pages.Administration.Tenant.SubscriptionManagement',
+    AdministrationTenantSubscriptionManagementPayments = 'Pages.Administration.Tenant.SubscriptionManagement.Payments',
     TenantDashboard = 'Pages.Tenant.Dashboard',
     AdministrationHostSettings = 'Pages.Administration.Host.Settings',
     AdministrationHostMaintenance = 'Pages.Administration.Host.Maintenance',

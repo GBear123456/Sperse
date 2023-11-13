@@ -24,7 +24,7 @@
             <div class="details">
                 <div class="row">
                     <div class="col-6 gray">Invoice number</div>
-                    <div class="col-6 text-right">{{invoiceInfo.invoiceNumber}}</div>
+                    <div class="col-6 text-right text-overflow" title="{{invoiceInfo.invoiceNumber}}">{{invoiceInfo.invoiceNumber}}</div>
                 </div>
                 <div class="row">
                     <div class="col-6 gray">Payment date</div>
@@ -54,11 +54,18 @@
                 </div>
             </div>
         </div>
+        <div class="downloads" *ngIf="invoiceInfo.resources && invoiceInfo.resources.length">
+            <h1>Downloads</h1>
+            <hr>
+            <div *ngFor="let resource of invoiceInfo.resources; let i = index" class="resource">
+                <a target="_blank" [href]="resource.url" class="{{resource.url ? 'link' : 'file'}}">{{resource.name || resource.url}}</a><button (click)="resourceClick($event, resource)">{{resource.url ? 'Copy' : 'Download'}}</button>
+            </div>
+        </div>
         <div class="footer gray">
             <div class="powered-by">
-                {{currentYear}} &copy; Sperse Platform
+                {{currentYear}} &copy; {{hostName}} Platform
             </div>
-            <div class="links">
+            <div *ngIf="hasToSOrPolicy" class="links">
                 <a (click)="openConditionsDialog(conditions.Terms)">Terms</a>
                 <a (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
             </div>

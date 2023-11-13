@@ -3,7 +3,6 @@ import { Component, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { ActivationEnd, Router } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
 import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
@@ -11,7 +10,7 @@ import { AppConsts } from 'shared/AppConsts';
 import { environment } from 'environments/environment';
 import { ApplicationServiceProxy, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -21,7 +20,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: [
         './lend-space-signup.component.less'
     ],
-    providers: [ ApplicationServiceProxy, LoginService ],
+    providers: [ApplicationServiceProxy, LoginService],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LendSpaceSignupComponent {
@@ -45,10 +44,10 @@ export class LendSpaceSignupComponent {
     };
     isRoutProcessed = false;
     constructor(
-        private dialog: MatDialog,
         private router: Router,
         public loginService: LoginService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public conditionsModalService: ConditionsModalService,
     ) {
         this.registerData.isUSCitizen = true;
         this.router.events.subscribe((event) => {
@@ -77,7 +76,10 @@ export class LendSpaceSignupComponent {
     }
 
     openConditionsDialog(data: any) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: data });
+        this.conditionsModalService.openModal({
+            panelClass: ['slider', 'footer-slider'],
+            data: data
+        });
     }
 
     externalLogin(provider: ExternalLoginProvider) {

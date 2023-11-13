@@ -1,4 +1,4 @@
-﻿:host {
+:host {
     ::ng-deep form {
         position: relative;
         display: inline-block;
@@ -36,18 +36,15 @@
         }
     }
 
-    .feature-tree-textbox {
-        max-width: 100px;
-        margin: 1px;
-        margin-left: 5px;
+    ::ng-deep {
+        .feature-tree-textbox {
+            margin: 1px;
+            margin-left: 5px;
 
-        &.feature-tree-textbox-invalid {
-            background: #f00;
-            color:white;
+            &.feature-tree-textbox-invalid {
+                border-color: red !important;
+                border-width: 2px;
+            }
         }
-    }
-
-    .m--font-warning {
-        color: #ffb822!important;
     }
 }

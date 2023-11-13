@@ -6,7 +6,7 @@
             </h3>
             <div class="header-right-side">
                 <ng-container *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent && invoiceInfo.isPaymentsEnabled">
-                    <pay-pal (onApprove)="onPayPalApprove()">
+                    <pay-pal [height]="38" (onApprove)="onPayPalApprove()">
                     </pay-pal>
                     <a *ngIf="invoiceInfo.stripePayUrl" role="button" class="btn btn-primary stripe-button" href="{{invoiceInfo.stripePayUrl}}">
                         Pay with <img src="assets/common/images/stripe.svg"/>
@@ -222,9 +222,9 @@
     </div>
     <div class="footer gray content-center">
         <div class="powered-by">
-            {{currentYear}} &copy; Sperse Platform
+            {{currentYear}} &copy; {{hostName}} Platform
         </div>
-        <div class="links">
+        <div *ngIf="hasToSOrPolicy" class="links">
             <a (click)="openConditionsDialog(conditions.Terms)">Terms</a>
             <a (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
         </div>

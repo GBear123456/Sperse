@@ -5,5 +5,6 @@ export class ContditionsModalData {
     type: ConditionsType;
     bodyUrl?: string;
     downloadDisabled?: boolean;
+    downloadLink?: string;
     onlyHost?: boolean;
 }

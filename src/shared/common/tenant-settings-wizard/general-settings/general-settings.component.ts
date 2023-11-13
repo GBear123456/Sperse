@@ -35,8 +35,8 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
 @Component({
     selector: 'general-settings',
     templateUrl: 'general-settings.component.html',
-    styleUrls: [ '../shared/styles/common.less', 'general-settings.component.less' ],
-    providers: [ PhoneNumberService ],
+    styleUrls: ['../shared/styles/common.less', 'general-settings.component.less'],
+    providers: [PhoneNumberService],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeneralSettingsComponent implements ITenantSettingsStepComponent {

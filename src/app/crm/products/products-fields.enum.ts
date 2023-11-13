@@ -10,5 +10,10 @@ export const ProductFields: KeysEnum<ProductDto> = {
     Type: 'Type',
     Price: 'Price',
     Unit: 'Unit',
-    ThumbnailUrl: 'ThumbnailUrl'
+    ThumbnailUrl: 'ThumbnailUrl',
+    PublicName: 'PublicName',
+    CreateUser: 'CreateUser',
+    AllowCoupon: 'AllowCoupon',
+    IsPublished: 'IsPublished',
+    PublishDate: 'PublishDate'
 };

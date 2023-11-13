@@ -14,11 +14,30 @@ body app-header dx-nav-bar .dx-state-hover {
 body app-header dx-drop-down-box input {
   border: 0 !important;
 }
+body .top-bar-nav .dx-tabs-wrapper .dx-menu-items-container .dx-menu-item-wrapper .dx-menu-item-content .dx-menu-item-popout:before{
+  color:#000;
+}
+body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-items-container .dx-menu-item-wrapper .dx-menu-item-content .dx-menu-item-popout:before{
+  color: #000 !important;
+}
+body .dx-submenu .dx-menu-items-container {
+  background: transparent!important;
+}
+body .dx-submenu .dx-item.dx-menu-item.dx-menu-item-has-text {
+  color: #333;
+}
+body .dx-submenu .dx-item.dx-menu-item.dx-menu-item-has-text.dx-state-hover {
+  background: rgba(0,0,0,.04)!important;
+  color: #333;
+}
 body app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text {
   color: #333 !important;
 }
 body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
   color: #202b35 !important;
+}
+body .dx-item.dx-menu-item.dx-menu-item-has-text.dx-menu-item-has-submenu {
+  background: transparent!important;
 }
 body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected {
   border-bottom: 3px solid #00aeef!important;
@@ -52,8 +71,8 @@ body .swal-modal .swal-footer {
 }
 body .swal-modal .swal-button.swal-button--confirm {
   border-radius: 2px;
-  background-color: #ffcc00;
-  font-family: Poppins;
+  background-color: #00aeef;
+  font-family: Montserrat;
   letter-spacing: 0.15px;
   font-size: 19px;
   font-weight: 700;
@@ -104,18 +123,18 @@ body .swal-modal .swal-title {
   font-size: 24px;
   font-weight: bold;
   white-space: pre-line;
-  font-family: Poppins;
+  font-family: Montserrat;
 }
 body .swal-modal .swal-button {
-  background-color: #FFF;
+  background-color: #00aeef;
   font-size: 18px;
   font-weight: 600;
-  color: #000;
+  color: #FFF;
   cursor: pointer;
 }
 body .swal-modal .swal-button:hover {
-  color: #FFF;
-  background-color: #000;
+  color: #FFFFFF;
+  background-color: #3dcaff;
 }
 body .swal-modal .checkbox-container input[type="checkbox"]:hover + label:before {
     border: 1px solid #f0d500;
@@ -137,7 +156,7 @@ body .accountsContainer .sidebar {
   border-right: none !important;
 }
 body .accountsContainer .sidebar .left-navigation .left-navigation-item .left-navigation-link {
-  font-family: Poppins !important;
+  font-family: Montserrat !important;
   line-height: 22px !important;
   padding-right: 0 !important;
 }
@@ -153,7 +172,7 @@ body .accountsContainer .not-initialized-content body-text .btn-layout {
   font-size: 18px !important;
 }
 body .btn-layout {
-  font-family: 'Poppins' !important;
+  font-family: Montserrat !important;
   background-color: #00aeef;
   color: #ffffff;
   transition: 0.2s;
@@ -220,7 +239,7 @@ body .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header,
 body .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header,
 body .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header,
 body .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header {
-  background: #313131 !important;
+  background: #F3F7FA !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header dx-text-box,
 body .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header dx-text-box,
@@ -232,14 +251,14 @@ body .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header input,
 body .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header input,
 body .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header input,
 body .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header input {
-  color: #FFF !important;
-  background: transparent !important;
+  color: #202B35 !important;
+  background: #F3F7FA !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content {
-  background: #262626;
+  background: #FFFFFF;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content label,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content label,
@@ -257,7 +276,7 @@ body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content span,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content span,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content span,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content span {
-  color: #FFF;
+  color: #333;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item,
@@ -377,20 +396,20 @@ body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content #content * 
   }
 }
 body .notification-header {
-  font-family: Poppins;
+  font-family: Montserrat;
 }
 body .notification-header .m-dropdown__header {
   background: #313131;
   padding: 20px 35px;
 }
 body .notification-header .m-dropdown__header .tenantName {
-  font-family: Poppins;
+  font-family: Montserrat;
   font-size: 16px;
   letter-spacing: 0.2px;
   color: #fff;
 }
 body .notification-header .m-dropdown__header .fullName {
-  font-family: Poppins;
+  font-family: Montserrat;
   font-size: 18px;
   font-weight: 500;
   letter-spacing: 0.1px;
@@ -412,7 +431,7 @@ body .notification-header .m-dropdown__body .row {
 }
 body .notification-header,
 body .notification-modal {
-  font-family: Poppins;
+  font-family: Montserrat;
 }
 body .notification-header a,
 body .notification-modal a {
@@ -420,7 +439,7 @@ body .notification-modal a {
   font-weight: 600;
   letter-spacing: 0.2px;
   color: #3463ae;
-  font-family: Poppins;
+  font-family: Montserrat;
 }
 body notificationsettingsmodal .mat-dialog-header input,
 body notificationsettingsmodal .mat-dialog-actions button,
@@ -428,10 +447,10 @@ body notificationsettingsmodal h4,
 body notificationsettingsmodal .help-block,
 body notificationsettingsmodal .m-checkbox,
 body notificationsettingsmodal .mat-button-wrapper span {
-  font-family: Poppins !important;
+  font-family: Montserrat !important;
 }
 body .m-scrollable {
-  font-family: Poppins;
+  font-family: Montserrat;
   padding-left: 35px;
 }
 body .m-scrollable .m-list-timeline__items:before {
@@ -465,7 +484,7 @@ body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeli
   font-weight: 400;
   color: #4a4a4a;
   padding-right: 0;
-  font-family: Poppins;
+  font-family: Montserrat;
 }
 body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__time {
   width: auto;
@@ -473,7 +492,7 @@ body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeli
   font-size: 12px;
   font-weight: 400;
   margin-top: 5px;
-  font-family: Poppins;
+  font-family: Montserrat;
 }
 body .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__text {
   color: #000000;

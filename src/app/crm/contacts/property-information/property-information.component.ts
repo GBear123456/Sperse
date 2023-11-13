@@ -558,8 +558,9 @@ export class PropertyInformationComponent implements OnInit {
 
         this.dialog.closeAll();
         let data: UploadPhotoData = {
+            title: this.ls.l('ChangePropertyPhoto'),
             source: this.property.photo ? this.profileService.getPhoto(this.property.photo) : '',
-            title: this.ls.l('ChangePropertyPhoto')
+            maxSizeBytes: AppConsts.maxImageSize
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,

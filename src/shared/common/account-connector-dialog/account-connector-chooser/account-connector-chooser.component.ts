@@ -6,14 +6,12 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { AccountConnector } from '@shared/common/account-connector-dialog/models/account-connector.model';
 import { AccountConnectors } from '@shared/AppEnums';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ConditionsType } from '@shared/AppEnums';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 
 @Component({
     selector: 'account-connector-chooser',
@@ -33,8 +31,7 @@ export class AccountConnectorChooserComponent implements OnInit {
     };
 
     constructor(
-        private dialog: MatDialog,
-        private appSessionService: AppSessionService,
+        public conditionsModalService: ConditionsModalService,
         private dialogRef: MatDialogRef<AccountConnectorChooserComponent>,
         public ls: AppLocalizationService
     ) {}
@@ -91,7 +88,10 @@ export class AccountConnectorChooserComponent implements OnInit {
     }
 
     openTermsModal(type: ConditionsType) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type } });
+        this.conditionsModalService.openModal({
+            panelClass: ['slider'],
+            data: { type: type }
+        });
     }
 
     next() {

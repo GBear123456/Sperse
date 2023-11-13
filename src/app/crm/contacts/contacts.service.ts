@@ -292,8 +292,9 @@ export class ContactsService {
     showUploadPhotoDialog(companyId: number, companyPhoto: string, event): Observable<any> {
         event.stopPropagation();
         const uploadPhotoData: UploadPhotoData = {
+            title: this.ls.l('ChangeCompanyLogo'),
             source: companyPhoto ? 'data:image/jpeg;base64,' + companyPhoto : null,
-            title: this.ls.l('ChangeCompanyLogo')
+            maxSizeBytes: AppConsts.maxImageSize
         };
         return this.dialog.open(UploadPhotoDialogComponent, {
             data: uploadPhotoData,
@@ -680,11 +681,12 @@ export class ContactsService {
     showTemplateDocumentsDialog(
         contactId: number, invalidate: () => void,
         showDocuments: boolean = false, fullHeight: boolean = false,
-        title?: string
+        title?: string, showUploadTab: boolean = true
     ) {
         const templateDocumentsDialogData: TemplateDocumentsDialogData = {
             contactId: contactId,
             fullHeight: fullHeight,
+            showUpload: showUploadTab,
             showDocuments: showDocuments,
             invalidate: invalidate,
             title: title

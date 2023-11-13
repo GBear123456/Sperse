@@ -24,6 +24,8 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
     stripePaymentSettings: StripeSettings = new StripeSettings();
 
+    showAdvancedSettings = this.isHost;
+
     constructor(
         _injector: Injector,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy
@@ -40,9 +42,33 @@ export class StripeSettingsComponent extends SettingsComponentBase {
                 )
                 .subscribe(res => {
                     this.stripePaymentSettings = res;
+                    this.showAdvancedSettings = this.isHost || !!this.stripePaymentSettings.apiKey;
                     this.changeDetection.detectChanges();
                 })
         }
+    }
+
+    createConnectedAccount() {
+        if (this.stripePaymentSettings.isConnectedAccountSetUpCompleted)
+            return;
+
+        this.message.confirm('', this.l('Do you want to connect Stripe account ?'), (isConfirmed) => {
+            if (isConfirmed) {
+                this.startLoading();
+                let method = this.stripePaymentSettings.connectedAccountId ?
+                    this.tenantPaymentSettingsService.connectStripeAccount() :
+                    this.tenantPaymentSettingsService.getConnectOAuthAuthorizeUrl();
+                method.pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe((url) => {
+                    window.location.href = url;
+                });
+            }
+        });
+    }
+
+    disconnedConnectedAccount() {
+        alert('disconnectConnectedAccount');
     }
 
     getSaveObs(): Observable<any> {
@@ -57,5 +83,9 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     getStripeConnectWebhookUrl(): string {
         let tenantParam = this.appSession.tenantId ? `?tenantId=${this.appSession.tenantId}` : '';
         return AppConsts.remoteServiceBaseUrl + `/api/stripe/processConnectWebhook${tenantParam}`;
+    }
+
+    getStripeOAuthConnectRedirectUrl(): string {
+        return AppConsts.remoteServiceBaseUrl + `/stripeConnectAccount/oauth`;
     }
 }

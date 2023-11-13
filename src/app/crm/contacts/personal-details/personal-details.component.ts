@@ -15,7 +15,7 @@ import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from 'abp-ng2-module';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { CountriesStoreActions, CountriesStoreSelectors, LanguagesStoreSelectors, RootStore, StatesStoreActions, LanguagesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     ContactInfoDto,
@@ -30,7 +30,9 @@ import {
     PersonInfoDto,
     TimeOfDay,
     TimingServiceProxy,
-    UpdatePersonInfoInput
+    UpdatePersonInfoInput,
+    CountryDto,
+    LanguageDto
 } from 'shared/service-proxies/service-proxies';
 import { PersonalDetailsService } from './personal-details.service';
 import { ContactsService } from '../contacts.service';
@@ -62,6 +64,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
             { name: 'dob', type: 'date' },
             { name: 'timeZone', type: 'select' },
             { name: 'preferredToD', type: 'select' },
+            { name: 'preferredLanguageId', type: 'select', displayName: this.ls.l('PreferredLanguage') },
             { name: 'interests', type: 'list', source: this.dictionaryProxy.getInterests() }
         ], [
             ...( !this.appSessionService.tenant || this.appSessionService.tenant.customLayoutType !== LayoutType.BankCode ?
@@ -122,7 +125,8 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         drivingLicenseState: [],
         gender: this.getGenderList(),
         maritalStatus: this.getMaritalStatusList(),
-        preferredToD: this.getPreferredToD()
+        preferredToD: this.getPreferredToD(),
+        preferredLanguageId: []
     };
     private readonly settingsDialogId = 'personal-details-dialog';
     settingsDialog$: Subscription;
@@ -172,6 +176,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         this.loadCountries();
         this.getCountries();
         this.loadStates();
+        this.getLanguages();
     }
 
     ngAfterViewInit() {
@@ -204,9 +209,21 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
             select(CountriesStoreSelectors.getCountries),
             filter(Boolean),
             first(),
-            map((countries: CountryStateDto[]) => this.getSelectListFromObject(countries))
+            map((countries: CountryDto[]) => this.getSelectListFromObject(countries))
         ).subscribe((countries: SelectListItem[]) => {
             this.selectList.citizenship = countries;
+        });
+    }
+
+    private getLanguages() {
+        this.store$.dispatch(new LanguagesStoreActions.LoadRequestAction());
+        this.store$.pipe(
+            select(LanguagesStoreSelectors.getLanguages),
+            filter(Boolean),
+            first(),
+            map((languages: LanguageDto[]) => this.getSelectListFromObject(languages))
+        ).subscribe((languages: SelectListItem[]) => {
+            this.selectList.preferredLanguageId = languages;
         });
     }
 
@@ -325,6 +342,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
             experience: this.person.experience,
             profileSummary: this.person.profileSummary,
             preferredToD: TimeOfDay[this.person.preferredToD],
+            preferredLanguageId: this.person.preferredLanguageId,
             drivingLicense: this.accessConfidentialData ? this.person.drivingLicense : undefined,
             drivingLicenseState: this.person.drivingLicenseState,
             isActiveMilitaryDuty: this.person.isActiveMilitaryDuty,

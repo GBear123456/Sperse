@@ -12,8 +12,10 @@ import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment
 import {
     PaymentPeriodType,
     ProductInfo,
+    ProductMeasurementUnit,
     ProductServiceProxy,
-    RecurringPaymentFrequency
+    RecurringPaymentFrequency,
+    TenantSubscriptionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { BillingPeriod } from './models/billing-period.enum';
 
@@ -27,10 +29,11 @@ export class PaymentService {
     addOnConfig$: Observable<ProductInfo[]> = of([]);
 
     constructor(
-        private productServiceProxy: ProductServiceProxy
+        private productServiceProxy: ProductServiceProxy,
+        private tenantSubscriptionProxy: TenantSubscriptionServiceProxy
     ) {
         /* Remove condition to enabled Add On Products for all environments */
-        if (environment.releaseStage == 'staging')
+        if (['staging', 'development'].includes(environment.releaseStage))
             this.addOnConfig$ = this.getPackagesConfig(
                 AppConsts.PRODUCT_GROUP_ADD_ON
             );
@@ -52,6 +55,15 @@ export class PaymentService {
         );
     }
 
+    getProductInfo(productId: number): Observable<ProductInfo> {
+        return this.tenantSubscriptionProxy.getHostProductInfo(
+            productId
+        ).pipe(
+            publishReplay(),
+            refCount()
+        );
+    }
+
     static getBillingPeriod(paymentPeriodType: PaymentPeriodType): BillingPeriod {
         switch (paymentPeriodType) {
             case PaymentPeriodType.Monthly:
@@ -65,6 +77,40 @@ export class PaymentService {
         }
     }
 
+    static getBillingPeriodByPaymentFrequency(frequency: RecurringPaymentFrequency): BillingPeriod {
+        switch (frequency) {
+            case RecurringPaymentFrequency.Monthly:
+                return BillingPeriod.Monthly;
+            case RecurringPaymentFrequency.Annual:
+                return BillingPeriod.Yearly;
+            case RecurringPaymentFrequency.LifeTime:
+                return BillingPeriod.LifeTime;
+            case RecurringPaymentFrequency.OneTime:
+                return BillingPeriod.OneTime;
+            case RecurringPaymentFrequency.Custom:
+                return BillingPeriod.Custom;
+            default:
+                return undefined;
+        }
+    }
+
+    static getProductMeasurementUnit(frequency: RecurringPaymentFrequency): ProductMeasurementUnit {
+        switch (frequency) {
+            case RecurringPaymentFrequency.Monthly:
+                return ProductMeasurementUnit.Month;
+            case RecurringPaymentFrequency.Annual:
+                return ProductMeasurementUnit.Year;
+            case RecurringPaymentFrequency.LifeTime:
+                return ProductMeasurementUnit.Piece;
+            case RecurringPaymentFrequency.OneTime:
+                return ProductMeasurementUnit.OneTime;
+            case RecurringPaymentFrequency.Custom:
+                return ProductMeasurementUnit.Custom;
+            default:
+                return undefined;
+        }
+    }
+
     static getPaymentPeriodType(billingType: BillingPeriod): PaymentPeriodType {
         switch (billingType) {
             case BillingPeriod.Monthly:
@@ -73,6 +119,8 @@ export class PaymentService {
                 return PaymentPeriodType.Annual;
             case BillingPeriod.LifeTime:
                 return PaymentPeriodType.LifeTime;
+            case BillingPeriod.OneTime:
+                return PaymentPeriodType.OneTime;
             case BillingPeriod.Custom:
                 return PaymentPeriodType.Custom;
             default:
@@ -88,6 +136,8 @@ export class PaymentService {
                 return RecurringPaymentFrequency.Annual;
             case BillingPeriod.LifeTime:
                 return RecurringPaymentFrequency.LifeTime;
+            case BillingPeriod.OneTime:
+                return RecurringPaymentFrequency.OneTime;
             case BillingPeriod.Custom:
                 return RecurringPaymentFrequency.Custom;
             default:

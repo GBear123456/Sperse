@@ -1,25 +1,34 @@
+.my-subscriptions-header {
+    .mat-tab-label {
+        height: 75px;
+        font-size: 25px;
+    }
+}
+
 #paymentWizardComponent {
-    height: 100%;
-    
+    height: 800px;
+
     @media all and (max-width: 768px) {
         height: auto;
         min-height: 100%;
     }
-    
+
     .mat-dialog-content {
         padding: 0;
         margin: 0;
         max-height: initial;
         height: 100%;
         line-height: 100%;
+
         .rejectSubscriptionBlock {
             display: flex;
-            position: relative; 
+            position: relative;
             align-items: center;
             justify-content: center;
             flex-direction: column;
             height: 100%;
             text-align: center;
+
             h2 {
                 font-size: 36px;
                 font-weight: 600;
@@ -27,16 +36,20 @@
                 margin-bottom: 10px;
                 margin-top: 0;
             }
+
             h3 {
                 padding: 10px 130px;
             }
+
             span {
                 bottom: 30px;
-                position: absolute;                
+                position: absolute;
             }
         }
+
         .mat-stepper-horizontal {
             height: 100%;
+
             .mat-horizontal-stepper-header-container {
                 display: none;
             }
@@ -44,6 +57,7 @@
             .mat-horizontal-content-container {
                 padding: 0;
                 height: 100%;
+
                 .mat-horizontal-stepper-content[aria-expanded=true] {
                     height: 100%;
                 }

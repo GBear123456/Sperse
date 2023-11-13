@@ -32,6 +32,9 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
 export class UploadPhotoDialogComponent implements AfterViewInit {
     @ViewChild('cropper') cropper: ImageCropperComponent;
 
+    private readonly TAB_INDEX_BROWSE = 0;
+    private readonly TAB_INDEX_UPLOAD = 1;
+
     croppedWidth: number;
     croppedHeight: number;
     fileUrlFormControl = new FormControl('', [
@@ -42,6 +45,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     private imageData: string;
     private thumbData: string;
     title: string = this.data.title;
+    selectedTabIndex = this.TAB_INDEX_BROWSE;
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -63,7 +67,12 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
                 this.cropper['loadImageFromURL'](image.src);
                 this.clearDisabled = false;
             };
-        }
+         } else if (this.data.fileUrl) {
+            this.selectedTabIndex = this.TAB_INDEX_UPLOAD;
+            this.fileUrlFormControl.setValue(this.data.fileUrl);
+            this.changeDetectorRef.detectChanges();
+            this.loadFile();
+         }
     }
 
     fileSelected($event) {
@@ -112,7 +121,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     onSave() {
         if (this.data.maxSizeBytes && this.imageData) {
             const fileBytes = window.atob(StringHelper.getBase64(this.imageData)).length;
-            if (fileBytes > this.data.maxSizeBytes) {
+            if (fileBytes > (this.data.maxSizeBytes * 6)) { //Image becomes larger after ngx-image-cropper processing. Will be compressed on server side.
                 abp.message.error(
                     this.ls.l(
                         'ResizedProfilePicture_Warn_SizeLimit',

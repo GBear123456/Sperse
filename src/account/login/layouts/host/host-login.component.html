@@ -10,7 +10,7 @@
                     <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
                            class="form-control form-control-solid placeholder-no-fix input-ltr" type="text"
                            autocomplete="off" placeholder="{{getLoginPlaceholder()}}" name="userNameOrEmailAddress"
-                           required tabindex="1"/>
+                           required tabindex="1" />
                     <div class="form-group clearfix">&nbsp;</div>
                 </div>
 
@@ -20,19 +20,20 @@
                            [type]="showPassword ? 'text' : 'password'"
                            autocomplete="off" placeholder="{{ls.l('Password')}}" name="password"
                            required maxlength="32"
-                           tabindex="2"/>
+                           tabindex="2" />
                     <a class="show-password" (click)="showHidePassword($event)"></a>
                     <div class="form-group clearfix">
                         <div class="mt-checkbox-list pull-left">
                             <label class="mt-checkbox mt-checkbox-outline">
                                 <input class="form-control" [(ngModel)]="loginService.authenticateModel.rememberClient"
-                                       type="checkbox" name="rememberMe" value="true"/>{{ls.l("RememberMe")}}
+                                       type="checkbox" name="rememberMe" value="true" />{{ls.l("RememberMe")}}
                                 <span></span>
                             </label>
                         </div>
 
                         <a routerLink="/account/forgot-password" [queryParams]="{'email': loginService.authenticateModel.userNameOrEmailAddress}" id="forget-password"
-                           class="forget-password pull-right">{{ls.l("ForgotPassword")}}
+                           class="forget-password pull-right">
+                            {{ls.l("ForgotPassword")}}
                         </a>
                     </div>
                 </div>
@@ -64,9 +65,13 @@
                     </div>
                 </ng-container>
 
-                <p class="agree-rights">By continuing I agree to
-                    <a (click)="openConditionsDialog(conditions.Terms)">Terms</a> &
-                    <a (click)="openConditionsDialog(conditions.Policies)">Policies</a></p>
+                <p *ngIf="conditionsModalService.hasTermsOrPolicy()" class="agree-rights">
+                    By continuing I agree to
+                    <ng-container *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)">
+                        <a (click)="openConditionsDialog(conditions.Terms)">Terms</a><span *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"> & </span>
+                    </ng-container>
+                    <a *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)" (click)="openConditionsDialog(conditions.Policies)">Policies</a>
+                </p>
             </form>
         </div>
     </div>

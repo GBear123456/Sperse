@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
@@ -8,20 +8,15 @@ import { finalize, first } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
-import { LoginService } from '../../../login/login.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { MatDialog } from '@angular/material/dialog';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import {
     TenantModel,
     SendAutoLoginLinkInput,
-    AccountServiceProxy,
-    TokenAuthServiceProxy,
-    AuthenticateByCodeModel,
-    AuthenticateResultModel
+    AccountServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -38,20 +33,17 @@ export class HostAutoLoginComponent {
         ? this.appSession.tenant.name
         : AppConsts.defaultTenantName;
     isLoggedIn: boolean = false;
-    isExtLogin: boolean = false; 
+    isExtLogin: boolean = false;
     isLinkSent: boolean = false;
     userEmail: string;
 
 
     constructor(
-        injector: Injector,
-        public dialog: MatDialog,
+        public conditionsModalService: ConditionsModalService,
         public ls: AppLocalizationService,
         private activatedRoute: ActivatedRoute,
         private accountProxy: AccountServiceProxy,
-        private appSession: AppSessionService,
-        private authProxy: TokenAuthServiceProxy,
-        private loginService: LoginService
+        private appSession: AppSessionService
     ) {
         this.activatedRoute.queryParams.pipe(first())
             .subscribe((params: Params) => {
@@ -95,6 +87,9 @@ export class HostAutoLoginComponent {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type }});
+        this.conditionsModalService.openModal({
+            panelClass: ['slider', 'footer-slider'],
+            data: { type: type }
+        });
     }
 }

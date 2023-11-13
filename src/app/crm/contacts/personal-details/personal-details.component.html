@@ -4,7 +4,7 @@
             <h3 *ngIf="field.type == 'head'" class="{{field.icon}}">
                 {{ls.l(field.name)}}
             </h3>
-            <div *ngIf="field.type != 'head' && column.length > 2" class="item-edit-label">{{ls.l(startCase(field.name))}}:</div>
+            <div *ngIf="field.type != 'head' && column.length > 2" class="item-edit-label">{{field.displayName || ls.l(startCase(field.name))}}:</div>
             <div *ngIf="!isEditAllowed || (field.confidential && !accessConfidentialData)" class="item-value">
                 {{person[field.name]}}                
             </div>

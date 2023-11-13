@@ -972,8 +972,9 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     showUploadPhoto($event) {
         const data: UploadPhotoData = {
+            title: this.ls.l('AddLogo'),
             source: this.photoOriginalData,
-            title: this.ls.l('AddLogo')
+            maxSizeBytes: AppConsts.maxImageSize
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,

@@ -6,31 +6,64 @@
                   [(value)]="stripePaymentSettings.isEnabled">
     </dx-check-box>
 </div>
-<div class="form-group">
-    <label for="StripeSecretKey">{{l("Secret key")}}</label>
-    <input id="StripeSecretKey" type="text" name="StripeSecretKey" class="form-control" [(ngModel)]="stripePaymentSettings.apiKey">
-</div>
-<p>
-    <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
-</p>
-<div class="form-group">
-    <label for="StripeWebhookSecret">{{l("AccountWebhookSigningSecret")}}</label>
-    <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
-</div>
-<p>
-    <span class="small" [innerHtml]="l('StripeWebhookSecretHint1')"></span><br />
-    <span class="small">URL - <span class="copy-url"><b>{{getStripeWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
-    <span class="small" [innerHtml]="l('StripeWebhookSecretHint2')"></span>
-</p>
-<div class="form-group">
-    <label for="StripeConnectWebhookSecret">{{l("ConnectWebhookSigningSecret")}}</label>
-    <input id="StripeConnectWebhookSecret" type="text" name="StripeConnectWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.connectWebhookSingingSecret">
-</div>
-<p>
-    <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint1')"></span><br />
-    <span class="small">URL - <span class="copy-url"><b>{{getStripeConnectWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
-    <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint2')"></span>
-</p>
+<ng-conainer *ngIf="!isHost">
+    <div class="stripe-button-container">
+        <button class="btn btn-layout stripe-button" (click)="createConnectedAccount()">
+            {{ stripePaymentSettings.isConnectedAccountSetUpCompleted ? l('Connected with') : stripePaymentSettings.connectedAccountId ? l('Finish onboarding with') : l('Connect with') }}
+            <img src="./assets/common/images/stripe.svg" />
+        </button>
+        <!--<ng-container *ngIf="stripePaymentSettings.isConnectedAccountSetUpCompleted">
+            <span class="disconnect" (click)="disconnedConnectedAccount()">{{l("Disconnect")}}</span>
+        </ng-container>-->
+    </div>
+    <hr />
+    <div>
+        <dx-check-box id="ShowAdvancedSettings"
+                      [text]="l('Show advanced settings')"
+                      [(value)]="showAdvancedSettings"
+                      (change)="showAdvancedSettings = !showAdvancedSettings">
+        </dx-check-box>
+        <br />
+    </div>
+</ng-conainer>
+<ng-container *ngIf="showAdvancedSettings">
+    <div class="form-group">
+        <label for="StripeSecretKey">{{l("Secret key")}}</label>
+        <input id="StripeSecretKey" type="text" name="StripeSecretKey" class="form-control" [(ngModel)]="stripePaymentSettings.apiKey">
+    </div>
+    <p>
+        <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
+    </p>
+    <div class="form-group">
+        <label for="StripeWebhookSecret">{{l("AccountWebhookSigningSecret")}}</label>
+        <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
+    </div>
+    <p>
+        <span class="small" [innerHtml]="l('StripeWebhookSecretHint1')"></span><br />
+        <span class="small">URL - <span class="copy-url"><b>{{getStripeWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+        <span class="small" [innerHtml]="l('StripeWebhookSecretHint2')"></span>
+    </p>
+    <ng-container *ngIf="isHost">
+        <div class="form-group">
+            <label for="OAuthClientId">{{l("OAuth Client Id")}}</label>
+            <input id="OAuthClientId" type="text" name="OAuthClientId" class="form-control" [(ngModel)]="stripePaymentSettings.oAuthClientId">
+        </div>
+        <p>
+            <span class="small">{{l('Used to connect stripe account of Tenant. You can find value in Connected account settings ')}}<a href="https://dashboard.stripe.com/settings/connect" target="_blank">here</a></span><br />
+            <span class="small">{{l('Please enable ')}}<b>OAuth for Standard accounts</b>{{l(' and add the following URL to OAuth redirects')}}</span>
+            <span class="small">URL - <span class="copy-url"><b>{{getStripeOAuthConnectRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+        </p>
+    </ng-container>
+    <div class="form-group">
+        <label for="StripeConnectWebhookSecret">{{l("ConnectWebhookSigningSecret")}}</label>
+        <input id="StripeConnectWebhookSecret" type="text" name="StripeConnectWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.connectWebhookSingingSecret">
+    </div>
+    <p>
+        <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint1')"></span><br />
+        <span class="small">URL - <span class="copy-url"><b>{{getStripeConnectWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+        <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint2')"></span>
+    </p>
+</ng-container>
 <button class="btn btn-layout" (click)="save()">
     <i class="icon-la la la-floppy-o"></i>
     {{l('Save')}}

@@ -452,23 +452,34 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         const ext = this.getFileExtensionByFileName(this.currentDocumentInfo.fileName);
         const viewerType = this.getViewerType(ext);
         this.showViewerType = undefined;
-        if (viewerType !== DocumentViewerType.UNKNOWN) {
-            super.startLoading(true);
-            this.initViewerToolbar({
-                viewerType: viewerType,
-                rotateDisabled: ext == 'pdf',
-                editDisabled: !this.currentDocumentInfo.isEditSupportedByWopi,
-                prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
-                nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
-                printHidden: viewerType === DocumentViewerType.IMAGE || viewerType === DocumentViewerType.VIDEO || ext === 'pdf'
-            });
+        if (viewerType !== DocumentViewerType.UNKNOWN) {            
+            if (viewerType != DocumentViewerType.WOPI) {
+                super.startLoading(true);
+                this.initViewerToolbar({
+                    viewerType: viewerType,
+                    rotateDisabled: ext == 'pdf',
+                    editDisabled: !this.currentDocumentInfo.isEditSupportedByWopi,
+                    prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
+                    nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
+                    printHidden: viewerType === DocumentViewerType.IMAGE || viewerType === DocumentViewerType.VIDEO || ext === 'pdf'
+                });
+            }
             switch (viewerType) {
                 case DocumentViewerType.WOPI:
-                    this.getViewWopiRequestInfoObservable().pipe(finalize(() => {
-                        super.finishLoading(true);
-                    })).subscribe((response) => {
-                        this.showOfficeOnline(response);
-                    });
+                    this.message.confirm(
+                        '', this.l('Do you want to download this file?'), isConfirmed => {   
+                            this.openDocumentMode = false;
+                            if (isConfirmed)
+                                this.downloadDocument();
+                        });
+/*                  
+    !!VP Currently Wopi API does not work
+    this.getViewWopiRequestInfoObservable().pipe(finalize(() => {
+        super.finishLoading(true);
+    })).subscribe((response) => {
+        this.showOfficeOnline(response);
+    });
+*/
                     break;
                 case DocumentViewerType.VIDEO:
                     this.documentsService.getDocumentUrlInfoObservable(this.currentDocumentInfo.id).subscribe((urlInfo) => {

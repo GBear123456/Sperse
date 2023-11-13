@@ -6,20 +6,22 @@ import {
 
 /** Third party imports */
 import * as moment from 'moment';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable, combineLatest, forkJoin } from 'rxjs';
 import { finalize, first, filter } from 'rxjs/operators';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { PersonContactServiceProxy, PersonHistoryDto, CountryDto, CountryStateDto } from '@shared/service-proxies/service-proxies';
+import { PersonContactServiceProxy, PersonHistoryDto, CountryDto, CountryStateDto, LanguageDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppConsts } from '../../../../../../shared/AppConsts';
 import {
     CountriesStoreSelectors,
+    LanguagesStoreActions,
+    LanguagesStoreSelectors,
     RootStore,
     StatesStoreActions,
     StatesStoreSelectors
@@ -42,6 +44,7 @@ export class PersonHistoryDialogComponent implements OnInit {
     Object = Object;
     ignoreFields = ['creationTime', 'creatorUserId', 'creatorUserName', 'creatorUserPhotoPublicId', 'source'];
     countries: { [code: string]: { name: string, states: { [code: string]: string } } } = {};
+    languages: LanguageDto[] = [];
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -56,10 +59,12 @@ export class PersonHistoryDialogComponent implements OnInit {
 
     ngOnInit() {
         this.modalDialog.startLoading();
-        this.personProxy.getPersonHistory(this.data.contactId)
+        this.store$.dispatch(new LanguagesStoreActions.LoadRequestAction());
+        forkJoin([this.personProxy.getPersonHistory(this.data.contactId), this.getLanugages()])      
             .pipe(finalize(() => this.modalDialog.finishLoading()))
-            .subscribe((result: PersonHistoryDto[]) => {
+            .subscribe(([result, languages]) => {
                 this.personHistory = result;
+                this.languages = languages;
                 this.getCountryStates(result, () => {
                     this.processHistory(result.slice().reverse());
                     this.changeDetectorRef.detectChanges();
@@ -85,6 +90,14 @@ export class PersonHistoryDialogComponent implements OnInit {
     getCountries(): Observable<CountryDto[]> {
         return this.store$.pipe(
             select(CountriesStoreSelectors.getCountries),
+            filter(x => Boolean(x)),
+            first()
+        );
+    }
+
+    getLanugages(): Observable<LanguageDto[]> {
+        return this.store$.pipe(
+            select(LanguagesStoreSelectors.getLanguages),
             filter(x => Boolean(x)),
             first()
         );
@@ -139,6 +152,9 @@ export class PersonHistoryDialogComponent implements OnInit {
 
         if (propName == 'citizenship') {
             value = this.countries[value] && this.countries[value].name || value;
+        }
+        if (propName == 'preferredLanguage') {
+            value = this.languages.find(v => v.code == value).name;
         }
         if (propName == 'drivingLicenseState' && value) {
             let countryCode = object.citizenship || (object.isUSCitizen ? AppConsts.defaultCountryCode : null);

@@ -13,8 +13,8 @@ import {
 import * as moment from 'moment-timezone';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { Observable } from 'rxjs';
-import { first, finalize } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { first, finalize, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -30,13 +30,15 @@ import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '../localization/app-localization.service';
 import { MessageService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
+import { PaymentsInfoService } from '../payments-info/payments-info.service';
+import { PaymentWizardPaymentsInfoService } from './payments-info/payments-info.service';
 
 @Component({
     selector: 'payment-wizard',
     templateUrl: './payment-wizard.component.html',
     styleUrls: ['./payment-wizard.component.less'],
     encapsulation: ViewEncapsulation.None,
-    providers: [ PaymentService, PackageServiceProxy, ProductServiceProxy ],
+    providers: [PaymentService, PackageServiceProxy, ProductServiceProxy, TenantSubscriptionServiceProxy, { provide: PaymentsInfoService, useClass: PaymentWizardPaymentsInfoService } ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentWizardComponent {
@@ -59,6 +61,7 @@ export class PaymentWizardComponent {
     cancellationDayCount = this.data.subscription && this.data.subscription.endDate ? 
         this.appService.getGracePeriodDayCountBySubscription(this.data.subscription) : 0;
     isSubscriptionManagementAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);
+    isSubscriptionPaymentsAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagementPayments);
     trackingCode: string;
     selectedUpgradeProductId: number;
     productsGroupName: string;
@@ -99,9 +102,16 @@ export class PaymentWizardComponent {
     }
 
     activateSubscription() {
-        this.packagesConfig$.pipe(first()).subscribe((products: ProductInfo[]) => {
-            let product = products.find(item => item.id == this.data.subscription.productId),
-                pricePerMonth = product ? (this.data.subscription.paymentPeriodType === 'Monthly' ?
+        this.packagesConfig$.pipe(
+            first(),
+            switchMap((products: ProductInfo[]) => {
+                let product = products.find(item => item.id == this.data.subscription.productId);
+                if (product)
+                    return of(product);
+                return this.paymentService.getProductInfo(this.data.subscription.productId);
+            })
+        ).subscribe((product: ProductInfo) => {
+            let pricePerMonth = product ? (this.data.subscription.paymentPeriodType === 'Monthly' ?
                     product.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Monthly).fee :
                     Math.round(product.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual).fee / 12)
                 ) : 0;
@@ -139,5 +149,11 @@ export class PaymentWizardComponent {
         this.refreshAfterClose
             ? this.reloadAfterClosed()
             : this.dialogRef.close();
+    }
+
+    showSubscriptions() {
+        this.data.showSubscriptions = true;
+        this.dialogRef.disableClose = false;
+        this.changeDetectorRef.detectChanges();
     }
 }

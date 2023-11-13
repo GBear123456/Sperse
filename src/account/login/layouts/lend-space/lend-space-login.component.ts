@@ -18,12 +18,13 @@ import { environment } from 'environments/environment';
 export class LendSpaceLoginComponent extends HostLoginComponent {
     openConditionsDialog(type: ConditionsType) {
         let isTerms = (type == ConditionsType.Terms);
-        this.dialog.open(ConditionsModalComponent, {
+        this.conditionsModalService.openModal({
             panelClass: ['slider', 'footer-slider'],
             data: {
                 title: isTerms ? 'Terms of Use' : 'Privacy Policy',
                 bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/' + (isTerms ? 'terms' : 'policy') + '.html',
-                downloadDisabled: true
+                downloadDisabled: true,
+                type: type
             }
         });
     }
