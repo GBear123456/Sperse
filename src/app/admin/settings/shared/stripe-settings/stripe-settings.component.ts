@@ -7,7 +7,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    StripeSettings, TenantPaymentSettingsServiceProxy
+    StripeSettingsDto, TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@root/shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -22,7 +22,7 @@ import { SettingsComponentBase } from './../settings-base.component';
 })
 export class StripeSettingsComponent extends SettingsComponentBase {
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
-    stripePaymentSettings: StripeSettings = new StripeSettings();
+    stripePaymentSettings: StripeSettingsDto = new StripeSettingsDto();
 
     showAdvancedSettings = this.isHost;
 
@@ -49,7 +49,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     }
 
     createConnectedAccount() {
-        if (this.stripePaymentSettings.isConnectedAccountSetUpCompleted)
+        if (this.isHost || !this.stripePaymentSettings.isHostAccountEnabled || this.stripePaymentSettings.isConnectedAccountSetUpCompleted)
             return;
 
         this.message.confirm('', this.l('Do you want to connect Stripe account ?'), (isConfirmed) => {

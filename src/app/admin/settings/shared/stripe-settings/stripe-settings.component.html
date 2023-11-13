@@ -8,7 +8,7 @@
 </div>
 <ng-conainer *ngIf="!isHost">
     <div class="stripe-button-container">
-        <button class="btn btn-layout stripe-button" (click)="createConnectedAccount()">
+        <button [disabled]="!stripePaymentSettings.isHostAccountEnabled" class="btn btn-layout stripe-button" (click)="createConnectedAccount()">
             {{ stripePaymentSettings.isConnectedAccountSetUpCompleted ? l('Connected with') : stripePaymentSettings.connectedAccountId ? l('Finish onboarding with') : l('Connect with') }}
             <img src="./assets/common/images/stripe.svg" />
         </button>
