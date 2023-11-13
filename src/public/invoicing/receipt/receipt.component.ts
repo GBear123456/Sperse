@@ -75,6 +75,7 @@ export class ReceiptComponent implements OnInit {
                     case InvoiceStatus.Paid:
                         {
                             this.invoiceInfo = result;
+                            this.invoiceInfo.resources = result.resources.sort((a, b) => Boolean(a.url) > Boolean(b.url) ? 1 : -1);
                             this.setReturnLinkInfo();
                             this.loading = false;
                             abp.ui.clearBusy();
