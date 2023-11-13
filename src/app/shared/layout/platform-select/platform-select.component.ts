@@ -70,7 +70,8 @@ export class PlatformSelectComponent {
         this.appSessionService.tenant.landingPageDomains
             .sort((a, b) => a.includes('vercel.app') > b.includes('vercel.app') ? 1 : -1)
             .map(domain => 'https://' + domain);
-    selectedlandingPage: string = this.landingPageDomains[0];
+    selectedlandingPage = this.landingPageDomains 
+        && this.landingPageDomains[0];
 
     moduleItems: string[];
 
