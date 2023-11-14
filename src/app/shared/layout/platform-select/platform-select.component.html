@@ -61,8 +61,19 @@
                         <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(appMemberPortalUrl)">
                         <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(appMemberPortalUrl)">
                     </div>
+                    <div class="shortcuts_portal_field" *ngIf="isCFOPortalEnabled">
+                        <img class="icon" src="./assets/common/images/platform-select/portal.png"><span>{{cfoPortalUrl}}</span>
+                        <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(cfoPortalUrl)">
+                        <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(cfoPortalUrl)">
+                    </div>
                     <div class="shortcuts_portal_field" *ngIf="landingPageDomains && landingPageDomains.length">
-                        <img class="icon" src="./assets/common/images/platform-select/landing.png"><select [(ngModel)]="selectedlandingPage"><option *ngFor="let domain of landingPageDomains" [value]="domain">{{domain}}</option></select>
+                        <img class="icon" src="./assets/common/images/platform-select/landing.png">
+                        <dx-select-box 
+                            width="540px"
+                            height="49px"
+                            [(value)]="selectedlandingPage" 
+                            [dataSource]="landingPageDomains">
+                        </dx-select-box>
                         <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(selectedlandingPage)">
                         <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(selectedlandingPage)">
                     </div>

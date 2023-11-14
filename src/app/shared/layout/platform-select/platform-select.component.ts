@@ -28,6 +28,7 @@ import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ClipboardService } from 'ngx-clipboard';
+import { environment } from '@root/environments/environment';
 
 interface ModuleConfig extends Module {
     code: string;
@@ -56,6 +57,7 @@ export class PlatformSelectComponent {
     affiliateRefId = this.appSessionService.user &&
         this.appSessionService.user.affiliateCode;
     isProductEnabled = this.permission.isGranted(AppPermissions.CRMProducts);
+    isCFOPortalEnabled = this.permission.isGranted(AppPermissions.CFOMemberAccess);
     accessCodeValidationRules = [
         {
             type: 'pattern',
@@ -69,11 +71,15 @@ export class PlatformSelectComponent {
         }
     ];
 
+    cfoPortalUrl = location.origin + '/app/cfo-portal';
     appMemberPortalUrl = AppConsts.appMemberPortalUrl;
-    landingPageDomains = this.appSessionService.tenant && 
+    enabledPortal = this.feature.isEnabled(AppFeatures.Portal);
+    enabledAdminCustomizations = this.feature.isEnabled(AppFeatures.AdminCustomizations);
+    landingPageDomains = (this.enabledAdminCustomizations && this.appSessionService.tenant && 
         this.appSessionService.tenant.landingPageDomains
             .sort((a, b) => a.includes('vercel.app') > b.includes('vercel.app') ? 1 : -1)
-            .map(domain => 'https://' + domain);
+            .map(domain => 'https://' + domain)
+    ) || (this.enabledPortal && environment.portalUrl && [environment.portalUrl]);
     selectedlandingPage = this.landingPageDomains 
         && this.landingPageDomains[0];
 
