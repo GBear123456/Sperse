@@ -4,6 +4,8 @@ import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
 
 /** Third party imports */
+import { DataSource } from 'devextreme/data/data_source/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -23,6 +25,8 @@ import { Module } from '@shared/common/module.interface';
 import { AppSessionService } from '@root/shared/common/session/app-session.service';
 import { UpdateUserAffiliateCodeDto, MemberSettingsServiceProxy, LayoutType } from '@root/shared/service-proxies/service-proxies';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { ODataService } from '@shared/common/odata/odata.service';
 import { ClipboardService } from 'ngx-clipboard';
 
 interface ModuleConfig extends Module {
@@ -51,7 +55,7 @@ export class PlatformSelectComponent {
     width: string = AppConsts.isMobile ? '100vw' : '760px';
     affiliateRefId = this.appSessionService.user &&
         this.appSessionService.user.affiliateCode;
-
+    isProductEnabled = this.permission.isGranted(AppPermissions.CRMProducts);
     accessCodeValidationRules = [
         {
             type: 'pattern',
@@ -74,8 +78,34 @@ export class PlatformSelectComponent {
         && this.landingPageDomains[0];
 
     moduleItems: string[];
-
+    currency: string = SettingsHelper.getCurrency();
     enabledAffiliate = this.feature.isEnabled(AppFeatures.CRMCommissions);
+    productLinks: string[] = [];
+    productUrl: string;
+    searchProduct: string;
+
+    productDataSource = new DataSource({ 
+        store: new ODataStore({
+            key: 'Id',
+            deserializeDates: false,
+            url: this.oDataService.getODataUrl('Product'),
+            version: AppConsts.ODataVersion,
+            beforeSend: (request) => {
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.params.$filter = '(IsPublished eq true) and (PublishDate le ' + (new Date()).toISOString() + ')' +
+                    (this.searchProduct ? " and startswith(Name,'" + this.searchProduct + "')" : '');
+                request.params.$select = 'Id,ThumbnailUrl,PublicName,Price,Name';
+                request.params.$top = 100;
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+            },
+            onLoaded: (data) => {
+                this.productLinks = data.map(product => this.getProductPublicLink(product.PublicName));
+            },
+            errorHandler: (error) => {
+                this.productLinks = [];
+            }
+        })
+    });
 
     constructor(
         public appService: AppService,
@@ -86,6 +116,7 @@ export class PlatformSelectComponent {
         private permission: PermissionCheckerService,
         private router: Router,
         private titleService: TitleService,
+        private oDataService: ODataService,
         private appSessionService: AppSessionService,
         private memberSettingsProxy: MemberSettingsServiceProxy,
         public clipboardService: ClipboardService,
@@ -150,6 +181,10 @@ export class PlatformSelectComponent {
             this.cssClass = this.module.toLowerCase();
             this.titleService.setTitle(config.name);
         });
+    }
+
+    onProductListInit(event) {
+        this.productDataSource.load();
     }
 
     onItemClick(module) {
@@ -229,12 +264,15 @@ export class PlatformSelectComponent {
     }
 
     copyToClipboard(value: string) {
-        this.clipboardService.copyFromContent(value);
-        abp.notify.info(this.ls.l('SavedToClipboard'));
+        if (value) {
+            this.clipboardService.copyFromContent(value);
+            abp.notify.info(this.ls.l('SavedToClipboard'));
+        }
     }
 
     openLink(link: string) {
-        window.open(link);
+        if (link)
+            window.open(link);
     }
 
     affiliateCodeChanged(affiliateCode: string) {
@@ -243,5 +281,19 @@ export class PlatformSelectComponent {
         ).subscribe(() => {
             this.affiliateRefId = affiliateCode;
         });
+    }
+
+    getProductPublicLink(publicName: string) {
+        if (publicName)
+            return location.origin + '/p/' + (abp.session.tenantId || 0) + '/' + publicName;
+    }
+
+    selectProduct(dialog, publicName) {
+        this.productUrl = this.getProductPublicLink(publicName);
+        dialog.instance.close();
+    }
+
+    onProductSearch() {
+        this.productDataSource.load();
     }
 }

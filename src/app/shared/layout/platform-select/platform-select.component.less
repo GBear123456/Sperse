@@ -235,6 +235,87 @@
     }
 }
 
+::ng-deep .product-select-wrapper {
+    padding: 20px;
+
+    ::ng-deep .dx-textbox {
+        input {
+            border: 0;
+            background: rgba(247, 247, 252, 1);
+            border-radius: 10px;
+        }
+        input, .dx-placeholder {
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 21px;
+            letter-spacing: -0.02em;
+            text-align: left;
+            color: rgba(17, 51, 120, 1);
+        }
+        &.dx-state-focused .dx-placeholder {
+            top: -30px;
+        }
+    }
+    p {
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 21px;
+        letter-spacing: -0.02em;
+        text-align: left;
+        color: rgba(6, 15, 68, 1);
+        margin: 25px 0 15px 0;
+        span {
+            border-radius: 5px;
+            display: inline-block;
+            background: rgba(237, 237, 250, 1);
+            padding: 0 7px;
+        }
+        img {
+            float: right;
+            cursor: pointer;
+        }
+    }
+    .scroll-wrapper {
+        max-height: 215px;
+        height: inherit;        
+    }
+    .product-list {
+        margin-right: 10px;
+        & > div {
+            height: 56px;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 21px;
+            letter-spacing: -0.02em;
+            color: rgba(17, 51, 120, 1);
+            .name {
+                display: inline-block;
+                vertical-align: middle;
+                cursor: pointer;
+            }
+            img.thumb {
+                width: 44px;
+                margin-right: 6px;
+            }
+            img.copy, img.open {
+                float: right;
+                top: 8px;
+                position: relative;
+                cursor: pointer;
+                margin: 3px;
+            }
+            .price {
+                font-size: 13px;
+                font-weight: 500;
+                line-height: 13px;
+                letter-spacing: -0.02em;
+                text-align: left;
+                color: rgba(128, 131, 150, 1);
+            }
+        }
+    }
+}
+
 ::ng-deep .platform-select-wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -279,6 +360,29 @@
         border-radius: 10px;
         padding-bottom: 23px;
 
+        ::ng-deep dx-drop-down-box {
+            display: inline-block;
+            input {
+                border: 0;
+                font-size: 15px;
+                font-weight: 500;
+                letter-spacing: -0.02em;
+                color: rgba(128, 131, 150, 1);
+            }
+            .dx-placeholder {
+                font-size: 15px;
+                font-weight: 500;
+                letter-spacing: -0.02em;
+                color: rgba(128, 131, 150, 1);
+            }
+            .dx-dropdowneditor-icon {
+                background: transparent!important;
+                &::before {
+                    content: url("data:image/svg+xml;utf8,<svg fill='rgba(128, 131, 150, 1)' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+                }
+            }
+        }
+
         .shortcuts_portal_field {
             height: 49px;
             background: #fff;
@@ -288,12 +392,22 @@
 
             select {
                 width: 80%;
+                height: 40px;
                 outline: none;
+                cursor: pointer;
                 border: none;
                 font-size: 15px;
                 font-weight: 500;
                 letter-spacing: -0.02em;
                 color: rgba(128, 131, 150, 1);
+
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                background: transparent;
+                background-repeat: no-repeat;
+                background-position-x: 100%;
+                background-position-y: 8px;
+                background-image: url("data:image/svg+xml;utf8,<svg fill='rgba(128, 131, 150, 1)' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
             }
             img {
                 &.icon {

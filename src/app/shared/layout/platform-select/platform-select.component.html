@@ -45,7 +45,7 @@
                         </li>
                     </ul>
                 </div>
-                <div class="shortcuts" *ngIf="appMemberPortalUrl || (landingPageDomains && landingPageDomains.length)">
+                <div class="shortcuts" *ngIf="appMemberPortalUrl || (landingPageDomains && landingPageDomains.length) || isProductEnabled">
                     <div class="shortcuts_head">
                         <h3>{{ls.l('My Link Shortcuts')}}</h3><p class="shortcuts_ref" *ngIf="enabledAffiliate">{{ls.l('Include Affiliate ID in links')}}: 
                             <inplace-edit [value]="affiliateRefId"
@@ -65,6 +65,40 @@
                         <img class="icon" src="./assets/common/images/platform-select/landing.png"><select [(ngModel)]="selectedlandingPage"><option *ngFor="let domain of landingPageDomains" [value]="domain">{{domain}}</option></select>
                         <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(selectedlandingPage)">
                         <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(selectedlandingPage)">
+                    </div>
+                    <div class="shortcuts_portal_field" *ngIf="isProductEnabled">
+                        <img class="icon" src="./assets/common/images/platform-select/product.png">
+                        <dx-drop-down-box #productList
+                            width="540px"
+                            height="49px"
+                            [placeholder]="ls.l('See Product Links')"
+                            [value]="productUrl"
+                            [items]="productLinks"
+                            (onInitialized)="onProductListInit($event)">
+                            <div *dxTemplate="let data of 'content'" class="product-select-wrapper">
+                                <dx-text-box 
+                                    width="100%"
+                                    [(value)]="searchProduct"                                    
+                                    placeholder="Search"
+                                    (onValueChanged)="onProductSearch()">
+                                </dx-text-box>
+                                <p>All <span>{{productLinks.length}}</span> <img src="assets/common/icons/settings.png"></p>          
+                                <hr>
+                                <div class="scroll-wrapper">
+                                    <dx-scroll-view showScrollbar="onHover">
+                                        <div class="product-list">
+                                            <div *ngFor="let product of productDataSource.items()">
+                                                <img class="thumb" [src]="product.ThumbnailUrl || 'assets/common/images/no-image.svg'"><div (click)="selectProduct(productList, product.PublicName)" class="name">{{product.Name}}<div class="price">{{ product.Price || 0 | currency:currency:'symbol':'1.2-2' }}</div></div>
+                                                <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(getProductPublicLink(product.PublicName))">
+                                                <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(getProductPublicLink(product.PublicName))">
+                                            </div>
+                                        </div>
+                                    </dx-scroll-view>
+                                </div>
+                            </div>
+                        </dx-drop-down-box>                                            
+                        <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(productUrl)">
+                        <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(productUrl)">
                     </div>
                 </div>
                 <!-- footer *ngIf="modules.footerItems.length">
