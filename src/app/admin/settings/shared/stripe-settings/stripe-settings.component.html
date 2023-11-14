@@ -34,7 +34,14 @@
     <p>
         <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
     </p>
+    <p>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</p>
     <div class="form-group">
+        <button [disabled]="stripePaymentSettings.webhookSingingSecret" [title]="stripePaymentSettings.webhookSingingSecret" class="btn btn-layout webhook-button" (click)="createWebhook(false)">
+            {{ stripePaymentSettings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
+        </button>
+        <img *ngIf="stripePaymentSettings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
+    </div>
+    <!--<div class="form-group">
         <label for="StripeWebhookSecret">{{l("AccountWebhookSigningSecret")}}</label>
         <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
     </div>
@@ -42,7 +49,7 @@
         <span class="small" [innerHtml]="l('StripeWebhookSecretHint1')"></span><br />
         <span class="small">URL - <span class="copy-url"><b>{{getStripeWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
         <span class="small" [innerHtml]="l('StripeWebhookSecretHint2')"></span>
-    </p>
+    </p>-->
     <ng-container *ngIf="isHost">
         <div class="form-group">
             <label for="OAuthClientId">{{l("OAuth Client Id")}}</label>
@@ -54,15 +61,22 @@
             <span class="small">URL - <span class="copy-url"><b>{{getStripeOAuthConnectRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
         </p>
     </ng-container>
+    <p>Use button below to create <b>Connect</b> webhook and recieve Connect events from Stripe</p>
     <div class="form-group">
-        <label for="StripeConnectWebhookSecret">{{l("ConnectWebhookSigningSecret")}}</label>
+        <button [disabled]="stripePaymentSettings.connectWebhookSingingSecret" [title]="stripePaymentSettings.connectWebhookSingingSecret" class="btn btn-layout webhook-button" (click)="createWebhook(true)">
+            {{ stripePaymentSettings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
+        </button>
+        <img *ngIf="stripePaymentSettings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
+    </div>
+    <!--<div class="form-group">
+        <label for="StripeConnectWebhookSecret">{{l("ConnectWebhookSigningSecret")}}</label><span (click)="createWebhook(true)" class="create-webhook">(Create webhook on Stripe)</span>
         <input id="StripeConnectWebhookSecret" type="text" name="StripeConnectWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.connectWebhookSingingSecret">
     </div>
     <p>
         <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint1')"></span><br />
         <span class="small">URL - <span class="copy-url"><b>{{getStripeConnectWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
         <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint2')"></span>
-    </p>
+    </p>-->
 </ng-container>
 <button class="btn btn-layout" (click)="save()">
     <i class="icon-la la la-floppy-o"></i>

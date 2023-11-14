@@ -34,6 +34,10 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     }
 
     ngOnInit(): void {
+        this.loadSettings();
+    }
+
+    loadSettings() {
         this.startLoading();
         if (this.isPaymentsEnabled) {
             this.tenantPaymentSettingsService.getStripeSettings()
@@ -69,6 +73,18 @@ export class StripeSettingsComponent extends SettingsComponentBase {
 
     disconnedConnectedAccount() {
         alert('disconnectConnectedAccount');
+    }
+
+    createWebhook(isConnected) {
+        this.startLoading();
+        this.tenantPaymentSettingsService.createStripeWebhook(isConnected)
+            .pipe(
+                finalize(() => this.finishLoading())
+            )
+            .subscribe(() => {
+                this.notify.info(this.l('SuccessfullyGenerated'));
+                this.loadSettings();
+            })
     }
 
     getSaveObs(): Observable<any> {
