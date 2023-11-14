@@ -13,7 +13,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, ReplaySubject, of } from 'rxjs';
-import { finalize, first, map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { finalize, first, map, startWith, switchMap, take, tap, catchError } from 'rxjs/operators';
 
 /** Application imports */
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -224,7 +224,7 @@ export class GlobalSearchComponent implements OnInit {
     private getInvoicesGroup(search: string): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Invoice'),
-            this.ls.l('Invoice'),
+            this.ls.l('Invoices'),
             'app/crm/invoices',
             search,
             AppPermissions.CRMOrdersInvoices,
@@ -277,6 +277,7 @@ export class GlobalSearchComponent implements OnInit {
                     }))
                 : of(null)
         ).pipe(
+            catchError(() => of({ value: [] })),
             startWith({ value: [] }),
             map((entities: any) => {
                 return {
