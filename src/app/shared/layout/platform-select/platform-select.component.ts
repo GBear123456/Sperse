@@ -57,7 +57,13 @@ export class PlatformSelectComponent {
     affiliateRefId = this.appSessionService.user &&
         this.appSessionService.user.affiliateCode;
     isProductEnabled = this.permission.isGranted(AppPermissions.CRMProducts);
-    isCFOPortalEnabled = this.permission.isGranted(AppPermissions.CFOMemberAccess);
+    get isCFOPortalEnabled() {
+        return !this.appService.isHostTenant
+            && this.appService.isModuleActive('CFO')
+            && this.feature.isEnabled(AppFeatures.CFOPartner)
+            && this.permission.isGranted(AppPermissions.CFOMemberAccess);
+    }
+
     accessCodeValidationRules = [
         {
             type: 'pattern',
