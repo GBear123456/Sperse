@@ -78,14 +78,16 @@ export class PlatformSelectComponent {
     ];
 
     cfoPortalUrl = location.origin + '/app/cfo-portal';
-    appMemberPortalUrl = AppConsts.appMemberPortalUrl;
     enabledPortal = this.feature.isEnabled(AppFeatures.Portal);
     enabledAdminCustomizations = this.feature.isEnabled(AppFeatures.AdminCustomizations);
-    landingPageDomains = (this.enabledAdminCustomizations && this.appSessionService.tenant && 
+    appMemberPortalUrl = this.formatUrl(
+        (this.enabledAdminCustomizations && AppConsts.appMemberPortalUrl) 
+        || (this.enabledPortal && environment.portalUrl)
+    );
+    landingPageDomains = this.appSessionService.tenant && 
         this.appSessionService.tenant.landingPageDomains
             .sort((a, b) => a.includes('vercel.app') > b.includes('vercel.app') ? 1 : -1)
-            .map(domain => 'https://' + domain)
-    ) || (this.enabledPortal && environment.portalUrl && [environment.portalUrl]);
+            .map(domain => 'https://' + domain) || ['https://some.domain.com'];
     selectedlandingPage = this.landingPageDomains 
         && this.landingPageDomains[0];
 
@@ -193,6 +195,10 @@ export class PlatformSelectComponent {
             this.cssClass = this.module.toLowerCase();
             this.titleService.setTitle(config.name);
         });
+    }
+
+    formatUrl(url: string) {
+        return (url && url[url.length - 1] == '/' ? url.slice(0, -1) : url);        
     }
 
     onProductListInit(event) {

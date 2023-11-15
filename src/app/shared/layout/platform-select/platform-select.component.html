@@ -71,6 +71,7 @@
                         <dx-select-box 
                             width="540px"
                             height="49px"
+                            [readOnly]="landingPageDomains.length == 1"
                             [(value)]="selectedlandingPage" 
                             [dataSource]="landingPageDomains">
                         </dx-select-box>
