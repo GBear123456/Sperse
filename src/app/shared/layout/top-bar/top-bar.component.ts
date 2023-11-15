@@ -69,6 +69,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
             if (currModuleName && currModuleName != appService.getModule())
                 appService.initModule();
             setTimeout(() => {
+                this.selectedIndex = undefined;
                 let route = event.urlAfterRedirects.split('?').shift();
                 this.menu.items.forEach((item: PanelMenuItem, i: number) => {
                     if (route === item.route || _.contains(item.alterRoutes, route))
