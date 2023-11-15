@@ -87,7 +87,7 @@ export class PlatformSelectComponent {
     landingPageDomains = this.appSessionService.tenant && 
         this.appSessionService.tenant.landingPageDomains
             .sort((a, b) => a.includes('vercel.app') > b.includes('vercel.app') ? 1 : -1)
-            .map(domain => 'https://' + domain) || ['https://some.domain.com'];
+            .map(domain => 'https://' + domain);
     selectedlandingPage = this.landingPageDomains 
         && this.landingPageDomains[0];
 
@@ -107,13 +107,15 @@ export class PlatformSelectComponent {
             beforeSend: (request) => {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$filter = '(IsPublished eq true) and (PublishDate le ' + (new Date()).toISOString() + ')' +
-                    (this.searchProduct ? " and startswith(Name,'" + this.searchProduct + "')" : '');
-                request.params.$select = 'Id,ThumbnailUrl,PublicName,Price,Name';
+                    ' and (PublicName ne null)' + (this.searchProduct ? " and startswith(Name,'" + this.searchProduct + "')" : '');
+                request.params.$select = 'Id,ThumbnailUrl,PublicName,Price,Name,Type';
                 request.params.$top = 100;
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             },
             onLoaded: (data) => {
                 this.productLinks = data.map(product => this.getProductPublicLink(product.PublicName));
+                if (!this.productUrl)
+                    this.productUrl = this.productLinks[0];
             },
             errorHandler: (error) => {
                 this.productLinks = [];
@@ -201,10 +203,6 @@ export class PlatformSelectComponent {
         return (url && url[url.length - 1] == '/' ? url.slice(0, -1) : url);        
     }
 
-    onProductListInit(event) {
-        this.productDataSource.load();
-    }
-
     onItemClick(module) {
         if ((this.module !== module.name || this.uri !== module.uri || module.footerItem) &&
             (this.appService.isModuleActive(module.name) || module.name === 'BankCode' || module.name === 'Slice')
@@ -278,7 +276,12 @@ export class PlatformSelectComponent {
                     of: this.document.querySelector('app-header')
                 }
             });
-        }
+        }        
+    }
+
+    onDropDownOpen() {
+        if (!this.productLinks || !this.productLinks.length)
+            this.productDataSource.load();
     }
 
     copyToClipboard(value: string) {

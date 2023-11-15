@@ -289,6 +289,10 @@
             letter-spacing: -0.02em;
             color: rgba(17, 51, 120, 1);
             .name {
+                max-width: 280px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 display: inline-block;
                 vertical-align: middle;
                 cursor: pointer;
@@ -304,13 +308,17 @@
                 cursor: pointer;
                 margin: 3px;
             }
-            .price {
+            .type {
                 font-size: 13px;
                 font-weight: 500;
                 line-height: 13px;
                 letter-spacing: -0.02em;
                 text-align: left;
                 color: rgba(128, 131, 150, 1);
+            }
+            .price {
+                float: right;
+                margin: 15px;
             }
         }
     }

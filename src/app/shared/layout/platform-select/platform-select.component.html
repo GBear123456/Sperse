@@ -3,7 +3,8 @@
         [width]="width"
         [value]="displayName"
         [items]="moduleItems"
-        (onInitialized)="onDropDownInit($event)">
+        (onInitialized)="onDropDownInit($event)"
+        (onOpened)="onDropDownOpen()">
         <div *dxTemplate="let data of 'content'" class="platform-select-wrapper">
             <dx-scroll-view showScrollbar="onHover">
                 <div class="top-row">
@@ -78,15 +79,14 @@
                         <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(selectedlandingPage)">
                         <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(selectedlandingPage)">
                     </div>
-                    <div class="shortcuts_portal_field" *ngIf="isProductEnabled">
+                    <div class="shortcuts_portal_field" *ngIf="isProductEnabled && productLinks && productLinks.length">
                         <img class="icon" src="./assets/common/images/platform-select/product.png">
                         <dx-drop-down-box #productList
                             width="540px"
                             height="49px"
                             [placeholder]="ls.l('See Product Links')"
                             [value]="productUrl"
-                            [items]="productLinks"
-                            (onInitialized)="onProductListInit($event)">
+                            [items]="productLinks">
                             <div *dxTemplate="let data of 'content'" class="product-select-wrapper">
                                 <dx-text-box 
                                     width="100%"
@@ -94,15 +94,16 @@
                                     placeholder="Search"
                                     (onValueChanged)="onProductSearch()">
                                 </dx-text-box>
-                                <p>All <span>{{productLinks.length}}</span> <img src="assets/common/icons/settings.png"></p>          
+                                <p>All <span>{{productLinks.length}}</span> <!-- img src="assets/common/icons/settings.png" --></p>          
                                 <hr>
                                 <div class="scroll-wrapper">
                                     <dx-scroll-view showScrollbar="onHover">
                                         <div class="product-list">
                                             <div *ngFor="let product of productDataSource.items()">
-                                                <img class="thumb" [src]="product.ThumbnailUrl || 'assets/common/images/no-image.svg'"><div (click)="selectProduct(productList, product.PublicName)" class="name">{{product.Name}}<div class="price">{{ product.Price || 0 | currency:currency:'symbol':'1.2-2' }}</div></div>
+                                                <img class="thumb" [src]="product.ThumbnailUrl || 'assets/common/images/no-image.svg'"><div (click)="selectProduct(productList, product.PublicName)" class="name" [title]="product.Name">{{product.Name}}<div class="type">{{product.Type}}</div></div>
                                                 <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(getProductPublicLink(product.PublicName))">
                                                 <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(getProductPublicLink(product.PublicName))">
+                                                <div class="price">{{ product.Price | currency:currency:'symbol':'1.2-2' }}</div>
                                             </div>
                                         </div>
                                     </dx-scroll-view>
