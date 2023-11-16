@@ -316,8 +316,9 @@ export class GlobalSearchComponent implements OnInit {
         };
     }
 
-    onFocusIn() {
-        this.layoutService.showPlatformSelectMenu = false;
+    onFocusIn(event) {
+        if (event.element.getBoundingClientRect().width < 348)
+            this.layoutService.showPlatformSelectMenu = false;
         if (this.itemsFound) {
             setTimeout(() => {
                 this.isTooltipVisible = true;

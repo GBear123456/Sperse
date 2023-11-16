@@ -3,7 +3,7 @@
                  width="100%"
                  height="51px"
                  [placeholder]="ls.l('GlobalSearch')"
-                 (onFocusIn)="onFocusIn()"
+                 (onFocusIn)="onFocusIn($event)"
                  (onFocusOut)="onFocusOut()"
                  (onEnterKey)="search($event)"
                  (onValueChanged)="valueChanged($event)"
