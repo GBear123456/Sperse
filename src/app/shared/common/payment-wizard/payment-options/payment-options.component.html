@@ -83,7 +83,7 @@
                          [productId]="plan.productId"
                          [paymentPeriodType]="plan.paymentPeriodType"
                          [quantity]="quantity"
-                         [clientId] ="payPalClientId"
+                         [clientId]="payPalClientId"
                          (onSubmit)="submitData($event, paymentMethods.PayPal)">
                 </pay-pal>
             </mat-tab>
@@ -107,12 +107,9 @@
             <!--</div>-->
             <!--</mat-tab>-->
         </mat-tab-group>
-        <!-- <div *ngIf="!plan.total" class="downgradeToFreeBlock">
-            <h2>{{ l('DowngradeToFreeLimitedVersionText') }}</h2>
-            <payment-options-footer
-                (onSubmit)="submitData($event)"
-                [submitButtonText]="l('FreeTrialConfirm')">
-            </payment-options-footer>
-        </div> -->
+        <div *ngIf="!plan.total" class="freeBlock">
+            <h2>Are you sure you want to subscribe to {{plan.productName}}?</h2>
+            <button class="btn btn-layout" (click)="subscribeToFree()">Confirm</button>
+        </div>
     </div>
 </div>

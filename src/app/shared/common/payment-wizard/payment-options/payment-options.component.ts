@@ -40,7 +40,7 @@ import { AppService } from '@app/app.service';
     templateUrl: './payment-options.component.html',
     styleUrls: ['./payment-options.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ TenantSubscriptionServiceProxy ]
+    providers: [TenantSubscriptionServiceProxy]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
     @Input() plan: PaymentOptions;
@@ -224,15 +224,15 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             ? this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo)
             : paymentMethod === PaymentMethods.BankTransfer
                 ? this.tenantSubscriptionServiceProxy.requestPayment(
-                      new RequestPaymentDto({
-                          subscriptionInfo: ModuleSubscriptionInfo.fromJS({
-                              editionId: paymentInfo.subscriptionInfo.editionId,
-                              maxUserCount: paymentInfo.subscriptionInfo.maxUserCount,
-                              frequency: paymentInfo.subscriptionInfo.frequency
-                          }),
-                          requestType: RequestPaymentType.ManualBankTransfer
-                      })
-                  )
+                    new RequestPaymentDto({
+                        subscriptionInfo: ModuleSubscriptionInfo.fromJS({
+                            editionId: paymentInfo.subscriptionInfo.editionId,
+                            maxUserCount: paymentInfo.subscriptionInfo.maxUserCount,
+                            frequency: paymentInfo.subscriptionInfo.frequency
+                        }),
+                        requestType: RequestPaymentType.ManualBankTransfer
+                    })
+                )
                 : this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
 
         method.pipe(finalize(() => { this.appHttpConfiguration.avoidErrorHandling = false; }))
@@ -292,6 +292,24 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         }, () => {
             this.isPayByStripeDisabled = false;
             this.loadingService.finishLoading();
+        });
+    }
+
+    subscribeToFree() {
+        this.onStatusChange.emit({ status: PaymentStatusEnum.BeingConfirmed });
+        this.onChangeStep.emit(2);
+        this.tenantSubscriptionServiceProxy.requestFreeProduct(new RequestPaymentInput({
+            productId: this.plan.productId,
+            paymentPeriodType: this.plan.paymentPeriodType,
+            quantity: 1
+        })).subscribe(() => {
+            this.refreshAfterClose.emit();
+            this.onStatusChange.emit({
+                status: PaymentStatusEnum.Confirmed,
+                statusText: this.l('PaymentStatus_payment-free-confirmed'),
+                icon: PaymentStatusEnum.Confirmed,
+                showBack: false
+            });
         });
     }
 }

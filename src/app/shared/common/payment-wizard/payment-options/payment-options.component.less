@@ -1,6 +1,7 @@
 :host {
     display: flex;
     height: 100%;
+
     .left {
         padding: 35px 18px 31px 33px;
         flex-basis: 32%; //234px
@@ -9,12 +10,15 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+
         .stepsList ul {
             padding-left: 0;
             margin-bottom: 0;
+
             li {
                 display: flex;
                 align-items: center;
+
                 .label {
                     width: 25px;
                     height: 25px;
@@ -26,17 +30,20 @@
                     justify-content: center;
                     align-items: center;
                     margin-right: 9px;
+
                     span {
                         font-size: 12px;
                         font-weight: 600;
                         text-align: center;
                         color: #00aeef;
                     }
+
                     &.completed {
                         background: url('../../../../../assets/common/icons/payment-completed-step.svg') no-repeat;
                         background-size: 100%;
                         border: none;
                         opacity: 1;
+
                         span {
                             display: none;
                         }
@@ -47,6 +54,7 @@
                     font-size: 14px;
                     font-weight: 500;
                     color: #424c56;
+
                     button {
                         font-size: 10px;
                         font-weight: 500;
@@ -57,6 +65,7 @@
                         margin-top: 8px;
                         cursor: pointer;
                     }
+
                     p {
                         opacity: 0.4;
                         margin-bottom: 0;
@@ -75,6 +84,7 @@
 
         .securedInfo {
             text-align: center;
+
             p {
                 font-size: 10px;
                 font-weight: 500;
@@ -82,16 +92,19 @@
                 padding: 0 30px;
             }
         }
+
         .orderSummary {
             .orderSummaryTitle {
                 display: flex;
                 position: relative;
                 margin-bottom: 20px;
+
                 h3 {
                     letter-spacing: 0.6px;
                     color: #888d92;
                     font-size: 12px;
                 }
+
                 hr {
                     margin-bottom: 1rem;
                     border: 0;
@@ -102,17 +115,20 @@
                     flex-basis: 64px;
                 }
             }
+
             .planName {
                 font-size: 18px;
                 font-weight: 700;
                 letter-spacing: -0.3px;
                 color: #424c56;
             }
+
             .planPrice {
                 color: #424c56;
                 display: flex;
                 margin-bottom: 20px;
                 align-items: flex-end;
+
                 & > div {
                     display: flex;
                     align-items: flex-start;
@@ -120,16 +136,19 @@
                     vertical-align: top;
                     font-weight: 700;
                     letter-spacing: -0.4px;
+
                     .currency {
                         font-size: 16px;
                         font-weight: 700;
                         letter-spacing: -0.2px;
                         margin-right: 4.5px;
                     }
+
                     .numberPrice {
                         font-size: 26px;
                         line-height: 0.8;
                     }
+
                     .decimalsPrice {
                         font-size: 16px;
                     }
@@ -141,49 +160,59 @@
                     font-weight: 500;
                 }
             }
+
             .usersAmountAndBilledInfo {
                 font-size: 10px;
                 letter-spacing: -0.2px;
                 color: #424c56;
                 font-weight: 600;
             }
+
             .calculations {
                 border-top: solid 1px #dee3e5;
                 padding: 5px 0;
                 margin: 10px 0 0;
+
                 div {
                     display: flex;
                     justify-content: space-between;
                     line-height: 1.9em;
                     font-weight: 600;
+
                     span:first-child {
                         font-size: 10px;
                         letter-spacing: 0.5px;
                         color: #888d92;
                     }
+
                     span:last-child {
                         font-size: 12px;
                         letter-spacing: 0.4px;
                         text-align: right;
                         color: #424c56;
+
                         &.subtotalPrice {
                             text-decoration: line-through;
                         }
                     }
                 }
             }
+
             .total {
                 display: flex;
                 border-top: 1px solid #dee3e5;
                 padding-top: 10px;
                 justify-content: space-between;
+
                 span {
                     font-size: 14px;
                     font-weight: 700;
                     color: #424c56;
+
                     &:first-child {
                         letter-spacing: 0.6px;
                     }
+
                     &:last-child {
                         letter-spacing: 0.4px;
                         text-align: right;
@@ -192,17 +221,20 @@
             }
         }
     }
+
     .right {
         padding: 38px 52px 33px 40px;
         flex-basis: 76%; //744px
         display: flex;
         flex-direction: column;
+
         .header {
             display: flex;
             position: relative;
             padding-right: 36px;
             justify-content: space-between;
             margin-bottom: 23px;
+
             h2 {
                 font-size: 22px;
                 font-weight: 600;
@@ -210,6 +242,7 @@
                 line-height: 32px;
                 margin-bottom: 0;
             }
+
             .phoneBlock {
                 display: flex;
                 align-items: flex-start;
@@ -218,19 +251,23 @@
                 letter-spacing: 0.4px;
                 text-align: right;
                 color: #424c56;
+
                 img {
                     margin-right: 8.1px;
                 }
+
                 p {
                     margin-bottom: 0;
                     line-height: 1em;
                 }
+
                 .phoneNumber {
                     font-size: 14px;
                     margin-top: 4px;
                     font-weight: 600;
                 }
             }
+
             button {
                 border: none;
                 position: absolute;
@@ -243,14 +280,17 @@
                 background-size: cover;
             }
         }
+
         .paymentMethods {
             height: 90%;
 
             ::ng-deep .mat-tab-header {
                 margin-bottom: 25px;
                 border: none;
+
                 .mat-tab-labels {
                     justify-content: space-evenly;
+
                     .mat-tab-label {
                         flex-basis: 24%;
                         font-size: 16px;
@@ -262,6 +302,7 @@
                         min-width: 0;
                         height: 50px;
                         opacity: 1;
+
                         &.mat-tab-label-active {
                             color: #ffffff;
                             background-color: #00aeef;
@@ -273,6 +314,7 @@
                         }
                     }
                 }
+
                 mat-ink-bar {
                     display: none;
                 }
@@ -288,22 +330,31 @@
                 height: 100%;
             }
         }
-        .downgradeToFreeBlock {
+
+        .freeBlock {
             height: 100%;
             display: flex;
             position: relative;
             padding-bottom: 63px;
             align-items: center;
+            flex-direction: column;
+            justify-content: center;
+
             h2 {
                 text-align: center;
             }
+
+            button {
+                min-width: 200px;
+                margin-top: 20px;
+            }
+
             payment-options-footer {
                 position: absolute;
                 bottom: 0;
             }
         }
     }
-
     // global styles
     ::ng-deep .info-icon {
         min-width: 19px;
@@ -343,11 +394,11 @@
             font-weight: 600;
             background-color: #00aeef;
             cursor: pointer;
-    
+
             &:hover {
                 background-color: #0082b1;
             }
-            
+
             &:disabled {
                 pointer-events: none;
                 opacity: 0.5;
