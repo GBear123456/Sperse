@@ -41,32 +41,17 @@ export class CrmConfig implements ConfigInterface {
                 text: 'Orders',
                 permission: AppPermissions.CRMOrders,
                 route: '/app/crm/orders',
-                params: {contactGroup: ContactGroup.Client, orderType: 1},
-                items: Object.keys(ContactGroup).concat(['All']).map(contactGroup => ({
-                    text: contactGroup,
-                    localization: 'ContactGroup_',
-                    route: '/app/crm/orders',
-                    permission: AppPermissions['CRM' + contactGroup + 's'],
-                    params: {contactGroup: ContactGroup[contactGroup] || '', orderType: 1}
-                }))
+                params: {contactGroup: '', orderType: 1}
             }, {
                 text: 'Subscriptions',
                 permission: AppPermissions.CRMOrders,
                 route: '/app/crm/orders',
-                params: {contactGroup: ContactGroup.Client, orderType: 2},
-                items: Object.keys(ContactGroup).concat(['All']).map(contactGroup => ({
-                    text: contactGroup,
-                    localization: 'ContactGroup_',
-                    route: '/app/crm/orders',
-                    permission: AppPermissions['CRM' + contactGroup + 's'],
-                    params: {contactGroup: ContactGroup[contactGroup] || '', orderType: 2}
-                }))
+                params: {contactGroup: '', orderType: 2}
+            }, {
+                text: 'Invoices',
+                permission: AppPermissions.CRMOrdersInvoices,
+                route: '/app/crm/invoices'
             }]
-        },
-        {
-            text: 'Invoices',
-            permission: AppPermissions.CRMOrdersInvoices,
-            route: '/app/crm/invoices'
         },
         {
             text: 'Products',
