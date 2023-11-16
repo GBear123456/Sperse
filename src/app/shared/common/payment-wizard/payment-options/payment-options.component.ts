@@ -26,7 +26,8 @@ import {
     ModuleSubscriptionInfo,
     BankTransferSettingsDto,
     RequestPaymentResult,
-    RequestPaymentInput
+    RequestPaymentInput,
+    PaymentSystemSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -87,7 +88,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     selectedGateway: number = this.GATEWAY_STRIPE;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
-    payPalClientId: string;
+    paymentSystemSettings: PaymentSystemSettingsDto;
+    hasAnyPaymentSystem;
     showPayPal: boolean = false;
 
     isPayByStripeDisabled = false;
@@ -104,7 +106,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit(): void {
-        this.initPayPal();
+        if (this.plan.total)
+            this.initPaymentSystems();
     }
 
     goToStep(i) {
@@ -138,20 +141,25 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         }
     }
 
-    initPayPal() {
+    initPaymentSystems() {
         forkJoin(
-            this.tenantSubscriptionServiceProxy.getPayPalSettings(),
-            this.tenantSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
-                paymentPeriodType: this.plan.paymentPeriodType,
-                productId: this.plan.productId,
-                quantity: this.quantity,
-            }))
+            [
+                this.tenantSubscriptionServiceProxy.getPaymentSettingsInfo(),
+                this.tenantSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
+                    paymentPeriodType: this.plan.paymentPeriodType,
+                    productId: this.plan.productId,
+                    quantity: this.quantity,
+                }))
+            ]
         ).subscribe(([settings, isApplicable]) => {
-            if (settings.clientId && isApplicable) {
-                this.payPalClientId = settings.clientId;
+            this.paymentSystemSettings = settings;
+            if (settings.paypalClientId && isApplicable) {
                 this.showPayPal = true;
-                this.changeDetector.detectChanges();
             }
+            this.hasAnyPaymentSystem = settings.stripeIsEnabled || this.showPayPal;
+            if (this.hasAnyPaymentSystem && !settings.stripeIsEnabled)
+                this.selectedGateway = this.GATEWAY_PAYPAL;
+            this.changeDetector.detectChanges();
         });
     }
 

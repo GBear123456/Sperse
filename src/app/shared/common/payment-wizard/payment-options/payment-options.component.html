@@ -66,27 +66,32 @@
         <!-- button (click)="close()"></button -->
     </div>
     <div class="paymentMethods">
-        <mat-tab-group *ngIf="plan.total" [(selectedIndex)]="selectedGateway" (selectedTabChange)="selectedTabChange($event)">
-            <mat-tab [label]="l('Stripe')">
-                <div class="stripe-wrap">
-                    <p class="stripe-text">
-                        You will be redirected to Stripe payment page
-                    </p>
-                    <button [disabled]="isPayByStripeDisabled" class="pay-by-stripe" (click)="payByStripe()">Pay</button>
-                </div>
-            </mat-tab>
-            <mat-tab *ngIf="showPayPal" [label]="l('PayPal')">
-                <ng-template mat-tab-label="">
-                    <img [src]="'./assets/common/icons/paypal-logo.png'">
-                </ng-template>
-                <pay-pal *ngIf="payPalClientId && selectedGateway == GATEWAY_PAYPAL"
-                         [productId]="plan.productId"
-                         [paymentPeriodType]="plan.paymentPeriodType"
-                         [quantity]="quantity"
-                         [clientId]="payPalClientId"
-                         (onSubmit)="submitData($event, paymentMethods.PayPal)">
-                </pay-pal>
-            </mat-tab>
+        <ng-container *ngIf="plan.total">
+            <div *ngIf="hasAnyPaymentSystem == false" class="no-payment-systems">
+                <h2>Payment systems are not configured</h2>
+            </div>
+            <mat-tab-group *ngIf="hasAnyPaymentSystem == true" [(selectedIndex)]="selectedGateway" (selectedTabChange)="selectedTabChange($event)">
+                <mat-tab *ngIf="paymentSystemSettings.stripeIsEnabled" [label]="l('Stripe')">
+                    <div class="stripe-wrap">
+                        <p class="stripe-text">
+                            You will be redirected to Stripe payment page
+                        </p>
+                        <button [disabled]="isPayByStripeDisabled" class="pay-by-stripe" (click)="payByStripe()">Pay</button>
+                    </div>
+                </mat-tab>
+                <mat-tab *ngIf="showPayPal" [label]="l('PayPal')">
+                    <ng-template mat-tab-label="">
+                        <img [src]="'./assets/common/icons/paypal-logo.png'">
+                    </ng-template>
+                    <pay-pal *ngIf="paymentSystemSettings.paypalClientId && selectedGateway == GATEWAY_PAYPAL"
+                             [productId]="plan.productId"
+                             [paymentPeriodType]="plan.paymentPeriodType"
+                             [quantity]="quantity"
+                             [clientId]="paymentSystemSettings.paypalClientId"
+                             (onSubmit)="submitData($event, paymentMethods.PayPal)">
+                    </pay-pal>
+                </mat-tab>
+
             <!--<mat-tab [label]="l('CreditCard')">
                 <credit-card (onSubmit)="submitData($event, paymentMethods.CreditCard)"></credit-card>
             </mat-tab>-->
@@ -106,7 +111,8 @@
             <!--</div>-->
             <!--</div>-->
             <!--</mat-tab>-->
-        </mat-tab-group>
+            </mat-tab-group>
+        </ng-container>
         <div *ngIf="!plan.total" class="freeBlock">
             <h2>Are you sure you want to subscribe to {{plan.productName}}?</h2>
             <button class="btn btn-layout" (click)="subscribeToFree()">Confirm</button>
