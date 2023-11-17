@@ -84,14 +84,14 @@
                         <dx-drop-down-box #productList
                             width="540px"
                             height="49px"
-                            [placeholder]="ls.l('See Product Links')"
+                            [placeholder]="ls.l('Select Product Link')"
                             [value]="productUrl"
-                            [items]="productLinks">
+                            [dataSource]="productLinks">
                             <div *dxTemplate="let data of 'content'" class="product-select-wrapper">
                                 <dx-text-box 
                                     width="100%"
-                                    [(value)]="searchProduct"                                    
                                     placeholder="Search"
+                                    [(value)]="searchProduct"                                    
                                     (onValueChanged)="onProductSearch()">
                                 </dx-text-box>
                                 <p>All <span>{{productLinks.length}}</span> <!-- img src="assets/common/icons/settings.png" --></p>          

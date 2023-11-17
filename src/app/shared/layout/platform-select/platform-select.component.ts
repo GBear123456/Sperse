@@ -301,6 +301,18 @@ export class PlatformSelectComponent {
             new UpdateUserAffiliateCodeDto({affiliateCode: affiliateCode})
         ).subscribe(() => {
             this.affiliateRefId = affiliateCode;
+            if (this.productLinks) {
+                this.productLinks = this.productDataSource.items().map(product => 
+                    this.getProductPublicLink(product.PublicName)
+                );
+                this.productUrl = this.productLinks[0];
+            }
+
+            if (this.landingPageDomains) {
+                this.landingPageDomains = this.landingPageDomains.map(
+                    item => this.getAffiliateLink(item.split('?')[0]));
+                this.selectedlandingPage = this.landingPageDomains[0];
+            }
         });
     }
 
