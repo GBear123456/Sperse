@@ -87,7 +87,7 @@ export class PlatformSelectComponent {
     landingPageDomains = this.appSessionService.tenant && 
         this.appSessionService.tenant.landingPageDomains
             .sort((a, b) => a.includes('vercel.app') > b.includes('vercel.app') ? 1 : -1)
-            .map(domain => 'https://' + domain);
+            .map(domain => this.getAffiliateLink('https://' + domain));
     selectedlandingPage = this.landingPageDomains 
         && this.landingPageDomains[0];
 
@@ -286,14 +286,14 @@ export class PlatformSelectComponent {
 
     copyToClipboard(value: string) {
         if (value) {
-            this.clipboardService.copyFromContent(value);
+            this.clipboardService.copyFromContent(this.getAffiliateLink(value));
             abp.notify.info(this.ls.l('SavedToClipboard'));
         }
     }
 
     openLink(link: string) {
         if (link)
-            window.open(link);
+            window.open(this.getAffiliateLink(link));
     }
 
     affiliateCodeChanged(affiliateCode: string) {
@@ -306,7 +306,7 @@ export class PlatformSelectComponent {
 
     getProductPublicLink(publicName: string) {
         if (publicName)
-            return location.origin + '/p/' + (abp.session.tenantId || 0) + '/' + publicName;
+            return this.getAffiliateLink(location.origin + '/p/' + (abp.session.tenantId || 0) + '/' + publicName);
     }
 
     selectProduct(dialog, publicName) {
@@ -316,5 +316,9 @@ export class PlatformSelectComponent {
 
     onProductSearch() {
         this.productDataSource.load();
+    }
+
+    getAffiliateLink(url: string) {
+        return (this.affiliateRefId && url && url.indexOf('ref=') == -1 ? url + '?ref=' + this.affiliateRefId : url);
     }
 }
