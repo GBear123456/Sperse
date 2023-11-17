@@ -317,7 +317,7 @@ export class GlobalSearchComponent implements OnInit {
     }
 
     onFocusIn(event) {
-        if (event.element.getBoundingClientRect().width < 348)
+        if (event.element.getBoundingClientRect().width < 345)
             this.layoutService.showPlatformSelectMenu = false;
         if (this.itemsFound) {
             setTimeout(() => {

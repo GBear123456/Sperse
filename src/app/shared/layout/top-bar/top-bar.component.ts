@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -58,6 +58,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
         private lifecycleService: LifecycleSubjectsService,
         private router: Router,
         private route: ActivatedRoute,
+        private element: ElementRef,
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {
@@ -192,7 +193,6 @@ export class TopBarComponent implements OnInit, OnDestroy {
                 } else {
                     let switchItemIndex,
                         availableWidth = this.getAvailableWidth();
-
                     if (this.menu.items.every((item: PanelMenuItem, index: number) => {
                         switchItemIndex = index;
                         if (item.visible)
@@ -237,12 +237,14 @@ export class TopBarComponent implements OnInit, OnDestroy {
     calculateItemsWidth() {
         let items = this.getNavBarElement().querySelectorAll('div.dx-tab.dx-nav-item');
         Array.prototype.forEach.call(items, (elm, index) => {
-            this.menu.items[index].width = elm.offsetWidth + 20;
+            this.menu.items[index].width = elm.offsetWidth;
         });
     }
 
     getAvailableWidth() {
-        return innerWidth - (innerWidth >= 1530 ? 848 : 680);
+        let availableWidth = this.element.nativeElement.offsetWidth - (this.showGlobalSearch ? 350 : 110),
+            calculatedWidth = innerWidth - (this.showGlobalSearch ? 650 : 450);
+        return calculatedWidth < availableWidth ? calculatedWidth : availableWidth;
     }
 
     onNavBarInitialized() {

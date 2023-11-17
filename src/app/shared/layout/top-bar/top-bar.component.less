@@ -23,11 +23,15 @@
     .top-bar-nav {
         margin-left: auto;
         padding: 0 10px;
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
         &:after {
             right: 40px;
         }
 
         ::ng-deep dx-nav-bar {
+            display: block;
             width: max-content;
         }
 
