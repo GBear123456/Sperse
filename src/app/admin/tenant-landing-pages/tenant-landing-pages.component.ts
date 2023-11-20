@@ -22,6 +22,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { TenantLandingPageDto } from './tenant-landing-page-dto.interface';
 import { TenantLandingPageFields } from './tenant-landing-page-fields.enum';
+import { TenantLandingPageModalComponent } from './tenant-landing-page-modal/tenant-landing-page-modal.component';
 
 @Component({
     templateUrl: './tenant-landing-pages.component.html',
@@ -234,7 +235,13 @@ export class TenantLandingPagesComponent extends AppComponentBase implements OnD
     }
 
     private openEditDialog(tenantId: number) {
-        alert('openEditDialog ' + tenantId.toString());
+        this.dialog.open(TenantLandingPageModalComponent, {
+            panelClass: ['slider'],
+            data: { tenantId: tenantId }
+        }).afterClosed().subscribe(invalidate => {
+            if (invalidate)
+                this.invalidate();
+        });
     }
 
     searchValueChange(e: object) {

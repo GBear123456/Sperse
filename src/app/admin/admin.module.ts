@@ -111,6 +111,7 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { TenantLandingPagesComponent } from './tenant-landing-pages/tenant-landing-pages.component';
+import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-landing-page-modal/tenant-landing-page-modal.component';
 
 @NgModule({
     imports: [
@@ -225,7 +226,8 @@ import { TenantLandingPagesComponent } from './tenant-landing-pages/tenant-landi
         ModulesEditionsSelectComponent,
         ClearIconSvgComponent,
         CreateUserDialogComponent,
-        TenantLandingPagesComponent
+        TenantLandingPagesComponent,
+        TenantLandingPageModalComponent
     ],
     entryComponents: [
         CreateUserDialogComponent,

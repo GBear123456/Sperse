@@ -1,0 +1,14 @@
+<modal-dialog [buttons]="buttons" [title]="title">
+    <dx-scroll-view showScrollbar="onHover">
+        <div class="modal-body" *ngIf="landingPageInfo">
+            <h2>{{landingPageInfo.tenantName}}</h2>
+            <div class="domains">
+                <div class="domains-header">{{ls.l('Domains')}}:</div>
+                <ul class="domains-list">
+                    <li *ngFor="let domain of landingPageInfo.domains">{{domain}} <i class="fa fa-external-link" (click)="openLink(domain)"></i></li>
+                </ul>
+            </div>
+            <dx-check-box [text]="ls.l('Verified')" [(value)]="landingPageInfo.verified"></dx-check-box>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>
