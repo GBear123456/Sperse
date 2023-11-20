@@ -16,12 +16,17 @@ user-management-list {
                 display: flex;
                 align-items: center;
 
+                @media (max-width: 1280px) {
+                    margin: 0 10px 0 0;
+                }
+
                 @media (max-width: 380px) {
                     margin: 0;
                 }
 
                 .m-nav__item {
-                    padding: 0 14px !important;
+                    padding: 0 14px;
+
                     &.bottom-back {
                         display: inline-block;
                         padding: 3px!important;
@@ -61,6 +66,10 @@ user-management-list {
                     .m-nav__separator {
                         height: 1px;
                         background: #f4f5f8;
+                    }
+
+                    @media (max-width: 1280px) {
+                        padding: 0 5px !important;
                     }
 
                     @media (max-width: 768px) {

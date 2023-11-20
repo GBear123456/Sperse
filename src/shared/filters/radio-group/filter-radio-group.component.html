@@ -1,8 +1,8 @@
 <div class="wrapper">
     <dx-radio-group
-        [dataSource]="items.element.list"
+        [dataSource]="items[field].list"
         displayExpr="name"
         valueExpr="id"
-        [(value)]="items.element.value">
+        [(value)]="items[field].value">
     </dx-radio-group>
 </div>
