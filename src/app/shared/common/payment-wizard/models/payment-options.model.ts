@@ -6,4 +6,6 @@ export interface PaymentOptions {
     paymentPeriodType: PaymentPeriodType;
     customPeriodDescription: string;
     total: number;
+    signUpFee: number;
+    trialDayCount: number;
 }
