@@ -110,6 +110,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { TenantLandingPagesComponent } from './tenant-landing-pages/tenant-landing-pages.component';
 
 @NgModule({
     imports: [
@@ -223,7 +224,8 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         StorageChangeDialog,
         ModulesEditionsSelectComponent,
         ClearIconSvgComponent,
-        CreateUserDialogComponent
+        CreateUserDialogComponent,
+        TenantLandingPagesComponent
     ],
     entryComponents: [
         CreateUserDialogComponent,
