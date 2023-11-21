@@ -5,5 +5,6 @@ export const TenantLandingPageFields: KeysEnum<TenantLandingPageDto> = {
     TenantId: 'TenantId',
     TenantName: 'TenantName',
     FirstDomain: 'FirstDomain',
-    Verified: 'Verified'
+    Verified: 'Verified',
+    Disabled: 'Disabled'
 };

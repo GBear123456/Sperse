@@ -70,7 +70,8 @@ export class TenantLandingPageModalComponent implements OnInit {
         this.modalDialog.startLoading();
         this.tenantLandingPageService.update(new TenantLandingPageUpdateInfo({
             tenantId: this.landingPageInfo.tenantId,
-            verified: this.landingPageInfo.verified
+            verified: this.landingPageInfo.verified,
+            disabled: this.landingPageInfo.disabled
         })).pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this.notifyService.info(this.ls.l('SavedSuccessfully'));

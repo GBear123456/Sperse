@@ -3,4 +3,5 @@ export interface TenantLandingPageDto {
     TenantName: string;
     FirstDomain: string;
     Verified: boolean;
+    Disabled: boolean;
 }
