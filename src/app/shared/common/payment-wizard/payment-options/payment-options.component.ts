@@ -26,7 +26,8 @@ import {
     ModuleSubscriptionInfo,
     BankTransferSettingsDto,
     RequestPaymentResult,
-    RequestPaymentInput
+    RequestPaymentInput,
+    PaymentSystemSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -40,7 +41,7 @@ import { AppService } from '@app/app.service';
     templateUrl: './payment-options.component.html',
     styleUrls: ['./payment-options.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ TenantSubscriptionServiceProxy ]
+    providers: [TenantSubscriptionServiceProxy]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
     @Input() plan: PaymentOptions;
@@ -87,7 +88,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     selectedGateway: number = this.GATEWAY_STRIPE;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
-    payPalClientId: string;
+    paymentSystemSettings: PaymentSystemSettingsDto;
+    hasAnyPaymentSystem;
     showPayPal: boolean = false;
 
     isPayByStripeDisabled = false;
@@ -104,7 +106,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit(): void {
-        this.initPayPal();
+        if (this.plan.total)
+            this.initPaymentSystems();
     }
 
     goToStep(i) {
@@ -138,20 +141,25 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         }
     }
 
-    initPayPal() {
+    initPaymentSystems() {
         forkJoin(
-            this.tenantSubscriptionServiceProxy.getPayPalSettings(),
-            this.tenantSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
-                paymentPeriodType: this.plan.paymentPeriodType,
-                productId: this.plan.productId,
-                quantity: this.quantity,
-            }))
+            [
+                this.tenantSubscriptionServiceProxy.getPaymentSettingsInfo(),
+                this.tenantSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
+                    paymentPeriodType: this.plan.paymentPeriodType,
+                    productId: this.plan.productId,
+                    quantity: this.quantity,
+                }))
+            ]
         ).subscribe(([settings, isApplicable]) => {
-            if (settings.clientId && isApplicable) {
-                this.payPalClientId = settings.clientId;
+            this.paymentSystemSettings = settings;
+            if (settings.paypalClientId && isApplicable) {
                 this.showPayPal = true;
-                this.changeDetector.detectChanges();
             }
+            this.hasAnyPaymentSystem = settings.stripeIsEnabled || this.showPayPal;
+            if (this.hasAnyPaymentSystem && !settings.stripeIsEnabled)
+                this.selectedGateway = this.GATEWAY_PAYPAL;
+            this.changeDetector.detectChanges();
         });
     }
 
@@ -224,15 +232,15 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             ? this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo)
             : paymentMethod === PaymentMethods.BankTransfer
                 ? this.tenantSubscriptionServiceProxy.requestPayment(
-                      new RequestPaymentDto({
-                          subscriptionInfo: ModuleSubscriptionInfo.fromJS({
-                              editionId: paymentInfo.subscriptionInfo.editionId,
-                              maxUserCount: paymentInfo.subscriptionInfo.maxUserCount,
-                              frequency: paymentInfo.subscriptionInfo.frequency
-                          }),
-                          requestType: RequestPaymentType.ManualBankTransfer
-                      })
-                  )
+                    new RequestPaymentDto({
+                        subscriptionInfo: ModuleSubscriptionInfo.fromJS({
+                            editionId: paymentInfo.subscriptionInfo.editionId,
+                            maxUserCount: paymentInfo.subscriptionInfo.maxUserCount,
+                            frequency: paymentInfo.subscriptionInfo.frequency
+                        }),
+                        requestType: RequestPaymentType.ManualBankTransfer
+                    })
+                )
                 : this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
 
         method.pipe(finalize(() => { this.appHttpConfiguration.avoidErrorHandling = false; }))
@@ -292,6 +300,24 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         }, () => {
             this.isPayByStripeDisabled = false;
             this.loadingService.finishLoading();
+        });
+    }
+
+    subscribeToFree() {
+        this.onStatusChange.emit({ status: PaymentStatusEnum.BeingConfirmed });
+        this.onChangeStep.emit(2);
+        this.tenantSubscriptionServiceProxy.requestFreeProduct(new RequestPaymentInput({
+            productId: this.plan.productId,
+            paymentPeriodType: this.plan.paymentPeriodType,
+            quantity: 1
+        })).subscribe(() => {
+            this.refreshAfterClose.emit();
+            this.onStatusChange.emit({
+                status: PaymentStatusEnum.Confirmed,
+                statusText: this.l('PaymentStatus_payment-free-confirmed'),
+                icon: PaymentStatusEnum.Confirmed,
+                showBack: false
+            });
         });
     }
 }

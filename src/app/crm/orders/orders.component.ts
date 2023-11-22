@@ -62,6 +62,8 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
+import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
 import { FilterMultilineInputComponent } from '@shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -202,16 +204,19 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         name: this.l('ContactGroup_' + group)
     }));
     private contactGroupFilter: FilterModel = new FilterModel({
-        component: FilterCheckBoxesComponent,
         caption: 'ContactGroup',
+        component: FilterRadioGroupComponent,
         field: this.orderFields.ContactGroupId,
-        hidden: true,
+        filterMethod: (filter) => {
+            if (this.selectedOrderType.value === OrderType.Order)
+                return this.contactGroupFilter.getODataFilterObject();
+            else
+                return {};
+        },
         items: {
-            ContactGroupId: new FilterCheckBoxesModel({
-                selectedKeys$: this.selectedContactGroup$,
-                dataSource: this.contactGroupDataSource,
-                nameField: 'name',
-                keyExpr: 'id'
+            ContactGroupId: new FilterRadioGroupModel({
+                value: this.selectedContactGroup.value,
+                list: this.contactGroupDataSource,
             })
         }
     });
@@ -307,6 +312,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         };
     });
     private subscriptionsFilters: FilterModel[] = [
+        this.contactGroupFilter,
         new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
@@ -1025,7 +1031,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 products: new FilterServicesAndProductsModel(
                     {
                         dataSource$: this.productProxy.getProducts(
-                            ProductType.Subscription
+                            ProductType.Subscription, false
                         ).pipe(
                             map((products: ProductDto[]) => {
                                 let productsWithGroups = products.filter(x => x.group);
@@ -1536,10 +1542,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     subscribeToFilter() {
-        this.filtersService.apply(() => {
+        this.filtersService.apply((filters) => {
             this.selectedOrderKeys = [];
             this.filterChanged = true;
-            this.contactGroupFilter.items.ContactGroupId.value = this.selectedContactGroup.value;
+
+            if (filters && filters[0] && filters[0].field == this.orderFields.ContactGroupId)
+                this.selectedContactGroup.next(filters[0].items.ContactGroupId.value);
+
             this.processFilterInternal();
         });
     }
@@ -1803,7 +1812,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             DataGridService.hideColumnChooser(this.dxDataGrid);
 
         if (event.itemData.value != this.selectedContactGroup.value) {
-            this.selectedContactGroup.next(event.itemData.value);
+            this.contactGroupFilter.items.ContactGroupId.value = event.itemData.value;
             this.filtersService.change([this.contactGroupFilter]);
         }
     }

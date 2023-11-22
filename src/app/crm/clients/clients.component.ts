@@ -652,7 +652,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     filterMode: 'All',
                     dataSource$: this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts) ?
                         this.productProxy.getProducts(
-                            ProductType.Subscription
+                            ProductType.Subscription, false
                         ).pipe(
                             map((products: ProductDto[]) => {
                                 let productsWithGroups = products.filter(x => x.group);

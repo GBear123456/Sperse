@@ -8,7 +8,11 @@ import { FilterRadioGroupModel } from './filter-radio-group.model';
 })
 export class FilterRadioGroupComponent implements FilterComponent {
     items: {
-        element: FilterRadioGroupModel
+        [field: string]: FilterRadioGroupModel
     };
     apply: (event) => void;
+
+    get field(): string {
+        return Object.keys(this.items)[0];
+    }
 }

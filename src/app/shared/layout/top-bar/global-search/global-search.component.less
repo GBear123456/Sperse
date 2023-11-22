@@ -2,13 +2,19 @@
     align-items: center;
     display: flex;
     align-self: center;
-    padding: 0 12px;
-    margin-right: 24px;
+    padding-left: 12px;
     background-color: #fff;
     border-radius: 10px;
     height: 50px;
+    width: inherit;
+    min-width: 200px;
+    max-width: 361px;
+
     .global-search-container {
         display: flex;
+        width: inherit;
+        max-width: 350px;
+        position: relative;
         align-items: center;
         &:before,
         &:after {
@@ -16,20 +22,15 @@
             width: 1px;
             height: 34px;
         }
-        &:before {
-            border-left: 1px solid #e5e9ec;
-        }
-        &:after {
-            border-right: 1px solid #e5e9ec;
-            display: flex;
-        }
     }
-
     ::ng-deep .spinner {
         width: 20px !important;
         height: 20px !important;
-        right: -173px;
+        right: 15px;
+        left: initial !important;
         border-width: 3px;
+        background: #fff;
+        margin: auto 0;
     }
     ::ng-deep .blockOverlay {
         width: 25px !important;
@@ -42,38 +43,62 @@
         align-items: center;
         .dx-icon-search:before {
             content: '';
-            background: url('../../../../../assets/common/icons/global-search.png');
+            background: url('../../../../../assets/common/icons/search-icon.png');
             background-size: 100%;
-            width: 20px;
-            height: 20px;
+            width: 19px;
+            height: 19px;
+            margin-left: 10px;
+            margin-top: -2px;
         }
         .dx-texteditor-input {
             font-weight: 500;
         }
         .dx-texteditor-buttons-container {
-            position: relative;
+            position: absolute;
             right: 9px;
             width: 20px;
             min-width: 20px;
-            .dx-show-clear-button .dx-clear-button-area {
+            .dx-clear-button-area {
                 .dx-icon-clear {
-                    width: 20px;
-                    height: 20px;
-                    margin-top: -17px;
-                    padding: 8px 0;
+                    top: 8px;
+                    right: 12px;
+                    margin: 0;
+                    padding: 8px;
                 }
             }
         }
     }
     ::ng-deep .dx-searchbox {
-        padding-right: 22px;
-        .dx-placeholder {
-            font-size: 16px;
-            font-weight: 300;
+        &.dx-state-focused {
+            .dx-placeholder {
+                display: none!important;
+            }            
+        }        
+
+        .dx-placeholder:before {
+            padding-left: 45px;
+        }
+
+        .dx-placeholder,
+        .dx-texteditor-input {
+            font-family: Poppins;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 23px;
+            letter-spacing: -0.02em;
+            text-align: left;
         }
         .dx-texteditor-input {
-            border-bottom: none;
+            border-radius: 51px;
+            border: 2px solid #dedede;
+            padding-left: 45px;
         }
+    }
+}
+
+::ng-deep #global-search-tooltip {
+    .dx-overlay-content {
+        top: 8px!important;
     }
 }
 

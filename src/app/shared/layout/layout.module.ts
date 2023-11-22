@@ -11,6 +11,7 @@ import { DxMenuModule } from 'devextreme-angular/ui/menu';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxNavBarModule } from 'devextreme-angular/ui/nav-bar';
@@ -34,6 +35,7 @@ import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { UserManagementModule } from '@shared/common/layout/user-management-list/user-management.module';
+import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 
 /** @todo Used for chart bar and dropdown. Reimplement in future */
 import 'assets/metronic/src/js/framework/base/util.js';
@@ -65,6 +67,7 @@ let COMPONENTS = [
         UtilsModule,
         FiltersModule,
         LayoutCommonModule,
+        InplaceEditModule,
 
         DxListModule,
         DxMenuModule,
@@ -74,6 +77,7 @@ let COMPONENTS = [
         DxNavBarModule,
         DxDropDownBoxModule,
         DxTextBoxModule,
+        DxSelectBoxModule,
 
         MatTabsModule,
         MatDialogModule,

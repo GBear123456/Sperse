@@ -1,8 +1,10 @@
 <div class="global-search-container">
     <dx-text-box mode="search"
-                 [width]="200"
+                 width="100%"
+                 height="51px"
                  [placeholder]="ls.l('GlobalSearch')"
-                 (onFocusIn)="onFocusIn()"
+                 (onFocusIn)="onFocusIn($event)"
+                 (onFocusOut)="onFocusOut()"
                  (onEnterKey)="search($event)"
                  (onValueChanged)="valueChanged($event)"
                  [elementAttr]="{ id: 'global-search-textbox' }">
@@ -15,8 +17,9 @@
                 height="auto"
                 maxHeight="calc(100vh - 75px)"
                 target="#global-search-textbox"
+                [wrapperAttr]="{ id: 'global-search-tooltip' }"
                 (onContentReady)="tooltipReady($event)">
-        <dxo-position my="left top" at="left bottom" of="#global-search-textbox"></dxo-position>
+        <dxo-position my="center top" at="center bottom" of="#global-search-textbox"></dxo-position>
         <div *dxTemplate="let data = data of 'content'">
             <dx-scroll-view>
                 <div class="global-search-tooltip-container">

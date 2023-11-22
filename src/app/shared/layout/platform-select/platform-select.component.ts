@@ -4,6 +4,8 @@ import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
 
 /** Third party imports */
+import { DataSource } from 'devextreme/data/data_source/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -21,8 +23,12 @@ import { AppConsts } from '@shared/AppConsts';
 import { ConfigInterface } from '@app/shared/common/config.interface';
 import { Module } from '@shared/common/module.interface';
 import { AppSessionService } from '@root/shared/common/session/app-session.service';
-import { LayoutType } from '@root/shared/service-proxies/service-proxies';
+import { UpdateUserAffiliateCodeDto, MemberSettingsServiceProxy, LayoutType } from '@root/shared/service-proxies/service-proxies';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { ODataService } from '@shared/common/odata/odata.service';
+import { ClipboardService } from 'ngx-clipboard';
+import { environment } from '@root/environments/environment';
 
 interface ModuleConfig extends Module {
     code: string;
@@ -31,6 +37,7 @@ interface ModuleConfig extends Module {
 @Component({
     templateUrl: './platform-select.component.html',
     styleUrls: ['./platform-select.component.less'],
+    providers: [MemberSettingsServiceProxy],
     selector: 'platform-select'
 })
 export class PlatformSelectComponent {
@@ -47,11 +54,77 @@ export class PlatformSelectComponent {
     activeModuleCount = 0;
     permissions = AppPermissions;
     width: string = AppConsts.isMobile ? '100vw' : '760px';
+    affiliateRefId = this.appSessionService.user &&
+        this.appSessionService.user.affiliateCode;
+    isProductEnabled = this.permission.isGranted(AppPermissions.CRMProducts);
+    get isCFOPortalEnabled() {
+        return !this.appService.isHostTenant
+            && this.appService.isModuleActive('CFO')
+            && this.feature.isEnabled(AppFeatures.CFOPartner)
+            && this.permission.isGranted(AppPermissions.CFOMemberAccess);
+    }
+
+    accessCodeValidationRules = [
+        {
+            type: 'pattern',
+            pattern: AppConsts.regexPatterns.affiliateCode,
+            message: this.ls.l('AccessCodeIsNotValid')
+        },
+        {
+            type: 'stringLength',
+            max: AppConsts.maxAffiliateCodeLength,
+            message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateCodeLength)
+        }
+    ];
+
+    cfoPortalUrl = location.origin + '/app/cfo-portal';
+    enabledPortal = this.feature.isEnabled(AppFeatures.Portal);
+    enabledAdminCustomizations = this.feature.isEnabled(AppFeatures.AdminCustomizations);
+    appMemberPortalUrl = this.formatUrl(
+        (this.enabledAdminCustomizations && AppConsts.appMemberPortalUrl) 
+        || (this.enabledPortal && environment.portalUrl)
+    );
+    landingPageDomains = this.appSessionService.tenant && 
+        this.appSessionService.tenant.landingPageDomains
+            .sort((a, b) => a.includes('vercel.app') > b.includes('vercel.app') ? 1 : -1)
+            .map(domain => this.getAffiliateLink('https://' + domain));
+    selectedlandingPage = this.landingPageDomains 
+        && this.landingPageDomains[0];
 
     moduleItems: string[];
+    currency: string = SettingsHelper.getCurrency();
+    enabledAffiliate = this.feature.isEnabled(AppFeatures.CRMCommissions);
+    productLinks: string[] = [];
+    productUrl: string;
+    searchProduct: string;
+
+    productDataSource = new DataSource({ 
+        store: new ODataStore({
+            key: 'Id',
+            deserializeDates: false,
+            url: this.oDataService.getODataUrl('Product'),
+            version: AppConsts.ODataVersion,
+            beforeSend: (request) => {
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.params.$filter = '(IsPublished eq true) and (PublishDate le ' + (new Date()).toISOString() + ')' +
+                    ' and (PublicName ne null)' + (this.searchProduct ? " and startswith(Name,'" + this.searchProduct + "')" : '');
+                request.params.$select = 'Id,ThumbnailUrl,PublicName,Price,Name,Type';
+                request.params.$top = 100;
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+            },
+            onLoaded: (data) => {
+                this.productLinks = data.map(product => this.getProductPublicLink(product.PublicName));
+                if (!this.productUrl)
+                    this.productUrl = this.productLinks[0];
+            },
+            errorHandler: (error) => {
+                this.productLinks = [];
+            }
+        })
+    });
 
     constructor(
-        private appService: AppService,
+        public appService: AppService,
         private authService: AppAuthService,
         private impersonationService: ImpersonationService,
         private userManagementService: UserManagementService,
@@ -59,7 +132,10 @@ export class PlatformSelectComponent {
         private permission: PermissionCheckerService,
         private router: Router,
         private titleService: TitleService,
+        private oDataService: ODataService,
         private appSessionService: AppSessionService,
+        private memberSettingsProxy: MemberSettingsServiceProxy,
+        public clipboardService: ClipboardService,
         public layoutService: LayoutService,
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
@@ -121,6 +197,10 @@ export class PlatformSelectComponent {
             this.cssClass = this.module.toLowerCase();
             this.titleService.setTitle(config.name);
         });
+    }
+
+    formatUrl(url: string) {
+        return (url && url[url.length - 1] == '/' ? url.slice(0, -1) : url);        
     }
 
     onItemClick(module) {
@@ -196,6 +276,61 @@ export class PlatformSelectComponent {
                     of: this.document.querySelector('app-header')
                 }
             });
+        }        
+    }
+
+    onDropDownOpen() {
+        if (!this.productLinks || !this.productLinks.length)
+            this.productDataSource.load();
+    }
+
+    copyToClipboard(value: string) {
+        if (value) {
+            this.clipboardService.copyFromContent(this.getAffiliateLink(value));
+            abp.notify.info(this.ls.l('SavedToClipboard'));
         }
+    }
+
+    openLink(link: string) {
+        if (link)
+            window.open(this.getAffiliateLink(link));
+    }
+
+    affiliateCodeChanged(affiliateCode: string) {
+        this.memberSettingsProxy.updateAffiliateCode(
+            new UpdateUserAffiliateCodeDto({affiliateCode: affiliateCode})
+        ).subscribe(() => {
+            this.affiliateRefId = affiliateCode;
+            if (this.productLinks) {
+                this.productLinks = this.productDataSource.items().map(product => 
+                    this.getProductPublicLink(product.PublicName)
+                );
+                this.productUrl = this.productLinks[0];
+            }
+
+            if (this.landingPageDomains) {
+                this.landingPageDomains = this.landingPageDomains.map(
+                    item => this.getAffiliateLink(item.split('?')[0]));
+                this.selectedlandingPage = this.landingPageDomains[0];
+            }
+        });
+    }
+
+    getProductPublicLink(publicName: string) {
+        if (publicName)
+            return this.getAffiliateLink(location.origin + '/p/' + (abp.session.tenantId || 0) + '/' + publicName);
+    }
+
+    selectProduct(dialog, publicName) {
+        this.productUrl = this.getProductPublicLink(publicName);
+        dialog.instance.close();
+    }
+
+    onProductSearch() {
+        this.productDataSource.load();
+    }
+
+    getAffiliateLink(url: string) {
+        return (this.affiliateRefId && url && url.indexOf('ref=') == -1 ? url + '?ref=' + this.affiliateRefId : url);
     }
 }

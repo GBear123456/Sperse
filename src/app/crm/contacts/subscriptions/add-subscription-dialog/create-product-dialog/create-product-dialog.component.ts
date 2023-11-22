@@ -157,7 +157,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     product: CreateProductInput | UpdateProductInput;
     amountFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,##0.##';
     amountNullableFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,###.##';
-    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription).pipe(
+    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription, false).pipe(
         map((products: ProductDto[]) => {
             return this.data.product && this.data.product.id ?
                 products.filter((product: ProductDto) => product.id != this.data.product.id) : products

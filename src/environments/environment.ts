@@ -9,6 +9,7 @@ export const environment = {
     hmr: false,
     publicUrl: 'http://localhost:5200',
     appBaseHref: 'https://testuicdn.azureedge.net/current/',
+    portalUrl: 'https://my.sperse.com',
     appConfig: 'appconfig.json',
     releaseStage: 'development',
 

@@ -13,7 +13,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, ReplaySubject, of } from 'rxjs';
-import { finalize, first, map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { finalize, first, map, startWith, switchMap, take, tap, catchError } from 'rxjs/operators';
 
 /** Application imports */
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -34,6 +34,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { ContactGroup } from '@shared/AppEnums';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 class CustomHttpParameterCodec implements HttpParameterCodec {
     encodeKey(key: string): string {
@@ -67,7 +68,7 @@ export class GlobalSearchComponent implements OnInit {
         tap(() => {
             this.isTooltipVisible = false;
             this.searchGroups = [];
-            this.loadingService.startLoading(this.elementRef.nativeElement);
+            this.loadingService.startLoading(this.getLoadingElement());
         }),
         switchMap((search: string) => {
             return combineLatest(
@@ -106,6 +107,7 @@ export class GlobalSearchComponent implements OnInit {
         private elementRef: ElementRef,
         private itemDetailsService: ItemDetailsService,
         private permissionService: AppPermissionService,
+        private layoutService: LayoutService,
         public ls: AppLocalizationService
     ) {}
 
@@ -222,7 +224,7 @@ export class GlobalSearchComponent implements OnInit {
     private getInvoicesGroup(search: string): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Invoice'),
-            this.ls.l('Invoice'),
+            this.ls.l('Invoices'),
             'app/crm/invoices',
             search,
             AppPermissions.CRMOrdersInvoices,
@@ -275,6 +277,7 @@ export class GlobalSearchComponent implements OnInit {
                     }))
                 : of(null)
         ).pipe(
+            catchError(() => of({ value: [] })),
             startWith({ value: [] }),
             map((entities: any) => {
                 return {
@@ -289,7 +292,11 @@ export class GlobalSearchComponent implements OnInit {
     }
 
     private hideSpinner() {
-        this.loadingService.finishLoading(this.elementRef.nativeElement);
+        this.loadingService.finishLoading(this.getLoadingElement());
+    }
+
+    getLoadingElement() {
+        return this.elementRef.nativeElement.getElementsByClassName('global-search-container')[0];
     }
 
     getOptions(search: string, params?: Params): any {
@@ -309,10 +316,19 @@ export class GlobalSearchComponent implements OnInit {
         };
     }
 
-    onFocusIn() {
+    onFocusIn(event) {
+        if (event.element.getBoundingClientRect().width < 345)
+            this.layoutService.showPlatformSelectMenu = false;
         if (this.itemsFound) {
-            this.isTooltipVisible = true;
+            setTimeout(() => {
+                this.isTooltipVisible = true;
+                this.changeDetectorRef.detectChanges();
+            }, 100);
         }
+    }
+
+    onFocusOut() {
+        this.layoutService.showPlatformSelectMenu = true;
     }
 
     valueChanged(e) {

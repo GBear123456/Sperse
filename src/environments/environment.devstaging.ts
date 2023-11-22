@@ -5,6 +5,7 @@ export const environment = {
     appConfig: 'appconfig.devstaging.json',
     publicUrl: 'http://localhost:5200',
     appBaseHref: 'https://testuicdn.azureedge.net/current/',
+    portalUrl: 'https://mytest.sperse.com',
     releaseStage: 'development',
 
     /* DNS Binding Info */
