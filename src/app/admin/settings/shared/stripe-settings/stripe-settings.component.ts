@@ -25,6 +25,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     stripePaymentSettings: StripeSettingsDto = new StripeSettingsDto();
 
     showAdvancedSettings = this.isHost;
+    tenantName = this.isHost ? AppConsts.defaultTenantName : this.appSession.tenantName;
 
     constructor(
         _injector: Injector,

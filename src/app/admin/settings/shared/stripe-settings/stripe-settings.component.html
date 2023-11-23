@@ -34,6 +34,16 @@
     <p>
         <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
     </p>
+    <br />
+    <div class="form-group">
+        <dx-check-box id="StripeIgnoreExternalWebhooks"
+                      [text]="l('Ignore external webhooks')"
+                      [(value)]="stripePaymentSettings.ignoreExternalWebhooks">
+        </dx-check-box>
+    </div>
+    <p>
+        <span class="small">*Skip webhooks that are not intended for <b>{{tenantName}}</b></span>
+    </p>
     <p>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</p>
     <div class="form-group">
         <button [disabled]="stripePaymentSettings.webhookSingingSecret" [title]="stripePaymentSettings.webhookSingingSecret" class="btn btn-layout webhook-button" (click)="createWebhook(false)">
