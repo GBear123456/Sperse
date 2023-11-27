@@ -38,6 +38,8 @@ export enum AppPermissions {
     AdministrationHangfireDashboard = 'Pages.Administration.HangfireDashboard',
     AdministrationHostDashboard = 'Pages.Administration.Host.Dashboard',
     AdministrationAuditLogs = 'Pages.Administration.AuditLogs',
+    AdministrationTenantLandingPages = 'Pages.Administration.TenantLandingPages',
+    AdministrationTenantLandingPagesManage = 'Pages.Administration.TenantLandingPages.Manage',
     Editions = 'Pages.Editions',
     EditionsCreate = 'Pages.Editions.Create',
     EditionsEdit = 'Pages.Editions.Edit',
