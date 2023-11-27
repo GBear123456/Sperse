@@ -83,6 +83,7 @@ export class AppComponent implements OnInit {
                                 height: '800px',
                                 width: '1200px',                                                              
                                 id: 'payment-wizard',
+                                closeOnNavigation: isOneTimeExpirationSoon,
                                 disableClose: !isOneTimeExpirationSoon,
                                 panelClass: ['payment-wizard', 'setup'],
                                 data: {
