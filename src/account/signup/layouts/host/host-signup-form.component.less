@@ -85,6 +85,13 @@
             grid-template: 1fr / 1fr 1fr;
             color: #fff;
             width: 1144px;
+            max-width: 99%;
+
+            @media all and (max-width: 768px) {
+                max-width: 99%;
+                display: flex;
+                flex-direction: column;                
+            }
         }
 
         &__item {
@@ -97,11 +104,21 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            @media all and (max-width: 768px) {
+                border-radius: 0;
+                border-top-right-radius: 25px;
+                border-top-left-radius: 25px;
+            }
         }
 
         &__right {
             background-color: #1a99ef;
             border-radius: 0px 20px 20px 0px;
+            @media all and (max-width: 768px) {
+                border-radius: 0;
+                border-bottom-right-radius: 25px;
+                border-bottom-left-radius: 25px;
+            }
         }
     }
 
@@ -159,7 +176,7 @@
 
         .price-wrapper {
             width: 100%;
-            height: 108px;
+            height: 100%;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -266,6 +283,7 @@
             span {
                 &:before {
                     font-size: 30px;
+                    margin: auto;
                 }
             }
 
@@ -274,10 +292,27 @@
                 width: 25px;
                 height: 21px;
                 background-image: url(../../../../assets/common/icons/discord-icon.svg);
+                @media all and (max-width: 320px) {
+                    width: 37px;
+                }
             }
 
             &:hover .discord-icon:before {
                 background-image: url(../../../../assets/common/icons/discord-icon-blue.svg);
+            }
+
+            @media all and (max-width: 390px) {
+                padding: 0px;
+                padding-left: 5px;
+                span {
+                    column-gap: 5px;
+                    &:before {
+                        width: 20%!important;
+                        text-align: right;    
+                        background-repeat: no-repeat;
+                        background-position: right;
+                    }
+                }
             }
         }
     }
@@ -313,6 +348,15 @@
         &__input {
             input {
                 padding-left: 10px !important;
+            }
+        }
+
+        @media all and (max-width: 460px) {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            &__input {
+                margin-bottom: 0!important;
             }
         }
     }
@@ -488,6 +532,12 @@
             width: 490px;
             border-bottom: none !important;
         }
+
+        @media all and (max-width: 768px) {
+            .input-group, .wrapper {
+                width: 100%!important;
+            }
+        }
     }
 
     .check_wrap {
@@ -600,6 +650,12 @@
             padding: 10px 20px;
             border-radius: 20px;
             margin: 40px;
+            @media all and (max-width: 320px) {
+                width: 230px;
+            }
+        }
+        @media all and (max-width: 768px) {
+            min-height: 400px;
         }
     }
 
@@ -697,6 +753,19 @@
                         background-image: url(../../../../assets/common/icons/excluded.svg) !important;
                     }
                 }
+
+                @media all and (max-width: 920px) {
+                    width: 100%;
+                    white-space: unset;
+                    text-align: left;
+                }
+            }
+            @media all and (max-width: 920px) {
+                width: 300px;
+                margin: auto;
+            }
+            @media all and (max-width: 320px) {
+                width: 230px;
             }
         }
     }
