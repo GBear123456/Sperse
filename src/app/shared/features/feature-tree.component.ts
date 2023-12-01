@@ -19,6 +19,7 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 })
 export class FeatureTreeComponent {
     @Input() showResetToDefault: boolean = false;
+    @Input() enableRestoreCustom: boolean = false;
     @Input() isReadOnly: boolean = false;
     @Input() set editData(val: FeatureTreeEditModel) {
         if (val) {
@@ -58,11 +59,14 @@ export class FeatureTreeComponent {
 
     setSelectedNodes(val: FeatureTreeEditModel) {
         val.features.forEach((feature) => {
+            let node = this.treeDataHelperService.findNode(this.treeData, { data: { name: feature.name } });
             let items = filter(val.featureValues, { name: feature.name });
             let value = '';
             if (items && items.length === 1) {
                 let item = items[0];
                 value = item.value;
+                node.isCustom = item.isCustomValue;
+                node.restoreValue = item.restoreValue || feature.defaultValue;
             } else {
                 value = feature.defaultValue;
             }
@@ -70,7 +74,6 @@ export class FeatureTreeComponent {
             if (feature.inputType.name == 'SINGLE_LINE_STRING' && value == feature.defaultValue)
                 value = '';
 
-            let node = this.treeDataHelperService.findNode(this.treeData, { data: { name: feature.name } });
             node.value = feature.inputType.name == 'CHECKBOX' ? value == 'true' : value;
         });
         this.initialGrantedFeatures = this.getGrantedFeatures();
@@ -106,6 +109,9 @@ export class FeatureTreeComponent {
     }
 
     onInputChange(node) {
+        if (this.enableRestoreCustom && node.value !== '' && node.value != node.restoreValue)
+            node.isCustom = true;
+
         this.setFeatureValueByName(node.data.name, node.value);
     }
 
@@ -156,7 +162,7 @@ export class FeatureTreeComponent {
                 return (new RegExp(validator.attributes.RegularExpression)).test(value);
             }
         } else if (validator.name === 'NUMERIC' || validator.name === 'FLOAT') {
-            if (value === undefined || value === null || value == '') {
+            if (value === undefined || value === null || value === '') {
                 return true;
             }
 
@@ -199,7 +205,6 @@ export class FeatureTreeComponent {
             }
         });
 
-        console.log(result);
         return result;
     }
 
@@ -220,8 +225,8 @@ export class FeatureTreeComponent {
         if (!feature.data.inputType || feature.data.inputType.name === 'CHECKBOX')
             return feature.value ? 'true' : 'false';
 
-        if (feature.value)
-            return feature.value;
+        if (feature.value !== '' && feature.value != null)
+            return feature.value.toString();
 
         return feature.data.defaultValue;
     }
@@ -257,5 +262,11 @@ export class FeatureTreeComponent {
     resetToDefault(node) {
         node.value = '';
         this.setFeatureValueByName(node.data.name, node.data.defaultValue);
+    }
+
+    restoreValue(node) {
+        node.isCustom = false;
+        node.value = node.restoreValue == node.data.defaultValue ? '' : node.restoreValue;
+        this.setFeatureValueByName(node.data.name, node.restoreValue);
     }
 }

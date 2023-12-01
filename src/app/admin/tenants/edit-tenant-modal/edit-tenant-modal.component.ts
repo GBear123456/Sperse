@@ -14,7 +14,7 @@ import {
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Observable, forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
@@ -37,6 +37,7 @@ import { FeatureTreeComponent } from '@app/shared/features/feature-tree.componen
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { MessageService } from 'abp-ng2-module';
 import { StorageChangeDialog } from './storage-change-dialog/storage-change-dialog.component';
+import { FeatureTreeEditModel, FeatureValuesDto } from '@app/shared/features/feature-tree-edit.model';
 
 @Component({
     selector: 'editTenantModal',
@@ -67,7 +68,7 @@ export class EditTenantModalComponent implements OnInit {
         }
     ];
     tenantId: number = this.data.tenantId;
-    features$: Observable<GetTenantFeaturesEditOutput> = this.tenantService.getTenantFeaturesForEdit(this.tenantId);
+    features$: Observable<FeatureTreeEditModel> = this.getFeaturesObs(this.tenantId);
 
     constructor(
         private tenantService: TenantServiceProxy,
@@ -120,8 +121,25 @@ export class EditTenantModalComponent implements OnInit {
 
     private loadFeatures(): void {
         this.modalDialog.startLoading();
-        this.features$ = this.tenantService.getTenantFeaturesForEdit(this.tenantId)
+        this.features$ = this.getFeaturesObs(this.tenantId)
             .pipe(finalize(() => this.modalDialog.finishLoading()));
+    }
+
+    private getFeaturesObs(tenantId: number): Observable<FeatureTreeEditModel> {
+        return this.tenantService.getTenantFeaturesForEdit(tenantId)
+            .pipe(map(featuresOutput => {
+                var model = new FeatureTreeEditModel();
+                model.features = featuresOutput.features;
+                model.featureValues = featuresOutput.featureValues.map(val => {
+                    var featureValue = new FeatureValuesDto();
+                    featureValue.name = val.name;
+                    featureValue.value = val.value;
+                    featureValue.isCustomValue = val.isTenantOverridden;
+                    featureValue.restoreValue = val.tenantOriginalValue;
+                    return featureValue;
+                });
+                return model;
+            }));
     }
 
     save(): void {

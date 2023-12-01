@@ -29,22 +29,16 @@
                          [disabled]="isReadOnly"
                          (onValueChanged)="onInputChange(feature)">
             </dx-text-box>
-            <!--<input [type]="node.inputType"
-            [attr.name]="node.data.name"
-            [placeholder]="node.data.defaultValue || ''"
-            [(ngModel)]="node.value"
-            [class.invalid]="!isFeatureValueValid(node.data.name, node.value)"
-            [disabled]="isReadOnly"
-            (change)="onInputChange(node)" />-->
             <button class="reset-button" *ngIf="showResetToDefault && feature.value" (click)="resetToDefault(feature)"></button>
         </ng-container>
+        <button class="reset-button" *ngIf="enableRestoreCustom && feature.isCustom" (click)="restoreValue(feature)" title="Clear manually changed value"></button>
         <!--<select *ngIf="node.data.inputType.name === 'COMBOBOX'"
-                [(ngModel)]="node.value"
-                [disabled]="isReadOnly"
-                (change)="onDropdownChange(node)">
-            <option *ngFor="let item of node.data.inputType.itemSource.items" [value]="item.value">
-                {{ item.displayText }}
-            </option>
-        </select>-->
+            [(ngModel)]="node.value"
+            [disabled]="isReadOnly"
+            (change)="onDropdownChange(node)">
+        <option *ngFor="let item of node.data.inputType.itemSource.items" [value]="item.value">
+            {{ item.displayText }}
+        </option>
+    </select>-->
     </div>
 </dx-tree-view>
