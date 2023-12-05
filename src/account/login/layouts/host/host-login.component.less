@@ -260,7 +260,7 @@
         line-height: 20px;
         letter-spacing: 0em;
         color: #3F5671;
-        margin-top: 30px;
+        margin-top: 10px;
 
         a {
             font-weight: 400;
@@ -286,7 +286,7 @@
     .entrance-page__social li {
         width: 100%;
         max-width: 200px;
-        padding: 0 10px;
+        padding: 0 2px;
         list-style-type: none;
     }
 
@@ -304,6 +304,16 @@
     .entrance-page__social-link--facebook {
         background-color: #3B5998;
         background-image: url(../../../../assets/common/icons/facebook-icon.svg);
+        @media (min-width: 500px) {
+            background-position: 15px;
+            text-decoration: none!important;
+            font-family: Outfit;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 50px;
+            letter-spacing: -0.02em;
+            padding-left: 32px;
+        }
     }
 
     .entrance-page__social-link--facebook:hover {
@@ -320,19 +330,39 @@
     }
 
     .entrance-page__social-link--google {
-        background-size: 24px;
+        background-size: 19px;
         border: 1px solid #c1c0c0;
         background-image: url(../../../../assets/common/icons/google.svg);
+        @media (min-width: 500px) {
+            background-position: 19px;
+            text-decoration: none!important;
+            color: rgba(6, 32, 70, 1);
+            font-family: Outfit;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 47px;
+            letter-spacing: -0.02em;
+            padding-left: 44px;
+        }
     }
 
     .entrance-page__social-link--google:hover {
-        border-width: 3px;
-        border-color: #ddd;
+        background-color: #dddddd;
     }
 
     .entrance-page__social-link--linkedin {
         background-color: #2E78B6;
         background-image: url(../../../../assets/common/icons/linkedin-icon.svg);
+        @media (min-width: 500px) {
+            background-position: 15px;
+            text-decoration: none!important;
+            font-family: Outfit;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 50px;
+            letter-spacing: -0.02em;
+            padding-left: 40px;
+        }
     }
 
     .entrance-page__social-link--linkedin:hover {
@@ -342,6 +372,16 @@
     .entrance-page__social-link--discord {
         background-color: #404eed;
         background-image: url(../../../../assets/common/icons/discord-icon.svg);
+        @media (min-width: 500px) {
+            background-position: 15px;
+            text-decoration: none!important;
+            font-family: Outfit;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 50px;
+            letter-spacing: -0.02em;
+            padding-left: 45px;
+        }
     }
 
     .entrance-page__social-link--discord:hover {

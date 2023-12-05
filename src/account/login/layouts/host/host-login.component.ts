@@ -27,6 +27,7 @@ import { ConditionsModalService } from '@shared/common/conditions-modal/conditio
 export class HostLoginComponent implements OnInit {
     @ViewChild('loginForm') loginForm;
     currentYear: number = moment().year();
+    width = innerWidth;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;

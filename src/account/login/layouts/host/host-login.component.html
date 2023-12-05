@@ -42,7 +42,10 @@
                         <!-- img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right" -->
                     </button>
                 </div>
-
+                <p class="agree-rights">By continuing I agree to
+                    <a (click)="openConditionsDialog(conditions.Terms)">Terms</a> &
+                    <a (click)="openConditionsDialog(conditions.Policies)">Policies</a>
+                </p>
                 <ng-container *ngIf="showExternalLogin">
                     <div *ngIf="(loginService.externalLoginProviders$ | async) as externalLoginProviders">
                         <div class="entrance-page__separator" *ngIf="externalLoginProviders?.length">
@@ -55,7 +58,7 @@
                                 <ng-container *ngFor="let provider of externalLoginProviders">
                                     <li>
                                         <a class="entrance-page__social-link entrance-page__social-link--{{provider.icon}}"
-                                           href="javascript:void(0);" (click)="externalLogin(provider)" title="{{provider.name}}"></a>
+                                           href="javascript:void(0);" (click)="externalLogin(provider)" title="{{provider.name}}">{{width > 500 ? provider.name : ''}}</a>
                                     </li>
                                 </ng-container>
                             </ul>
@@ -64,10 +67,7 @@
                 </ng-container>
 
                 <hr>
-                <p class="signup-link">Don't have an account? <a href="{{remoteServiceBaseUrl}}/account/signup" target="_self">Sign up now</a></p>
-                <!-- p class="agree-rights">By continuing I agree to
-                    <a (click)="openConditionsDialog(conditions.Terms)">Terms</a> &
-                    <a (click)="openConditionsDialog(conditions.Policies)">Policies</a></p -->
+                <p class="signup-link">Don't have an account? <a href="{{remoteServiceBaseUrl}}/account/signup?referer=login" target="_self">Sign up now</a></p>
             </form>
         </div>
     </div>

@@ -50,8 +50,10 @@ export class HostSignupFormComponent {
     @ViewChild('secondStepForm') secondStepForm;
     @ViewChild('phoneNumber') phoneNumber;
 
+    remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     hostName = AppConsts.defaultTenantName;
     isSperseHost = AppConsts.isSperseHost;
+    isDefaultLogin: boolean = false;
     isExtLogin: boolean = false;
     defaultCountryCode: string;
     selectedCountryCode: string;
@@ -102,6 +104,7 @@ export class HostSignupFormComponent {
             first()
         ).subscribe((paramsMap: ParamMap) => {
             this.isExtLogin = paramsMap.get('extlogin') == 'true';
+            this.isDefaultLogin = paramsMap.get('referer') == 'login';
         });
 
         this.productProxy.getSubscriptionProductsByGroupName('Main').subscribe(products => {
