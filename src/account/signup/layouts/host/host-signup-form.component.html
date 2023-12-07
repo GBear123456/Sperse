@@ -108,7 +108,7 @@
                         <span>{{buttonText}}</span>
                     </button>
                 </div>
-                <div class="has-account">Already have an account? <a [href]="remoteServiceBaseUrl + '/account/' + (isDefaultLogin ? 'login' : 'signin') + (isExtLogin ? '?extlogin=true' : '')">Sign in</a></div>
+                <div class="has-account">Already have an account? <a [href]="loginReferer == 'portal' ? appMemberPortalUrl : (remoteServiceBaseUrl + '/account/' + (loginReferer ? loginReferer : 'signin') + (isExtLogin ? '?extlogin=true' : ''))">Sign in</a></div>
             </form>
             <form *ngIf="leadRequestXref" id="secondStepForm" #secondStepForm="ngForm" novalidate (ngSubmit)="completeTenantRegistrationRequest()">
                 <div class="second-step" *ngIf="!congratulationLink; else congratulation">
