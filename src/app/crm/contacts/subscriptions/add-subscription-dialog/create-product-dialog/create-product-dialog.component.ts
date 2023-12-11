@@ -674,7 +674,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     onProductCodeChanged(event) {
         if (this.isPublicProductsEnabled && !this.defaultProductUri && (!this.data.product || !this.data.product.id))
-            this.product.publicName = event.value.replace(/[^a-zA-Z0-9-._~]+/, '');
+            this.product.publicName = event.value.replace(/[^a-zA-Z0-9-._~]+/gim, '');
     }
 
     fileSelected($event) {
