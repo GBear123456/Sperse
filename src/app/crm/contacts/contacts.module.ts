@@ -149,6 +149,7 @@ import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { OrgUnitsTreeModule } from '@shared/common/organization-units-tree/organization-units-tree.module';
 import { InvoiceGridMenuModule } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.module'
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
+import { InvoiceAddressDialog } from '@app/crm/shared/create-invoice-dialog/invoice-address-dialog/invoice-address-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
 import { AddProductDialogComponent, FilterAssignmentsPipe } from './subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
@@ -220,6 +221,7 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
         CreateInvoiceDialogComponent,
+        InvoiceAddressDialog,
         LeadRelatedContactsComponent,
         AddProductDialogComponent,
         CreateProductDialogComponent,
@@ -303,6 +305,7 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
     entryComponents: [
         CreateActivityDialogComponent,
         CreateInvoiceDialogComponent,
+        InvoiceAddressDialog,
         EditContactDialog,
         EditAddressDialog,
         ResetPasswordDialog,
