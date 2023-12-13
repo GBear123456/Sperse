@@ -22,7 +22,9 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dial
 import { DxValidatorComponent, DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable, of, zip } from 'rxjs';
 import * as moment from 'moment';
-import { map, switchMap, finalize } from 'rxjs/operators';
+import { map, switchMap, finalize, first, filter } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
+import { findIana } from 'windows-iana';
 
 /** Application imports */
 import {
@@ -44,13 +46,19 @@ import {
     ProductUpgradeAssignmentInfo,
     DocumentTemplatesServiceProxy,
     CustomPeriodType,
-    ProductResourceDto
+    ProductResourceDto,
+    ProductEventDto,
+    AddressInfoDto,
+    ProductEventLocation,
+    LanguageDto,
+    TimingServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
+import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
-import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
+import { AppTimezoneScope } from '@shared/AppEnums';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
@@ -62,6 +70,7 @@ import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactsService } from '../../../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
+import { LanguagesStoreSelectors, RootStore, LanguagesStoreActions } from '@root/store';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
@@ -185,8 +194,17 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     imageChanged: boolean = false;
     isOneTime = false;
 
+    eventLocation = ProductEventLocation;
+    eventDurations: any[] = [];
+    languages: LanguageDto[] = [];
+    timezones: any[] = [];
+    eventDate: Date;
+    eventTime: Date;
+
     constructor(
         private elementRef: ElementRef,
+        private store$: Store<RootStore.State>,
+        private timingService: TimingServiceProxy,
         private productProxy: ProductServiceProxy,
         productGroupProxy: ProductGroupServiceProxy,
         private notify: NotifyService,
@@ -222,6 +240,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             if (this.product.publishDate)
                 this.publishDate = DateHelper.addTimezoneOffset(new Date(this.product.publishDate), true);
             this.initProductResources();
+            this.initProductEvent();
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -230,6 +249,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     this.product.publicName = this.defaultProductUri;
                 this.addUpgradeToProduct();
             }
+            this.initEventProps();
         }
 
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
@@ -244,6 +264,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         });
 
         this.gracePeriodDefaultValue = this.setting.getInt('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount');
+        this.initEventDataSources();
     }
 
     ngOnInit() {
@@ -270,6 +291,80 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     this.productLinks.push(resource);
             });
         }
+    }
+
+    initProductEvent() {
+        if (!this.product.productEvent)
+            return;
+
+        if (this.product.productEvent.time) {
+            let baseDateMomentUtc = this.product.productEvent.date ? moment(new Date(this.product.productEvent.date)).utc() : moment().utc();
+            let timeArr = this.product.productEvent.time.split(':');
+            baseDateMomentUtc.set({ hour: timeArr[0], minute: timeArr[1] });
+            let baseDate = DateHelper.addTimezoneOffset(baseDateMomentUtc.toDate(), false, findIana(this.product.productEvent.timezone)[0]);
+            this.eventDate = this.product.productEvent.date ? DateHelper.removeTimezoneOffset(new Date(baseDate)) : undefined;
+            this.eventTime = baseDate;
+        } else {
+            this.eventDate = new Date(this.product.productEvent.date);
+            this.eventTime = undefined;
+        }
+
+
+    }
+
+    initEventProps() {
+        if (this.product.productEvent)
+            return;
+
+        this.product.productEvent = new ProductEventDto();
+        this.product.productEvent.location = ProductEventLocation.Online;
+        this.product.productEvent.timezone = this.setting.get('Abp.Timing.TimeZone');
+        this.product.productEvent.languageId = 'en';
+        this.product.productEvent.address = new AddressInfoDto();
+    }
+
+    initEventDataSources() {
+        this.initEventDurations();
+        this.initLanguages();
+        this.initTimezones();
+    }
+
+    initEventDurations() {
+        let durations = [];
+        for (var i = 15; i <= 1440; i += 5) {
+            let hour = Math.floor(i / 60);
+            let min = i % 60;
+            let displayValue = hour ? `${hour}H ` : '';
+            displayValue += min ? `${min}Min` : '';
+            durations.push({
+                hour: hour,
+                minutes: min,
+                displayValue: displayValue,
+                totalMinutes: i
+            });
+        }
+        this.eventDurations = durations;
+        this.changeDetection.markForCheck();
+    }
+
+    initLanguages() {
+        this.store$.dispatch(new LanguagesStoreActions.LoadRequestAction());
+        this.store$.pipe(
+            select(LanguagesStoreSelectors.getLanguages),
+            filter(x => !!x),
+            first()
+        ).subscribe(languages => {
+            this.languages = languages;
+            this.changeDetection.markForCheck();
+        });
+    }
+
+    initTimezones() {
+        this.timingService.getTimezones(AppTimezoneScope.Application).subscribe(res => {
+            res.items.splice(0, 1);
+            this.timezones = res.items;
+            this.changeDetection.markForCheck();
+        });
     }
 
     checkAddManageOption(options) {
@@ -305,7 +400,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             }
         }
 
-
         this.resourceLinkUrl = '';
         setTimeout(() => {
             if (this.validationGroup.instance.validate().isValid) {
@@ -318,10 +412,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                             item.trialDayCount = 0;
                     });
 
-                if (this.publishDate)
-                    this.product.publishDate = DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '');
-                else
-                    this.product.publishDate = undefined;
+                this.product.publishDate = this.publishDate ? DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '') : undefined;
 
                 let upgradeProducts = this.product.productUpgradeAssignments;
                 if (upgradeProducts && upgradeProducts.length == 1 && !upgradeProducts[0].upgradeProductId)
@@ -336,6 +427,31 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
                 if (this.product.type == ProductType.Digital && (!this.product.productResources || !this.product.productResources.length))
                     return this.notify.error(this.ls.l('DigitalProductError'));
+
+                if (this.product.type != ProductType.Event)
+                    this.product.productEvent = undefined;
+                if (this.product.type == ProductType.Event) {
+                    if (this.eventTime) {
+                        let ianaTimezone = findIana(this.product.productEvent.timezone)[0];
+                        if (this.eventDate) {
+                            let date = new Date(this.eventDate);
+                            date.setHours(this.eventTime.getHours(), this.eventTime.getMinutes(), 0, 0);
+                            DateHelper.removeTimezoneOffset(date, false, '', ianaTimezone);
+                            let utc = moment(date).utc();
+                            this.product.productEvent.date = DateHelper.getDateWithoutTime(date);
+                            this.product.productEvent.time = `${utc.hours()}:${utc.minutes()}`;
+                        } else {
+                            let date = this.eventTime;
+                            DateHelper.removeTimezoneOffset(date, false, '', ianaTimezone)
+                            let utc = moment(date).utc();
+                            this.product.productEvent.date = undefined;
+                            this.product.productEvent.time = `${utc.hours()}:${utc.minutes()}`;
+                        }
+                    } else {
+                        this.product.productEvent.date = this.eventDate ? DateHelper.removeTimezoneOffset(this.eventDate, false, 'from') : undefined;
+                        this.product.productEvent.time = undefined;
+                    }
+                }
 
                 if (this.product instanceof UpdateProductInput) {
                     this.productProxy.updateProduct(this.product).pipe(
@@ -823,10 +939,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     onProductTypeChanged(productType: ProductType) {
         let options = this.product.productSubscriptionOptions;
-        if (productType == ProductType.Subscription && (!options || !options.length))
-            this.addNewPaymentPeriod();
-        else if (productType == ProductType.Digital)
-            this.product.unit = ProductMeasurementUnit.Unit;
+        switch (productType) {
+            case ProductType.Subscription:
+                if (!options || !options.length)
+                    this.addNewPaymentPeriod();
+                break;
+            case ProductType.Digital:
+                this.product.unit = ProductMeasurementUnit.Unit;
+                break;
+            case ProductType.Event:
+                this.product.unit = ProductMeasurementUnit.Unit;
+                this.initEventProps();
+                break;
+        }
 
         this.product.type = productType;
         this.detectChanges();
