@@ -71,6 +71,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactsService } from '../../../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { LanguagesStoreSelectors, RootStore, LanguagesStoreActions } from '@root/store';
+import { EditAddressDialog } from '../../../edit-address-dialog/edit-address-dialog.component';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
@@ -198,6 +199,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     eventDurations: any[] = [];
     languages: LanguageDto[] = [];
     timezones: any[] = [];
+    eventAddress: string;
     eventDate: Date;
     eventTime: Date;
 
@@ -296,6 +298,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     initProductEvent() {
         if (!this.product.productEvent)
             return;
+
+        this.setEventAddressString();
 
         if (this.product.productEvent.time) {
             let baseDateMomentUtc = this.product.productEvent.date ? moment(new Date(this.product.productEvent.date)).utc() : moment().utc();
@@ -1042,6 +1046,71 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         if (this.product.isPublished && !this.publishDate) {
             this.publishDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());
         }
+    }
+
+    editAddress() {
+        let data = {
+            streetAddress: this.product.productEvent.address.streetAddress,
+            city: this.product.productEvent.address.city,
+            stateId: this.product.productEvent.address.stateId,
+            stateName: this.product.productEvent.address.stateName,
+            countryId: this.product.productEvent.address.countryId,
+            countryName: this.product.productEvent.address.countryName,
+            neighborhood: this.product.productEvent.address.neighborhood,
+            zip: this.product.productEvent.address.zip,
+            isCompany: false,
+            isDeleteAllowed: false,
+            showType: false,
+            showNeighborhood: false,
+            editDialogTitle: 'Update address',
+            formattedAddress: '',
+            isEditAllowed: true,
+            disableDragging: true,
+            hideComment: true,
+            hideCheckboxes: true
+        };
+
+        this.dialog.open(EditAddressDialog, {
+            data: data,
+            hasBackdrop: true
+        }).afterClosed().subscribe((saved: boolean) => {
+            if (saved) {
+                this.product.productEvent.address.streetAddress = data.streetAddress;
+                this.product.productEvent.address.city = data.city;
+                this.product.productEvent.address.stateId = data.stateId;
+                this.product.productEvent.address.stateName = data.stateName;
+                this.product.productEvent.address.countryId = data.countryId;
+                this.product.productEvent.address.countryName = data.countryName;
+                this.product.productEvent.address.neighborhood = data.neighborhood;
+                this.product.productEvent.address.zip = data.zip;
+                this.setEventAddressString();
+                this.detectChanges();
+            }
+        });
+    }
+
+    clearAddress(event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        this.product.productEvent.address.streetAddress = null;
+        this.product.productEvent.address.city = null;
+        this.product.productEvent.address.stateId = null;
+        this.product.productEvent.address.stateName = null;
+        this.product.productEvent.address.countryId = null;
+        this.product.productEvent.address.countryName = null;
+        this.product.productEvent.address.neighborhood = null;
+        this.product.productEvent.address.zip = null;
+        this.setEventAddressString();
+        this.detectChanges();
+    }
+
+    setEventAddressString() {
+        if (!this.product || !this.product.productEvent || !this.product.productEvent.address)
+            return;
+
+        let addr = this.product.productEvent.address;
+        this.eventAddress = [addr.streetAddress, addr.city, addr.stateName, addr.countryName, addr.zip].filter(x => !!x).join(', ');
     }
 
     ngOnDestroy() {

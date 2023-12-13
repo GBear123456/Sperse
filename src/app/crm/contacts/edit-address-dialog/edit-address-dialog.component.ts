@@ -51,7 +51,7 @@ export class EditAddressDialog {
     action: string;
     address: any;
     movePos: any;
-    isEditAllowed = this.permissionService.checkCGPermission(this.data.groups) || 
+    isEditAllowed = this.data.isEditAllowed || this.permissionService.checkCGPermission(this.data.groups) ||
         this.data.isCompany && this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
     states: CountryStateDto[];
     countries: CountryDto[];
@@ -205,6 +205,9 @@ export class EditAddressDialog {
     }
 
     mouseMove(event) {
+        if (this.data.disableDragging)
+            return;
+
         if (this.movePos) {
             let x = event.clientX - this.movePos.x,
                 y = event.clientY - this.movePos.y,
