@@ -41,6 +41,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     CustomCssType = CustomCssType;
 
     signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
+    someCssChanged: boolean;
 
     constructor(
         _injector: Injector,
@@ -79,9 +80,15 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     handleCssUpload(cssType: CustomCssType, res: any) {
         if (res.result && res.result.id) {
+            this.someCssChanged = true;
             this.setCustomCssTenantProperty(cssType, res.result.id);
             this.changeDetection.detectChanges();
         }
+    }
+
+    afterSave() {
+        if (this.someCssChanged)
+            this.message.info(this.l('ReloadPageStylesMessage'));
     }
 
     clearLogo(): void {

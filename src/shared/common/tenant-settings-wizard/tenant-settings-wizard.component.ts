@@ -107,6 +107,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     );
     securitySettings$: Observable<SecuritySettingsEditDto> = this.tenantSettingsService.getSecuritySettings();
     emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
+    appearanceSettingsChanged: Boolean;
     generalSettingsChanged: Boolean;
     timezoneChanged: Boolean;
     countryChanged: Boolean;
@@ -138,6 +139,8 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 this.messageService.info(this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('General'))).done(() => {
                     window.location.reload();
                 });            
+            if (this.appearanceSettingsChanged)
+                this.messageService.info(this.ls.l('ReloadPageStylesMessage'));
         });
     }
 
@@ -284,6 +287,8 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         if (option == 'timezone')
             this.timezoneChanged = true;
         if (option == 'defaultCountry')
-            this.countryChanged = true;                        
+            this.countryChanged = true;
+        if (option == 'appearance')
+            this.appearanceSettingsChanged = true;
     }
 }
