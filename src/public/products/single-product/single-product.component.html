@@ -58,7 +58,7 @@
             <ng-template #generalProduct>
                 <div class="price">
                     <ng-container *ngIf="!isFreeProductSelected else freeProduct">
-                        <div class="quantity" *ngIf="productInfo.type != productType.Digital">
+                        <div class="quantity" *ngIf="productInfo.type != productType.Digital && productInfo.type != productType.Event">
                             <div class="quantity-title">Quantity</div>
                             <div class="quantity-controls">
                                 <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>

@@ -20,7 +20,7 @@
                 <div class="bottom">Your payment is complete</div>
             </div>
             <div class="approved">
-                <img src="assets/common/images/approved.png">        
+                <img src="assets/common/images/approved.png">
                 <div class="amount">
                     <p>Invoice paid</p>
                     <span>{{invoiceInfo.invoiceAmount | currency:'USD':'symbol':'1.2-2'}}</span>
@@ -64,6 +64,42 @@
             <h1>Downloads</h1>
             <div *ngFor="let resource of invoiceInfo.resources; let i = index" class="resource">
                 <img src="assets/common/icons/{{resource.url ? 'link.png' : 'files.svg'}}"><a target="_blank" [href]="resource.url" class="{{resource.url ? 'link' : 'file'}}">{{resource.name || resource.url}}</a><button (click)="resourceClick($event, resource)"><img src="assets/common/icons/{{resource.url ? 'copy-reciept' : 'download'}}.png">{{resource.url ? 'Copy' : 'Download'}}</button>
+            </div>
+        </div>
+        <div class="events" *ngIf="invoiceInfo.events && invoiceInfo.events.length">
+            <h1>Events</h1>
+            <div *ngFor="let resource of invoiceInfo.events; let i = index" class="event">
+                <h1>{{resource.productName}}</h1>
+                <div class="row">
+                    <div class="col-3 caption">Location</div>
+                    <div class="col-9 text">{{ls.l('ProductEventLocation_' + resource.location)}}</div>
+                </div>
+                <div *ngIf="resource.dateStr" class="row">
+                    <div class="col-3 caption">Date</div>
+                    <div class="col-9 text" [title]="'Computer: ' + resource.dateStrLocal">{{resource.dateStr}} <span *ngIf="resource.time">({{resource.timezone}})</span></div>
+                </div>
+                <div *ngIf="resource.link" class="row">
+                    <div class="col-3 caption">Link</div>
+                    <div class="col-9 text nowrap" [title]="resource.link"><a [href]="resource.link" target="_blank">{{resource.link}}</a></div>
+                </div>
+                <div class="row">
+                    <div class="col-3 caption">Address</div>
+                    <div class="col-9 text">
+                        <div *ngIf="resource.address.streetAddress">{{resource.address.streetAddress}}</div>
+                        <div *ngIf="resource.address.city">{{resource.address.city}}</div>
+                        <div *ngIf="resource.address.stateName">{{resource.address.stateName}}</div>
+                        <div *ngIf="resource.address.countryName">{{resource.address.countryName}}</div>
+                        <div *ngIf="resource.address.zip">{{resource.address.zip}}</div>
+                    </div>
+                </div>
+                <div *ngIf="resource.durationStr" class="row">
+                    <div class="col-3 caption">Duration</div>
+                    <div class="col-9 text">{{resource.durationStr}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-3 caption">Language</div>
+                    <div class="col-9 text">{{resource.languageName}}</div>
+                </div>
             </div>
         </div>
         <div class="footer gray">

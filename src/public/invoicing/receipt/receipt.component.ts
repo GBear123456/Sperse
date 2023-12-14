@@ -8,6 +8,8 @@ import {
 
 /** Third party imports */
 import { ClipboardService } from 'ngx-clipboard';
+import * as moment from 'moment';
+import { findIana } from 'windows-iana';
 
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
@@ -76,6 +78,7 @@ export class ReceiptComponent implements OnInit {
                         {
                             this.invoiceInfo = result;
                             this.invoiceInfo.resources = result.resources.sort((a, b) => Boolean(a.url) > Boolean(b.url) ? 1 : -1);
+                            this.initEventsInfo();
                             this.setReturnLinkInfo();
                             this.loading = false;
                             abp.ui.clearBusy();
@@ -148,5 +151,29 @@ export class ReceiptComponent implements OnInit {
 
         event.stopPropagation();
         event.preventDefault();
+    }
+
+    initEventsInfo() {
+        if (!this.invoiceInfo.events)
+            return;
+            
+        for (let event of this.invoiceInfo.events) {
+            if (event.time) {
+                let baseDateMomentUtc = event.date ? moment(new Date(event.date)).utc() : moment().utc();
+                let timeArr = event.time.split(':');
+                baseDateMomentUtc.set({ hour: timeArr[0], minute: timeArr[1] });
+                let timezoneDateMoment = baseDateMomentUtc.tz(findIana(event.timezone)[0]);
+                event['dateStr'] = event.date ? timezoneDateMoment.format('MMM D, YYYY h:mm A Z') : timezoneDateMoment.format('h:mm A Z');
+                event['dateStrLocal'] = event.date ? timezoneDateMoment.local().format('MMM D, YYYY h:mm A Z') : timezoneDateMoment.local().format('h:mm A Z');
+            } else if (event.date) {
+                event['dateStr'] = moment(new Date(event.date)).utc().format('MMM D, YYYY');
+            }
+
+            if (event.durationMinutes) {
+                let hour = Math.floor(event.durationMinutes / 60);
+                let min = event.durationMinutes % 60;
+                event['durationStr'] = `${hour}h ${min}min`;
+            }
+        }
     }
 }
