@@ -216,14 +216,30 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
         if (!serviceLevel['featureValues'])
             this.defineFeatureLevelValues(serviceLevel);
 
+        let featuresConfig: FlatFeatureDto[] = serviceLevel['currentFeaturesConfig'] || this.featuresData.features;
+        serviceLevel['featureValues'].forEach((val: FeatureValuesDto) => {
+            let featureConfig: FlatFeatureDto = featuresConfig.find(v => v.name == val.name);
+            if (!featureConfig || featureConfig.inputType.name == 'CHECKBOX')
+                return val;
+
+            if (val.value == featureConfig.defaultValue) {
+                let serviceValue = this.featuresData.featureValues.find(v => v.name == val.name);
+                val.value = serviceValue ? serviceValue.value : featureConfig.defaultValue;
+            }
+
+            return val;
+        })
+        let features = this.featuresData.features.map((feature, index) => {
+            return {
+                ...feature,
+                defaultValue: this.featuresData.featureValues[index].value
+                    || feature.defaultValue
+            };
+        });
+        serviceLevel['currentFeaturesConfig'] = features;
+
         return {
-            features: this.featuresData.features.map((feature, index) => {
-                return {
-                    ...feature,
-                    defaultValue: this.featuresData.featureValues[index].value
-                        || feature.defaultValue
-                };
-            }),
+            features: features,
             featureValues: serviceLevel['featureValues']
         };
     }
