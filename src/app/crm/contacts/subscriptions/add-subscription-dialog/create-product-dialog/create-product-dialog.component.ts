@@ -287,12 +287,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     saveProduct() {
+        if (this.product.type != ProductType.Digital) {
+            this.productFiles = [];
+            this.productLinks = [];
+            this.productTemplates = [];
+        }
+
         if (this.product.type == ProductType.Subscription) {
             let options = this.product.productSubscriptionOptions;
             if (!options || !options.length)
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.unit = undefined;
             this.product.price = undefined;
+
         } else {
             this.product.productServices = undefined;
             this.product.productSubscriptionOptions = undefined;
