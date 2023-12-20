@@ -13,11 +13,9 @@
                     name="company"
                     maxLength="50"
                     [placeholder]="!data.viewMode ? ls.l('EditValuePlaceholder') : ''"
-                    displayExpr="name"
-                    valueExpr="name"
                     [(value)]="data.company"
                     [acceptCustomValue]="true"
-                    [dataSource]="organizations"
+                    [items]="organizations"
                     [disabled]="data.viewMode"
                     (onCustomItemCreating)="onCustomItemCreating($event, 'name')"
                     (onFocusIn)="onFieldFocus($event)">

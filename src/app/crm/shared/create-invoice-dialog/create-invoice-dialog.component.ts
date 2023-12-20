@@ -968,6 +968,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     clearClient() {
         this.contactId = undefined;
         this.customer = undefined;
+        this.selectedContact = undefined;
         this.selectedBillingAddress = undefined;
         this.selectedShippingAddress = undefined;
         this.initiatePaymentMethodsCheck();
@@ -1153,7 +1154,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     showEditAddressDialog(event, field) {
         let person = new PersonInfoDto(),
-            address = this.selectedContact.address;
+            address = this.selectedContact && this.selectedContact.address;
         this.nameParser.parseIntoPerson(this.customer, person);
         let dialogData: any = Object.assign({}, this[field]) || {
             /*countryId: address.countryCode,*/

@@ -100,8 +100,8 @@
                              src='./assets/common/icons/preview.svg'
                              (click)="showEditAddressDialog($event, 'selectedShippingAddress')">
                         <ng-template #shippingEditButtons>
-                            <i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i>
-                            <i class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
+                            <i *ngIf="selectedContact" class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i>
+                            <i *ngIf="selectedContact" class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
                         </ng-template>
                     </label>
                     <span *ngIf="!selectedShippingAddress && selectedContact">
