@@ -37,6 +37,8 @@ export class HostLoginComponent implements OnInit {
     isExtLogin: boolean = false;
     showExternalLogin = false;
     get redirectToSignUp() { return false; }
+    isSignUpEnabled = this.appSession.tenant && 
+        abp.setting.get('App.UserManagement.IsSignUpPageEnabled') == 'true';
 
     constructor(
         private sessionService: AbpSessionService,

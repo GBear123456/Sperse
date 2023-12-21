@@ -67,7 +67,7 @@
                 </ng-container>
 
                 <hr>
-                <p class="signup-link">Don't have an account? <a href="{{remoteServiceBaseUrl}}/account/signup?referer=login" target="_self">Sign up now</a></p>
+                <p *ngIf="isSignUpEnabled" class="signup-link">Don't have an account? <a href="{{remoteServiceBaseUrl}}/account/signup?referer=login" target="_self">Sign up now</a></p>
             </form>
         </div>
     </div>
