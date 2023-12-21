@@ -10,7 +10,8 @@ import { finalize, first } from 'rxjs/operators';
 import {
     MailchimpSettingsDto,
     MailchimpServiceProxy,
-    MailchimpSettingsEditDto
+    MailchimpSettingsEditDto,
+    MailchimpListDto
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { AppConsts } from '@shared/AppConsts';
@@ -24,6 +25,7 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class MailchimpSettingsComponent extends SettingsComponentBase {
     mailchimpSettings: MailchimpSettingsDto = new MailchimpSettingsDto();
+    listsDataSource: MailchimpListDto[] = [];
 
     constructor(
         _injector: Injector,
@@ -59,6 +61,17 @@ export class MailchimpSettingsComponent extends SettingsComponentBase {
             )
             .subscribe(res => {
                 this.mailchimpSettings = res;
+                if (res.isConfigured) {
+                    this.getListsData();
+                }
+                this.changeDetection.detectChanges();
+            });
+    }
+
+    getListsData() {
+        this.mailchimpService.getLists()
+            .subscribe(res => {
+                this.listsDataSource = res;
                 this.changeDetection.detectChanges();
             });
     }
@@ -99,13 +112,27 @@ export class MailchimpSettingsComponent extends SettingsComponentBase {
             )
             .subscribe(() => {
                 this.mailchimpSettings.isConfigured = false;
+                this.mailchimpSettings.isEnabled = false;
+                this.mailchimpSettings.listId = null;
+
+                this.listsDataSource = [];
                 this.changeDetection.detectChanges();
             });
     }
 
+    isValid(): boolean {
+        if (this.mailchimpSettings.isConfigured && !this.mailchimpSettings.listId) {
+            this.notify.error(this.l('RequiredField', 'List'));
+            return false;
+        }
+
+        return super.isValid();
+    }
+
     getSaveObs(): Observable<any> {
         let obj = new MailchimpSettingsEditDto({
-            isEnabled: this.mailchimpSettings.isEnabled
+            isEnabled: this.mailchimpSettings.isEnabled,
+            listId: this.mailchimpSettings.listId
         });
         return this.mailchimpService.updateSettings(obj);
     }

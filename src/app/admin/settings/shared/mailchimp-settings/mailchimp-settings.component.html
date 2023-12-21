@@ -15,6 +15,16 @@
             <img *ngIf="mailchimpSettings.isConfigured" src="./assets/common/icons/check-green.svg" />
             <span *ngIf="mailchimpSettings.isConfigured" class="disconnect" (click)="disconnect()">{{l("Disconnect")}}</span>
         </div>
+        <div class="form-group">
+            <label>Mailchimp list to add contacts</label>
+            <dx-select-box [(value)]="mailchimpSettings.listId"
+                           [dataSource]="listsDataSource"
+                           valueExpr="id"
+                           displayExpr="name"
+                           [disabled]="!mailchimpSettings.isConfigured || !listsDataSource.length"
+                           width="300">
+            </dx-select-box>
+        </div>
     </div>
     <button class="btn btn-layout" (click)="save()">
         <i class="icon-la la la-floppy-o"></i>
