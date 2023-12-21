@@ -309,11 +309,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.eventDate = this.product.productEvent.date ? DateHelper.removeTimezoneOffset(new Date(baseDate)) : undefined;
             this.eventTime = baseDate;
         } else {
-            this.eventDate = new Date(this.product.productEvent.date);
+            this.eventDate = this.product.productEvent.date ? new Date(this.product.productEvent.date) : undefined;
             this.eventTime = undefined;
         }
-
-
     }
 
     initEventProps() {
