@@ -2,7 +2,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-    GetInvoiceReceiptInfoOutput, InvoiceStatus,
+    GetInvoiceReceiptInfoOutput, InvoiceEventInfo, InvoiceStatus,
     UserInvoiceServiceProxy
 } from '@root/shared/service-proxies/service-proxies';
 
@@ -175,5 +175,38 @@ export class ReceiptComponent implements OnInit {
                 event['durationStr'] = `${hour}h ${min}min`;
             }
         }
+    }
+
+    copyEventData(event: InvoiceEventInfo) {
+        let eventData = `${event.productName}\nLocation: ${this.ls.l('ProductEventLocation_' + event.location)}\n`;
+        if (event['dateStr']) {
+            eventData += `Date: ${event['dateStr']}${event.time ? '(' + event.timezone + ')' : ''}\n`;
+            if (event.time)
+                eventData += `Local Date: ${event['dateStrLocal']}\n`;
+        }
+
+        eventData += this.getCopyString('Link', event.link);
+
+        if (event.address.streetAddress || event.address.city || event.address.stateName || event.address.countryName || event.address.zip) {
+            eventData += `Address\n`;
+            eventData += this.getCopyString('Street', event.address.streetAddress);
+            eventData += this.getCopyString('City', event.address.city);
+            eventData += this.getCopyString('State', event.address.stateName);
+            eventData += this.getCopyString('Country', event.address.countryName);
+            eventData += this.getCopyString('Zip', event.address.zip);
+        }
+
+        eventData += this.getCopyString('Duration', event['durationStr']);
+        eventData += this.getCopyString('Language', event.languageName, false);
+
+        this.clipboardService.copyFromContent(eventData);
+        abp.notify.info(this.ls.l('SavedToClipboard'));
+    }
+
+    private getCopyString(displayName: string, value: any, checkNotEmpty = true): string {
+        if (checkNotEmpty && !value) {
+            return '';
+        }
+        return `${displayName}: ${value}\n`;
     }
 }
