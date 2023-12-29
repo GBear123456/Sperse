@@ -69,22 +69,23 @@
         <div class="events" *ngIf="invoiceInfo.events && invoiceInfo.events.length">
             <h1>Events</h1>
             <div *ngFor="let resource of invoiceInfo.events; let i = index" class="event">
-                <h1>{{resource.productName}}</h1>
+                <div class="event-name">{{resource.productName}}</div>
+                <hr />
                 <div class="row">
-                    <div class="col-3 caption">Location</div>
-                    <div class="col-9 text">{{ls.l('ProductEventLocation_' + resource.location)}}</div>
+                    <div class="col-4 caption"><i class="fa fa-map-marker"></i>Location</div>
+                    <div class="col-8 text">{{ls.l('ProductEventLocation_' + resource.location)}}</div>
                 </div>
                 <div *ngIf="resource.dateStr" class="row">
-                    <div class="col-3 caption">Date</div>
+                    <div class="col-3 caption"><i class="fa fa-calendar"></i>Date</div>
                     <div class="col-9 text" [title]="'Computer: ' + resource.dateStrLocal">{{resource.dateStr}} <span *ngIf="resource.time">({{resource.timezone}})</span></div>
                 </div>
                 <div *ngIf="resource.link" class="row">
-                    <div class="col-3 caption">Link</div>
-                    <div class="col-9 text nowrap" [title]="resource.link"><a [href]="resource.link" target="_blank">{{resource.link}}</a></div>
+                    <div class="col-4 caption"><i class="fa fa-external-link"></i>Link</div>
+                    <div class="col-8 text nowrap" [title]="resource.link"><a [href]="resource.link" target="_blank">{{resource.link}}</a></div>
                 </div>
                 <div class="row">
-                    <div class="col-3 caption">Address</div>
-                    <div class="col-9 text">
+                    <div class="col-4 caption"><i class="fa fa-building-o"></i>Address</div>
+                    <div class="col-8 text">
                         <div *ngIf="resource.address.streetAddress">{{resource.address.streetAddress}}</div>
                         <div *ngIf="resource.address.city">{{resource.address.city}}</div>
                         <div *ngIf="resource.address.stateName">{{resource.address.stateName}}</div>
@@ -93,12 +94,12 @@
                     </div>
                 </div>
                 <div *ngIf="resource.durationStr" class="row">
-                    <div class="col-3 caption">Duration</div>
-                    <div class="col-9 text">{{resource.durationStr}}</div>
+                    <div class="col-4 caption"><i class="fa fa-clock-o"></i>Duration</div>
+                    <div class="col-8 text">{{resource.durationStr}}</div>
                 </div>
                 <div class="row">
-                    <div class="col-3 caption">Language</div>
-                    <div class="col-9 text">{{resource.languageName}}</div>
+                    <div class="col-4 caption"><i class="fa fa-globe"></i>Language</div>
+                    <div class="col-8 text">{{resource.languageName}}</div>
                 </div>
             </div>
         </div>

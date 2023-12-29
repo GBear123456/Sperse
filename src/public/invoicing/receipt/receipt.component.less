@@ -298,33 +298,52 @@ public-receipt {
         margin: 10px 0;
         background: #fff;
         border-radius: 20px;
-        font-family: Poppins;
         letter-spacing: -0.02em;
+
+        div, h1, span {
+            font-family: Poppins !important;
+        }
 
         h1 {
             font-size: 18px;
             font-weight: 500;
             line-height: 27px;
             color: rgba(7, 13, 68, 1);
+            margin-bottom: 23px;
         }
 
         .event {
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ebedf3;
+            padding: 26px 15px 0;
+            margin-bottom: 12px;
+            background-color: #F1F6F9;
             border-radius: 5px;
-            font-family: Poppins;
             font-size: 14px;
             font-weight: 400;
             color: #79848c;
             line-height: 21px;
 
+            .event-name {
+                font-size: 16px;
+                font-weight: 500;
+                color: #000;
+            }
+
+            hr {
+                border-color: #D7DFE4;
+                margin: 16px 0;
+            }
+
             .row {
-                margin-bottom: 5px;
+                padding-bottom: 23px;
+
+               .fa {
+                   margin-right: 8px;
+               }
 
                 .caption {
                     color: #070d44;
-                    font-weight: 500;
+                    font-weight: 400;
+                    padding-right: 0;
                 }
 
                 .text {
