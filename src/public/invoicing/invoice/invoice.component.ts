@@ -130,7 +130,9 @@ export class InvoiceComponent implements OnInit {
             let type = this.payPalInfo.isSubscription ? ButtonType.Subscription : ButtonType.Payment;
             this.payPal.initialize(this.payPalInfo.clientId, type,
                 () => this.paypalServiceProxy.requestPayment(this.tenantId, this.publicId).toPromise(),
-                () => this.paypalServiceProxy.requestSubscription(this.tenantId, this.publicId).toPromise());
+                () => this.paypalServiceProxy.requestSubscription(this.tenantId, this.publicId).toPromise(),
+                this.payPalInfo.currency
+            );
         }
     }
 

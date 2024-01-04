@@ -3,6 +3,7 @@ import { RootComponent } from '@root/root.component';
 
 import { ButtonType } from './button-type.enum';
 import { ButtonConfigInterface } from './button-config.interface';
+import { Currency } from '../../service-proxies/service-proxies';
 
 @Component({
     selector: 'pay-pal',
@@ -64,7 +65,7 @@ export class PayPalComponent {
         return enbaledConfigs.reduce((prev, curr) => prev && curr.initialized, true);
     }
 
-    initialize(clientId: string, type: ButtonType, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>) {
+    initialize(clientId: string, type: ButtonType, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>, currency: Currency) {
         if (!clientId)
             return;
 
@@ -73,15 +74,15 @@ export class PayPalComponent {
         this.requestSubscription = requestSubscription;
 
         if (type == ButtonType.Subscription || type == ButtonType.Both) {
-            this.initializeScript(clientId, ButtonType.Subscription);
+            this.initializeScript(clientId, ButtonType.Subscription, currency);
         }
 
         if (type == ButtonType.Payment || type == ButtonType.Both) {
-            this.initializeScript(clientId, ButtonType.Payment);
+            this.initializeScript(clientId, ButtonType.Payment, currency);
         }
     }
 
-    private initializeScript(clientId: string, type: ButtonType) {
+    private initializeScript(clientId: string, type: ButtonType, currency: Currency) {
         let typeConfig = this.config[type];
         typeConfig.isEnabled = true;
 
@@ -90,7 +91,7 @@ export class PayPalComponent {
                 this.preparePaypalButton(type, typeConfig.namespace, typeConfig.buttonId);
             });
         else {
-            let payPalUrl = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
+            let payPalUrl = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${currency}`;
             if (type == ButtonType.Subscription)
                 payPalUrl += '&vault=true&intent=subscription';
 
