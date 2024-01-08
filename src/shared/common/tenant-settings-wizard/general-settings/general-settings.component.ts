@@ -14,6 +14,7 @@ import { AbstractControlDirective } from '@angular/forms';
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
 
 /** Application imports */
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
@@ -31,6 +32,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
+import { RootStore, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
 
 @Component({
     selector: 'general-settings',
@@ -72,12 +74,14 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
             text: this.ls.l(item)
         };
     });
-    supportedCurrencies = Object.keys(Currency).map(item => {
-        return {
-            key: item,
-            text: this.ls.l(item)
-        };
-    });
+
+    currencies$: Observable<any[]> = this.store$.pipe(
+        select(CurrenciesCrmStoreSelectors.getCurrencies),
+        tap(data => {
+            data.forEach(c => c['displayName'] = `${c.name}, ${c.symbol}`);
+            return data;
+        })
+    );
     initialTimezone: string;
     initialCountry: string;
 
@@ -85,9 +89,11 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         private appSession: AppSessionService,
         private phoneNumberService: PhoneNumberService,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
+        private store$: Store<RootStore.State>,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {
+        this.store$.dispatch(new CurrenciesCrmStoreActions.LoadRequestAction());
     }
 
     onCountryChanged(event) {

@@ -65,7 +65,7 @@ export class PayPalComponent {
         return enbaledConfigs.reduce((prev, curr) => prev && curr.initialized, true);
     }
 
-    initialize(clientId: string, type: ButtonType, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>, currency: Currency) {
+    initialize(clientId: string, type: ButtonType, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>, currency: string) {
         if (!clientId)
             return;
 
@@ -82,7 +82,7 @@ export class PayPalComponent {
         }
     }
 
-    private initializeScript(clientId: string, type: ButtonType, currency: Currency) {
+    private initializeScript(clientId: string, type: ButtonType, currency: string) {
         let typeConfig = this.config[type];
         typeConfig.isEnabled = true;
 
