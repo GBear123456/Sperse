@@ -3,7 +3,6 @@ import { RootComponent } from '@root/root.component';
 
 import { ButtonType } from './button-type.enum';
 import { ButtonConfigInterface } from './button-config.interface';
-import { Currency } from '../../service-proxies/service-proxies';
 
 @Component({
     selector: 'pay-pal',

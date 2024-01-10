@@ -55,7 +55,7 @@ import { LandingPageComponent } from './landing-page/landing-page.component';
 @Component({
     selector: 'tenant-settings-wizard',
     templateUrl: 'tenant-settings-wizard.component.html',
-    styleUrls: [ 'tenant-settings-wizard.component.less' ],
+    styleUrls: ['tenant-settings-wizard.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantSettingsWizardComponent implements AfterViewInit {
@@ -110,6 +110,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     generalSettingsChanged: Boolean;
     timezoneChanged: Boolean;
     countryChanged: Boolean;
+    currencyChanged: Boolean;
 
     constructor(
         private featureCheckerService: FeatureCheckerService,
@@ -137,7 +138,11 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             if (this.generalSettingsChanged)
                 this.messageService.info(this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('General'))).done(() => {
                     window.location.reload();
-                });            
+                });
+            if (this.currencyChanged)
+                this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Currency'))).done(() => {
+                    window.location.reload();
+                });
         });
     }
 
@@ -284,6 +289,8 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         if (option == 'timezone')
             this.timezoneChanged = true;
         if (option == 'defaultCountry')
-            this.countryChanged = true;                        
+            this.countryChanged = true;
+        if (option == 'currency')
+            this.currencyChanged = true;
     }
 }

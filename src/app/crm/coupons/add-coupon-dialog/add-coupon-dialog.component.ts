@@ -9,6 +9,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef
 } from '@angular/core';
+import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 import { NotifyService } from 'abp-ng2-module';
@@ -26,6 +27,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'add-coupon-dialog',
@@ -43,6 +45,7 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
     private slider: any;
     coupon: CreateCouponInput | UpdateCouponInput;
 
+    amountNullableFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,###.##';
     types: string[] = Object.keys(CouponDiscountType);
     durations: string[] = Object.keys(CouponDiscountDuration);
     typesEnum = CouponDiscountType;

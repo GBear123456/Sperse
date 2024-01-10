@@ -23,7 +23,7 @@
                 <img src="assets/common/images/approved.png">        
                 <div class="amount">
                     <p>Invoice paid</p>
-                    <span>{{invoiceInfo.invoiceAmount | currency:'USD':'symbol':'1.2-2'}}</span>
+                    <span>{{invoiceInfo.invoiceAmount | currency:invoiceInfo.currency:'symbol':'1.2-2'}}</span>
                 </div>
             </div>
             <div class="details">

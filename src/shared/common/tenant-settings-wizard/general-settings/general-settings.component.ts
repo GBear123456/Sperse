@@ -23,8 +23,7 @@ import {
     GeneralSettingsEditDto,
     SettingScopes,
     TenantLoginInfoDto,
-    TenantSettingsServiceProxy,
-    Currency
+    TenantSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
@@ -55,6 +54,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
             this._settings = value;
             this.initialTimezone = value.timezone;
             this.initialCountry = value.defaultCountryCode;
+            this.initialCurrency = value.currency;
         }
         this.changeDetectorRef.detectChanges();
     };
@@ -84,6 +84,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     );
     initialTimezone: string;
     initialCountry: string;
+    initialCurrency: string;
 
     constructor(
         private appSession: AppSessionService,
@@ -98,9 +99,9 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
 
     onCountryChanged(event) {
         if (event.value == Country.Canada)
-            this.settings.currency = Currency.CAD;
+            this.settings.currency = 'CAD';
         else if (event.value == Country.USA)
-            this.settings.currency = Currency.USD;
+            this.settings.currency = 'USD';
     }
 
     onPhoneNumberChange(phone, elm) {
@@ -117,6 +118,8 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
                         this.onOptionChanged.emit('timezone');
                     if (this.initialCountry != this.settings.defaultCountryCode)
                         this.onOptionChanged.emit('defaultCountry');
+                    if (this.initialCurrency != this.settings.currency)
+                        this.onOptionChanged.emit('currency');
                     this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.settings.defaultCountryCode);
                 })),
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),

@@ -306,7 +306,7 @@
                             <dx-text-box
                                 width="120px"
                                 height="32px"
-                                placeholder="$"
+                                [placeholder]="currencySymbol"
                                 dataType="number"
                                 [readOnly]="true"
                                 [value]="cellData.data.total | currency: currency">
