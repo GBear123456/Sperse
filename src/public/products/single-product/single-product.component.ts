@@ -127,7 +127,7 @@ export class SingleProductComponent implements OnInit {
     initializePayPal() {
         if (this.payPal && this.productInfo && !this.payPal.initialized) {
             let type: ButtonType;
-            if (this.productInfo.type == ProductType.General || this.productInfo.type == ProductType.Digital)
+            if (this.productInfo.type == ProductType.General || this.productInfo.type == ProductType.Digital || this.productInfo.type == ProductType.Event)
                 type = ButtonType.Payment;
             else {
                 let hasPayment = false;
@@ -290,6 +290,7 @@ export class SingleProductComponent implements OnInit {
         switch (this.productInfo.type) {
             case ProductType.General:
             case ProductType.Digital:
+            case ProductType.Event:
                 this.requestInfo.unit = this.productInfo.unit;
                 break;
             case ProductType.Subscription:
@@ -345,6 +346,7 @@ export class SingleProductComponent implements OnInit {
         switch (this.productInfo.type) {
             case ProductType.General:
             case ProductType.Digital:
+            case ProductType.Event:
                 this.isFreeProductSelected = this.productInfo.price == 0;
                 break;
             case ProductType.Subscription:

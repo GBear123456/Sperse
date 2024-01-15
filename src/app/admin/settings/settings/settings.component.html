@@ -66,6 +66,11 @@
                             <sendgrid-settings></sendgrid-settings>
                         </ng-container>
                     </mat-step>
+                    <mat-step #mailchimpStep>
+                        <ng-container *ngIf="stepper.selected === mailchimpStep">
+                            <mailchimp-settings></mailchimp-settings>
+                        </ng-container>
+                    </mat-step>
                     <mat-step *ngIf="!appService.isHostTenant" #klaviyoStep>
                         <ng-container *ngIf="stepper.selected === klaviyoStep">
                             <klaviyo-settings></klaviyo-settings>

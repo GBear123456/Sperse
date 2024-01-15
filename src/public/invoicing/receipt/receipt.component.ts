@@ -2,12 +2,14 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-    GetInvoiceReceiptInfoOutput, InvoiceStatus,
+    GetInvoiceReceiptInfoOutput, InvoiceEventInfo, InvoiceStatus,
     UserInvoiceServiceProxy
 } from '@root/shared/service-proxies/service-proxies';
 
 /** Third party imports */
 import { ClipboardService } from 'ngx-clipboard';
+import * as moment from 'moment';
+import { findIana } from 'windows-iana';
 
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
@@ -76,6 +78,7 @@ export class ReceiptComponent implements OnInit {
                         {
                             this.invoiceInfo = result;
                             this.invoiceInfo.resources = result.resources.sort((a, b) => Boolean(a.url) > Boolean(b.url) ? 1 : -1);
+                            this.initEventsInfo();
                             this.setReturnLinkInfo();
                             this.loading = false;
                             abp.ui.clearBusy();
@@ -148,5 +151,62 @@ export class ReceiptComponent implements OnInit {
 
         event.stopPropagation();
         event.preventDefault();
+    }
+
+    initEventsInfo() {
+        if (!this.invoiceInfo.events)
+            return;
+            
+        for (let event of this.invoiceInfo.events) {
+            if (event.time) {
+                let baseDateMomentUtc = event.date ? moment(new Date(event.date)).utc() : moment().utc();
+                let timeArr = event.time.split(':');
+                baseDateMomentUtc.set({ hour: timeArr[0], minute: timeArr[1] });
+                let timezoneDateMoment = baseDateMomentUtc.tz(findIana(event.timezone)[0]);
+                event['dateStr'] = event.date ? timezoneDateMoment.format('MMM D, YYYY h:mm A Z') : timezoneDateMoment.format('h:mm A Z');
+                event['dateStrLocal'] = event.date ? timezoneDateMoment.local().format('MMM D, YYYY h:mm A Z') : timezoneDateMoment.local().format('h:mm A Z');
+            } else if (event.date) {
+                event['dateStr'] = moment(new Date(event.date)).utc().format('MMM D, YYYY');
+            }
+
+            if (event.durationMinutes) {
+                let hour = Math.floor(event.durationMinutes / 60);
+                let min = event.durationMinutes % 60;
+                event['durationStr'] = `${hour}h ${min}min`;
+            }
+        }
+    }
+
+    copyEventData(event: InvoiceEventInfo) {
+        let eventData = `${event.productName}\nLocation: ${this.ls.l('ProductEventLocation_' + event.location)}\n`;
+        if (event['dateStr']) {
+            eventData += `Date: ${event['dateStr']}${event.time ? '(' + event.timezone + ')' : ''}\n`;
+            if (event.time)
+                eventData += `Local Date: ${event['dateStrLocal']}\n`;
+        }
+
+        eventData += this.getCopyString('Link', event.link);
+
+        if (event.address.streetAddress || event.address.city || event.address.stateName || event.address.countryName || event.address.zip) {
+            eventData += `Address\n`;
+            eventData += this.getCopyString('Street', event.address.streetAddress);
+            eventData += this.getCopyString('City', event.address.city);
+            eventData += this.getCopyString('State', event.address.stateName);
+            eventData += this.getCopyString('Country', event.address.countryName);
+            eventData += this.getCopyString('Zip', event.address.zip);
+        }
+
+        eventData += this.getCopyString('Duration', event['durationStr']);
+        eventData += this.getCopyString('Language', event.languageName, false);
+
+        this.clipboardService.copyFromContent(eventData);
+        abp.notify.info(this.ls.l('SavedToClipboard'));
+    }
+
+    private getCopyString(displayName: string, value: any, checkNotEmpty = true): string {
+        if (checkNotEmpty && !value) {
+            return '';
+        }
+        return `${displayName}: ${value}\n`;
     }
 }

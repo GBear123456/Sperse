@@ -80,6 +80,7 @@ import { FacebookSettingsComponent } from './settings/shared/facebook-settings/f
 import { GoogleSettingsComponent } from './settings/shared/google-settings/google-settings.component';
 import { LinkedInSettingsComponent } from './settings/shared/linkedin-settings/linkedin-settings.component';
 import { DiscordSettingsComponent } from './settings/shared/discord-settings/discord-settings.component';
+import { MailchimpSettingsComponent } from './settings/shared/mailchimp-settings/mailchimp-settings.component';
 import { ExternalAuthInfoComponent } from './settings/shared/helpers/external-auth-info/external-auth-info.component';
 import { YTelSettingsComponent } from './settings/shared/ytel-settings/ytel-settings.component';
 import { BugsnagSettingsComponent } from './settings/shared/bugsnag-settings/bugsnag-settings.component';
@@ -195,6 +196,7 @@ import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-l
         GoogleSettingsComponent,
         LinkedInSettingsComponent,
         DiscordSettingsComponent,
+        MailchimpSettingsComponent,
         ExternalAuthInfoComponent,
         YTelSettingsComponent,
         BugsnagSettingsComponent,
