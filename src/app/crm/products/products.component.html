@@ -101,7 +101,7 @@
                         <img [src]="cell.data.ThumbnailUrl || 'assets/common/images/no-image.svg'" />
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder price-column">
-                        <span> {{ cell.data.Price | currency:currency:'symbol':'1.2-2' }} </span>
+                        <span> {{ cell.data.Price | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
                     </div>
 
                     <dxo-sorting mode="multiple"></dxo-sorting>

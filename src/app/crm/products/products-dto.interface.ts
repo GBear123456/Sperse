@@ -6,6 +6,7 @@ export interface ProductDto {
     Group: string;
     Type: string;
     Price: number;
+    CurrencyId: number;
     Unit: string;
     ThumbnailUrl: string;
     PublicName: string;

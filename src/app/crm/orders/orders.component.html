@@ -135,7 +135,7 @@
                                     {{cellData.value | phone}}
                                 </div>
                                 <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                                    {{cellData.value | currency: currency}}
+                                    {{cellData.value | currency: cellData.data.CurrencyId || currency }}
                                 </div>
                                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                                     {{cellData.value | datetime: formatting.dateTimeMoment}}
@@ -172,7 +172,7 @@
                                 totalsURI="OrderCount"
                                 dragulaName="orderStages"
                                 [source]="pipelineDataSource"
-                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId', 'Phone', 'Amount']"
+                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId', 'Phone', 'Amount', 'CurrencyId']"
                                 dateField="OrderDate"
                                 [actionMenuGroups]="actionMenuGroups"
                                 [pipelinePurposeId]="pipelinePurposeId"
@@ -269,7 +269,7 @@
                         {{cellData.value | datetime: formatting.dateMoment}}
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
-                        <span *ngIf="cell.text >= 0"> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
+                        <span *ngIf="cell.text >= 0"> {{ cell.text | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
                     </div>
                     <dxo-summary>
                         <dxo-texts sum="{0}"></dxo-texts>

@@ -26,7 +26,6 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
-import { AddProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
 import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
@@ -35,6 +34,8 @@ import { ProductDto } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { CurrencyHelper } from '../shared/helpers/currency.helper';
 
 @Component({
     templateUrl: './products.component.html',
@@ -99,7 +100,8 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         key: this.productFields.Id,
         deserializeDates: false,
         url: this.getODataUrl(
-            this.dataSourceURI
+            this.dataSourceURI,
+            [FilterHelpers.filterByCurrencyId(this.currency)]
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
@@ -111,7 +113,10 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                     this.productFields.CreateUser,
                     this.productFields.AllowCoupon,
                     this.productFields.PublishDate
-                ]
+                ],
+                {
+                    Price: [this.productFields.CurrencyId]
+                }
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         },
@@ -277,7 +282,8 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                         name: 'Code'
                     })
                 }
-            })
+            }),
+            CurrencyHelper.getCurrencyFilter(this.currency)
         ];
     }
 

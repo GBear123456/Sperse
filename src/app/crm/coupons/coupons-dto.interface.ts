@@ -4,6 +4,7 @@ export interface CouponDto {
     Description: string;
     Type: string;
     Value: number;
+    CurrencyId: string;
     ActivationDate: Date;
     DeactivationDate?: Date;
     Duration: string;
