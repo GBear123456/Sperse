@@ -6,26 +6,32 @@ export class DateHelper {
     }
 
     static getDateWithoutTime(date: moment): moment {
-        return moment(date).utc().set({ hour: 0 , minute: 0, second: 0, millisecond: 0 });
+        return moment(date).utc().set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     }
 
-    static addTimezoneOffset(date: Date, addUserOffset = false): Date {
-        const momentOffset = addUserOffset ? DateHelper.getUserOffset(date) : 0;
+    static addTimezoneOffset(date: Date, addUserOffset = false, ianaTimezone = null): Date {
+        const momentOffset = addUserOffset ? DateHelper.getUserOffset(date) :
+            ianaTimezone ? DateHelper.getCustomTimezoneOffset(date, ianaTimezone) : 0;
         date.setTime(date.getTime() + (date.getTimezoneOffset() + momentOffset) * 60 * 1000);
         return date;
     }
 
-    static removeTimezoneOffset(date: Date, removeUserOffset = false, setTime?: string | 'to' | 'from'): Date {
+    static removeTimezoneOffset(date: Date, removeUserOffset = false, setTime?: string | 'to' | 'from', ianaTimezone = null): Date {
         setTime && Date.prototype.setHours.apply(date,
             setTime == 'to' ? [23, 59, 59, 999] : [0, 0, 0, 0]);
 
-        const momentOffset = removeUserOffset ? DateHelper.getUserOffset(date) : 0;
+        const momentOffset = removeUserOffset ? DateHelper.getUserOffset(date) :
+            ianaTimezone ? DateHelper.getCustomTimezoneOffset(date, ianaTimezone) : 0;
         date.setTime(date.getTime() - (date.getTimezoneOffset() + momentOffset) * 60 * 1000);
         return date;
     }
 
     static getUserOffset(date: Date): number {
-        return moment(date).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset();
+        return DateHelper.getCustomTimezoneOffset(date, abp.timing.timeZoneInfo.iana.timeZoneId);
+    }
+
+    static getCustomTimezoneOffset(date: Date, ianaTimezone: string): number {
+        return moment(date).tz(ianaTimezone).utcOffset();
     }
 
     static getUserTimezone(): string {
@@ -61,7 +67,7 @@ export class DateHelper {
     static getEndDate(date: Date) {
         const periodTo = date && DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(date)));
         return date
-                ? periodTo.isAfter(moment.utc()) ? moment.utc().startOf('day') : periodTo
-                : moment.utc().startOf('day');
+            ? periodTo.isAfter(moment.utc()) ? moment.utc().startOf('day') : periodTo
+            : moment.utc().startOf('day');
     }
 }

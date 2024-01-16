@@ -1,339 +1,118 @@
 /** Core imports */
-import { ChangeDetectionStrategy, AfterViewInit, Component, ElementRef, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 /** Third party imports */
-import some from 'lodash/some';
-import each from 'lodash/each';
+import filter from 'lodash/filter';
 
 /** Application imports */
 import { FeatureTreeEditModel } from '@app/shared/features/feature-tree-edit.model';
 import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-proxies';
+import { ArrayToTreeConverterService } from '@shared/utils/array-to-tree-converter.service';
+import { TreeDataHelperService } from '@shared/utils/tree-data-helper.service';
+import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 @Component({
     selector: 'feature-tree',
-    template: `<div class="feature-tree"></div>`,
+    templateUrl: './feature-tree.component.html',
     styleUrls: ['./feature-tree.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FeatureTreeComponent implements AfterViewInit {
+export class FeatureTreeComponent {
     @Input() showResetToDefault: boolean = false;
+    @Input() enableRestoreCustom: boolean = false;
+    @Input() isReadOnly: boolean = false;
     @Input() set editData(val: FeatureTreeEditModel) {
         if (val) {
-            this._editData = val;
-            this.refreshTree();
+            if (!this._editData || ArrayHelper.dataChanged(val.features, this._editData.features) || ArrayHelper.dataChanged(val.featureValues, this._editData.featureValues)) {
+                this._editData = val;
+                this.setTreeData(val.features);
+                this.setSelectedNodes(val);
+            }
         }
     }
-    @Input() isReadOnly: boolean = false;
 
     private _editData: FeatureTreeEditModel;
-    private $tree: JQuery;
-    private createdTreeBefore;
+    treeData: any;
     initialGrantedFeatures;
 
-    constructor(private element: ElementRef) {
+    constructor(
+        private arrayToTreeConverterService: ArrayToTreeConverterService,
+        private treeDataHelperService: TreeDataHelperService,
+    ) {
         if (this.isReadOnly)
             this.showResetToDefault = false;
     }
 
-    ngAfterViewInit(): void {
-        this.$tree = $(this.element.nativeElement);
-        this.refreshTree();
+    setTreeData(features: FlatFeatureDto[]) {
+        this.treeData = this.arrayToTreeConverterService.createTree(
+            features,
+            'parentName',
+            'name',
+            null,
+            'children',
+            [
+                { target: 'displayName', source: 'displayName' },
+                { target: 'expanded', value: true }
+            ]
+        );
+    }
+
+    setSelectedNodes(val: FeatureTreeEditModel) {
+        val.features.forEach((feature) => {
+            let node = this.treeDataHelperService.findNode(this.treeData, { data: { name: feature.name } });
+            let items = filter(val.featureValues, { name: feature.name });
+            let value = '';
+            if (items && items.length === 1) {
+                let item = items[0];
+                value = item.value;
+                node.isCustom = item.isCustomValue;
+                node.restoreValue = item.restoreValue || feature.defaultValue;
+            } else {
+                value = feature.defaultValue;
+            }
+
+            if (feature.inputType.name == 'SINGLE_LINE_STRING' && value == feature.defaultValue)
+                value = '';
+
+            node.value = feature.inputType.name == 'CHECKBOX' ? value == 'true' : value;
+        });
+        this.initialGrantedFeatures = this.getGrantedFeatures();
     }
 
     getGrantedFeatures(): NameValueDto[] {
-        if (!this.$tree || !this.createdTreeBefore) {
+        if (!this._editData.features) {
             return [];
         }
 
-        const selectedFeatures = this.$tree.jstree('get_selected', true);
+        let features: NameValueDto[] = [];
+        for (let i = 0; i < this._editData.features.length; i++) {
+            let feature = new NameValueDto();
 
-        return this._editData.features.map(item => {
-            const feature = new NameValueDto();
-
-            feature.name = item.name;
-
-            if (!item.inputType || item.inputType.name === 'CHECKBOX') {
-                feature.value = some(selectedFeatures, { original: { id: item.name } }) ? 'true' : 'false';
-            } else {
-                feature.value = this.getFeatureValueByName(item.name);
-            }
-
-            return feature;
-        });
-    }
-
-    refreshTree(): void {
-        const self = this;
-
-        if (this.createdTreeBefore) {
-            this.$tree.jstree('destroy');
+            let featureData = this._editData.features[i];
+            feature.name = featureData.name;
+            feature.value = this.getFeatureValueByName(feature.name);
+            features.push(feature);
         }
 
-        this.createdTreeBefore = false;
-        if (!this._editData || !this.$tree) {
+        return features;
+    }
+
+    onCheckboxInputChange(event, node) {
+        if (event.event == null)
             return;
-        }
 
-        const treeData = this._editData.features.map(item => ({
-            id: item.name,
-            parent: item.parentName ? item.parentName : '#',
-            text: item.displayName,
-            state: {
-                opened: true,
-                selected: some(this._editData.featureValues, { name: item.name, value: 'true' })
-            }
-        }));
-        this.$tree
-            .on('ready.jstree', () => {
-                this.customizeTreeNodes();
-                this.initialGrantedFeatures = this.getGrantedFeatures();
-            })
-            .on('redraw.jstree', () => {
-                this.customizeTreeNodes();
-            })
-            .on('after_open.jstree', () => {
-                this.customizeTreeNodes();
-            })
-            .on('create_node.jstree', () => {
-                this.customizeTreeNodes();
-            })
-            .on('changed.jstree', (e, data) => {
-                if (!data.node) {
-                    return;
-                }
-
-                const wasInTreeChangeEvent = inTreeChangeEvent;
-                if (!wasInTreeChangeEvent) {
-                    inTreeChangeEvent = true;
-                }
-
-                let childrenNodes;
-
-                if (data.node.state.selected) {
-                    selectNodeAndAllParents(this.$tree.jstree('get_parent', data.node));
-
-                    childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
-                    this.$tree.jstree('select_node', childrenNodes);
-
-                } else {
-                    childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
-                    this.$tree.jstree('deselect_node', childrenNodes);
-                }
-
-                if (!wasInTreeChangeEvent) {
-                    const $nodeLi = this.getNodeLiByFeatureName(data.node.id);
-                    const feature = this.findFeatureByName(data.node.id);
-                    if (feature && (!feature.inputType || feature.inputType.name === 'CHECKBOX')) {
-                        const value = this.$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
-                        this.setFeatureValueByName(data.node.id, value);
-                    }
-
-                    inTreeChangeEvent = false;
-                }
-            })
-            .jstree({
-                'core': {
-                    data: treeData
-                },
-                'types': {
-                    'default': {
-                        'icon': 'fa fa-folder m--font-warning'
-                    },
-                    'file': {
-                        'icon': 'fa fa-file m--font-warning'
-                    }
-                },
-                'checkbox': {
-                    keep_selected_style: false,
-                    three_state: false,
-                    cascade: ''
-                },
-                plugins: ['checkbox', 'types']
-            });
-
-        this.createdTreeBefore = true;
-
-        let inTreeChangeEvent = false;
-
-        function selectNodeAndAllParents(node) {
-            self.$tree.jstree('select_node', node, true);
-            const parent = self.$tree.jstree('get_parent', node);
-            if (parent) {
-                selectNodeAndAllParents(parent);
-            }
-        }
-
-        this.$tree.on('changed.jstree', (e, data) => {
-            if (!data.node) {
-                return;
-            }
-
-            const wasInTreeChangeEvent = inTreeChangeEvent;
-            if (!wasInTreeChangeEvent) {
-                inTreeChangeEvent = true;
-            }
-
-            let childrenNodes;
-
-            if (data.node.state.selected) {
-                selectNodeAndAllParents(this.$tree.jstree('get_parent', data.node));
-
-                childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
-                this.$tree.jstree('select_node', childrenNodes);
-
-            } else {
-                childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
-                this.$tree.jstree('deselect_node', childrenNodes);
-            }
-
-            if (!wasInTreeChangeEvent) {
-                inTreeChangeEvent = false;
-            }
-        });
+        this.onInputChange(node);
+        if (node.value)
+            this.nodeSelect(node);
+        else
+            this.setChildrenValue(node, false);
     }
 
-    customizeTreeNodes(): void {
-        const self = this;
-        self.$tree.find('.jstree-node').each(function () {
-            const $nodeLi = $(this);
-            const $nodeA = $nodeLi.find('.jstree-anchor');
+    onInputChange(node) {
+        if (this.enableRestoreCustom && node.value !== '' && node.value != node.restoreValue)
+            node.isCustom = true;
 
-            const featureName = $nodeLi.attr('id');
-            const feature = self.findFeatureByName(featureName);
-            const featureDefaultValue = feature.defaultValue || '';
-            let featureValue = self.findFeatureValueByName(featureName) || '';
-            if (featureValue == featureDefaultValue)
-                featureValue = '';
-
-            if (!feature || !feature.inputType) {
-                return;
-            }
-
-            if (feature.inputType.name === 'CHECKBOX') {
-                //no change for checkbox
-            } else if (feature.inputType.name === 'SINGLE_LINE_STRING') {
-                if (!$nodeLi.find('.feature-tree-textbox').length) {
-                    $nodeA.find('.jstree-checkbox').hide();
-
-                    let inputType = 'text';
-                    let inputDecimalPlaces = 0;
-                    const validator = (feature.inputType.validator as any);
-                    if (feature.inputType.validator) {
-                        if (feature.inputType.validator.name === 'NUMERIC' || feature.inputType.validator.name === 'FLOAT') {
-                            inputType = 'number';
-                            if (feature.inputType.validator.name === 'FLOAT')
-                                inputDecimalPlaces = feature.inputType.validator.attributes['DecimalPlaces'];
-                        }
-                    }
-
-                    const $textbox = $(
-                        '<input class="feature-tree-textbox" type="' + inputType +
-                        '" placeholder="' + featureDefaultValue + '"' +
-                        (self.showResetToDefault ? ' required' : '') + '/>'
-                    ).val(featureValue);
-                    if (self.isReadOnly)
-                        $textbox.attr('disabled', 'disabled');
-
-                    if (inputType === 'number') {
-                        $textbox.attr('min', validator.minValue || validator.attributes['MinValue']);
-                        $textbox.attr('max', validator.maxValue || validator.attributes['MaxValue']);
-
-                        if (inputDecimalPlaces === 0) {
-                            $textbox.attr('step', '1');
-                        } else
-                            if (inputDecimalPlaces) {
-                                let step = '.';
-                                let k = 1;
-                                while (k < inputDecimalPlaces) {
-                                    step += '0';
-                                    k++;
-                                }
-                                step += '1';
-                                $textbox.attr('step', step);
-                            }
-                    } else {
-                        if (feature.inputType.validator && feature.inputType.validator.name === 'STRING') {
-                            if (validator.maxLength > 0) {
-                                $textbox.attr('maxlength', validator.maxLength || validator.attributes['MaxLength']);
-                            }
-                            if (validator.minLength > 0) {
-                                $textbox.attr('required', 'required');
-                            }
-                            if (validator.regularExpression) {
-                                $textbox.attr('pattern', validator.regularExpression || validator.attributes['RegularExpression']);
-                            }
-                        }
-                    }
-
-                    $textbox.on('input propertychange paste', () => {
-                        const value = $textbox.val() as string;
-
-                        if (self.isFeatureValueValid(featureName, value)) {
-                            self.setFeatureValueByName(featureName, value);
-                            $textbox.removeClass('feature-tree-textbox-invalid');
-                        } else {
-                            if (value) {
-                                $textbox.val(self.getFeatureValueByName(featureName));
-                            }
-                            else {
-                                $textbox.addClass('feature-tree-textbox-invalid');
-                            }
-                        }
-                    });
-
-                    if (self.showResetToDefault) {
-                        let $form = $('<form></form>'),
-                            $reset = $('<button type="reset">');
-                        $textbox.appendTo($form);
-                        $reset.appendTo($form);
-                        $form.appendTo($nodeLi);
-                        $form.on('reset', () => {
-                            self.setFeatureValueByName(featureName, featureDefaultValue);
-                        });
-                    } else
-                        $textbox.appendTo($nodeLi);
-                }
-            } else if (feature.inputType.name === 'COMBOBOX') {
-                if (!$nodeLi.find('.feature-tree-combobox').length) {
-                    $nodeA.find('.jstree-checkbox').hide();
-
-                    const $combobox = $('<select class="feature-tree-combobox" />');
-                    const inputType = (feature.inputType as any);
-                    each(inputType.itemSource.items, (opt: any) => {
-                        $('<option></option>')
-                            .attr('value', opt.value)
-                            .text(opt.displayText)
-                            .appendTo($combobox);
-                    });
-                    if (self.isReadOnly)
-                        $combobox.attr('disabled', 'disabled');
-                    $combobox
-                        .val(featureValue)
-                        .on('change', () => {
-                            const value = $combobox.val() as string;
-                            self.setFeatureValueByName(featureName, value);
-                        })
-                        .appendTo($nodeLi);
-                }
-            }
-
-            if (self.isReadOnly) {
-                self.$tree.jstree().disable_node($(this));
-            }
-        });
-    }
-
-    getNodeLiByFeatureName(featureName: string): JQuery {
-        return $('#' + featureName.replace('.', '\\.'));
-    }
-
-    selectNodeAndAllParents(node: any): void {
-        const self = this;
-        self.$tree.jstree('select_node', node, true);
-        const parent = self.$tree.jstree('get_parent', node);
-        if (parent) {
-            self.selectNodeAndAllParents(parent);
-        }
+        this.setFeatureValueByName(node.data.name, node.value);
     }
 
     findFeatureByName(featureName: string): FlatFeatureDto {
@@ -348,19 +127,10 @@ export class FeatureTreeComponent implements AfterViewInit {
         return feature;
     }
 
-    findFeatureValueByName(featureName: string) {
-        const self = this;
-        const feature = self.findFeatureByName(featureName);
-        if (!feature) {
-            return '';
+    validateInputValue(feature) {
+        return event => {
+            return this.isFeatureValueValid(feature.data.name, event.value);
         }
-
-        const featureValue = self._editData.featureValues.find(f => f.name === featureName);
-        if (!featureValue) {
-            return feature.defaultValue;
-        }
-
-        return featureValue.value;
     }
 
     isFeatureValueValid(featureName: string, value: string): boolean {
@@ -373,26 +143,26 @@ export class FeatureTreeComponent implements AfterViewInit {
         const validator = (feature.inputType.validator as any);
         if (validator.name === 'STRING') {
             if (value === undefined || value === null) {
-                return validator.allowNull;
+                return validator.attributes.AllowNull;
             }
 
             if (typeof value !== 'string') {
                 return false;
             }
 
-            if (validator.minLength > 0 && value.length < validator.minLength) {
+            if (validator.attributes.MinLength > 0 && value.length < validator.attributes.MinLength) {
                 return false;
             }
 
-            if (validator.maxLength > 0 && value.length > validator.maxLength) {
+            if (validator.attributes.MaxLength > 0 && value.length > validator.attributes.MaxLength) {
                 return false;
             }
 
-            if (validator.regularExpression) {
-                return (new RegExp(validator.regularExpression)).test(value);
+            if (validator.attributes.RegularExpression) {
+                return (new RegExp(validator.attributes.RegularExpression)).test(value);
             }
         } else if (validator.name === 'NUMERIC' || validator.name === 'FLOAT') {
-            if (feature.inputType.validator.attributes.AllowNulls && (value === undefined || value === null || value == '')) {
+            if (value === undefined || value === null || value === '') {
                 return true;
             }
 
@@ -426,19 +196,16 @@ export class FeatureTreeComponent implements AfterViewInit {
     }
 
     areAllValuesValid(): boolean {
-        const self = this;
-        self.$tree.find('.jstree-node').each(function () {
-            const $nodeLi = $(this);
-            const featureName = $nodeLi.attr('id');
-            const feature = self.findFeatureByName(featureName);
+        let result = true;
 
-            if (feature && (!feature.inputType || feature.inputType.name === 'CHECKBOX')) {
-                const value = self.$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
-                self.setFeatureValueByName(featureName, value);
+        this._editData.features.forEach((feature) => {
+            let value = this.getFeatureValueByName(feature.name);
+            if (!this.isFeatureValueValid(feature.name, value)) {
+                result = false;
             }
         });
 
-        return self.$tree.find('.feature-tree-textbox-invalid').length <= 0;
+        return result;
     }
 
     setFeatureValueByName(featureName: string, value: string): void {
@@ -447,16 +214,59 @@ export class FeatureTreeComponent implements AfterViewInit {
             return;
         }
 
-        featureValue.value = value;
+        featureValue.value = value == null ? value : value.toString();
     }
 
     getFeatureValueByName(featureName: string): string {
-        const featureValue = this._editData.featureValues.find(f => f.name === featureName);
-        if (!featureValue) {
+        let feature = this.treeDataHelperService.findNode(this.treeData, { data: { name: featureName } });
+        if (!feature)
             return null;
-        }
 
-        return featureValue.value;
+        if (!feature.data.inputType || feature.data.inputType.name === 'CHECKBOX')
+            return feature.value ? 'true' : 'false';
+
+        if (feature.value !== '' && feature.value != null)
+            return feature.value.toString();
+
+        return feature.data.defaultValue;
     }
 
+    nodeSelect(node) {
+        var parentName = node.parent;
+        while (parentName != null) {
+            let parentNode = this.treeDataHelperService.findNode(this.treeData, { data: { name: node.parent } });
+            if (!parentNode.value) {
+                parentNode.value = true;
+                this.setFeatureValueByName(parentNode.data.name, 'true');
+            }
+            parentName = parentNode.parent;
+        }
+
+        this.setChildrenValue(node, true);
+    }
+
+    setChildrenValue(node, value: boolean) {
+        let childrenNodesNames = this.treeDataHelperService.findChildren(this.treeData, {
+            data: { name: node.data.name },
+        });
+
+        childrenNodesNames.forEach(childName => {
+            let childNode = this.treeDataHelperService.findNode(this.treeData, { data: { name: childName } });
+            if (childNode.data.inputType.name === 'CHECKBOX') {
+                childNode.value = value;
+                this.setFeatureValueByName(childName, value.toString());
+            }
+        });
+    }
+
+    resetToDefault(node) {
+        node.value = '';
+        this.setFeatureValueByName(node.data.name, node.data.defaultValue);
+    }
+
+    restoreValue(node) {
+        node.isCustom = false;
+        node.value = node.restoreValue == node.data.defaultValue ? '' : node.restoreValue;
+        this.setFeatureValueByName(node.data.name, node.restoreValue);
+    }
 }

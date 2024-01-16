@@ -77,7 +77,7 @@ export class HostLoginComponent implements OnInit {
         let tenant = this.appSession.tenant;
         if (tenant)
             this.tenantName = tenant.name || tenant.tenancyName;
-        this.showExternalLogin = tenant && (!environment.production || environment.releaseStage == 'staging');
+        this.showExternalLogin = environment.releaseStage == 'staging' || (tenant && !environment.production);
         if (this.sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this.sessionAppService.updateUserSignInToken()
                 .subscribe((result: UpdateUserSignInTokenOutput) => {

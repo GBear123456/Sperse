@@ -46,7 +46,7 @@
                         </li>
                     </ul>
                 </div>
-                <div class="shortcuts" *ngIf="appMemberPortalUrl || (landingPageDomains && landingPageDomains.length) || isProductEnabled">
+                <div class="shortcuts" *ngIf="appMemberPortalUrl || (landingPageDomains && landingPageDomains.length) || (isProductEnabled && productLinks && productLinks.length) || isCFOPortalEnabled">
                     <div class="shortcuts_head">
                         <h3>{{ls.l('My Link Shortcuts')}}</h3><p class="shortcuts_ref" *ngIf="enabledAffiliate">{{ls.l('Include Affiliate ID in links')}}: 
                             <inplace-edit [value]="affiliateRefId"

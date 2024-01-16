@@ -87,6 +87,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
             { key: 'EmailSmtp', visible: true },
             { key: 'Gmail', visible: true },
             { key: 'SendGrid', visible: !this.appService.isHostTenant },
+            { key: 'Mailchimp', visible: true },
             { key: 'Klaviyo', visible: !this.appService.isHostTenant },
             { key: 'YTel', visible: this.isInboundOutboundSMSEnabled },
             { key: 'Bugsnag', visible: this.appService.isHostTenant },
@@ -113,10 +114,13 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
         this.route.queryParams.pipe(
             first(), delay(100)
         ).subscribe(params => {
-            if (params['tab'] == 'smtp') {
-                let emailIndex = this.visibleSettings.find(v => v.key == 'EmailSmtp').index;
-                this.stepper.selectedIndex = emailIndex;
-                this.changeDetector.detectChanges();
+            if (params['tab']) {
+                let keyName = params['tab'] == 'smtp' ? 'EmailSmtp' : params['tab'];
+                let item = this.visibleSettings.find(v => v.key == keyName);
+                if (item) {
+                    this.stepper.selectedIndex = item.index;
+                    this.changeDetector.detectChanges();
+                }
             }
         });
     }

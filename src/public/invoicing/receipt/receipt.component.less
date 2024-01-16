@@ -50,6 +50,7 @@ public-receipt {
 
                 .amount {
                     margin: 0 15px;
+
                     p {
                         margin: 0;
                         font-family: Poppins;
@@ -59,6 +60,7 @@ public-receipt {
                         letter-spacing: -0.02em;
                         color: rgba(130, 130, 130, 1);
                     }
+
                     span {
                         font-family: Poppins;
                         font-size: 27px;
@@ -67,7 +69,7 @@ public-receipt {
                         letter-spacing: -0.02em;
                         color: rgba(7, 13, 68, 1);
                     }
-                }                
+                }
             }
 
             .summary {
@@ -95,7 +97,7 @@ public-receipt {
                     text-align: center;
                     color: rgba(7, 13, 68, 1);
                 }
-    
+
                 .bottom {
                     font-family: Poppins;
                     font-size: 15px;
@@ -111,6 +113,7 @@ public-receipt {
                 .row {
                     margin-bottom: 20px;
                     line-height: 21px;
+
                     .caption, .value {
                         font-family: Poppins;
                         font-size: 14px;
@@ -142,7 +145,8 @@ public-receipt {
                         letter-spacing: -0.02em;
                         color: rgba(91, 101, 113, 1);
                     }
-                    img {        
+
+                    img {
                         vertical-align: text-bottom;
                         margin-right: 6px;
                     }
@@ -150,6 +154,7 @@ public-receipt {
 
                 .login-row {
                     margin-top: 26px;
+
                     a {
                         margin: 0 auto;
                         width: 332px;
@@ -166,6 +171,7 @@ public-receipt {
                         color: rgba(255, 255, 255, 1);
                     }
                 }
+
                 .sms-row {
                     margin: 26px 0 0;
                     font-family: Poppins;
@@ -173,6 +179,7 @@ public-receipt {
                     font-weight: 400;
                     line-height: 20px;
                     letter-spacing: -0.02em;
+
                     img {
                         margin-right: 9px;
                     }
@@ -207,6 +214,7 @@ public-receipt {
         margin: 10px 0;
         background: #fff;
         border-radius: 20px;
+
         h1 {
             font-family: Poppins;
             font-size: 18px;
@@ -215,12 +223,14 @@ public-receipt {
             letter-spacing: -0.02em;
             color: rgba(7, 13, 68, 1);
         }
+
         .resource {
             height: 44px;
             padding: 0 5px;
             border: 1px solid rgba(235, 237, 243, 1);
             margin: 5px 0;
-            border-radius: 5px;        
+            border-radius: 5px;
+
             .link {
                 width: 55%;
                 display: inline-block;
@@ -235,11 +245,13 @@ public-receipt {
                 letter-spacing: -0.02em;
                 color: rgba(0, 0, 0, 1);
             }
+
             & > img {
                 margin-right: 12px;
                 margin-left: 8px;
             }
         }
+
         .file {
             width: 55%;
             color: #000;
@@ -256,6 +268,7 @@ public-receipt {
             line-height: 40px;
             letter-spacing: -0.02em;
         }
+
         button {
             border: 1px solid #EBEDF3;
             font-family: Poppins;
@@ -272,8 +285,89 @@ public-receipt {
             margin: 4px 0;
             cursor: pointer;
             outline: none;
+
             img {
                 margin-right: 5px;
+            }
+        }
+    }
+
+    .events {
+        width: 100%;
+        padding: 23px;
+        margin: 10px 0;
+        background: #fff;
+        border-radius: 20px;
+        letter-spacing: -0.02em;
+
+        div, h1, span {
+            font-family: Poppins !important;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 27px;
+            color: rgba(7, 13, 68, 1);
+            margin-bottom: 23px;
+        }
+
+        .event {
+            padding: 26px 15px 0;
+            margin-bottom: 12px;
+            background-color: #F1F6F9;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 400;
+            color: #79848c;
+            line-height: 21px;
+
+            .header-row {
+                padding-bottom: 0 !important;
+
+                .event-name {
+                    font-size: 16px;
+                    font-weight: 500;
+                    color: #000;
+                }
+
+                .copy-event-data {
+                    color: #b7c4cd;
+                    padding-left: 0;
+
+                    i {
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            hr {
+                border-color: #D7DFE4;
+                margin: 16px 0;
+            }
+
+            .row {
+                padding-bottom: 23px;
+
+                .fa {
+                    margin-right: 8px;
+                }
+
+                .caption {
+                    color: #070d44;
+                    font-weight: 400;
+                    padding-right: 0;
+                }
+
+                .text {
+                    text-align: right;
+
+                    &.nowrap {
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        white-space: nowrap;
+                    }
+                }
             }
         }
     }

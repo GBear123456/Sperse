@@ -20,7 +20,7 @@
                         <dx-scroll-view showScrollbar="onHover">
                             <form #editTenantFeaturesForm="ngForm" name="editTenantFeaturesForm" role="form" novalidate class="form-validation" (submit)="save()">
                                 <div class="modal-body">
-                                    <feature-tree [editData]="features$ | async"></feature-tree>
+                                    <feature-tree [editData]="features$ | async" [enableRestoreCustom]="true"></feature-tree>
                                 </div>
                             </form>
                             <button class="button-layout button-default"

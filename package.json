@@ -1,6 +1,6 @@
 {
   "name": "abp-zero-template",
-  "version": "8.2.1",
+  "version": "8.2.4",
   "license": "MIT",
   "angular-cli": {},
   "scripts": {
@@ -154,6 +154,7 @@
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.4",
     "uuid": "^3.0.1",
+    "windows-iana": "^5.1.0",
     "xlsx": "^0.13.2",
     "xml-js": "^1.6.11",
     "xmlhttprequest": "^1.8.0",
