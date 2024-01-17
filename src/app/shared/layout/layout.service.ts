@@ -9,6 +9,11 @@ export class LayoutService {
     public showNotificationsButton = true;
     public showChatButton = true;
     public showUserProfileMenu = true;
+
+    defaultHeaderBgColor: string = '#FFFFFF';
+    defaultHeaderTextColor: string = '#202b35';
+    defaultHeaderUnderlineColor: string = '#00aeef';
+
     layoutColors = {
         [LayoutType.Default]: {
             historicalCredit: '#00aeef',
@@ -26,7 +31,10 @@ export class LayoutService {
             totalSales: '#8487e7',
             totalLeads: '#00AEEF',
             totalClients: '#f4ae55',
-            clientsCount: '#8487e7'
+            clientsCount: '#8487e7',
+	    navBackground: abp.setting.get('App.Appearance.NavBackground') || this.defaultHeaderBgColor,
+	    navTextColor: abp.setting.get('App.Appearance.NavTextColor') || this.defaultHeaderTextColor,
+	    navUnderlineColor: abp.setting.get('App.Appearance.NavTextColor') || this.defaultHeaderUnderlineColor 
         },
         [LayoutType.AdvicePeriod]: {
             historicalCredit: '#86c5dc',
@@ -44,7 +52,10 @@ export class LayoutService {
             totalSales: '#e47822',
             totalLeads: '#86c5dc',
             totalClients: '#99c24d',
-            clientsCount: '#5b5f97'
+            clientsCount: '#5b5f97',
+	    navBackground: abp.setting.get('App.Appearance.NavBackground') || this.defaultHeaderBgColor,
+	    navTextColor: abp.setting.get('App.Appearance.NavTextColor') || this.defaultHeaderTextColor,
+	    navUnderlineColor: abp.setting.get('App.Appearance.NavTextColor') || this.defaultHeaderUnderlineColor 
         }
     };
     mapPalette = {

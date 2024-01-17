@@ -1,6 +1,6 @@
 ﻿<platform-select></platform-select>
 <global-search *ngIf="showGlobalSearch"></global-search>
-<div class="top-bar-nav" [ngStyle]="{ 'visibility': lastInnerWidth && navbarItems.length ? 'visible' : 'hidden' }">
+<div class="top-bar-nav" [ngStyle]="{ 'visibility': lastInnerWidth && navbarItems.length ? 'visible' : 'hidden' }" style="--underline-color: {{layoutService.getLayoutColor('navUnderlineColor')}}">
     <dx-nav-bar
         height="74px"
         [items]="navbarItems"
@@ -19,6 +19,9 @@
                 [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
                 [showSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
                 (onItemClick)="navigate($event)">
+		<div *dxTemplate="let data of 'item'" class="dx-item-content dx-menu-item-content dx-nav-item-content dx-menu-item-has-text">
+		    <span class="dx-menu-item-text" [ngStyle]="{color: data.parent ? undefined : layoutService.getLayoutColor('navTextColor')}">{{data.text}}</span>
+		</div>
             </dx-menu>
         </div>
     </dx-nav-bar>

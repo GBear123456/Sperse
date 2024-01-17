@@ -16,6 +16,7 @@ import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
 import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxColorBoxModule } from 'devextreme-angular/ui/color-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
@@ -146,6 +147,7 @@ import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-l
         DxPieChartModule,
         DxChartModule,
         DxListModule,
+	DxColorBoxModule,
 
         MatTabsModule,
         MatInputModule,

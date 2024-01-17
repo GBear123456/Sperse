@@ -33,6 +33,10 @@
         ::ng-deep dx-nav-bar {
             display: block;
             width: max-content;
+	    .dx-navbar-text-item {
+		background: transparent!important;
+		background-color: transparent!important;
+	    }
         }
 
         ::ng-deep .dx-tabs-wrapper {
@@ -48,7 +52,6 @@
             }
             .dx-tab {
                 padding: 0 6px;
-                background-color: #FFF;
                 margin-right: 10px;
                 margin-left: 10px;
                 border-bottom: 0;
@@ -65,25 +68,29 @@
                         color: #c1cbd5 !important;
                     }
                 }
+                &.dx-state-hover {
+                    border-bottom: 0;
+                    margin-bottom: 3px;
+                    .dx-menu-item-text {
+		        padding: 3px 4px 5px;
+                        font-weight: 500 !important;
+                    }
+                }
                 &.dx-tab-selected {
-                    border-bottom: 3px solid #00aeef;
+                    border-bottom: 3px solid var(--underline-color);
                     margin-bottom: 0;
                     &.dx-state-focused {
                         box-shadow: none;
                     }
                     &.dx-state-hover {
-                        border-bottom: 3px solid #00aeef;
+                        border-bottom: 3px solid var(--underline-color);
                         margin-bottom: 0;
+
                     }
                     .dx-menu-item-text {
-                        color: #202b35;
                         font-weight: 500 !important;
+		        padding: 3px 5px 5px;
                     }
-                }
-                &.dx-state-hover {
-                    background-color: #FFF;
-                    border-bottom: 0;
-                    margin-bottom: 3px;
                 }
             }
             .dx-menu-items-container {
@@ -91,9 +98,9 @@
                 .dx-menu-item-wrapper {
                     width: 100%;
                     height: 71px;
-                    .dx-menu-item {
-                        &.dx-state-hover {
-                            background-color: #FFF;
+                    .dx-menu-item {			
+                        &.dx-state-hover, &.dx-menu-item-expanded {
+                            background-color: transparent;
                         }
                     }
                     .dx-context-menu-container-border {

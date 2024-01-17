@@ -10,9 +10,12 @@ import kebabCase from 'lodash/kebabCase';
 import {
     CustomCssType,
     LayoutType,
+    AppearanceSettingsEditDto,
     TenantCustomizationServiceProxy,
+    TenantSettingsServiceProxy,
     TenantLoginInfoDto
 } from '@shared/service-proxies/service-proxies';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { AppConsts } from '@shared/AppConsts';
@@ -24,7 +27,7 @@ import { SettingService } from 'abp-ng2-module';
     templateUrl: './appearance-settings.component.html',
     styleUrls: ['./appearance-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantCustomizationServiceProxy]
+    providers: [TenantCustomizationServiceProxy, TenantSettingsServiceProxy]
 })
 export class AppearanceSettingsComponent extends SettingsComponentBase {
     @ViewChild('logoUploader') logoUploader: UploaderComponent;
@@ -42,21 +45,47 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
     someCssChanged: boolean;
+    someColorChanged: boolean;
+
+    defaultHeaderColor: string = this.layoutService.defaultHeaderBgColor;
+    defaultTextColor: string = this.layoutService.defaultHeaderTextColor;
+
+    appearance: AppearanceSettingsEditDto = new AppearanceSettingsEditDto();
 
     constructor(
         _injector: Injector,
+	private layoutService: LayoutService,
         private faviconsService: FaviconService,
+	private settingsProxy: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private settingService: SettingService
     ) {
         super(_injector);
+
+	this.settingsProxy.getAppearanceSettings().subscribe(
+	    (res: AppearanceSettingsEditDto) => {
+	        this.appearance = res;
+		if (!this.appearance.navBackground)
+		    this.appearance.navBackground = this.defaultHeaderColor;
+		if (!this.appearance.navTextColor)
+		    this.appearance.navTextColor = this.defaultTextColor;
+		this.changeDetection.detectChanges();
+	    }
+	);
     }
 
     ngOnInit() {
     }
 
     getSaveObs(): Observable<any> {
+       	if (this.appearance.navBackground == this.defaultHeaderColor)
+       	    this.appearance.navBackground = null;
+       	if (this.appearance.navTextColor == this.defaultTextColor)
+       	    this.appearance.navTextColor = null;
+
         return forkJoin(
+	    this.someColorChanged ?
+	    	this.settingsProxy.updateAppearanceSettings(this.appearance) : of(null),
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
                     this.tenant.logoId = res.result && res.result.id;
@@ -87,7 +116,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     afterSave() {
-        if (this.someCssChanged)
+        if (this.someCssChanged || this.someColorChanged)
             this.message.info(this.l('ReloadPageStylesMessage'));
     }
 
@@ -141,5 +170,11 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             return basePath + kebabCase(tenant.customLayoutType) + '/style.css'
         else
             return basePath + 'platform-custom-style.css';
+    }
+
+    onColorValueChanged(event, defaultColor) {
+	this.someColorChanged = true;
+	if (!event.value)
+	    event.component.option('value', defaultColor);
     }
 }
