@@ -1,5 +1,5 @@
 <h2 mat-dialog-title (mousedown)="mouseDown($event)">
-    {{ ls.l('ContactInfoDialogTitle', ls.l(action), ls.l('Address'))}}
+    {{ data.editDialogTitle || ls.l('ContactInfoDialogTitle', ls.l(action), ls.l('Address'))}}
 </h2>
 <dx-scroll-view showScrollbar="always">
     <mat-dialog-content>
@@ -125,7 +125,7 @@
                 </dx-text-box>
             </div>
 
-            <div>
+            <div *ngIf="!data.hideComment">
                 <label>{{ls.l('Comment')}}</label>
                 <dx-text-box
                     name="comment"
@@ -134,7 +134,7 @@
                 </dx-text-box>
             </div>
 
-            <p>
+            <p *ngIf="!data.hideCheckboxes">
                 <dx-check-box
                     text="{{ls.l('ActiveContact')}}"
                     [disabled]="!isEditAllowed"

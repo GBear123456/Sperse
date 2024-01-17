@@ -26,4 +26,8 @@ export interface EditAddressDialogData {
     formattedAddress?: string;
     confirmationDate: moment;
     confirmedByUserFullName: string;
+    isEditAllowed?: boolean;
+    disableDragging?: boolean;
+    hideComment?: boolean;
+    hideCheckboxes?: boolean;
 }
