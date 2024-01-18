@@ -146,7 +146,7 @@ export class SingleProductComponent implements OnInit {
             this.payPal.initialize(this.productInfo.data.paypalClientId, type,
                 this.getPayPalRequest.bind(this),
                 this.getPayPalRequest.bind(this),
-                this.productInfo.data.currency
+                this.productInfo.currencyId
             );
         }
     }
@@ -180,7 +180,7 @@ export class SingleProductComponent implements OnInit {
             .subscribe(result => {
                 if (result.id) {
                     this.productInfo = result;
-                    this.currencySymbol = getCurrencySymbol(result.data.currency, 'narrow');
+                    this.currencySymbol = getCurrencySymbol(result.currencyId, 'narrow');
                     this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
                     this.titleService.setTitle(this.productInfo.name);
                     if (result.descriptionHtml)
@@ -500,7 +500,7 @@ export class SingleProductComponent implements OnInit {
         }
 
         this.couponLoading = true;
-        this.publicProductService.getCouponInfo(this.tenantId, this.requestInfo.couponCode)
+        this.publicProductService.getCouponInfo(this.tenantId, this.requestInfo.couponCode, this.productInfo.currencyId)
             .pipe(
                 finalize(() => {
                     this.couponLoading = false;

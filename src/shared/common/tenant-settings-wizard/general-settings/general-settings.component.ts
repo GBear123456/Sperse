@@ -13,7 +13,7 @@ import { AbstractControlDirective } from '@angular/forms';
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 
 /** Application imports */
@@ -77,6 +77,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
 
     currencies$: Observable<any[]> = this.store$.pipe(
         select(CurrenciesCrmStoreSelectors.getCurrencies),
+        filter(x => x != null),
         tap(data => {
             data.forEach(c => c['displayName'] = `${c.name}, ${c.symbol}`);
             return data;

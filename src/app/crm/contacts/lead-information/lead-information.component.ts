@@ -313,7 +313,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
             else
                 return value.format(this.formatting.fieldDateTime);
         } else if (this.hasFieldMoneyType(field))
-            return this.currencyPipe.transform(value, this.currency);
+            return this.currencyPipe.transform(value, this.data.leadInfo.currencyId || this.currency);
         else if (field == 'ssn')
             return [value.slice(0, 3), value.slice(3, 5), value.slice(5, 9)].filter(Boolean).join('-');
         else

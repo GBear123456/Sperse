@@ -262,10 +262,11 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         text: this.l('Resellers')
     }];
 
+    currency = SettingsHelper.getCurrency();
     currencyFormat: DevExpress.ui.Format = {
         type: 'currency',
         precision: 2,
-        currency: SettingsHelper.getCurrency()
+        currency: this.currency
     };
 
     get dxDataGrid(): DxDataGridComponent {
@@ -374,7 +375,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 items: {
                     element: new FilterCheckBoxesModel(
                         {
-                            dataSource$: this.productProxy.getProducts(undefined, false),
+                            dataSource$: this.productProxy.getProducts(undefined, this.currency, false),
                             nameField: 'name',
                             keyExpr: 'code'
                         })

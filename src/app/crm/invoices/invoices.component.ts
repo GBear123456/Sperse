@@ -364,7 +364,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     products: new FilterServicesAndProductsModel(
                         {
                             dataSource$: this.productProxy.getProducts(
-                                undefined, false
+                                undefined, this.currency, false
                             ).pipe(
                                 map((products: ProductDto[]) => {
                                     let productsWithGroups = products.filter(x => x.group);
