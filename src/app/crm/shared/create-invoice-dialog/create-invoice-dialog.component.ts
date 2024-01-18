@@ -360,6 +360,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
                         }
                     }
+                    this.disabledForUpdate = this.disabledForUpdate || invoiceInfo.currencyId != this.currency;
                     this.orderNumber = invoiceInfo.orderNumber;
                     this.customer = invoiceInfo.contactName;
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
@@ -490,6 +491,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             );
         }
         data.note = this.notes;
+        data.currencyId = this.currency;
         data.forbiddenPaymentMethods = this.forbiddenPaymentMethods || undefined;
     }
 
@@ -1264,6 +1266,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             contactId: this.contactId,
             subscriptionStartOn: this.getDate(this.startDate, true, ''),
             couponId: this.selectedCoupon ? this.selectedCoupon.id : null,
+            currencyId: this.currency,
             discountTotal: this.discountTotal,
             shippingTotal: this.shippingTotal,
             taxTotal: this.taxTotal,

@@ -220,6 +220,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 });
             }
             else {
+                this.product.currencyId = this.currency;
                 this.productProxy.createProduct(this.product).pipe(
                     switchMap((res) => zip(of(res), this.getUpdateProductImageObservable(res.productId)))
                 ).subscribe(([res,]) => {

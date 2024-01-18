@@ -255,6 +255,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.initEventProps();
         }
 
+        this.product.currencyId = this.currency;
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
             this.detectChanges();

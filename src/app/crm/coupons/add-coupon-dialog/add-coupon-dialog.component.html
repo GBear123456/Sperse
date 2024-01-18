@@ -40,19 +40,37 @@
                            [disabled]="isReadOnly || isAlreadyUsed">
             </dx-select-box>
         </div>
-        <div class="field" *ngIf="coupon.type == typesEnum.Fixed">
-            <label>{{ls.l('DiscountAmount')}}</label>
-            <dx-number-box width="300px"
-                           [format]="amountNullableFormat"
-                           [min]="0.01"
-                           [readOnly]="!isCreate"
-                           [(value)]="coupon.amountOff"
-                           [disabled]="isReadOnly || isAlreadyUsed">
-                <dx-validator>
-                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Amount'))}}."></dxi-validation-rule>
-                </dx-validator>
-            </dx-number-box>
-        </div>
+        <ng-container *ngIf="coupon.type == typesEnum.Fixed">
+            <div class="field">
+                <label>{{ls.l('DiscountAmount')}}</label>
+                <dx-number-box width="300px"
+                               [format]="amountNullableFormat"
+                               [min]="0.01"
+                               [readOnly]="!isCreate"
+                               [(value)]="coupon.amountOff"
+                               [disabled]="isReadOnly || isAlreadyUsed">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Amount'))}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-number-box>
+            </div>
+            <div class="field">
+                <label>{{ls.l('Currency')}}</label>
+                <dx-select-box [dataSource]="currencies$ | async"
+                               width="300px"
+                               placeholder="Select currency..."
+                               [readOnly]="!isCreate"
+                               valueExpr="id"
+                               displayExpr="displayName"
+                               [(value)]="coupon.currencyId"
+                               [searchEnabled]="true"
+                               [disabled]="true">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Currency'))}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-select-box>
+            </div>
+        </ng-container>
         <div class="field" *ngIf="coupon.type == typesEnum.Percentage">
             <label>{{ls.l('PercentageOff')}}</label>
             <dx-number-box width="300px"
