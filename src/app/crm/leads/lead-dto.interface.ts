@@ -40,5 +40,6 @@ export interface LeadDto {
     PropertyId: number;
     PropertyName: string;
     Amount: string;
+    CurrencyId: string;
     IsSubscribedToEmails: boolean;
 }

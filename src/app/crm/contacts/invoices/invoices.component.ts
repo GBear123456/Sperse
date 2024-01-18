@@ -114,12 +114,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         ]
     };
 
-    currencyFormat = {
-        type: 'currency',
-        precision: 2,
-        currency: SettingsHelper.getCurrency()
-    };
-
     constructor(injector: Injector,
         private dialog: MatDialog,
         private pipelineService: PipelineService,
@@ -174,6 +168,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                             this.invoiceFields.InvoiceStatus,
                             this.invoiceFields.InvoicePublicId,
                             this.invoiceFields.Amount,
+                            this.invoiceFields.CurrencyId,
                             this.invoiceFields.FutureSubscriptionIsSetUp
                         ],
                         this.fieldsDependencies
