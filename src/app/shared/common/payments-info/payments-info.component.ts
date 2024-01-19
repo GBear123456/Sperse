@@ -4,7 +4,6 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, ViewChil
 /** Third party imports */
 import { BehaviorSubject, Observable, of, combineLatest } from 'rxjs';
 import {
-    finalize,
     map,
     switchMap, tap
 } from 'rxjs/operators';
@@ -31,11 +30,11 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class PaymentsInfoComponent implements OnInit {
     @Input() paymentInfoScrollHeight: number;
-    @Input() amountCurrency = SettingsHelper.getCurrency();
 
     @ViewChild('paymentsContainer', { static: true }) paymentsContainer: ElementRef;
     @ViewChild('paymentMethodsContainer', { static: true }) paymentMethodsContainer: ElementRef;
     totalPaymentAmount: number;
+    amountCurrency: string;
     hasRecurringBilling: boolean;
     payments$: Observable<ShortPaymentInfo[]>;
     displayedPayments$: Observable<ShortPaymentInfo[]>;
@@ -54,6 +53,7 @@ export class PaymentsInfoComponent implements OnInit {
             .pipe(
                 tap((res) => {
                     this.totalPaymentAmount = res.totalPaymentAmount;
+                    this.amountCurrency = res.payments.length ? res.payments[0].currencyId : SettingsHelper.getCurrency();
                     this.hasRecurringBilling = res.hasRecurringBilling;
                     this.changeDetectorRef.detectChanges();
                 }),

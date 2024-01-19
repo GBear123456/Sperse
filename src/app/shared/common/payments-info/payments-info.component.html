@@ -37,7 +37,7 @@
                                     {{ payment.invoiceNumber }}
                                 </div>
                                 <div class="col-3 amount text-right">
-                                    {{ payment.amount | currency:amountCurrency:'symbol': '1.2-2' }}
+                                    {{ payment.amount | currency:payment.currencyId:'symbol': '1.2-2' }}
                                 </div>
                             </div>
                         </ng-container>
