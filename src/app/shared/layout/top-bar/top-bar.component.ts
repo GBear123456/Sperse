@@ -52,7 +52,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
 
     constructor(
         private authService: AppAuthService,
-        private appSessionService: AppSessionService,
+        public appSessionService: AppSessionService,
         private appService: AppService,
         private impersonationService: ImpersonationService,
         private permissionChecker: AppPermissionService,
@@ -135,16 +135,16 @@ export class TopBarComponent implements OnInit, OnDestroy {
                 navigation.alterRoutes,
                 navigation.host,
                 navigation.layout,
-		undefined,
+        undefined,
                 navigation.params,
-		parent		
+        parent      
             );
-	    if (navigation.items)
-		item.items = this.initMenu(
+        if (navigation.items)
+        item.items = this.initMenu(
                     navigation.items, 
                     localizationSource,
-		    item
-                ); 	    
+            item
+                );      
             item.visible = this.showMenuItem(item);
             navList.push(item);
         });

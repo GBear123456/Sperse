@@ -54,38 +54,38 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     constructor(
         _injector: Injector,
-	private layoutService: LayoutService,
+    private layoutService: LayoutService,
         private faviconsService: FaviconService,
-	private settingsProxy: TenantSettingsServiceProxy,
+    private settingsProxy: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private settingService: SettingService
     ) {
         super(_injector);
 
-	this.settingsProxy.getAppearanceSettings().subscribe(
-	    (res: AppearanceSettingsEditDto) => {
-	        this.appearance = res;
-		if (!this.appearance.navBackground)
-		    this.appearance.navBackground = this.defaultHeaderColor;
-		if (!this.appearance.navTextColor)
-		    this.appearance.navTextColor = this.defaultTextColor;
-		this.changeDetection.detectChanges();
-	    }
-	);
+        this.settingsProxy.getAppearanceSettings().subscribe(
+            (res: AppearanceSettingsEditDto) => {
+                this.appearance = res;
+                if (!this.appearance.navBackground)
+                    this.appearance.navBackground = this.defaultHeaderColor;
+                if (!this.appearance.navTextColor)
+                    this.appearance.navTextColor = this.defaultTextColor;
+                this.changeDetection.detectChanges();
+            }
+        );
     }
 
     ngOnInit() {
     }
 
     getSaveObs(): Observable<any> {
-       	if (this.appearance.navBackground == this.defaultHeaderColor)
-       	    this.appearance.navBackground = null;
-       	if (this.appearance.navTextColor == this.defaultTextColor)
-       	    this.appearance.navTextColor = null;
+        if (this.appearance.navBackground == this.defaultHeaderColor)
+            this.appearance.navBackground = null;
+        if (this.appearance.navTextColor == this.defaultTextColor)
+            this.appearance.navTextColor = null;
 
         return forkJoin(
-	    this.someColorChanged ?
-	    	this.settingsProxy.updateAppearanceSettings(this.appearance) : of(null),
+        this.someColorChanged ?
+            this.settingsProxy.updateAppearanceSettings(this.appearance) : of(null),
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
                     this.tenant.logoId = res.result && res.result.id;
@@ -117,7 +117,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     afterSave() {
         if (this.someCssChanged || this.someColorChanged)
-            this.message.info(this.l('ReloadPageStylesMessage'));
+            this.message.info(this.l('ReloadPageStylesMessage')).then(() => window.location.reload());
     }
 
     clearLogo(): void {
@@ -173,8 +173,8 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     onColorValueChanged(event, defaultColor) {
-	this.someColorChanged = true;
-	if (!event.value)
-	    event.component.option('value', defaultColor);
+    this.someColorChanged = true;
+    if (!event.value)
+        event.component.option('value', defaultColor);
     }
 }
