@@ -519,7 +519,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 summaryType: 'sum',
                 name: 'fee',
                 dataField: 'Fee',
-                format: 'currency',
+                format: {
+                    type: "currency",
+                    precision: 2,
+                    currency: this.currency
+                },
                 isMeasure: true
             },
             {

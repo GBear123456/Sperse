@@ -244,6 +244,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         Number: invoice.InvoiceNumber,
                         Status: invoice.InvoiceStatus,
                         Amount: invoice.Amount,
+                        CurrencyId: invoice.CurrencyId,
                         PublicId: invoice.InvoicePublicId,
                         OrderId: invoice.OrderId,
                         OrderStage: invoice.OrderStage,

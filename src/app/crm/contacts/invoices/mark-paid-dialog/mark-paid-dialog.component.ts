@@ -10,10 +10,8 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { InvoiceServiceProxy, AddBankCardPaymentInput, InvoiceSettings, PaymentTransactionType, PaymentServiceProxy, InvoiceStatus } from '@shared/service-proxies/service-proxies';
+import { InvoiceServiceProxy, AddBankCardPaymentInput, PaymentTransactionType, PaymentServiceProxy, InvoiceStatus } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { SettingsHelper } from '@shared/common/settings/settings.helper';
-
 @Component({
     templateUrl: 'mark-paid-dialog.html',
     styleUrls: ['mark-paid-dialog.less']
@@ -21,7 +19,7 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
 export class MarkAsPaidDialogComponent {
     date = DateHelper.addTimezoneOffset(new Date(), true);
     amount = this.data.invoice.Amount;
-    currency = getCurrencySymbol(SettingsHelper.getCurrency(), 'wide');
+    currency = '';
     transactionTypes = [];
     model: AddBankCardPaymentInput = new AddBankCardPaymentInput();
     paymentProviders$ = this.paymentProxy.getPaymentProviders();
@@ -38,6 +36,7 @@ export class MarkAsPaidDialogComponent {
     ) {
         this.initTransactionTypes(data.invoice.InvoiceStatus);
 
+        this.currency = getCurrencySymbol(data.invoice.CurrencyId, 'wide');
         this.model.invoiceId = data.invoice.InvoiceId;
         this.model.invoiceNumber = data.invoice.InvoiceNumber;
         this.model.orderStage = data.invoice.OrderStage;
