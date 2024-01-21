@@ -41,6 +41,10 @@
                 </dx-check-box>
             </div>
             <div class="form-group">
+                <label for="publicCreateLeadUrl">{{l("PublicCreateLeadUrl")}}</label><br />
+                <span class="copy-url"><b>{{publicCreateLeadUrl}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span><br /><br />
+            </div>
+            <div class="form-group">
                 <contact-group-templates [title]="l('UserRegistrationEmail')"
                                          [(customTemplates)]="tenantSettings.customWelcomeEmailTemplates"
                                          [templateType]="EmailTemplateType.WelcomeEmail">
@@ -102,6 +106,10 @@
         <label for="Setting_PasswordExpirationDayCount">{{l("PasswordExpirationDayCountSettingLabel")}}</label>
         <input id="Setting_PasswordExpirationDayCount" type="number" name="Setting_PasswordExpirationDayCount" class="form-control" [ngClass]="{'edited':hostSettings.userPasswordSettings.passwordExpirationDayCount}"
                [(ngModel)]="hostSettings.userPasswordSettings.passwordExpirationDayCount">
+    </div>
+    <div class="form-group">
+        <label for="publicCreateLeadUrl">{{l("PublicCreateLeadUrl")}}</label><br />
+        <span class="copy-url"><b>{{publicCreateLeadUrl}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span><br />
     </div>
 </ng-container>
 <button class="btn btn-layout" (click)="save()">

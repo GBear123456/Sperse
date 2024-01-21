@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -29,6 +29,8 @@ export class UserManagementSettingsComponent extends SettingsComponentBase {
     tenantSettings: TenantUserManagementSettingsEditDto;
     hostSettings: HostUserManagementSettingsEditDto;
 
+    publicCreateLeadUrl: string;
+
     EmailTemplateType = EmailTemplateType;
     initialSignUpPageEnabled: boolean;
 
@@ -44,25 +46,33 @@ export class UserManagementSettingsComponent extends SettingsComponentBase {
         this.startLoading();
 
         if (this.isHost) {
-            this.hostSettingsService.getUserManagementSettings()
-                .pipe(
+            forkJoin(
+                this.hostSettingsService.getUserManagementSettings().pipe(
+                    finalize(() => this.finishLoading())
+                ),
+                this.hostSettingsService.getPublicCreateLeadURL().pipe(
                     finalize(() => this.finishLoading())
                 )
-                .subscribe(res => {
-                    this.hostSettings = res;
-                    this.changeDetection.detectChanges();
-                });
+            ).subscribe(([settings, publicCreateLeadUrl]: [HostUserManagementSettingsEditDto, string]) => {
+                this.hostSettings = settings;
+                this.publicCreateLeadUrl = publicCreateLeadUrl;
+                this.changeDetection.detectChanges();
+            });
         }
         else {
-            this.tenantSettingsService.getUserManagementSettings()
-                .pipe(
+            forkJoin(
+                this.tenantSettingsService.getUserManagementSettings().pipe(
+                    finalize(() => this.finishLoading())
+                ),
+                this.tenantSettingsService.getPublicCreateLeadURL().pipe(
                     finalize(() => this.finishLoading())
                 )
-                .subscribe(res => {
-                    this.tenantSettings = res;
-                    this.initialSignUpPageEnabled = res.isSignUpPageEnabled;
-                    this.changeDetection.detectChanges();
-                });
+            ).subscribe(([settings, publicCreateLeadUrl]: [TenantUserManagementSettingsEditDto, string]) => {
+                this.publicCreateLeadUrl = publicCreateLeadUrl;
+                this.tenantSettings = settings;
+                this.initialSignUpPageEnabled = settings.isSignUpPageEnabled;
+                this.changeDetection.detectChanges();
+            });
         }
     }
 
