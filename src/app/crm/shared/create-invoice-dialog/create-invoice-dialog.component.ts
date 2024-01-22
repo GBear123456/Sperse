@@ -8,6 +8,7 @@ import {
     ChangeDetectorRef
 } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
+import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 import { DxValidationGroupComponent } from 'devextreme-angular';
@@ -43,7 +44,6 @@ import {
     CreateInvoiceLineInput,
     InvoiceInfo,
     ProductMeasurementUnit,
-    InvoiceSettings,
     GetNewInvoiceInfoOutput,
     InvoiceAddressInfo,
     ContactAddressDto,
@@ -124,6 +124,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private readonly MAX_DESCRIPTION_LENGTH = 499;
     defaultCountryCode = AppConsts.defaultCountryCode;
     currency = SettingsHelper.getCurrency();
+    currencySymbol = getCurrencySymbol(this.currency, 'narrow');
     saveButtonId = 'saveInvoiceOptions';
     newInvoiceInfo = new GetNewInvoiceInfoOutput();
     invoiceSettings: InvoiceSettingsDto = new InvoiceSettingsDto();

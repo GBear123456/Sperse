@@ -13,7 +13,8 @@ import { AbstractControlDirective } from '@angular/forms';
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
 
 /** Application imports */
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
@@ -22,8 +23,7 @@ import {
     GeneralSettingsEditDto,
     SettingScopes,
     TenantLoginInfoDto,
-    TenantSettingsServiceProxy,
-    Currency
+    TenantSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
@@ -31,6 +31,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
+import { RootStore, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
 
 @Component({
     selector: 'general-settings',
@@ -53,6 +54,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
             this._settings = value;
             this.initialTimezone = value.timezone;
             this.initialCountry = value.defaultCountryCode;
+            this.initialCurrency = value.currency;
         }
         this.changeDetectorRef.detectChanges();
     };
@@ -72,29 +74,35 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
             text: this.ls.l(item)
         };
     });
-    supportedCurrencies = Object.keys(Currency).map(item => {
-        return {
-            key: item,
-            text: this.ls.l(item)
-        };
-    });
+
+    currencies$: Observable<any[]> = this.store$.pipe(
+        select(CurrenciesCrmStoreSelectors.getCurrencies),
+        filter(x => x != null),
+        tap(data => {
+            data.forEach(c => c['displayName'] = `${c.name}, ${c.symbol}`);
+            return data;
+        })
+    );
     initialTimezone: string;
     initialCountry: string;
+    initialCurrency: string;
 
     constructor(
         private appSession: AppSessionService,
         private phoneNumberService: PhoneNumberService,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
+        private store$: Store<RootStore.State>,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {
+        this.store$.dispatch(new CurrenciesCrmStoreActions.LoadRequestAction());
     }
 
     onCountryChanged(event) {
         if (event.value == Country.Canada)
-            this.settings.currency = Currency.CAD;
+            this.settings.currency = 'CAD';
         else if (event.value == Country.USA)
-            this.settings.currency = Currency.USD;
+            this.settings.currency = 'USD';
     }
 
     onPhoneNumberChange(phone, elm) {
@@ -111,6 +119,8 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
                         this.onOptionChanged.emit('timezone');
                     if (this.initialCountry != this.settings.defaultCountryCode)
                         this.onOptionChanged.emit('defaultCountry');
+                    if (this.initialCurrency != this.settings.currency)
+                        this.onOptionChanged.emit('currency');
                     this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.settings.defaultCountryCode);
                 })),
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),

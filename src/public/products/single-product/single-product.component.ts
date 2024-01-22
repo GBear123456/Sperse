@@ -38,6 +38,7 @@ import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { PayPalComponent } from '@shared/common/paypal/paypal.component';
 import { ButtonType } from '@shared/common/paypal/button-type.enum';
 import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
+import { getCurrencySymbol } from '@angular/common';
 
 @Component({
     selector: 'single-product',
@@ -60,7 +61,7 @@ export class SingleProductComponent implements OnInit {
 
     hostName = AppConsts.defaultTenantName;
     currentYear: number = new Date().getFullYear();
-    currencySymbol = '$';
+    currencySymbol = '';
 
     tenantId: number;
     productPublicName: string;
@@ -144,7 +145,9 @@ export class SingleProductComponent implements OnInit {
             }
             this.payPal.initialize(this.productInfo.data.paypalClientId, type,
                 this.getPayPalRequest.bind(this),
-                this.getPayPalRequest.bind(this));
+                this.getPayPalRequest.bind(this),
+                this.productInfo.data.currency
+            );
         }
     }
 
@@ -177,6 +180,7 @@ export class SingleProductComponent implements OnInit {
             .subscribe(result => {
                 if (result.id) {
                     this.productInfo = result;
+                    this.currencySymbol = getCurrencySymbol(result.data.currency, 'narrow');
                     this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
                     this.titleService.setTitle(this.productInfo.name);
                     if (result.descriptionHtml)

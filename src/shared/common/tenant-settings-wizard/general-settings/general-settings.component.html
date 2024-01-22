@@ -21,10 +21,11 @@
             <label for="Currency">{{ls.l("Currency")}}</label>
             <dx-select-box
                 width="290px"
-                valueExpr="key"
-                displayExpr="text"
+                valueExpr="id"
+                displayExpr="displayName"
                 [(value)]="settings.currency"
-                [dataSource]="supportedCurrencies">
+                [dataSource]="currencies$ | async"
+                [searchEnabled]="true">
             </dx-select-box>
         </div>
     </div>

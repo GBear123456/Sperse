@@ -9,6 +9,7 @@ import { localStorageSync } from 'ngrx-store-localstorage';
 
 /** Application imports */
 import { CurrenciesStoreModule } from './currencies-store';
+import { CurrenciesCrmStoreModule } from './currencies-crm-store';
 import { StatesStoreModule } from './states-store';
 import { environment } from '../environments/environment';
 import { EmailUsageTypesStoreModule } from '@root/store/email-usage-types-store';
@@ -51,6 +52,7 @@ const metaReducers: Array<MetaReducer<any, any>> = [ localStorageSyncReducer ];
     imports: [
         StatesStoreModule,
         CurrenciesStoreModule,
+        CurrenciesCrmStoreModule,
         EmailUsageTypesStoreModule,
         AddressUsageTypesStoreModule,
         PhoneUsageTypesStoreModule,
