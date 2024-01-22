@@ -107,6 +107,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     );
     securitySettings$: Observable<SecuritySettingsEditDto> = this.tenantSettingsService.getSecuritySettings();
     emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
+    appearanceSettingsChanged: Boolean;
     generalSettingsChanged: Boolean;
     timezoneChanged: Boolean;
     countryChanged: Boolean;
@@ -141,6 +142,10 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 });
             if (this.currencyChanged)
                 this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Currency'))).done(() => {
+                    window.location.reload();
+                });
+            if (this.appearanceSettingsChanged)
+                this.messageService.info(this.ls.l('ReloadPageStylesMessage'));
                     window.location.reload();
                 });
         });
@@ -292,5 +297,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             this.countryChanged = true;
         if (option == 'currency')
             this.currencyChanged = true;
+        if (option == 'appearance')
+            this.appearanceSettingsChanged = true;
     }
 }

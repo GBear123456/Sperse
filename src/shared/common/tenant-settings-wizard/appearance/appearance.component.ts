@@ -2,8 +2,10 @@
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
+    EventEmitter,
     Component,
-    ViewChild
+    ViewChild,
+    Output
 } from '@angular/core';
 
 /** Third party imports */
@@ -44,6 +46,8 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     @ViewChild('portalCssUploader') portalCssUploader: UploaderComponent;
     @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
     @ViewChild('signUpCssUploader') signUpCssUploader: UploaderComponent;
+
+    @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
 
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
@@ -88,6 +92,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
 
     handleCssUpload(cssType: CustomCssType, res: any) {
         if (res.result && res.result.id) {
+            this.onOptionChanged.emit('appearance');
             this.setCustomCssTenantProperty(cssType, res.result.id);
             this.changeDetectorRef.detectChanges();
         }

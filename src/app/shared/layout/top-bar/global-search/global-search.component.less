@@ -3,7 +3,7 @@
     display: flex;
     align-self: center;
     padding-left: 12px;
-    background-color: #fff;
+    background-color: transparent;
     border-radius: 10px;
     height: 50px;
     width: inherit;
@@ -39,6 +39,9 @@
         left: initial !important;
         top: 4px !important;
     }
+    ::ng-deep dx-text-box {
+	background: transparent!important;
+    }
     ::ng-deep .dx-texteditor-container {
         align-items: center;
         .dx-icon-search:before {
@@ -51,6 +54,7 @@
             margin-top: -2px;
         }
         .dx-texteditor-input {
+	    background: #FFFFFF;
             font-weight: 500;
         }
         .dx-texteditor-buttons-container {
