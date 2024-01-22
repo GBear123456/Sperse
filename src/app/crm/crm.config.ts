@@ -58,6 +58,10 @@ export class CrmConfig implements ConfigInterface {
             permission: AppPermissions.CRMProducts,
             route: '/app/crm/products',
             items: [{
+                text: 'Products',
+                permission: AppPermissions.CRMProducts,
+                route: '/app/crm/products'
+            }, {
                 text: 'Coupons',
                 permission: AppPermissions.CRMProducts,
                 route: '/app/crm/coupons'
