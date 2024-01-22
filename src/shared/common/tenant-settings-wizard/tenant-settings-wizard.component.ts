@@ -145,7 +145,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                     window.location.reload();
                 });
             if (this.appearanceSettingsChanged)
-                this.messageService.info(this.ls.l('ReloadPageStylesMessage'));
+                this.messageService.info(this.ls.l('ReloadPageStylesMessage')).done(() => {
                     window.location.reload();
                 });
         });
