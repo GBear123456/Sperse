@@ -55,6 +55,12 @@ export class LeftMenuComponent implements OnInit {
     initMenuItems() {
         this.leftMenuItems = [
             {
+                caption: this.ls.l('Home'),
+                visible: !this.appService.isHostTenant,
+                iconSrc: 'assets/common/icons/home.svg',
+                component: '/welcome'
+            },
+            {
                 caption: this.ls.l('MySubscriptions'),
                 visible: !this.appService.isHostTenant &&
                     this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement),

@@ -1,0 +1,211 @@
+<div class="left">
+    <div class="head">
+        <a (click)="openPaymentWizardDialog()">Choose Your Plan</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a (click)="openIntroDialog()">Introduction Tour</a>
+    </div>
+    <dx-scroll-view showScrollbar="onHover" height="calc(100vh - 180px)">
+        <div class="boxes">
+            <div class="box">
+                <div class="element">
+                    <div class="overlap products">
+                        <div class="overlap-group-wrapper">
+                            <div class="overlap-group"><div class="text-wrapper">1</div></div>
+                        </div>
+                        <img class="icon-box" src="assets/common/images/add-product-form.svg" />
+                        <p class="title">Add Your Products <br />&amp; Forms</p>
+                        <button class="button" (click)="openProductDialog()">
+                            <img class="btn-img" src="assets/common/icons/plus.svg" />
+                            <div class="btn-text">New Product Form</div>
+                        </button>
+                        <div class="points">
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/new-subscription.svg" />
+                                <div class="label"><a routeLink="app/crm/products">Show All Products</a></div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/new-coupon.svg" />
+                                <div class="label">Show All Coupons</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="element">
+                    <div class="overlap payment">
+                        <div class="overlap-group-wrapper">
+                            <div class="overlap-group">
+                                <div class="text-wrapper">2</div>
+                            </div>
+                        </div>
+                        <img class="icon-box" src="assets/common/images/card-add.svg" />
+                        <div class="title">Link Your Payment <br />Services </div>
+                        <button class="button">
+                            <img class="btn-img" src="assets/common/icons/plus.svg" />
+                            <div (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'stripe' } })" class="btn-text">Connect Stripe</div>
+                        </button>
+                        <div class="links">
+                            <img class="link ach-payment" src="assets/common/images/ach-payment-solutions.svg" />
+                            <img (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'paypal' } })" class="link paypal" src="assets/common/images/paypal.svg" />
+                            <img class="link add-card" src="assets/common/images/zelle.svg" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="element">
+                    <div class="overlap settings">
+                        <div class="overlap-group-wrapper">
+                            <div class="overlap-group">
+                                <div class="text-wrapper">3</div>
+                            </div>
+                        </div>
+                        <img class="icon-box" src="assets/common/images/settings.svg" />
+                        <div class="title">Customize Settings <br />&amp; Preferences </div>
+                        <button class="button">
+                            <img class="btn-img" src="assets/common/icons/invoice-settings.svg" />
+                            <div class="btn-text">My Settings</div>
+                        </button>
+                        <div class="points">
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/grid.svg" />
+                                <div class="label">Sales Landing Page</div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/task-square.svg" />
+                                <div class="label">Invoice Settings</div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/document-sketch.svg" />
+                                <div class="label">File Templates</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="element">
+                    <div class="overlap favorite">
+                        <div class="overlap-group-wrapper">
+                            <div class="overlap-group">
+                                <div class="text-wrapper">4</div>
+                            </div>
+                        </div>
+                        <img class="icon-box" src="assets/common/images/category.svg" />
+                        <div class="title">Link Your Favorite <br />Apps </div>
+                        <div class="points">
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/mailchimp-freddie-icon.svg" />
+                                <div class="label">MailChimp</div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/pngwing.svg" />
+                                <div class="label">Google Analytics</div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/meta.svg" />
+                                <div class="label">Meta</div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/zapier-icon.svg" />
+                                <div class="label">Zapier</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="element">
+                    <div class="overlap import">
+                        <div class="overlap-group-wrapper">
+                            <div class="overlap-group">
+                                <div class="text-wrapper">5</div>
+                            </div>
+                        </div>
+                        <img class="icon-box" src="assets/common/images/user-square.svg" />
+                        <p class="title">Add or Import <br />Leads and Customers </p>
+                        <div class="points">
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/user-edit.svg" />
+                                <div class="label">Manage Leads</div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/peoples.svg" />
+                                <div class="label">Manage Clients</div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/send-square.svg" />
+                                <div class="label">Import Your List</div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/user-add.svg" />
+                                <div class="label">Add and Invite Team Members</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="element">
+                    <div class="overlap affiliate">
+                        <div class="overlap-group-wrapper">
+                            <div class="overlap-group">
+                                <div class="text-wrapper">6</div>
+                            </div>
+                        </div>
+                        <img class="icon-box" src="assets/common/images/format-square.svg" />
+                        <div class="title">Setup Your <br />Affiliate Program </div>
+                        <div class="points">
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/archive-book.svg" />
+                                <div class="label">Affilate Rules</div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/money-time.svg" />
+                                <div class="label">Commission History</div>
+                            </div>
+                            <div class="point">
+                                <img class="icon" src="assets/common/icons/format-circle.svg" />
+                                <div class="label">Connect Your Payout Providers</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </dx-scroll-view>
+</div>
+<div class="right">
+    <div class="box">
+        <div class="group">
+            <div class="div-wrapper">
+                <div class="text-wrapper" (click)="openPaymentWizardDialog()">Activate Your Plan</div>
+            </div>
+            <div class="rectangle"></div>
+            <div class="ellipse"></div>
+            <div class="overlap">
+                <div class="icon">
+                    <div class="overlap-group" (click)="openPaymentWizardDialog()">
+                        <div class="div">Upgrade</div>
+                    </div>
+                </div>
+                <p class="p">Current plan: Pay as you go</p>
+            </div>
+            <div class="group-2">
+                <p class="text-wrapper-2">Book a call to learn more</p>
+                <div class="text-wrapper-3" (click)="openIntroDialog()">Learn More: introductory Tour</div>
+                <div class="ellipse-2"></div>
+                <div class="ellipse-3"></div>
+                <div class="overlap-2">
+                    <div class="book-your-free">Book Your Free <br />Discovery Call </div>
+                    <img class="img" src="assets/common/images/avatar.svg" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

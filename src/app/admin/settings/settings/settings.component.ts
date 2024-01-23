@@ -116,7 +116,9 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
         ).subscribe(params => {
             if (params['tab']) {
                 let keyName = params['tab'] == 'smtp' ? 'EmailSmtp' : params['tab'];
-                let item = this.visibleSettings.find(v => v.key == keyName);
+                let item = this.visibleSettings.find(
+                    v => v.key.toLowerCase() == keyName.toLowerCase()
+                );
                 if (item) {
                     this.stepper.selectedIndex = item.index;
                     this.changeDetector.detectChanges();

@@ -14,7 +14,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, Subject, ReplaySubject, combineLatest } from 'rxjs';
-import { filter, first, takeUntil, map, delay } from 'rxjs/operators';
+import { filter, first, takeUntil, map, delay, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppStore } from '@app/store';
@@ -63,7 +63,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     @ViewChild(LeftMenuComponent) leftMenu: LeftMenuComponent;
 
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
-    showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();
+    showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable().pipe(
+        tap((showWelcomeSection: boolean) => showWelcomeSection ? this.router.navigate(['app/crm/welcome']) : undefined)
+    );
     showDefaultSection$: Observable<boolean> = this.showWelcomeSection$.pipe(
         map((showWelcomeSection: boolean) => showWelcomeSection === false)
     );
@@ -158,7 +160,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
     ngOnInit() {
         if (this.hasAccessibleCG) {
-            this.loadStatus();
+            this.loadStatus(true);
         }
 
         const introAcceptedCache = this.cacheService.get(this.introAcceptedCacheKey);
@@ -245,10 +247,12 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         this.router.navigate(['app/crm/clients'], { queryParams: { action: 'addNew' } });
     }
 
-    private loadStatus() {
+    private loadStatus(initialLoad: boolean = false) {
         if (this.filterModelContactGroup.items.element.value) {
-            this.dashboardServiceProxy.getStatus(this.filterModelContactGroup.items.element.value.toString(), undefined).subscribe((status: GetCRMStatusOutput) => {
-                this.showWelcomeSection.next(!status.hasData);
+            this.dashboardServiceProxy.getStatus(
+                this.filterModelContactGroup.items.element.value.toString(), undefined
+            ).subscribe((status: GetCRMStatusOutput) => {
+                this.showWelcomeSection.next(initialLoad ? !status.hasData : false);
                 this.showLoadingSpinner = false;
                 this.changeDetectorRef.detectChanges();
             });
