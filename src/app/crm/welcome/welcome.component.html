@@ -1,6 +1,6 @@
 <div class="left">
     <div class="head">
-        <a (click)="openPaymentWizardDialog()">Choose Your Plan</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a (click)="openIntroDialog()">Introduction Tour</a>
+        <a (click)="openPaymentWizardDialog(true)">My Subscriptions</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a (click)="openIntroDialog()">Introduction Tour</a>
     </div>
     <dx-scroll-view showScrollbar="onHover" height="calc(100vh - 180px)">
         <div class="boxes">
@@ -40,13 +40,13 @@
                         </div>
                         <img class="icon-box" src="assets/common/images/card-add.svg" />
                         <div class="title">Link Your Payment <br />Services </div>
-                        <button class="button">
+                        <button class="button" [disabled]="!isPaymentsEnabled || stripePaymentSettings.isConnectedAccountSetUpCompleted">
                             <img class="btn-img" src="assets/common/icons/plus.svg" />
-                            <div (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'stripe' } })" class="btn-text">Connect Stripe</div>
+                            <div (click)="connectStripeAccount()" class="btn-text">Connect Stripe</div>
                         </button>
                         <div class="links">
+                            <img class="link paypal" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'paypal' } })" src="assets/common/images/paypal.svg" />
                             <img class="link ach-payment" src="assets/common/images/ach-payment-solutions.svg" />
-                            <img (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'paypal' } })" class="link paypal" src="assets/common/images/paypal.svg" />
                             <img class="link add-card" src="assets/common/images/zelle.svg" />
                         </div>
                     </div>
@@ -63,20 +63,24 @@
                         </div>
                         <img class="icon-box" src="assets/common/images/settings.svg" />
                         <div class="title">Customize Settings <br />&amp; Preferences </div>
-                        <button class="button">
+                        <button class="button" (click)="openProfileTenantSettingsDialog()">
                             <img class="btn-img" src="assets/common/icons/invoice-settings.svg" />
                             <div class="btn-text">My Settings</div>
                         </button>
                         <div class="points">
-                            <div class="point">
+                            <div class="point" *ngIf="showLandingPageSettings">
                                 <img class="icon" src="assets/common/icons/grid.svg" />
-                                <div class="label">Sales Landing Page</div>
+                                <div class="label" (click)="openProfileTenantSettingsDialog('landingPage')">Sales Landing Page</div>
                             </div>
-                            <div class="point">
+                            <div class="point" *ngIf="showInvoiceSettings">
                                 <img class="icon" src="assets/common/icons/task-square.svg" />
-                                <div class="label">Invoice Settings</div>
+                                <div class="label" (click)="openProfileTenantSettingsDialog('invoice')">Invoice Settings</div>
                             </div>
-                            <div class="point">
+                            <div class="point" (click)="openProfileTenantSettingsDialog('gmail')">
+                                <img class="icon" src="assets/common/icons/email-icon.svg" />
+                                <div class="label">Email SMTP or Gmail</div>
+                            </div>
+                            <div class="point" (click)="router.navigate(['app/crm/documents'])">
                                 <img class="icon" src="assets/common/icons/document-sketch.svg" />
                                 <div class="label">File Templates</div>
                             </div>
@@ -98,17 +102,17 @@
                         <div class="points">
                             <div class="point">
                                 <img class="icon" src="assets/common/icons/mailchimp-freddie-icon.svg" />
-                                <div class="label">MailChimp</div>
+                                <div class="label" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Mailchimp' } })">MailChimp</div>
                             </div>
-                            <div class="point">
+                            <div class="point disabled">
                                 <img class="icon" src="assets/common/icons/pngwing.svg" />
                                 <div class="label">Google Analytics</div>
                             </div>
-                            <div class="point">
+                            <div class="point disabled">
                                 <img class="icon" src="assets/common/icons/meta.svg" />
                                 <div class="label">Meta</div>
                             </div>
-                            <div class="point">
+                            <div class="point" *ngIf="showZapier" (click)="router.navigate(['/zapier'])">
                                 <img class="icon" src="assets/common/icons/zapier-icon.svg" />
                                 <div class="label">Zapier</div>
                             </div>
@@ -130,19 +134,19 @@
                         <div class="points">
                             <div class="point">
                                 <img class="icon" src="assets/common/icons/user-edit.svg" />
-                                <div class="label">Manage Leads</div>
+                                <div class="label" (click)="router.navigate(['app/crm/leads'])">Manage Leads</div>
                             </div>
                             <div class="point">
                                 <img class="icon" src="assets/common/icons/peoples.svg" />
-                                <div class="label">Manage Clients</div>
+                                <div class="label" (click)="router.navigate(['app/crm/clients'])">Manage Clients</div>
                             </div>
-                            <div class="point">
+                            <div class="point" *ngIf="showImportLeads">
                                 <img class="icon" src="assets/common/icons/send-square.svg" />
-                                <div class="label">Import Your List</div>
+                                <div class="label" (click)="router.navigate(['app/crm/import-leads'])">Import Your List</div>
                             </div>
-                            <div class="point">
+                            <div class="point" *ngIf="showImportUsersStep">
                                 <img class="icon" src="assets/common/icons/user-add.svg" />
-                                <div class="label">Add and Invite Team Members</div>
+                                <div class="label" (click)="openIntroDialog(true)">Add and Invite Team Members</div>
                             </div>
                         </div>
                     </div>
@@ -160,15 +164,15 @@
                         <img class="icon-box" src="assets/common/images/format-square.svg" />
                         <div class="title">Setup Your <br />Affiliate Program </div>
                         <div class="points">
-                            <div class="point">
+                            <div class="point" *ngIf="showCommissionsSettings">
                                 <img class="icon" src="assets/common/icons/archive-book.svg" />
-                                <div class="label">Affilate Rules</div>
+                                <div class="label" (click)="openProfileTenantSettingsDialog('commissions')">Affilate Rules</div>
                             </div>
-                            <div class="point">
+                            <div class="point" *ngIf="showCommissionsSettings">
                                 <img class="icon" src="assets/common/icons/money-time.svg" />
-                                <div class="label">Commission History</div>
-                            </div>
-                            <div class="point">
+                                <div class="label" (click)="router.navigate(['app/crm/commission-history'])">Commission History</div>
+                            </div>                                                             
+                            <div class="point disabled">
                                 <img class="icon" src="assets/common/icons/format-circle.svg" />
                                 <div class="label">Connect Your Payout Providers</div>
                             </div>
@@ -184,17 +188,17 @@
     <div class="box">
         <div class="group">
             <div class="div-wrapper">
-                <div class="text-wrapper" (click)="openPaymentWizardDialog()">Activate Your Plan</div>
+                <div class="text-wrapper" (click)="openPaymentWizardDialog(true)">Activate Your Plan</div>
             </div>
             <div class="rectangle"></div>
             <div class="ellipse"></div>
             <div class="overlap">
-                <div class="icon">
+                <div class="icon" *ngIf="isUpgradable">
                     <div class="overlap-group" (click)="openPaymentWizardDialog()">
                         <div class="div">Upgrade</div>
                     </div>
                 </div>
-                <p class="p">Current plan: Pay as you go</p>
+                <p class="p">Current plan: <b>{{subscriptionName}}</b></p>
             </div>
             <div class="group-2">
                 <p class="text-wrapper-2">Book a call to learn more</p>

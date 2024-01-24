@@ -64,7 +64,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable().pipe(
-        tap((showWelcomeSection: boolean) => showWelcomeSection ? this.router.navigate(['app/crm/welcome']) : undefined)
+        tap((showWelcomeSection: boolean) => !this.appService.isHostTenant && showWelcomeSection ? this.router.navigate(['app/crm/welcome']) : undefined)
     );
     showDefaultSection$: Observable<boolean> = this.showWelcomeSection$.pipe(
         map((showWelcomeSection: boolean) => showWelcomeSection === false)

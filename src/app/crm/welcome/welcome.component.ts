@@ -1,8 +1,7 @@
 /** Core imports */
 import {
     ChangeDetectionStrategy,
-    Component,
-    AfterViewInit,
+    Component,    
     ViewChild,
     OnInit,
     ChangeDetectorRef
@@ -14,7 +13,8 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, Subject, ReplaySubject, combineLatest } from 'rxjs';
-import { filter, first, takeUntil, map, delay } from 'rxjs/operators';
+import { finalize, filter, first, takeUntil, map, delay } from 'rxjs/operators';
+import { FeatureCheckerService, MessageService } from 'abp-ng2-module';
 
 /** Application imports */
 import { AppStore } from '@app/store';
@@ -25,26 +25,53 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
+import { ModuleType, LayoutType, StripeSettingsDto, TenantPaymentSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
+import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './welcome.component.html',
     styleUrls: ['./welcome.component.less'],
-    providers: [ LifecycleSubjectsService ],
+    providers: [ LifecycleSubjectsService, TenantPaymentSettingsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WelcomeComponent implements AfterViewInit, OnInit {
+export class WelcomeComponent implements OnInit {
 
-    showLoadingSpinner = true;
     private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
     isGrantedOrders = this.permission.isGranted(AppPermissions.CRMOrders);
-    hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();
+
+    stripePaymentSettings: StripeSettingsDto = new StripeSettingsDto();
+    isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
+    hasTenantPermission = this.permission.isGranted(AppPermissions.AdministrationTenantSettings);
+    hasTenantOrCRMSettings = this.hasTenantPermission || 
+        this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
+    showLandingPageSettings = !this.appService.isHostTenant && 
+        this.feature.isEnabled(AppFeatures.CRMTenantLandingPage) && 
+        this.permission.isGranted(AppPermissions.AdministrationUsers);
+    showInvoiceSettings = this.hasTenantOrCRMSettings && 
+        this.feature.isEnabled(AppFeatures.CRMInvoicesManagement);        
+    showImportLeads = this.permission.isGranted(AppPermissions.CRMBulkImport);
+    showImportUsersStep = (this.appService.isHostTenant || this.feature.isEnabled(AppFeatures.Admin))
+            && this.permission.isGranted(AppPermissions.AdministrationUsers)
+            && this.permission.isGranted(AppPermissions.AdministrationUsersCreate)
+            && this.permission.isGranted(AppPermissions.AdministrationRoles);
+    showSubscriptionManagement = this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement); 
+    showCommissionsSettings = this.feature.isEnabled(AppFeatures.CRMCommissions) &&
+        (this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasTenantPermission);
+
+    hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();    
+    showZapier = location.href.includes(AppConsts.defaultDomain) &&
+        this.permission.isGranted(AppPermissions.CRM);
+
+    isUpgradable: boolean;
+    subscriptionName: string;
     localization = AppConsts.localization.CRMLocalizationSourceName;
 
     constructor(
@@ -58,17 +85,30 @@ export class WelcomeComponent implements AfterViewInit, OnInit {
         private cacheService: CacheService,
         public ui: AppUiCustomizationService,
         public permission: AppPermissionService,
+        private feature: FeatureCheckerService,
         public ls: AppLocalizationService,
+        private loadingService: LoadingService,
+        private message: MessageService,
+        private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         public dialog: MatDialog
-    ) {}
+    ) {
+        this.appService.moduleSubscriptions$.subscribe(() => this.updateSubscriptionInfo());
+    }
 
     ngOnInit() {
+        this.loadSettings();
+
+        if (this.appService.isHostTenant)
+            this.router.navigate(['app/crm/dashboard']);
     }
 
-    ngAfterViewInit(): void {
+    updateSubscriptionInfo() {
+        this.subscriptionName = this.appService.getSubscriptionName();        
+        this.isUpgradable = this.appService.getModuleSubscription().isUpgradable;
+        this.changeDetectorRef.markForCheck()
     }
 
-    openIntroDialog() {
+    openIntroDialog(showLastStep: boolean = false) {
         if (this.appService.isHostTenant)
             return;
 
@@ -78,7 +118,7 @@ export class WelcomeComponent implements AfterViewInit, OnInit {
             this.dialogConfig.width = '900px';
             this.dialogConfig.id = 'crm-intro';
             this.dialogConfig.panelClass = ['crm-intro', 'setup'];
-            this.dialogConfig.data = { alreadyStarted: false };
+            this.dialogConfig.data = { alreadyStarted: false, showLastStep: showLastStep };
             this.dialog.open(CrmIntroComponent, this.dialogConfig).afterClosed().subscribe(() => {
                 /** Mark accepted cache with true when user closed intro and don't want to see it anymore) */
                 this.cacheService.set(this.introAcceptedCacheKey, 'true');
@@ -86,13 +126,14 @@ export class WelcomeComponent implements AfterViewInit, OnInit {
         }
     }
 
-    activate() {
-        this.lifeCycleSubject.activate.next();
-        this.showLoadingSpinner = false;
-        this.ui.overflowHidden(true);
-        this.appService.isClientSearchDisabled = true;
-        this.appService.toolbarIsHidden.next(true);
-        this.changeDetectorRef.markForCheck()
+    openProfileTenantSettingsDialog(selectedTab: string) {
+        this.dialog.open(TenantSettingsWizardComponent, {
+            width: '960px',
+            height: '700px',
+            id: 'tenant-settings',
+            panelClass: ['tenant-settings'],
+            data: {tab: selectedTab}
+        });
     }
 
     subscribeToRefreshParam() {
@@ -129,7 +170,7 @@ export class WelcomeComponent implements AfterViewInit, OnInit {
         });        
     }
 
-    openPaymentWizardDialog() {
+    openPaymentWizardDialog(showSubscriptions = false) {
         this.dialog.closeAll();
         this.dialog.open(PaymentWizardComponent, {
             height: '800px',
@@ -137,9 +178,50 @@ export class WelcomeComponent implements AfterViewInit, OnInit {
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {
-                showSubscriptions: false
+                showSubscriptions: showSubscriptions
             }
         });
+    }
+
+    loadSettings() {
+        this.loadingService.startLoading();
+        if (this.isPaymentsEnabled) {
+            this.tenantPaymentSettingsService.getStripeSettings()
+                .pipe(
+                    finalize(() => this.loadingService.finishLoading())
+                )
+                .subscribe(res => {
+                    this.stripePaymentSettings = res;
+                })
+        }
+    }
+
+    connectStripeAccount() {
+        if (this.stripePaymentSettings.isConnectedAccountSetUpCompleted)
+            return;
+
+        this.message.confirm('', this.ls.l('Do you want to connect Stripe account ?'), (isConfirmed) => {
+            if (isConfirmed) {
+                this.loadingService.startLoading();
+                let method = this.stripePaymentSettings.connectedAccountId ?
+                    this.tenantPaymentSettingsService.connectStripeAccount() :
+                    this.tenantPaymentSettingsService.getConnectOAuthAuthorizeUrl();
+                method.pipe(
+                    finalize(() => this.loadingService.finishLoading())
+                ).subscribe((url) => {
+                    window.location.href = url;
+                });
+            }
+        });
+    }
+
+
+    activate() {
+        this.lifeCycleSubject.activate.next();
+        this.ui.overflowHidden(true);
+        this.appService.isClientSearchDisabled = true;
+        this.appService.toolbarIsHidden.next(true);
+        this.changeDetectorRef.markForCheck()
     }
 
     deactivate() {

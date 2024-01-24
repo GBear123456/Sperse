@@ -29,6 +29,8 @@
             margin-bottom: 10px;
             justify-content: center;
             gap: 29px;
+            max-width: 1500px;
+            margin: auto;
         }
 
         .box {
@@ -159,7 +161,12 @@
                 display: flex;
                 margin-left: 36px;
                 flex-direction: column;
-                flex-wrap: wrap;        
+                flex-wrap: wrap;
+
+                .disabled {
+                    opacity: 0.4;
+                    cursor: default;
+                }        
             }
 
             .point {
@@ -419,7 +426,7 @@
             position: absolute;
             width: 8px;
             height: 8px;
-            top: 176px;
+            top: 175px;
             left: 0;
             background-color: #63d940;
             border-radius: 4px;

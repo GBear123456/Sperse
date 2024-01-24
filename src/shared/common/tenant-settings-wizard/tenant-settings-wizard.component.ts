@@ -5,13 +5,14 @@ import {
     Component,
     ElementRef,
     ViewChild,
-    AfterViewInit
+    AfterViewInit,
+    Inject
 } from '@angular/core';
 
 /** Third party imports */
 import { MessageService } from 'abp-ng2-module';
 import { MatVerticalStepper } from '@angular/material/stepper';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
@@ -123,7 +124,8 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         private messageService: MessageService,
         private commonLookupServiceProxy: CommonLookupServiceProxy,
         public ls: AppLocalizationService,
-        public appService: AppService
+        public appService: AppService,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef.afterClosed().subscribe(() => {
             if (this.timezoneChanged)
@@ -239,6 +241,19 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 visible: this.showLandingPageSettings
             }
         ];
+
+        if (this.data.tab) {
+            let selectedIndex = 0;
+            this.steps.map((step, index) => {
+                if (step.visible) {                    
+                    if (step.name == this.data.tab) {
+                        this.stepper.selectedIndex = selectedIndex;
+                        this.changeDetectorRef.detectChanges();
+                    }
+                    selectedIndex++;
+                }
+            });
+        }    
     }
 
     back() {
