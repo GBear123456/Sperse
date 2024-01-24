@@ -71,6 +71,8 @@ import { LedgerStatus } from '@app/crm/commission-history/ledger-status.enum';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { CrmService } from '@app/crm/crm.service';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { CurrencyHelper } from '../shared/helpers/currency.helper';
 
 @Component({
     templateUrl: './commission-history.component.html',
@@ -122,6 +124,14 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             items: []
         }
     ];
+
+    currency = SettingsHelper.getCurrency();
+    currencyFormat: DevExpress.ui.Format = {
+        type: 'currency',
+        precision: 2,
+        currency: this.currency
+    };
+
     reconciliationFilter: FilterModel = new FilterModel({
         component: null,
         caption: 'Reconciliation',
@@ -174,7 +184,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         requireTotalCount: true,
         store: new ODataStore({
             key: this.commissionFields.Id,
-            url: this.getODataUrl(this.commissionDataSourceURI),
+            url: this.getODataUrl(this.commissionDataSourceURI, [FilterHelpers.filterByCurrencyId(this.currency)]),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: (request) => {
@@ -187,7 +197,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         this.commissionFields.OrderId,
                         this.commissionFields.CommissionAmount,
                         this.commissionFields.BuyerContactId,
-                        this.commissionFields.ResellerContactId
+                        this.commissionFields.ResellerContactId,
+                        this.commissionFields.CurrencyId
                     ]
                 );
             },
@@ -201,7 +212,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         requireTotalCount: true,
         store: new ODataStore({
             key: this.ledgerFields.Id,
-            url: this.getODataUrl(this.ledgerDataSourceURI),
+            url: this.getODataUrl(this.ledgerDataSourceURI, [FilterHelpers.filterByCurrencyId(this.currency)]),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: (request) => {
@@ -209,7 +220,10 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.ledgerDataGrid,
-                    [this.ledgerFields.Id, this.ledgerFields.ContactId, this.ledgerFields.HasPayout, this.ledgerFields.PayPalEmailAddress, this.ledgerFields.StripeAccountID]
+                    [
+                        this.ledgerFields.Id, this.ledgerFields.ContactId, this.ledgerFields.HasPayout, this.ledgerFields.PayPalEmailAddress,
+                        this.ledgerFields.StripeAccountID, this.ledgerFields.CurrencyId
+                    ]
                 );
             },
             errorHandler: (error) => {
@@ -232,6 +246,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     this.resellersDataGrid,
                     [this.resellersFields.Id]
                 );
+                request.params.currencyId = this.currency;
             },
             errorHandler: (error) => {
                 setTimeout(() => this.isDataLoaded = true);
@@ -261,13 +276,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         value: this.RESELLERS_VIEW,
         text: this.l('Resellers')
     }];
-
-    currency = SettingsHelper.getCurrency();
-    currencyFormat: DevExpress.ui.Format = {
-        type: 'currency',
-        precision: 2,
-        currency: this.currency
-    };
 
     get dxDataGrid(): DxDataGridComponent {
         return [
@@ -363,42 +371,44 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             caption: 'Commission',
             field: this.commissionFields.CommissionAmount,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
-        })],
-        this.permission.isGranted(AppPermissions.CRMOrders) || 
-        this.permission.isGranted(AppPermissions.CRMProducts) ?
+        }),
+        CurrencyHelper.getCurrencyFilter(this.currency)
+    ],
+        this.permission.isGranted(AppPermissions.CRMOrders) || this.permission.isGranted(AppPermissions.CRMProducts) ?
+            [
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    caption: 'Product',
+                    field: this.commissionFields.ProductCode,
+                    options: { method: 'filterByFilterElement' },
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource$: this.productProxy.getProducts(undefined, this.currency, false),
+                                nameField: 'name',
+                                keyExpr: 'code'
+                            })
+                    }
+                })
+            ] : [],
         [
             new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'Product',
-                field: this.commissionFields.ProductCode,
-                options: { method: 'filterByFilterElement' },
-                items: {
-                    element: new FilterCheckBoxesModel(
-                        {
-                            dataSource$: this.productProxy.getProducts(undefined, this.currency, false),
-                            nameField: 'name',
-                            keyExpr: 'code'
-                        })
-                }
-            }) 
-        ]: [],
-        [new FilterModel({
-            component: FilterInputsComponent,
-            options: { type: 'number' },
-            operator: { from: 'ge', to: 'le' },
-            caption: 'ProductAmount',
-            field: this.commissionFields.ProductAmount,
-            items: { from: new FilterItemModel(), to: new FilterItemModel() }
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            options: { type: 'number' },
-            operator: { from: 'ge', to: 'le' },
-            caption: 'CommissionRate',
-            field: this.commissionFields.CommissionRate,
-            items: { from: new FilterItemModel(), to: new FilterItemModel() }
-        })
-    ]);
+                component: FilterInputsComponent,
+                options: { type: 'number' },
+                operator: { from: 'ge', to: 'le' },
+                caption: 'ProductAmount',
+                field: this.commissionFields.ProductAmount,
+                items: { from: new FilterItemModel(), to: new FilterItemModel() }
+            }),
+            new FilterModel({
+                component: FilterInputsComponent,
+                options: { type: 'number' },
+                operator: { from: 'ge', to: 'le' },
+                caption: 'CommissionRate',
+                field: this.commissionFields.CommissionRate,
+                items: { from: new FilterItemModel(), to: new FilterItemModel() }
+            })
+        ]);
 
     ledgerFilters = [
         new FilterModel({
@@ -459,13 +469,14 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             caption: 'TotalAmount',
             field: this.ledgerFields.TotalAmount,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
-        })
+        }),
+        CurrencyHelper.getCurrencyFilter(this.currency)
     ];
 
     manageAllowed = this.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     isPayPalPayoutEnabled: Boolean = false;
     isStripePayoutEnabled: Boolean = false;
-                   
+
     constructor(
         injector: Injector,
         public dialog: MatDialog,
@@ -492,10 +503,10 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     ngOnInit() {
         if (abp.features.isEnabled(AppFeatures.CRMPayments))
             this.affiliatePayoutSettingProxy.getAvailablePayoutTypes(
-                ).subscribe((payoutTypes: PaymentSettingType[]) => {
-                    this.isPayPalPayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.PayPal);
-                    this.isStripePayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.Stripe);
-                });
+            ).subscribe((payoutTypes: PaymentSettingType[]) => {
+                this.isPayPalPayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.PayPal);
+                this.isStripePayoutEnabled = payoutTypes.some(item => item == PaymentSettingType.Stripe);
+            });
 
         this.handleDataGridUpdate();
         this.handleFiltersPining();
@@ -746,7 +757,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 {
                                     text: this.l('PayWithPayPal'),
                                     visible: abp.features.isEnabled(AppFeatures.CRMPayments),
-                                    disabled: !this.isPayPalPayoutEnabled ||                                        
+                                    disabled: !this.isPayPalPayoutEnabled ||
                                         !this.selectedRecords.some(item => item.PayPalEmailAddress),
                                     action: () => this.applyPaymentComplete(PaymentSystem.PayPal)
                                 },
@@ -811,7 +822,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             ]
                         }
                     }
-                    ]
+                ]
             }, {
                 location: 'before',
                 locateInMenu: 'auto',
@@ -1158,7 +1169,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                ledgerEntryId: data.Id
+                ledgerEntryId: data.Id,
+                currencyId: data.CurrencyId
             }
         }).afterClosed().subscribe(() => {
         });

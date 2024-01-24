@@ -14,6 +14,7 @@ import { RecordEarningsInput, CommissionServiceProxy, PendingCommissionContactIn
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { SettingsHelper } from '../../../../shared/common/settings/settings.helper';
 
 @Component({
     selector: 'commission-earnings-dialog',
@@ -21,7 +22,8 @@ import { DateHelper } from '@shared/helpers/DateHelper';
     styleUrls: ['commission-earnings-dialog.component.less']
 })
 export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
-    contacts$: Observable<PendingCommissionContactInfo[]> = this.commissionProxy.getPendingCommissionContacts().pipe(
+    currency = SettingsHelper.getCurrency();
+    contacts$: Observable<PendingCommissionContactInfo[]> = this.commissionProxy.getPendingCommissionContacts(this.currency).pipe(
         map(data => data.sort((prev: PendingCommissionContactInfo, next: PendingCommissionContactInfo) => {
             return prev.name.localeCompare(next.name);
         }))
@@ -60,7 +62,8 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
                                 startDate: DateHelper.removeTimezoneOffset(new Date(
                                     (this.dateRange.from.value || this.dateRange.to.value).getTime()), true, 'from'),
                                 endDate: DateHelper.removeTimezoneOffset(new Date(
-                                    (this.dateRange.to.value || this.dateRange.from.value).getTime()), true, 'to')
+                                    (this.dateRange.to.value || this.dateRange.from.value).getTime()), true, 'to'),
+                                currencyId: this.currency
                             })
                         ).pipe(
                             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))

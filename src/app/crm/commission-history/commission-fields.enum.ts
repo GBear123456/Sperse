@@ -12,6 +12,7 @@ export const CommissionFields: KeysEnum<CommissionDto> = {
     CommissionAmount: 'CommissionAmount',
     CommissionRate: 'CommissionRate',
     CommissionableAmount: 'CommissionableAmount',
+    CurrencyId: 'CurrencyId',
     EarnedDate: 'EarnedDate',
     Id: 'Id',
     InvoiceDate: 'InvoiceDate',
