@@ -56,7 +56,7 @@ import { LandingPageComponent } from './landing-page/landing-page.component';
 @Component({
     selector: 'tenant-settings-wizard',
     templateUrl: 'tenant-settings-wizard.component.html',
-    styleUrls: [ 'tenant-settings-wizard.component.less' ],
+    styleUrls: ['tenant-settings-wizard.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantSettingsWizardComponent implements AfterViewInit {
@@ -108,9 +108,11 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     );
     securitySettings$: Observable<SecuritySettingsEditDto> = this.tenantSettingsService.getSecuritySettings();
     emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
+    appearanceSettingsChanged: Boolean;
     generalSettingsChanged: Boolean;
     timezoneChanged: Boolean;
     countryChanged: Boolean;
+    currencyChanged: Boolean;
 
     constructor(
         private featureCheckerService: FeatureCheckerService,
@@ -139,7 +141,15 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             if (this.generalSettingsChanged)
                 this.messageService.info(this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('General'))).done(() => {
                     window.location.reload();
-                });            
+                });
+            if (this.currencyChanged)
+                this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Currency'))).done(() => {
+                    window.location.reload();
+                });
+            if (this.appearanceSettingsChanged)
+                this.messageService.info(this.ls.l('ReloadPageStylesMessage')).done(() => {
+                    window.location.reload();
+                });
         });
     }
 
@@ -299,6 +309,10 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         if (option == 'timezone')
             this.timezoneChanged = true;
         if (option == 'defaultCountry')
-            this.countryChanged = true;                        
+            this.countryChanged = true;
+        if (option == 'currency')
+            this.currencyChanged = true;
+        if (option == 'appearance')
+            this.appearanceSettingsChanged = true;
     }
 }

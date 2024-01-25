@@ -30,6 +30,7 @@ import { CouponDto as OdataCouponDto } from './coupons-dto.interface';
 import { CouponFields } from './coupons-fields.enum';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { DateHelper } from '../../../shared/helpers/DateHelper';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: './coupons.component.html',
@@ -52,6 +53,7 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
     permissions = AppPermissions;
     couponTypes = CouponDiscountType;
     formatting = AppConsts.formatting;
+    currency = SettingsHelper.getCurrency();
     headerOptions = [this.l("Coupons"), this.l("Products")];
     activeHeaderOption = this.headerOptions[0];
     public headlineButtons: HeadlineButton[] = [];

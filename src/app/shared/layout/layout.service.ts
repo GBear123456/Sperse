@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class LayoutService {
@@ -9,6 +10,11 @@ export class LayoutService {
     public showNotificationsButton = true;
     public showChatButton = true;
     public showUserProfileMenu = true;
+
+    defaultHeaderBgColor: string = '#FFFFFF';
+    defaultHeaderTextColor: string = '#202b35';
+    defaultHeaderUnderlineColor: string = '#00aeef';
+
     layoutColors = {
         [LayoutType.Default]: {
             historicalCredit: '#00aeef',
@@ -26,7 +32,10 @@ export class LayoutService {
             totalSales: '#8487e7',
             totalLeads: '#00AEEF',
             totalClients: '#f4ae55',
-            clientsCount: '#8487e7'
+            clientsCount: '#8487e7',
+            navBackground: this.getNavBarColor('NavBackground', this.defaultHeaderBgColor),
+            navTextColor: this.getNavBarColor('NavTextColor', this.defaultHeaderTextColor),
+            navUnderlineColor: this.getNavBarColor('NavTextColor', this.defaultHeaderUnderlineColor)
         },
         [LayoutType.AdvicePeriod]: {
             historicalCredit: '#86c5dc',
@@ -44,7 +53,10 @@ export class LayoutService {
             totalSales: '#e47822',
             totalLeads: '#86c5dc',
             totalClients: '#99c24d',
-            clientsCount: '#5b5f97'
+            clientsCount: '#5b5f97',
+            navBackground: this.getNavBarColor('NavBackground', this.defaultHeaderBgColor),
+            navTextColor: this.getNavBarColor('NavTextColor', this.defaultHeaderTextColor),
+            navUnderlineColor: this.getNavBarColor('NavTextColor', this.defaultHeaderUnderlineColor)
         }
     };
     mapPalette = {
@@ -67,5 +79,12 @@ export class LayoutService {
 
     getMapPalette(): string[] {
         return this.mapPalette[this.appSessionService.layoutType] || this.mapPalette[LayoutType.Default];
+    }
+    
+    getNavBarColor(property: string, defaultColor: string) {
+        if (abp.features.isEnabled(AppFeatures.AdminCustomizations))
+            return abp.setting.get('App.Appearance.' + property) || defaultColor;
+        else
+            return defaultColor; 
     }
 }

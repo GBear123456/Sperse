@@ -43,7 +43,7 @@
         <div class="field" *ngIf="coupon.type == typesEnum.Fixed">
             <label>{{ls.l('DiscountAmount')}}</label>
             <dx-number-box width="300px"
-                           format="$ #,##0.##"
+                           [format]="amountNullableFormat"
                            [min]="0.01"
                            [readOnly]="!isCreate"
                            [(value)]="coupon.amountOff"

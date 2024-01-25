@@ -17,6 +17,7 @@ export class PanelMenuItem {
     items: PanelMenuItem[];
     host: string;
     width: number;
+    parent: PanelMenuItem;
 
     constructor(
         text: string,
@@ -29,7 +30,8 @@ export class PanelMenuItem {
         host?: string,
         layoutType?: LayoutType,
         items?: PanelMenuItem[],
-        params?: Params
+        params?: Params,
+	parent?: PanelMenuItem
     ) {
         this.text = text;
         this.permission = permission;
@@ -41,6 +43,7 @@ export class PanelMenuItem {
         this.host = host;
         this.layoutType = layoutType;
         this.params = params;
+        this.parent = parent;
 
         if (items === undefined) {
             this.items = [];
