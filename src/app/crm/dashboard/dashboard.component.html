@@ -14,7 +14,7 @@
                  [currentContactGroup]="filterModelContactGroup.items.element.value"
                  (openIntro)="openDialog()">
   </crm-left-menu>
-  <div *ngIf="hasAccessibleCG; else noData" class="widgets-wrapper" [ngClass]="{ expanded: leftMenuCollapsed$ | async }">
+  <div *ngIf="hasAccessibleCG; else noData" class="widgets-wrapper" [ngClass]="{ expanded: leftMenuCollapsed$ | async, 'left-nav-menu': layoutService.showLeftBar }">
       <div class="wrapper">
           <!-- div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
               <div>

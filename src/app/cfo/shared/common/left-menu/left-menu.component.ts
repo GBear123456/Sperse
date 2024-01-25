@@ -23,6 +23,7 @@ import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
 import { GetStatusOutput } from '@shared/service-proxies/service-proxies';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppService } from '@app/app.service';
 
 @Component({
@@ -32,6 +33,7 @@ import { AppService } from '@app/app.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LeftMenuComponent extends CFOComponentBase implements OnInit{
+    @HostBinding('class.show-left-bar') showLeftBar;
     @HostBinding('class.mobile') mobile: boolean = AppConsts.isMobile;
     @Input() collapsed = true;
     @Input() selectedItemIndex: number;
@@ -50,6 +52,7 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
 
     constructor(
         injector: Injector,
+        public layoutService: LayoutService,
         private appService: AppService,
         private appSessionService: AppSessionService,
         public dialog: MatDialog,
@@ -59,6 +62,7 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
     }
 
     ngOnInit() {
+        this.showLeftBar = this.layoutService.showLeftBar;
         if (!this.items || !this.items.length) {
             this.items = [
                 {
@@ -148,5 +152,4 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
         this.onToggle.emit(collapsed);
         this.collapsedChange.emit(collapsed);
     }
-
 }

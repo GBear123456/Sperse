@@ -81,6 +81,7 @@ import { TransactionDto } from '@app/cfo/transactions/transaction-dto.interface'
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { TransactionFields } from '@app/cfo/transactions/transaction-fields.enum';
 import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { RequestHelper } from '@shared/helpers/RequestHelper';
 
 @Component({
@@ -124,6 +125,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
         private calendarService: CalendarService,
+        public layoutService: LayoutService,
         public appService: AppService,
         public cfoPreferencesService: CfoPreferencesService,
         public filtersService: FiltersService,
@@ -145,7 +147,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     get gridHeight() {
         return window.innerHeight -
-            (this.isFullscreenMode ? 0 : (AppConsts.isMobile ? 160 : 150)) -
+            (this.isFullscreenMode ? 0 : (AppConsts.isMobile ? 160 : (this.layoutService.showTopBar ? 150 : 75))) -
             (this.appService.toolbarIsHidden.value ? 0 : 62) + 'px';
     }
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;

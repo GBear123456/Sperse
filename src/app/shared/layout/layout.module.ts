@@ -31,6 +31,7 @@ import { PlatformSelectComponent } from './platform-select/platform-select.compo
 import { HeaderComponent } from './header/header.component';
 import { SideBarComponent } from './side-bar/side-bar.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
+import { LeftBarComponent } from './left-bar/left-bar.component';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
@@ -51,6 +52,7 @@ let COMPONENTS = [
     HeaderComponent,
     TopBarComponent,
     SideBarComponent,
+    LeftBarComponent,
     ContactInfoPanelComponent,
     GlobalSearchComponent
 ];

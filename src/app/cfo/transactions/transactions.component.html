@@ -122,12 +122,12 @@
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div class="wrapper" [ngClass]="{ 'expanded': categoriesShowed, 'toolbar-hidden': appService.toolbarIsHidden$ | async }">
+            <div class="wrapper" [ngClass]="{ 'show-left-bar': layoutService.showLeftBar, 'expanded': categoriesShowed, 'toolbar-hidden': appService.toolbarIsHidden$ | async }">
                 <div class="categories" *ngIf="!isAdvicePeriod">
                     <categorization #categoriesPanel
                         [hidden]="!toggleTabContent"
                         width="340px"
-                        [height]="isFullscreenMode ? 'calc(100vh - 150px)' : 'calc(100vh - 300px)'"
+                        [height]="isFullscreenMode ? 'calc(100vh - 150px)' : (layoutService.showLeftBar ? 'calc(100vh - 225px)' : 'calc(100vh - 300px)')"
                         [showTitle]="true"
                         [showHeader]="true"
                         [showClearSelection]="true"

@@ -23,6 +23,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
+import { ChatSignalrService } from '../chat/chat-signalr.service';
+import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
 
 @Component({
     templateUrl: './header.component.html',
@@ -40,7 +42,7 @@ export class HeaderComponent implements OnInit {
     userName = '';
     unreadChatMessageCount = 0;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-    isChatConnected = false;
+    isChatConnected = this.chatSignalrService.isChatConnected;
     userCompany$: Observable<string>;
     dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
     isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
@@ -53,8 +55,10 @@ export class HeaderComponent implements OnInit {
         private profileServiceProxy: ProfileServiceProxy,
         private commonUserInfoService: CommonUserInfoServiceProxy,
         private feature: FeatureCheckerService,
+        private chatSignalrService: ChatSignalrService,
         public appSession: AppSessionService,
         public userManagementService: UserManagementService,
+        public quickSideBarChat: QuickSideBarChat,
         public appService: AppService,
         public layoutService: LayoutService,
         public ls: AppLocalizationService
@@ -78,9 +82,10 @@ export class HeaderComponent implements OnInit {
                 this.unreadChatMessageCount = messageCount;
             });
 
-            abp.event.on('app.chat.connected', () => {
-                this.isChatConnected = true;
-            });
+            if (!this.isChatConnected)
+                abp.event.on('app.chat.connected', () => {
+                    this.isChatConnected = true;
+                });
         }
     }
 

@@ -50,6 +50,7 @@ import { PeriodService } from '@app/shared/common/period/period.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { LeftMenuComponent } from '../shared/common/left-menu/left-menu.component';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -148,6 +149,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         private activatedRoute: ActivatedRoute,
         private leftMenuService: LeftMenuService,
         private filtersService: FiltersService,
+        public layoutService: LayoutService,
         public ui: AppUiCustomizationService,
         public permission: AppPermissionService,
         public cacheHelper: CacheHelper,

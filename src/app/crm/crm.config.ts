@@ -15,26 +15,31 @@ export class CrmConfig implements ConfigInterface {
     navigation: ConfigNavigation[] = [
         {
             text: 'Dashboard',
-            route: '/app/crm/dashboard'
+            route: '/app/crm/dashboard',
+            icon: 'assets/common/icons/crm/dashboard2.png'
         },
         {
             text: 'Leads',
             permission: AppPermissions.CRMCustomers + '|' + AppPermissions.CRMPartners + '|' + AppPermissions.CRMEmployees + '|' + AppPermissions.CRMInvestors + '|' + AppPermissions.CRMVendors + '|' + AppPermissions.CRMOthers,
+            icon: 'assets/common/icons/crm/leads.png',
             route: '/app/crm/leads',
             items: []
         },
         {
             text: 'Clients',
+            icon: 'assets/common/icons/crm/customers.png',
             permission: AppPermissions.CRMCustomers,
             route: '/app/crm/clients'
         },
         {
             text: 'Partners',
+            icon: 'assets/common/icons/crm/partners.png',
             permission: AppPermissions.CRMPartners,
             route: '/app/crm/partners'
         },
         {
             text: 'Orders',
+            icon: 'assets/common/icons/crm/orders.png',
             permission: AppPermissions.CRMOrders,
             route: '/app/crm/orders',
             items: [{
@@ -55,6 +60,7 @@ export class CrmConfig implements ConfigInterface {
         },
         {
             text: 'Products',
+            icon: 'assets/common/icons/crm/products.png',
             permission: AppPermissions.CRMProducts,
             route: '/app/crm/products',
             items: [{
@@ -70,12 +76,14 @@ export class CrmConfig implements ConfigInterface {
 /*
         {
             text: 'Tasks',
+            icon: 'assets/common/icons/crm/tasks.png',
             permission: AppPermissions.CRM,
             route: '/app/crm/activity'
         },
 */
         {
             text: 'Reports',
+            icon: 'assets/common/icons/crm/reports.png',
             permission: AppPermissions.CRMCustomers + '&' + AppPermissions.CRMOrders,
             layout: LayoutType.BankCode,
             route: '/app/crm/reports'
