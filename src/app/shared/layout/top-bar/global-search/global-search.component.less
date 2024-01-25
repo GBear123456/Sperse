@@ -3,16 +3,17 @@
     display: flex;
     align-self: center;
     padding-left: 12px;
-    background-color: #fff;
+    background-color: transparent;
     border-radius: 10px;
     height: 50px;
     width: inherit;
-    min-width: 250px;
+    min-width: 200px;
+    max-width: 361px;
 
     .global-search-container {
         display: flex;
         width: inherit;
-        max-width: 504px;
+        max-width: 350px;
         position: relative;
         align-items: center;
         &:before,
@@ -38,6 +39,9 @@
         left: initial !important;
         top: 4px !important;
     }
+    ::ng-deep dx-text-box {
+	background: transparent!important;
+    }
     ::ng-deep .dx-texteditor-container {
         align-items: center;
         .dx-icon-search:before {
@@ -50,6 +54,7 @@
             margin-top: -2px;
         }
         .dx-texteditor-input {
+	    background: #FFFFFF;
             font-weight: 500;
         }
         .dx-texteditor-buttons-container {

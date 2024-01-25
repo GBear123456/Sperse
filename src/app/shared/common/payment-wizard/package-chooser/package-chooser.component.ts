@@ -100,7 +100,6 @@ export class PackageChooserComponent implements OnInit {
     ];
 
     PRODUCT_GROUP_ADD_ON = AppConsts.PRODUCT_GROUP_ADD_ON;
-    MAX_PERIOD_COUNT = 4;
     static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.Custom];
     availablePeriods: BillingPeriod[] = [];
     selectedPeriodIndex = 0;
@@ -233,7 +232,7 @@ export class PackageChooserComponent implements OnInit {
 
     getSliderValue(): number {
         var periodIndex = this.availablePeriods.findIndex(v => v == this.selectedBillingPeriod);
-        var value = periodIndex * (100 / this.availablePeriods.length);
+        var value = (this.availablePeriods.length > 1 ? periodIndex : 1) * (100 / this.availablePeriods.length);
         return +value.toFixed();
     }
 
@@ -267,7 +266,9 @@ export class PackageChooserComponent implements OnInit {
                 customPeriodDescription: this.selectedBillingPeriod == BillingPeriod.Custom ? this.selectedPackageCardComponent.getPriceDescription() : null,
                 total: this.selectedPackageCardComponent.pricePerPeriod * (
                     this.selectedBillingPeriod === BillingPeriod.Yearly ? 12 : 1
-                )
+                ),
+                signUpFee: this.selectedPackageCardComponent.signupFee,
+                trialDayCount: this.selectedPackageCardComponent.trialDayCount
             };
             return paymentOptions;
         }

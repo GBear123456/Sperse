@@ -10,19 +10,23 @@
         width: 100%;
         padding: 2%;
         display: flex;
-        justify-content: space-between; 
+        justify-content: space-between;
+
         .left, .middle, .right {
             display: flex;
             flex-direction: column;
             height: 100%;
         }
+
         .left, .right {
             width: 28%;
         }
+
         .middle {
             width: 44%;
             margin: 0 30px;
         }
+
         .left {
             .block {
                 &.disabled {
@@ -30,11 +34,13 @@
                     cursor: default;
                     pointer-events: none;
                 }
+
                 &.selected {
                     border: 1px solid #00aeef;
                 }
             }
         }
+
         .block {
             position: relative;
             padding: 20px;
@@ -50,23 +56,28 @@
 
                     img {
                         vertical-align: bottom;
+
                         &.delete {
                             display: inline;
                             cursor: pointer;
                             vertical-align: sub;
                         }
                     }
+
                     ::ng-deep dx-switch {
                         float: right;
                         vertical-align: bottom;
                     }
+
                     span {
                         font-weight: 600;
                     }
+
                     a {
                         float: right;
                         padding: 0 8px;
                     }
+
                     ::ng-deep dx-date-box {
                         float: right;
                     }
@@ -82,20 +93,24 @@
             img.head {
                 padding: 15px;
             }
+
             img.info {
                 display: inline;
                 cursor: pointer;
                 vertical-align: top;
             }
+
             img.product {
                 width: 186px;
                 margin: auto;
             }
+
             h3 {
                 font-family: Poppins;
                 font-size: 19px;
                 font-weight: 500;
             }
+
             label {
                 height: 23px;
                 white-space: nowrap;
@@ -107,23 +122,28 @@
                 text-overflow: ellipsis;
                 width: 100%;
             }
+
             p {
                 font-family: Poppins;
                 font-size: 13px;
                 font-weight: 400;
             }
+
             hr {
                 margin: 10px 0;
+
                 &.wide {
                     border: 2px solid rgba(0,0,0,.1);
                 }
             }
+
             .add-group-button {
                 position: absolute;
                 background: #F4F7FA;
                 padding: 4px 8px;
                 top: 18px;
                 right: 70px;
+
                 span {
                     font-family: Poppins;
                     font-size: 13px;
@@ -134,11 +154,13 @@
                     color: #000;
                 }
             }
+
             .slider-wrapper {
                 position: absolute;
                 width: 100%;
                 top: 0;
             }
+
             .state-slider {
                 position: relative;
                 width: 110px;
@@ -212,14 +234,17 @@
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: space-around;
+
                 &.disabled {
                     opacity: 0.5;
                     pointer-events: none;
                 }
+
                 & > div {
                     margin: 0 10px 10px;
                 }
-            }            
+            }
+
             span.enable-commissions {
                 font-family: Poppins;
                 font-size: 14px;
@@ -229,6 +254,7 @@
                 text-align: left;
                 padding-left: 10px;
             }
+
             p.enable-commissions-info {
                 font-family: Poppins;
                 font-size: 12px;
@@ -238,56 +264,69 @@
                 text-align: left;
                 margin: 10px 0;
             }
+
             .product-ident {
                 & > div {
                     display: inline-block;
+
                     &:first-child {
                         width: 56%;
                         padding-right: 10px;
                     }
+
                     &:last-child {
                         width: 44%;
                     }
                 }
             }
+
             .general-product {
                 display: flex;
                 justify-content: space-around;
             }
+
             .field {
                 ::ng-deep dx-text-area, ::ng-deep dx-number-box, ::ng-deep dx-select-box {
                     min-width: 250px;
                 }
             }
-            ::ng-deep dx-text-box, ::ng-deep dx-number-box, ::ng-deep dx-select-box, ::ng-deep dx-text-area {
+
+            ::ng-deep dx-text-box, ::ng-deep dx-number-box, ::ng-deep dx-select-box, ::ng-deep dx-text-area, ::ng-deep dx-date-box {
                 .dx-texteditor-input-container {
-                    border: 1px solid #dfdfdf!important;
+                    border: 1px solid #dfdfdf !important;
                 }
+
                 input, textarea {
                     font-family: Poppins;
                     font-size: 13px;
                     font-weight: 400;
                     border: none;
                 }
+
                 .dx-placeholder {
                     font-size: 14px;
                 }
             }
+
             ::ng-deep dx-switch {
                 height: 23px;
+
                 &.dx-switch-on-value {
                     .dx-switch-container {
                         background: #68ACE9;
                     }
                 }
+
                 .dx-switch-container {
                     border-radius: 18px;
                     background: #E0E3E6;
                     border: 1px solid #FFF;
                 }
+
                 .dx-switch-handle {
                     width: 18px;
                     height: 18px;
+
                     &:before {
                         width: 17px;
                         height: 17px;
@@ -296,13 +335,10 @@
                     }
                 }
             }
-            ::ng-deep dx-select-box, ::ng-deep dx-number-box.label {
+
+            ::ng-deep dx-select-box, ::ng-deep dx-number-box.label, ::ng-deep dx-date-box {
                 height: 65px;
-                input {
-                    height: 40px;
-                    top: 20px;
-                    position: relative;
-                }
+
                 .dx-button-content {
                     position: relative;
                     border-radius: 50%;
@@ -312,13 +348,24 @@
                     height: 29px;
                     right: 10px;
                     top: 17px;
+
                     .dx-dropdowneditor-icon {
                         width: 29px;
+
                         &:before {
                             margin-top: -8px;
                         }
                     }
                 }
+            }
+
+            ::ng-deep dx-select-box:not(.hide-placeholder), ::ng-deep dx-number-box.label {
+                input {
+                    height: 40px;
+                    top: 20px;
+                    position: relative;
+                }
+
                 div.dx-placeholder {
                     width: calc(100% - 42px);
                     font-family: Poppins;
@@ -328,13 +375,15 @@
                     letter-spacing: 0em;
                     text-align: left;
                     color: #919698;
+
                     &.dx-state-invisible {
-                        display: block!important;
-                        opacity: 1!important;
-                        top: -10px!important;
+                        display: block !important;
+                        opacity: 1 !important;
+                        top: -10px !important;
                     }
                 }
             }
+
             .add-new-button, .remove-button {
                 position: absolute;
                 top: -4px;
@@ -343,35 +392,43 @@
                 height: 29px;
                 border: 1px solid #E6E9EC;
                 text-align: center;
+
                 span {
                     font-size: 20px;
                     font-weight: 400;
                     line-height: 28px;
                 }
             }
+
             .remove-button {
                 top: 7px;
+
                 span {
                     line-height: 24px;
                 }
             }
+
             .logo-wrapper {
                 margin: auto;
                 text-align: center;
             }
+
             .upload-logo {
                 text-align: center;
+
                 input[type="file"] {
                     display: none;
                 }
+
                 .browse-file {
                     ::ng-deep ngx-file-drop {
                         .ngx-file-drop__drop-zone {
                             border: 1px dashed #dedede;
                             border-radius: 0px;
                         }
+
                         .ngx-file-drop__browse-btn {
-                            font-family: Poppins!important;
+                            font-family: Poppins !important;
                             font-size: 13px;
                             font-weight: 400;
                             line-height: 20px;
@@ -383,13 +440,16 @@
                             box-shadow: none;
                         }
                     }
+
                     width: 100%;
                     height: 100px;
                 }
+
                 .add-link {
                     dx-text-box {
                         display: inline-block;
                     }
+
                     .add-button {
                         display: inline-block;
                         border: 1px solid #dedede;
@@ -405,7 +465,8 @@
                         letter-spacing: 0em;
                         color: #000;
                     }
-                }                
+                }
+
                 span {
                     margin: 10px;
                     font-family: Poppins;
@@ -425,10 +486,11 @@
                 text-align: center;
                 border: 1px dashed #dedede;
                 border-radius: 0px;
-            
+
                 img {
                     margin: 0 0 15px;
                 }
+
                 h3 {
                     font-family: Poppins;
                     font-size: 17px;
@@ -438,6 +500,7 @@
                     text-align: center;
                     color: #000;
                 }
+
                 p {
                     font-family: Poppins;
                     font-size: 14px;
@@ -447,14 +510,17 @@
                     text-align: center;
                     color: #919698;
                 }
+
                 .share-add-link {
                     display: flex;
                     position: relative;
+
                     .add-new-button {
                         top: 0px;
                         left: 10px;
                         position: relative;
                     }
+
                     ::ng-deep dx-text-box {
                         display: inline-block;
                         margin: 0 0 0 5px;
@@ -464,10 +530,12 @@
                         }
                     }
                 }
+
                 .link {
                     text-align: left;
                     padding: 5px 0;
                     height: 30px;
+
                     a {
                         overflow: hidden;
                         text-overflow: ellipsis;
@@ -476,6 +544,7 @@
                         height: 20px;
                         display: inline-block;
                     }
+
                     .delete {
                         vertical-align: super;
                     }
@@ -501,9 +570,11 @@
                         padding: 10px;
                         min-height: 250px;
                         flex-direction: column;
+
                         img {
                             margin: 0 0 15px;
                         }
+
                         h3 {
                             font-family: Poppins;
                             font-size: 17px;
@@ -511,8 +582,9 @@
                             line-height: 26px;
                             letter-spacing: 0em;
                             text-align: left;
-                            color: #000000;                
+                            color: #000000;
                         }
+
                         span {
                             padding: 10px 0;
                             font-family: Poppins;
@@ -523,6 +595,7 @@
                             text-align: center;
                             color: #919698;
                         }
+
                         .buttons {
                             font-family: Poppins;
                             font-size: 13px;
@@ -532,6 +605,7 @@
                             text-align: left;
                             color: #919698;
                         }
+
                         button {
                             width: 220px;
                             height: 42px;
@@ -539,8 +613,9 @@
                             font-size: 14px;
                             font-weight: 500;
                             line-height: 21px;
-                            letter-spacing: -0.01em;                            
+                            letter-spacing: -0.01em;
                             text-align: center;
+
                             &.button-default {
                                 border: 1px solid #68ACE9;
                                 color: #68ACE9;
@@ -557,11 +632,12 @@
         margin-top: 10px;
         display: block;
         height: 45px;
+
         .inplace-edit-view-mode a {
             font-weight: 600;
         }
     }
-    
+
     .footer {
         width: 100%;
         height: 50px;
@@ -570,7 +646,7 @@
     .options-header {
         margin: 17px 0;
         font: 600 17px Poppins;
-        position: relative; 
+        position: relative;
     }
 
     .options {
@@ -585,34 +661,42 @@
             .prices, .periods, .trials, .grace {
                 display: flex;
                 justify-content: space-between;
+
                 & > div {
                     margin: 0 10px 20px;
+
                     &:first-child {
                         margin-left: 0;
                     }
+
                     &:last-child {
                         margin-right: 0;
                     }
                 }
             }
+
             .prices {
                 & > div {
                     width: 50%;
                 }
+
                 label {
                     white-space: nowrap;
                 }
             }
+
             .periods {
                 & > div {
                     &:first-child {
                         width: 40%;
                     }
+
                     &:last-child {
                         width: 30%;
                     }
                 }
             }
+
             span {
                 cursor: pointer;
             }
@@ -651,6 +735,7 @@
             display: inline-block;
             width: 50%;
             padding-left: 10px;
+
             &:first-child {
                 padding-left: 0px;
                 padding-right: 10px;
@@ -658,7 +743,7 @@
         }
     }
 
-    ::ng-deep dx-select-box {
+    ::ng-deep dx-select-box:not(.hide-placeholder) {
         .dx-icon-clear {
             left: 12px;
             font-size: 18px;
@@ -678,6 +763,7 @@
 
     .resources {
         border-bottom: none;
+
         .resource {
             background: linear-gradient(to right, #00ef0c47, #00ef0c47);
             background-repeat: no-repeat;
@@ -687,11 +773,13 @@
             margin: 5px;
             border: 1px dashed #646464;
             float: left;
+
             i.delete {
                 color: #58a3dcb8;
                 cursor: pointer;
                 padding-left: 5px;
             }
+
             &.progress {
                 &:before {
                     top: 4px;
@@ -703,6 +791,72 @@
                     display: inline-block;
                     background: url(../../../../../../assets/common/icons/spinner-48px.gif) no-repeat;
                     background-size: contain;
+                }
+            }
+        }
+    }
+
+    .event-type {
+        .dx-textbox {
+            margin: 10px 0;
+        }
+
+        .edit-address {
+            border: 1px solid #dfdfdf;
+            padding: 21px 20px 21px 8px;
+            position: relative;
+
+            &.placeholder {
+                font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif;
+                color: #8a9da1;
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            .fa-times {
+                position: absolute;
+                right: 0px;
+                top: 0px;
+                padding: 5px;
+                font-size: 15px;
+                color: #f44336;
+            }
+        }
+
+        .address.dx-texteditor-input {
+            font-family: Poppins;
+            font-size: 13px;
+            font-weight: 400;
+            height: 65px;
+            border: 1px solid #dfdfdf;
+
+            &::placeholder {
+                font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+                color: #8a969b;
+                opacity: 1;
+            }
+        }
+
+        .small-gray {
+            color: #919698;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 19px;
+            margin: 10px 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            margin: 15px 10px 20px 0;
+
+            &.btn-outline-dark {
+                border-radius: 21px;
+
+                &.active {
+                    background-color: #000;
+                    border-color: #000;
                 }
             }
         }

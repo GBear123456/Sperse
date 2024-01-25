@@ -413,28 +413,33 @@ export class LoginService {
                     redirectUrl
                 );
 
-        } else if (authenticateResult.userNotFound && abp.features.isEnabled(AppFeatures.PFMApplications)) {
-            // show confirmation msg about creating user
-            this.dialog.open(RegisterConfirmComponent, {
-                width: '600px',
-                id: 'confirm-register',
-                panelClass: ['confirm-register'],
-                data: {
-                    authenticateResult: authenticateResult,
-                    routerUrl: this.router.routerState.snapshot.url.split('?')[0].split('/').pop()
-                }
-            }).afterClosed().subscribe(result => {
-                if (result) {
-                    abp.ui.setBusy();
-                    this.externalLoginModal.autoRegistration = true;
-                    this.externalLoginModal.autoDetectTenancy = true;
-                    this.tokenAuthService.externalAuthenticate(this.externalLoginModal)
-                        .pipe(finalize(() => abp.ui.clearBusy()))
-                        .subscribe((result: ExternalAuthenticateResultModel) => {
-                            this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
-                        });
-                }
-            });
+        } else if (authenticateResult.userNotFound) {
+            if (abp.features.isEnabled(AppFeatures.PFMApplications)) {
+                // show confirmation msg about creating user
+                this.dialog.open(RegisterConfirmComponent, {
+                    width: '600px',
+                    id: 'confirm-register',
+                    panelClass: ['confirm-register'],
+                    data: {
+                        authenticateResult: authenticateResult,
+                        routerUrl: this.router.routerState.snapshot.url.split('?')[0].split('/').pop()
+                    }
+                }).afterClosed().subscribe(result => {
+                    if (result) {
+                        abp.ui.setBusy();
+                        this.externalLoginModal.autoRegistration = true;
+                        this.externalLoginModal.autoDetectTenancy = true;
+                        this.tokenAuthService.externalAuthenticate(this.externalLoginModal)
+                            .pipe(finalize(() => abp.ui.clearBusy()))
+                            .subscribe((result: ExternalAuthenticateResultModel) => {
+                                this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+                            });
+                    }
+                });
+            } else
+                this.messageService.error(
+                    abp.localization.localize('UserNotFound', 'Platform')
+                );                
         } else if (!!authenticateResult.detectedTenancies && authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
             this.router.navigate(['account/select-tenant'],

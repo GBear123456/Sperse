@@ -37,6 +37,10 @@ export class FilterRadioGroupModel extends FilterItemModel {
             return result;
     }
 
+    removeFilterItem(filter) {
+        this.value = undefined;
+    }
+
     private canShowFirstAsDefault(): boolean {
         return this.showFirstAsDefault && this.list.length !== 0;
     }

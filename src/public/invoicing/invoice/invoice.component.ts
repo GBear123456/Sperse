@@ -19,6 +19,7 @@ import { InvoiceDueStatus } from '@app/crm/invoices/invoices-dto.interface';
 import { InvoiceHelpers } from '@app/crm/invoices/invoices.helper';
 import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { AppConsts } from '@shared/AppConsts';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'public-invoice',
@@ -73,26 +74,27 @@ export class InvoiceComponent implements OnInit {
     ngOnInit(): void {
         this.tenantId = +this.route.snapshot.paramMap.get('tenantId');
         this.publicId = this.route.snapshot.paramMap.get('publicId');
-        this.getInvoiceInfo();
-        this.getPayPalInfo();
+
+        abp.ui.setBusy();
+        forkJoin([
+            this.userInvoiceService.getPublicInvoiceInfo(this.tenantId, this.publicId),
+            this.paypalServiceProxy.getPaymentInfo(this.tenantId, this.publicId)
+        ])
+            .pipe(finalize(() => abp.ui.clearBusy()))
+            .subscribe(([invoiceInfo, paypalInfo]) => {
+                this.loading = false;
+                this.setInvoiceInfo(invoiceInfo);
+                this.setPayPalInfo(paypalInfo);
+            });
     }
 
-    getInvoiceInfo() {
-        abp.ui.setBusy();
-        this.userInvoiceService
-            .getPublicInvoiceInfo(this.tenantId, this.publicId)
-            .pipe(
-                finalize(() => abp.ui.clearBusy())
-            )
-            .subscribe(result => {
-                this.loading = false;
-                this.invoiceInfo = result;
-                this.setDueInfo(result);
-                this.showPaymentAdvice = !!(result.paymentSettings && (result.paymentSettings.bankAccountNumber ||
-                    result.paymentSettings.bankRoutingNumberForACH ||
-                    result.paymentSettings.bankRoutingNumber));
-                this.showSubsScheduledMessage = this.invoiceInfo.invoiceData.status != InvoiceStatus.Paid && this.invoiceInfo.futureSubscriptionIsSetUp;
-            });
+    setInvoiceInfo(invoiceInfo: GetPublicInvoiceInfoOutput) {
+        this.invoiceInfo = invoiceInfo;
+        this.setDueInfo(invoiceInfo);
+        this.showPaymentAdvice = !!(invoiceInfo.paymentSettings && (invoiceInfo.paymentSettings.bankAccountNumber ||
+            invoiceInfo.paymentSettings.bankRoutingNumberForACH ||
+            invoiceInfo.paymentSettings.bankRoutingNumber));
+        this.showSubsScheduledMessage = this.invoiceInfo.invoiceData.status != InvoiceStatus.Paid && this.invoiceInfo.futureSubscriptionIsSetUp;
     }
 
     setDueInfo(invoiceInfo: GetPublicInvoiceInfoOutput) {
@@ -117,12 +119,9 @@ export class InvoiceComponent implements OnInit {
         this.router.navigate(['/receipt', this.tenantId, this.publicId]);
     }
 
-    getPayPalInfo() {
-        this.paypalServiceProxy.getPaymentInfo(this.tenantId, this.publicId)
-            .subscribe(res => {
-                this.payPalInfo = res;
-                this.initializePayPal();
-            });
+    setPayPalInfo(payPalInfo: InvoicePaypalPaymentInfo) {
+        this.payPalInfo = payPalInfo;
+        this.initializePayPal();
     }
 
     initializePayPal() {
@@ -130,7 +129,9 @@ export class InvoiceComponent implements OnInit {
             let type = this.payPalInfo.isSubscription ? ButtonType.Subscription : ButtonType.Payment;
             this.payPal.initialize(this.payPalInfo.clientId, type,
                 () => this.paypalServiceProxy.requestPayment(this.tenantId, this.publicId).toPromise(),
-                () => this.paypalServiceProxy.requestSubscription(this.tenantId, this.publicId).toPromise());
+                () => this.paypalServiceProxy.requestSubscription(this.tenantId, this.publicId).toPromise(),
+                this.invoiceInfo.currency
+            );
         }
     }
 

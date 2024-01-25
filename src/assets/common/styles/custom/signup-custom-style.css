@@ -1,5 +1,5 @@
 signup {
-    background: #FFF;
+    background: transparent;
 }
 
 signup member-signup-form h2 {
@@ -46,13 +46,19 @@ signup member-signup-form .signup-box {
 }
 
 signup member-signup-form button.submit {
-    font-family: 'Montserrat', sans-serif!important;
     min-width: 400px!important;
-    border-radius: 100px!important;
-    background-color: #00aeef!important;
+    border-radius: 10px!important;
+    background: #66ac5b!important;
+    font-family: Manrope!important;
     font-size: 18px!important;
     font-weight: 500!important;
+    line-height: 24px!important;
+    letter-spacing: -0.02em!important;
+    text-align: center!important;
+    box-shadow: none!important;
+    position: relative!important;
     color: #ffffff!important;
+    outline: none!important;
     border: 0!important;
     box-shadow: none!important;
     line-height: 54px!important;

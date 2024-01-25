@@ -199,6 +199,9 @@
         overflow: hidden;
         padding-top: 20px;
         margin: 0 10px 0 10px;
+	::ng-deep dx-drop-down-box {
+            background: transparent;
+	}
     }
 
     ::ng-deep .dx-texteditor {
@@ -224,12 +227,102 @@
                 padding-top: 0;
                 padding-bottom: 2px;
                 padding-right: 15px;
+		border: 0;
             }
             &:after {
                 content: url('../../../../assets/common/icons/arrow.png');
                 left: 56px;
                 top: 6px;
                 position: absolute;
+            }
+        }
+    }
+}
+
+::ng-deep .product-select-wrapper {
+    padding: 20px;
+
+    ::ng-deep .dx-textbox {
+        input {
+            border: 0;
+            background: rgba(247, 247, 252, 1);
+            border-radius: 10px;
+        }
+        input, .dx-placeholder {
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 21px;
+            letter-spacing: -0.02em;
+            text-align: left;
+            color: rgba(17, 51, 120, 1);
+        }
+        &.dx-state-focused .dx-placeholder {
+            top: -30px;
+        }
+    }
+    p {
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 21px;
+        letter-spacing: -0.02em;
+        text-align: left;
+        color: rgba(6, 15, 68, 1);
+        margin: 25px 0 15px 0;
+        span {
+            border-radius: 5px;
+            display: inline-block;
+            background: rgba(237, 237, 250, 1);
+            padding: 0 7px;
+        }
+        img {
+            float: right;
+            cursor: pointer;
+        }
+    }
+    .scroll-wrapper {
+        max-height: 215px;
+        height: inherit;        
+    }
+    .product-list {
+        margin-right: 10px;
+        & > div {
+            height: 56px;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 21px;
+            letter-spacing: -0.02em;
+            color: rgba(17, 51, 120, 1);
+            .name {
+                max-width: 280px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: inline-block;
+                vertical-align: middle;
+                cursor: pointer;
+            }
+            img.thumb {
+                width: 44px;
+                margin-right: 6px;
+            }
+            img.copy, img.open {
+                float: right;
+                top: 8px;
+                position: relative;
+                cursor: pointer;
+                margin: 3px;
+            }
+            .type {
+                font-size: 13px;
+                font-weight: 500;
+                line-height: 13px;
+                letter-spacing: -0.02em;
+                text-align: left;
+                color: rgba(128, 131, 150, 1);
+            }
+            .price {
+                float: right;
+                margin: 15px;
             }
         }
     }
@@ -270,6 +363,9 @@
             .link {
                 margin: auto;
             }
+            .empty .edit {
+                margin-bottom: 10px;
+            }
         }
     }
 
@@ -279,6 +375,30 @@
         border-radius: 10px;
         padding-bottom: 23px;
 
+        ::ng-deep dx-drop-down-box, ::ng-deep dx-select-box {
+            display: inline-block;
+            input {
+                border: 0;
+                font-size: 15px;
+                font-weight: 500;
+                letter-spacing: -0.02em;
+                color: rgba(128, 131, 150, 1);
+                padding-left: 0;
+            }
+            .dx-placeholder {
+                font-size: 15px;
+                font-weight: 500;
+                letter-spacing: -0.02em;
+                color: rgba(128, 131, 150, 1);
+            }
+            .dx-dropdowneditor-icon {
+                background: transparent!important;
+                &::before {
+                    content: url("data:image/svg+xml;utf8,<svg fill='rgba(128, 131, 150, 1)' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+                }
+            }
+        }
+
         .shortcuts_portal_field {
             height: 49px;
             background: #fff;
@@ -286,15 +406,6 @@
             border-radius: 9px;
             padding-right: 7px;
 
-            select {
-                width: 80%;
-                outline: none;
-                border: none;
-                font-size: 15px;
-                font-weight: 500;
-                letter-spacing: -0.02em;
-                color: rgba(128, 131, 150, 1);
-            }
             img {
                 &.icon {
                     margin: 15px;

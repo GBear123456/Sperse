@@ -103,6 +103,16 @@ export class UserManagementService {
             onClick: (e) => this.changeProfilePicture(e)
         },
         {
+            name: this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'Navigation_Tasks'),
+            id: 'UserProfileTasks',
+            iconClass: 'flaticon-calendar-1',
+            visible: this.feature.isEnabled(AppFeatures.CRM) 
+                && this.permissionChecker.isGranted(AppPermissions.CRM),
+            onClick: (e) => {
+                this.router.navigateByUrl('app/crm/activity');
+            }
+        },
+        {
             name: this.ls.l('MySettings'),
             id: 'UserProfileMySettingsLink',
             iconClass: 'flaticon-cogwheel',

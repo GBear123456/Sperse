@@ -29,14 +29,14 @@
                     </div>
                     <div class="price-wrapper">
                         <div class="trial-day-count" *ngIf="selectedSubscriptionOption.trialDayCount">
-                            <span *ngIf="selectedSubscriptionOption.signupFee; else free">{{ currencySymbol }}{{getSignUpFee(true) | customNumber: '1.0-1' | currency: 'USD' : '' : '1.0-1'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
+                            <span *ngIf="selectedSubscriptionOption.signupFee; else free">{{ currencySymbol }}{{getSignUpFee(true) | customNumber: '1.0-1' | currency: productInfo.data.currency : '' : '1.0-1'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
                             <ng-template #free>{{ls.l('Free')}}</ng-template>
                         </div>
                         <div class="amountPerMonth">
                             <ng-container *ngIf="!isFreeProductSelected else freeOption">
                                 <span class="currency-symbol">{{ currencySymbol }}</span>
                                 <span class="number">
-                                    {{ getPricePerPeriod(true) | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
+                                    {{ getPricePerPeriod(true) | customNumber: '1.0-0' | currency: productInfo.data.currency : '' : '1.0-0' }}
                                 </span>
                                 <div class="number-info">
                                     <span class="decimal">{{ getPricePerPeriod(true) | customNumber: '0.2-2' }}</span>
@@ -58,7 +58,7 @@
             <ng-template #generalProduct>
                 <div class="price">
                     <ng-container *ngIf="!isFreeProductSelected else freeProduct">
-                        <div class="quantity" *ngIf="productInfo.type != productType.Digital">
+                        <div class="quantity" *ngIf="productInfo.type != productType.Digital && productInfo.type != productType.Event">
                             <div class="quantity-title">Quantity</div>
                             <div class="quantity-controls">
                                 <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>
@@ -67,7 +67,7 @@
                             </div>
                         </div>
                         <div class="price__new">
-                            <span>{{ getGeneralPrice(true) | number : '1.0-2'}}</span>
+                            <span [attr.data-currency]="currencySymbol">{{ getGeneralPrice(true) | number : '1.0-2'}}</span>
                         </div>
                         <div *ngIf="couponInfo" class="discount-info">
                             <div>Coupon applied</div>

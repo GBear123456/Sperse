@@ -102,7 +102,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     process(isRemove: boolean) {
         let contactIds = this.selectedKeys;
         let lists = this.selectedItems;
-        if (contactIds.length > 1) {
+        if (contactIds.length > 1 || this.bulkUpdateMode) {
             if (isRemove)
                 return this._listsService.removeContactsFromLists(
                     contactIds, this.selectedLists

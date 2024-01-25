@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Inject, OnDestroy, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -16,6 +16,7 @@ import { PanelMenuItem } from './panel-menu-item';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ConfigInterface } from '@app/shared/common/config.interface';
@@ -51,13 +52,15 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     constructor(
         private authService: AppAuthService,
-        private appSessionService: AppSessionService,
+        public appSessionService: AppSessionService,
         private appService: AppService,
         private impersonationService: ImpersonationService,
         private permissionChecker: AppPermissionService,
         private lifecycleService: LifecycleSubjectsService,
         private router: Router,
         private route: ActivatedRoute,
+        private element: ElementRef,
+        public layoutService: LayoutService,
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {
@@ -69,6 +72,7 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
             if (currModuleName && currModuleName != appService.getModule())
                 appService.initModule();
             setTimeout(() => {
+                this.selectedIndex = undefined;
                 let route = event.urlAfterRedirects.split('?').shift();
                 this.menu.items.forEach((item: PanelMenuItem, i: number) => {
                     if (route === item.route || _.contains(item.alterRoutes, route))
@@ -119,7 +123,7 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.config && this.config.name === 'CRM';
     };
 
-    initMenu(configNavigation: ConfigNavigation[], localizationSource): PanelMenuItem[] {
+    initMenu(configNavigation: ConfigNavigation[], localizationSource, parent?: PanelMenuItem): PanelMenuItem[] {
         let navList: PanelMenuItem[] = [];
         configNavigation.forEach((navigation: ConfigNavigation) => {
             let item = new PanelMenuItem(
@@ -135,12 +139,16 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
                 navigation.alterRoutes,
                 navigation.host,
                 navigation.layout,
-                navigation.items ? this.initMenu(
-                    navigation.items, 
-                    localizationSource
-                ) : undefined,
-                navigation.params
+        undefined,
+                navigation.params,
+        parent      
             );
+        if (navigation.items)
+        item.items = this.initMenu(
+                    navigation.items, 
+                    localizationSource,
+            item
+                );      
             item.visible = this.showMenuItem(item);
             navList.push(item);
         });
@@ -195,7 +203,6 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
                 } else {
                     let switchItemIndex,
                         availableWidth = this.getAvailableWidth();
-
                     if (this.menu.items.every((item: PanelMenuItem, index: number) => {
                         switchItemIndex = index;
                         if (item.visible)
@@ -240,12 +247,14 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
     calculateItemsWidth() {
         let items = this.getNavBarElement().querySelectorAll('div.dx-tab.dx-nav-item');
         Array.prototype.forEach.call(items, (elm, index) => {
-            this.menu.items[index].width = elm.offsetWidth + 20;
+            this.menu.items[index].width = elm.offsetWidth;
         });
     }
 
     getAvailableWidth() {
-        return innerWidth - 848;
+        let availableWidth = this.element.nativeElement.offsetWidth - (this.showGlobalSearch ? 350 : 110),
+            calculatedWidth = innerWidth - (this.showGlobalSearch ? 650 : 450);
+        return calculatedWidth < availableWidth ? calculatedWidth : availableWidth;
     }
 
     onNavBarInitialized() {

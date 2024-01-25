@@ -40,7 +40,7 @@ export class InvoiceAddressDialog {
     googleAutoComplete: Boolean;
     emailRegEx = AppConsts.regexPatterns.email;
     contactDetails: ContactDetailsDto = new ContactDetailsDto();
-    organizations: OrganizationShortInfo[] = [];
+    organizations: string[] = [];
     phones: string[] = [];
     addresses: any[] = [];
 
@@ -72,7 +72,7 @@ export class InvoiceAddressDialog {
         this.contactProxy.getContactDetails(this.data.contactId).subscribe((data: ContactDetailsDto) => {
             this.contactDetails = data;
             this.organizations = data.orgRelations && data.orgRelations.map((rel: PersonOrgRelationShortInfo) => {
-                return rel.organization;
+                return rel.organization.name;
             });
             this.phones = data.phones.map(item => item.phoneNumber);
             this.addresses = data.addresses.map(item => {
@@ -194,7 +194,7 @@ export class InvoiceAddressDialog {
 
     onCustomItemCreating(event, field) {
         if (event.text)
-            return event.customItem = {[field]: event.text};
+            return event.customItem = event.text;
     }
 
     selectPhoneNumber(event, tooltipComponent, phoneComponent) {

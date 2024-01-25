@@ -19,6 +19,8 @@ export class ArrayToTreeConverterService {
         forEach(nodes, (node) => {
             let newNode = {
                 data: node,
+                key: node[idProperty],
+                parent: parentIdValue
             };
 
             this.mapFields(node, newNode, fieldMappings);

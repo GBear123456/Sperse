@@ -2,8 +2,8 @@
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    Component,
     EventEmitter,
+    Component,    
     Output,
     ViewChild
 } from '@angular/core';
@@ -105,7 +105,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             saveObs.push(
                 this.tenantSettingsServiceProxy.updateAppearanceSettings(
                     new AppearanceSettingsEditDto({
-                        navPosition: this.navPosition
+                        navPosition: this.navPosition,
+                        navBackground: this.settingService.get('App.Appearance.NavBackground'),
+                        navTextColor: this.settingService.get('App.Appearance.NavTextColor')                     
                     })
                 ).pipe(tap(() => {
                     this.onOptionChanged.emit('navPosition');
@@ -118,6 +120,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
 
     handleCssUpload(cssType: CustomCssType, res: any) {
         if (res.result && res.result.id) {
+            this.onOptionChanged.emit('appearance');
             this.setCustomCssTenantProperty(cssType, res.result.id);
             this.changeDetectorRef.detectChanges();
         }

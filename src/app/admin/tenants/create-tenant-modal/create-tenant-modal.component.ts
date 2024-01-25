@@ -36,7 +36,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from 'abp-ng2-module';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { ModulesEditionsSelectComponent } from '../modules-edtions-select/modules-editions-select.component';
 
 //!!VP should be reimplemnted to use Dx text box instead of inputs
 @Component({
@@ -95,7 +94,7 @@ export class CreateTenantModalComponent implements OnInit {
             .subscribe((result: GetPasswordComplexitySettingOutput) => {
                 this.passwordComplexitySetting = result.setting;
             });
-        this.productService.getProducts(ProductType.Subscription).subscribe(response => {
+        this.productService.getProducts(ProductType.Subscription, true).subscribe(response => {
             this.products = response;
         })
     }

@@ -8,6 +8,7 @@ import {
     ChangeDetectorRef
 } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
+import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 import { DxValidationGroupComponent } from 'devextreme-angular';
@@ -43,7 +44,6 @@ import {
     CreateInvoiceLineInput,
     InvoiceInfo,
     ProductMeasurementUnit,
-    InvoiceSettings,
     GetNewInvoiceInfoOutput,
     InvoiceAddressInfo,
     ContactAddressDto,
@@ -124,6 +124,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private readonly MAX_DESCRIPTION_LENGTH = 499;
     defaultCountryCode = AppConsts.defaultCountryCode;
     currency = SettingsHelper.getCurrency();
+    currencySymbol = getCurrencySymbol(this.currency, 'narrow');
     saveButtonId = 'saveInvoiceOptions';
     newInvoiceInfo = new GetNewInvoiceInfoOutput();
     invoiceSettings: InvoiceSettingsDto = new InvoiceSettingsDto();
@@ -968,6 +969,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     clearClient() {
         this.contactId = undefined;
         this.customer = undefined;
+        this.selectedContact = undefined;
         this.selectedBillingAddress = undefined;
         this.selectedShippingAddress = undefined;
         this.initiatePaymentMethodsCheck();
@@ -1153,7 +1155,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     showEditAddressDialog(event, field) {
         let person = new PersonInfoDto(),
-            address = this.selectedContact.address;
+            address = this.selectedContact && this.selectedContact.address;
         this.nameParser.parseIntoPerson(this.customer, person);
         let dialogData: any = Object.assign({}, this[field]) || {
             /*countryId: address.countryCode,*/

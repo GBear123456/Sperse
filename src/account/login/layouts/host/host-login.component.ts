@@ -27,6 +27,8 @@ import { ConditionsModalService } from '@shared/common/conditions-modal/conditio
 export class HostLoginComponent implements OnInit {
     @ViewChild('loginForm') loginForm;
     currentYear: number = moment().year();
+    width = innerWidth;
+    remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;
     loginInProgress = false;
@@ -35,6 +37,8 @@ export class HostLoginComponent implements OnInit {
     isExtLogin: boolean = false;
     showExternalLogin = false;
     get redirectToSignUp() { return false; }
+    isSignUpEnabled = this.appSession.tenant && 
+        abp.setting.get('App.UserManagement.IsSignUpPageEnabled') == 'true';
 
     constructor(
         private sessionService: AbpSessionService,
@@ -73,7 +77,7 @@ export class HostLoginComponent implements OnInit {
         let tenant = this.appSession.tenant;
         if (tenant)
             this.tenantName = tenant.name || tenant.tenancyName;
-        this.showExternalLogin = tenant && (!environment.production || environment.releaseStage == 'staging');
+        this.showExternalLogin = environment.releaseStage == 'staging' || (tenant && !environment.production);
         if (this.sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this.sessionAppService.updateUserSignInToken()
                 .subscribe((result: UpdateUserSignInTokenOutput) => {

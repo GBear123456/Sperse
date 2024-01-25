@@ -1,8 +1,11 @@
 import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-proxies';
 
-export class FeatureValuesDto extends NameValueDto {}
+export class FeatureValuesDto extends NameValueDto {
+    isCustomValue?: boolean;
+    restoreValue: string;
+}
 
-export interface FeatureTreeEditModel {
+export class FeatureTreeEditModel {
     features: FlatFeatureDto[];
     featureValues: FeatureValuesDto[];
 }

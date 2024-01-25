@@ -11,6 +11,7 @@ import { DxMenuModule } from 'devextreme-angular/ui/menu';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxNavBarModule } from 'devextreme-angular/ui/nav-bar';
@@ -78,6 +79,7 @@ let COMPONENTS = [
         DxNavBarModule,
         DxDropDownBoxModule,
         DxTextBoxModule,
+        DxSelectBoxModule,
 
         MatTabsModule,
         MatDialogModule,

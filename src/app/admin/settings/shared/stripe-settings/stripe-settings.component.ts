@@ -7,7 +7,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    StripeSettings, TenantPaymentSettingsServiceProxy
+    StripeSettingsDto, TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@root/shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -22,9 +22,10 @@ import { SettingsComponentBase } from './../settings-base.component';
 })
 export class StripeSettingsComponent extends SettingsComponentBase {
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
-    stripePaymentSettings: StripeSettings = new StripeSettings();
+    stripePaymentSettings: StripeSettingsDto = new StripeSettingsDto();
 
     showAdvancedSettings = this.isHost;
+    tenantName = this.isHost ? AppConsts.defaultTenantName : this.appSession.tenantName;
 
     constructor(
         _injector: Injector,
@@ -34,6 +35,10 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     }
 
     ngOnInit(): void {
+        this.loadSettings();
+    }
+
+    loadSettings() {
         this.startLoading();
         if (this.isPaymentsEnabled) {
             this.tenantPaymentSettingsService.getStripeSettings()
@@ -49,7 +54,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     }
 
     createConnectedAccount() {
-        if (this.stripePaymentSettings.isConnectedAccountSetUpCompleted)
+        if (this.isHost || !this.stripePaymentSettings.isHostAccountEnabled || this.stripePaymentSettings.isConnectedAccountSetUpCompleted)
             return;
 
         this.message.confirm('', this.l('Do you want to connect Stripe account ?'), (isConfirmed) => {
@@ -69,6 +74,18 @@ export class StripeSettingsComponent extends SettingsComponentBase {
 
     disconnedConnectedAccount() {
         alert('disconnectConnectedAccount');
+    }
+
+    createWebhook(isConnected) {
+        this.startLoading();
+        this.tenantPaymentSettingsService.createStripeWebhook(isConnected)
+            .pipe(
+                finalize(() => this.finishLoading())
+            )
+            .subscribe(() => {
+                this.notify.info(this.l('SuccessfullyGenerated'));
+                this.loadSettings();
+            })
     }
 
     getSaveObs(): Observable<any> {

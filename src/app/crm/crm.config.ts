@@ -46,33 +46,17 @@ export class CrmConfig implements ConfigInterface {
                 text: 'Orders',
                 permission: AppPermissions.CRMOrders,
                 route: '/app/crm/orders',
-                params: {contactGroup: ContactGroup.Client, orderType: 1},
-                items: Object.keys(ContactGroup).concat(['All']).map(contactGroup => ({
-                    text: contactGroup,
-                    localization: 'ContactGroup_',
-                    route: '/app/crm/orders',
-                    permission: AppPermissions['CRM' + contactGroup + 's'],
-                    params: {contactGroup: ContactGroup[contactGroup] || '', orderType: 1}
-                }))
+                params: {contactGroup: '', orderType: 1}
             }, {
                 text: 'Subscriptions',
                 permission: AppPermissions.CRMOrders,
                 route: '/app/crm/orders',
-                params: {contactGroup: ContactGroup.Client, orderType: 2},
-                items: Object.keys(ContactGroup).concat(['All']).map(contactGroup => ({
-                    text: contactGroup,
-                    localization: 'ContactGroup_',
-                    route: '/app/crm/orders',
-                    permission: AppPermissions['CRM' + contactGroup + 's'],
-                    params: {contactGroup: ContactGroup[contactGroup] || '', orderType: 2}
-                }))
+                params: {contactGroup: '', orderType: 2}
+            }, {
+                text: 'Invoices',
+                permission: AppPermissions.CRMOrdersInvoices,
+                route: '/app/crm/invoices'
             }]
-        },
-        {
-            text: 'Invoices',
-            icon: 'assets/common/icons/crm/invoices.png',
-            permission: AppPermissions.CRMOrdersInvoices,
-            route: '/app/crm/invoices'
         },
         {
             text: 'Products',
@@ -80,17 +64,23 @@ export class CrmConfig implements ConfigInterface {
             permission: AppPermissions.CRMProducts,
             route: '/app/crm/products',
             items: [{
+                text: 'Products',
+                permission: AppPermissions.CRMProducts,
+                route: '/app/crm/products'
+            }, {
                 text: 'Coupons',
-                params: {tab: 1},
+                permission: AppPermissions.CRMProducts,
                 route: '/app/crm/coupons'
             }]
         },
+/*
         {
             text: 'Tasks',
             icon: 'assets/common/icons/crm/tasks.png',
             permission: AppPermissions.CRM,
             route: '/app/crm/activity'
         },
+*/
         {
             text: 'Reports',
             icon: 'assets/common/icons/crm/reports.png',

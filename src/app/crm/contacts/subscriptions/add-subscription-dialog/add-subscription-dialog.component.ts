@@ -127,7 +127,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             right: '-100vw'
         });
 
-        this.productProxy.getProducts(ProductType.Subscription).subscribe((products: ProductDto[]) => {
+        this.productProxy.getProducts(ProductType.Subscription, false).subscribe((products: ProductDto[]) => {
             this.products = products;
             this.checkAddManageOption(this.products);
         });

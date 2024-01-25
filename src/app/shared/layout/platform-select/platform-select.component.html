@@ -4,7 +4,8 @@
         [value]="displayName"
         [items]="moduleItems"
         [ngStyle]="{background: 'transparent'}"
-        (onInitialized)="onDropDownInit($event)">
+        (onInitialized)="onDropDownInit($event)"
+        (onOpened)="onDropDownOpen()">
         <div *dxTemplate="let data of 'content'" class="platform-select-wrapper">
             <dx-scroll-view showScrollbar="onHover">
                 <div class="top-row">
@@ -46,7 +47,7 @@
                         </li>
                     </ul>
                 </div>
-                <div class="shortcuts" *ngIf="appMemberPortalUrl || (landingPageDomains && landingPageDomains.length)">
+                <div class="shortcuts" *ngIf="appMemberPortalUrl || (landingPageDomains && landingPageDomains.length) || (isProductEnabled && productLinks && productLinks.length) || isCFOPortalEnabled">
                     <div class="shortcuts_head">
                         <h3>{{ls.l('My Link Shortcuts')}}</h3><p class="shortcuts_ref" *ngIf="enabledAffiliate">{{ls.l('Include Affiliate ID in links')}}: 
                             <inplace-edit [value]="affiliateRefId"
@@ -58,14 +59,60 @@
                             </inplace-edit></p>
                     </div>
                     <div class="shortcuts_portal_field" *ngIf="appMemberPortalUrl">
-                        <img class="icon" src="./assets/common/images/platform-select/portal.png"><span>{{appMemberPortalUrl}}</span>
+                        <img class="icon" src="./assets/common/images/platform-select/portal.png"><span>{{getAffiliateLink(appMemberPortalUrl)}}</span>
                         <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(appMemberPortalUrl)">
                         <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(appMemberPortalUrl)">
                     </div>
+                    <div class="shortcuts_portal_field" *ngIf="isCFOPortalEnabled">
+                        <img class="icon" src="./assets/common/images/platform-select/portal.png"><span>{{getAffiliateLink(cfoPortalUrl)}}</span>
+                        <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(cfoPortalUrl)">
+                        <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(cfoPortalUrl)">
+                    </div>
                     <div class="shortcuts_portal_field" *ngIf="landingPageDomains && landingPageDomains.length">
-                        <img class="icon" src="./assets/common/images/platform-select/landing.png"><select [(ngModel)]="selectedlandingPage"><option *ngFor="let domain of landingPageDomains" [value]="domain">{{domain}}</option></select>
+                        <img class="icon" src="./assets/common/images/platform-select/landing.png">
+                        <dx-select-box 
+                            width="540px"
+                            height="49px"
+                            [readOnly]="landingPageDomains.length == 1"                            
+                            [(value)]="selectedlandingPage" 
+                            [dataSource]="landingPageDomains">
+                        </dx-select-box>
                         <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(selectedlandingPage)">
                         <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(selectedlandingPage)">
+                    </div>
+                    <div class="shortcuts_portal_field" *ngIf="isProductEnabled && productLinks && productLinks.length">
+                        <img class="icon" src="./assets/common/images/platform-select/product.png">
+                        <dx-drop-down-box #productList
+                            width="540px"
+                            height="49px"
+                            [placeholder]="ls.l('Select Product Link')"
+                            [value]="productUrl"
+                            [dataSource]="productLinks">
+                            <div *dxTemplate="let data of 'content'" class="product-select-wrapper">
+                                <dx-text-box 
+                                    width="100%"
+                                    placeholder="Search"
+                                    [(value)]="searchProduct"                                    
+                                    (onValueChanged)="onProductSearch()">
+                                </dx-text-box>
+                                <p>All <span>{{productLinks.length}}</span> <!-- img src="assets/common/icons/settings.png" --></p>          
+                                <hr>
+                                <div class="scroll-wrapper">
+                                    <dx-scroll-view showScrollbar="onHover">
+                                        <div class="product-list">
+                                            <div *ngFor="let product of productDataSource.items()">
+                                                <img class="thumb" [src]="product.ThumbnailUrl || 'assets/common/images/no-image.svg'"><div (click)="selectProduct(productList, product.PublicName)" class="name" [title]="product.Name">{{product.Name}}<div class="type">{{product.Type}}</div></div>
+                                                <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(getProductPublicLink(product.PublicName))">
+                                                <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(getProductPublicLink(product.PublicName))">
+                                                <div class="price">{{ product.Price | currency:currency:'symbol':'1.2-2' }}</div>
+                                            </div>
+                                        </div>
+                                    </dx-scroll-view>
+                                </div>
+                            </div>
+                        </dx-drop-down-box>                                            
+                        <img class="copy" src="./assets/common/images/platform-select/copy.png" (click)="copyToClipboard(productUrl)">
+                        <img class="open" src="./assets/common/images/platform-select/open.png" (click)="openLink(productUrl)">
                     </div>
                 </div>
                 <!-- footer *ngIf="modules.footerItems.length">

@@ -23,6 +23,11 @@ export class AdminConfig implements ConfigInterface {
             route: '/app/admin/tenants'
         },
         {
+            text: 'Sites',
+            permission: AppPermissions.AdministrationTenantLandingPages,
+            route: '/app/admin/sites'
+        },
+        {
             text: 'Roles',
             permission: AppPermissions.AdministrationRoles,
             route: '/app/admin/roles'

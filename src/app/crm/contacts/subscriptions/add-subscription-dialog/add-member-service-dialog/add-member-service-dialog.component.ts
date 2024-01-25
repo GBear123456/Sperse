@@ -30,6 +30,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Component({
     selector: 'add-member-service-dialog',
@@ -59,6 +60,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
         private memberServiceProxy: MemberServiceServiceProxy,
         private notify: NotifyService,
         private changeDetection: ChangeDetectorRef,
+        private loadingService: LoadingService,
         public dialogRef: MatDialogRef<AddMemberServiceDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -77,7 +79,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
 
         this.isReadOnly = data && !!data.isReadOnly;
         this.title = ls.l(this.isReadOnly ? 'Service' : this.memberService.id ? 'EditService' : 'AddService');
-
+        
         this.memberServiceProxy.getSystemTypes().subscribe((types: SystemTypeDto[]) => {
             this.systemTypes = types.map(type => type.code);
             if (data && data.service)
@@ -95,6 +97,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
     }
 
     onSystemTypeChanged(event) {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
         this.memberServiceProxy.getSystemFeatures(
             event.value
         ).subscribe((features: FlatFeatureDto[]) => {
@@ -105,6 +108,8 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
                     value: this.memberService.features[feature.name] || feature.defaultValue
                 }))
             };
+
+            this.loadingService.finishLoading(this.elementRef.nativeElement);
             this.detectChanges();
         });
     }
@@ -161,6 +166,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
                 });
             }
 
+            this.loadingService.startLoading(this.elementRef.nativeElement);
             this.memberServiceProxy.createOrUpdate(this.memberService).subscribe(res => {
                 if (!this.memberService.id)
                     this.memberService.id = res.id;
@@ -173,6 +179,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
                     });
                 });
                 this.dialogRef.close(this.memberService);
+                this.loadingService.finishLoading(this.elementRef.nativeElement);
                 this.notify.info(this.ls.l('SavedSuccessfully'));
             });
         }
@@ -209,14 +216,30 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
         if (!serviceLevel['featureValues'])
             this.defineFeatureLevelValues(serviceLevel);
 
+        let featuresConfig: FlatFeatureDto[] = serviceLevel['currentFeaturesConfig'] || this.featuresData.features;
+        serviceLevel['featureValues'].forEach((val: FeatureValuesDto) => {
+            let featureConfig: FlatFeatureDto = featuresConfig.find(v => v.name == val.name);
+            if (!featureConfig || featureConfig.inputType.name == 'CHECKBOX')
+                return val;
+
+            if (val.value == featureConfig.defaultValue) {
+                let serviceValue = this.featuresData.featureValues.find(v => v.name == val.name);
+                val.value = serviceValue ? serviceValue.value : featureConfig.defaultValue;
+            }
+
+            return val;
+        })
+        let features = this.featuresData.features.map((feature, index) => {
+            return {
+                ...feature,
+                defaultValue: this.featuresData.featureValues[index].value
+                    || feature.defaultValue
+            };
+        });
+        serviceLevel['currentFeaturesConfig'] = features;
+
         return {
-            features: this.featuresData.features.map((feature, index) => {
-                return {
-                    ...feature,
-                    defaultValue: this.featuresData.featureValues[index].value
-                        || feature.defaultValue
-                };
-            }),
+            features: features,
             featureValues: serviceLevel['featureValues']
         };
     }

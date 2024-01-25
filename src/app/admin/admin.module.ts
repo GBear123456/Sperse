@@ -16,6 +16,7 @@ import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
 import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxColorBoxModule } from 'devextreme-angular/ui/color-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
@@ -80,6 +81,7 @@ import { FacebookSettingsComponent } from './settings/shared/facebook-settings/f
 import { GoogleSettingsComponent } from './settings/shared/google-settings/google-settings.component';
 import { LinkedInSettingsComponent } from './settings/shared/linkedin-settings/linkedin-settings.component';
 import { DiscordSettingsComponent } from './settings/shared/discord-settings/discord-settings.component';
+import { MailchimpSettingsComponent } from './settings/shared/mailchimp-settings/mailchimp-settings.component';
 import { ExternalAuthInfoComponent } from './settings/shared/helpers/external-auth-info/external-auth-info.component';
 import { YTelSettingsComponent } from './settings/shared/ytel-settings/ytel-settings.component';
 import { BugsnagSettingsComponent } from './settings/shared/bugsnag-settings/bugsnag-settings.component';
@@ -110,6 +112,8 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { TenantLandingPagesComponent } from './tenant-landing-pages/tenant-landing-pages.component';
+import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-landing-page-modal/tenant-landing-page-modal.component';
 
 @NgModule({
     imports: [
@@ -144,6 +148,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         DxPieChartModule,
         DxChartModule,
         DxListModule,
+	DxColorBoxModule,
 
         MatTabsModule,
         MatInputModule,
@@ -193,6 +198,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         GoogleSettingsComponent,
         LinkedInSettingsComponent,
         DiscordSettingsComponent,
+        MailchimpSettingsComponent,
         ExternalAuthInfoComponent,
         YTelSettingsComponent,
         BugsnagSettingsComponent,
@@ -223,7 +229,9 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         StorageChangeDialog,
         ModulesEditionsSelectComponent,
         ClearIconSvgComponent,
-        CreateUserDialogComponent
+        CreateUserDialogComponent,
+        TenantLandingPagesComponent,
+        TenantLandingPageModalComponent
     ],
     entryComponents: [
         CreateUserDialogComponent,

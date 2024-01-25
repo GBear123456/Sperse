@@ -12,6 +12,7 @@ import { UiCustomizationComponent } from './ui-customization/ui-customization.co
 import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { TenantLandingPagesComponent } from './tenant-landing-pages/tenant-landing-pages.component';
 
 @NgModule({
     imports: [
@@ -44,7 +45,8 @@ import { AppPermissions } from '@shared/AppPermissions';
                     },
                     { path: 'ui-customization', component: UiCustomizationComponent },
                     { path: 'products', component: EditionsComponent, data: { permission: AppPermissions.Editions } },
-                    { path: 'tenants', component: TenantsComponent, data: { permission: AppPermissions.Tenants } }
+                    { path: 'tenants', component: TenantsComponent, data: { permission: AppPermissions.Tenants } },
+                    { path: 'sites', component: TenantLandingPagesComponent, data: { permission: AppPermissions.AdministrationTenantLandingPages } }
                 ]
             }
         ])
