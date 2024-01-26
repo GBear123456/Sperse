@@ -89,6 +89,7 @@
                     </ng-template>
                     <pay-pal *ngIf="paymentSystemSettings.paypalClientId && selectedGateway == GATEWAY_PAYPAL"
                              [productId]="plan.productId"
+                             [currencyId]="plan.currencyId"
                              [paymentPeriodType]="plan.paymentPeriodType"
                              [quantity]="quantity"
                              [clientId]="paymentSystemSettings.paypalClientId"

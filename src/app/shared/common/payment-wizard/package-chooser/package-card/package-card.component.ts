@@ -6,7 +6,7 @@ import {
     HostBinding,
     ViewEncapsulation
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, getCurrencySymbol } from '@angular/common';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { CustomPeriodType, PackageEditionConfigDto, ProductInfo, ProductSubscriptionOptionInfo, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -40,7 +40,7 @@ export class PackageCardComponent implements OnChanges {
     get billingPeriod() {
         return this.currentBillingPeriod;
     }
-    @Input() currencySymbol = '$';
+    @Input() currencySymbol = '';
     @Input() usersAmount: number;
     @Input() module: ModuleType;
     @HostBinding('class.isActive') @Input() public isActive: boolean;
@@ -113,7 +113,7 @@ export class PackageCardComponent implements OnChanges {
             this.features = product.features;
         }
         this.descriptionHtml = this.productInfo.descriptionHtml && this.sanitizer.bypassSecurityTrustHtml(this.productInfo.descriptionHtml);
-
+        this.currencySymbol = getCurrencySymbol(this.productInfo.currencyId, 'narrow');
         //this.selectedEdition = this.getSelectedEdition();
         //this.isActive = this.editions && !!this.selectedEdition;
     }
