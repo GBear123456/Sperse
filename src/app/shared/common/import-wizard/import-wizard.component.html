@@ -173,7 +173,7 @@
                 </div>
 
                 <div *dxTemplate="let cellData of 'amountCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
-                    {{ cellData.value | currency }}
+                    {{ cellData.value | currency:currency:'symbol' }}
                 </div>
 
                 <div *dxTemplate="let cellData of 'datetimeCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">

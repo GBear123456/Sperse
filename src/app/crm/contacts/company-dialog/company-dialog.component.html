@@ -51,7 +51,7 @@
                         <label for="annualRevenue">{{ls.l('Company_AnnualRevenue')}}</label>
                         <dx-number-box name="annualRevenue"
                                      [disabled]="!manageAllowed"
-                                     format="currency"
+                                     [format]="currencyFormat"
                                      [inputAttr]="{ id: 'annualRevenue' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.annualRevenue">

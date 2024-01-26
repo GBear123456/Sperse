@@ -135,7 +135,7 @@
                                     {{cellData.value | phone}}
                                 </div>
                                 <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                                    {{cellData.value | currency: cellData.data.CurrencyId || currency }}
+                                    {{cellData.value | currency: cellData.data.CurrencyId:'symbol' }}
                                 </div>
                                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                                     {{cellData.value | datetime: formatting.dateTimeMoment}}

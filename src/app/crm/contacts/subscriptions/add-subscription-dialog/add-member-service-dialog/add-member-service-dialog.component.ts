@@ -9,11 +9,9 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef
 } from '@angular/core';
-import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
 
 /** Application imports */
 import {

@@ -76,7 +76,6 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
     startDate: any;
     endDate: any;
-    currency = 'USD';
     clientColor = this.layoutService.getLayoutColor('clientsCount');
     periods: TotalsByPeriodModel[] = [
          {
