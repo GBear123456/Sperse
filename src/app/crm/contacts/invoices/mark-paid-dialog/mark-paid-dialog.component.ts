@@ -36,7 +36,7 @@ export class MarkAsPaidDialogComponent {
     ) {
         this.initTransactionTypes(data.invoice.InvoiceStatus);
 
-        this.currency = getCurrencySymbol(data.invoice.CurrencyId, 'wide');
+        this.currency = getCurrencySymbol(data.invoice.CurrencyId, 'narrow');
         this.model.invoiceId = data.invoice.InvoiceId;
         this.model.invoiceNumber = data.invoice.InvoiceNumber;
         this.model.orderStage = data.invoice.OrderStage;

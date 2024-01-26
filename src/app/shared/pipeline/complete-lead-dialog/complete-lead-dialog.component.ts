@@ -17,7 +17,7 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
 export class LeadCompleteDialogComponent extends ConfirmDialogComponent {
     orderStages: any = [];
     orderStageId: number;
-    currency = '$';
+    currency = '';
     comment: string;
     amount: string;
 
@@ -29,7 +29,7 @@ export class LeadCompleteDialogComponent extends ConfirmDialogComponent {
         this.amount = this.data.entity.Amount;
         this.orderStages = this.data.stages.filter((item) => !item['isFinal']);
         this.dialogRef['_overlayRef'].hostElement.classList.add('lead-complete');
-        this.currency = getCurrencySymbol(SettingsHelper.getCurrency(), 'wide');
+        this.currency = getCurrencySymbol(this.data.entity.CurrencyId || SettingsHelper.getCurrency(), 'narrow');
     }
 
     confirm() {
