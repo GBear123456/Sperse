@@ -11,6 +11,7 @@ import {
     HostUserManagementSettingsEditDto,
     TenantSettingsServiceProxy,
     TenantUserManagementSettingsEditDto,
+    PublicReceiverSettingsEditDto,
     EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
@@ -29,7 +30,7 @@ export class UserManagementSettingsComponent extends SettingsComponentBase {
     tenantSettings: TenantUserManagementSettingsEditDto;
     hostSettings: HostUserManagementSettingsEditDto;
 
-    publicCreateLeadUrl: string;
+    publicReceiverSettings: PublicReceiverSettingsEditDto;
 
     EmailTemplateType = EmailTemplateType;
     initialSignUpPageEnabled: boolean;
@@ -47,28 +48,24 @@ export class UserManagementSettingsComponent extends SettingsComponentBase {
 
         if (this.isHost) {
             forkJoin(
-                this.hostSettingsService.getUserManagementSettings().pipe(
-                    finalize(() => this.finishLoading())
-                ),
-                this.hostSettingsService.getPublicCreateLeadURL().pipe(
-                    finalize(() => this.finishLoading())
-                )
-            ).subscribe(([settings, publicCreateLeadUrl]: [HostUserManagementSettingsEditDto, string]) => {
+                this.hostSettingsService.getUserManagementSettings(),
+                this.hostSettingsService.getPublicReceiverSettings()
+            ).pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe(([settings, publicReceiverSettings]: [HostUserManagementSettingsEditDto, PublicReceiverSettingsEditDto]) => {
                 this.hostSettings = settings;
-                this.publicCreateLeadUrl = publicCreateLeadUrl;
+                this.publicReceiverSettings = publicReceiverSettings;
                 this.changeDetection.detectChanges();
             });
         }
         else {
             forkJoin(
-                this.tenantSettingsService.getUserManagementSettings().pipe(
-                    finalize(() => this.finishLoading())
-                ),
-                this.tenantSettingsService.getPublicCreateLeadURL().pipe(
-                    finalize(() => this.finishLoading())
-                )
-            ).subscribe(([settings, publicCreateLeadUrl]: [TenantUserManagementSettingsEditDto, string]) => {
-                this.publicCreateLeadUrl = publicCreateLeadUrl;
+                this.tenantSettingsService.getUserManagementSettings(),
+                this.tenantSettingsService.getPublicReceiverSettings()
+            ).pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe(([settings, publicReceiverSettings]: [TenantUserManagementSettingsEditDto, PublicReceiverSettingsEditDto]) => {
+                this.publicReceiverSettings = publicReceiverSettings;
                 this.tenantSettings = settings;
                 this.initialSignUpPageEnabled = settings.isSignUpPageEnabled;
                 this.changeDetection.detectChanges();
@@ -82,8 +79,14 @@ export class UserManagementSettingsComponent extends SettingsComponentBase {
 
     getSaveObs(): Observable<any> {
         return this.isHost
-            ? this.hostSettingsService.updateUserManagementSettings(this.hostSettings)
-            : this.tenantSettingsService.updateUserManagementSettings(this.tenantSettings);
+            ? forkJoin(
+                this.hostSettingsService.updateUserManagementSettings(this.hostSettings),
+                this.hostSettingsService.updatePublicReceiverSettings(this.publicReceiverSettings)
+            )
+            : forkJoin(
+                this.tenantSettingsService.updateUserManagementSettings(this.tenantSettings),
+                this.tenantSettingsService.updatePublicReceiverSettings(this.publicReceiverSettings)
+            );
     }
 
     afterSave() {
