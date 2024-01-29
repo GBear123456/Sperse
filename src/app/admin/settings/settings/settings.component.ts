@@ -1,6 +1,6 @@
 /** Core imports */
 import {
-    Component, Injector, OnInit, ViewChild, ElementRef,
+    Component, Injector, OnInit, ViewChild, ElementRef, HostBinding,
     OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -12,6 +12,7 @@ import { MatVerticalStepper } from '@angular/material/stepper';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import {
     ExternalLoginSettingsDto,
     LayoutType,
@@ -30,6 +31,7 @@ import { AppService } from '@app/app.service';
 export class SettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('tabGroup') tabGroup: ElementRef;
     @ViewChild(MatVerticalStepper) stepper: MatVerticalStepper;
+    @HostBinding('class.showLeftBar') showLeftBar;
 
     private rootComponent;
 
@@ -54,6 +56,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
         private route: ActivatedRoute,
         private tenantSettingsService: TenantSettingsServiceProxy,
         private changeDetector: ChangeDetectorRef,
+        public layoutService: LayoutService,
         private appService: AppService,
         public dialog: MatDialog
     ) {
@@ -65,6 +68,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
     ngOnInit(): void {
         this.startLoading(true);
         this.appService.isClientSearchDisabled = true;
+        this.showLeftBar = this.layoutService.showLeftBar;
         this.tenantSettingsService.getEnabledSocialLoginSettings()
             .pipe(finalize(() => this.finishLoading(true)))
             .subscribe(res => {

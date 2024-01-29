@@ -53,6 +53,13 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     menu: PanelMenu = <PanelMenu>{
         items: []
     };
+    selectedModuleIndex: number;
+    moduleItems = [
+        {title: 'Home', disabled: false}, 
+        {title: 'CRM', disabled: false}, 
+        {title: 'API', disabled: false}, 
+        {title: 'Admin', disabled: false}
+    ];
 
     isChatConnected = this.chatSignalrService.isChatConnected;
     isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
@@ -79,6 +86,12 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     ) {
         this.appService.subscribeModuleChange((config: ConfigInterface) => {
             this.config = config;
+
+            this.moduleItems.forEach((module, index) => {
+                if (config.name.toLowerCase() == module.title.toLowerCase() && this.selectedModuleIndex != index)
+                    this.selectedModuleIndex = index;
+            });        
+
             this.menu = new PanelMenu(
                 'MainMenu',
                 'MainMenu',
@@ -90,7 +103,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
             const selectedItem = this.navbarItems.find((navBarItem: PanelMenuItem) => {
                 return navBarItem.route === this.router.url.split('?')[0];
             });
-            this.navbarItems = this.menu.items;
+            this.navbarItems = this.menu.items || [];
             this.selectedItem = selectedItem || this.menu.items[0];
 
             this.appService.topMenu = this.menu;
@@ -135,7 +148,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
                 navigation.title || navigation.text && this.ls.ls(localizationSource, 
                     (navigation.localization || 'Navigation_') + navigation.text),
                 navigation.permission,
-                navigation.icon || 'assets/common/icons/accounts.svg',
+                navigation.icon,
                 navigation.route,
                 navigation.feature,
                 navigation.route === '/app/crm/reports'
@@ -228,16 +241,16 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     @HostBinding('style.width') width: string = '90px';
     @HostListener('mouseover')
     onHover = () => {
-        this.expanded = true;
-        this.width = '210px';
+//        this.expanded = true;
+//        this.width = '210px';
     }
 
     @HostListener('mouseleave')
     onBlur = () => {
-        this.expanded = false;
-        if (!this.isSubMenuOpen) {
-            this.width = '90px';
-        }
+//        this.expanded = false;
+//        if (!this.isSubMenuOpen) {
+//            this.width = '90px';
+//        }
     }
 
     isSubMenuOpen = false;
@@ -249,6 +262,19 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isSubMenuOpen = false;
         if (!this.expanded && !$event.cancel) {
             this.width = '90px';
+        }
+    }
+
+    onItemTitleClick(event) {
+        if (event.itemData.title == 'Home') {
+            this.router.navigate(['app/crm/welcome']);
+            event.event.preventDefault();
+            event.event.stopPropagation();
+        } else {
+            let module = event.itemData.title;
+            this.navbarItems = [];
+            this.appService.switchModule(module);
+            setTimeout(() => this.router.navigate(['app/' + module.toLowerCase()]), 300);
         }
     }
 }

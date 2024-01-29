@@ -1,6 +1,7 @@
 /** Core imports */
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     HostBinding,
@@ -28,6 +29,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppConsts } from '@shared/AppConsts';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'app-headline',
@@ -68,6 +70,8 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Output() onToggleLeftMenu: EventEmitter<null> = new EventEmitter<null>();
     @Output() onStateReset: EventEmitter<null> = new EventEmitter<null>();
     @HostBinding('class.fullscreen') isFullScreenMode = false;
+    @HostBinding('class.showLeftBar') showLeftBar = this.layoutService.showLeftBar;
+
     data: HeadLineConfigModel;
     showHeadlineButtons = false;
     toolbarMenuToggleButtonText$: Observable<string> = this.appService.toolbarIsHidden$.pipe(
@@ -99,7 +103,9 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         private fullScreenService: FullScreenService,
         private lifecycleService: LifecycleSubjectsService,
         private leftMenuService: LeftMenuService,
+        public layoutService: LayoutService,
         public ls: AppLocalizationService,
+        private changeDetectorRef: ChangeDetectorRef,
         @Inject('toggleButtonPosition') @Optional() toggleButtonPosition: 'left' | 'right',
         @Inject('showToggleLeftMenuButton') @Optional() showToggleLeftMenuButton: boolean
     ) {
@@ -107,6 +113,15 @@ export class HeadLineComponent implements OnInit, OnDestroy {
             this.toggleButtonPosition = toggleButtonPosition;
         }
         this.showToggleLeftMenuButton = showToggleLeftMenuButton;
+
+        this.layoutService.toggleHeadlineButtonSubject.asObservable().pipe(
+            takeUntil(this.lifecycleService.destroy$)
+        ).subscribe(() => {
+            setTimeout(() => {
+                this.toggleHeadlineButtons();
+                this.changeDetectorRef.markForCheck();
+            }, 100);
+        });
     }
 
     ngOnInit() {
@@ -123,6 +138,8 @@ export class HeadLineComponent implements OnInit, OnDestroy {
             || this.showToggleColumnSelectorButton
             || this.showPrintButton
             || this.showToggleLeftMenuButton;
+
+        this.showLeftBar = this.layoutService.showLeftBar;
     }
 
     @HostListener('document:click', ['$event'])
@@ -133,6 +150,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     }
 
     toggleHeadlineButtons() {
+console.log(123);
         this.showHeadlineButtons = !this.showHeadlineButtons;
     }
 

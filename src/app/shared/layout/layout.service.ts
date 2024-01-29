@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LayoutType, ModuleType, NavPosition } from '@shared/service-proxies/service-proxies';
 import { AppFeatures } from '@shared/AppFeatures';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class LayoutService {
@@ -66,7 +67,9 @@ export class LayoutService {
         [LayoutType.AdvicePeriod]: [ '#9fcbdc', '#91c4d7', '#84bdd2', '#76b5cd', '#68aec9', '#5aa6c4', '#4d9fbf', '#4296b7' ]
     };
 
-    public supportLeftNavigationModules = [ModuleType.CRM, ModuleType.CFO];
+    public supportLeftNavigationModules = ['ADMIN', 'API', ModuleType.CRM, ModuleType.CFO];
+
+    toggleHeadlineButtonSubject: Subject<boolean> = new Subject();
 
     constructor(private appSessionService: AppSessionService) {}
 
@@ -93,7 +96,7 @@ export class LayoutService {
     }
 
     checkSetModuleSettings(moduleName: string) {
-        if (this.supportLeftNavigationModules.includes(ModuleType[moduleName.toUpperCase()])) {
+        if (this.supportLeftNavigationModules.includes(moduleName.toUpperCase())) {
             let navPosition = abp.setting.get('App.Appearance.NavPosition');
             this.showTopBar = !navPosition || navPosition == NavPosition.Horizontal;        
             this.showLeftBar = !this.showTopBar;

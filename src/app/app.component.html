@@ -1,4 +1,4 @@
-<app-header *ngIf="layoutService.showTopBar"
+<app-header
     [hidden]="isFullscreenMode"
     [ngClass]="{ withContactInfo: appService.showContactInfoPanel$ | async }">
 </app-header>

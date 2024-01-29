@@ -16,30 +16,30 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'Dashboard',
             route: '/app/crm/dashboard',
-            icon: 'assets/common/icons/crm/dashboard2.png'
+            icon: 'assets/common/icons/crm/dashboard.svg'
         },
         {
             text: 'Leads',
             permission: AppPermissions.CRMCustomers + '|' + AppPermissions.CRMPartners + '|' + AppPermissions.CRMEmployees + '|' + AppPermissions.CRMInvestors + '|' + AppPermissions.CRMVendors + '|' + AppPermissions.CRMOthers,
-            icon: 'assets/common/icons/crm/leads.png',
+            icon: 'assets/common/icons/crm/leads.svg',
             route: '/app/crm/leads',
             items: []
         },
         {
             text: 'Clients',
-            icon: 'assets/common/icons/crm/customers.png',
+            icon: 'assets/common/icons/crm/customers.svg',
             permission: AppPermissions.CRMCustomers,
             route: '/app/crm/clients'
         },
         {
             text: 'Partners',
-            icon: 'assets/common/icons/crm/partners.png',
+            icon: 'assets/common/icons/crm/partners.svg',
             permission: AppPermissions.CRMPartners,
             route: '/app/crm/partners'
         },
         {
             text: 'Orders',
-            icon: 'assets/common/icons/crm/orders.png',
+            icon: 'assets/common/icons/crm/orders.svg',
             permission: AppPermissions.CRMOrders,
             route: '/app/crm/orders',
             items: [{
@@ -60,7 +60,7 @@ export class CrmConfig implements ConfigInterface {
         },
         {
             text: 'Products',
-            icon: 'assets/common/icons/crm/products.png',
+            icon: 'assets/common/icons/crm/products.svg',
             permission: AppPermissions.CRMProducts,
             route: '/app/crm/products',
             items: [{
@@ -83,7 +83,7 @@ export class CrmConfig implements ConfigInterface {
 */
         {
             text: 'Reports',
-            icon: 'assets/common/icons/crm/reports.png',
+            icon: 'assets/common/icons/crm/reports.svg',
             permission: AppPermissions.CRMCustomers + '&' + AppPermissions.CRMOrders,
             layout: LayoutType.BankCode,
             route: '/app/crm/reports'

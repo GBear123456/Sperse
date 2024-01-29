@@ -13,17 +13,21 @@ export class ApiConfig implements ConfigInterface {
     navigation: ConfigNavigation[] = [
         {
             text: 'Introduction',
-            route: '/app/api/introduction'
+            route: '/app/api/introduction',
+            icon: 'assets/common/icons/api/introduction.svg'
         },
         {
             text: 'Documentation',
-            route: '/app/api/swagger'
-        },
+            route: '/app/api/swagger',
+            icon: 'assets/common/icons/api/documents.svg'
+        }
+/*
         {
             text: 'Downloads'
         },
         {
             text: 'Demos'
         }
+*/
     ];
 }

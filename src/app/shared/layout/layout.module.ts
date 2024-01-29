@@ -16,6 +16,7 @@ import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxNavBarModule } from 'devextreme-angular/ui/nav-bar';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxAccordionModule } from 'devextreme-angular/ui/accordion';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -80,6 +81,7 @@ let COMPONENTS = [
         DxDropDownBoxModule,
         DxTextBoxModule,
         DxSelectBoxModule,
+        DxAccordionModule,
 
         MatTabsModule,
         MatDialogModule,

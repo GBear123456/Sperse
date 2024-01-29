@@ -1,32 +1,15 @@
- :host {
+:host {
     transition: width 0.5s;
-    height: 100vh;
+    height: calc(100vh - 75px);
     z-index: 999;
     border-right: 1px solid #dedede;
-    background: #F4F5F7;
+    background: #FFFFFF;
     position: absolute;
     display: block;
-    top: 0;
+    top: 75px;
     left: 0;
 
-    .page-logo {
-        width: 80px;
-        height: 80px;
-        overflow: hidden;
-        margin: auto auto auto 5px;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-
-        img {
-            width: 80px;
-        }
-    }
-
     .nav-menu {
-        display: flex;
-        overflow: hidden;
-        height: calc(100vh - 300px);
         ::ng-deep dx-menu {
             margin: auto auto auto 0;
             .dx-menu-items-container {
@@ -80,11 +63,67 @@
         }
     }
 
+    .top-menu {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        border: 1px solid #E1E7ED;
+        margin: 10px auto 20px auto;
+        background: url(../../../../assets/common/icons/three-dots.svg) center no-repeat;
+        cursor: pointer;
+    }
+
+    ::ng-deep dx-accordion {
+        .dx-accordion-item {
+            border: none;
+            outline: none;
+            margin: 5px 0;
+        }
+        .dx-accordion-item-title {
+            &:before {
+                display: none;
+            }
+
+            &.home {
+                background: #0C2859;
+            }
+
+            &.crm {
+                background: #4D3AA0;
+            }
+
+            &.api {
+                background: #107500;
+            }
+        
+            &.admin {
+                background: #0051AA;
+            }
+
+            font-family: Plus Jakarta Sans!important;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 27px;
+            letter-spacing: 0em;
+            text-align: center;
+            border-radius: 8px;
+            padding: 0;
+            color: #FFF;
+            width: 63px;
+            height: 30px;
+            margin: auto;
+        }
+        .dx-accordion-item-body {
+            padding: 7px 0;
+        }        
+    }
+
     ::ng-deep user-management-list {
         display: block;
         width: 90px!important;
         margin-right: auto;
-        margin-left: 0px;        
+        margin-left: 0px;
+        margin-top: 40px;        
         .m-topbar__nav.m-nav {
             flex-direction: column;
             margin: 0 18px;
@@ -99,5 +138,6 @@
         width: 90px;
         height: 75px;
         display: block;
+        margin: 0 5px;
     }
 }
