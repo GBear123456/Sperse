@@ -1,3 +1,8 @@
+<app-headline [names]="[ ls.l('Welcome') + ' ' + appSessionService.user.name + '! Let\'s get you started' ]"
+              [buttons]="[]"
+              [showToggleFullScreenButton]="true"
+              [showReloadButton]="true">
+</app-headline>
 <div class="left">
     <div class="head">
         <a (click)="openPaymentWizardDialog(true)">My Subscriptions</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a (click)="openIntroDialog()">Introduction Tour</a>
@@ -17,11 +22,11 @@
                             <div class="btn-text">New Product Form</div>
                         </button>
                         <div class="points">
-                            <div class="point">
+                            <div class="point" (click)="router.navigate(['app/crm/products'])">
                                 <img class="icon" src="assets/common/icons/new-subscription.svg" />
-                                <div class="label"><a routeLink="app/crm/products">Show All Products</a></div>
+                                <div class="label">Show All Products</div>
                             </div>
-                            <div class="point">
+                            <div class="point" (click)="router.navigate(['app/crm/coupons'])">
                                 <img class="icon" src="assets/common/icons/new-coupon.svg" />
                                 <div class="label">Show All Coupons</div>
                             </div>

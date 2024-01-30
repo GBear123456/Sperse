@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LayoutType, ModuleType, NavPosition } from '@shared/service-proxies/service-proxies';
 import { AppFeatures } from '@shared/AppFeatures';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class LayoutService {
@@ -70,6 +70,7 @@ export class LayoutService {
     public supportLeftNavigationModules = ['ADMIN', 'API', ModuleType.CRM, ModuleType.CFO];
 
     toggleHeadlineButtonSubject: Subject<boolean> = new Subject();
+    expandedLeftBarSubject: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(private appSessionService: AppSessionService) {}
 

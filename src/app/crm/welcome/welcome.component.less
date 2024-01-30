@@ -1,7 +1,24 @@
 :host {
     display: flex;
     position: relative;
-    padding: 10px 10px 0 56px;
+    padding: 10px 10px 0 0px;
+
+    ::ng-deep app-headline {
+        .headline-title {
+            flex: 3;
+        }
+        .header-names {
+            margin: auto;
+        }
+        .header-name {
+            font-family: Plus Jakarta Sans;
+            font-size: 19px;
+            font-weight: 400;
+            line-height: 27px;
+            letter-spacing: -0.02em;
+            text-align: center;
+        }
+    }
 
     .left {
         width: 100%;

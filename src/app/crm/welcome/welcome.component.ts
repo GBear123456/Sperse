@@ -77,7 +77,7 @@ export class WelcomeComponent implements OnInit {
     constructor(
         public router: Router,
         private appService: AppService,
-        private appSessionService: AppSessionService,
+        public appSessionService: AppSessionService,
         private changeDetectorRef: ChangeDetectorRef,
         private lifeCycleSubject: LifecycleSubjectsService,
         private activatedRoute: ActivatedRoute,

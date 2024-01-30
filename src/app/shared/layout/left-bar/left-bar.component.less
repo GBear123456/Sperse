@@ -9,6 +9,10 @@
     top: 75px;
     left: 0;
 
+    &.fullscreen {
+        top: 0;
+    }
+
     .nav-menu {
         ::ng-deep dx-menu {
             margin: auto auto auto 0;
@@ -68,9 +72,13 @@
         height: 40px;
         border-radius: 8px;
         border: 1px solid #E1E7ED;
-        margin: 10px auto 20px auto;
+        margin: 10px 25px 20px 25px;
         background: url(../../../../assets/common/icons/three-dots.svg) center no-repeat;
         cursor: pointer;
+    }
+
+    .accordion-wrapper {
+        height: calc(100vh - 330px);
     }
 
     ::ng-deep dx-accordion {
@@ -111,10 +119,11 @@
             color: #FFF;
             width: 63px;
             height: 30px;
-            margin: auto;
+            margin: 0 13px;
         }
         .dx-accordion-item-body {
             padding: 7px 0;
+            max-height: calc(100vh - 420px);
         }        
     }
 
@@ -124,20 +133,19 @@
         margin-right: auto;
         margin-left: 0px;
         margin-top: 40px;        
+
+        position: absolute;
+        bottom: 0;
+
         .m-topbar__nav.m-nav {
             flex-direction: column;
             margin: 0 18px;
         }
     }
 
-    ::ng-deep user-dropdown-menu .m-topbar__user-profile--img {
-        margin-left: -6px;
-    }
-
-    ::ng-deep platform-select {
-        width: 90px;
-        height: 75px;
-        display: block;
-        margin: 0 5px;
+    ::ng-deep user-dropdown-menu {
+        .m-topbar__user-profile--img {
+            margin-left: -6px;
+        }
     }
 }

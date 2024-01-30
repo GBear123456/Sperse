@@ -43,7 +43,7 @@ import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
     selector: 'left-bar',
     providers: [ LifecycleSubjectsService, CommonUserInfoServiceProxy ]
 })
-export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {     
     userCompany$: Observable<string>;
     dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
@@ -63,7 +63,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     isChatConnected = this.chatSignalrService.isChatConnected;
     isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
-    unreadChatMessageCount = 0;
+    unreadChatMessageCount = 0;    
     expanded = false;
 
     constructor(
@@ -111,6 +111,18 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.layoutService.expandedLeftBarSubject.asObservable().pipe(
+            takeUntil(this.lifecycleService.destroy$)
+        ).subscribe(val => {
+            if (this.expanded = val) {
+                this.width = '260px';
+            } else {
+                if (!this.isSubMenuOpen) {
+                    this.width = '90px';
+                }
+            }
+        });
+
         this.userCompany$ = this.commonUserInfoService.getCompany().pipe(
             map(x => isEqual(x, {}) ? null : x)
         );
@@ -274,7 +286,11 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
             let module = event.itemData.title;
             this.navbarItems = [];
             this.appService.switchModule(module);
-            setTimeout(() => this.router.navigate(['app/' + module.toLowerCase()]), 300);
+            setTimeout(() => this.router.navigate(['app/' + module.toLowerCase()]), 200);
         }
+    }
+
+    getAccordeonHeight() {
+        return innerHeight - 420 < this.navbarItems.length * 55 ? innerHeight - 420 : '100%';
     }
 }

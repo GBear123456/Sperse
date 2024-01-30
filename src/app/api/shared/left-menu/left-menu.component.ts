@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LeftMenuItem } from '../../../shared/common/left-menu/left-menu-item.interface';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -32,6 +33,8 @@ export class LeftMenuComponent {
         }
     ];
 
-    constructor(public ls: AppLocalizationService) {}
-
+    constructor(
+        public layoutService: LayoutService,
+        public ls: AppLocalizationService
+    ) {}
 }

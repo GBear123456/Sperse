@@ -71,6 +71,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Output() onStateReset: EventEmitter<null> = new EventEmitter<null>();
     @HostBinding('class.fullscreen') isFullScreenMode = false;
     @HostBinding('class.showLeftBar') showLeftBar = this.layoutService.showLeftBar;
+    @HostBinding('class.expandedLeftBar') expandedLeftBar = false;
 
     data: HeadLineConfigModel;
     showHeadlineButtons = false;
@@ -122,6 +123,13 @@ export class HeadLineComponent implements OnInit, OnDestroy {
                 this.changeDetectorRef.markForCheck();
             }, 100);
         });
+
+        this.layoutService.expandedLeftBarSubject.asObservable().pipe(
+            takeUntil(this.lifecycleService.destroy$)
+        ).subscribe((val: boolean) => {
+            this.expandedLeftBar = val;
+            this.changeDetectorRef.markForCheck();
+        });
     }
 
     ngOnInit() {
@@ -150,7 +158,6 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     }
 
     toggleHeadlineButtons() {
-console.log(123);
         this.showHeadlineButtons = !this.showHeadlineButtons;
     }
 
@@ -199,6 +206,10 @@ console.log(123);
 
     isTotalCountValid() {
         return Number.isInteger(this.totalCount);
+    }
+
+    toggleLeftBar() {
+        this.layoutService.expandedLeftBarSubject.next(!this.layoutService.expandedLeftBarSubject.value);
     }
 
     ngOnDestroy() {
