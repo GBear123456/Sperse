@@ -1,7 +1,8 @@
-<app-headline [names]="[ ls.l('Welcome') + ' ' + appSessionService.user.name + '! Let\'s get you started' ]"
-              [buttons]="[]"
-              [showToggleFullScreenButton]="true"
-              [showReloadButton]="true">
+<app-headline *ngIf="layoutService.showLeftBar"
+    [names]="[ ls.l('Welcome') + ' ' + appSessionService.user.name + '! Let\'s get you started' ]"
+    [buttons]="[]"
+    [showToggleFullScreenButton]="true"
+    [showReloadButton]="true">
 </app-headline>
 <div class="left">
     <div class="head">

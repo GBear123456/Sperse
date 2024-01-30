@@ -32,6 +32,7 @@ import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/ad
 import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 
@@ -90,6 +91,7 @@ export class WelcomeComponent implements OnInit {
         private loadingService: LoadingService,
         private message: MessageService,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
+        public layoutService: LayoutService,
         public dialog: MatDialog
     ) {
         this.appService.moduleSubscriptions$.subscribe(() => this.updateSubscriptionInfo());
