@@ -132,6 +132,7 @@ import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/mode
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AppFeatures } from '@shared/AppFeatures';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -176,6 +177,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     starsLookup = {};
     formatting = AppConsts.formatting;
+    currency: string = SettingsHelper.getCurrency();
     isCfoLinkOrVerifyEnabled = this.appService.isCfoLinkOrVerifyEnabled;
     canSendVerificationRequest = this.appService.canSendVerificationRequest();
     isCFOClientAccessAllowed = this.appService.checkCFOClientAccessPermission();
