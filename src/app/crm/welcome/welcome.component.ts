@@ -20,6 +20,7 @@ import { FeatureCheckerService, MessageService } from 'abp-ng2-module';
 import { AppStore } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
+import { ContactGroup } from '@shared/AppEnums';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
@@ -29,8 +30,11 @@ import { ModuleType, LayoutType, StripeSettingsDto, TenantPaymentSettingsService
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
+import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
+import { AddCouponDialogComponent } from '../coupons/add-coupon-dialog/add-coupon-dialog.component';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -155,6 +159,18 @@ export class WelcomeComponent implements OnInit {
         });
     }
 
+    openContactDialog() {
+        const dialogData: CreateEntityDialogData = {
+            customerType: ContactGroup.Client
+        };
+        this.dialog.open(CreateEntityDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: dialogData
+        }).afterClosed().subscribe(() => {});
+    }
+
     openProductDialog() {
         const dialogData = {
             fullHeigth: true,
@@ -171,6 +187,26 @@ export class WelcomeComponent implements OnInit {
                 this.router.navigate(['app/crm/products'])
         });        
     }
+
+    openCouponDialog() {
+        const dialogData = {
+            fullHeigth: true,
+            coupon: undefined,
+            isReadOnly: false
+        };
+        this.dialog.open(AddCouponDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: dialogData
+        }).afterClosed().subscribe(
+            (refresh) => {
+                if (refresh) this.router.navigate(['app/crm/coupons'])
+            }
+        );
+    }
+
+
 
     openPaymentWizardDialog(showSubscriptions = false) {
         this.dialog.closeAll();
@@ -193,7 +229,7 @@ export class WelcomeComponent implements OnInit {
                     finalize(() => this.loadingService.finishLoading())
                 )
                 .subscribe(res => {
-                    this.stripePaymentSettings = res;
+                    this.stripePaymentSettings = res;                    
                 })
         }
     }
