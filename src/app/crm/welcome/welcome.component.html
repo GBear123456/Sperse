@@ -14,14 +14,18 @@
                         <p class="title">{{ls.l('Welcome_ProductsTitle')}} <br />&amp; {{ls.l('Welcome_ProductsTitle2')}}</p>
                         <button class="button" (click)="openProductDialog()">
                             <img class="btn-img" src="assets/common/icons/plus.svg" />
-                            <div class="btn-text">New Product Form</div>
+                            <div class="btn-text">New Product</div>
+                        </button>
+                        <button class="button add-coupon" (click)="openCouponDialog()">
+                            <img class="btn-img" src="assets/common/icons/plus.svg" />
+                            <div class="btn-text">New Coupons</div>
                         </button>
                         <div class="points">
-                            <div class="point">
+                            <div class="point" (click)="router.navigate(['app/crm/products'])">
                                 <img class="icon" src="assets/common/icons/new-subscription.svg" />
-                                <div class="label"><a routeLink="app/crm/products">Show All Products</a></div>
+                                <div class="label">Show All Products</div>
                             </div>
-                            <div class="point">
+                            <div class="point" (click)="router.navigate(['app/crm/coupons'])">
                                 <img class="icon" src="assets/common/icons/new-coupon.svg" />
                                 <div class="label">Show All Coupons</div>
                             </div>
@@ -40,9 +44,9 @@
                         </div>
                         <img class="icon-box" src="assets/common/images/card-add.svg" />
                         <div class="title">{{ls.l('Welcome_PaymentsTitle')}} <br />{{ls.l('Welcome_PaymentsTitle2')}} </div>
-                        <button class="button" [disabled]="!isPaymentsEnabled || stripePaymentSettings.isConnectedAccountSetUpCompleted">
-                            <img class="btn-img" src="assets/common/icons/plus.svg" />
-                            <div (click)="connectStripeAccount()" class="btn-text">Connect Stripe</div>
+                        <button (click)="connectStripeAccount()" class="button" [disabled]="!isPaymentsEnabled || stripePaymentSettings.isConnectedAccountSetUpCompleted">
+                            <img class="btn-img" src="assets/common/icons/plus.svg" *ngIf="!stripePaymentSettings.isConnectedAccountSetUpCompleted" />
+                            <div class="btn-text">{{stripePaymentSettings.isConnectedAccountSetUpCompleted ? ls.l('Stripe Connected'): (stripePaymentSettings.connectedAccountId ? ls.l('Finish onboarding Stripe') : ls.l('Connect Stripe'))}}</div>
                         </button>
                         <div class="links">
                             <img class="link paypal" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'paypal' } })" src="assets/common/images/paypal.svg" />
@@ -68,21 +72,21 @@
                             <div class="btn-text">My Settings</div>
                         </button>
                         <div class="points">
-                            <div class="point" *ngIf="showLandingPageSettings">
+                            <div class="point" *ngIf="showLandingPageSettings" (click)="openProfileTenantSettingsDialog('landingPage')">
                                 <img class="icon" src="assets/common/icons/grid.svg" />
-                                <div class="label" (click)="openProfileTenantSettingsDialog('landingPage')">Sales Landing Page</div>
+                                <div class="label">Sales Landing Page</div>
                             </div>
-                            <div class="point" *ngIf="showInvoiceSettings">
+                            <div class="point" *ngIf="showInvoiceSettings" (click)="openProfileTenantSettingsDialog('invoice')">
                                 <img class="icon" src="assets/common/icons/task-square.svg" />
-                                <div class="label" (click)="openProfileTenantSettingsDialog('invoice')">Invoice Settings</div>
+                                <div class="label">Invoice Settings</div>
                             </div>
-                            <div class="point" (click)="openProfileTenantSettingsDialog('gmail')">
+                            <div class="point">
                                 <img class="icon" src="assets/common/icons/email-icon.svg" />
-                                <div class="label">Email SMTP or Gmail</div>
+                                <div class="label">Email <u (click)="openProfileTenantSettingsDialog('email')">SMTP</u> or <u (click)="openProfileTenantSettingsDialog('gmail')">Gmail</u></div>
                             </div>
                             <div class="point" (click)="router.navigate(['app/crm/documents'])">
                                 <img class="icon" src="assets/common/icons/document-sketch.svg" />
-                                <div class="label">File Templates</div>
+                                <div class="label">Tenant Files</div>
                             </div>
                         </div>
                     </div>
@@ -100,9 +104,9 @@
                         <img class="icon-box" src="assets/common/images/category.svg" />
                         <div class="title">{{ls.l('Welcome_AppsTitle')}} <br />{{ls.l('Welcome_AppsTitle2')}} </div>
                         <div class="points">                                     
-                            <div class="point">
+                            <div class="point" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Mailchimp' } })">
                                 <img class="icon" src="assets/common/icons/mailchimp-freddie-icon.svg" />
-                                <div class="label" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Mailchimp' } })">MailChimp</div>
+                                <div class="label">MailChimp</div>
                             </div>
                             <div class="point disabled">
                                 <img class="icon" src="assets/common/icons/pngwing.svg" />
@@ -112,7 +116,7 @@
                                 <img class="icon" src="assets/common/icons/meta.svg" />
                                 <div class="label">Meta</div>
                             </div>
-                            <div class="point" *ngIf="showZapier" (click)="router.navigate(['/zapier'])">
+                            <div class="point" *ngIf="showZapier" (click)="router.navigate(['/app/crm/zapier'])">
                                 <img class="icon" src="assets/common/icons/zapier-icon.svg" />
                                 <div class="label">Zapier</div>
                             </div>
@@ -131,22 +135,26 @@
                         </div>
                         <img class="icon-box" src="assets/common/images/user-square.svg" />
                         <p class="title">{{ls.l('Welcome_ImportTitle')}} <br />{{ls.l('Welcome_ImportTitle2')}} </p>
+                        <button class="button" (click)="openContactDialog()">
+                            <img class="btn-img" src="assets/common/icons/plus.svg" />
+                            <div class="btn-text">New Contact</div>
+                        </button>
                         <div class="points">
-                            <div class="point">
+                            <div class="point" (click)="router.navigate(['app/crm/leads'])">
                                 <img class="icon" src="assets/common/icons/user-edit.svg" />
-                                <div class="label" (click)="router.navigate(['app/crm/leads'])">Manage Leads</div>
+                                <div class="label">Manage Leads</div>
                             </div>
-                            <div class="point">
+                            <div class="point" (click)="router.navigate(['app/crm/clients'])">
                                 <img class="icon" src="assets/common/icons/peoples.svg" />
-                                <div class="label" (click)="router.navigate(['app/crm/clients'])">Manage Clients</div>
+                                <div class="label">Manage Clients</div>
                             </div>
-                            <div class="point" *ngIf="showImportLeads">
+                            <div class="point" (click)="router.navigate(['app/crm/import-leads'])" *ngIf="showImportLeads">
                                 <img class="icon" src="assets/common/icons/send-square.svg" />
-                                <div class="label" (click)="router.navigate(['app/crm/import-leads'])">Import Your List</div>
+                                <div class="label">Import Your List</div>
                             </div>
-                            <div class="point" *ngIf="showImportUsersStep">
+                            <div class="point" (click)="openIntroDialog(true)" *ngIf="showImportUsersStep">
                                 <img class="icon" src="assets/common/icons/user-add.svg" />
-                                <div class="label" (click)="openIntroDialog(true)">Add and Invite Team Members</div>
+                                <div class="label">Add and Invite Team Members</div>
                             </div>
                         </div>
                     </div>
@@ -164,18 +172,18 @@
                         <img class="icon-box" src="assets/common/images/format-square.svg" />
                         <div class="title">{{ls.l('Welcome_SetupTitle')}} <br />{{ls.l('Welcome_SetupTitle2')}} </div>
                         <div class="points">
-                            <div class="point" *ngIf="showCommissionsSettings">
+                            <div class="point" (click)="openProfileTenantSettingsDialog('commissions')" *ngIf="showCommissionsSettings">
                                 <img class="icon" src="assets/common/icons/archive-book.svg" />
-                                <div class="label" (click)="openProfileTenantSettingsDialog('commissions')">Affilate Rules</div>
+                                <div class="label">Affilate Rules</div>
                             </div>
-                            <div class="point" *ngIf="showCommissionsSettings">
+                            <div class="point" (click)="router.navigate(['app/crm/commission-history'])" *ngIf="showCommissionsSettings">
                                 <img class="icon" src="assets/common/icons/money-time.svg" />
-                                <div class="label" (click)="router.navigate(['app/crm/commission-history'])">Commission History</div>
+                                <div class="label">Commission History</div>
                             </div>                                                             
-                            <div class="point disabled">
+                            <!-- div class="point disabled">
                                 <img class="icon" src="assets/common/icons/format-circle.svg" />
                                 <div class="label">Connect Your Payout Providers</div>
-                            </div>
+                            </div -->
                         </div>
                     </div>
                 </div>
