@@ -44,6 +44,8 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 import { StarsHelper } from '@shared/common/stars-helper/stars-helper';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { AppConsts } from '@shared/AppConsts';
+import { AppPermissions } from '@shared/AppPermissions';
+import { AppPermissionService } from '@root/shared/common/auth/permission.service';
 
 @Component({
     selector: 'totals-by-source',
@@ -127,7 +129,15 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                     argumentField: 'key',
                     valueField: 'count'
                 }
-            ] : [{
+            ].concat(
+                this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ? [{
+                    key: 'productSales',
+                    label: this.ls.l('TotalsBySalesDistribution'),
+                    method: this.dashboardServiceProxy.getProductSalesCountByType,
+                    argumentField: 'key',
+                    valueField: 'count'
+                }] : []
+            ) : [{
                 key: 'star',
                 label: this.ls.l('TotalsByStar/CreditRating'),
                 method: this.dashboardServiceProxy.getContactsByStar,
@@ -161,6 +171,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         private appSession: AppSessionService,
         private pipelineService: PipelineService,
         private layoutService: LayoutService,
+        private permissionService: AppPermissionService,
         public ls: AppLocalizationService
     ) {}
 
