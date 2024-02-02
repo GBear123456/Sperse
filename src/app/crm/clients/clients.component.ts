@@ -173,6 +173,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private readonly dateField = 'ContactDate';
     private subRouteParams: any;
     private dependencyChanged = false;
+
+    isNotANumber = isNaN;
     rowsViewHeight: number;
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
     isOrdersInvoicesAllowed = this.isGranted(AppPermissions.CRMOrdersInvoices);
