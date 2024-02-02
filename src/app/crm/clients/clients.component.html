@@ -219,7 +219,8 @@
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="clientFields.TotalRevenue"
+                        <dxi-column *ngIf="isOrdersInvoicesAllowed"
+                                    [dataField]="clientFields.TotalRevenue"
                                     [caption]="l('Contact.TotalRevenue')"
                                     [visible]="false"
                                     cellTemplate="amountTemplate">
@@ -261,7 +262,7 @@
                         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                             {{cellData.value | phone}}
                         </div>
-                        <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
+                        <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder" (click)="showClientOrderInvoices(cell.data)">
                             <span> {{ cell.value | currency:currency:'symbol':'1.2-2' }} </span>
                         </div>
                         <dxo-sorting mode="multiple"></dxo-sorting>
