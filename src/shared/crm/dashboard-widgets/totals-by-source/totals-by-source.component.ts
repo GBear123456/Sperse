@@ -71,6 +71,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         this.layoutService.getLayoutColor('purple'),
         this.layoutService.getLayoutColor('green'),
         this.layoutService.getLayoutColor('orange'),
+        '#e78487',
         '#ecf0f3'
     ];
     rawData: any[];
