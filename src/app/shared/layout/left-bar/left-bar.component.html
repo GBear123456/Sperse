@@ -1,4 +1,4 @@
-﻿<div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
+<div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
 
 <div class="accordion-wrapper">
     <dx-accordion
@@ -25,8 +25,17 @@
                         (onSubmenuShowing)="onSubmenuShowing($event)"
                         (onSubmenuHiding)="onSubmenuHiding($event)"
                         (onItemClick)="navigate($event)">
-                        <div *dxTemplate="let data of 'item'" [title]="data.text">
-                            <img *ngIf="!data.params" [src]="data.icon"><span class="caption" style="padding: 10px 0;" *ngIf="!!data.params || expanded || isSubMenuOpen">{{data.text}}</span><span class="triangle" *ngIf="!data.params && data?.items?.length">&#9656;</span>
+                        <div *dxTemplate="let data of 'item'">
+                            <img [id]="data.text" *ngIf="!data.params" [src]="data.icon"><span class="caption" style="padding: 10px 0;" *ngIf="!!data.params || expanded || isSubMenuOpen">{{data.text}}</span><span class="triangle" *ngIf="!data.params && data?.items?.length">&#9656;</span>
+                            <dx-tooltip *ngIf="!data?.items?.length"
+                                target="#{{data.text}}"
+                                [position]="{ my: 'left top', at: 'right', offset: '0 ' + ((selectedModuleIndex - 1) * 35 + 25) }"
+                                showEvent="dxhoverstart"
+                                hideEvent="dxhoverend">
+                                <div *dxTemplate="let item of 'content'">
+                                    <span class="menu-tooltip">{{data.text}}</span>
+                                </div>
+                            </dx-tooltip>
                         </div>
                     </dx-menu>
                 </div>
