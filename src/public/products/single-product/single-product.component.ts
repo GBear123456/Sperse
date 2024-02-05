@@ -434,12 +434,19 @@ export class SingleProductComponent implements OnInit {
             ButtonType.Subscription;
     }
 
-    getPricePerPeriod(includeCoupon: boolean): number {
+    getSubscriptionPrice(includeCoupon: boolean) {
         let price = this.selectedSubscriptionOption.fee;
         if (includeCoupon) {
-            if (!this.selectedSubscriptionOption.signupFee || (this.couponInfo && this.couponInfo.duration != CouponDiscountDuration.Once))
+            if (!this.selectedSubscriptionOption.trialDayCount ||
+                (this.selectedSubscriptionOption.trialDayCount && !this.selectedSubscriptionOption.signupFee) ||
+                (this.couponInfo && this.couponInfo.duration != CouponDiscountDuration.Once))
                 price = this.applyCoupon(price);
         }
+        return price;
+    }
+
+    getPricePerPeriod(includeCoupon: boolean): number {
+        let price = this.getSubscriptionPrice(includeCoupon);
         return this.selectedBillingPeriod === BillingPeriod.Yearly ?
             round(price / 12, 2) :
             price;
@@ -447,8 +454,14 @@ export class SingleProductComponent implements OnInit {
 
     getSignUpFee(includeCoupon: boolean): number {
         let fee = this.selectedSubscriptionOption.signupFee;
-        if (includeCoupon)
-            fee = this.applyCoupon(fee);
+        if (includeCoupon) {
+            let usedAmountOff = 0;
+            if (!this.selectedSubscriptionOption.trialDayCount) {
+                usedAmountOff = this.getSubscriptionPrice(false) - this.getSubscriptionPrice(true);
+            }
+            fee = this.applyCoupon(fee, usedAmountOff);
+        }
+
         return fee;
     }
 
@@ -473,7 +486,7 @@ export class SingleProductComponent implements OnInit {
     getDiscount(): number {
         if (this.productInfo.type == ProductType.Subscription) {
             let amount = this.getPricePerPeriod(false) - this.getPricePerPeriod(true);
-            if (this.selectedSubscriptionOption.trialDayCount)
+            if (this.selectedSubscriptionOption.signupFee)
                 amount = amount + this.getSignUpFee(false) - this.getSignUpFee(true);
             return amount;
         }
@@ -526,12 +539,12 @@ export class SingleProductComponent implements OnInit {
         coupon['description'] = `${description} Off ${coupon.duration}`;
     }
 
-    applyCoupon(amount: number): number {
+    applyCoupon(amount: number, usedAmountOff: number = 0): number {
         if (!this.couponInfo)
             return amount;
 
         if (this.couponInfo.amountOff)
-            return amount - this.couponInfo.amountOff > 0 ? amount - this.couponInfo.amountOff : 0;
+            return amount - this.couponInfo.amountOff + usedAmountOff > 0 ? amount - this.couponInfo.amountOff + usedAmountOff : 0;
 
         return round(amount * (1 - this.couponInfo.percentOff / 100), 2);
     }

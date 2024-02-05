@@ -669,14 +669,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             };
     }
 
-    validateTrialDayCount(option) {
-        return (event) => {
-            if (option.frequency && !this.isOneTime)
-                return !option.signupFee || event.value && event.value > 0;
-            return true;
-        };
-    }
-
     validatePeriodDayCount(option: ProductSubscriptionOptionInfo) {
         return (event) => {
             if (this.isOneTime || (option.frequency && option.frequency == RecurringPaymentFrequency.Custom))

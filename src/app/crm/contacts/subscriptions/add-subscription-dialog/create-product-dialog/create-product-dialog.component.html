@@ -227,7 +227,7 @@
                                                                switchedOffText=""
                                                                switchedOnText=""
                                                                [(value)]="option.trialEnabled"
-                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount">
+                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount || !!option.signupFee">
                                                     </dx-switch>&nbsp;<span (click)="option.trialEnabled = !option.trialEnabled">{{ls.l('Add Trial Period')}}</span>
                                                 </label>
                                                 <dx-number-box name="count"
@@ -238,14 +238,10 @@
                                                                valueChangeEvent="keyup"
                                                                [placeholder]="ls.l('ByDefault', 0)"
                                                                [(value)]="option.trialDayCount"
-                                                               [disabled]="isReadOnly || !option.trialEnabled"
-                                                               (onValueChanged)="option.signupFee = $event.value ? option.signupFee : 0">
-                                                    <dx-validator>
-                                                        <dxi-validation-rule type="custom" [validationCallback]="validateTrialDayCount(option)" message="{{ls.l('TrialDayCountRequired')}}."></dxi-validation-rule>
-                                                    </dx-validator>
+                                                               [disabled]="isReadOnly || !option.trialEnabled">
                                                 </dx-number-box>
                                             </div>
-                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime && option.trialDayCount) || (!i && isFreePriceType)}">
+                                            <div [ngClass]="{disabled: !option.trialEnabled || !(option.frequency && !isOneTime) || (!i && isFreePriceType)}">
                                                 <label class="wide">{{ls.l('SignupFee')}}</label>
                                                 <dx-number-box name="price"
                                                                width="100%"
@@ -258,7 +254,7 @@
                                                     </dx-validator>
                                                 </dx-number-box>
                                             </div>
-                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !(option.frequency && !isOneTime && isCommissionsEnabled && option.trialDayCount)}">
+                                            <div [ngClass]="{disabled: !option.trialEnabled || (!i && isFreePriceType) || !(option.frequency && !isOneTime && isCommissionsEnabled)}">
                                                 <label class="wide">{{ls.l('CommissionableAmount')}}</label>
                                                 <dx-number-box name="commissionableSignupFeeAmount"
                                                                width="100%"
