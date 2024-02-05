@@ -174,7 +174,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private subRouteParams: any;
     private dependencyChanged = false;
 
-    isNotANumber = isNaN;
+    isNumber = parseFloat;
     rowsViewHeight: number;
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
     isOrdersInvoicesAllowed = this.isGranted(AppPermissions.CRMOrdersInvoices);

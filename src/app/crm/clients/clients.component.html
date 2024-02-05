@@ -263,7 +263,7 @@
                             {{cellData.value | phone}}
                         </div>
                         <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder" (click)="showClientOrderInvoices(cell.data)">
-                            <span> {{ isNotANumber(cell.value) ? 0 : cell.value | currency:currency:'symbol':'1.2-2' }} </span>
+                            <span> {{ (isNumber(cell.value) ? cell.value : 0) | currency:currency:'symbol':'1.2-2' }} </span>
                         </div>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
