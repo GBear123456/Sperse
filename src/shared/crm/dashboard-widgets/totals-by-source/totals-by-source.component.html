@@ -11,7 +11,10 @@
         <div *ngIf="totalCount$ | async as totalCount; else noData">
             <div *ngIf="!loading && totalNumbersTop" class="totalsNumbers" [ngStyle]="{ top: totalNumbersTop }">
                 <span class="range-name" [ngStyle]="{color: rangeColor}">{{percentage && rangeName}}</span>
-                <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCount}}</span>
+                <span class="total-count" [ngStyle]="{color: rangeColor}">
+                    <ng-container *ngIf="selectedTotal.value.format == 'currency'; else plain">{{rangeCount || totalCount | currency:currency:'symbol':'1.0-2'}}</ng-container>
+                    <ng-template #plain>{{(rangeCount || totalCount).toLocaleString('en')}}</ng-template>
+                </span>
                 <span class="percentage" [ngStyle]="{color: rangeColor}">{{percentage}}</span>
             </div>
             <div class="round-progress">

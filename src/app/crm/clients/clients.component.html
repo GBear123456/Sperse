@@ -113,13 +113,13 @@
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-pager [visible]="true"></dxo-pager>
                         <dxo-selection selectAllMode="page"
-                                    showCheckBoxesMode="always"
-                                    mode="multiple">
+                                       showCheckBoxesMode="always"
+                                       mode="multiple">
                         </dxo-selection>
                         <dxo-editing mode="popup"
-                                    [texts]="{ editRow: '' }"
-                                    [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
-                                    [allowUpdating]="true">
+                                     [texts]="{ editRow: '' }"
+                                     [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                                     [allowUpdating]="true">
                         </dxo-editing>
                         <dxo-scrolling mode="infinite"></dxo-scrolling>
                         <dxi-column caption=""
@@ -213,11 +213,17 @@
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="clientFields.AffiliateRateTier2" 
+                        <dxi-column [dataField]="clientFields.AffiliateRateTier2"
                                     [caption]="l('AffiliateRateTier2')"
-                                    format="percent" 
+                                    format="percent"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column *ngIf="isOrdersInvoicesAllowed"
+                                    [dataField]="clientFields.TotalRevenue"
+                                    [caption]="l('Contact.TotalRevenue')"
+                                    [visible]="false"
+                                    cellTemplate="amountTemplate">
                         </dxi-column>
 
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
@@ -241,13 +247,13 @@
                             <div class="star star-{{starsLookup[cellData.value] ? starsLookup[cellData.value].colorType.toLowerCase() : 'default'}}"></div>
                         </ng-container>
                         <div *dxTemplate="let cellData of 'emailCell'" class="clipboard-holder">
-                            <span style="font-family: 'Montserrat' !important;">{{cellData.value}}
+                            <span style="font-family: 'Montserrat' !important;">
+                                {{cellData.value}}
                                 <span *ngIf="!cellData.data.IsSubscribedToEmails" id="unsubscribedStatus{{cellData.data.Id}}" class="unsubscribed-status">
-                                    <dx-tooltip
-                                        position="bottom" 
-                                        target="#unsubscribedStatus{{cellData.data.Id}}" 
-                                        showEvent="dxhoverstart" 
-                                        hideEvent="dxhoverend">
+                                    <dx-tooltip position="bottom"
+                                                target="#unsubscribedStatus{{cellData.data.Id}}"
+                                                showEvent="dxhoverstart"
+                                                hideEvent="dxhoverend">
                                         <div>{{ l('ContactIsUnsubscribedFromEmails') }}</div>
                                     </dx-tooltip>
                                 </span>
@@ -255,6 +261,9 @@
                         </div>
                         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                             {{cellData.value | phone}}
+                        </div>
+                        <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder" (click)="showClientOrderInvoices(cell.data)">
+                            <span> {{ (isNumber(cell.value) ? cell.value : 0) | currency:currency:'symbol':'1.2-2' }} </span>
                         </div>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>

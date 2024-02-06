@@ -17,8 +17,10 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
-import { Subject, BehaviorSubject, combineLatest, concat, merge, 
-    Observable, of, Subscription, forkJoin, from } from 'rxjs';
+import {
+    Subject, BehaviorSubject, combineLatest, concat, merge,
+    Observable, of, Subscription, forkJoin, from
+} from 'rxjs';
 import {
     filter,
     finalize,
@@ -80,7 +82,7 @@ import {
     ProductType,
     ProductServiceProxy,
     ContactEmailServiceProxy,
-    ContactServiceProxy,    
+    ContactServiceProxy,
     CreateContactEmailInput,
     LayoutType
 } from '@shared/service-proxies/service-proxies';
@@ -132,6 +134,7 @@ import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/mode
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AppFeatures } from '@shared/AppFeatures';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -170,12 +173,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private readonly dateField = 'ContactDate';
     private subRouteParams: any;
     private dependencyChanged = false;
+
+    isNumber = parseFloat;
     rowsViewHeight: number;
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
+    isOrdersInvoicesAllowed = this.isGranted(AppPermissions.CRMOrdersInvoices);
     isOrdersMergeAllowed = this.isGranted(AppPermissions.CRMOrdersManage);
 
     starsLookup = {};
     formatting = AppConsts.formatting;
+    currency: string = SettingsHelper.getCurrency();
     isCfoLinkOrVerifyEnabled = this.appService.isCfoLinkOrVerifyEnabled;
     canSendVerificationRequest = this.appService.canSendVerificationRequest();
     isCFOClientAccessAllowed = this.appService.checkCFOClientAccessPermission();
@@ -254,7 +261,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelStatus: FilterModel = new FilterModel({
         component: FilterContactStatusComponent,
         caption: 'status',
-        filterMethod: () => {return {}},
+        filterMethod: () => { return {} },
         isSelected: true,
         items: {
             element: new FilterContactStatusModel({
@@ -299,7 +306,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     }
                 })
         }
-    });    
+    });
     contactStatus = ContactStatus;
     selectedClientKeys: any = [];
     get selectedClients(): Observable<ContactDto[]> {
@@ -415,7 +422,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     text: this.l('Appointment'),
                     class: 'appointment',
                     disabled: true,
-                    action: () => {}
+                    action: () => { }
                 },
                 {
                     text: this.l('Orders'),
@@ -429,7 +436,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     text: this.l('Notifications'),
                     class: 'notifications',
                     disabled: true,
-                    action: () => {}
+                    action: () => { }
                 }
             ]
         },
@@ -470,7 +477,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 contactGroupId: ContactGroup.Client,
                 ...this.getSubscriptionFilterObjectValue()
             };
-            (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
+            (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({ params: params });
 
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
@@ -595,7 +602,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         contactGroupId: ContactGroup.Client,
                         ...this.getSubscriptionFilterObjectValue()
                     };
-                    (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
+                    (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({ params: params });
 
                     const chartDataUrl = this.chartDataUrl || this.crmService.getChartDataUrl(
                         this.getODataUrl(this.groupDataSourceURI),
@@ -680,7 +687,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     });
     private filters: FilterModel[] = this.getFilters();
-    loadTotalsRequest: Subject<ODataRequestValues> = new Subject<ODataRequestValues>(); 
+    loadTotalsRequest: Subject<ODataRequestValues> = new Subject<ODataRequestValues>();
     loadTotalsRequest$: Observable<ODataRequestValues> = this.loadTotalsRequest.asObservable();
     odataRequestValues$: Observable<ODataRequestValues> = concat(
         this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom),
@@ -759,7 +766,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     );
 
                     (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams(request);
-                    
+
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -806,7 +813,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 errorHandler: (e: any) => {
                     this.totalErrorMsg = this.l('AnHttpErrorOccured');
                     this.changeDetectorRef.detectChanges();
-                }                
+                }
             })
         });
     }
@@ -876,7 +883,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-            switchMap(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+            switchMap(([odataRequestValues,]: [ODataRequestValues, null]) => {
                 return this.loadTotalsRequest$.pipe(first(), map(() => odataRequestValues));
             })
         ).subscribe((odataRequestValues: ODataRequestValues) => {
@@ -922,9 +929,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.listenForUpdate(DataLayoutType.Chart)
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(([summaryBy, [odataRequestValues, ]]: [SummaryBy, [ODataRequestValues, ]]) => {
-            let params = {contactGroupId: ContactGroup.Client};
-            (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
+        ).subscribe(([summaryBy, [odataRequestValues,]]: [SummaryBy, [ODataRequestValues,]]) => {
+            let params = { contactGroupId: ContactGroup.Client };
+            (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({ params: params });
 
             const chartDataUrl = this.crmService.getChartDataUrl(
                 this.getODataUrl(this.groupDataSourceURI),
@@ -947,12 +954,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.listenForUpdate(DataLayoutType.Map),
             this.selectedMapArea$
         ).pipe(
-            map(([[odataRequestValues, ], mapArea]: [[ODataRequestValues, null], MapArea]) => {
+            map(([[odataRequestValues,], mapArea]: [[ODataRequestValues, null], MapArea]) => {
                 let params = {
                     contactGroupId: ContactGroup.Client,
                     ...this.getSubscriptionFilterObjectValue()
                 };
-                (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
+                (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({ params: params });
 
                 return this.mapService.getSliceMapUrl(
                     this.getODataUrl(this.groupDataSourceURI),
@@ -1010,7 +1017,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if (params['refresh'] || searchValueChanged) {
                         this.refresh();
                     }
-            });
+                });
     }
 
     onContentReady(event) {
@@ -1079,16 +1086,31 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             setTimeout(() => {
                 this._router.navigate(
                     CrmService.getEntityDetailsLink(clientId, section, null, orgId),
-                    { 
+                    {
                         queryParams: {
-                            contactGroupId: ContactGroup.Client, 
-                            referrer: 'app/crm/clients', 
-                            ...queryParams 
+                            contactGroupId: ContactGroup.Client,
+                            referrer: 'app/crm/clients',
+                            ...queryParams
                         }
                     }
                 );
             });
         }
+    }
+
+    showClientOrderInvoices(data: ContactDto) {
+        if (!this.isOrdersInvoicesAllowed || !data.Id)
+            return;
+
+        this.searchClear = false;
+        this._router.navigate(
+            CrmService.getEntityDetailsLink(data.Id, 'invoices', null, data.OrganizationId),
+            {
+                queryParams: {
+                    referrer: 'app/crm/clients'
+                }
+            }
+        );
     }
 
     initFilterConfig() {
@@ -1127,7 +1149,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 component: FilterInputsComponent,
                 operator: 'startswith',
                 caption: 'name',
-                items: { Name: new FilterItemModel()}
+                items: { Name: new FilterItemModel() }
             }),
             new FilterModel({
                 component: FilterMultilineInputComponent,
@@ -1168,7 +1190,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }),
             new FilterModel({
                 component: FilterInputsComponent,
-                options: { type: 'number', min: 0, max: 100},
+                options: { type: 'number', min: 0, max: 100 },
                 operator: { from: 'ge', to: 'le' },
                 caption: 'AffiliateRate',
                 field: 'AffiliateRate',
@@ -1179,7 +1201,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }),
             new FilterModel({
                 component: FilterInputsComponent,
-                options: { type: 'number', min: 0, max: 100},
+                options: { type: 'number', min: 0, max: 100 },
                 operator: { from: 'ge', to: 'le' },
                 caption: 'AffiliateRateTier2',
                 field: 'AffiliateRateTier2',
@@ -1192,7 +1214,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.contactService.getFeatureCount(AppFeatures.CRMMaxProductCount) ? [this.subscriptionStatusFilter] : [],
             [new FilterModel({
                 component: FilterCalendarComponent,
-                operator: {from: 'ge', to: 'le'},
+                operator: { from: 'ge', to: 'le' },
                 caption: 'creation',
                 field: this.dateField,
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
@@ -1248,7 +1270,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 filterMethod: FiltersService.filterByBooleanValue,
                 items: {
                     element: new FilterNullableRadioGroupModel({
-                        value:  undefined,
+                        value: undefined,
                         list: [
                             { id: true, name: this.l('CommunicationPreferencesStatus_Subscribed') },
                             { id: false, name: this.l('CommunicationPreferencesStatus_Unsubscribed') }
@@ -1256,7 +1278,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     })
                 }
             })
-        ]);
+            ]);
     }
 
     initToolbarConfig() {
@@ -1388,7 +1410,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     disabled: this.selectedClientKeys.length != 1, // need update
                                     action: () => {
                                         this.selectedClients.subscribe((clients: ContactDto[]) => {
-                                            const client =  clients[0];
+                                            const client = clients[0];
                                             this.contactService.deleteContact(
                                                 client.Name,
                                                 [ContactGroup.Client],
@@ -1412,23 +1434,23 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                             });
                                         });
                                     }
-                               },
-                               {
-                                   text: this.l('AddSubscription'),
-                                   visible: this.isOrdersMergeAllowed,
-                                   disabled: !this.selectedClientKeys.length,
-                                   action: () => {
-                                       this.selectedClients.subscribe((clients: ContactDto[]) => {
-                                           this.dialog.open(AddSubscriptionDialogComponent, {
-                                               panelClass: ['slider'],
-                                               hasBackdrop: false,
-                                               closeOnNavigation: false,
-                                               disableClose: true,
-                                               data: clients
-                                           });
-                                       });
-                                   }
-                               }
+                                },
+                                {
+                                    text: this.l('AddSubscription'),
+                                    visible: this.isOrdersMergeAllowed,
+                                    disabled: !this.selectedClientKeys.length,
+                                    action: () => {
+                                        this.selectedClients.subscribe((clients: ContactDto[]) => {
+                                            this.dialog.open(AddSubscriptionDialogComponent, {
+                                                panelClass: ['slider'],
+                                                hasBackdrop: false,
+                                                closeOnNavigation: false,
+                                                disableClose: true,
+                                                data: clients
+                                            });
+                                        });
+                                    }
+                                }
                             ]
                         }
                     }
@@ -1451,9 +1473,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                         this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             this.contactService.showEmailDialog({
                                                 to: clients.map(lead => lead.Email).filter(Boolean),
-                                                ...(clients.length > 1 ? 
-                                                    {contactIds: this.selectedClientKeys} : 
-                                                    {contactId: this.selectedClientKeys[0]}
+                                                ...(clients.length > 1 ?
+                                                    { contactIds: this.selectedClientKeys } :
+                                                    { contactId: this.selectedClientKeys[0] }
                                                 )
                                             }).subscribe();
                                         });
@@ -1475,10 +1497,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                         });
                                     }
                                 }
-                           ]
-                       }
-                   }
-               ]
+                            ]
+                        }
+                    }
+                ]
             },
             {
                 location: 'after',
@@ -1712,13 +1734,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
             this._refresh.next(null);
-            this._router.navigate([], {queryParams: {search: this.searchValue}});
+            this._router.navigate([], { queryParams: { search: this.searchValue } });
             this.changeDetectorRef.detectChanges();
         }
     }
 
     processFilterInternal() {
-        if (this.showDataGrid && this.dataGrid && this.dataGrid.instance || this.showPivotGrid && 
+        if (this.showDataGrid && this.dataGrid && this.dataGrid.instance || this.showPivotGrid &&
             this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
         ) {
             this.dataSource['total'] = this.dataSource['entities'] = undefined;
@@ -1751,7 +1773,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     onCellClick($event) {
         let col = $event.column;
-        if (col && (col.command || col.name == 'LinkToCFO'))
+        if (col && (col.command || col.name == 'LinkToCFO' || col.name == this.clientFields.TotalRevenue))
             return;
         this.showClientDetails($event);
     }
@@ -1782,7 +1804,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 isActive: true,
                 isCompany: false,
                 comment: '',
-                deleteItem: () => {}
+                deleteItem: () => { }
             };
 
             this.dialog.open(EditContactDialog, {
@@ -1876,8 +1898,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     onDragEnd = e => {
         if (e && e.fromIndex != e.toIndex) {
             forkJoin(
-                from (e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
-                from (e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
+                from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
+                from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [ContactDto, ContactDto]) => {
                 this.contactService.mergeContact(source, target, ContactGroup.Client, true, true, () => this.refresh());
             });
@@ -1923,13 +1945,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     filterByStatusApply(data) {
-        let filterElement: FilterContactStatusModel = 
+        let filterElement: FilterContactStatusModel =
             <FilterContactStatusModel>this.filterModelStatus.items.element;
         if (!data || filterElement.value == data.id)
             filterElement.value = [];
         else {
             filterElement.value = [data.id];
-            filterElement.includeProspective = 
+            filterElement.includeProspective =
                 filterElement.FILTER_EXCLUDE_PROSPECTIVE;
         }
     }
