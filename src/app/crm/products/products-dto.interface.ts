@@ -1,3 +1,5 @@
+import { CustomPeriodType, RecurringPaymentFrequency } from "@shared/service-proxies/service-proxies";
+
 export interface ProductDto {
     Id: number;
     Code: string;
@@ -14,4 +16,15 @@ export interface ProductDto {
     IsPublished: boolean;
     AllowCoupon: boolean;
     PublishDate: string;
+    ProductSubscriptionOptions: ProductSubscriptionOption[];
+}
+
+export interface ProductSubscriptionOption {
+    SignupFee: number;
+    Fee: number;
+    Frequency: RecurringPaymentFrequency;
+    TrialDayCount: number;
+    CustomPeriodCount: number;
+    CustomPeriodType: CustomPeriodType;
+    GracePeriodDayCount: number;
 }

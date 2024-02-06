@@ -30,7 +30,6 @@
             <div class="portlet-body">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
                 <dx-data-grid class="main-component-view"
-                              hint="Products"
                               accesskey="narrowHeaderPanel"
                               [renderAsync]="true"
                               [dataSource]="dataSource"
@@ -75,7 +74,7 @@
                     <dxi-column [dataField]="productFields.Code" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.Description" [caption]="l('Description')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.Group" [caption]="l('Group')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [dataField]="productFields.Unit" [caption]="l('Unit')"></dxi-column>
+                    <dxi-column [dataField]="productFields.Unit" [caption]="l('Unit')" cellTemplate="unitTemplate"></dxi-column>
                     <dxi-column [dataField]="productFields.Price" [caption]="l('Price')" cellTemplate="amountTemplate" cssClass="price"></dxi-column>
                     <dxi-column [dataField]="productFields.Type" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.IsPublished" [caption]="l('IsPublished')"></dxi-column>
@@ -83,7 +82,7 @@
                     <dxi-column [dataField]="productFields.PublicName" [caption]="l('PublicName')" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.CreateUser" [caption]="l('Create User')" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.AllowCoupon" [caption]="l('Allow Coupon')" [visible]="false"></dxi-column>
-                    <dxi-column [dataField]="productFields.PublishDate" [caption]="l('Publish Date')" [visible]="false" cellTemplate="dateCell"></dxi-column>                    
+                    <dxi-column [dataField]="productFields.PublishDate" [caption]="l('Publish Date')" [visible]="false" cellTemplate="dateCell"></dxi-column>
                     <dxi-column caption="" cellTemplate="actionTemplate" [width]="60"></dxi-column>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                         {{cellData.value | datetime: formatting.dateTimeMoment }}
@@ -94,14 +93,31 @@
                             <img src="assets/common/icons/copy-black.svg" (click)="copyToClipbord($event, cell.data)" />
                         </ng-container>
                     </div>
-                    <div *dxTemplate="let cell of 'actionTemplate'" 
-                        class="dx-link dx-link-edit">
+                    <div *dxTemplate="let cell of 'actionTemplate'"
+                         class="dx-link dx-link-edit">
                     </div>
                     <div *dxTemplate="let cell of 'imageTemplate'" class="image-column {{cell.data.ThumbnailUrl ? '' : 'no-image'}}">
                         <img [src]="cell.data.ThumbnailUrl || 'assets/common/images/no-image.svg'" />
                     </div>
+                    <div *dxTemplate="let cell of 'unitTemplate'" class="clipboard-holder">
+                        {{cell.data.Unit || cell.data.ProductSubscriptionOptions[0].Frequency}}
+                    </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder price-column">
-                        <span> {{ cell.data.Price | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
+                        <span id="product{{cell.data.Id}}" [ngClass]="{'underline': cell.data.ProductSubscriptionOptions.length > 1}">
+                            {{ (cell.data.Price != null ? cell.data.Price : cell.data.ProductSubscriptionOptions[0].Fee) | currency:cell.data.CurrencyId:'symbol':'1.2-2' }}
+                        </span>
+                        <dx-tooltip *ngIf="cell.data.ProductSubscriptionOptions.length > 1"
+                                    position="bottom"
+                                    target="#product{{cell.data.Id}}"
+                                    showEvent="dxhoverstart"
+                                    hideEvent="dxhoverend">
+                            <div *dxTemplate="let data of 'content'" class="product-subscr-options">
+                                <div><h3>{{l('Type')}}</h3><h3>{{l('Price')}}</h3></div>
+                                <div *ngFor="let option of cell.data.ProductSubscriptionOptions">
+                                    <label>{{getSubscrOptionDescription(option)}}:</label><span>{{option.Fee | currency:cell.data.CurrencyId:'symbol':'1.2-2'}}</span>
+                                </div>
+                            </div>
+                        </dx-tooltip>
                     </div>
 
                     <dxo-sorting mode="multiple"></dxo-sorting>
@@ -119,7 +135,6 @@
     </div>
 </div>
 
-<app-no-data
-    [hidden]="!isDataLoaded || totalRowCount"
-    [showLink]="false">
+<app-no-data [hidden]="!isDataLoaded || totalRowCount"
+             [showLink]="false">
 </app-no-data>
