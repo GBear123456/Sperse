@@ -110,6 +110,7 @@ import { TenantSettingsWizardModule } from '@shared/common/tenant-settings-wizar
 import { ProductsComponent } from './products/products.component';
 import { CouponsComponent } from './coupons/coupons.component';
 import { AddCouponDialogComponent } from './coupons/add-coupon-dialog/add-coupon-dialog.component';
+import { TenantReportsComponent } from './tenant-reports/tenant-reports.component';
 import { CrmContactGroupGuard } from './crm-contact-group-guard';
 import { ZapierModule } from '@shared/common/zapier/zapier.module';
 
@@ -211,7 +212,8 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         RequestWithdrawalDialogComponent,
         UpdateCommissionableDialogComponent,
         UpdateCommissionRateDialogComponent,
-        EditTypeItemDialogComponent
+        EditTypeItemDialogComponent,
+        TenantReportsComponent
     ],
     providers: [
         ImportServiceProxy,

@@ -18,6 +18,7 @@ import { ActivityComponent } from './activity/activity.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { CommissionHistoryComponent } from './commission-history/commission-history.component';
+import { TenantReportsComponent } from './tenant-reports/tenant-reports.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { CrmContactGroupGuard } from '@app/crm/crm-contact-group-guard'
 import { InvoicesComponent } from './invoices/invoices.component';
@@ -44,6 +45,7 @@ import { ZapierComponent } from '@shared/common/zapier/zapier.component';
                     { path: 'import-leads', component: ImportLeadsComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRM, reuse: true } },
+                    { path: 'tenant-reports', component: TenantReportsComponent, data: { permission: AppPermissions.Tenants, reuse: true } },
                     { path: 'reports', component: ReportsComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     {
                         path: 'commission-history',
