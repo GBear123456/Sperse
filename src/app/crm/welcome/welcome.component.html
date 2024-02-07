@@ -6,7 +6,7 @@
 </app-headline>
 <div class="left">
     <div class="head">
-        <a (click)="openPaymentWizardDialog(true)">My Subscriptions</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a (click)="openIntroDialog()">Introduction Tour</a>
+        <a (click)="openPaymentWizardDialog(true)">My Subscriptions</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a (click)="openIntroDialog()">Introduction Tour</a><ng-container *ngIf="calendlyUri">&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a target="_blank" href="https://calendly.com/{{calendlyUri}}">Book a call to learn more</a></ng-container>
     </div>
     <dx-scroll-view showScrollbar="onHover" height="calc(100vh - 180px)">
         <div class="boxes">

@@ -52,6 +52,7 @@ export class WelcomeComponent implements OnInit {
     dialogConfig = new MatDialogConfig();
     isGrantedOrders = this.permission.isGranted(AppPermissions.CRMOrders);
 
+    calendlyUri = AppConsts.calendlyUri;
     stripePaymentSettings: StripeSettingsDto = new StripeSettingsDto();
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
     hasTenantPermission = this.permission.isGranted(AppPermissions.AdministrationTenantSettings);
