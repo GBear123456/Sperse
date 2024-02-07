@@ -55,6 +55,7 @@ import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboa
 import { CrmRoutingModule } from './crm-routing.module';
 import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
+import { WelcomeComponent } from './welcome/welcome.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { LeftMenuModule } from './shared/common/left-menu/left-menu.module';
@@ -192,6 +193,7 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         OrdersComponent,
         InvoicesComponent,
         ReportsComponent,
+        WelcomeComponent,
         DashboardComponent,        
         ImportListComponent,
         ImportLeadsComponent,

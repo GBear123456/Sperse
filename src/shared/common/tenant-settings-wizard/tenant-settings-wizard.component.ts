@@ -5,13 +5,14 @@ import {
     Component,
     ElementRef,
     ViewChild,
-    AfterViewInit
+    AfterViewInit,
+    Inject
 } from '@angular/core';
 
 /** Third party imports */
 import { MessageService } from 'abp-ng2-module';
 import { MatVerticalStepper } from '@angular/material/stepper';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
@@ -107,11 +108,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     );
     securitySettings$: Observable<SecuritySettingsEditDto> = this.tenantSettingsService.getSecuritySettings();
     emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
-    appearanceSettingsChanged: Boolean;
-    generalSettingsChanged: Boolean;
-    timezoneChanged: Boolean;
-    countryChanged: Boolean;
-    currencyChanged: Boolean;
+    changedReloadOption: string;
 
     constructor(
         private featureCheckerService: FeatureCheckerService,
@@ -125,29 +122,38 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         private messageService: MessageService,
         private commonLookupServiceProxy: CommonLookupServiceProxy,
         public ls: AppLocalizationService,
-        public appService: AppService
+        public appService: AppService,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef.afterClosed().subscribe(() => {
-            if (this.timezoneChanged)
-                this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
-                    window.location.reload();
-                });
-            if (this.countryChanged)
-                this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Country'))).done(() => {
-                    window.location.reload();
-                });
-            if (this.generalSettingsChanged)
-                this.messageService.info(this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('General'))).done(() => {
-                    window.location.reload();
-                });
-            if (this.currencyChanged)
-                this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Currency'))).done(() => {
-                    window.location.reload();
-                });
-            if (this.appearanceSettingsChanged)
-                this.messageService.info(this.ls.l('ReloadPageStylesMessage')).done(() => {
-                    window.location.reload();
-                });
+            if (!this.changedReloadOption)
+                return;
+
+            let message;
+            switch (this.changedReloadOption) {
+                case 'timezone':
+                    message = this.ls.l('TimeZoneSettingChangedRefreshPageNotification');
+                    break;
+                case 'defaultCountry':
+                    message = this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Country'));
+                    break;
+                case 'SignUpPageEnabled':
+                    message = this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('General'));
+                    break;
+                case 'navPosition':
+                    message = this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'));
+                    break;
+                case 'currency':
+                    message = this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Currency')));
+                    break;
+                case 'appearance':
+                    message = this.messageService.info(this.ls.l('ReloadPageStylesMessage'));
+                    break;
+            }
+
+            this.messageService.info(message).done(() => {
+                window.location.reload();
+            });
         });
     }
 
@@ -249,6 +255,19 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 visible: this.showLandingPageSettings
             }
         ];
+
+        if (this.data.tab) {
+            let selectedIndex = 0;
+            this.steps.map((step, index) => {
+                if (step.visible) {                    
+                    if (step.name == this.data.tab) {
+                        this.stepper.selectedIndex = selectedIndex;
+                        this.changeDetectorRef.detectChanges();
+                    }
+                    selectedIndex++;
+                }
+            });
+        }    
     }
 
     back() {
@@ -289,15 +308,6 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     }
 
     onOptionChanged(option: string) {
-        if (option == 'SignUpPageEnabled')
-            this.generalSettingsChanged = true;
-        if (option == 'timezone')
-            this.timezoneChanged = true;
-        if (option == 'defaultCountry')
-            this.countryChanged = true;
-        if (option == 'currency')
-            this.currencyChanged = true;
-        if (option == 'appearance')
-            this.appearanceSettingsChanged = true;
+        this.changedReloadOption = option;
     }
 }

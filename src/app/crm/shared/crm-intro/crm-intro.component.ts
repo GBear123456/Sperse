@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ElementRef, Inject, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Injector, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -27,7 +27,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     ],
     providers: [ RoleServiceProxy, UserServiceProxy ]
 })
-export class CrmIntroComponent implements OnInit {
+export class CrmIntroComponent implements OnInit, AfterViewInit {
     @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
     @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
     @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
@@ -61,6 +61,14 @@ export class CrmIntroComponent implements OnInit {
     ngOnInit() {
         this.stepper.selectedIndex = 1;
         if (this.showImportUsersStep) this.getAvailableUserCount();
+    }
+
+    ngAfterViewInit() {
+        if (this.data.showLastStep) {
+            setTimeout(() => {
+                this.stepper.selectedIndex = this.stepper.steps.length - 1;
+            }, 500);
+        }        
     }
 
     onSubmit() {

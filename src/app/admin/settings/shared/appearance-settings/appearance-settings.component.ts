@@ -10,10 +10,11 @@ import kebabCase from 'lodash/kebabCase';
 import {
     CustomCssType,
     LayoutType,
-    AppearanceSettingsEditDto,
+    NavPosition,
     TenantCustomizationServiceProxy,
+    TenantLoginInfoDto,
     TenantSettingsServiceProxy,
-    TenantLoginInfoDto
+    AppearanceSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { SettingsComponentBase } from './../settings-base.component';
@@ -52,12 +53,21 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     appearance: AppearanceSettingsEditDto = new AppearanceSettingsEditDto();
 
+    navPosition = this.getNavPosition();
+    navPositionOptions = Object.keys(NavPosition).map(item => {
+        return {
+            id: NavPosition[item],
+            text: this.l('NavPosition_' + item)
+        };
+    });
+
     constructor(
         _injector: Injector,
     private layoutService: LayoutService,
         private faviconsService: FaviconService,
     private settingsProxy: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
+        private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         private settingService: SettingService
     ) {
         super(_injector);
@@ -83,9 +93,12 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         if (this.appearance.navTextColor == this.defaultTextColor)
             this.appearance.navTextColor = null;
 
+        if (this.getNavPosition() != this.navPosition)
+            this.appearance.navPosition = this.navPosition;
+
         return forkJoin(
-        this.someColorChanged ?
-            this.settingsProxy.updateAppearanceSettings(this.appearance) : of(null),
+            this.someColorChanged ?
+                this.settingsProxy.updateAppearanceSettings(this.appearance) : of(null),
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
                     this.tenant.logoId = res.result && res.result.id;
@@ -107,17 +120,23 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         );
     }
 
+    afterSave() {
+        if (this.someCssChanged || this.someColorChanged)
+            this.message.info(this.l('ReloadPageStylesMessage')).then(() => window.location.reload());
+
+        if (this.getNavPosition() != this.navPosition) {
+            this.message.info(this.l('SettingsChangedRefreshPageNotification', this.l('NavigationMenuPosition'))).done(function () {
+                window.location.reload();
+            });
+        }
+    }
+
     handleCssUpload(cssType: CustomCssType, res: any) {
         if (res.result && res.result.id) {
             this.someCssChanged = true;
             this.setCustomCssTenantProperty(cssType, res.result.id);
             this.changeDetection.detectChanges();
         }
-    }
-
-    afterSave() {
-        if (this.someCssChanged || this.someColorChanged)
-            this.message.info(this.l('ReloadPageStylesMessage')).then(() => window.location.reload());
     }
 
     clearLogo(): void {
@@ -172,9 +191,13 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             return basePath + 'platform-custom-style.css';
     }
 
+    getNavPosition(): NavPosition {
+        return NavPosition[this.settingService.get('App.Appearance.NavPosition')];
+    }
+
     onColorValueChanged(event, defaultColor) {
-    this.someColorChanged = true;
-    if (!event.value)
-        event.component.option('value', defaultColor);
+        this.someColorChanged = true;
+        if (!event.value)
+            event.component.option('value', defaultColor);
     }
 }

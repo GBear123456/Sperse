@@ -35,6 +35,10 @@
     <div class="toggle-button-container" [ngClass]="toggleButtonPosition" *ngIf="showHeadlineMenuToggleButton">
         <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons()"></button>
         <ul *ngIf="showHeadlineButtons" class="buttons">
+            <li *ngIf="layoutService.showLeftBar" (click)="toggleLeftBar()">
+                <div><i class="icon left-menu {{'dx-icon-' + (layoutService.expandedLeftBarSubject.value ? 'hide' : 'show') + 'panel'}}"></i></div>
+                <span class="text">{{( layoutService.expandedLeftBarSubject.value ? ls.l('Collapse') : ls.l('Expand') ) + ' Left Bar'}}</span>
+            </li>
             <li *ngIf="showReloadButton && !showRefreshButtonSeparately" (click)="reload($event)">
                 <div><span class="icon reload"></span></div>
                 <span class="text">{{ ls.l('ReloadTheCurrentPage') }}</span>

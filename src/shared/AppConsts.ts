@@ -1,4 +1,5 @@
 export class AppConsts {
+    static readonly calendlyUri = 'sperse';
     static readonly tenancyNamePlaceHolderInUrl = '{TENANCY_NAME}';
     static readonly defaultTenantName = 'Sperse';
     static readonly defaultDomain = 'sperse.com';

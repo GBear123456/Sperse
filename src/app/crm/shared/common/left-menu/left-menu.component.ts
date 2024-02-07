@@ -1,5 +1,6 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Output, Input, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Output, Input, 
+    HostBinding, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -17,6 +18,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -27,6 +29,8 @@ import { AppConsts } from '@shared/AppConsts';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LeftMenuComponent implements OnInit {
+    @HostBinding('class.left-nav-menu') showLeftBar = this.layoutService.showLeftBar;
+
     @Input() selectedItemIndex: number;
     @Input() showIntroductionTour = false;
     @Input() currentContactGroup: ContactGroup;
@@ -43,6 +47,7 @@ export class LeftMenuComponent implements OnInit {
         private permissionChecker: AppPermissionService,
         private feature: FeatureCheckerService,
         private dialog: MatDialog,
+        public layoutService: LayoutService,
         public appService: AppService,
         public ls: AppLocalizationService,
         private changeDetector: ChangeDetectorRef,
@@ -54,6 +59,12 @@ export class LeftMenuComponent implements OnInit {
 
     initMenuItems() {
         this.leftMenuItems = [
+            {
+                caption: this.ls.l('Home'),
+                visible: !this.appService.isHostTenant,
+                iconSrc: 'assets/common/icons/home.svg',
+                component: '/welcome'
+            },
             {
                 caption: this.ls.l('MySubscriptions'),
                 visible: !this.appService.isHostTenant &&

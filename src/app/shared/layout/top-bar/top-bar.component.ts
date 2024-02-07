@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Inject, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -36,7 +36,7 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
     },
     providers: [ LifecycleSubjectsService ]
 })
-export class TopBarComponent implements OnInit, OnDestroy {
+export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxNavBarComponent) navBar: DxNavBarComponent;
 
     config: ConfigInterface;
@@ -113,6 +113,10 @@ export class TopBarComponent implements OnInit, OnDestroy {
         ).subscribe(() => {
             this.updateNavMenu(true);
         });
+    }
+
+    ngAfterViewInit() {
+        this.appService.initModule();
     }
 
     get showGlobalSearch():  boolean {

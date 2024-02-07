@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, AfterViewInit, HostBinding, OnDestroy, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -9,6 +9,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppService } from '@app/app.service';
 
 @Component({
@@ -18,11 +19,13 @@ import { AppService } from '@app/app.service';
 export class SwaggerComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     link: SafeResourceUrl;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
+    @HostBinding('class.showLeftBar') showLeftBar = false;
 
     constructor(
         injector: Injector,
         private appService: AppService,
         private sanitizer: DomSanitizer,
+        public layoutService: LayoutService,
         private leftMenuService: LeftMenuService
     ) {
         super(injector);
@@ -33,6 +36,7 @@ export class SwaggerComponent extends AppComponentBase implements AfterViewInit,
     }
 
     ngOnInit() {
+        this.showLeftBar = this.layoutService.showLeftBar;
         this.appService.isClientSearchDisabled = true;
         window.addEventListener('message', this.onSwaggerLoaded);
         if (AppConsts.remoteServiceBaseUrl == AppConsts.appBaseUrl) {

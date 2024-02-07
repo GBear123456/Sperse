@@ -1,3 +1,5 @@
-<left-menu [selectedItemIndex]="selectedItemIndex"
-           [items]="leftMenuItems">
+<left-menu 
+    [ngClass]="{showLeftBar: layoutService.showLeftBar}"
+    [selectedItemIndex]="selectedItemIndex"
+    [items]="leftMenuItems">
 </left-menu>

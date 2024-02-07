@@ -16,6 +16,7 @@ import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-p
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LeftMenuComponent } from '../../shared/common/left-menu/left-menu.component';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppService } from '@app/app.service';
 
 @Component({
@@ -45,6 +46,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         private dashboardService: DashboardService,
         public bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
+        public layoutService: LayoutService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
