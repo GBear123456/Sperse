@@ -5,9 +5,9 @@
     [showReloadButton]="true">
 </app-headline>
 <div class="left">
-    <div class="head">
+    <!-- div class="head">
         <a (click)="openPaymentWizardDialog(true)">My Subscriptions</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a (click)="openIntroDialog()">Introduction Tour</a><ng-container *ngIf="calendlyUri">&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a target="_blank" href="https://calendly.com/{{calendlyUri}}">Book a call to learn more</a></ng-container>
-    </div>
+    </div -->
     <dx-scroll-view showScrollbar="onHover" height="calc(100vh - 180px)">
         <div class="boxes">
             <div class="box">
@@ -215,12 +215,12 @@
                 <p class="p">Current plan: <b>{{subscriptionName}}</b></p>
             </div>
             <div class="group-2">
-                <p class="text-wrapper-2">Book a call to learn more</p>
+                <a class="text-wrapper-2" target="_blank" href="https://calendly.com/{{calendlyUri}}">Book a call to learn more</a>
                 <div class="text-wrapper-3" (click)="openIntroDialog()">Learn More: introductory Tour</div>
                 <div class="ellipse-2"></div>
                 <div class="ellipse-3"></div>
                 <div class="overlap-2">
-                    <div class="book-your-free">Book Your Free <br />Discovery Call </div>
+                    <div class="book-your-free">Book Your Free <br />Discovery Call</div>
                     <img class="img" src="assets/common/images/avatar.svg" />
                 </div>
             </div>
