@@ -5,7 +5,7 @@
 
     ::ng-deep app-headline {
         .headline-title {
-            flex: 3;
+            padding-left: 0!important;
         }
         .header-names {
             margin: auto;
@@ -17,6 +17,9 @@
             line-height: 27px;
             letter-spacing: -0.02em;
             text-align: center;
+        }
+        .headline-content {
+            display: none;
         }
     }
 
@@ -268,6 +271,7 @@
         background: #F8FAFC;
         position: relative;
         height: calc(100vh - 95px);
+        display: none;
 
         .box {
             position: relative;
