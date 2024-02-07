@@ -109,6 +109,7 @@ import { EditTypeItemDialogComponent } from '@app/crm/shared/types-dropdown/edit
 import { TenantSettingsWizardModule } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
 import { ProductsComponent } from './products/products.component';
 import { CouponsComponent } from './coupons/coupons.component';
+import { EditTenantModule } from '@app/admin/tenants/edit-tenant-modal/edit-tenant-modal.module';
 import { AddCouponDialogComponent } from './coupons/add-coupon-dialog/add-coupon-dialog.component';
 import { TenantReportsComponent } from './tenant-reports/tenant-reports.component';
 import { CrmContactGroupGuard } from './crm-contact-group-guard';
@@ -181,7 +182,8 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         MatButtonModule,
         TenantSettingsWizardModule,
         LeftMenuModule,
-        ZapierModule
+        ZapierModule,
+        EditTenantModule
     ],
     declarations: [
         ClientsComponent,

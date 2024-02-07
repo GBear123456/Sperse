@@ -16,6 +16,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import {
+    EntityDtoOfInt64,
     NameValueDto,
     TenantListDto,
     TenantServiceProxy
@@ -32,6 +33,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { EditTenantModalComponent } from '@app/admin/tenants/edit-tenant-modal/edit-tenant-modal.component';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ContactGroup } from '@shared/AppEnums';
 
@@ -48,9 +50,42 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
     private filters: FilterModel[];
     public actionMenuItems: ActionMenuItem[] = [
         {
+            text: this.l('LoginAsThisTenant'),
+            class: 'login',
+            visible: this.permission.isGranted(AppPermissions.TenantsImpersonation),
+            action: () => {
+                this.showUserImpersonateLookUpModal(this.actionRecord);
+            }
+        },
+        {
+            text: this.l('LoginAsAdmin'),
+            visible: this.permission.isGranted(AppPermissions.TenantsImpersonation),
+            class: 'login',
+            action: () => {
+                this.impersonateAsAdmin(this.actionRecord);
+            }
+        },
+        {
+            text: this.l('Edit'),
+            class: 'edit',
+            visible: this.permission.isGranted(AppPermissions.TenantsEdit),
+            action: () => {
+                this.openEditDialog(this.actionRecord.id);
+            }
+        },
+        {
+            text: this.l('Delete'),
+            class: 'delete',
+            visible: this.permission.isGranted(AppPermissions.TenantsDelete),
+            action: () => {
+                this.deleteTenant(this.actionRecord);
+            }
+        },
+        {
             text: this.l('Unlock'),
             class: 'unlock',
             action: () => {
+                this.unlockUser(this.actionRecord);
             }
         }
     ].filter(Boolean);
@@ -314,10 +349,48 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
         });
     }
 
-    toggleActionsMenu(event) {
-        ActionMenuService.toggleActionMenu(event, this.actionRecord).subscribe((actionRecord) => {
-            this.actionRecord = actionRecord;
+    toggleActionsMenu(data) {
+        this.actionRecord = data;
+    }
+
+    editTenant(event) {
+        if (this.permission.isGranted(AppPermissions.AdministrationRolesEdit)) {
+            let roleId = event.data && event.data.id;
+            if (roleId) {
+                event.component.cancelEditData();
+                this.openEditDialog(roleId);
+            }
+        }
+    }
+
+    private openEditDialog(tenantId: number) {
+        this.dialog.open(EditTenantModalComponent, {
+            panelClass: ['slider'],
+            data: { tenantId: tenantId }
+        }).afterClosed().pipe(filter(Boolean)).subscribe(
+            () => this.invalidate()
+        );
+    }
+
+    unlockUser(record: any): void {
+        this.tenantService.unlockTenantAdmin(new EntityDtoOfInt64({ id: record.id })).subscribe(() => {
+            this.notify.success(this.l('UnlockedTenandAdmin', record.name));
         });
+    }
+
+    deleteTenant(tenant: TenantListDto): void {
+        this.message.confirm(
+            this.l('TenantDeleteWarningMessage', tenant.tenancyName),
+            this.l('AreYouSure'),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.tenantService.deleteTenant(tenant.id).subscribe(() => {
+                        this.dataGrid.instance.refresh();
+                        this.notify.success(this.l('SuccessfullyDeleted'));
+                    });
+                }
+            }
+        );
     }
 
     onMenuItemClick($event) {
@@ -348,6 +421,11 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
     getContactInfo(company: string) {
         if (this.contactRecords && this.contactRecords.length)
             return this.contactRecords.find(contact => contact.CompanyName == company);
+    }
+
+    onRowPrepared(event) {
+        if (event.data && !event.data.isActive)
+            event.rowElement.classList.add('inactive');
     }
 
     ngOnDestroy() {

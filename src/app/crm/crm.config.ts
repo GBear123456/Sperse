@@ -84,7 +84,7 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'TenantReports',
             icon: 'assets/common/icons/crm/reports.svg',
-            permission: AppPermissions.CRMCustomers,
+            permission: AppPermissions.Tenants,
             route: '/app/crm/tenant-reports'
         },
         {

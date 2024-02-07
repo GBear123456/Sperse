@@ -38,19 +38,19 @@
                                       [hoverStateEnabled]="true"
                                       [pager]="defaultGridPagerConfig"
                                       [loadPanel]="{ enabled: false }"
+                                      [groupPanel]="{ visible: false }"
+                                      [toolbar]="{ visible: false }"
                                       (onOptionChanged)="onGridOptionChanged($event)"
                                       (onInitialized)="onInitialized($event)"
                                       (onContentReady)="setGridDataLoaded()"
-                                      (onEditingStart)="toggleActionsMenu($event)"
+                                      (onRowPrepared)="onRowPrepared($event)"
                                       [dataSource]="dataSource">
                             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
-                            <!-- dxo-editing mode="popup" [allowUpdating]="true" [texts]="{editRow: ''}"></dxo-editing -->
 
                             <dxi-column [caption]="''" cellTemplate="Avatar" [width]="'69px'"></dxi-column>
 
                             <ng-container *dxTemplate="let cell of 'Avatar'">
                                 <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(cell.data.PhotoPublicId) + ')'}" class="img-circle"></div>
-                                <!-- img class="avatar" src="assets/common/images/avatar.svg" / -->
                             </ng-container>
 
                             <dxi-column [caption]="l('FullName') + ' / ' + l('Email') + ' / ' + l('Phone')" cellTemplate="Contact" headerCellTemplate="Header"></dxi-column>
@@ -84,17 +84,18 @@
                             <ng-container *dxTemplate="let cell of 'Created'">
                                 <div class="cell-wrapper">
                                     <div class="tenant-created"><label>{{l('Created on')}}</label><span>{{cell.data.creationTime | datetime: formatting.dateTimeMoment}}</span></div>
-                                    <div class="tenant-last-login"><label>{{l('Last Login on')}}</label><span>01/14/2024 9:25 AM</span></div>
+                                    <div class="tenant-last-login"><label>{{l('Last Login on')}}</label><span>{{cell.data.creationTime | datetime: formatting.dateTimeMoment}}</span></div>
                                     <div class="tenant-deactivated" *ngIf="!cell.data.isActive"><label>{{l('Deactivated')}}</label><span>01/14/2024 9:25 AM</span></div>
-                                    <div class="tenant-last-paid" *ngIf="cell.data.isActive"><label>{{l('Last Paid')}}</label><span>01/14/2024 9:25 AM</span></div>
+                                    <div class="tenant-last-paid" *ngIf="cell.data.isActive"><label>{{l('Last Paid')}}</label><span>{{cell.data.creationTime | datetime: formatting.dateTimeMoment}}</span></div>
                                 </div>
                             </ng-container>
 
-                            <dxi-column [caption]="l('Billing Status') + ' / ' + l('Plan') + ' / ' + l('Rate')" cellTemplate="Billing" headerCellTemplate="Header"></dxi-column>
+                            <dxi-column [caption]="l('Plan') + ' / ' + l('Rate') + ' / ' + l('Billing Status')" cellTemplate="Billing" headerCellTemplate="Header"></dxi-column>
                             <ng-container *dxTemplate="let cell of 'Billing'">
                                 <div class="cell-wrapper">
                                     <div class="billing-plan"><a>Enterprise Plan</a></div>
                                     <div class="billing-rate">$199.99/yr</div>
+                                    <div class="billing-status">Paying</div>
                                 </div>
                             </ng-container>
 
@@ -118,7 +119,8 @@
 
                             <dxi-column [caption]="l('Status')" cellTemplate="Status"></dxi-column>
                             <ng-container *dxTemplate="let cell of 'Status'">
-                                <div class="cell-wrapper status">{{cell.data.isActive ? 'Active' : 'Inactive'}} Paying</div>
+                                <div class="cell-wrapper status">{{cell.data.isActive ? 'Active' : 'Inactive'}}</div>
+                                <a class="dx-link dx-link-edit" (click)="toggleActionsMenu(cell.data)"></a>
                             </ng-container>
 
                             <ng-container *dxTemplate="let cell of 'Header'">
