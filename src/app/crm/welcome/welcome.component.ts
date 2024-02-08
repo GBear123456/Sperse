@@ -254,6 +254,9 @@ export class WelcomeComponent implements OnInit {
         });
     }
 
+    openCalendly() {
+        window.open('https://calendly.com/' + this.calendlyUri, '_blank');
+    }
 
     activate() {
         this.lifeCycleSubject.activate.next();

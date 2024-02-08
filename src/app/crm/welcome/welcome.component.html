@@ -22,18 +22,18 @@
                             <img class="btn-img" src="assets/common/icons/plus.svg" />
                             <div class="btn-text">New Product</div>
                         </button>
-                        <button class="button add-coupon" (click)="openCouponDialog()">
+                        <!-- button class="button add-coupon" (click)="openCouponDialog()">
                             <img class="btn-img" src="assets/common/icons/plus.svg" />
                             <div class="btn-text">New Coupons</div>
-                        </button>
+                        </button -->
                         <div class="points">
                             <div class="point" (click)="router.navigate(['app/crm/products'])">
                                 <img class="icon" src="assets/common/icons/new-subscription.svg" />
                                 <div class="label">Show All Products</div>
                             </div>
-                            <div class="point" (click)="router.navigate(['app/crm/coupons'])">
+                            <div class="point">
                                 <img class="icon" src="assets/common/icons/new-coupon.svg" />
-                                <div class="label">Show All Coupons</div>
+                                <div class="label"><u (click)="router.navigate(['app/crm/coupons'])">Show</u> or <u (click)="openCouponDialog()">Add</u> Coupons</div>
                             </div>
                         </div>
                     </div>
@@ -222,7 +222,7 @@
                 <div class="text-wrapper-3" (click)="openIntroDialog()">Learn More: Introduction Tour</div>
                 <div class="ellipse-2"></div>
                 <div class="ellipse-3"></div>
-                <div class="overlap-2">
+                <div class="overlap-2" (click)="openCalendly()">
                     <div class="book-your-free">Book Your Free <br />Discovery Call</div>
                     <img class="img" src="assets/common/images/avatar.svg" />
                 </div>

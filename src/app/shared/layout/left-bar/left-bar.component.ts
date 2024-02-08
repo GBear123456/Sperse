@@ -36,6 +36,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { ChatSignalrService } from '../chat/chat-signalr.service';
 import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
+import { PlatformSelectComponent } from '../platform-select/platform-select.component';
 
 @Component({
     templateUrl: './left-bar.component.html',
@@ -44,6 +45,8 @@ import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
     providers: [ LifecycleSubjectsService, CommonUserInfoServiceProxy ]
 })
 export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {     
+    @ViewChild(PlatformSelectComponent) platformSelector: PlatformSelectComponent;
+
     userCompany$: Observable<string>;
     dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
@@ -247,6 +250,11 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     logoClick() {
         location.href = origin;
+    }
+
+
+    showPlatformSelect() {
+        this.platformSelector.dropDownBox.instance.open();
     }
 
     @HostBinding('style.width') width: string = '90px';

@@ -1,6 +1,8 @@
 <div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
 
-<a routerLink="/app/crm/welcome" class="top-home"></a>                
+<a routerLink="/app/crm/welcome" class="top-home" (mouseover)="showPlatformSelect()">
+    <platform-select></platform-select>
+</a>                
 
 <div class="accordion-wrapper">
     <dx-accordion
@@ -74,7 +76,7 @@
         class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center  m-dropdown--mobile-full-width">
         <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
             <span class="m-nav__link-icon">
-                <img [src]="'./assets/common/icons/feedback' + (customLayoutType ? '-' + customLayoutType: '')  + '.svg'">
+                <img [src]="'./assets/common/icons/feedback' + (customLayoutType ? '-' + customLayoutType: '2')  + '.svg'">
             </span>
             <span class="m-badge m-badge--danger" [ngClass]="{'d-none': !unreadChatMessageCount}" id="UnreadChatMessageCount">{{unreadChatMessageCount}}</span>
         </a>

@@ -13,6 +13,13 @@
         top: 0;
     }
 
+    ::ng-deep .flaticon-music-2 {
+        &:before {
+            content: url(../../../../assets/common/icons/notification-bing.svg);
+            
+        }
+    }
+
     .nav-menu {
         ::ng-deep dx-menu {
             margin: auto auto auto 0;
@@ -88,6 +95,15 @@
         cursor: pointer;
         background: url(../../../../assets/common/icons/welcome.svg) center no-repeat;
         margin: 0px 18px 11px 18px;
+        overflow: hidden;
+
+        platform-select {
+            left: 40px;
+            position: relative;
+            top: -25px;
+            opacity: 0;
+            z-index: -1;
+        }
     }
 
     .accordion-wrapper {
