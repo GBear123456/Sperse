@@ -55,7 +55,6 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     selectedModuleIndex: number;
     moduleItems = [
-        {title: 'Home', disabled: false}, 
         {title: 'CRM', disabled: false}, 
         {title: 'API', disabled: false}, 
         {title: 'Admin', disabled: false}
@@ -291,6 +290,6 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     getAccordeonHeight() {
-        return innerHeight - 420 < this.navbarItems.length * 55 ? innerHeight - 420 : '100%';
+        return innerHeight - 420 < this.navbarItems.length * 25 ? innerHeight - 420 : '100%';
     }
 }

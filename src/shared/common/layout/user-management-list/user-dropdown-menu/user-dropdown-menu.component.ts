@@ -55,6 +55,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     @ViewChild('topBarUserProfile') topBarUserProfile: ElementRef;
     @ViewChild(BankCodeLettersComponent) bankCodeLetters: BankCodeLettersComponent;
     @Input() subtitle: string;
+    @Input() showSquareIcon: boolean = false;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = this.getDropDownItems();
     private impersonationService: ImpersonationService;
     private commonUserInfoService: CommonUserInfoServiceProxy;
@@ -191,5 +192,10 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
 
     bankCodeChange() {
         this.dropdownHeaderStyle = this.getDropdownHeaderStyle();
+    }
+
+    getUserNameFirstLatters() {
+        let parts = this.shownLoginInfo.fullName.split(' ');
+        return (parts[0][0] || '') + (parts[1][0] || '');
     }
 }

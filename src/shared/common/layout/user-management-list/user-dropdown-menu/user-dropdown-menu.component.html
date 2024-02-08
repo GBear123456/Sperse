@@ -2,9 +2,14 @@
     data-dropdown-toggle="click"
     #topBarUserProfile>
     <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
-        <span class="m-topbar__userpic">
-            <img alt="" class="header-profile-picture m--img-rounded m--marginless m--img-centered"
+        <span class="m-topbar__userpic">            
+            <img alt="" *ngIf="appSession?.user?.profileThumbnailId; else stub"
+                 class="header-profile-picture m--img-rounded m--marginless m--img-centered"
+                 [ngClass]="{square: showSquareIcon}"
                  [src]="profileService.getProfilePictureUrl(appSession?.user?.profileThumbnailId)"/>
+            <ng-template #stub>
+                <div class="square-picture">{{getUserNameFirstLatters()}}</div>
+            </ng-template>
         </span>
     </a>
     <div class="m-dropdown__wrapper" [ngClass]="hasBankCodeFeature || showAccessCode ? 'bank-code' : ''" (click)="onClick($event)">

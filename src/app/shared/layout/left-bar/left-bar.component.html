@@ -1,5 +1,7 @@
 <div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
 
+<a routerLink="/app/crm/welcome" class="top-home"></a>                
+
 <div class="accordion-wrapper">
     <dx-accordion
         [(selectedIndex)]="selectedModuleIndex"
@@ -8,9 +10,10 @@
         <div *dxTemplate="let data of 'item'">
 
             <dx-scroll-view [height]="getAccordeonHeight()">
-                <div class="nav-menu" [hidden]="!moduleItems || !moduleItems.length">
+                <div class="nav-menu"
+                    [hidden]="!moduleItems || !moduleItems.length">
                     <dx-menu
-                        [width]="width"                    
+                        [width]="'calc(' + width + ' - 36px)'"                    
                         [dataSource]="navbarItems"
                         [selectByClick]="true"
                         [selectionMode]="'single'"
@@ -29,7 +32,7 @@
                             <img [id]="data.text" *ngIf="!data.params" [src]="data.icon"><span class="caption" style="padding: 10px 0;" *ngIf="!!data.params || expanded || isSubMenuOpen">{{data.text}}</span><span class="triangle" *ngIf="!data.params && data?.items?.length">&#9656;</span>
                             <dx-tooltip *ngIf="!data?.items?.length"
                                 target="#{{data.text}}"
-                                [position]="{ my: 'left top', at: 'right', offset: '0 ' + ((selectedModuleIndex - 1) * 35 + 25) }"
+                                [position]="{ my: 'left center', at: 'right', offset: '0 ' + (selectedModuleIndex * 35) }"
                                 showEvent="dxhoverstart"
                                 hideEvent="dxhoverend">
                                 <div *dxTemplate="let item of 'content'">
@@ -78,6 +81,7 @@
     </li>
 
     <user-dropdown-menu *ngIf="layoutService.showUserProfileMenu"
+                        [showSquareIcon]="true"
                         [subtitle]="userCompany$ | async"
                         [dropdownMenuItems]="dropdownMenuItems">
     </user-dropdown-menu>

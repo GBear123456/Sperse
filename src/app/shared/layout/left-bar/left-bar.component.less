@@ -24,10 +24,17 @@
             }
             .dx-menu-item {
                 background: transparent;
-                &.dx-menu-item-selected, &.dx-state-hover {
+                &.dx-menu-item-selected {
                     .dx-item-content.dx-menu-item-content {
+                        border-left: 2px solid #4D3AA0;
+                        background: #EDE7F3;
+                    }
+                }
+                &.dx-state-hover {
+                    .dx-item-content.dx-menu-item-content {
+                        background: #FFF;                        
                         img {
-                            border: 3px solid #d0d3e7;
+                            //border: 3px solid #d0d3e7;
                         }
                     }
                 }
@@ -35,14 +42,11 @@
                 .dx-item-content.dx-menu-item-content {
                     display: flex;
                     justify-content: left;
-                    height: 56px;
+                    height: 45px;
                     padding: 0;
                     img {
-                        margin: auto;
-                        max-width: 52px;
-                        border-radius: 50%;
-                        border: 3px solid transparent;
-                        margin: auto 19px;
+                        max-width: 27px;
+                        margin: auto 17px auto 15px;
                     }
                     .caption {
                         font-size: 16px;
@@ -68,13 +72,22 @@
     }
 
     .top-menu {
-        width: 40px;
+        width: 54px;
         height: 40px;
         border-radius: 8px;
         border: 1px solid #E1E7ED;
-        margin: 10px 25px 20px 25px;
+        margin: 10px 18px 6px 18px;
         background: url(../../../../assets/common/icons/three-dots.svg) center no-repeat;
         cursor: pointer;
+    }
+
+    .top-home {
+        width: 55px;
+        height: 40px;
+        display: block;
+        cursor: pointer;
+        background: url(../../../../assets/common/icons/welcome.svg) center no-repeat;
+        margin: 0px 18px 11px 18px;
     }
 
     .accordion-wrapper {
@@ -83,10 +96,38 @@
 
     ::ng-deep dx-accordion {
         .dx-accordion-item {
-            border: none;
+            border-radius: 8px;
+            border: 1px solid #ECE5EF;
+            background: #FAF9FB;
             outline: none;
-            margin: 5px 0;
-        }
+            margin: 5px 16px;
+            &.dx-accordion-item-opened {
+                .dx-accordion-item-title {
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
+                    width: 100%;
+                }
+            }
+            &.dx-accordion-item-closed {
+                width: 56px;
+                border: 0;
+                .api {
+                    background: #10750008;
+                    border: 1px solid #10750030;
+                    color: #107500;
+                }
+                .admin {
+                    background: #0051AA08;
+                    border: 1px solid #0051AA30;
+                    color: #0051AA;
+                }
+                .crm {
+                    background: #4D3AA008;
+                    border: 1px solid #4D3AA030;
+                    color: #4D3AA0;
+                }
+            }
+        }        
         .dx-accordion-item-title {
             &:before {
                 display: none;
@@ -117,9 +158,9 @@
             border-radius: 8px;
             padding: 0;
             color: #FFF;
-            width: 63px;
+            width: 55px;
             height: 30px;
-            margin: 0 13px;
+            margin: 0;
         }
         .dx-accordion-item-body {
             padding: 7px 0;
@@ -132,7 +173,7 @@
         width: 90px!important;
         margin-right: auto;
         margin-left: 0px;
-        margin-top: 40px;        
+        margin-bottom: 10px;        
 
         position: absolute;
         bottom: 0;
