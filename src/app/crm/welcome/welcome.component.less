@@ -335,11 +335,12 @@
         }
 
         .overlap {
-            position: absolute;
+            position: relative;
+            top: 35px;
+            left: 15px;
             width: 286px;
-            height: 100px;
-            top: 31px;
-            left: 18px;
+            height: auto;
+            padding: 10px;
             background-color: #f8fafc;
             border-radius: 10px;
             border: 1px dashed;
@@ -347,11 +348,8 @@
         }
 
         .icon {
-            position: absolute;
             width: 93px;
             height: 35px;
-            top: 43px;
-            left: 18px;
         }
 
         .overlap-group {
@@ -379,9 +377,8 @@
         }
 
         .p {
-            position: absolute;
-            top: 19px;
-            left: 17px;
+            display: flex;
+            justify-content: space-between;
             font-family: "Plus Jakarta Sans-Medium", Helvetica;
             font-weight: 500;
             color: #000000;
@@ -389,13 +386,23 @@
             letter-spacing: -0.28px;
             line-height: 27px;
             white-space: nowrap;
+            margin: 5px 0;
+            b {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                line-height: 35px;
+                cursor: pointer;
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
         }
 
         .group-2 {
-            position: absolute;
+            position: relative;
             width: 310px;
             height: 176px;
-            top: 182px;
+            top: 75px;
             left: 0;
         }
 

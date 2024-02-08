@@ -76,8 +76,7 @@ export class WelcomeComponent implements OnInit {
     showZapier = location.href.includes(AppConsts.defaultDomain) &&
         this.permission.isGranted(AppPermissions.CRM);
 
-    isUpgradable: boolean;
-    subscriptionName: string;
+    subscriptions: any[];
     localization = AppConsts.localization.CRMLocalizationSourceName;
 
     constructor(
@@ -98,20 +97,20 @@ export class WelcomeComponent implements OnInit {
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         public layoutService: LayoutService,
         public dialog: MatDialog
-    ) {
-        this.appService.moduleSubscriptions$.subscribe(() => this.updateSubscriptionInfo());
-    }
+    ) {}
 
     ngOnInit() {
-        this.loadSettings();
-
         if (this.appService.isHostTenant)
             this.router.navigate(['app/crm/dashboard']);
+
+        this.loadSettings();
+
+        this.appService.moduleSubscriptions$.subscribe(
+            () => this.updateSubscriptionInfo());
     }
 
     updateSubscriptionInfo() {
-        this.subscriptionName = this.appService.getSubscriptionName();        
-        this.isUpgradable = this.appService.getModuleSubscription().isUpgradable;
+        this.subscriptions = this.appService.moduleSubscriptions.filter(sub => sub.statusId == 'A');
         this.changeDetectorRef.markForCheck()
     }
 
@@ -209,7 +208,7 @@ export class WelcomeComponent implements OnInit {
 
 
 
-    openPaymentWizardDialog(showSubscriptions = false) {
+    openPaymentWizardDialog(showSubscriptions = false, data?) {
         this.dialog.closeAll();
         this.dialog.open(PaymentWizardComponent, {
             height: '800px',
@@ -217,6 +216,7 @@ export class WelcomeComponent implements OnInit {
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {
+                ...data,
                 showSubscriptions: showSubscriptions
             }
         });

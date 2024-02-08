@@ -6,7 +6,8 @@ import {
     ViewChild,
     ViewEncapsulation,
     Inject,
-    ElementRef
+    ElementRef,
+    AfterViewInit
 } from '@angular/core';
 
 /** Third party imports */
@@ -41,7 +42,7 @@ import { PaymentWizardPaymentsInfoService } from './payments-info/payments-info.
     providers: [PaymentService, PackageServiceProxy, ProductServiceProxy, TenantSubscriptionServiceProxy, { provide: PaymentsInfoService, useClass: PaymentWizardPaymentsInfoService } ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaymentWizardComponent {
+export class PaymentWizardComponent implements AfterViewInit {
     @ViewChild('stepper') stepper: MatStepper;
     @ViewChild('wizard') wizardRef: ElementRef;
     plan$: Observable<PaymentOptions> = this.paymentService.plan$;
@@ -77,7 +78,13 @@ export class PaymentWizardComponent {
         private messageService: MessageService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) {}
+    ) {
+    }
+    
+    ngAfterViewInit() {
+        if (this.data.upgrade)
+            this.showSubscriptionProducts(this.data);
+    }
 
     moveToPaymentOptionsStep() {
         if (this.isSubscriptionManagementAllowed)
