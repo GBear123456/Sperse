@@ -19,9 +19,14 @@
                                          (onSelect)="onProductOptionSelect($event)">
                 </product-option-selector>
                 <div class="price-wrapper" *ngIf="selectedSubscriptionOption">
-                    <div class="trial-day-count" *ngIf="selectedSubscriptionOption.trialDayCount">
-                        <span *ngIf="selectedSubscriptionOption.signupFee; else free">{{ currencySymbol }}{{selectedSubscriptionOption.signupFee | customNumber: '1.0-1' | currency: 'USD' : '' : '1.0-1'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
-                        <ng-template #free>{{ls.l('Free')}}</ng-template>
+                    <div class="trial-day-count" *ngIf="selectedSubscriptionOption.trialDayCount || selectedSubscriptionOption.signupFee">
+                        <ng-container *ngIf="selectedSubscriptionOption.trialDayCount; else signupBlock">
+                            <span *ngIf="selectedSubscriptionOption.signupFee; else free">{{ currencySymbol }}{{selectedSubscriptionOption.signupFee | customNumber: '1.0-1' | currency: 'USD' : '' : '1.0-1'}}</span> for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
+                            <ng-template #free>{{ls.l('Free')}}</ng-template>
+                        </ng-container>
+                        <ng-template #signupBlock>
+                            <span>{{ currencySymbol }}{{selectedSubscriptionOption.signupFee | customNumber: '1.0-1' | currency: 'USD' : '' : '1.0-1'}}</span> signup fee
+                        </ng-template>
                     </div>
                     <div class="amountPerMonth">
                         <ng-container *ngIf="this.selectedSubscriptionOption.fee else freeOption">
