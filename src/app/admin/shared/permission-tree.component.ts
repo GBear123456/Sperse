@@ -25,7 +25,7 @@ export class PermissionTreeComponent implements AfterViewInit {
     ngAfterViewInit(): void {
         this.$tree = $(this.element.nativeElement);
 
-        this.refreshTree();
+        setTimeout(() => this.refreshTree(), 100);
     }
 
     getGrantedPermissionNames(): string[] {

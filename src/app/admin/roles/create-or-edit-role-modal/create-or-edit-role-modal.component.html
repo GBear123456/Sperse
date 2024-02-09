@@ -12,7 +12,7 @@
                         <dx-check-box [(value)]="role.isDefault" [text]="ls.l('DefaultRole_Description')"></dx-check-box>
                     </tab>
                     <tab heading="{{ls.l('Permissions')}}" customClass="m-tabs__item">
-                        <permission-tree [editData]="editData" #permissionTree></permission-tree>
+                        <permission-tree *ngIf="editData" [editData]="editData" #permissionTree></permission-tree>
                     </tab>
                 </tabset>
                 <div class="alert alert-warning" style="margin-top: 30px;">
