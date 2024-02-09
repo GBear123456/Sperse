@@ -19,7 +19,9 @@ import {
     EntityDtoOfInt64,
     NameValueDto,
     TenantListDto,
-    TenantServiceProxy
+    TenantServiceProxy,
+    TenantStripeConnectedAccountDto,
+    TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppService } from '@app/app.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -49,6 +51,14 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
 
     private filters: FilterModel[];
     public actionMenuItems: ActionMenuItem[] = [
+        {
+            text: this.l('Login to Stripe'),
+            class: 'login',
+            visible: false,
+            action: () => {
+                window.open(this.getConnectedStripeAccount(this.actionRecord.id), '_blank');
+            }
+        },
         {
             text: this.l('LoginAsThisTenant'),
             class: 'login',
@@ -90,6 +100,7 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
         }
     ].filter(Boolean);
 
+    connectedStripeAccounts: TenantStripeConnectedAccountDto[];
     tenantName: string = this.route.snapshot.queryParams.name;
     searchValue: string = this.tenantName;
     productId = '-1';
@@ -122,6 +133,7 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
         injector: Injector,
         private tenantService: TenantServiceProxy,
         private filtersService: FiltersService,
+        private paymentSettingsProxy: TenantPaymentSettingsServiceProxy,
         private impersonationService: ImpersonationService,
         private dialog: MatDialog,
         private route: ActivatedRoute,
@@ -154,6 +166,13 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
                 ).toPromise().then(response => {
                     this.tenantRecords = response.items;
                     this.contactDataSource.load();
+
+                    this.paymentSettingsProxy.getTenantStripeConnectedAccounts(
+                        response.items.map(item => item.id)
+                    ).subscribe((accounts: TenantStripeConnectedAccountDto[]) => {
+                        this.connectedStripeAccounts = accounts;
+                    });
+
                     this.startLoading();                    
                     return {
                         data: response.items,
@@ -350,6 +369,9 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
     }
 
     toggleActionsMenu(data) {
+        let stripe = this.getConnectedStripeAccount(data.id);
+        this.actionMenuItems[0].visible = !!stripe;
+
         this.actionRecord = data;
     }
 
@@ -398,11 +420,6 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
         this.actionRecord = null;
     }
 
-    onShowingPopup(e) {
-        e.component.option('visible', false);
-        e.component.hide();
-    }
-
     impersonateUser(item: NameValueDto): void {
         this.impersonationService.impersonate(
             parseInt(item.value),
@@ -421,6 +438,14 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
     getContactInfo(company: string) {
         if (this.contactRecords && this.contactRecords.length)
             return this.contactRecords.find(contact => contact.CompanyName == company);
+    }
+
+    getConnectedStripeAccount(tenantId: number) {
+        if (this.connectedStripeAccounts) {
+            let account = Array.prototype.find.call(this.connectedStripeAccounts, acc => acc.tenantId == tenantId);
+            if (account && account.connectedAccountId)
+                return 'https://dashboard.stripe.com/connect/accounts/' + account.connectedAccountId + '/activity';
+        }
     }
 
     onRowPrepared(event) {

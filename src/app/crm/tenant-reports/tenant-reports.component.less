@@ -57,7 +57,8 @@
         }
 
         .dx-datagrid .dx-link.dx-link-edit {
-            width: 18px !important;
+            width: 28px !important;
+            height: 28px;
         }
 
         td.dx-command-edit {
@@ -134,6 +135,13 @@
             }
             &.status {
                 margin-bottom: 0;
+            }
+            .email a[href=""] {
+                color: #000;
+                &:hover {
+                    cursor: default;
+                    text-decoration: none;
+                }
             }
         }
     }

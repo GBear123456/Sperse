@@ -57,7 +57,7 @@
                             <ng-container *dxTemplate="let cell of 'Contact'">
                                 <div class="cell-wrapper" *ngIf="getContactInfo(cell.data.name) as contact">
                                     <div class="full-name"><b>{{contact.Name}}</b></div>
-                                    <div class="email"><a href="mail:butch.coolidge@hotmail.com">{{contact.Email}}</a></div>
+                                    <div class="email"><a target="_blank" [href]="getConnectedStripeAccount(cell.data.id)">{{contact.Email}}</a></div>
                                     <div class="phone">{{contact.Phone | phone}}</div>
                                 </div>
                                 <!-- ng-template #stub>
