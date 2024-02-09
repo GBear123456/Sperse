@@ -63,9 +63,9 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     constructor(
         _injector: Injector,
-    private layoutService: LayoutService,
+        private layoutService: LayoutService,
         private faviconsService: FaviconService,
-    private settingsProxy: TenantSettingsServiceProxy,
+        private settingsProxy: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         private settingService: SettingService

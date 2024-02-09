@@ -23,6 +23,11 @@ import { map, takeUntil } from 'rxjs/operators';
 import { HeadLineConfigModel } from './headline.model';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import {
+    NavPosition,
+    TenantSettingsServiceProxy,
+    AppearanceSettingsEditDto
+} from '@shared/service-proxies/service-proxies';
 import { AppService } from '@app/app.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
@@ -30,6 +35,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { AppConsts } from '@shared/AppConsts';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { SettingService } from 'abp-ng2-module';
 
 @Component({
     selector: 'app-headline',
@@ -104,8 +110,10 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         private fullScreenService: FullScreenService,
         private lifecycleService: LifecycleSubjectsService,
         private leftMenuService: LeftMenuService,
+        private settingsProxy: TenantSettingsServiceProxy,
         public layoutService: LayoutService,
         public ls: AppLocalizationService,
+        private settingService: SettingService,
         private changeDetectorRef: ChangeDetectorRef,
         @Inject('toggleButtonPosition') @Optional() toggleButtonPosition: 'left' | 'right',
         @Inject('showToggleLeftMenuButton') @Optional() showToggleLeftMenuButton: boolean
@@ -210,6 +218,18 @@ export class HeadLineComponent implements OnInit, OnDestroy {
 
     toggleLeftBar() {
         this.layoutService.expandedLeftBarSubject.next(!this.layoutService.expandedLeftBarSubject.value);
+    }
+
+    switchNavBar(event) {
+        this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({
+            navPosition: event.value ? NavPosition.Vertical : NavPosition.Horizontal,
+            navTextColor: this.settingService.get('App.Appearance.NavTextColor'),
+            navBackground: this.settingService.get('App.Appearance.NavBackground')
+        })).subscribe(() => {
+            abp.message.info(
+                this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'))
+            ).done(() => window.location.reload());
+        });
     }
 
     ngOnDestroy() {
