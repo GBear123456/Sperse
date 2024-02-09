@@ -29,6 +29,7 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { FileUploadModule } from 'ng2-file-upload';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -148,6 +149,7 @@ import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-l
         DxChartModule,
         DxListModule,
         DxColorBoxModule,
+        DxTreeViewModule,
 
         MatTabsModule,
         MatInputModule,
