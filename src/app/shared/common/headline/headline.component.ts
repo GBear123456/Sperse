@@ -35,6 +35,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { AppConsts } from '@shared/AppConsts';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { AppFeatures } from '@shared/AppFeatures';
 import { SettingService } from 'abp-ng2-module';
 
 @Component({
@@ -102,6 +103,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     showTotals = !AppConsts.isMobile;
     showRefreshButtonSeparately: boolean;
     showHeadlineMenuToggleButton: boolean;
+    isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
 
     constructor(
         injector: Injector,

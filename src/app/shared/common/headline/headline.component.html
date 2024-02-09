@@ -35,7 +35,7 @@
     <div class="toggle-button-container" [ngClass]="toggleButtonPosition" *ngIf="showHeadlineMenuToggleButton">
         <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons()"></button>
         <ul *ngIf="showHeadlineButtons" class="buttons">
-            <li>
+            <li *ngIf="isAdminCustomizations">
                 <div>
                     <dx-switch
                         width="42px"
