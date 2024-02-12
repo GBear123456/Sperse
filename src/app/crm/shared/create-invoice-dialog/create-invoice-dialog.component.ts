@@ -121,7 +121,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     startCase = startCase;
 
 
-    private readonly MAX_DESCRIPTION_LENGTH = 499;
+    private readonly MAX_DESCRIPTION_LENGTH = 5000 + 255;
     defaultCountryCode = AppConsts.defaultCountryCode;
     currency = SettingsHelper.getCurrency();
     currencySymbol = getCurrencySymbol(this.currency, 'narrow');
