@@ -39,6 +39,7 @@
                                     <label>{{ls.l('Product name')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
                                     <dx-text-box name="name"
                                                  width="100%"
+                                                 [maxLength]="255"
                                                  [inputAttr]="{ id: 'name' }"
                                                  [(value)]="product.name"
                                                  [disabled]="isReadOnly">
@@ -51,6 +52,7 @@
                                     <label>{{ls.l('Product SKU or unique code')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
                                     <dx-text-box name="code"
                                                  width="100%"
+                                                 [maxLength]="50"
                                                  valueChangeEvent="keyup"
                                                  [inputAttr]="{ id: 'code' }"
                                                  [(value)]="product.code"
@@ -66,6 +68,7 @@
                                           [value]="product.publicName"
                                           [showInlineEditButton]="true"
                                           [displayValue]="baseUrl + '/p/' + tenantId + '/' + (product.publicName || '')"
+                                          [maxLength]="255"
                                           [validationRules]="publicNameValidationRules"
                                           [isReadOnlyField]="isReadOnly"
                                           lEntityName="Product Url"
@@ -76,12 +79,16 @@
                             </inplace-edit>
                             <div>
                                 <label for="name">{{ls.l('Description')}}</label>
-                                <dx-text-box name="description"
-                                             width="100%"
-                                             [inputAttr]="{ id: 'description' }"
-                                             [(value)]="product.description"
-                                             [disabled]="isReadOnly">
-                                </dx-text-box>
+                                <dx-text-area name="description"
+                                              width="100%"
+                                              [inputAttr]="{ id: 'description' }"
+                                              [(value)]="product.description"
+                                              [autoResizeEnabled]="true"
+                                              [maxLength]="5000"
+                                              [maxHeight]="150"
+                                              [minHeight]="100"
+                                              [disabled]="isReadOnly">
+                                </dx-text-area>
                             </div>
                             <div>
                                 <label>{{ls.l('Description')}} Html <img class="info" src="assets/common/icons/info-circle.svg"></label>
