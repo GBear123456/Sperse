@@ -9,7 +9,7 @@
         [(selectedIndex)]="selectedModuleIndex"
         [items]="moduleItems"
         (onItemTitleClick)="onItemTitleClick($event)">
-        <div *dxTemplate="let data of 'item'">
+        <div *dxTemplate="let data of 'item'" class="{{data.title.toLowerCase()}}">
 
             <dx-scroll-view [height]="getAccordeonHeight()">
                 <div class="nav-menu"
@@ -31,16 +31,18 @@
                         (onSubmenuHiding)="onSubmenuHiding($event)"
                         (onItemClick)="navigate($event)">
                         <div *dxTemplate="let data of 'item'">
-                            <img [id]="data.text" *ngIf="!data.params" [src]="data.icon"><span class="caption" style="padding: 10px 0;" *ngIf="!!data.params || expanded || isSubMenuOpen">{{data.text}}</span><span class="triangle" *ngIf="!data.params && data?.items?.length">&#9656;</span>
-                            <dx-tooltip *ngIf="!data?.items?.length"
-                                target="#{{data.text}}"
-                                [position]="{ my: 'left center', at: 'right', offset: '0 ' + (selectedModuleIndex * 35) }"
-                                showEvent="dxhoverstart"
-                                hideEvent="dxhoverend">
-                                <div *dxTemplate="let item of 'content'">
-                                    <span class="menu-tooltip">{{data.text}}</span>
-                                </div>
-                            </dx-tooltip>
+                            <ng-container *ngIf="data && data.text">
+                                <img [id]="getTargetByTitle(data.text)" *ngIf="!data.params" [src]="data.icon"><span class="caption" style="padding: 10px 0;" *ngIf="!!data.params || expanded || isSubMenuOpen">{{data.text}}</span><span class="triangle" *ngIf="!data.params && data?.items?.length">&#9656;</span>
+                                <dx-tooltip *ngIf="!data?.items?.length"
+                                    target="#{{getTargetByTitle(data.text)}}"
+                                    [position]="{ my: 'left center', at: 'right', offset: '0 ' + (selectedModuleIndex * 35) }"
+                                    showEvent="dxhoverstart"
+                                    hideEvent="dxhoverend">
+                                    <div *dxTemplate="let item of 'content'">
+                                        <span class="menu-tooltip">{{data.text}}</span>
+                                    </div>
+                                </dx-tooltip>
+                            </ng-container>
                         </div>
                     </dx-menu>
                 </div>

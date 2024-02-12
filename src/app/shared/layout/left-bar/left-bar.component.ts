@@ -61,9 +61,10 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     selectedModuleIndex: number;
     moduleItems = [
         {title: 'CRM', disabled: false}, 
+        {title: 'CFO', disabled: false},
         {title: 'API', disabled: false}, 
         {title: 'Admin', disabled: false}
-    ];
+    ].filter(item => this.isModuleVisible(item.title));
 
     isChatConnected = this.chatSignalrService.isChatConnected;
     isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
@@ -136,6 +137,10 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         this.appService.initModule();
         this.updateSelectedItem();
+    }
+
+    isModuleVisible(item: string): boolean {
+        return this.appService.isModuleActive(item);
     }
 
     updateSelectedItem() {
@@ -287,6 +292,10 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
                     .then(() => this.updateSelectedItem());
             }, 200);
         }
+    }
+
+    getTargetByTitle(val: string) {
+        return val ? val.replace(/\W/gim, '') : '';
     }
 
     getAccordeonHeight() {

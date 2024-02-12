@@ -31,12 +31,6 @@
             }
             .dx-menu-item {
                 background: transparent;
-                &.dx-menu-item-selected {
-                    .dx-item-content.dx-menu-item-content {
-                        border-left: 2px solid #4D3AA0;
-                        background: #EDE7F3;
-                    }
-                }
                 &.dx-state-hover {
                     .dx-item-content.dx-menu-item-content {
                         background: #FFF;                        
@@ -113,8 +107,7 @@
     ::ng-deep dx-accordion {
         .dx-accordion-item {
             border-radius: 8px;
-            border: 1px solid #ECE5EF;
-            background: #FAF9FB;
+            border: 1px solid #ECE5EF;            
             outline: none;
             margin: 5px 16px;
             &.dx-accordion-item-opened {
@@ -122,6 +115,20 @@
                     border-bottom-left-radius: 0;
                     border-bottom-right-radius: 0;
                     width: 100%;
+                }
+                .dx-accordion-item-body {
+                    &.api {
+                        background: #F9FBF9;
+                    }
+                    &.admin {        
+                        background: rgba(246, 250, 255, 0.8);
+                    }
+                    &.crm {
+                        background: #FAF9FB;
+                    }
+                    &.cfo {
+                        background: #D1F0FC;
+                    }
                 }
             }
             &.dx-accordion-item-closed {
@@ -142,6 +149,11 @@
                     border: 1px solid #4D3AA030;
                     color: #4D3AA0;
                 }
+                .cfo {
+                    background: #32BEF208;
+                    border: 1px solid #32BEF230;
+                    color: #32BEF2;
+                }
             }
         }        
         .dx-accordion-item-title {
@@ -149,8 +161,8 @@
                 display: none;
             }
 
-            &.home {
-                background: #0C2859;
+            &.cfo {
+                background: #32BEF2;
             }
 
             &.crm {
@@ -181,6 +193,34 @@
         .dx-accordion-item-body {
             padding: 7px 0;
             max-height: calc(100vh - 420px);
+
+            &.cfo {
+                ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
+                    border-left: 2px solid #32BEF2;
+                    background: #A4E2F9;
+                }            
+            }
+            &.crm {
+                ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
+                    border-left: 2px solid #4D3AA0;
+                    background: #EDE7F3;
+                }            
+            }
+
+            &.api {
+                ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
+                    border-left: 2px solid #107500;
+                    background: #E2EEE2;
+                }            
+            }
+        
+            &.admin {
+                ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
+                    border-left: 2px solid #0051AA;
+                    background: #E9F2FD;
+                }            
+            }
+
         }        
     }
 
