@@ -46,7 +46,9 @@ import { PlatformSelectComponent } from '../platform-select/platform-select.comp
 })
 export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {     
     @ViewChild(PlatformSelectComponent) platformSelector: PlatformSelectComponent;
+    @HostBinding('style.width') width: string = '90px';
 
+    isSubMenuOpen = false;
     userCompany$: Observable<string>;
     dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
@@ -102,12 +104,12 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
                     config.localizationSource
                 )
             );
+            this.navbarItems = this.menu.items || [];
             const selectedItem = this.navbarItems.find((navBarItem: PanelMenuItem) => {
                 return navBarItem.route === this.router.url.split('?')[0];
             });
-            this.navbarItems = this.menu.items || [];
-            this.selectedItem = selectedItem || this.menu.items[0];
 
+            this.selectedItem = selectedItem || this.menu.items[0];
             this.appService.topMenu = this.menu;
         });
     }
@@ -133,7 +135,10 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.appService.initModule();
+        this.updateSelectedItem();
+    }
 
+    updateSelectedItem() {
         setTimeout(() => {
             let route = this.router.url.split('?').shift();
             this.menu.items.forEach((item: PanelMenuItem, i: number) => {
@@ -142,7 +147,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         });
     }
-
+    
     registerToEvents() {
         if (this.isChatEnabled && this.layoutService.showChatButton) {
             abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
@@ -257,22 +262,6 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         this.platformSelector.dropDownBox.instance.open();
     }
 
-    @HostBinding('style.width') width: string = '90px';
-    @HostListener('mouseover')
-    onHover = () => {
-//        this.expanded = true;
-//        this.width = '210px';
-    }
-
-    @HostListener('mouseleave')
-    onBlur = () => {
-//        this.expanded = false;
-//        if (!this.isSubMenuOpen) {
-//            this.width = '90px';
-//        }
-    }
-
-    isSubMenuOpen = false;
     onSubmenuShowing($event) {
         this.isSubMenuOpen = true;
     }
@@ -293,7 +282,10 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
             let module = event.itemData.title;
             this.navbarItems = [];
             this.appService.switchModule(module);
-            setTimeout(() => this.router.navigate(['app/' + module.toLowerCase()]), 200);
+            setTimeout(() => {
+                this.router.navigate(['app/' + module.toLowerCase()])
+                    .then(() => this.updateSelectedItem());
+            }, 200);
         }
     }
 
