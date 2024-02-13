@@ -9,6 +9,7 @@ import {
 import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
+import { NgxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
@@ -95,9 +96,13 @@ export class WelcomeComponent implements OnInit {
         private loadingService: LoadingService,
         private message: MessageService,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
+        private ngxZendeskWebwidgetService: NgxZendeskWebwidgetService,
         public layoutService: LayoutService,
         public dialog: MatDialog
-    ) {}
+    ) {
+        if (abp.setting.values['Integrations:Zendesk:AccountUrl'])
+            this.ngxZendeskWebwidgetService.initZendesk();            
+    }
 
     ngOnInit() {
         if (this.appService.isHostTenant)
@@ -263,6 +268,7 @@ export class WelcomeComponent implements OnInit {
         this.ui.overflowHidden(true);
         this.appService.isClientSearchDisabled = true;
         this.appService.toolbarIsHidden.next(true);
+        this.ngxZendeskWebwidgetService.zE('messenger', 'show');
         this.changeDetectorRef.markForCheck()
     }
 
@@ -270,6 +276,7 @@ export class WelcomeComponent implements OnInit {
         this.ui.overflowHidden();        
         this.appService.toolbarIsHidden.next(false);
         this.lifeCycleSubject.deactivate.next();
+        this.ngxZendeskWebwidgetService.zE('messenger', 'hide');
         this.dialog.closeAll();
     }
 }
