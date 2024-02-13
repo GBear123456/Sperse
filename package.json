@@ -126,7 +126,7 @@
     "ngx-papaparse": "3.0.0-beta.0",
     "ngx-perfect-scrollbar": "^10.1.1",
     "ngx-videogular": "^10.1.0-0",
-    "ngx-zendesk-webwidget": "^0.1.3",
+    "ngx-zendesk-webwidget": "^3.0.1",
     "number-to-words": "^1.2.4",
     "odata-query": "^5.0.0",
     "parse-address": "^0.0.10",

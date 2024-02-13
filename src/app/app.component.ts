@@ -3,6 +3,7 @@ import { Component, OnInit, NgZone, ViewEncapsulation, HostBinding, HostListener
 import { Router } from '@angular/router';
 
 /** Third party imports */
+import { NgxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { MatDialog } from '@angular/material/dialog';
 import { first } from 'rxjs/operators';
 
@@ -57,6 +58,7 @@ export class AppComponent implements OnInit {
         private chatSignalrService: ChatSignalrService,
         private fullScreenService: FullScreenService,
         private permissionCheckerService: PermissionCheckerService,
+        private ngxZendeskWebwidgetService: NgxZendeskWebwidgetService,
         public layoutService: LayoutService,
         public ls: AppLocalizationService,
         public appSession: AppSessionService,
@@ -64,6 +66,9 @@ export class AppComponent implements OnInit {
         public filtersService: FiltersService,
         public dialog: MatDialog
     ) {
+        if (abp.setting.values['Integrations:Zendesk:AccountUrl'])
+            this.ngxZendeskWebwidgetService.initZendesk();            
+
         if (!appService.isHostTenant) {
             let paymentDialogTimeout;
             appService.moduleSubscriptions$.pipe(first()).subscribe(() => {

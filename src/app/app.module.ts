@@ -3,7 +3,7 @@ import * as ngCommon from '@angular/common';
 import { NgModule } from '@angular/core';
 
 /** Third party imports */
-import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+import { NgxZendeskWebwidgetModule, NgxZendeskWebwidgetConfig } from 'ngx-zendesk-webwidget';
 import { ClipboardModule } from 'ngx-clipboard';
 
 /** Application imports */
@@ -31,10 +31,11 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { SearchTooltipModule } from '@shared/common/dialogs/search-tooltip/search-tooltip.module';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 
-export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
-    accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'];
-    beforePageLoad(zE) {
-        zE.setLocale('en');
+export class ZendeskConfig extends NgxZendeskWebwidgetConfig {
+    override lazyLoad = true;
+    accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'] || 'lazyLoad';
+    callback(zE) {
+//        zE.setLocale('en');
 //        zE.hide();
     }
 }
@@ -48,7 +49,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         LayoutModule,
         LayoutCommonModule,
         AppCommonModule.forRoot(),
-        ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
+        NgxZendeskWebwidgetModule.forRoot(ZendeskConfig),
         ngCommon.CommonModule,
         AppRoutingModule,
         FiltersModule.forRoot(),
@@ -60,7 +61,6 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         AppService,
         AppStoreService,
         ImpersonationService,
-        ngxZendeskWebwidgetService,
         InstanceServiceProxy,
         CFOService,
         ContactServiceProxy,
