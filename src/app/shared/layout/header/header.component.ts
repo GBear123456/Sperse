@@ -33,7 +33,6 @@ import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
     providers: [ CommonUserInfoServiceProxy ]
 })
 export class HeaderComponent implements OnInit {
-    @Input() showGlobalSearch: boolean;
     origin = location.origin;
     customLayoutType = '';
     languages: abp.localization.ILanguageInfo[];

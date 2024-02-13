@@ -10,6 +10,9 @@
             </a>
         </div>
 
+
+        <global-search *ngIf="appService.getModule() == 'crm' && layoutService.showLeftBar"></global-search>
+
         <ng-container *ngIf="layoutService.showTopBar">
             <contact-info-panel *ngIf="appService.showContactInfoPanel$ | async" [data]="appService.contactInfo"></contact-info-panel>
             <user-management-list>
