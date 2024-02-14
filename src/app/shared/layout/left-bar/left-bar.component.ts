@@ -75,7 +75,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         private feature: FeatureCheckerService,
         private authService: AppAuthService,
         public appSessionService: AppSessionService,
-        private appService: AppService,
+        public appService: AppService,
         private impersonationService: ImpersonationService,
         private permissionChecker: AppPermissionService,
         private lifecycleService: LifecycleSubjectsService,

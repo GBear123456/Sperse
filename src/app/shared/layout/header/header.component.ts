@@ -75,6 +75,12 @@ export class HeaderComponent implements OnInit {
         this.registerToEvents();
     }
 
+    showGlobalSearch() {
+        return this.layoutService.showLeftBar && 
+            !location.href.includes('welcome') &&
+            this.appService.getModule() == 'crm'; 
+    }
+    
     registerToEvents() {
         if (this.isChatEnabled && this.layoutService.showChatButton) {
             abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {

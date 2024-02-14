@@ -100,18 +100,20 @@ export class WelcomeComponent implements OnInit {
         public layoutService: LayoutService,
         public dialog: MatDialog
     ) {
-        if (abp.setting.values['Integrations:Zendesk:AccountUrl'])
+        if (this.appService.isHostTenant)
+            this.router.navigate(['app/crm/dashboard']);
+
+
+        if (!this.appService.isHostTenant && abp.setting.values['Integrations:Zendesk:AccountUrl'])
             this.ngxZendeskWebwidgetService.initZendesk();            
     }
 
     ngOnInit() {
-        if (this.appService.isHostTenant)
-            this.router.navigate(['app/crm/dashboard']);
-
         this.loadSettings();
 
-        this.appService.moduleSubscriptions$.subscribe(
-            () => this.updateSubscriptionInfo());
+        if (this.appService.moduleSubscriptions$)
+            this.appService.moduleSubscriptions$.subscribe(
+                () => this.updateSubscriptionInfo());
     }
 
     updateSubscriptionInfo() {
@@ -211,8 +213,6 @@ export class WelcomeComponent implements OnInit {
         );
     }
 
-
-
     openPaymentWizardDialog(showSubscriptions = false, data?) {
         this.dialog.closeAll();
         this.dialog.open(PaymentWizardComponent, {
@@ -264,11 +264,15 @@ export class WelcomeComponent implements OnInit {
     }
 
     activate() {
+        if (this.appService.isHostTenant)
+            return this.router.navigate(['app/crm/dashboard']);
+
         this.lifeCycleSubject.activate.next();
         this.ui.overflowHidden(true);
         this.appService.isClientSearchDisabled = true;
         this.appService.toolbarIsHidden.next(true);
-        this.ngxZendeskWebwidgetService.zE('messenger', 'show');
+        if (!this.appService.isHostTenant)
+            this.ngxZendeskWebwidgetService.zE('messenger', 'show');
         this.changeDetectorRef.markForCheck()
     }
 
@@ -276,7 +280,8 @@ export class WelcomeComponent implements OnInit {
         this.ui.overflowHidden();        
         this.appService.toolbarIsHidden.next(false);
         this.lifeCycleSubject.deactivate.next();
-        this.ngxZendeskWebwidgetService.zE('messenger', 'hide');
+        if (!this.appService.isHostTenant)
+            this.ngxZendeskWebwidgetService.zE('messenger', 'hide');
         this.dialog.closeAll();
     }
 }
