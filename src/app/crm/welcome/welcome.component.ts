@@ -79,6 +79,7 @@ export class WelcomeComponent implements OnInit {
 
     subscriptions: any[];
     localization = AppConsts.localization.CRMLocalizationSourceName;
+    isZendeskEnabled = !this.appService.isHostTenant && abp.setting.values['Integrations:Zendesk:AccountUrl'];
 
     constructor(
         public router: Router,
@@ -104,7 +105,7 @@ export class WelcomeComponent implements OnInit {
             this.router.navigate(['app/crm/dashboard']);
 
 
-        if (!this.appService.isHostTenant && abp.setting.values['Integrations:Zendesk:AccountUrl'])
+        if (this.isZendeskEnabled)
             this.ngxZendeskWebwidgetService.initZendesk();            
     }
 
@@ -271,7 +272,7 @@ export class WelcomeComponent implements OnInit {
         this.ui.overflowHidden(true);
         this.appService.isClientSearchDisabled = true;
         this.appService.toolbarIsHidden.next(true);
-        if (!this.appService.isHostTenant)
+        if (this.isZendeskEnabled)
             this.ngxZendeskWebwidgetService.zE('messenger', 'show');
         this.changeDetectorRef.markForCheck()
     }
@@ -280,7 +281,7 @@ export class WelcomeComponent implements OnInit {
         this.ui.overflowHidden();        
         this.appService.toolbarIsHidden.next(false);
         this.lifeCycleSubject.deactivate.next();
-        if (!this.appService.isHostTenant)
+        if (this.isZendeskEnabled)
             this.ngxZendeskWebwidgetService.zE('messenger', 'hide');
         this.dialog.closeAll();
     }
