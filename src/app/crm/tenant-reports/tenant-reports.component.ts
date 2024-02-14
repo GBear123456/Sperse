@@ -188,7 +188,7 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {     
-                    request.params.$filter = 'CompanyName in (' + this.tenantRecords.map(tenant => "'" + tenant.name + "'") + ')';
+                    request.params.$filter = 'CompanyName in (' + this.tenantRecords.map(tenant => JSON.stringify(tenant.name)) + ')';
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
