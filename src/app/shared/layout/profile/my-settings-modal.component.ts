@@ -83,6 +83,10 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         isUserSmtpEnabled: false,
         from: new EmailFromSettings(),
         smtp: new EmailSmtpSettings(),
+        imapHost: undefined,
+        imapPort: undefined,
+        isImapEnabled: false,
+        imapUseSsl: false
     });
     public isGoogleAuthenticatorEnabled = false;
     public isPhoneNumberConfirmed: boolean;
