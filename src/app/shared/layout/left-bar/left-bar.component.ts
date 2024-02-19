@@ -96,7 +96,6 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (config.name.toLowerCase() == module.title.toLowerCase() && this.selectedModuleIndex != index)
                     this.selectedModuleIndex = index;
             });        
-
             this.menu = new PanelMenu(
                 'MainMenu',
                 'MainMenu',
@@ -285,13 +284,15 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
             event.event.stopPropagation();
         } else {
             let module = event.itemData.title;
-            this.navbarItems = [];
-            this.appService.switchModule(module);
-            setTimeout(() => {
-                this.router.navigate(['app/' + module.toLowerCase()])
-                    .then(() => this.updateSelectedItem());
-            }, 200);
+            this.router.navigate(['app/' + module.toLowerCase()]).then(() => {
+                this.appService.switchModule(module, { instance: this.getModuleUri(module) });
+                this.updateSelectedItem();
+            });
         }
+    }
+
+    getModuleUri(name: string) {
+        return this.appService.getModules().find(module => module.name.toLowerCase() == name.toLowerCase()).uri;
     }
 
     getTargetByTitle(val: string) {

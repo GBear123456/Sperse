@@ -39,7 +39,7 @@
                                     showEvent="dxhoverstart"
                                     hideEvent="dxhoverend">
                                     <div *dxTemplate="let item of 'content'">
-                                        <span class="menu-tooltip">{{data.text}}</span>
+                                        <span class="menu-tooltip">{{ls.l(data.text)}}</span>
                                     </div>
                                 </dx-tooltip>
                             </ng-container>
