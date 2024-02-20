@@ -1,6 +1,154 @@
 :host {
     display: block;
 
+    .wrapper {
+        display: flex;
+        h2 {
+            font-family: Plus Jakarta Sans;
+            font-size: 20px;
+            letter-spacing: -0.02em;
+            border-bottom: 3px solid #E5E8F3;
+            padding: 13px 0;
+            color: #10213A;
+            height: 60px;
+        }
+
+        ::ng-deep uploader {
+            display: block;
+            border-bottom: 1px solid #E5E8F3;
+            padding-bottom: 12px;
+
+            h5 {
+                font-family: Plus Jakarta Sans;
+                font-size: 17px;
+                letter-spacing: 0em;
+                color: #10213A;
+                position: relative;
+                top: 20px;
+            }
+
+            p {
+                width: 70%;
+                display: inline-block;
+                font-family: Plus Jakarta Sans;
+                font-size: 14px;
+                font-weight: 400;
+                letter-spacing: 0em;
+                color: #10213A;
+
+                span {
+                    padding-top: 10px;
+                }
+
+                a {
+                    float: right;
+                    color: #00A8ED!important;
+                    padding: 0px 10px;
+                }
+            }
+
+            form {
+                display: inline-block;
+                float: right;
+                width: 25%;
+                & > .form-group {
+                    margin-bottom: 0;
+                }
+                div:last-child {
+                    text-align: center;
+                }
+            }
+
+            .ngx-file-drop__drop-zone {
+                width: 100%;
+                padding-left: calc((100% - 175px) / 2);
+                border-radius: 10px !important;
+                background: rgba(245, 249, 251, 0.3);
+
+                a {
+                    font-family: Plus Jakarta Sans;
+                    font-size: 14px;
+                    letter-spacing: -0.02em;
+                    text-align: left;
+                    color: #10213A;
+                }
+            }
+        }
+
+        .left {
+            width: 70%;
+            min-height: calc(100vh - 120px);
+            border-right: 3px solid #E5E8F3;
+            padding-right: 20px;
+        }
+
+        .right {
+            width: 30%;
+            padding-left: 20px;
+
+            & > div {
+                margin: 16px 0;
+            }
+
+            span {
+                font-family: Plus Jakarta Sans;
+                font-size: 14px;
+                letter-spacing: 0em;
+                padding: 22px 0 17px 0;
+            }
+
+            ::ng-deep dx-color-box {
+                background: #F8FAFC;
+                border-radius: 10px;
+                max-width: 95%;
+                .dx-texteditor-input-container {
+                    padding-left: calc(100% - 134px);
+                }
+                .dx-colorbox-color-result-preview {
+                    left: unset;
+                    width: 34px;
+                    height: 22px;
+                    border-radius: 5px;
+                    border: 0;
+                    margin-top: -10px;
+                }
+                .dx-texteditor-label {
+                    color: #10213A;
+                }
+                input {
+                    border-bottom: 0;
+                    font-family: Plus Jakarta Sans;
+                    font-size: 13px;
+                    line-height: 27px;
+                    letter-spacing: 0em;
+                    color: #10213A;
+                }
+                .dx-placeholder {
+                    display: block!important;
+                    opacity: 1;
+                    top: 0;
+                    left: 10px;
+                    font-family: Plus Jakarta Sans;
+                    font-size: 13px;
+                    font-weight: 500;
+                    letter-spacing: 0em;
+                    color: #10213A;
+                    width: calc(100% - 125px);
+                }
+            }
+    
+            button {
+                margin-right: 5%;
+            }
+        }
+
+        button {
+            margin: 30px 0;
+            float: right;
+            border-radius: 10px!important;
+        }
+    }
+
     ::ng-deep uploader .m-form__help {
         display: block;
     }
