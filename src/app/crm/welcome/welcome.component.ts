@@ -72,6 +72,9 @@ export class WelcomeComponent implements OnInit {
     showSubscriptionManagement = this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement); 
     showCommissionsSettings = this.feature.isEnabled(AppFeatures.CRMCommissions) &&
         (this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasTenantPermission);
+    isProductsGranted = this.permission.isGranted(AppPermissions.CRMProducts);
+    isPaymentsGranted = this.feature.isEnabled(AppFeatures.CRMPayments);
+    isCustomersGranted = this.permission.isGranted(AppPermissions.CRMCustomers);    
 
     hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();    
     showZapier = location.href.includes(AppConsts.defaultDomain) &&
@@ -229,8 +232,8 @@ export class WelcomeComponent implements OnInit {
     }
 
     loadSettings() {
-        this.loadingService.startLoading();
         if (this.isPaymentsEnabled) {
+            this.loadingService.startLoading();
             this.tenantPaymentSettingsService.getStripeSettings()
                 .pipe(
                     finalize(() => this.loadingService.finishLoading())
