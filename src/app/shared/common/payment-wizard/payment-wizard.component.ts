@@ -118,16 +118,15 @@ export class PaymentWizardComponent implements AfterViewInit {
                 return this.paymentService.getProductInfo(this.data.subscription.productId);
             })
         ).subscribe((product: ProductInfo) => {
-            let pricePerMonth = product ? (this.data.subscription.paymentPeriodType === 'Monthly' ?
-                    product.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Monthly).fee :
-                    Math.round(product.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual).fee / 12)
-                ) : 0;
+            let selectedOption = product &&
+                product.productSubscriptionOptions.find(x => x.frequency == 
+                    RecurringPaymentFrequency[this.data.subscription.paymentPeriodType]);
 
             this.changePlan({
                 productId: this.data.subscription.productId,
                 productName: this.data.subscription.productName,
                 paymentPeriodType: this.data.subscription.paymentPeriodType,
-                total: pricePerMonth
+                total: selectedOption ? selectedOption.fee : 0
             });
             setTimeout(() => this.moveToPaymentOptionsStep());
         });
