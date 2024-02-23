@@ -241,6 +241,7 @@
                                             <div [ngClass]="{disabled: !option.billingCyclesEnabled}">
                                                 <dx-number-box name="cycles"
                                                                [min]="1"
+                                                               [max]="999"
                                                                mode="number"
                                                                format="###0"
                                                                class="label"
