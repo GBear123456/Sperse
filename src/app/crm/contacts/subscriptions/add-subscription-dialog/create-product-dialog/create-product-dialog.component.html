@@ -157,7 +157,7 @@
                                     <div *ngIf="!isReadOnly && i" class="remove-button" (click)="removePaymentPeriod(i)"><span>-</span></div>
 
                                     <div class="option">
-                                        <div class="prices">
+                                        <div class="option-row width-50">
                                             <div [ngClass]="{disabled: !i && isFreePriceType}">
                                                 <label class="wide">{{ls.l('Subscription fee')}}</label>
                                                 <dx-number-box name="price"
@@ -181,8 +181,7 @@
                                                 </dx-number-box>
                                             </div>
                                         </div>
-
-                                        <div class="periods">
+                                        <div class="option-row periods">
                                             <div>
                                                 <dx-select-box name="name"
                                                                [dataSource]="getFrequencies(option, i)"
@@ -226,15 +225,67 @@
                                         </div>
 
                                         <hr>
-
-                                        <div class="trials">
-                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime) || (!i && isFreePriceType)}">
+                                        <div class="option-row width-50" [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime || option.frequency == recurringPaymentFrequency.LifeTime }">
+                                            <div>
+                                                <dx-select-box name="name"
+                                                               [dataSource]="billingCyclesEnable"
+                                                               [placeholder]="ls.l('Billing cycles')"
+                                                               valueExpr="key"
+                                                               displayExpr="displayValue"
+                                                               [(value)]="option.billingCyclesEnabled"
+                                                               [disabled]="isReadOnly"
+                                                               (onValueChanged)="option.cycles = option.billingCyclesEnabled ? option.cycles : undefined"
+                                                               (onInitialized)="option.billingCyclesEnabled = (option.frequency && !!option.cycles) || false">
+                                                </dx-select-box>
+                                            </div>
+                                            <div [ngClass]="{disabled: !option.billingCyclesEnabled}">
+                                                <dx-number-box name="cycles"
+                                                               [min]="1"
+                                                               mode="number"
+                                                               format="###0"
+                                                               class="label"
+                                                               valueChangeEvent="keyup"
+                                                               [placeholder]="ls.l('Set number of cycles')"
+                                                               [(value)]="option.cycles"
+                                                               [disabled]="isReadOnly">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule [type]="option.billingCyclesEnabled ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('Cycles'))}}."></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="option-row width-50">
+                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime}">
+                                                <label class="wide">{{ls.l('SignupFee')}}</label>
+                                                <dx-number-box name="price"
+                                                               width="100%"
+                                                               [format]="amountFormat"
+                                                               [(value)]="option.signupFee"
+                                                               [disabled]="isReadOnly"
+                                                               (onValueChanged)="checkShowAmountChangeWarrning()">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule [type]="option.frequency && !isOneTime && option.trialDayCount ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-number-box>
+                                            </div>
+                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime || !isCommissionsEnabled}">
+                                                <label class="wide">{{ls.l('CommissionableAmount')}}</label>
+                                                <dx-number-box name="commissionableSignupFeeAmount"
+                                                               width="100%"
+                                                               [format]="amountNullableFormat"
+                                                               [(value)]="option.commissionableSignupFeeAmount"
+                                                               [disabled]="isReadOnly">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="option-row width-50">
+                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime}">
                                                 <label class="wide" for="level">
                                                     <dx-switch #trialSwitch
                                                                switchedOffText=""
                                                                switchedOnText=""
                                                                [(value)]="option.trialEnabled"
-                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount || !!option.signupFee">
+                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount">
                                                     </dx-switch>&nbsp;<span (click)="option.trialEnabled = !option.trialEnabled">{{ls.l('Add Trial Period')}}</span>
                                                 </label>
                                                 <dx-number-box name="count"
@@ -248,31 +299,6 @@
                                                                [disabled]="isReadOnly || !option.trialEnabled">
                                                 </dx-number-box>
                                             </div>
-                                            <div [ngClass]="{disabled: !option.trialEnabled || !(option.frequency && !isOneTime) || (!i && isFreePriceType)}">
-                                                <label class="wide">{{ls.l('SignupFee')}}</label>
-                                                <dx-number-box name="price"
-                                                               width="100%"
-                                                               [format]="amountFormat"
-                                                               [(value)]="option.signupFee"
-                                                               [disabled]="isReadOnly || !option.trialEnabled"
-                                                               (onValueChanged)="checkShowAmountChangeWarrning()">
-                                                    <dx-validator>
-                                                        <dxi-validation-rule [type]="option.frequency && !isOneTime && option.trialDayCount ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-number-box>
-                                            </div>
-                                            <div [ngClass]="{disabled: !option.trialEnabled || (!i && isFreePriceType) || !(option.frequency && !isOneTime && isCommissionsEnabled)}">
-                                                <label class="wide">{{ls.l('CommissionableAmount')}}</label>
-                                                <dx-number-box name="commissionableSignupFeeAmount"
-                                                               width="100%"
-                                                               [format]="amountNullableFormat"
-                                                               [(value)]="option.commissionableSignupFeeAmount"
-                                                               [disabled]="isReadOnly || !option.trialEnabled">
-                                                </dx-number-box>
-                                            </div>
-                                        </div>
-
-                                        <div class="grace">
                                             <div>
                                                 <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">
                                                     <dx-switch switchedOffText=""
@@ -292,7 +318,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </ng-container>
                         </div>

@@ -124,8 +124,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     tenantId = abp.session.tenantId || 0;
     defaultProductUri = '';
 
-    trialEnabled: boolean = false;
-    gracePeriodEnabled: boolean = false;
     enableCommissions: boolean = true;
     isReadOnly = !!this.data.isReadOnly;
     saveButtonId = 'saveProductOptions';
@@ -187,6 +185,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     recurringPaymentFrequency = RecurringPaymentFrequency;
     frequencies = Object.keys(RecurringPaymentFrequency);
     customPeriodTypes = Object.keys(CustomPeriodType);
+    billingCyclesEnable = [
+        { key: false, displayValue: this.ls.l('Forever') },
+        { key: true, displayValue: this.ls.l('Limited') }
+    ];
     gracePeriodDefaultValue: number;
     customGroup: string;
     isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
@@ -598,6 +600,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
             if (this.customPeriodValidator)
                 this.customPeriodValidator.instance.reset();
+        }
+
+        if ([RecurringPaymentFrequency.OneTime, RecurringPaymentFrequency.LifeTime].indexOf(event.value) != -1) {
+            option['billingCyclesEnabled'] = false;
+            option.cycles = undefined;
         }
 
         this.detectChanges();
