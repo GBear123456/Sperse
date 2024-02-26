@@ -206,7 +206,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                         request.params.$select = DataGridService.getSelectFields(
                             this.generatedCommissionDataGrid,
-                            ['Id', 'ResellerContactId']
+                            ['Id', 'ResellerContactId', 'CurrencyId']
                         );
                     }
                 })
