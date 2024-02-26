@@ -466,6 +466,13 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+    getUnitColumnText(data: ProductDto) {
+        if (data.Unit)
+            return data.Unit;
+
+        return this.getSubscrOptionDescription(data.ProductSubscriptionOptions[0]);
+    }
+
     getSubscrOptionDescription(data: ProductSubscriptionOption) {
         if (data.Frequency == RecurringPaymentFrequency.Custom) {
             return this.l('RecurringPaymentFrequency_CustomDescription', data.CustomPeriodCount, this.l('CustomPeriodType_' + data.CustomPeriodType));

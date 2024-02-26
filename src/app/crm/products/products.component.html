@@ -100,7 +100,7 @@
                         <img [src]="cell.data.ThumbnailUrl || 'assets/common/images/no-image.svg'" />
                     </div>
                     <div *dxTemplate="let cell of 'unitTemplate'" class="clipboard-holder">
-                        {{cell.data.Unit || cell.data.ProductSubscriptionOptions[0].Frequency}}
+                        {{getUnitColumnText(cell.data)}}
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder price-column">
                         <span id="product{{cell.data.Id}}" [ngClass]="{'underline': cell.data.ProductSubscriptionOptions.length > 1}">
