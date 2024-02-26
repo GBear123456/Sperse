@@ -98,7 +98,7 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
         deserializeDates: false,
         url: this.getODataUrl(
             this.dataSourceURI,
-            [FilterHelpers.filterByCurrencyId(this.currency)]
+            this.getCurrencyFilterExpression()
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
@@ -257,8 +257,23 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
                     })
                 }
             }),
-            CurrencyHelper.getCurrencyFilter(this.currency)
+            this.getCurrencyFilter()
         ];
+    }
+
+    getCurrencyFilter(): FilterModel {
+        let filter = CurrencyHelper.getCurrencyFilter(this.currency);
+        filter.filterMethod = () => this.getCurrencyFilterExpression();
+        return filter;
+    }
+
+    getCurrencyFilterExpression(): any {
+        return {
+            or: [
+                FilterHelpers.filterByCurrencyId(this.currency),
+                { 'Type': { eq: CouponDiscountType.Percentage } }
+            ]
+        };
     }
 
     navigateToProducts(event) {
