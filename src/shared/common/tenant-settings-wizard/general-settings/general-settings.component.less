@@ -30,12 +30,15 @@
     }
     label[for="Currency"],
     label[for="DefaultCountry"] {
-        min-width: 90px!important;
+        min-width: 80px!important;
     }
     .payment-settings {
         display: flex;
         padding-left: 20px;
-        width: 388px;
+        width: 400px;
+        .selected-flag-icon {
+            border-bottom: 1px solid #dfdfdf;
+        }
     }
     ::ng-deep dx-select-box {
         border-bottom: 1px solid #dfdfdf!important;
@@ -63,5 +66,25 @@
                 padding: 0;
             }
         }
+    }
+}
+
+::ng-deep .currency-row {
+    border-bottom: 1px solid #E5E8F3;
+    padding: 7px 0px!important;
+    margin: 0 10px;
+    display: flex;
+    width: calc(100% - 20px);
+
+    .flag-icon {
+        border-radius: 10px;
+        border: 1px solid #dedede;
+    }
+    div {
+        display: inline-block;
+        margin: auto 0 auto 10px;
+        white-space: pre-wrap;
+    }
+    .currency-name {
     }
 }
