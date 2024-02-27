@@ -1147,4 +1147,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.actionEvent = null;
         this.detectChanges();
     }
+
+    getMaxColumnHeight(elm) {
+        let maxColumnHeight = 0;
+        (this.stages || []).forEach(stage => {
+            let height = stage.entities.length * 110;
+            if (maxColumnHeight < height)
+                maxColumnHeight = height;
+        });
+        return maxColumnHeight + 'px';
+    }
 }

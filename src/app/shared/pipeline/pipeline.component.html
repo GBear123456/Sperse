@@ -7,9 +7,9 @@
     width="300px"
     (onItemClick)="onMenuItemClick($event)">
 </action-menu>
-<div class="pipeline-wrapper">
+<div class="pipeline-wrapper" style="--max-column-height: {{getMaxColumnHeight(columnItems)}}">
     <div *ngFor="let stage of stages; let i = index;"
-         class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}"
+        class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}"
         [ngStyle]="{
             flexBasis: 'calc(100% / ' + (stages.length > stage.width ? stages.length - stage.width : stages.length) + ')'
         }"
@@ -103,10 +103,10 @@
             </loading-spinner>
         </div>
         <div [ngClass]="{ 'column-items': true, 'drag-allowed': stage?.dragAllowed }"
-             [dragula]="dragulaName"
-             [dragulaModel]="stage?.entities"
-             [accessKey]="stage?.id"
-             (click)="hideStageHighlighting()" #columnItems>
+            [dragula]="dragulaName"
+            [dragulaModel]="stage?.entities"
+            [accessKey]="stage?.id"
+            (click)="hideStageHighlighting()" #columnItems>
             <div *ngFor="let entity of stage.entities"
                  [ngClass]="{ card: true, locked: entity?.locked, selected: entity?.selected, compact: compactView }"
                  [ngStyle]="{ borderTopColor: stage.color }"
