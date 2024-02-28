@@ -35,6 +35,23 @@
     <div class="toggle-button-container" [ngClass]="toggleButtonPosition" *ngIf="showHeadlineMenuToggleButton">
         <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons()"></button>
         <ul *ngIf="showHeadlineButtons" class="buttons">
+            <li *ngIf="isAdminCustomizations">
+                <div>
+                    <dx-switch
+                        width="42px"
+                        style="margin: auto;"
+                        switchedOffText="Top"
+                        switchedOnText="Left"
+                        [value]="settingService.get('App.Appearance.NavPosition') == 'Vertical'"
+                        (onValueChanged)="switchNavBar($event)"> 
+                    </dx-switch>
+                </div>
+                <span class="text">{{ls.l('Navigation Bar')}}</span>
+            </li>
+            <li *ngIf="layoutService.showLeftBar" (click)="toggleLeftBar()">
+                <div><i class="icon left-menu {{'dx-icon-' + (layoutService.expandedLeftBarSubject.value ? 'hide' : 'show') + 'panel'}}"></i></div>
+                <span class="text">{{( layoutService.expandedLeftBarSubject.value ? ls.l('Collapse') : ls.l('Expand') ) + ' Left Bar'}}</span>
+            </li>
             <li *ngIf="showReloadButton && !showRefreshButtonSeparately" (click)="reload($event)">
                 <div><span class="icon reload"></span></div>
                 <span class="text">{{ ls.l('ReloadTheCurrentPage') }}</span>

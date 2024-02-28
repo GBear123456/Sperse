@@ -4,6 +4,10 @@
     .content {
         display: flex;
         height: calc(~"100vh - 150px");
+
+        &.show-left-bar {
+            height: calc(~"100vh - 75px")!important;
+        }
     }
 
     .btn-layout {
@@ -33,9 +37,15 @@
         @media (min-width: 1200px) {
             padding: 0 48px;
             width: calc(~"100vw - 322px");
+            &.show-left-bar {
+                width: calc(~"100vw - 412px");
+            }            
         }
         &.expanded {
             width: 100vw;
+            &.show-left-bar {
+                width: calc(100vw - 90px);
+            }
         }
 
         section {

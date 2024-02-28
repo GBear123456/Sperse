@@ -11,13 +11,13 @@
         <synch-progress class="synch-progress" (onComplete)="refreshWidgets()"></synch-progress>
         <calendar-button></calendar-button>
     </app-headline>
-    <div class="content" #content>
+    <div class="content" [ngClass]="{'show-left-bar': layoutService.showLeftBar}" #content>
         <cfo-left-menu #leftMenu
                        [showIntroductionTourLink]="!appService.isHostTenant">
         </cfo-left-menu>
         <div class="right">
             <dx-scroll-view [useNative]="false" [showScrollbar]="dashboard.offsetHeight > content.offsetHeight ? 'onHover' : 'Never'">
-                <div #dashboard class="dashboard-wrapper {{leftMenu.collapsed ? 'expanded' : ''}}">
+                <div #dashboard class="dashboard-wrapper {{leftMenu.collapsed ? 'expanded' : ''}}" [ngClass]="{'show-left-bar': layoutService.showLeftBar}">
                     <top-spending-categories [fullpage]="true" *ngIf="!accessAllDepartments; else main"></top-spending-categories>
                     <ng-template #main>
                         <section class="accounts-info">

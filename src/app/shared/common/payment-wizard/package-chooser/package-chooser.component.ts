@@ -259,6 +259,9 @@ export class PackageChooserComponent implements OnInit {
 
     getPaymentOptions(): PaymentOptions {
         if (this.selectedPackageCardComponent) {
+            let selectedOption = this.selectedPackageCardComponent.productInfo.productSubscriptionOptions.find(option => 
+                option.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
+
             const paymentOptions: PaymentOptions = {
                 productId: this.selectedPackageCardComponent.productInfo.id,
                 productName: this.selectedPackageCardComponent.productInfo.name,
@@ -266,9 +269,7 @@ export class PackageChooserComponent implements OnInit {
                 currencySymbol: this.selectedPackageCardComponent.currencySymbol,
                 paymentPeriodType: PaymentService.getPaymentPeriodType(this.selectedBillingPeriod),
                 customPeriodDescription: this.selectedBillingPeriod == BillingPeriod.Custom ? this.selectedPackageCardComponent.getPriceDescription() : null,
-                total: this.selectedPackageCardComponent.pricePerPeriod * (
-                    this.selectedBillingPeriod === BillingPeriod.Yearly ? 12 : 1
-                ),
+                total: selectedOption ? selectedOption.fee : this.selectedPackageCardComponent.pricePerPeriod,
                 signUpFee: this.selectedPackageCardComponent.signupFee,
                 trialDayCount: this.selectedPackageCardComponent.trialDayCount
             };

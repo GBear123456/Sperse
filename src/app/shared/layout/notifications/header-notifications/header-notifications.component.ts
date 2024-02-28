@@ -24,6 +24,7 @@ import { PermissionCheckerService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     templateUrl: './header-notifications.component.html',
@@ -62,6 +63,7 @@ export class HeaderNotificationsComponent implements OnInit {
         private permission: PermissionCheckerService,
         private router: Router,
         private localizationResolver: LocalizationResolver,
+        public layoutService: LayoutService,
         public ls: AppLocalizationService,
         public profileService: ProfileService
     ) {}

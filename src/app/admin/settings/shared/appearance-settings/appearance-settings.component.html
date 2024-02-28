@@ -1,4 +1,34 @@
 <h2>{{l('Appearance')}} {{l('Settings')}}</h2>
+<div class="form-group">
+    <h5>{{l("NavigationMenuPosition")}}</h5>
+    <dx-select-box width="576"
+                   height="46"
+                   [items]="navPositionOptions"
+                   displayExpr="text"
+                   valueExpr="id"
+                   placeholder=""
+                   [(value)]="navPosition"
+                   stylingMode="outlined">
+    </dx-select-box>
+</div>
+<div class="row m-form color-theme">
+    <div class="col-lg-4 col-md-6 app-header-color">
+        <dx-color-box 
+        [(value)]="appearance.navBackground"
+        [showClearButton]="true"
+            label="Navigation Menu Background Color"
+        (onValueChanged)="onColorValueChanged($event, defaultHeaderColor)"
+    ></dx-color-box>
+    </div>
+    <div class="col-lg-4 col-md-6 app-text-color">
+        <dx-color-box
+        [(value)]="appearance.navTextColor"
+        [showClearButton]="true"
+            label="Navigation Menu Text Color"
+        (onValueChanged)="onColorValueChanged($event, defaultTextColor)"
+    ></dx-color-box>
+    </div>
+</div>
 <div class="row m-form file-uploads">
     <div class="col-lg-4 col-md-6 app-logo-upload">
         <uploader #logoUploader

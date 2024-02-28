@@ -46,6 +46,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     'selector': 'app-stats',
@@ -205,7 +206,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private calendarService: CalendarService,
         public filtersService: FiltersService,
         public bankAccountsService: BankAccountsService,
-        public cfoPreferencesService: CfoPreferencesService
+        public cfoPreferencesService: CfoPreferencesService,
+        public layoutService: LayoutService
     ) {
         super(injector);
     }
@@ -340,12 +342,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             {
                                 name: 'filters',
                                 visible: !this.isAdvicePeriod && !this._cfoService.hasStaticInstance,
-                                action: () => {
-                                    setTimeout(() => {
-                                        this.linearChart.instance.render();
-                                        this.barChart.instance.render();
-                                    }, 1000);
+                                action: () => {                                    
                                     this.filtersService.fixed = !this.filtersService.fixed;
+                                    this.calculateChartsSize();
                                 },
                                 options: {
                                     checkPressed: () => {
@@ -499,7 +498,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     calculateChartsSize() {
         let chartsHeight = window.innerHeight - 390;
         this.chartsHeight = chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
-        this.chartsWidth = window.innerWidth - (window.innerWidth < 768 || this.leftMenuComponent.collapsed ? 40 : 371);
+        this.chartsWidth = window.innerWidth - (
+            window.innerWidth < 768 || (this.leftMenuComponent.collapsed && !this.filtersService.fixed)
+                ? (this.layoutService.showLeftBar ? 130 : 40) : (this.layoutService.showLeftBar ? 461 : 371)
+        );
+
+        setTimeout(() => {
+            this.linearChart.instance.render();
+            this.barChart.instance.render();
+        }, 600);
     }
 
     /** Calculates the height of the charts scrollable height after resizing */

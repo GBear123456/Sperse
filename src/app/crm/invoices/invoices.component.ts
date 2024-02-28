@@ -90,6 +90,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     toolbarConfig: ToolbarGroupModel[];
     InvoiceDueStatus = InvoiceDueStatus;
     selectedQuickStatusFilter: InvoiceStatusQuickFitler = InvoiceStatusQuickFitler.All;
+    filterZeroInvoices: boolean = true;
     readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;
     private filters: FilterModel[] = this.getFilters();
     private prodcutsFilter: FilterModel;
@@ -118,7 +119,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         deserializeDates: false,
         url: this.getODataUrl(
             this.dataSourceURI,
-            [FilterHelpers.filterByCurrencyId(this.currency)]
+            [FilterHelpers.filterByCurrencyId(this.currency), this.getOdataFilterByNonZeroTotal()]
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
@@ -398,6 +399,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 isSelected: false,
                 filterMethod: () => this.getOdataFilterByQuickStatus()
             }),
+            new FilterModel({
+                caption: 'zeroAmountQuickFilter',
+                hidden: true,
+                isSelected: false,
+                filterMethod: () => this.getOdataFilterByNonZeroTotal()
+            }),
         ];
     }
 
@@ -475,10 +482,31 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                             }
                         },
                         action: () => {
-                            this.filterByQuickStatus(InvoiceStatusQuickFitler[key]);
+                            this.selectedQuickStatusFilter = InvoiceStatusQuickFitler[key];
+                            this.triggerToolbarFilter();
                         }
                     };
                 })
+            },
+            {
+                location: 'center',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        text: '',
+                        name: 'check-box',
+                        widget: 'dxCheckBox',
+                        options: {
+                            width: '200px',
+                            value: this.filterZeroInvoices,
+                            text: this.l('Exclude zero invoices'),
+                            onValueChanged: event => {
+                                this.filterZeroInvoices = event.value;
+                                this.triggerToolbarFilter();
+                            }
+                        }
+                    }
+                ]
             },
             {
                 location: 'after',
@@ -551,8 +579,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    filterByQuickStatus(item: InvoiceStatusQuickFitler) {
-        this.selectedQuickStatusFilter = item;
+    triggerToolbarFilter() {
         this.initToolbarConfig();
         this.filtersService.change([]);
     }
@@ -615,6 +642,17 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             default:
                 return {};
         }
+    }
+
+    getOdataFilterByNonZeroTotal() {
+        if (this.filterZeroInvoices) {
+            return {
+                [this.invoiceFields.GrandTotal]: {
+                    gt: 0
+                }
+            };
+        }
+        return {};
     }
 
     ngOnDestroy() {

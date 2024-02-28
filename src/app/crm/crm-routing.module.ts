@@ -9,6 +9,7 @@ import { CouponsComponent } from './coupons/coupons.component';
 import { PartnersComponent } from './partners/partners.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
+import { WelcomeComponent } from './welcome/welcome.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
@@ -17,6 +18,7 @@ import { ActivityComponent } from './activity/activity.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { CommissionHistoryComponent } from './commission-history/commission-history.component';
+import { TenantReportsComponent } from './tenant-reports/tenant-reports.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { CrmContactGroupGuard } from '@app/crm/crm-contact-group-guard'
 import { InvoicesComponent } from './invoices/invoices.component';
@@ -30,6 +32,7 @@ import { ZapierComponent } from '@shared/common/zapier/zapier.component';
                 path: '',
                 children: [
                     { path: 'zapier', component: ZapierComponent, data: { permission: AppPermissions.CRM, reuse: true } },
+                    { path: 'welcome', component: WelcomeComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'dashboard', component: DashboardComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'documents', component: DocumentsComponent, data: { permission: AppPermissions.CRMFileStorageTemplates, reuse: true } },
                     { path: 'clients', component: ClientsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },
@@ -42,6 +45,7 @@ import { ZapierComponent } from '@shared/common/zapier/zapier.component';
                     { path: 'import-leads', component: ImportLeadsComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRM, reuse: true } },
+                    { path: 'tenant-reports', component: TenantReportsComponent, data: { permission: AppPermissions.Tenants, reuse: true } },
                     { path: 'reports', component: ReportsComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     {
                         path: 'commission-history',

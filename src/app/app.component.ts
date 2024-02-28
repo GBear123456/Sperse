@@ -21,6 +21,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     templateUrl: './app.component.html',
@@ -56,6 +57,7 @@ export class AppComponent implements OnInit {
         private chatSignalrService: ChatSignalrService,
         private fullScreenService: FullScreenService,
         private permissionCheckerService: PermissionCheckerService,
+        public layoutService: LayoutService,
         public ls: AppLocalizationService,
         public appSession: AppSessionService,
         public appService: AppService,

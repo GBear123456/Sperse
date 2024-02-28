@@ -199,15 +199,18 @@
 :host {
     width: 100%;
     display: block;
+
     .empty-container {
         height: 61px;
         display: block;
         position: relative;
         border-bottom: 1px solid #dfdfdf !important;
     }
+
     &.compact {
         height: 37px;
     }
+
     ::ng-deep .dx-toolbar {
         border-bottom: 1px solid #dedede;
         padding: 11px 0 13px 0;
@@ -271,7 +274,7 @@
 
         .dx-numberbox {
             .dx-texteditor-buttons-container {
-                margin-right: 0px!important;
+                margin-right: 0px !important;
             }
         }
 
@@ -284,16 +287,19 @@
             font-size: 20px;
             font-weight: 500;
             border-bottom: none;
-            &+.dx-placeholder {
-                font-size: 20px!important;
+
+            & + .dx-placeholder {
+                font-size: 20px !important;
+
                 &:before {
                     height: 30px;
-                    padding: 0!important;
+                    padding: 0 !important;
                 }
             }
+
             &[aria-controls] {
-                &+.dx-placeholder {
-                    top: 0!important;
+                & + .dx-placeholder {
+                    top: 0 !important;
                 }
             }
         }
@@ -304,9 +310,11 @@
             border-radius: 5px;
             padding: 0 10px;
             height: 38px;
+
             &.dx-state-hover {
                 border-color: #bebebe;
             }
+
             .dx-checkbox-text {
                 line-height: 36px;
                 margin-left: 0;
@@ -319,12 +327,12 @@
         }
 
         [title="Import Type"] {
-            width: 130px!important;
+            width: 130px !important;
         }
 
         [accesskey="select-box"] {
             display: flex;
-            min-width: 100px!important;
+            min-width: 100px !important;
             align-items: center;
             justify-content: center;
             position: relative;
@@ -382,6 +390,7 @@
 
         .dx-dropdownmenu.dx-dropdownmenu-button {
             min-width: 50px;
+
             &[accesskey="flag"] {
                 .dx-button-content {
                     background: url('../../../../assets/common/icons/flag-icon.svg') 17px center no-repeat;
@@ -424,7 +433,7 @@
                 }
             }
 
-            &[accesskey="status"], 
+            &[accesskey="status"],
             &[accesskey="stage"],
             &[accesskey="groups"] {
                 .dx-button-content {
@@ -583,7 +592,7 @@
                 }
             }
 
-            &[accesskey="message"], 
+            &[accesskey="message"],
             &[accesskey="menu"] {
                 padding: 6px 10px;
                 height: 39px;
@@ -694,29 +703,31 @@
                 border: solid 1px #dddddd;
                 //cursor: pointer;
                 cursor: default;
-                    &::before {
-                        width: 8px;
-                        height: 8px;
-                        content: '';
-                        display: block;
-                        position: absolute;
-                        left: 10px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        border-radius: 50%;
-                    }
+
+                &::before {
+                    width: 8px;
+                    height: 8px;
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    left: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    border-radius: 50%;
+                }
+
                 &.subscribed {
                     &::before {
                         background: #37d749;
                     }
                 }
+
                 &.unsubscribed {
                     &::before {
                         background: #ef8f00;
                     }
                 }
             }
-
             // &.dx-button:hover {
             //     border: solid 1px #b9b9b9;
             // }
@@ -818,8 +829,10 @@
             &:after {
                 display: none;
             }
+
             &[button-pressed="true"] {
                 background-color: rgba(0, 174, 239, 0.04);
+
                 .dx-button-content {
                     background: url('../../../../assets/common/icons/profile-gear-blue.svg') no-repeat 15px;
                 }
@@ -951,7 +964,8 @@
                     border-top-left-radius: 0;
                     border-bottom-left-radius: 0;
                     border-left: 1px solid transparent;
-                }                
+                }
+
                 &:hover, &.dx-state-focused {
                     border-left: 1px solid #bebebe;
                 }
@@ -961,7 +975,7 @@
                 .rotate {
                     transform: rotate(180deg);
                 }
-            }            
+            }
 
             &[aria-label="Stage"],
             &[aria-label="Rank"],
@@ -978,6 +992,7 @@
             &[aria-label="pen"],
             &[aria-label="folder"] {
                 min-width: 100px;
+
                 &:not(.dx-button-has-text) {
                     min-width: 60px;
                 }
@@ -1049,10 +1064,16 @@
                     font-size: 17px;
                     line-height: 24px;
                 }
+
                 .dx-icon {
                     color: #000;
                 }
             }
+        }
+
+        .dx-checkbox {
+            margin-left: 0;
+            margin-right: 12px;
         }
 
         .dx-toolbar-after .dx-toolbar-item:last-child {
@@ -1194,7 +1215,7 @@
             }
         }
 
-        &[accesskey="status"], 
+        &[accesskey="status"],
         &[accesskey="stage"],
         &[accesskey="groups"] {
             .dx-button-content {

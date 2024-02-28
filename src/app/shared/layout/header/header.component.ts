@@ -23,6 +23,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
+import { ChatSignalrService } from '../chat/chat-signalr.service';
+import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
 
 @Component({
     templateUrl: './header.component.html',
@@ -31,7 +33,6 @@ import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management
     providers: [ CommonUserInfoServiceProxy ]
 })
 export class HeaderComponent implements OnInit {
-    @Input() showGlobalSearch: boolean;
     origin = location.origin;
     customLayoutType = '';
     languages: abp.localization.ILanguageInfo[];
@@ -40,7 +41,7 @@ export class HeaderComponent implements OnInit {
     userName = '';
     unreadChatMessageCount = 0;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-    isChatConnected = false;
+    isChatConnected = this.chatSignalrService.isChatConnected;
     userCompany$: Observable<string>;
     dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
     isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
@@ -53,8 +54,10 @@ export class HeaderComponent implements OnInit {
         private profileServiceProxy: ProfileServiceProxy,
         private commonUserInfoService: CommonUserInfoServiceProxy,
         private feature: FeatureCheckerService,
+        private chatSignalrService: ChatSignalrService,
         public appSession: AppSessionService,
         public userManagementService: UserManagementService,
+        public quickSideBarChat: QuickSideBarChat,
         public appService: AppService,
         public layoutService: LayoutService,
         public ls: AppLocalizationService
@@ -72,15 +75,22 @@ export class HeaderComponent implements OnInit {
         this.registerToEvents();
     }
 
+    showGlobalSearch() {
+        return this.layoutService.showLeftBar && 
+            !location.href.includes('welcome') &&
+            this.appService.getModule() == 'crm'; 
+    }
+    
     registerToEvents() {
         if (this.isChatEnabled && this.layoutService.showChatButton) {
             abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
                 this.unreadChatMessageCount = messageCount;
             });
 
-            abp.event.on('app.chat.connected', () => {
-                this.isChatConnected = true;
-            });
+            if (!this.isChatConnected)
+                abp.event.on('app.chat.connected', () => {
+                    this.isChatConnected = true;
+                });
         }
     }
 

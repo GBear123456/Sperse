@@ -1,6 +1,7 @@
 /** Core imports */
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     HostBinding,
@@ -22,12 +23,20 @@ import { map, takeUntil } from 'rxjs/operators';
 import { HeadLineConfigModel } from './headline.model';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import {
+    NavPosition,
+    TenantSettingsServiceProxy,
+    AppearanceSettingsEditDto
+} from '@shared/service-proxies/service-proxies';
 import { AppService } from '@app/app.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppConsts } from '@shared/AppConsts';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
+import { AppFeatures } from '@shared/AppFeatures';
+import { SettingService } from 'abp-ng2-module';
 
 @Component({
     selector: 'app-headline',
@@ -68,6 +77,9 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Output() onToggleLeftMenu: EventEmitter<null> = new EventEmitter<null>();
     @Output() onStateReset: EventEmitter<null> = new EventEmitter<null>();
     @HostBinding('class.fullscreen') isFullScreenMode = false;
+    @HostBinding('class.showLeftBar') showLeftBar = this.layoutService.showLeftBar;
+    @HostBinding('class.expandedLeftBar') expandedLeftBar = false;
+
     data: HeadLineConfigModel;
     showHeadlineButtons = false;
     toolbarMenuToggleButtonText$: Observable<string> = this.appService.toolbarIsHidden$.pipe(
@@ -91,6 +103,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     showTotals = !AppConsts.isMobile;
     showRefreshButtonSeparately: boolean;
     showHeadlineMenuToggleButton: boolean;
+    isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
 
     constructor(
         injector: Injector,
@@ -99,7 +112,11 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         private fullScreenService: FullScreenService,
         private lifecycleService: LifecycleSubjectsService,
         private leftMenuService: LeftMenuService,
+        private settingsProxy: TenantSettingsServiceProxy,
+        public layoutService: LayoutService,
         public ls: AppLocalizationService,
+        private settingService: SettingService,
+        private changeDetectorRef: ChangeDetectorRef,
         @Inject('toggleButtonPosition') @Optional() toggleButtonPosition: 'left' | 'right',
         @Inject('showToggleLeftMenuButton') @Optional() showToggleLeftMenuButton: boolean
     ) {
@@ -107,6 +124,22 @@ export class HeadLineComponent implements OnInit, OnDestroy {
             this.toggleButtonPosition = toggleButtonPosition;
         }
         this.showToggleLeftMenuButton = showToggleLeftMenuButton;
+
+        this.layoutService.toggleHeadlineButtonSubject.asObservable().pipe(
+            takeUntil(this.lifecycleService.destroy$)
+        ).subscribe(() => {
+            setTimeout(() => {
+                this.toggleHeadlineButtons();
+                this.changeDetectorRef.markForCheck();
+            }, 100);
+        });
+
+        this.layoutService.expandedLeftBarSubject.asObservable().pipe(
+            takeUntil(this.lifecycleService.destroy$)
+        ).subscribe((val: boolean) => {
+            this.expandedLeftBar = val;
+            this.changeDetectorRef.markForCheck();
+        });
     }
 
     ngOnInit() {
@@ -123,6 +156,8 @@ export class HeadLineComponent implements OnInit, OnDestroy {
             || this.showToggleColumnSelectorButton
             || this.showPrintButton
             || this.showToggleLeftMenuButton;
+
+        this.showLeftBar = this.layoutService.showLeftBar;
     }
 
     @HostListener('document:click', ['$event'])
@@ -181,6 +216,22 @@ export class HeadLineComponent implements OnInit, OnDestroy {
 
     isTotalCountValid() {
         return Number.isInteger(this.totalCount);
+    }
+
+    toggleLeftBar() {
+        this.layoutService.expandedLeftBarSubject.next(!this.layoutService.expandedLeftBarSubject.value);
+    }
+
+    switchNavBar(event) {
+        this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({
+            navPosition: event.value ? NavPosition.Vertical : NavPosition.Horizontal,
+            navTextColor: this.settingService.get('App.Appearance.NavTextColor'),
+            navBackground: this.settingService.get('App.Appearance.NavBackground')
+        })).subscribe(() => {
+            abp.message.info(
+                this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'))
+            ).done(() => window.location.reload());
+        });
     }
 
     ngOnDestroy() {

@@ -78,6 +78,15 @@
         </button>
         <img *ngIf="stripePaymentSettings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
     </div>
+    <div class="form-group">
+        <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
+                      [text]="l('Ignore external connected accounts')"
+                      [(value)]="stripePaymentSettings.ignoreExternalConnectedAccounts">
+        </dx-check-box>
+    </div>
+    <p>
+        <span class="small">*Skip webhooks from external connected accounts</span>
+    </p>
     <!--<div class="form-group">
         <label for="StripeConnectWebhookSecret">{{l("ConnectWebhookSigningSecret")}}</label><span (click)="createWebhook(true)" class="create-webhook">(Create webhook on Stripe)</span>
         <input id="StripeConnectWebhookSecret" type="text" name="StripeConnectWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.connectWebhookSingingSecret">

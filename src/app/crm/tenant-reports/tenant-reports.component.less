@@ -1,0 +1,148 @@
+﻿:host {
+    display: block;
+    position: relative;
+    height: 100%;
+
+    ::ng-deep #tenantReportsGrid {
+        margin: 0 18px;
+        .dx-datagrid-table.dx-datagrid-table-fixed {
+            border-collapse: separate;
+            border-spacing: 0 6px;
+
+            .dx-row.dx-data-row.dx-column-lines {
+                &:nth-child(odd) {
+                    background: linear-gradient(0deg, #BEDCC840, #BEDCC840), linear-gradient(0deg, #E7F4E840, #E7F4E840);
+                }
+
+                &:nth-child(even) {
+                    background: linear-gradient(0deg, #D6DCD840, #D6DCD840), linear-gradient(0deg, #FFFFFF40, #FFFFFF40);
+                }
+
+                &.inactive {
+                    background: #F7EEEA;
+                }
+
+                td {
+                    border-top: 1px solid #D6DCD8;
+                    border-bottom: 1px solid #D6DCD8;
+                }
+                td:first-child {
+                    border-top-left-radius: 10px;
+                    border-bottom-left-radius: 10px;
+                    border: 1px solid #D6DCD8;
+                    border-right: 0;
+                }
+                td:last-child {
+                    border-top-right-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                    border: 1px solid #D6DCD8;
+                    border-left: 0;
+                }                                    
+            }
+        }
+
+        .dx-header-row {
+            .dx-datagrid-text-content {
+                color: #10213A;
+                font-family: Plus Jakarta Sans;
+                font-size: 13px;
+                font-weight: 500;
+                line-height: 27px;
+                letter-spacing: 0em;
+                i {
+                    color: #AAB1BA;
+                    font-style: normal;
+                }
+            }
+        }
+
+        .dx-datagrid .dx-link.dx-link-edit {
+            width: 28px !important;
+            height: 28px;
+        }
+
+        td.dx-command-edit {
+            & + td::before {
+                display: none !important;
+            }
+        }
+
+        .avatar {
+            width: 46px;
+            height: 46px;
+            margin: auto 10px;
+        }
+
+        .img-circle {
+            width: 46px!important;
+            height: 46px!important;
+            margin-left: auto;
+        }
+
+        .cell-wrapper {
+            max-width: 230px;
+            margin: 11px 15px 13px 0px;
+            font-family: Plus Jakarta Sans;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 20px;
+            letter-spacing: 0em;
+
+            label {
+                margin: 0;
+            }
+            span {
+                float: right;
+            }
+            .tenant-addr {
+                color: #0E4D91;
+            }
+            .tenant-created {
+                color: #478025;
+            }
+            .tenant-last-login {
+                color: #286AB3;
+            }
+            .tenant-deactivated {
+                color: #DD3C27;
+            }
+            .tenant-payments {
+                color: #3E4D60;
+            }
+            .tenant-sites {
+                color: #0E4D91;
+                text-decoration: underline;
+                cursor: pointer;
+            }
+            .tenant-products {
+                color: #10213A;
+            }
+
+            .billing-plan a {
+                padding: 2px;
+                border-radius: 4px;
+                background: #0051AA;
+                color: #FFF;
+                font-family: Plus Jakarta Sans;
+                font-size: 11px;
+                font-weight: 500;
+                line-height: 27px;
+                letter-spacing: 0em;
+            }
+            .billing-rate {
+                color: #10213A;
+                font-weight: 500;
+            }
+            &.status {
+                margin-bottom: 0;
+            }
+            .email a[href=""] {
+                color: #000;
+                &:hover {
+                    cursor: default;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}

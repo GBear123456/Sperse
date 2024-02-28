@@ -2,7 +2,9 @@
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    Component,
+    EventEmitter,
+    Component,    
+    Output,
     ViewChild
 } from '@angular/core';
 
@@ -18,7 +20,10 @@ import {
     TenantCustomizationServiceProxy,
     TenantCustomizationInfoDto,
     CustomCssType,
-    LayoutType
+    LayoutType,
+    NavPosition,
+    TenantSettingsServiceProxy,
+    AppearanceSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -45,6 +50,8 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
     @ViewChild('signUpCssUploader') signUpCssUploader: UploaderComponent;
 
+    @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
+
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
@@ -53,18 +60,27 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
 
     signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
 
+    navPosition = this.getNavPosition();
+    navPositionOptions = Object.keys(NavPosition).map(item => {
+        return {
+            id: NavPosition[item],
+            text: this.ls.l('NavPosition_' + item)
+        };
+    });
+
     constructor(
         private notify: NotifyService,
         private appSession: AppSessionService,
         private faviconsService: FaviconService,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private settingService: SettingService,
+        private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
-    ) { }
+    ) {}
 
     save(): Observable<any> {
-        return forkJoin(
+        let saveObs = [
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
                     this.tenant.logoId = res.result && res.result.id;
@@ -83,11 +99,28 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                     this.changeDetectorRef.detectChanges();
                 }
             }))
-        );
+        ];
+
+        if (this.getNavPosition() != this.navPosition) {
+            saveObs.push(
+                this.tenantSettingsServiceProxy.updateAppearanceSettings(
+                    new AppearanceSettingsEditDto({
+                        navPosition: this.navPosition,
+                        navBackground: this.settingService.get('App.Appearance.NavBackground'),
+                        navTextColor: this.settingService.get('App.Appearance.NavTextColor')                     
+                    })
+                ).pipe(tap(() => {
+                    this.onOptionChanged.emit('navPosition');
+                }))
+            );
+        }
+
+        return forkJoin(saveObs);
     }
 
     handleCssUpload(cssType: CustomCssType, res: any) {
         if (res.result && res.result.id) {
+            this.onOptionChanged.emit('appearance');
             this.setCustomCssTenantProperty(cssType, res.result.id);
             this.changeDetectorRef.detectChanges();
         }
@@ -143,5 +176,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             return basePath + kebabCase(tenant.customLayoutType) + '/style.css'
         else
             return basePath + 'platform-custom-style.css';
+    }
+
+    getNavPosition(): NavPosition {
+        return NavPosition[this.settingService.get('App.Appearance.NavPosition')];
     }
 }

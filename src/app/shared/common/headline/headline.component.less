@@ -1,4 +1,32 @@
 :host {
+    &.showLeftBar {
+        position: absolute;
+        width: calc(100vw - 195px);
+        top: -75px;
+        left: 100px;
+
+        &.expandedLeftBar {
+            left: -70px;            
+        }
+
+        .headline-row, .reload-button-container {
+            background: transparent!important;
+        }
+
+        .toggle-button-container {
+            width: 0px;
+            overflow: hidden;
+            border-right: none;
+        }
+
+        ul.buttons { 
+            left: -100px!important;
+        }
+
+        .headline-title {
+            padding-left: 55px;
+        }
+    }
 
     &.fullscreen {
         display: none;
@@ -105,7 +133,7 @@
             border-right: 1px solid #dfdfdf;
             border-bottom: 1px solid #dfdfdf;
             padding: 15px 0;
-            z-index: 100;
+            z-index: 999;
 
             li {
                 list-style: none;

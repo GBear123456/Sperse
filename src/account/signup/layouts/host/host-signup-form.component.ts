@@ -14,6 +14,7 @@ import { Observable, of } from 'rxjs';
 import round from 'lodash/round';
 
 /** Application imports */
+import { environment } from '@root/environments/environment';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
 import {
@@ -51,8 +52,11 @@ export class HostSignupFormComponent {
     @ViewChild('secondStepForm') secondStepForm;
     @ViewChild('phoneNumber') phoneNumber;
 
+    appMemberPortalUrl = AppConsts.appMemberPortalUrl || environment.portalUrl;
+    remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     hostName = AppConsts.defaultTenantName;
     isSperseHost = AppConsts.isSperseHost;
+    loginReferer: string = '';
     isExtLogin: boolean = false;
     defaultCountryCode: string;
     selectedCountryCode: string;
@@ -102,7 +106,10 @@ export class HostSignupFormComponent {
         this.activatedRoute.queryParamMap.pipe(
             first()
         ).subscribe((paramsMap: ParamMap) => {
-            this.isExtLogin = paramsMap.get('extlogin') == 'true';
+            this.isExtLogin = paramsMap.get('extlogin') == 'true';        
+            this.loginReferer = paramsMap.get('referer');
+            if(!['login', 'portal'].includes(this.loginReferer))
+                this.loginReferer = '';
         });
 
         this.productProxy.getSubscriptionProductsByGroupName('Main').subscribe(products => {

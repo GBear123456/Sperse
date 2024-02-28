@@ -105,7 +105,7 @@ export class TagsListComponent implements OnInit {
     process(isRemove: boolean) {
         let contactIds = this.selectedKeys;
         let tags = this.selectedItems;
-        if (contactIds.length > 1) {
+        if (contactIds.length > 1 || this.bulkUpdateMode) {
             if (isRemove)
                 return this.tagsService.untagContacts(UntagContactsInput.fromJS({
                     contactIds: contactIds,

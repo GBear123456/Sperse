@@ -1,0 +1,92 @@
+<div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
+
+<a routerLink="/app/crm/{{appService.isHostTenant ? 'dashboard' : 'welcome'}}" class="top-home" (mouseover)="showPlatformSelect()">
+    <platform-select></platform-select>
+</a>                
+
+<div class="accordion-wrapper">
+    <dx-accordion
+        [(selectedIndex)]="selectedModuleIndex"
+        [items]="moduleItems"
+        (onItemTitleClick)="onItemTitleClick($event)">
+        <div *dxTemplate="let data of 'item'" class="{{data.title.toLowerCase()}}">
+
+            <dx-scroll-view [height]="getAccordeonHeight()">
+                <div class="nav-menu"
+                    [hidden]="!moduleItems || !moduleItems.length">
+                    <dx-menu
+                        [width]="'calc(' + width + ' - 36px)'"                    
+                        [dataSource]="navbarItems"
+                        [selectByClick]="true"
+                        [selectionMode]="'single'"
+                        [hoverStateEnabled]="true"
+                        orientation="vertical"
+                        [selectByClick]="true"
+                        [adaptivityEnabled]="true"
+                        [(selectedItem)]="selectedItem"
+                        [hideSubmenuOnMouseLeave]="true"
+                        [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 200, show: 0 }}"
+                        [showSubmenuMode]="{ name: 'onHover', delay: { hide: 200, show: 0 }}"
+                        (onSubmenuShowing)="onSubmenuShowing($event)"
+                        (onSubmenuHiding)="onSubmenuHiding($event)"
+                        (onItemClick)="navigate($event)">
+                        <div *dxTemplate="let data of 'item'">
+                            <ng-container *ngIf="data && data.text">
+                                <img [id]="getTargetByTitle(data.text)" *ngIf="!data.params" [src]="data.icon"><span class="caption" style="padding: 10px 0;" *ngIf="!!data.params || expanded || isSubMenuOpen">{{data.text}}</span><span class="triangle" *ngIf="!data.params && data?.items?.length">&#9656;</span>
+                                <dx-tooltip *ngIf="!data?.items?.length"
+                                    target="#{{getTargetByTitle(data.text)}}"
+                                    [position]="{ my: 'left center', at: 'right', offset: '0 ' + (selectedModuleIndex * 35) }"
+                                    showEvent="dxhoverstart"
+                                    hideEvent="dxhoverend">
+                                    <div *dxTemplate="let item of 'content'">
+                                        <span class="menu-tooltip">{{data.text}}</span>
+                                    </div>
+                                </dx-tooltip>
+                            </ng-container>
+                        </div>
+                    </dx-menu>
+                </div>
+            </dx-scroll-view>
+        </div>
+
+        <div *dxTemplate="let data of 'title'" class="{{data.title.toLowerCase()}}">
+            {{data.title}}
+        </div>
+
+    </dx-accordion>
+</div>
+
+<user-management-list>
+    <li *ngIf="userManagementService.notificationEnabled && layoutService.showNotificationsButton"
+        headerNotifications
+        class="{{layoutService.showTopBar ? 'm-dropdown--align-right' : 'm-dropdown--align-left m-dropdown--up'}} m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width"
+        data-dropdown-toggle="click"
+        data-dropdown-persistent="true"
+        id="header_notification_bar">
+    </li>
+
+    <li *ngIf="isChatEnabled && !isChatConnected && layoutService.showChatButton"
+        class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center  m-dropdown--mobile-full-width">
+        <a href="javascript:;" class="m-nav__link">
+            <span class="m-nav__link-icon">
+                <img *ngIf="!isChatConnected" src="./assets/common/images/loading.gif" style="width: 23px;" [tooltip]="ls.l('ChatIsConnecting')" placement="left"/>
+            </span>
+        </a>
+    </li>
+    <li *ngIf="isChatEnabled && isChatConnected && layoutService.showChatButton"
+        (click)="quickSideBarChat.toggle()"
+        class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center  m-dropdown--mobile-full-width">
+        <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
+            <span class="m-nav__link-icon">
+                <img [src]="'./assets/common/icons/feedback' + (customLayoutType ? '-' + customLayoutType: '2')  + '.svg'">
+            </span>
+            <span class="m-badge m-badge--danger" [ngClass]="{'d-none': !unreadChatMessageCount}" id="UnreadChatMessageCount">{{unreadChatMessageCount}}</span>
+        </a>
+    </li>
+
+    <user-dropdown-menu *ngIf="layoutService.showUserProfileMenu"
+                        [showSquareIcon]="true"
+                        [subtitle]="userCompany$ | async"
+                        [dropdownMenuItems]="dropdownMenuItems">
+    </user-dropdown-menu>
+</user-management-list>

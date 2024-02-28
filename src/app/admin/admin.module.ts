@@ -16,6 +16,7 @@ import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
 import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxColorBoxModule } from 'devextreme-angular/ui/color-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
@@ -28,6 +29,7 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { FileUploadModule } from 'ng2-file-upload';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -42,6 +44,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 
 /** Application imports */
+import { EditTenantModule } from '@app/admin/tenants/edit-tenant-modal/edit-tenant-modal.module';
 import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
@@ -65,7 +68,6 @@ import { PermissionComboComponent } from './shared/permission-combo.component';
 import { PermissionTreeComponent } from './shared/permission-tree.component';
 import { RoleComboComponent } from './shared/role-combo.component';
 import { CreateTenantModalComponent } from './tenants/create-tenant-modal/create-tenant-modal.component';
-import { EditTenantModalComponent } from './tenants/edit-tenant-modal/edit-tenant-modal.component';
 import { StorageChangeDialog } from './tenants/edit-tenant-modal/storage-change-dialog/storage-change-dialog.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
@@ -105,7 +107,6 @@ import { CreateUserDialogComponent } from './users/create-user-dialog/create-use
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { ContactsModule } from '../crm/contacts/contacts.module';
 import { OrganizationUnitsTreeComponent } from './shared/organization-units-tree/organization-units-tree.component';
-import { ModulesEditionsSelectComponent, ClearIconSvgComponent } from '@admin/tenants/modules-edtions-select/modules-editions-select.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
@@ -147,6 +148,8 @@ import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-l
         DxPieChartModule,
         DxChartModule,
         DxListModule,
+        DxColorBoxModule,
+        DxTreeViewModule,
 
         MatTabsModule,
         MatInputModule,
@@ -169,7 +172,8 @@ import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-l
         LoadingSpinnerModule,
         ActionMenuModule,
         ModalDialogModule,
-        FeaturesModule
+        FeaturesModule,
+        EditTenantModule
     ],
     declarations: [
         UsersComponent,
@@ -223,10 +227,7 @@ import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-l
         EditionComboComponent,
         TenantsComponent,
         CreateTenantModalComponent,
-        EditTenantModalComponent,
         StorageChangeDialog,
-        ModulesEditionsSelectComponent,
-        ClearIconSvgComponent,
         CreateUserDialogComponent,
         TenantLandingPagesComponent,
         TenantLandingPageModalComponent
@@ -234,12 +235,10 @@ import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-l
     entryComponents: [
         CreateUserDialogComponent,
         CreateTenantModalComponent,
-        EditTenantModalComponent,
         StorageChangeDialog,
         CreateOrEditEditionModalComponent,
         CreateOrEditLanguageModalComponent,
         CreateOrEditRoleModalComponent,
-        EditTextModalComponent,
         AuditLogDetailModalComponent,
         UploadSSLCertificateModalComponent,
         AddOrEditSSLBindingModalComponent

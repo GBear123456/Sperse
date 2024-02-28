@@ -37,7 +37,16 @@
     }
 
     &, .page-content-wrapper, .page-content {
-        height: calc(100vh - 75px);
+        &.show-top-bar {
+            height: calc(100vh - 75px);
+        }
+        &.show-left-bar {
+            height: 100vh;
+            margin-left: 90px;
+            &.expanded {
+                margin-left: 260px;
+            }
+        }
         .fullscreen {
             top: 0 !important;
             .main-component-view {
@@ -51,7 +60,7 @@
         .page-content {
             margin-left: 0;
             transition: 1s;
-            overflow: hidden;
+            overflow: visible;
             .main-wrapper {
                 margin-left: 0;
                 transition: 1s;

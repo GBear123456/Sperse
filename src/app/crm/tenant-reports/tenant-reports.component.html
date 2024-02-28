@@ -1,0 +1,140 @@
+<div>
+    <app-headline [names]="[ l('Tenant Reports') ]"
+                  [buttons]="headlineButtons"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="ui.showReload"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="true"
+                  [showStateResetButton]="true"
+                  (onToggleToolbar)="repaintDataGrid()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onReload)="invalidate()"
+                  (onStateReset)="dataGrid.instance.state(null)"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+    </app-headline>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <div class="main-wrapper">
+        <action-menu [items]="actionMenuItems"
+                     width="220px"
+                     [visible]="!!actionRecord"
+                     (onItemClick)="onMenuItemClick($event)"
+                     (onHidden)="actionRecord = null">
+        </action-menu>
+        <div class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div>
+                    <div id="tenantReportsGrid">
+                        <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                        <dx-data-grid id="gridContainer"
+                                      hint="tenant-reports"
+                                      class="main-component-view"
+                                      [renderAsync]="true"
+                                      [remoteOperations]="true"
+                                      [allowColumnReordering]="false"
+                                      [columnAutoWidth]="true"
+                                      [allowColumnResizing]="true"
+                                      [hoverStateEnabled]="true"
+                                      [pager]="defaultGridPagerConfig"
+                                      [loadPanel]="{ enabled: false }"
+                                      [groupPanel]="{ visible: false }"
+                                      [toolbar]="{ visible: false }"
+                                      (onOptionChanged)="onGridOptionChanged($event)"
+                                      (onInitialized)="onInitialized($event)"
+                                      (onContentReady)="setGridDataLoaded()"
+                                      (onRowPrepared)="onRowPrepared($event)"
+                                      [dataSource]="dataSource">
+                            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+
+                            <dxi-column [caption]="''" cellTemplate="Avatar" [width]="'69px'"></dxi-column>
+
+                            <ng-container *dxTemplate="let cell of 'Avatar'">
+                                <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(cell.data.PhotoPublicId) + ')'}" class="img-circle"></div>
+                            </ng-container>
+
+                            <dxi-column [caption]="l('FullName') + ' / ' + l('Email') + ' / ' + l('Phone')" cellTemplate="Contact" headerCellTemplate="Header"></dxi-column>
+                            <ng-container *dxTemplate="let cell of 'Contact'">
+                                <div class="cell-wrapper" *ngIf="getContactInfo(cell.data.name) as contact">
+                                    <div class="full-name"><b>{{contact.Name}}</b></div>
+                                    <div class="email">
+                                        <a *ngIf="getConnectedStripeAccount(cell.data.id) as link; else nolink" target="_blank" [href]="link">{{contact.Email}}</a>
+                                        <ng-template #nolink>
+                                            {{contact.Email}}
+                                        </ng-template>
+                                    </div>
+                                    <div class="phone">{{contact.Phone | phone}}</div>
+                                </div>
+                                <!-- ng-template #stub>
+                                    <div class="cell-wrapper">
+                                        <div class="full-name"><b>Butch Coolidge</b></div>
+                                        <div class="email"><a href="mail:butch.coolidge@hotmail.com">butch.coolidge@hotmail.com</a></div>
+                                        <div class="phone">+1 (480) 595-5586</div>
+                                    </div>
+                                </ng-template -->
+                            </ng-container>
+
+
+                            <dxi-column [caption]="l('Tenant Code') + ' / ' + l('Tenant Name') + ' / ' + l('ID')" cellTemplate="Tenant" headerCellTemplate="Header"></dxi-column>
+                            <ng-container *dxTemplate="let cell of 'Tenant'">
+                                <div class="cell-wrapper">
+                                    <div class="tenant-code"><b>{{cell.data.tenancyName}}</b><span>({{cell.data.id}})</span></div>
+                                    <div class="tenant-name">{{cell.data.name}}</div>
+                                    <div class="tenant-addr">Laguna Beach, CA United States</div>
+                                </div>
+                            </ng-container>
+
+
+                            <dxi-column [caption]="l('Created') + ' / ' + l('Deactivated') + ' / ' + l('Last Login')" cellTemplate="Created" headerCellTemplate="Header"></dxi-column>
+                            <ng-container *dxTemplate="let cell of 'Created'">
+                                <div class="cell-wrapper">
+                                    <div class="tenant-created"><label>{{l('Created on')}}</label><span>{{cell.data.creationTime | datetime: formatting.dateTimeMoment}}</span></div>
+                                    <div class="tenant-last-login"><label>{{l('Last Login on')}}</label><span>{{cell.data.creationTime | datetime: formatting.dateTimeMoment}}</span></div>
+                                    <div class="tenant-deactivated" *ngIf="!cell.data.isActive"><label>{{l('Deactivated')}}</label><span>01/14/2024 9:25 AM</span></div>
+                                    <div class="tenant-last-paid" *ngIf="cell.data.isActive"><label>{{l('Last Paid')}}</label><span>{{cell.data.creationTime | datetime: formatting.dateTimeMoment}}</span></div>
+                                </div>
+                            </ng-container>
+
+                            <dxi-column [caption]="l('Plan') + ' / ' + l('Rate') + ' / ' + l('Billing Status')" cellTemplate="Billing" headerCellTemplate="Header"></dxi-column>
+                            <ng-container *dxTemplate="let cell of 'Billing'">
+                                <div class="cell-wrapper">
+                                    <div class="billing-plan"><a>Enterprise Plan</a></div>
+                                    <div class="billing-rate">$199.99/yr</div>
+                                    <div class="billing-status">Paying</div>
+                                </div>
+                            </ng-container>
+
+                            <dxi-column [caption]="l('Features Payments') + ' / ' + l('Sites') + ' / ' + l('Products')" cellTemplate="Products" headerCellTemplate="Header"></dxi-column>
+                            <ng-container *dxTemplate="let cell of 'Products'">
+                                <div class="cell-wrapper">
+                                    <div class="tenant-payments">Active Payments (Stripe, PayPal)</div>
+                                    <div class="tenant-sites">Site Published: Coolidge.com</div>
+                                    <div class="tenant-products">Products (15)</div>
+                                </div>
+                            </ng-container>
+
+                            <dxi-column [caption]="l('Usage Stats')" cellTemplate="Stats"></dxi-column>
+                            <ng-container *dxTemplate="let cell of 'Stats'">
+                                <div class="cell-wrapper">
+                                    <div class="active-users">Active Users: <b>15</b></div>
+                                    <div class="contacts-stats">Contacts: <b>15,500</b></div>
+                                    <div class="subscriptions-stats">Subscriptions: <b>1,500</b></div>
+                                </div>
+                            </ng-container>
+
+                            <dxi-column [caption]="l('Status')" cellTemplate="Status"></dxi-column>
+                            <ng-container *dxTemplate="let cell of 'Status'">
+                                <div class="cell-wrapper status">{{cell.data.isActive ? 'Active' : 'Inactive'}}</div>
+                                <a class="dx-link dx-link-edit" (click)="toggleActionsMenu(cell.data)"></a>
+                            </ng-container>
+
+                            <ng-container *dxTemplate="let cell of 'Header'">
+                                {{cell.column.caption.split('/')[0]}}<i>/</i>{{cell.column.caption.split('/')[1]}}<i>/</i>{{cell.column.caption.split('/')[2]}}
+                            </ng-container>
+                        </dx-data-grid>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -16,6 +16,7 @@ import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxNavBarModule } from 'devextreme-angular/ui/nav-bar';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxAccordionModule } from 'devextreme-angular/ui/accordion';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -31,6 +32,7 @@ import { PlatformSelectComponent } from './platform-select/platform-select.compo
 import { HeaderComponent } from './header/header.component';
 import { SideBarComponent } from './side-bar/side-bar.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
+import { LeftBarComponent } from './left-bar/left-bar.component';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
@@ -51,6 +53,7 @@ let COMPONENTS = [
     HeaderComponent,
     TopBarComponent,
     SideBarComponent,
+    LeftBarComponent,
     ContactInfoPanelComponent,
     GlobalSearchComponent
 ];
@@ -78,6 +81,7 @@ let COMPONENTS = [
         DxDropDownBoxModule,
         DxTextBoxModule,
         DxSelectBoxModule,
+        DxAccordionModule,
 
         MatTabsModule,
         MatDialogModule,

@@ -1,11 +1,12 @@
 /** Core imports */
-import { Component, HostBinding, Inject } from '@angular/core';
+import { Component, HostBinding, ViewChild, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
 
 /** Third party imports */
 import { DataSource } from 'devextreme/data/data_source/data_source';
 import ODataStore from 'devextreme/data/odata/store';
+import { DxDropDownBoxComponent } from 'devextreme-angular/ui/drop-down-box';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -41,6 +42,8 @@ interface ModuleConfig extends Module {
     selector: 'platform-select'
 })
 export class PlatformSelectComponent {
+    @ViewChild(DxDropDownBoxComponent) dropDownBox: DxDropDownBoxComponent;
+
     @HostBinding('class') public cssClass = '';
     private dropDown: any;
     module = '';

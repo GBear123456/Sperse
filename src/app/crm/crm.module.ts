@@ -55,6 +55,7 @@ import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboa
 import { CrmRoutingModule } from './crm-routing.module';
 import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
+import { WelcomeComponent } from './welcome/welcome.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { LeftMenuModule } from './shared/common/left-menu/left-menu.module';
@@ -108,7 +109,9 @@ import { EditTypeItemDialogComponent } from '@app/crm/shared/types-dropdown/edit
 import { TenantSettingsWizardModule } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
 import { ProductsComponent } from './products/products.component';
 import { CouponsComponent } from './coupons/coupons.component';
+import { EditTenantModule } from '@app/admin/tenants/edit-tenant-modal/edit-tenant-modal.module';
 import { AddCouponDialogComponent } from './coupons/add-coupon-dialog/add-coupon-dialog.component';
+import { TenantReportsComponent } from './tenant-reports/tenant-reports.component';
 import { CrmContactGroupGuard } from './crm-contact-group-guard';
 import { ZapierModule } from '@shared/common/zapier/zapier.module';
 
@@ -179,7 +182,8 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         MatButtonModule,
         TenantSettingsWizardModule,
         LeftMenuModule,
-        ZapierModule
+        ZapierModule,
+        EditTenantModule
     ],
     declarations: [
         ClientsComponent,
@@ -192,6 +196,7 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         OrdersComponent,
         InvoicesComponent,
         ReportsComponent,
+        WelcomeComponent,
         DashboardComponent,        
         ImportListComponent,
         ImportLeadsComponent,
@@ -209,7 +214,8 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         RequestWithdrawalDialogComponent,
         UpdateCommissionableDialogComponent,
         UpdateCommissionRateDialogComponent,
-        EditTypeItemDialogComponent
+        EditTypeItemDialogComponent,
+        TenantReportsComponent
     ],
     providers: [
         ImportServiceProxy,

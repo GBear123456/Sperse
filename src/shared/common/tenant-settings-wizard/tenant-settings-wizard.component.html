@@ -25,7 +25,7 @@
         </mat-step>
         <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #appearanceStep>
             <dx-scroll-view [height]="529">
-                <appearance></appearance>
+                <appearance (onOptionChanged)="onOptionChanged($event)"></appearance>
             </dx-scroll-view>
         </mat-step>
         <mat-step *ngIf="hasHostPermission" #tenantManagementStep>

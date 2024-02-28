@@ -14,9 +14,9 @@
                  [currentContactGroup]="filterModelContactGroup.items.element.value"
                  (openIntro)="openDialog()">
   </crm-left-menu>
-  <div *ngIf="hasAccessibleCG; else noData" class="widgets-wrapper" [ngClass]="{ expanded: leftMenuCollapsed$ | async }">
+  <div *ngIf="hasAccessibleCG; else noData" class="widgets-wrapper" [ngClass]="{ expanded: leftMenuCollapsed$ | async, 'left-nav-menu': layoutService.showLeftBar }">
       <div class="wrapper">
-          <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
+          <!-- div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
               <div>
                   <img class="logo-crm" alt="CRM Logo" src="./assets/common/icons/cfo.png" />
                   <span class="sperse-crm big-gray-text">{{ls.ls(localization, 'CRM')}}</span>
@@ -33,9 +33,9 @@
                   <ng-container *ngIf="hasAnyCGPermission && hasOrdersPermission"> and </ng-container>
                   <a *ngIf="hasOrdersPermission" [routerLink]="['/app/crm/orders']">{{ls.ls(localization, 'Orders')}}</a>
               </p>
-              <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{ls.ls(localization, 'CRMDashboard_AddContact')}}</a> | {{ls.ls(localization, 'CRMDashboard_ImportContact')}}</p -->
+              <p class="last-line"><a [routerLink]="['/app/crm/clients']">{{ls.ls(localization, 'CRMDashboard_AddContact')}}</a> | {{ls.ls(localization, 'CRMDashboard_ImportContact')}}</p>
               <button *ngIf="hasPermissionToAddClient" (click)="addClient()" class="btn btn-layout add-client">{{ ls.ls(localization, 'CRMDashboard_AddClient') }}</button>
-          </div>
+          </div -->
           <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
               <div class="dashboard-widgets">
                   <counts-and-totals 

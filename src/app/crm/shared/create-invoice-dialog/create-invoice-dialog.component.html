@@ -235,6 +235,7 @@
                                 [dataSource]="products"
                                 [searchEnabled]="true"
                                 [searchTimeout]="0"
+                                [maxLength]="255"
                                 (onFocusIn)="onFieldFocusIn($event, cellData)"
                                 (onCustomItemCreating)="onCustomDescriptionCreating($event)"
                                 (onInput)="productLookupItems($event, cellData, !cellData.data.isCrmProduct)"
