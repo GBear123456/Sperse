@@ -33,9 +33,8 @@ export class PaymentsInfoComponent implements OnInit {
 
     @ViewChild('paymentsContainer', { static: true }) paymentsContainer: ElementRef;
     @ViewChild('paymentMethodsContainer', { static: true }) paymentMethodsContainer: ElementRef;
-    totalPaymentAmount: number;
+    totalPaymentAmounts: any[];
     amountCurrency: string;
-    hasRecurringBilling: boolean;
     payments$: Observable<ShortPaymentInfo[]>;
     displayedPayments$: Observable<ShortPaymentInfo[]>;
     paymentMethods$: Observable<PaymentMethodInfo[]>;
@@ -52,9 +51,10 @@ export class PaymentsInfoComponent implements OnInit {
         this.payments$ = paymentsInfoService.getPaymentsObserverable()
             .pipe(
                 tap((res) => {
-                    this.totalPaymentAmount = res.totalPaymentAmount;
+                    this.totalPaymentAmounts = Object.keys(res.totalPaymentAmounts)
+                        .map(x => { return { currencyId: x, total: res.totalPaymentAmounts[x] } })
+                        .sort((a, b) => b.total - a.total);
                     this.amountCurrency = res.payments.length ? res.payments[0].currencyId : SettingsHelper.getCurrency();
-                    this.hasRecurringBilling = res.hasRecurringBilling;
                     this.changeDetectorRef.detectChanges();
                 }),
                 map(res => res.payments)

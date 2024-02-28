@@ -2,14 +2,8 @@
     <div class="summary">
         <div class="totalPaymentAmount">
             <h4>{{ ls.l('TotalAmount') }}</h4>
-            {{ totalPaymentAmount | currency:amountCurrency:'symbol': '1.2-2' }}
+            <span *ngFor="let totalData of totalPaymentAmounts">{{ totalData.total | currency:totalData.currencyId:'symbol': '1.2-2' }}</span>
         </div>
-        <ul class="paymentStatus">
-            <li *ngIf="hasRecurringBilling">
-                <img src="./assets/common/icons/automatic-payments.svg">
-                {{ ls.l('AutomaticPayments') }}
-            </li>
-        </ul>
     </div>
     <div class="details">
         <div class="transactions" #paymentsContainer>
