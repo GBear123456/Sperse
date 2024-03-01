@@ -466,6 +466,14 @@ export class SingleProductComponent implements OnInit {
     }
 
     getPriceDescription(): string {
+        var description = this.getPricePeriodDescription();
+        if (this.selectedSubscriptionOption.cycles)
+            description += `, ${this.selectedSubscriptionOption.cycles} billing cycles`;
+
+        return description;
+    }
+
+    getPricePeriodDescription() {
         if (this.selectedBillingPeriod == BillingPeriod.Custom) {
             return this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', this.selectedSubscriptionOption.customPeriodCount,
                 this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[this.selectedSubscriptionOption.customPeriodType]));

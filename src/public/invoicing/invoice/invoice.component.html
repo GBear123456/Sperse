@@ -92,7 +92,7 @@
                     <td>
                         <span>{{lineItem.description.split('\n').shift()}}</span>
                         <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">
-                            ({{lineItem.subscriptionPeriod}}<span class="timezone-hover-line" *ngIf="invoiceInfo.invoiceData.subscriptionStartOn" title="Your Computer {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a'}}">, starting on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a' : 'UTC'}} UTC</span>)
+                            ({{lineItem.subscriptionPeriod}}<span *ngIf="lineItem.cycles">; {{lineItem.cycles}} billing cycles</span><span class="timezone-hover-line" *ngIf="invoiceInfo.invoiceData.subscriptionStartOn" title="Your Computer {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a'}}">, starting on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a' : 'UTC'}} UTC</span>)
                         </span>
                         <pre>{{lineItem.description.split('\n').slice(1).join('\n')}}</pre>
                     </td>
