@@ -10,6 +10,10 @@
     min-width: 200px;
     max-width: 361px;
 
+    &.showSearchMode {
+        max-width: 556px;
+    }
+
     .global-search-container {
         display: flex;
         width: inherit;
@@ -21,6 +25,14 @@
             content: '';
             width: 1px;
             height: 34px;
+        }
+    }
+    ::ng-deep dx-select-box {
+        input {
+            border: none!important;
+        }
+        .dx-dropdowneditor-icon {
+            background-color: transparent!important;
         }
     }
     ::ng-deep .spinner {
@@ -40,7 +52,7 @@
         top: 4px !important;
     }
     ::ng-deep dx-text-box {
-	background: transparent!important;
+    background: transparent!important;
     }
     ::ng-deep .dx-texteditor-container {
         align-items: center;
@@ -54,7 +66,7 @@
             margin-top: -2px;
         }
         .dx-texteditor-input {
-	    background: #FFFFFF;
+        background: #FFFFFF;
             font-weight: 500;
         }
         .dx-texteditor-buttons-container {

@@ -2,7 +2,7 @@
     <ng-container *ngIf="toggleButtonPosition === 'left'">
         <ng-container *ngTemplateOutlet="toggleButtonContainer"></ng-container>
     </ng-container>
-    <div class="headline-title">
+    <div class="headline-title" *ngIf="layoutService.showTopBar">
         <i *ngIf="icon" class="icon-{{icon}}"></i>
         <img class="title-icon" *ngIf="iconSrc" [src]="iconSrc">
         <div class="header-names">
@@ -14,7 +14,7 @@
         <small *ngIf="text">&nbsp;{{text}}</small><div class="transclude"></div>
         <span *ngIf="showTotalCount" class="total-count {{totalErrorMsg ? 'error' : ''}}" [title]="totalErrorMsg || ''">({{ isTotalCountValid() ? (totalCount | number) : '?'}})</span>
     </div>
-    <div class="headline-content" [ngClass]="{'menu-empty': (!buttons || !buttons.length) && !showReloadButton && !showToggleToolbarButton && !showToggleCompactViewButton && !showToggleFullScreenButton}">
+    <div class="headline-content" *ngIf="layoutService.showTopBar" [ngClass]="{'menu-empty': (!buttons || !buttons.length) && !showReloadButton && !showToggleToolbarButton && !showToggleCompactViewButton && !showToggleFullScreenButton}">
         <ng-content></ng-content>
     </div>
     <div class="headline-buttons" [ngClass]="{ 'need-refresh': reloadIsNecessary }">

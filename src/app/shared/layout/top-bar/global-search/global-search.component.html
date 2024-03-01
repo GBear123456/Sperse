@@ -1,13 +1,21 @@
+<dx-select-box *ngIf="showSearchMode"
+    width="95px"
+    height="51px"
+    [disabled]="isLoading"
+    [(value)]="selectedSearchMode"
+    [items]="[ls.l('Global'), ls.l('Local')]"
+    (onValueChanged)="clearSearch()"
+></dx-select-box>
 <div class="global-search-container">
     <dx-text-box mode="search"
-                 width="100%"
-                 height="51px"
-                 [placeholder]="ls.l('GlobalSearch')"
-                 (onFocusIn)="onFocusIn($event)"
-                 (onFocusOut)="onFocusOut()"
-                 (onEnterKey)="search($event)"
-                 (onValueChanged)="valueChanged($event)"
-                 [elementAttr]="{ id: 'global-search-textbox' }">
+                width="100%"
+                height="51px"
+                [placeholder]="ls.l(!layoutService.showLeftBar || (!showSearchMode && isCRMModule) ? 'GlobalSearch' : 'Search')"
+                (onFocusIn)="onFocusIn($event)"
+                (onFocusOut)="onFocusOut()"
+                (onEnterKey)="search($event)"
+                (onValueChanged)="valueChanged($event)"
+                [elementAttr]="{ id: 'global-search-textbox' }">
     </dx-text-box>
     <dx-tooltip #dropdown
                 [(visible)]="isTooltipVisible"

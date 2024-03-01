@@ -17,6 +17,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppService } from '@app/app.service';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'app-toolbar',
@@ -52,6 +53,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
         private filtersService: FiltersService,
         private ls: AppLocalizationService,
         private userManagementService: UserManagementService,
+        private toolbarService: ToolbarService,
+        private layoutService: LayoutService,
         public appService: AppService
     ) {}
 
@@ -89,7 +92,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('folder')
             },
             search: {
-                accessKey: 'search'
+                accessKey: 'search',
+                visible: this.layoutService.showTopBar
             },
             filters: {
                 hint: this.ls.l('Filters'),
@@ -447,8 +451,9 @@ export class ToolBarComponent implements OnDestroy, OnInit {
     }
 
     initToolbarItems() {
-        let supportedButtons = this.getSupportedButtons();
-        let items = [];
+        let supportedButtons = this.getSupportedButtons(),
+            isSearchEnabled = false,
+            items = [];
         if (this._config)
             this._config.forEach((group: ToolbarGroupModel, configIndex: number) => {
                 let groupItems = group.items.filter((item => this.checkItemVisible(item))),
@@ -470,6 +475,11 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                             }
                         }
                     );
+
+                    if (item.name == 'search') {
+                        this.toolbarService.setSearchConfig(item);
+                        isSearchEnabled = true;
+                    }
 
                     this.checkItemVisible(item) && items.push({
                         name: item.name,
@@ -495,6 +505,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                     });
                 });
             });
+
+        this.toolbarService.showSearchBox(isSearchEnabled);
         this.items = items;
     }
 

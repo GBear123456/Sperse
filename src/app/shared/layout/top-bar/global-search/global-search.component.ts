@@ -5,17 +5,22 @@ import {
     Component,
     ElementRef,
     HostBinding,
-    OnInit
+    ViewChild,
+    OnInit,
+    OnDestroy
 } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { NavigationEnd, Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, ReplaySubject, of } from 'rxjs';
-import { finalize, first, map, startWith, switchMap, take, tap, catchError } from 'rxjs/operators';
+import { finalize, first, filter, map, startWith, switchMap, 
+    take, tap, catchError, takeUntil, debounceTime } from 'rxjs/operators';
+import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 
 /** Application imports */
+import { AppService } from '@app/app.service';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { GlobalSearchGroup } from '@app/shared/layout/top-bar/global-search/global-search-group.interface';
 import { LeadFields } from '@app/crm/leads/lead-fields.enum';
@@ -25,10 +30,12 @@ import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { GlobalSearchGroupEntity } from '@app/shared/layout/top-bar/global-search/global-search-group-item.interface';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { CrmService } from '@app/crm/crm.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
@@ -58,14 +65,31 @@ class CustomHttpParameterCodec implements HttpParameterCodec {
     selector: 'global-search',
     templateUrl: 'global-search.component.html',
     styleUrls: [ 'global-search.component.less' ],
+    providers: [ LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GlobalSearchComponent implements OnInit {
+export class GlobalSearchComponent implements OnInit, OnDestroy {
+    @ViewChild(DxTextBoxComponent) textBox: DxTextBoxComponent;
+
+    @HostBinding('class.showSearchMode') showSearchMode =
+        this.toolbarService.isSearchBoxEnabled &&    
+        this.layoutService.showLeftBar &&
+        this.isCRMModule;
     @HostBinding('class.searchWide') searchWide = false;
+
+    get isCRMModule(): boolean {
+        return this.appService.getModule() == 'crm';
+    }
+
     _search: ReplaySubject<string> = new ReplaySubject<string>(1);
     search$: Observable<string> = this._search.asObservable();
+
+    selectedSearchMode = this.ls.l('Global');
+
+    isLoading = false;        
     searchGroups$: Observable<GlobalSearchGroup[]> = this.search$.pipe(
         tap(() => {
+            this.isLoading = true;
             this.isTooltipVisible = false;
             this.searchGroups = [];
             this.loadingService.startLoading(this.getLoadingElement());
@@ -86,6 +110,7 @@ export class GlobalSearchComponent implements OnInit {
             ).pipe(
                 finalize(() => {
                     this.hideSpinner();
+                    this.isLoading = false;
                     this.isTooltipVisible = true;
                     this.changeDetectorRef.detectChanges();
                 })
@@ -94,24 +119,58 @@ export class GlobalSearchComponent implements OnInit {
     );
     searchGroups: GlobalSearchGroup[];
     isTooltipVisible = false;
+    searchConfig: any;
 
     constructor(
         private http: HttpClient,
         private oDataService: ODataService,
         private dialog: MatDialog,
-        private route: ActivatedRoute,
         private router: Router,
+        private appService: AppService,
         private profileService: ProfileService,
         private changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
         private elementRef: ElementRef,
         private itemDetailsService: ItemDetailsService,
         private permissionService: AppPermissionService,
+        private lifecycleService: LifecycleSubjectsService,
         private layoutService: LayoutService,
+        public toolbarService: ToolbarService,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
+        this.toolbarService.isSearchBoxEnabled$.pipe(
+            takeUntil(this.lifecycleService.destroy$),
+            debounceTime(600)
+        ).subscribe(
+            isSearchBoxEnabled => {
+                this.clearSearch();
+                this.showSearchMode = isSearchBoxEnabled
+                    && this.layoutService.showLeftBar 
+                    && this.isCRMModule;
+                this.changeDetectorRef.detectChanges();
+            }
+        );
+
+        this.toolbarService.latestSearchConfig$.pipe(
+            takeUntil(this.lifecycleService.destroy$)
+        ).subscribe(
+            config => {
+                this.searchConfig = config;
+                if (config) {
+                    if (config.options.value) {
+                        this.selectedSearchMode = this.ls.l('Local');
+                        setTimeout(() =>    
+                            this.textBox.instance.option(
+                                'value', config.options.value
+                            ), 1000
+                        );
+                    }
+                }
+            }
+        );
+
         this.searchGroups$.subscribe((searchGroups: GlobalSearchGroup[]) => {
             this.searchGroups = searchGroups;
             if (this.itemsFound) {
@@ -342,7 +401,11 @@ export class GlobalSearchComponent implements OnInit {
     search(e) {
         const value = e.component.option('value');
         if (value) {
-            this._search.next(value);
+            if (!this.isCRMModule || (this.showSearchMode && this.selectedSearchMode != this.ls.l('Global'))) {
+                if (this.searchConfig && this.searchConfig.options.onValueChanged)
+                    this.searchConfig.options.onValueChanged({value});
+            } else
+                this._search.next(value);
         }
     }
 
@@ -384,5 +447,14 @@ export class GlobalSearchComponent implements OnInit {
         });
         e.stopPropagation();
         e.preventDefault();
+    }
+
+    clearSearch() {
+        this.searchGroups = [];
+        this.textBox.instance.option('value', '');
+    }
+
+    ngOnDestroy() {
+        this.lifecycleService.destroy.next(null);
     }
 }

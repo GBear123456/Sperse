@@ -1,8 +1,17 @@
 import { Injectable } from '@angular/core';
+import { Observable, BehaviorSubject, ReplaySubject } from 'rxjs';
 
 @Injectable()
 export class ToolbarService {
+    private _isSearchBoxEnabled: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private _latestSearchConfig: ReplaySubject<any> = new ReplaySubject(1);
 
+    isSearchBoxEnabled$: Observable<boolean> = this._isSearchBoxEnabled.asObservable();
+    latestSearchConfig$: Observable<any> = this._latestSearchConfig.asObservable();
+
+    get isSearchBoxEnabled(): boolean {
+        return this._isSearchBoxEnabled.getValue();
+    } 
     /**
      * Get item index in group and amount of items in group and returns item position in group
      * @param {number} itemIndex
@@ -37,5 +46,13 @@ export class ToolbarService {
             button.setAttribute('group-item-index', itemGroupItems.length - itemIndexInGroup);
             button.setAttribute('group-item-position', ToolbarService.getGroupItemPosition(itemIndexInGroup, itemGroupItems.length));
         }
+    }
+
+    setSearchConfig(config: any) {
+        this._latestSearchConfig.next(config);
+    }
+
+    showSearchBox(display: boolean) {
+        this._isSearchBoxEnabled.next(display);
     }
 }

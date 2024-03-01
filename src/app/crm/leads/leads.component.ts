@@ -1955,7 +1955,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 setTimeout(() => {
                     this.pipelineDataSource = cloneDeep(this.dataSourceConfig);
                     this.pipelineDataSource['exportIgnoreOnLoaded'] = true;
-                });
+                }, 500);
         } else if (this.showDataGrid) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
