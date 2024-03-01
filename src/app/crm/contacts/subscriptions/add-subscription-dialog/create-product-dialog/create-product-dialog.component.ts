@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import { getCurrencySymbol } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 /** Third party imports */
 import { NgxFileDropEntry } from 'ngx-file-drop';
@@ -212,6 +213,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         private productProxy: ProductServiceProxy,
         productGroupProxy: ProductGroupServiceProxy,
         private notify: NotifyService,
+        private clipboard: Clipboard,
         private changeDetection: ChangeDetectorRef,
         memberServiceProxy: MemberServiceServiceProxy,
         public contactsService: ContactsService,
@@ -1115,6 +1117,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
         let addr = this.product.productEvent.address;
         this.eventAddress = [addr.streetAddress, addr.city, addr.stateName, addr.countryName, addr.zip].filter(x => !!x).join(', ');
+    }
+
+    copyTextToClipboard(text) {
+        this.clipboard.copy(text);
+        this.notify.info(this.ls.l('SavedToClipboard'));
     }
 
     ngOnDestroy() {

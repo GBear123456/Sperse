@@ -221,9 +221,7 @@
                                                     </dx-validator>
                                                 </dx-number-box>
                                             </div>
-
                                         </div>
-
                                         <hr>
                                         <div class="option-row width-50" [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime || option.frequency == recurringPaymentFrequency.LifeTime }">
                                             <div>
@@ -318,6 +316,19 @@
                                                 </dx-number-box>
                                             </div>
                                         </div>
+                                        <ng-container *ngIf="option.stripeXref || option.paypalXref">
+                                            <hr>
+                                            <div class="option-row width-50">
+                                                <div *ngIf="option.stripeXref">
+                                                    <label>Stripe xref</label>
+                                                    <div class="clipboard-holder">{{option.stripeXref}} <i class="save-to-clipboard" (click)="copyTextToClipboard(option.stripeXref)"></i></div>
+                                                </div>
+                                                <div *ngIf="option.paypalXref">
+                                                    <label>Paypal xref</label>
+                                                    <div class="clipboard-holder">{{option.paypalXref}} <i class="save-to-clipboard" (click)="copyTextToClipboard(option.paypalXref)"></i></div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
                                     </div>
                                 </div>
                             </ng-container>
@@ -613,6 +624,13 @@
                                            switchedOnText=""
                                            [(value)]="product.publicAllowCoupon">
                                 </dx-switch>
+                            </p>
+                            <hr>
+                            <p *ngIf="product.stripeXref" class="product-xref clipboard-holder">
+                                Stripe Xref <span>{{product.stripeXref}}<i class="save-to-clipboard" (click)="copyTextToClipboard(product.stripeXref)"></i></span>
+                            </p>
+                            <p *ngIf="product.paypalXref" class="product-xref clipboard-holder">
+                                Paypal Xref <span>{{product.paypalXref}}<i class="save-to-clipboard" (click)="copyTextToClipboard(product.paypalXref)"></i></span>
                             </p>
                         </div>
                         <div class="block">

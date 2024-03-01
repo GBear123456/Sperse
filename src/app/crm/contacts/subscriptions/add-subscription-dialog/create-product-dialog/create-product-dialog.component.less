@@ -41,6 +41,18 @@
             }
         }
 
+        .right {
+            .product-xref {
+                span {
+                    float: right;
+                }
+
+                .save-to-clipboard {
+                    visibility: visible;
+                }
+            }
+        }
+
         .block {
             position: relative;
             padding: 20px;
@@ -625,6 +637,21 @@
                     }
                 }
             }
+        }
+
+        .clipboard-holder {
+            .save-to-clipboard {
+                visibility: hidden;
+            }
+
+            &:hover .save-to-clipboard {
+                visibility: visible;
+            }
+        }
+
+        i.save-to-clipboard {
+            height: 16px;
+            margin-bottom: -3px;
         }
     }
 
