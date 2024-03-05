@@ -90,6 +90,8 @@ export class AppComponent implements OnInit {
                                 panelClass: ['payment-wizard', 'setup'],
                                 data: {
                                     subscription: sub,
+                                    upgrade: sub.isUpgradable,
+                                    productId: sub.productId,
                                     title: isOneTimeExpirationSoon ?
                                         ls.ls('Platform', 'SubscriptionExpiration', sub.productName, expirationDayCount > 0 ? 
                                             ' in ' + expirationDayCount + ' day(s)' : 'today') :

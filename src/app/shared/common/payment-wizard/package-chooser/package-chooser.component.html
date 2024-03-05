@@ -2,7 +2,7 @@
     <ng-container *ngIf="packagesConfig$ | async">
         <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ productsGroupName == PRODUCT_GROUP_ADD_ON ? ls.l('ChooseAddOnPackage'): widgettitle }}</h2>
         <h3 class="subtitle">{{ subtitle }}</h3>
-        <div class="state-slider point{{availablePeriods.length}}">
+        <div *ngIf="packages && packages.length; else noproducts" class="state-slider point{{availablePeriods.length}}">
             <div class="captions">
                 <ng-container *ngFor="let period of availablePeriods; index as i">
                     <div [ngClass]="{ 'active': getActiveStatus(period) }" (click)="toggle(period)">{{ ls.l(billingPeriod[period]) }}</div>
@@ -12,6 +12,9 @@
                         [disabled]="true">
             </mat-slider>
         </div>
+        <ng-template #noproducts>
+            <h3>{{ ls.l('Your subscription cannot be upgraded') }}</h3>
+        </ng-template>
     </ng-container>
 </div>
 <ng-container *ngIf="packagesConfig$ | async">
