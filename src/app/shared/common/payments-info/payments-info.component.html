@@ -21,20 +21,39 @@
                             <div class="col-3 date">
                                 {{ ls.l('Date') }}
                             </div>
-                            <div class="col-6">
+                            <div class="col-4">
                                 {{ ls.l('Invoice') }}
+                            </div>
+                            <div class="col-2">
+                                {{ ls.l('Status') }}
                             </div>
                             <div class="col-3 amount text-right">
                                 {{ ls.l('Amount') }}
                             </div>
                         </div>
-                        <ng-container *ngFor="let payment of displayedPayments">
+                        <ng-container *ngFor="let payment of displayedPayments; index as index">
                             <div class="row" [ngClass]="{'active': selectedPayment && selectedPayment == payment}" (click)="highlightPaymentInfo(payment)">
                                 <div class="col-3 date">
                                     {{ formatDate(payment.date) }}
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                     {{ payment.invoiceNumber }}
+                                </div>
+                                <div class="col-2 status-data-column">
+                                    <div class="status-wrapper">
+                                        <div id="payment{{index}}" class="status status-{{payment.success ? 'success' : 'failed' }}">
+                                            {{ payment.statusString }} <i *ngIf="!payment.success && payment.messages" class="fa fa fa-info-circle"></i>
+                                            <dx-tooltip *ngIf="!payment.success && payment.messages"
+                                                        position="bottom"
+                                                        target="#payment{{index}}"
+                                                        showEvent="dxhoverstart"
+                                                        hideEvent="dxhoverend">
+                                                <div *dxTemplate="let data = data of 'content'">
+                                                    {{payment.messages}}
+                                                </div>
+                                            </dx-tooltip>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-3 amount text-right">
                                     {{ payment.amount | currency:amountCurrency:'symbol': '1.2-2' }}
@@ -58,7 +77,7 @@
                         <div [ngSwitch]="paymentMethod.type">
                             <ng-container *ngSwitchCase="paymentMethodsTypes.BankCard">
                                 <div [ngClass]="{'active': selectedPayment?.paymentInfoId == paymentMethod.id}" class="paymentMethodIcon">
-                                    <img [src]="'./assets/common/images/payments/card-logo/' + getCardType(paymentMethod.bankCardInfo) + '.svg'">
+                                    <img [src]="'./assets/common/images/payments/card-logo/' + getCardType(paymentMethod.bankCardInfo) + '.svg'" onError="this.src='./assets/common/images/payments/card-logo/credit-card.svg'">
                                 </div>
                                 <div>
                                     <p class="paymentName">
