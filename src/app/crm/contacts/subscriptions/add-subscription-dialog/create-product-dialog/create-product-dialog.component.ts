@@ -73,6 +73,7 @@ import { ContactsService } from '../../../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { LanguagesStoreSelectors, RootStore, LanguagesStoreActions } from '@root/store';
 import { EditAddressDialog } from '../../../edit-address-dialog/edit-address-dialog.component';
+import { EventDurationTypes } from './event-duration-types.enum';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
@@ -199,10 +200,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     isOneTime = false;
 
     eventLocation = ProductEventLocation;
-    eventDurations: any[] = [];
+    eventDurationTypes: string[] = Object.keys(EventDurationTypes).filter((v) => isNaN(Number(v)));
     languages: LanguageDto[] = [];
     timezones: any[] = [];
     eventAddress: string;
+    eventDuration: number;
+    eventDurationType: EventDurationTypes;
     eventDate: Date;
     eventTime: Date;
 
@@ -316,6 +319,18 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.eventDate = this.product.productEvent.date ? new Date(this.product.productEvent.date) : undefined;
             this.eventTime = undefined;
         }
+
+        if (this.product.productEvent.durationMinutes) {
+            let durationTypes = Object.values(EventDurationTypes).map(x => Number(x)).filter(x => !isNaN(x)).reverse();
+            for (let durationType of durationTypes) {
+                let value = this.product.productEvent.durationMinutes % durationType;
+                if (value == 0) {
+                    this.eventDurationType = <any>EventDurationTypes[durationType];
+                    this.eventDuration = this.product.productEvent.durationMinutes / durationType;
+                    break;
+                }
+            }
+        }
     }
 
     initEventProps() {
@@ -330,27 +345,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     initEventDataSources() {
-        this.initEventDurations();
         this.initLanguages();
         this.initTimezones();
-    }
-
-    initEventDurations() {
-        let durations = [];
-        for (var i = 15; i <= 1440; i += 5) {
-            let hour = Math.floor(i / 60);
-            let min = i % 60;
-            let displayValue = hour ? `${hour}H ` : '';
-            displayValue += min ? `${min}Min` : '';
-            durations.push({
-                hour: hour,
-                minutes: min,
-                displayValue: displayValue,
-                totalMinutes: i
-            });
-        }
-        this.eventDurations = durations;
-        this.changeDetection.markForCheck();
     }
 
     initLanguages() {
@@ -464,6 +460,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         this.product.productEvent.date = this.eventDate ? DateHelper.removeTimezoneOffset(this.eventDate, false, 'from') : undefined;
                         this.product.productEvent.time = undefined;
                     }
+
+                    this.product.productEvent.durationMinutes = this.eventDuration ? this.eventDuration * <any>EventDurationTypes[this.eventDurationType] : undefined;
                 }
 
                 if (this.product instanceof UpdateProductInput) {

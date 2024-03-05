@@ -536,7 +536,7 @@
                             </div>
                             <p class="small-gray">Single event happens once and can last multiple days</p>
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-3">
                                     <label>Date</label>
                                     <dx-date-box [(value)]="eventDate"
                                                  type="date"
@@ -557,12 +557,19 @@
                                 </div>
                                 <div class="col-3">
                                     <label>Duration</label>
+                                    <dx-number-box [placeholder]="ls.l('Duration')"
+                                                   height="65px"
+                                                   [(value)]="eventDuration"
+                                                   (onValueChanged)="eventDurationType = eventDurationType || eventDurationTypes[0]"
+                                                   [disabled]="isReadOnly">
+                                    </dx-number-box>
+                                </div>
+                                <div class="col-3">
+                                    <label></label>
                                     <dx-select-box class="hide-placeholder"
-                                                   [dataSource]="eventDurations"
-                                                   displayExpr="displayValue"
-                                                   valueExpr="totalMinutes"
-                                                   [(value)]="product.productEvent.durationMinutes"
-                                                   [showClearButton]="true"
+                                                   [dataSource]="eventDurationTypes"
+                                                   [(value)]="eventDurationType"
+                                                   [showClearButton]="!eventDuration"
                                                    [disabled]="isReadOnly">
                                     </dx-select-box>
                                 </div>
