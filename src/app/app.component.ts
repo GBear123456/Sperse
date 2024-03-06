@@ -1,10 +1,10 @@
 /** Core imports */
 import { Component, OnInit, NgZone, ViewEncapsulation, HostBinding, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { first } from 'rxjs/operators';
+import { first, filter } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -64,50 +64,14 @@ export class AppComponent implements OnInit {
         public filtersService: FiltersService,
         public dialog: MatDialog
     ) {
-        if (!appService.isHostTenant) {
-            let paymentDialogTimeout;
-            appService.moduleSubscriptions$.pipe(first()).subscribe(() => {
-                let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default || 
-                        !appService.checkSubscriptionsGroups([AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN]),                    
-                    moduleName = isCustomLayout ? '' : appService.defaultSubscriptionModule.toLowerCase(),
-                    productGroups = isCustomLayout ? [] : [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN];
-                if (moduleName != appService.getDefaultModule() && !appService.hasUnconventionalSubscription()) {
-                    clearTimeout(paymentDialogTimeout);
-                    paymentDialogTimeout = setTimeout(() => {
-                        let hasSubscription = appService.hasModuleSubscription(moduleName, productGroups),
-                            sub = appService.getModuleSubscription(moduleName, productGroups),
-                            isOneTimeExpirationSoon = appService.isOneTimeExpirationSoon(moduleName);
-                        if ((sub.statusId != 'A' || !hasSubscription || (isOneTimeExpirationSoon && 
-                            this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement))
-                        ) && !this.dialog.getDialogById('payment-wizard')) {
-                            let expirationDayCount = appService.getSubscriptionExpiringDayCount();
-                            this.dialog.open(PaymentWizardComponent, {
-                                height: '800px',
-                                width: '1200px',                                                              
-                                id: 'payment-wizard',
-                                closeOnNavigation: isOneTimeExpirationSoon,
-                                disableClose: !isOneTimeExpirationSoon,
-                                panelClass: ['payment-wizard', 'setup'],
-                                data: {
-                                    subscription: sub,
-                                    upgrade: sub.isUpgradable,
-                                    productId: sub.productId,
-                                    title: isOneTimeExpirationSoon ?
-                                        ls.ls('Platform', 'SubscriptionExpiration', sub.productName, expirationDayCount > 0 ? 
-                                            ' in ' + expirationDayCount + ' day(s)' : 'today') :
-                                        ls.ls(
-                                            'Platform',
-                                            'ModuleExpired',
-                                            sub.productName,
-                                            appService.getSubscriptionStatusBySubscription(sub)
-                                        )
-                                }
-                            });
-                        }
-                    }, 1000);
-                }
+        if (!appService.isHostTenant)
+            this.router.events.pipe(
+                filter(event => event instanceof NavigationEnd)
+            ).subscribe((event: any) => {
+                appService.moduleSubscriptions$.pipe(first()).subscribe(() => {
+                    this.checkShowPaymentDialog();
+                });
             });
-        }
     }
 
     ngOnInit(): void {
@@ -120,6 +84,47 @@ export class AppComponent implements OnInit {
         }
 
         this.installationMode = UrlHelper.isInstallUrl(location.href);
+    }
+
+    checkShowPaymentDialog() {
+        let isCustomLayout = this.appSession.tenant.customLayoutType && this.appSession.tenant.customLayoutType !== LayoutType.Default || 
+                !this.appService.checkSubscriptionsGroups([AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN]),                    
+            moduleName = isCustomLayout ? '' : this.appService.defaultSubscriptionModule.toLowerCase(),
+            productGroups = isCustomLayout ? [] : [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN];
+        if (moduleName != this.appService.getDefaultModule() && !this.appService.hasUnconventionalSubscription()) {
+            setTimeout(() => {
+                let hasSubscription = this.appService.hasModuleSubscription(moduleName, productGroups),
+                    sub = this.appService.getModuleSubscription(moduleName, productGroups),
+                    isOneTimeExpirationSoon = this.appService.isOneTimeExpirationSoon(moduleName);
+                if ((sub.statusId != 'A' || !hasSubscription || (isOneTimeExpirationSoon && 
+                    this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement))
+                ) && !this.dialog.getDialogById('payment-wizard')) {
+                    let expirationDayCount = this.appService.getSubscriptionExpiringDayCount();
+                    this.dialog.open(PaymentWizardComponent, {
+                        height: '800px',
+                        width: '1200px',                                                              
+                        id: 'payment-wizard',
+                        closeOnNavigation: isOneTimeExpirationSoon,
+                        disableClose: !isOneTimeExpirationSoon,
+                        panelClass: ['payment-wizard', 'setup'],
+                        data: {
+                            subscription: sub,
+                            upgrade: sub.isUpgradable,
+                            productId: sub.productId,
+                            title: isOneTimeExpirationSoon ?
+                                this.ls.ls('Platform', 'SubscriptionExpiration', sub.productName, expirationDayCount > 0 ? 
+                                    ' in ' + expirationDayCount + ' day(s)' : 'today') :
+                                this.ls.ls(
+                                    'Platform',
+                                    'ModuleExpired',
+                                    sub.productName,
+                                    this.appService.getSubscriptionStatusBySubscription(sub)
+                                )
+                        }
+                    });
+                }
+            }, 1000);
+        }
     }
 
     initModuleAttribute() {

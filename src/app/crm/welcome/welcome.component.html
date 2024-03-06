@@ -211,7 +211,7 @@
                     <div class="p">
                         <b (click)="openPaymentWizardDialog(true)">{{sub.productName}}</b>
                         <div class="icon" *ngIf="sub.isUpgradable">
-                            <div class="overlap-group" (click)="openPaymentWizardDialog(true, {upgrade: true, productId: sub.productId})">
+                            <div class="overlap-group" (click)="openPaymentWizardDialog(false, {upgrade: true, productId: sub.productId})">
                                 <div class="div">Upgrade</div>
                             </div>
                         </div>

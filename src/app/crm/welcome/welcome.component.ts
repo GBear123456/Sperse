@@ -230,8 +230,8 @@ export class WelcomeComponent implements OnInit {
     }
 
     loadSettings() {
-        this.loadingService.startLoading();
         if (this.isPaymentsEnabled) {
+            this.loadingService.startLoading();
             this.tenantPaymentSettingsService.getStripeSettings()
                 .pipe(
                     finalize(() => this.loadingService.finishLoading())
