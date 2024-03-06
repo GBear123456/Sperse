@@ -1,4 +1,5 @@
 <app-headline *ngIf="layoutService.showLeftBar"
+    style="--background-color: {{headlineBackground  || '#FFFFFF'}}"
     [names]="[ ls.l('Welcome') + ' ' + appSessionService.user.name + '! Let\'s get you started' ]"
     [buttons]="[]"
     [showToggleFullScreenButton]="true"
