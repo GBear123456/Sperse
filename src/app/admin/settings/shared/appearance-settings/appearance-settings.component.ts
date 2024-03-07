@@ -19,9 +19,9 @@ import {
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
-import { AppConsts } from '@shared/AppConsts';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { SettingService } from 'abp-ng2-module';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'appearance-settings',

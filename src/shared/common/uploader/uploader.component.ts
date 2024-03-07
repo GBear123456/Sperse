@@ -28,6 +28,7 @@ export class UploaderComponent {
     @Input() uploadUrl: string;
     @Input() acceptFileExt = '.html';
     @Input() maxFileSize: number;
+    @Input() showPlusSign: boolean = true;
     @Output() onDocumentClear: EventEmitter<any> = new EventEmitter();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     tenant: TenantLoginInfoDto = this.appSession.tenant;

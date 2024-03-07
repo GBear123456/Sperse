@@ -43,7 +43,14 @@
                 a {
                     float: right;
                     color: #00A8ED!important;
+                    font-weight: 500;
                     padding: 0px 10px;
+                    &:before {
+                        content: url(../../../../../assets/common/icons/download.svg);
+                        border-bottom: 2px solid #00A8ED;
+                        position: relative;
+                        right: 4px;
+                    }
                 }
             }
 
@@ -64,6 +71,11 @@
                 padding-left: calc((100% - 175px) / 2);
                 border-radius: 10px !important;
                 background: rgba(245, 249, 251, 0.3);
+
+                &:before {
+                    margin-right: 5px;
+                    margin-left: 36px;                    
+                }
 
                 a {
                     font-family: Plus Jakarta Sans;

@@ -3,6 +3,7 @@
         <h2>{{l('Appearance')}} {{l('Settings')}}</h2>
 
         <uploader #logoUploader
+                  [showPlusSign]="false"
                   [title]="l('ApplicationLogo')"
                   [documentId]="tenant.logoId"
                   [documentLink]="tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId : undefined"
@@ -15,6 +16,7 @@
         </uploader>
 
         <uploader #faviconsUploader
+                  [showPlusSign]="false"
                   [title]="l('CustomFavicons')"
                   [documentId]="tenant.tenantCustomizations.favicons?.length"
                   [documentLink]="tenant.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons' : undefined"
@@ -26,6 +28,7 @@
         </uploader>
 
         <uploader #cssUploader
+                  [showPlusSign]="false"
                   [title]="l('CustomCSS')"
                   [documentId]="tenant.customCssId"
                   [documentLink]="tenant.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id : undefined"
@@ -39,6 +42,7 @@
         </uploader>
 
         <uploader #loginCssUploader
+                  [showPlusSign]="false"
                   [title]="l('CustomLoginCSS')"
                   [documentId]="tenant.loginCustomCssId"
                   [documentLink]="tenant.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.loginCustomCssId + '/' + tenant.id : undefined"
@@ -52,6 +56,7 @@
         </uploader>
 
         <uploader #portalCssUploader
+                  [showPlusSign]="false"
                   [title]="l('CustomPortalCSS')"
                   [documentId]="tenant.portalCustomCssId"
                   [documentLink]="tenant.portalCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.portalCustomCssId + '/' + tenant.id : undefined"
@@ -65,6 +70,7 @@
         </uploader>
 
         <uploader #signUpCssUploader
+                  [showPlusSign]="false"
                   [title]="l('CustomSignUpCSS')"
                   [documentId]="tenant.signUpCustomCssId"
                   [documentLink]="tenant.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.signUpCustomCssId + '/' + tenant.id : undefined"
@@ -77,10 +83,10 @@
                   (onDocumentClear)="clearCustomCss(CustomCssType.SignUp)">
         </uploader>
 
-        <button class="btn btn-layout" (click)="save()">
+        <!-- button class="btn btn-layout" (click)="save()">
             <i class="icon-la la la-floppy-o"></i>
             {{l('Save Apperiance Settings')}}
-        </button>
+        </button -->
   
     </div>
     <div class="right">
@@ -97,7 +103,7 @@
                 stylingMode="filled"
                 [openOnFieldClick]="true"
                 labelMode="hidden"
-                placeholder="Navigation Menu Background Color"
+                placeholder="Header Background Color"
                 (onValueChanged)="onColorValueChanged($event, defaultHeaderColor)"
             ></dx-color-box>
         </div>
@@ -111,15 +117,15 @@
                 stylingMode="filled"
                 [openOnFieldClick]="true"
                 labelMode="hidden"
-                placeholder="Navigation Menu Text Color"
+                placeholder="Header Text Color"
                 (onValueChanged)="onColorValueChanged($event, defaultTextColor)"
             ></dx-color-box>
         </div>
 
-        <button class="btn btn-layout" (click)="save()">
+        <!-- button class="btn btn-layout" (click)="save()">
             <i class="icon-la la la-floppy-o"></i>
             {{l('Save Style Settings')}}
-        </button>
+        </button -->
 
     </div>
 </div>
