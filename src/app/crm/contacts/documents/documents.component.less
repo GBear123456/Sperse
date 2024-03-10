@@ -6,21 +6,127 @@
     align-items: center;
     display: flex;
     &:before {
+        content: '';
         margin-right: 17px;
-        max-height: 32px;
-        width: 24px;
+        height: 32px;
+        width: 32px;
+        background-size: contain!important;
+        background-position: center!important;
+        background-repeat: no-repeat!important;
     }
     &.doc:before,
     &.docx:before {
-        content: url('../../../../assets/common/icons/documents/doc.svg');
+        background: url('../../../../assets/common/icons/documents/doc.svg');
     }
     &.pdf:before {
-        content: url('../../../../assets/common/icons/documents/pdf.svg');
+        background: url('../../../../assets/common/icons/documents/pdf.svg');
     }
     &.xlsx:before,
     &.xls:before {
-        content: url('../../../../assets/common/icons/documents/xls.svg');
+        background: url('../../../../assets/common/icons/documents/xls.svg');
     }
+    &.zip:before {
+        background: url('../../../../assets/common/icons/documents/zip.svg');
+    }
+    &.txt:before {
+        background: url('../../../../assets/common/icons/documents/txt.svg');
+    }
+    &.ttf:before {
+        background: url('../../../../assets/common/icons/documents/ttf.svg');
+    }
+    &.svg:before {
+        background: url('../../../../assets/common/icons/documents/svg.svg');
+    }
+    &.sql:before {
+        background: url('../../../../assets/common/icons/documents/sql.svg');
+    }
+    &.psd:before {
+        background: url('../../../../assets/common/icons/documents/psd.svg');
+    }
+    &.ppt:before {
+        background: url('../../../../assets/common/icons/documents/ppt.svg');
+    }
+    &.apk:before {
+        background: url('../../../../assets/common/icons/documents/apk.svg');
+    }
+    &.css:before {
+        background: url('../../../../assets/common/icons/documents/css.svg');
+    }
+    &.iso:before {
+        background: url('../../../../assets/common/icons/documents/iso.svg');
+    }
+    &.mp3:before {
+        background: url('../../../../assets/common/icons/documents/mp3.svg');
+    }
+    &.jpg:before,
+    &.jpe:before,
+    &.jfif:before,
+    &.jpeg:before,
+    &.bmp:before,
+    &.gif:before,
+    &.tif:before,
+    &.tiff:before,
+    &.jpeg:before,
+    &.png:before {
+        background: url('../../../../assets/common/icons/documents/image.svg');
+    }
+    &.js:before {
+        background: url('../../../../assets/common/icons/documents/js.svg');
+    }
+    &.woff:before,
+    &.woff2:before {
+        background: url('../../../../assets/common/icons/documents/font.svg');
+    }
+    &.mp4a:before {
+        background: url('../../../../assets/common/icons/documents/record.svg');
+    }   
+    &.eml:before {
+        background: url('../../../../assets/common/icons/documents/eml.svg');
+    }   
+    &.eps:before {
+        background: url('../../../../assets/common/icons/documents/eps.svg');
+    }   
+    &.ai:before {
+        background: url('../../../../assets/common/icons/documents/ai.svg');
+    }   
+    &.php:before {
+        background: url('../../../../assets/common/icons/documents/php.svg');
+    }   
+    &.pptx:before {
+        background: url('../../../../assets/common/icons/documents/pptx.svg');
+    }
+    &.3gp:before,
+    &.mpeg:before,
+    &.flv:before,
+    &.mkv:before,
+    &.wmv:before,
+    &.mov:before,
+    &.avi:before,   
+    &.mp4:before {
+        background: url('../../../../assets/common/icons/documents/video.svg');
+    }   
+    &.docm:before,
+    &.dotx:before,   
+    &.dotm:before {
+        background: url('../../../../assets/common/icons/documents/word.svg');
+    }   
+    &.m4a:before,
+    &.flac:before,
+    &.wav:before,
+    &.wma:before,   
+    &.aac:before {
+        background: url('../../../../assets/common/icons/documents/music.svg');
+    }   
+    &.aif:before,
+    &.cda:before,
+    &.mid:before,
+    &.midi:before,
+    &.vcd:before,
+    &.toast:before,
+    &.dmg:before,
+    &.bin:before {
+        background: url('../../../../assets/common/icons/documents/disc.svg');
+    }   
 
     &.unknown:before {
         content: '\f070';
