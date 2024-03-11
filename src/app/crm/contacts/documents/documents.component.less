@@ -14,48 +14,68 @@
         background-position: center!important;
         background-repeat: no-repeat!important;
     }
+    &.unknown:before {
+        content: '\f070';
+        font-family: 'FontAwesome';
+        font-size: 25px;
+        line-height: 1em;
+    }
     &.doc:before,
     &.docx:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/doc.svg');
     }
     &.pdf:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/pdf.svg');
     }
     &.xlsx:before,
     &.xls:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/xls.svg');
     }
     &.zip:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/zip.svg');
     }
     &.txt:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/txt.svg');
     }
     &.ttf:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/ttf.svg');
     }
     &.svg:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/svg.svg');
     }
     &.sql:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/sql.svg');
     }
     &.psd:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/psd.svg');
     }
     &.ppt:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/ppt.svg');
     }
     &.apk:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/apk.svg');
     }
     &.css:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/css.svg');
     }
     &.iso:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/iso.svg');
     }
     &.mp3:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/mp3.svg');
     }
     &.jpg:before,
@@ -68,31 +88,40 @@
     &.tiff:before,
     &.jpeg:before,
     &.png:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/image.svg');
     }
     &.js:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/js.svg');
     }
     &.woff:before,
     &.woff2:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/font.svg');
     }
     &.mp4a:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/record.svg');
     }   
     &.eml:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/eml.svg');
     }   
     &.eps:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/eps.svg');
     }   
     &.ai:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/ai.svg');
     }   
     &.php:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/php.svg');
     }   
     &.pptx:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/pptx.svg');
     }
     &.3gp:before,
@@ -103,11 +132,13 @@
     &.mov:before,
     &.avi:before,   
     &.mp4:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/video.svg');
     }   
     &.docm:before,
     &.dotx:before,   
     &.dotm:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/word.svg');
     }   
     &.m4a:before,
@@ -115,6 +146,7 @@
     &.wav:before,
     &.wma:before,   
     &.aac:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/music.svg');
     }   
     &.aif:before,
@@ -125,15 +157,9 @@
     &.toast:before,
     &.dmg:before,
     &.bin:before {
+        content: '';
         background: url('../../../../assets/common/icons/documents/disc.svg');
     }   
-
-    &.unknown:before {
-        content: '\f070';
-        font-family: 'FontAwesome';
-        font-size: 25px;
-        line-height: 1em;
-    }
 
     .file-size {
         padding-left: 5px;
