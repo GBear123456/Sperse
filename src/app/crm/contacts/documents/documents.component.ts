@@ -97,9 +97,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public validXmlExtensions: String[] = ['xml'];
     public validCsvExtensions: String[] = ['csv'];
     public validWopiExtensions: String[] = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'dot', 'dotx', 'docm', 'odt', 'pot', 'potm', 'pps', 'ppsm', 'pptm', 'pptx', 'ppsx', 'odp', 'xlsm', 'xlsb', 'ods'];
-    public validVideoExtensions: String[] = ['mp4', 'mov', 'avi', 'wmv', 'flv', 'mpeg', '3gp'];
+    public validVideoExtensions: String[] = ['mp4', '3gp', 'webm', 'ogg'];
     public validArchiveExtensions: String[] = ['zip', 'rar'];
-    public validImageExtensions: String[] = ['jpeg', 'jpg', 'jfif', 'jpe', 'png', 'tif', 'tiff', 'pdf', 'bmp', 'gif'];
+    public validImageExtensions: String[] = ['jpeg', 'jpg', 'jfif', 'jpe', 'png', 'pdf', 'bmp', 'gif'];
     public viewerToolbarConfig: any = [];
     public parsedCsv: any;
     archiveFiles$: Observable<any[]>;
