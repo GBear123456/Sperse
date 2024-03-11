@@ -216,6 +216,7 @@ export class InvoiceGridMenuComponent {
                     InvoiceNumber: this.invoiceData.Number,
                     InvoiceStatus: this.invoiceData.Status,
                     Amount: this.invoiceData.Amount,
+                    CurrencyId: this.invoiceData.CurrencyId,
                     OrderStage: this.invoiceData.OrderStage
                 }
             }

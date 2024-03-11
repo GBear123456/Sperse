@@ -16,6 +16,7 @@ export interface SubscriptionDto {
     StartDate: string;
     EndDate: string;
     Fee: string;
+    CurrencyId: string;
     StatusId: string;
     StatusName: string;
     OrderAmount: string;

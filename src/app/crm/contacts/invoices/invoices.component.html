@@ -24,7 +24,7 @@
 
             <dxi-column [dataField]="invoiceFields.OrderNumber" [caption]="l('OrderNumber')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column [dataField]="invoiceFields.InvoiceNumber" [caption]="l('Invoice No')"></dxi-column>
-            <dxi-column [dataField]="invoiceFields.Amount" [caption]="l('Amount')" [format]="currencyFormat" cssClass="clipboard-holder padding-right"></dxi-column>
+            <dxi-column [dataField]="invoiceFields.Amount" [caption]="l('Amount')" cellTemplate="amountTemplate"></dxi-column>
             <!--<dxi-column [dataField]="invoiceFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>-->
             <dxi-column [dataField]="invoiceFields.InvoiceStatus" [caption]="l('Status')" alignment="center" cellTemplate="statusCell"></dxi-column>
             <dxi-column [dataField]="invoiceFields.OrderStage" [caption]="l('Stage')" name="stage" cellTemplate="stageCell" width="160px"></dxi-column>
@@ -61,6 +61,9 @@
             </div>
             <div *dxTemplate="let cellData of 'datetimeCell'" class="clipboard-holder">
                 {{ cellData.value | date: formatting.date }}
+            </div>
+            <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
+                <span> {{ cell.data.Amount | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
             </div>
 
             <dxo-paging [pageSize]="20"></dxo-paging>
@@ -131,8 +134,7 @@
                 <dxi-column width="120px"
                             dataField="ProductAmount"
                             [caption]="l('Price')"
-                            [format]="currencyFormat"
-                            cssClass="clipboard-holder padding-right">
+                            cellTemplate="amountTemplate">
                 </dxi-column>
                 <dxi-column width="100px"
                             dataField="Tier"
@@ -142,8 +144,7 @@
                 <dxi-column width="120px"
                             dataField="CommissionableAmount"
                             [caption]="l('CV')"
-                            [format]="currencyFormat"
-                            cssClass="clipboard-holder padding-right">
+                            cellTemplate="amountTemplate">
                 </dxi-column>
                 <dxi-column width="200px"
                             cellTemplate="staticWidthCell"
@@ -159,8 +160,7 @@
                 <dxi-column width="150px"
                             dataField="CommissionAmount"
                             [caption]="l('Commission')"
-                            [format]="currencyFormat"
-                            cssClass="clipboard-holder padding-right">
+                            cellTemplate="amountTemplate">
                 </dxi-column>
                 <dxi-column width="120px"
                             dataField="Status"
@@ -180,6 +180,9 @@
                 </div>
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                     {{cellData.value | datetime: formatting.dateTimeMoment}}
+                </div>
+                <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
+                    <span> {{ cell.value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
                 </div>
                 <dxo-group-panel [visible]="true"></dxo-group-panel>
                 <dxo-sorting mode="multiple"></dxo-sorting>

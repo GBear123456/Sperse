@@ -9,6 +9,7 @@ export interface LedgerDto {
     StartDate: string;
     Status: string;
     TotalAmount: number;
+    CurrencyId: string;
     Type: string;
     PaymentSystem: string;
     HasPayout: string;

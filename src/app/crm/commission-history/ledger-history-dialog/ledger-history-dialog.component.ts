@@ -94,7 +94,7 @@ export class LedgerHistoryDialogComponent implements OnInit {
             return value;
 
         if (propName == 'fee' || propName == 'amount') {
-            value = this.currencyPipe.transform(+value.toFixed(2));
+            value = this.currencyPipe.transform(+value.toFixed(2), this.data.currencyId);
         }
 
         if (propName == 'status')

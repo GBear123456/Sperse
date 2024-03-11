@@ -4,7 +4,6 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, ViewChil
 /** Third party imports */
 import { BehaviorSubject, Observable, of, combineLatest } from 'rxjs';
 import {
-    finalize,
     map,
     switchMap, tap
 } from 'rxjs/operators';
@@ -31,12 +30,11 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class PaymentsInfoComponent implements OnInit {
     @Input() paymentInfoScrollHeight: number;
-    @Input() amountCurrency = SettingsHelper.getCurrency();
 
     @ViewChild('paymentsContainer', { static: true }) paymentsContainer: ElementRef;
     @ViewChild('paymentMethodsContainer', { static: true }) paymentMethodsContainer: ElementRef;
-    totalPaymentAmount: number;
-    hasRecurringBilling: boolean;
+    totalPaymentAmounts: any[];
+    amountCurrency: string;
     payments$: Observable<ShortPaymentInfo[]>;
     displayedPayments$: Observable<ShortPaymentInfo[]>;
     paymentMethods$: Observable<PaymentMethodInfo[]>;
@@ -53,8 +51,10 @@ export class PaymentsInfoComponent implements OnInit {
         this.payments$ = paymentsInfoService.getPaymentsObserverable()
             .pipe(
                 tap((res) => {
-                    this.totalPaymentAmount = res.totalPaymentAmount;
-                    this.hasRecurringBilling = res.hasRecurringBilling;
+                    this.totalPaymentAmounts = Object.keys(res.totalPaymentAmounts)
+                        .map(x => { return { currencyId: x, total: res.totalPaymentAmounts[x] } })
+                        .sort((a, b) => b.total - a.total);
+                    this.amountCurrency = res.payments.length ? res.payments[0].currencyId : SettingsHelper.getCurrency();
                     this.changeDetectorRef.detectChanges();
                 }),
                 map(res => res.payments)

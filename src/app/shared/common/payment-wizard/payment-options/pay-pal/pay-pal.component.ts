@@ -18,6 +18,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class PayPalComponent implements AfterViewInit {
     @Input() productId: number;
+    @Input() currencyId: string;
     @Input() paymentPeriodType: PaymentPeriodType;
     @Input() quantity: number;
     @Input() clientId: string;
@@ -28,18 +29,14 @@ export class PayPalComponent implements AfterViewInit {
         private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy,
         private loadingService: LoadingService,
         private ls: AppLocalizationService
-    ) { }
+    ) {}
 
     ngAfterViewInit() {
         this.loadingService.startLoading();
-        if ((<any>window)['paypal'])
-            setTimeout(() => { this.preparePaypalButton(); });
-        else {
-            jQuery.ajaxSetup({ cache: true });
-            jQuery.getScript(`https://www.paypal.com/sdk/js?client-id=${this.clientId}&vault=true&intent=subscription`)
-                .done(() => { this.preparePaypalButton(); });
-            jQuery.ajaxSetup({ cache: false });
-        }
+        jQuery.ajaxSetup({ cache: true });
+        jQuery.getScript(`https://www.paypal.com/sdk/js?client-id=${this.clientId}&vault=true&intent=subscription&currency=${this.currencyId}`)
+            .done(() => { this.preparePaypalButton(); });
+        jQuery.ajaxSetup({ cache: false });
     }
 
     preparePaypalButton(): void {

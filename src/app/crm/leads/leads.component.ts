@@ -529,7 +529,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields.PropertyId,
         this.leadFields.Email,
         this.leadFields.Phone,
-        this.leadFields.Amount
+        this.leadFields.Amount,
+        this.leadFields.CurrencyId
     ]; 
     loadAssignUsersList: Subject<any> = new Subject<null>();
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
@@ -612,7 +613,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 this.leadFields.Phone,
                                 this.leadFields.StarId,
                                 this.leadFields.IsSubscribedToEmails
-                            ]
+                            ],
+                            {
+                                Amount: [this.leadFields.CurrencyId]
+                            }
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },

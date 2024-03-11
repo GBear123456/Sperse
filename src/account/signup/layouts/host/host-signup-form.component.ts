@@ -4,6 +4,7 @@
 import { Component, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 import { MessageService } from 'abp-ng2-module';
@@ -118,6 +119,7 @@ export class HostSignupFormComponent {
                 return prevOption.fee > nextOption.fee ? 1 : -1;
             })[0];
             if (this.signUpProduct) {
+                this.currencySymbol = getCurrencySymbol(this.signUpProduct.currencyId, 'narrow');
                 if (this.signUpProduct.descriptionHtml)
                     this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(this.signUpProduct.descriptionHtml);
             }

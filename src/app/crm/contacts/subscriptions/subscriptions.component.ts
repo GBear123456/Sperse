@@ -37,7 +37,6 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { AppService } from '@app/app.service';
-import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'subscriptions',
@@ -53,7 +52,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     };
     pagerConfig = DataGridService.defaultGridPagerConfig;
 
-    currency: string = SettingsHelper.getCurrency();
     public dataSource: DataSource;
     impersonateTenantId: number;
     permissions = AppPermissions;

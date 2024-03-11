@@ -12,6 +12,7 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { OrderDto } from '@app/crm/shared/order-dropdown/order-dto.type';
 import { OrderFields } from '@app/crm/shared/order-dropdown/order-fields.enum';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'order-dropdown',
@@ -34,6 +35,7 @@ export class OrderDropdownComponent {
     ) {}
     ordersDataSource;
     orderFields: KeysEnum<OrderDto> = OrderFields;
+    currency = SettingsHelper.getCurrency();
 
     orderFocusIn(event) {
         if (event.event.target.tagName == 'INPUT')
@@ -50,11 +52,11 @@ export class OrderDropdownComponent {
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
-                    let contactFilter = '(ContactId eq ' + this.contactId + ')';
+                    let filter = `(ContactId eq ${this.contactId}) and (CurrencyId eq '${this.currency}')`;
                     if (request.params.$filter)
-                        request.params.$filter += ' and ' + contactFilter;
+                        request.params.$filter += ' and ' + filter;
                     else
-                        request.params.$filter = contactFilter;
+                        request.params.$filter = filter;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             })
