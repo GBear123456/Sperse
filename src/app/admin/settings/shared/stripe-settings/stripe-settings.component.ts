@@ -7,6 +7,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
+    StripeEntityType,
     StripeSettingsDto, TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@root/shared/AppConsts';
@@ -26,6 +27,12 @@ export class StripeSettingsComponent extends SettingsComponentBase {
 
     showAdvancedSettings = this.isHost;
     tenantName = this.isHost ? AppConsts.defaultTenantName : this.appSession.tenantName;
+
+    showImportSection = false;
+    importInProgress = false;
+    selectedImportType: StripeEntityType = 0;
+    StripeEntityType = StripeEntityType;
+    importTypes: any[] = Object.values(StripeEntityType).filter(x => typeof x === "number");
 
     constructor(
         _injector: Injector,
@@ -48,6 +55,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
                 .subscribe(res => {
                     this.stripePaymentSettings = res;
                     this.showAdvancedSettings = this.isHost || !!this.stripePaymentSettings.apiKey;
+                    this.updateShowImportSection();
                     this.changeDetection.detectChanges();
                 })
         }
@@ -92,6 +100,11 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         return this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings);
     }
 
+    afterSave() {
+        this.updateShowImportSection();
+        this.changeDetection.detectChanges();
+    }
+
     getStripeWebhookUrl(): string {
         let tenantParam = this.appSession.tenantId ? `?tenantId=${this.appSession.tenantId}` : '';
         return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook${tenantParam}`;
@@ -104,5 +117,52 @@ export class StripeSettingsComponent extends SettingsComponentBase {
 
     getStripeOAuthConnectRedirectUrl(): string {
         return AppConsts.remoteServiceBaseUrl + `/stripeConnectAccount/oauth`;
+    }
+
+    getImportTypeValue(importType: StripeEntityType): boolean {
+        return (this.selectedImportType & importType) != 0;
+    }
+
+    getImportTypeDisabled(importType: StripeEntityType) {
+        if (this.selectedImportType >= StripeEntityType.Payment && importType < StripeEntityType.Payment)
+            return true;
+        return false;
+    }
+
+    updateShowImportSection() {
+        this.showImportSection = this.stripePaymentSettings.isEnabled &&
+            (this.stripePaymentSettings.isConnectedAccountSetUpCompleted || !!this.stripePaymentSettings.apiKey);
+    }
+
+    onImportTypeChanged(event, importType: StripeEntityType) {
+        if (event.value) {
+            this.selectedImportType |= importType;
+        }
+        else {
+            this.selectedImportType &= ~importType;
+        }
+        if (this.selectedImportType >= StripeEntityType.Payment) {
+            this.selectedImportType |= (StripeEntityType.Product | StripeEntityType.Coupon | StripeEntityType.Customer);
+        }
+        this.changeDetection.detectChanges();
+    }
+
+    import() {
+        if (this.importInProgress)
+            return;
+
+        this.importInProgress = true;
+        this.startLoading();
+        this.tenantPaymentSettingsService.importStripeData(this.selectedImportType)
+            .pipe(
+                finalize(() => this.finishLoading())
+            )
+            .subscribe(() => {
+                this.notify.info(this.l('Import started'));
+                this.changeDetection.detectChanges();
+            }, (e) => {
+                this.importInProgress = false;
+                this.changeDetection.detectChanges();
+            });
     }
 }

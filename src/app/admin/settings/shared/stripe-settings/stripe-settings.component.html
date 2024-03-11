@@ -6,7 +6,7 @@
                   [(value)]="stripePaymentSettings.isEnabled">
     </dx-check-box>
 </div>
-<ng-conainer *ngIf="!isHost">
+<ng-container *ngIf="!isHost">
     <div class="stripe-button-container">
         <button [disabled]="!stripePaymentSettings.isHostAccountEnabled" class="btn btn-layout stripe-button" (click)="createConnectedAccount()">
             {{ stripePaymentSettings.isConnectedAccountSetUpCompleted ? l('Connected with') : stripePaymentSettings.connectedAccountId ? l('Finish onboarding with') : l('Connect with') }}
@@ -25,7 +25,7 @@
         </dx-check-box>
         <br />
     </div>
-</ng-conainer>
+</ng-container>
 <ng-container *ngIf="showAdvancedSettings">
     <div class="form-group">
         <label for="StripeSecretKey">{{l("Secret key")}}</label>
@@ -101,3 +101,20 @@
     <i class="icon-la la la-floppy-o"></i>
     {{l('Save')}}
 </button>
+<div class="import-block" *ngIf="showImportSection">
+    <h5>{{l("Import")}}:</h5>
+    <div class="dx-fieldset">
+        <div class="dx-field" *ngFor="let importType of importTypes">
+            <div class="dx-field-label">{{l(StripeEntityType[importType])}}</div>
+            <dx-check-box class="dx-field-value"
+                          [value]="getImportTypeValue(importType)"
+                          [disabled]="importInProgress || getImportTypeDisabled(importType)"
+                          (onValueChanged)="onImportTypeChanged($event, importType)">
+            </dx-check-box>
+        </div>
+    </div>
+    <button class="btn btn-layout" (click)="import()" [disabled]="selectedImportType == 0 || importInProgress">
+        <i class="icon-la la la-download"></i>
+        {{l('Import')}}
+    </button>
+</div>
