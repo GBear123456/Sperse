@@ -5,6 +5,11 @@
     overflow: visible !important;
     align-items: center;
     display: flex;
+    & > span {
+        max-width: 92%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
     &:before {
         content: '';
         margin-right: 17px;
