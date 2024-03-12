@@ -710,7 +710,7 @@ export class ContactsService {
                     contactId: contactId,
                     files: files.map(item => {
                         return new FileInfo({
-                            id: item.key,
+                            id: item.key.split('_').shift(),
                             name: item.name
                         });
                     })
