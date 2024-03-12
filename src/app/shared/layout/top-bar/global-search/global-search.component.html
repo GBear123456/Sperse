@@ -1,16 +1,19 @@
 <dx-select-box *ngIf="showSearchMode"
-    width="95px"
+    width="260px"
     height="51px"
+    placeholder=""
     [disabled]="isLoading"
     [(value)]="selectedSearchMode"
-    [items]="[ls.l('Global'), ls.l('Local')]"
+    [items]="[globalSearchPlaceholder, localSearchPlaceholder]"
     (onValueChanged)="clearSearch()"
 ></dx-select-box>
+<div *ngIf="showSearchMode" class="drop-down-icon" (click)="openModeSelector(searchModeSelect)"></div>
 <div class="global-search-container">
     <dx-text-box mode="search"
                 width="100%"
                 height="51px"
-                [placeholder]="ls.l(!layoutService.showLeftBar || (!showSearchMode && isCRMModule) ? 'GlobalSearch' : 'Search')"
+                [ngClass]="{loading: isLoading}"
+                [placeholder]="!layoutService.showLeftBar || (!showSearchMode && isCRMModule) ? globalSearchPlaceholder : (showSearchMode ? selectedSearchMode : localSearchPlaceholder)"
                 (onFocusIn)="onFocusIn($event)"
                 (onFocusOut)="onFocusOut()"
                 (onEnterKey)="search($event)"

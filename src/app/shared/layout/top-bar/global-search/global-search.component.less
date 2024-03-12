@@ -9,11 +9,44 @@
     width: inherit;
     min-width: 200px;
     max-width: 361px;
-
+    
     &.showSearchMode {
-        max-width: 556px;
+        ::ng-deep .dx-searchbox {
+            .dx-texteditor-input-container {
+                width: 330px;
+            }
+            .dx-placeholder:before {
+                padding-left: 40px;
+            }
+            .dx-icon-search {
+                right: 20px;
+            }
+            input {
+                padding-right: 45px;
+            }
+            &:not(.dx-texteditor-empty).dx-state-hover,
+            &.loading {
+                .dx-icon-search {
+                    visibility: hidden;
+                }
+            }
+        }
+        ::ng-deep dx-select-box {
+            input {
+                display: none;
+            }
+        }
     }
 
+    .drop-down-icon {
+        background: url('../../../../../assets/common/icons/arrow-down.svg') no-repeat center;
+        width: 46px;
+        height: 46px;
+        z-index: 1;
+        position: absolute;
+        cursor: pointer;
+    }
+    
     .global-search-container {
         display: flex;
         width: inherit;
@@ -28,6 +61,7 @@
         }
     }
     ::ng-deep dx-select-box {
+        position: absolute;
         input {
             border: none!important;
         }
@@ -52,7 +86,7 @@
         top: 4px !important;
     }
     ::ng-deep dx-text-box {
-    background: transparent!important;
+        background: transparent!important;
     }
     ::ng-deep .dx-texteditor-container {
         align-items: center;
@@ -66,7 +100,7 @@
             margin-top: -2px;
         }
         .dx-texteditor-input {
-        background: #FFFFFF;
+            background: #FFFFFF;
             font-weight: 500;
         }
         .dx-texteditor-buttons-container {

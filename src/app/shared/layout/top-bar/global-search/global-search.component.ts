@@ -18,6 +18,7 @@ import { combineLatest, Observable, ReplaySubject, of } from 'rxjs';
 import { finalize, first, filter, map, startWith, switchMap, 
     take, tap, catchError, takeUntil, debounceTime } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
+import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -70,6 +71,7 @@ class CustomHttpParameterCodec implements HttpParameterCodec {
 })
 export class GlobalSearchComponent implements OnInit, OnDestroy {
     @ViewChild(DxTextBoxComponent) textBox: DxTextBoxComponent;
+    @ViewChild(DxSelectBoxComponent, {static: false}) selectBox: DxSelectBoxComponent;
 
     @HostBinding('class.showSearchMode') showSearchMode =
         this.toolbarService.isSearchBoxEnabled &&    
@@ -83,8 +85,6 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
 
     _search: ReplaySubject<string> = new ReplaySubject<string>(1);
     search$: Observable<string> = this._search.asObservable();
-
-    selectedSearchMode = this.ls.l('Global');
 
     isLoading = false;        
     searchGroups$: Observable<GlobalSearchGroup[]> = this.search$.pipe(
@@ -120,6 +120,10 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
     searchGroups: GlobalSearchGroup[];
     isTooltipVisible = false;
     searchConfig: any;
+
+    globalSearchPlaceholder = this.ls.l('Type here to search all sections');
+    localSearchPlaceholder = this.ls.l('Type here to search in this section');
+    selectedSearchMode = this.globalSearchPlaceholder;
 
     constructor(
         private http: HttpClient,
@@ -160,7 +164,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
                 this.searchConfig = config;
                 if (config) {
                     if (config.options.value) {
-                        this.selectedSearchMode = this.ls.l('Local');
+                        this.selectedSearchMode = this.localSearchPlaceholder;
                         setTimeout(() =>    
                             this.textBox.instance.option(
                                 'value', config.options.value
@@ -399,14 +403,12 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
     }
 
     search(e) {
-        const value = e.component.option('value');
-        if (value) {
-            if (!this.isCRMModule || (this.showSearchMode && this.selectedSearchMode != this.ls.l('Global'))) {
-                if (this.searchConfig && this.searchConfig.options.onValueChanged)
-                    this.searchConfig.options.onValueChanged({value});
-            } else
-                this._search.next(value);
-        }
+        const value = e.component.option('value');        
+        if (!this.isCRMModule || (this.showSearchMode && this.selectedSearchMode != this.globalSearchPlaceholder)) {
+            if (this.searchConfig && this.searchConfig.options.onValueChanged)
+                this.searchConfig.options.onValueChanged({value});
+        } else if (value)
+            this._search.next(value);
     }
 
     showAll(e, groupLink: string, groupLinkParams?: Params) {
@@ -452,6 +454,10 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
     clearSearch() {
         this.searchGroups = [];
         this.textBox.instance.option('value', '');
+    }
+
+    openModeSelector() {
+        this.selectBox.instance.open()
     }
 
     ngOnDestroy() {
