@@ -7,6 +7,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { finalize } from 'rxjs/operators';
 import { SettingService } from 'abp-ng2-module';
 import { NotifyService } from 'abp-ng2-module';
+import { forkJoin } from 'rxjs';
 
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
@@ -19,7 +20,6 @@ import { InvoiceDueStatus } from '@app/crm/invoices/invoices-dto.interface';
 import { InvoiceHelpers } from '@app/crm/invoices/invoices.helper';
 import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { AppConsts } from '@shared/AppConsts';
-import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'public-invoice',
@@ -130,7 +130,7 @@ export class InvoiceComponent implements OnInit {
             this.payPal.initialize(this.payPalInfo.clientId, type,
                 () => this.paypalServiceProxy.requestPayment(this.tenantId, this.publicId).toPromise(),
                 () => this.paypalServiceProxy.requestSubscription(this.tenantId, this.publicId).toPromise(),
-                this.invoiceInfo.currency
+                this.invoiceInfo.invoiceData.currencyId
             );
         }
     }

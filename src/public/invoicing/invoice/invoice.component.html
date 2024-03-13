@@ -68,7 +68,7 @@
                     </p>
                     <p>
                         <b>Invoice Number</b><br>
-                        {{invoiceInfo.invoiceData.number}}
+                        <span class="break-word">{{invoiceInfo.invoiceData.number}}</span>
                     </p>
                 </div>
                 <div class="left width-50">
@@ -84,7 +84,7 @@
                     <th>Description</th>
                     <th class="text-right">Quantity</th>
                     <th class="text-right">Unit Price</th>
-                    <th class="text-right">Amount {{invoiceInfo.currency}}</th>
+                    <th class="text-right">Amount {{invoiceInfo.invoiceData.currencyId}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -103,27 +103,27 @@
 
                 <tr class="footer-row">
                     <td></td>
-                    <td colspan="2"><b>Sub Total {{invoiceInfo.currency}}</b></td>
+                    <td colspan="2"><b>Sub Total {{invoiceInfo.invoiceData.currencyId}}</b></td>
                     <td><b>{{invoiceInfo.invoiceData.subTotal | number: '1.2-2'}}</b></td>
                 </tr>
                 <tr class="footer-row">
                     <td></td>
-                    <td colspan="2"><b>Discount Total {{invoiceInfo.currency}}</b></td>
+                    <td colspan="2"><b>Discount Total {{invoiceInfo.invoiceData.currencyId}}</b></td>
                     <td><b>{{invoiceInfo.invoiceData.discountTotal | number: '1.2-2'}}</b></td>
                 </tr>
                 <tr class="footer-row">
                     <td></td>
-                    <td colspan="2"><b>Shipping Total {{invoiceInfo.currency}}</b></td>
+                    <td colspan="2"><b>Shipping Total {{invoiceInfo.invoiceData.currencyId}}</b></td>
                     <td><b>{{invoiceInfo.invoiceData.shippingTotal | number: '1.2-2'}}</b></td>
                 </tr>
                 <tr class="footer-row">
                     <td></td>
-                    <td colspan="2"><b>Tax Total {{invoiceInfo.currency}}</b></td>
+                    <td colspan="2"><b>Tax Total {{invoiceInfo.invoiceData.currencyId}}</b></td>
                     <td><b>{{invoiceInfo.invoiceData.taxTotal | number: '1.2-2'}}</b></td>
                 </tr>
                 <tr class="footer-row">
                     <td></td>
-                    <td colspan="2"><b>Total {{invoiceInfo.currency}}</b></td>
+                    <td colspan="2"><b>Total {{invoiceInfo.invoiceData.currencyId}}</b></td>
                     <td><b>{{invoiceInfo.invoiceData.grandTotal | number: '1.2-2'}}</b></td>
                 </tr>
             </tbody>
@@ -206,7 +206,7 @@
                             <td>{{invoiceInfo.invoiceData.number}}</td>
                         </tr>
                         <tr>
-                            <td><b>Amount Due</b></td>
+                            <td><b>Amount Due {{invoiceInfo.invoiceData.currencyId}}</b></td>
                             <td>{{invoiceInfo.invoiceData.grandTotal | number: '1.2-2'}}</td>
                         </tr>
                         <tr>

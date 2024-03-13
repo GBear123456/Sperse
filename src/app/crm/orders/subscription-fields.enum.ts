@@ -19,6 +19,7 @@ export const SubscriptionFields: KeysEnum<SubscriptionDto> = {
     StartDate: 'StartDate',
     EndDate: 'EndDate',
     Fee: 'Fee',
+    CurrencyId: 'CurrencyId',
     StatusId: 'StatusId',
     StatusName: 'StatusName',
     OrderAmount: 'OrderAmount',

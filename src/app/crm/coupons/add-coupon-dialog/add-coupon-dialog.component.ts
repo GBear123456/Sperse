@@ -14,8 +14,9 @@ import { getCurrencySymbol } from '@angular/common';
 /** Third party imports */
 import { NotifyService } from 'abp-ng2-module';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { filter, finalize, tap } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { select, Store } from '@ngrx/store';
 
 /** Application imports */
 import {
@@ -28,6 +29,7 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { RootStore, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
 
 @Component({
     selector: 'add-coupon-dialog',
@@ -45,6 +47,7 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
     private slider: any;
     coupon: CreateCouponInput | UpdateCouponInput;
 
+    defaultCurrency = SettingsHelper.getCurrency();
     amountNullableFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,###.##';
     types: string[] = Object.keys(CouponDiscountType);
     durations: string[] = Object.keys(CouponDiscountDuration);
@@ -54,11 +57,21 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
     isReadOnly = true;
     isCreate = true;
 
+    currencies$: Observable<any[]> = this.store$.pipe(
+        select(CurrenciesCrmStoreSelectors.getCurrencies),
+        filter(x => x != null),
+        tap(data => {
+            data.forEach(c => c['displayName'] = `${c.name}, ${c.symbol}`);
+            return data;
+        })
+    );
+
     constructor(
         private elementRef: ElementRef,
         private couponProxy: CouponServiceProxy,
         private notify: NotifyService,
         private changeDetection: ChangeDetectorRef,
+        private store$: Store<RootStore.State>,
         public dialogRef: MatDialogRef<AddCouponDialogComponent>,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
@@ -78,10 +91,13 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
             this.coupon = new CreateCouponInput();
             this.coupon.type = CouponDiscountType.Fixed;
             this.coupon.activationDate = new Date();
+            this.coupon.currencyId = this.defaultCurrency;
         } else {
             this.isAlreadyUsed = data.coupon.isAlreadyUsed;
             this.coupon = new UpdateCouponInput(data.coupon);
         }
+
+        this.store$.dispatch(new CurrenciesCrmStoreActions.LoadRequestAction());
     }
 
     ngOnInit() {

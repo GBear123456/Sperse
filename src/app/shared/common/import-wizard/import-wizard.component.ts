@@ -28,6 +28,7 @@ import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { PapaParseResult } from '@node_modules/ngx-papaparse/lib/interfaces/papa-parse-result';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'import-wizard',
@@ -75,6 +76,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     lookupFields: any[];
     uploadFile: FormGroup;
     dataMapping: FormGroup;
+    currency = SettingsHelper.getCurrency();
 
     _toolbarConfig: ToolbarGroupModel[];
     private files: NgxFileDropEntry[] = [];

@@ -7,6 +7,7 @@ export const CouponFields: KeysEnum<CouponDto> = {
     Description: 'Description',
     Type: 'Type',
     Value: 'Value',
+    CurrencyId: 'CurrencyId',
     ActivationDate: 'ActivationDate',
     DeactivationDate: 'DeactivationDate',
     Duration: 'Duration',

@@ -14,6 +14,7 @@ export const OrderFields: KeysEnum<OrderDto> = {
     ContactId: 'ContactId',
     LeadId: 'LeadId',
     Amount: 'Amount',
+    CurrencyId: 'CurrencyId',
     OrderType: 'OrderType',
     OrderDate: 'OrderDate',
     AffiliateContactAffiliateCode: 'AffiliateContactAffiliateCode',

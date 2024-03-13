@@ -79,7 +79,7 @@
 
                     <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
-                        <span> {{ cell.data.GrandTotal | currency:currency:'symbol':'1.2-2' }} </span>
+                        <span> {{ cell.data.GrandTotal | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
                     </div>
                     <div *dxTemplate="let cellData of 'invoiceDateCell'" class="clipboard-holder">
                         {{cellData.value | date:formatting.date}}

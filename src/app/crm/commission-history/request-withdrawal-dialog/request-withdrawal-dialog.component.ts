@@ -24,11 +24,12 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
     styleUrls: ['request-withdrawal-dialog.component.less']
 })
 export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
-
     searchTimeout;
     selectedContact;
     searchValue: string;
     withdrawalAmount: number;
+    currency: string = SettingsHelper.getCurrency();
+
     dataSource = new DataSource({
         requireTotalCount: true,
         store: new ODataStore({
@@ -45,11 +46,11 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
                     ResellersFields.FullName,
                     ResellersFields.AvailableBalance
                 ];
+                request.params.currencyId = this.currency;
             }
         })
     });
 
-    currency: string = SettingsHelper.getCurrency();
     today: Date = DateHelper.addTimezoneOffset(new Date(), true);
     date: Date = this.today;
 
@@ -75,7 +76,8 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
                             contactId: this.selectedContact.Id,
                             amount: this.withdrawalAmount,
                             date: DateHelper.removeTimezoneOffset(this.date, true,
-                                DateHelper.isSameDateWithoutTime(this.date, this.today) ? undefined : 'from')
+                                DateHelper.isSameDateWithoutTime(this.date, this.today) ? undefined : 'from'),
+                            currencyId: this.currency
                         })).pipe(finalize(
                             () => this.loadingService.finishLoading(this.elementRef.nativeElement)
                         )).subscribe(() => {

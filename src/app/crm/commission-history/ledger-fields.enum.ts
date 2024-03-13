@@ -12,6 +12,7 @@ export const LedgerFields: KeysEnum<LedgerDto> = {
     StartDate: 'StartDate',
     Status: 'Status',
     TotalAmount: 'TotalAmount',
+    CurrencyId: 'CurrencyId',
     Type: 'Type',
     PaymentSystem: 'PaymentSystem',
     HasPayout: 'HasPayout',
