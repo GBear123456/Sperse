@@ -7,6 +7,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
+    ImportStripeDataInput,
     StripeEntityType,
     StripeSettingsDto, TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -126,6 +127,9 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     getImportTypeDisabled(importType: StripeEntityType) {
         if (this.selectedImportType >= StripeEntityType.Payment && importType < StripeEntityType.Payment)
             return true;
+        if (this.selectedImportType >= StripeEntityType.Subscription && importType < StripeEntityType.Subscription)
+            return true;
+
         return false;
     }
 
@@ -141,8 +145,12 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         else {
             this.selectedImportType &= ~importType;
         }
-        if (this.selectedImportType >= StripeEntityType.Payment) {
-            this.selectedImportType |= (StripeEntityType.Product | StripeEntityType.Coupon | StripeEntityType.Customer);
+        let baseTypes = StripeEntityType.Product | StripeEntityType.Coupon | StripeEntityType.Customer;
+        if (importType == StripeEntityType.Payment) {
+            this.selectedImportType |= baseTypes;
+        }
+        if (importType == StripeEntityType.Subscription) {
+            this.selectedImportType |= (baseTypes | StripeEntityType.Payment);
         }
         this.changeDetection.detectChanges();
     }
@@ -153,7 +161,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
 
         this.importInProgress = true;
         this.startLoading();
-        this.tenantPaymentSettingsService.importStripeData(this.selectedImportType)
+        this.tenantPaymentSettingsService.importStripeData(new ImportStripeDataInput({ type: this.selectedImportType }))
             .pipe(
                 finalize(() => this.finishLoading())
             )
