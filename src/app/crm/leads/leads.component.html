@@ -13,6 +13,10 @@
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
+        <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+        <import-progress-bar></import-progress-bar>
+    </app-headline>
+    <ng-template #titleTemplate>
         <types-dropdown [items]="pipelineTypes$ | async"
                         [showTotalCount]="true"
                         [totalCount]="totalCount"
@@ -22,9 +26,12 @@
                         (onValueChanged)="onSelectedPipelineChanged($event)"
                         (onEdit)="editPipeline($event)">
         </types-dropdown>
-        <import-progress-bar></import-progress-bar>
-    </app-headline>
-    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate"
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
     <div class="main-wrapper">
         <action-menu [items]="actionMenuGroups"
                      [visible]="actionEvent"

@@ -732,6 +732,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

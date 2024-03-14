@@ -1196,6 +1196,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'                        
                     }
                 ]
             },

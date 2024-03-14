@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, Input, HostBinding, OnDestroy, ChangeDetectorRef,
-    ViewChild, ChangeDetectionStrategy, OnInit } from '@angular/core';
+    ViewChild, ChangeDetectionStrategy, OnInit, TemplateRef } from '@angular/core';
 
 /** Third party imports */
 import cloneDeep from 'lodash/cloneDeep';
@@ -27,6 +27,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 })
 export class ToolBarComponent implements OnDestroy, OnInit {
     @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
+    @Input() titleTemplate: TemplateRef<any>;
     @Input() isDisabled = false;
     @Input() width = '100%';
     _config: ToolbarGroupModel[];
@@ -54,7 +55,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
         private ls: AppLocalizationService,
         private userManagementService: UserManagementService,
         private toolbarService: ToolbarService,
-        private layoutService: LayoutService,
+        public layoutService: LayoutService,
         public appService: AppService
     ) {}
 
@@ -94,6 +95,11 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             search: {
                 accessKey: 'search',
                 visible: this.layoutService.showTopBar
+            },
+            title: {
+                accessKey: 'title',
+                itemTemplate: 'titleTemplate',
+                visible: this.layoutService.showLeftBar
             },
             filters: {
                 hint: this.ls.l('Filters'),
@@ -487,10 +493,11 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                         locateInMenu: group.locateInMenu,
                         disabled: item.disabled,
                         widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
-                        visible: !item.hasOwnProperty('visible') || item.visible,
+                        visible: (!item.hasOwnProperty('visible') || item.visible) && (!mergedConfig.hasOwnProperty('visible') || mergedConfig.visible),
                         text: !item.widget && item.text,
                         html: !item.widget && item.html,
                         itemTemplate: item.itemTemplate || group.itemTemplate,
+                        template: item.itemTemplate || mergedConfig.itemTemplate,
                         options: _.extend({
                             focusStateEnabled: true,
                             onClick: (e) => this.toolbarItemAction(item, group, e),

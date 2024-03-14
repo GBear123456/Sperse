@@ -444,6 +444,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

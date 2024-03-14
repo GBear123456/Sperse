@@ -1321,6 +1321,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'                        
                     }
                 ]
             },

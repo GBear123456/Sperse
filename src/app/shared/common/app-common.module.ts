@@ -68,6 +68,7 @@ import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confi
 import { ImportProgressBarComponent } from './import-wizard/import-progress-bar/import-progress-bar.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { HeadLineComponent } from './headline/headline.component';
+import { HeadLineTitleComponent } from './headline/headline-title/headline-title.component';
 import { TimeZoneComboComponent } from './timing/timezone-combo.component';
 import { JqPluginDirective } from './libs/jq-plugin.directive';
 import { CommonLookupModalComponent } from './lookup/common-lookup-modal.component';
@@ -176,6 +177,7 @@ import { ActionMenuModule } from './action-menu/action-menu.module';
         DatePickerDirective,
         ToolBarComponent,
         HeadLineComponent,
+        HeadLineTitleComponent,
         InplaceSelectBoxComponent,
         PeriodComponent,
         ImportWizardComponent,
@@ -208,6 +210,7 @@ import { ActionMenuModule } from './action-menu/action-menu.module';
         DateRangePickerComponent,
         DatePickerDirective,
         HeadLineComponent,
+        HeadLineTitleComponent,
         ToolBarComponent,
         InplaceEditModule,
         InplaceSelectBoxComponent,

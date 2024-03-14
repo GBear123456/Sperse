@@ -2,19 +2,19 @@
     <ng-container *ngIf="toggleButtonPosition === 'left'">
         <ng-container *ngTemplateOutlet="toggleButtonContainer"></ng-container>
     </ng-container>
-    <div class="headline-title">
-        <i *ngIf="icon" class="icon-{{icon}}"></i>
-        <img class="title-icon" *ngIf="iconSrc" [src]="iconSrc">
-        <div class="header-names">
-            <ng-template ngFor let-item [ngForOf]="names" let-i="index">
-                <span class="header-name">{{item}}</span>
-                <span class="right-arrow"></span>
-            </ng-template>
-        </div>
-        <small *ngIf="text">&nbsp;{{text}}</small><div class="transclude"></div>
-        <span *ngIf="showTotalCount" class="total-count {{totalErrorMsg ? 'error' : ''}}" [title]="totalErrorMsg || ''">({{ isTotalCountValid() ? (totalCount | number) : '?'}})</span>
-    </div>
-    <div class="headline-content" [ngClass]="{'menu-empty': (!buttons || !buttons.length) && !showReloadButton && !showToggleToolbarButton && !showToggleCompactViewButton && !showToggleFullScreenButton}">
+    <app-headline-title
+        *ngIf="layoutService.showTopBar"
+        [icon]="icon"
+        [iconSrc]="iconSrc"
+        [names]="names"
+        [text]="text"
+        [showTotalCount]="showTotalCount"
+        [totalErrorMsg]="totalErrorMsg"
+        [totalCount]="totalCount">
+    </app-headline-title>
+    <div *ngIf="layoutService.showTopBar" 
+        class="headline-content" 
+        [ngClass]="{'menu-empty': (!buttons || !buttons.length) && !showReloadButton && !showToggleToolbarButton && !showToggleCompactViewButton && !showToggleFullScreenButton}">
         <ng-content></ng-content>
     </div>
     <div class="headline-buttons" [ngClass]="{ 'need-refresh': reloadIsNecessary }">

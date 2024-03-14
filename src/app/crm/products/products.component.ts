@@ -323,6 +323,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

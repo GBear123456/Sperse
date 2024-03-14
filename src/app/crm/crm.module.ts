@@ -1,7 +1,7 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 /** Third party imports */
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -151,6 +151,7 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         DxCalendarModule,
         DxFileManagerModule,
 
+        ReactiveFormsModule,
         MatSidenavModule,
         MatProgressBarModule,
         MatTabsModule,

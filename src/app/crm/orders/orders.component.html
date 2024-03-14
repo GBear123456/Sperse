@@ -22,6 +22,10 @@
                   (onReload)="invalidate()"
                   (onStateReset)="dxDataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
+        <ng-container *ngTemplateOutlet="headerDropdown"></ng-container>
+        <import-progress-bar></import-progress-bar>
+    </app-headline>
+    <ng-template #headerDropdown>
         <orders-header-dropdown
                         [totalCount]="totalCount"
                         [totalErrorMsg]="totalErrorMsg"
@@ -30,11 +34,12 @@
                         (onOrderTypeChanged)="onOrderTypeChanged($event)"
                         (onContactGroupChanged)="onContactGroupChanged($event)">
         </orders-header-dropdown>
-        <import-progress-bar></import-progress-bar>
-    </app-headline>
+    </ng-template>
     <div [hidden]="selectedOrderType.value !== orderTypesEnum.Order">
-        <app-toolbar [config]="ordersToolbarConfig"
-                     [hidden]="appService.toolbarIsHidden$ | async">
+        <app-toolbar 
+            [config]="ordersToolbarConfig" 
+            [titleTemplate]="headerDropdown" 
+            [hidden]="appService.toolbarIsHidden$ | async">
         </app-toolbar>
         <div class="main-wrapper">
             <app-static-list
@@ -191,8 +196,10 @@
         </div>
     </div>
     <div [hidden]="selectedOrderType.value !== orderTypesEnum.Subscription">
-        <app-toolbar [config]="subscriptionsToolbarConfig"
-                     [hidden]="appService.toolbarIsHidden$ | async">
+        <app-toolbar
+            [titleTemplate]="headerDropdown"
+            [config]="subscriptionsToolbarConfig"
+            [hidden]="appService.toolbarIsHidden$ | async">
         </app-toolbar>
         <div class="main-wrapper">
             <div [hidden]="subscriptionsDataLayoutType !== layoutTypes.DataGrid">
