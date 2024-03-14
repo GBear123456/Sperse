@@ -277,7 +277,7 @@
                                 [placeholder]="ls.lr('Value')"
                                 [showClearButton]="false"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"
-                                [value]="cellData.data.rate | currency: currency"
+                                [value]="cellData.data.rate | currency: currency: 'symbol'"
                                 (onValueChanged)="onRateChanged($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
@@ -311,7 +311,7 @@
                                 [placeholder]="currencySymbol"
                                 dataType="number"
                                 [readOnly]="true"
-                                [value]="cellData.data.total | currency: currency">
+                                [value]="cellData.data.total | currency: currency: 'symbol'">
                             </dx-text-box>
                         </div>
                         <div *dxTemplate="let cellData of 'actions'" class="row-actions">
@@ -404,7 +404,7 @@
                 </div>
             </div>
             <div class="col-sm-6 conclusion bottom-container-text">
-                <div class="sub-total"><span>{{ls.l('SubTotal')}}</span><span>{{subTotal | currency: currency}}</span></div>
+                <div class="sub-total"><span>{{ls.l('SubTotal')}}</span><span>{{subTotal | currency: currency: 'symbol'}}</span></div>
                 <div class="user-total"><span>{{ls.l('DiscountTotal')}}</span>
                     <span>
                         <dx-number-box 
@@ -444,7 +444,7 @@
                         </dx-number-box>
                     </span>
                 </div>
-                <div class="balance"><span>{{ls.l('Balance')}} ({{currency}})</span><span>{{balance | currency: currency}}</span></div>
+                <div class="balance"><span>{{ls.l('Balance')}} ({{currency}})</span><span>{{balance | currency: currency: 'symbol'}}</span></div>
             </div>
         </div>
     </div>

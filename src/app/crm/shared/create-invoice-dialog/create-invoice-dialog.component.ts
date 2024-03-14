@@ -255,7 +255,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         },
         load: (loadOptions) => {
             return loadOptions.hasOwnProperty('searchValue') ?
-                this.couponProxy.getCouponsByPhrase(loadOptions.searchValue || '', loadOptions.take).toPromise() :
+                this.couponProxy.getCouponsByPhrase(this.currency, loadOptions.searchValue || '', loadOptions.take).toPromise() :
                 Promise.resolve([]);
         }
     });
@@ -360,6 +360,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
                         }
                     }
+                    this.disabledForUpdate = this.disabledForUpdate || invoiceInfo.currencyId != this.currency;
                     this.orderNumber = invoiceInfo.orderNumber;
                     this.customer = invoiceInfo.contactName;
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
@@ -490,6 +491,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             );
         }
         data.note = this.notes;
+        data.currencyId = this.currency;
         data.forbiddenPaymentMethods = this.forbiddenPaymentMethods || undefined;
     }
 
@@ -728,7 +730,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     invoiceProductsLookupRequest(phrase = '', callback?, code?: string) {
-        this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
+        this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, code, 10, this.currency).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.products = res.map((item: any) => {
                     item.details = item.description.split('\n').slice(1).join('\n');
@@ -743,7 +745,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     productsLookupRequest(phrase = '', callback?, code?: string) {
         if (this.featureMaxProductCount)
-            this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
+            this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10, this.currency).subscribe(res => {
                 if (!phrase || phrase == this.lastProductPhrase) {
                     this.products = res.map((item: any) => {
                         item.details = item.description;
@@ -1264,6 +1266,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             contactId: this.contactId,
             subscriptionStartOn: this.getDate(this.startDate, true, ''),
             couponId: this.selectedCoupon ? this.selectedCoupon.id : null,
+            currencyId: this.currency,
             discountTotal: this.discountTotal,
             shippingTotal: this.shippingTotal,
             taxTotal: this.taxTotal,

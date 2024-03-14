@@ -40,6 +40,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { CompanyDialogData } from '@app/crm/contacts/company-dialog/company-dialog-data.interface';
 import { Company } from '@app/crm/contacts/company-dialog/company.interface';
 import { CompanySize } from '@app/crm/contacts/company-dialog/company-size.interface';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'company-dialog',
@@ -103,6 +104,7 @@ export class CompanyDialogComponent implements OnInit {
     title: string;
     buttons: IDialogButton[] = [];
     orgUnitName: string;
+    currencyFormat = { style: 'currency', currency: SettingsHelper.getCurrency(), useGrouping: true };
 
     constructor(
         private crmStore$: Store<CrmStore.State>,

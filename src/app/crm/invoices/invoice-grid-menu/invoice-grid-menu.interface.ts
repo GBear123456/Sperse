@@ -5,6 +5,7 @@ export interface InvoiceGridMenuDto {
     Number?: string;
     Status?: InvoiceStatus;
     Amount?: number;
+    CurrencyId?: string;
     PublicId?: string;
     ContactId: number;
     OrderId: number;

@@ -1,4 +1,5 @@
 <app-headline *ngIf="layoutService.showLeftBar"
+    style="--background-color: {{headlineBackground  || '#FFFFFF'}}"
     [names]="[ ls.l('Welcome') + ' ' + appSessionService.user.name + '! Let\'s get you started' ]"
     [buttons]="[]"
     [showToggleFullScreenButton]="true"
@@ -210,7 +211,7 @@
                     <div class="p">
                         <b (click)="openPaymentWizardDialog(true)">{{sub.productName}}</b>
                         <div class="icon" *ngIf="sub.isUpgradable">
-                            <div class="overlap-group" (click)="openPaymentWizardDialog(true, {upgrade: true, productId: sub.productId})">
+                            <div class="overlap-group" (click)="openPaymentWizardDialog(false, {upgrade: true, productId: sub.productId})">
                                 <div class="div">Upgrade</div>
                             </div>
                         </div>

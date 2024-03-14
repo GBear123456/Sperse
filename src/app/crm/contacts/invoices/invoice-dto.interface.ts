@@ -2,6 +2,7 @@ import { InvoiceStatus } from '@shared/service-proxies/service-proxies';
 
 export interface InvoiceDto {
     Amount: number;
+    CurrencyId: string;
     ContactId: number;
     Date: string;
     InvoiceDueDate: string;

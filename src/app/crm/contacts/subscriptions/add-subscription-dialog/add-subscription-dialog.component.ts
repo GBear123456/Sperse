@@ -88,7 +88,8 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         hasRecurringBilling: false,
         skipExisting: false
     });
-    amountFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,##0.##';
+    currency = SettingsHelper.getCurrency();
+    amountFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,##0.##';
 
     get validationGroup() {
         return this.selectedTabIndex ? this.validationServiceGroup : this.validationProductGroup;
@@ -127,7 +128,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             right: '-100vw'
         });
 
-        this.productProxy.getProducts(ProductType.Subscription, false).subscribe((products: ProductDto[]) => {
+        this.productProxy.getProducts(ProductType.Subscription, this.currency, false).subscribe((products: ProductDto[]) => {
             this.products = products;
             this.checkAddManageOption(this.products);
         });

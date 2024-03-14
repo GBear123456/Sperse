@@ -80,6 +80,7 @@ export class WelcomeComponent implements OnInit {
     subscriptions: any[];
     localization = AppConsts.localization.CRMLocalizationSourceName;
     isZendeskEnabled = !this.appService.isHostTenant && abp.setting.values['Integrations:Zendesk:AccountUrl'];
+    headlineBackground = abp.setting.get('App.Appearance.NavBackground');
 
     constructor(
         public router: Router,
@@ -229,8 +230,8 @@ export class WelcomeComponent implements OnInit {
     }
 
     loadSettings() {
-        this.loadingService.startLoading();
         if (this.isPaymentsEnabled) {
+            this.loadingService.startLoading();
             this.tenantPaymentSettingsService.getStripeSettings()
                 .pipe(
                     finalize(() => this.loadingService.finishLoading())

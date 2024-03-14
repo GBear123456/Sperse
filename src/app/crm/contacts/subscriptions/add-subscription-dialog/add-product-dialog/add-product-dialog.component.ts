@@ -75,9 +75,10 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     isHostTenant = !abp.session.tenantId;
     product: CreateProductInput | UpdateProductInput;
-    amountFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,##0.##';
-    amountNullableFormat: string = getCurrencySymbol(SettingsHelper.getCurrency(), 'narrow') + ' #,###.##';
-    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription, false).pipe(
+    currency = SettingsHelper.getCurrency();
+    amountFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,##0.##';
+    amountNullableFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,###.##';
+    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription, this.currency, false).pipe(
         map((products: ProductDto[]) => {
             return this.data.product && this.data.product.id ?
                 products.filter((product: ProductDto) => product.id != this.data.product.id) : products
@@ -219,6 +220,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 });
             }
             else {
+                this.product.currencyId = this.currency;
                 this.productProxy.createProduct(this.product).pipe(
                     switchMap((res) => zip(of(res), this.getUpdateProductImageObservable(res.productId)))
                 ).subscribe(([res,]) => {
