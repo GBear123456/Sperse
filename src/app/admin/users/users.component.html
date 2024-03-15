@@ -31,6 +31,7 @@
                 <div>
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid class="limitedPagerTotal main-component-view"
+                                  [ngClass]="{'gallery-view': isGalleryView}"
                                   [renderAsync]="true"
                                   [remoteOperations]="true"
                                   [dataSource]="dataSource"
@@ -39,6 +40,7 @@
                                   [columnAutoWidth]="true"
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
+                                  [dataRowTemplate]="isGalleryView ? 'dataRowTemplate' : undefined"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onInitialized)="onInitialized($event)"
                                   (onContentReady)="setGridDataLoaded()"
@@ -56,7 +58,7 @@
                                 [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                                 [allowUpdating]="true">
                         </dxo-editing>
-                        <dxo-scrolling mode="infinite"></dxo-scrolling>
+                        <dxo-scrolling [mode]="isGalleryView ? 'standard' : 'infinite'"></dxo-scrolling>
                         <dxi-column
                                 caption=" "
                                 dataField="profileThumbnailId"
@@ -79,14 +81,22 @@
                         <dxi-column dataField="lastLoginTime" [caption]="l('LastLoginTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
 
+                        <div *dxTemplate="let user of 'dataRowTemplate'" (click)="editUser(user)">
+                            <img class="galery-image" width="240px" height="240px" [src]="profileService.getProfilePictureUrl(user.data.profileThumbnailId, noPhotoUrl)" />
+                            <span class="role-container" [title]="getRolesTitle(user.data.roles)">
+                                {{getRolesTitle(user.data.roles)}}
+                            </span>
+                            <h3>{{user.data.name}} {{user.data.surname}}</h3>
+                        </div>
+
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(data.data.profileThumbnailId, noPhotoUrl) + ')'}" class="img-circle"></div>
                         </div>
 
                         <div *dxTemplate="let cellData of 'roleCell'" class="clipboard-holder">
-                        <span class="role-container" *ngIf="getRolesTitle(cellData.value) as roles" [title]="roles">
-                            {{roles}}
-                        </span>
+                            <span class="role-container" *ngIf="getRolesTitle(cellData.value) as roles" [title]="roles">
+                                {{roles}}
+                            </span>
                         </div>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">

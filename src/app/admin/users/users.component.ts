@@ -106,6 +106,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             label: this.l('CreateNewUser')
         }
     ];
+
+    isGalleryView: boolean = false;
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
     formatting = AppConsts.formatting;
     dataSource: DataSource;
@@ -352,6 +354,22 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         }
                     },
                     { name: 'print', action: Function(), visible: false }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'Gallery',
+                        action: () => {
+                            this.isGalleryView = !this.isGalleryView;
+                        },
+                        options: {
+                            icon: 'image',
+                            checkPressed: () => this.isGalleryView
+                        }
+                    }
                 ]
             }
         ];
@@ -648,6 +666,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
   
     getRolesTitle(list) {
-        return list.map(item => item.roleName).join(', ');
+        return list ? list.map(item => item.roleName).join(', ') : '';
     }
 }

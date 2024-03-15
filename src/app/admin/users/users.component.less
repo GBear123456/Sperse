@@ -19,6 +19,51 @@
             text-align: left!important;
         }
 
+        &.gallery-view {
+            .dx-datagrid-rowsview {
+                .dx-datagrid-table {
+                    display: flex;
+                    flex-wrap: wrap;
+                    padding: 0 40px;
+
+                    colgroup, 
+                    .dx-freespace-row, 
+                    .dx-virtual-row {
+                        display: none!important;
+                    }
+                }
+                .dx-column-lines {
+                    width: 260px;
+                    overflow: hidden;
+
+                    &:not(.dx-freespace-row),
+                    &:not(.dx-virtual-row) {
+                        display: inline-block;
+                        margin: auto;
+                    }
+
+                    .role-container {
+                        display: block!important;
+                        text-align: center!important;
+                        padding-top: 10px;
+                        height: 30px;
+                        width: 260px;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                    }
+
+                    h3 {
+                        text-align: center;
+                        padding: 10px 0;
+                    }
+                }
+                .galery-image {
+                    border-radius: 20px;
+                    margin: 40px 10px 0;
+                }
+            }
+        }
+
         .dx-datagrid-rowsview {
             .dx-column-lines {
                 cursor: pointer;
