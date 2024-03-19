@@ -303,6 +303,9 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

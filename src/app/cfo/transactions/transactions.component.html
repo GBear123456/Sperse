@@ -119,7 +119,19 @@
         <synch-progress class="synch-progress" (onComplete)="showRefreshButton()"></synch-progress>
         <calendar-button></calendar-button>
     </app-headline>
-    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <ng-template #titleTemplate>
+        <app-headline-title
+            [names]="[ l('Transactions') ]"
+            [showTotalCount]="true"
+            [totalErrorMsg]="totalErrorMsg"
+            [totalCount]="totalCount">
+        </app-headline-title>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate" 
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div class="wrapper" [ngClass]="{ 'show-left-bar': layoutService.showLeftBar, 'expanded': categoriesShowed, 'toolbar-hidden': appService.toolbarIsHidden$ | async }">

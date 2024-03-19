@@ -1538,6 +1538,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             placeholder: this.l('Search') + ' ' + this.l('Leads').toLowerCase(),
                             onValueChanged: (e) => this.searchValueChange(e)
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

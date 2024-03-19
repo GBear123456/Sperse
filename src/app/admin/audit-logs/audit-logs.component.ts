@@ -253,6 +253,9 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

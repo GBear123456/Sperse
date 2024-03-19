@@ -142,6 +142,9 @@ export class TenantLandingPagesComponent extends AppComponentBase implements OnD
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

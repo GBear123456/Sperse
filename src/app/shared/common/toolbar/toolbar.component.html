@@ -5,5 +5,8 @@
     [disabled]="isDisabled"
     [elementAttr]="{ compact: compact }"
     (onItemRendered)="onItemRendered($event)">
+    <div *dxTemplate="let data of 'titleTemplate'">
+        <ng-template [ngTemplateOutlet]="titleTemplate"></ng-template>
+    </div>
 </dx-toolbar>
 <div class="empty-container" [ngClass]="{ compact: compact }" *ngIf="!_config"></div>

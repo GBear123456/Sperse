@@ -241,6 +241,9 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             }
