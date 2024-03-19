@@ -73,7 +73,7 @@ import { ContactsService } from '../../../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { LanguagesStoreSelectors, RootStore, LanguagesStoreActions } from '@root/store';
 import { EditAddressDialog } from '../../../edit-address-dialog/edit-address-dialog.component';
-import { EventDurationTypes } from './event-duration-types.enum';
+import { EventDurationTypes, EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
@@ -323,15 +323,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
 
         if (this.product.productEvent.durationMinutes) {
-            let durationTypes = Object.values(EventDurationTypes).map(x => Number(x)).filter(x => !isNaN(x)).reverse();
-            for (let durationType of durationTypes) {
-                let value = this.product.productEvent.durationMinutes % durationType;
-                if (value == 0) {
-                    this.eventDurationType = <any>EventDurationTypes[durationType];
-                    this.eventDuration = this.product.productEvent.durationMinutes / durationType;
-                    break;
-                }
-            }
+            let durationInfo = EventDurationHelper.ParseDuration(this.product.productEvent.durationMinutes);
+            this.eventDurationType = durationInfo.eventDurationType;
+            this.eventDuration = durationInfo.eventDuration;
         }
     }
 
