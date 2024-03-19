@@ -14,7 +14,7 @@ import { NavigationEnd, Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { combineLatest, Observable, ReplaySubject, of } from 'rxjs';
+import { combineLatest, Observable, ReplaySubject, Subject, of } from 'rxjs';
 import { finalize, first, filter, map, startWith, switchMap, 
     take, tap, catchError, takeUntil, debounceTime } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
@@ -86,13 +86,15 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
     _search: ReplaySubject<string> = new ReplaySubject<string>(1);
     search$: Observable<string> = this._search.asObservable();
 
-    isLoading = false;        
+    isLoading = false;
+    _stopSearch: Subject<any> = new Subject<any>();
     searchGroups$: Observable<GlobalSearchGroup[]> = this.search$.pipe(
         tap(() => {
             this.isLoading = true;
             this.isTooltipVisible = false;
             this.searchGroups = [];
             this.loadingService.startLoading(this.getLoadingElement());
+            this.changeDetectorRef.detectChanges();
         }),
         switchMap((search: string) => {
             return combineLatest(
@@ -123,7 +125,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
 
     globalSearchPlaceholder = this.ls.l('Type here to search all sections');
     localSearchPlaceholder = this.ls.l('Type here to search in this section');
-    selectedSearchMode = this.globalSearchPlaceholder;
+    selectedSearchMode = this.localSearchPlaceholder;
 
     constructor(
         private http: HttpClient,
@@ -175,11 +177,20 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
             }
         );
 
-        this.searchGroups$.subscribe((searchGroups: GlobalSearchGroup[]) => {
+        this.searchGroups$.pipe(
+            takeUntil(this.lifecycleService.destroy$)
+        ).subscribe((searchGroups: GlobalSearchGroup[]) => {
             this.searchGroups = searchGroups;
             if (this.itemsFound) {
                 this.isTooltipVisible = true;
             }
+            this.changeDetectorRef.detectChanges();
+        });
+
+        this._stopSearch.asObservable().pipe(
+            takeUntil(this.lifecycleService.destroy$)
+        ).subscribe(() => {
+            this.isLoading = false;
             this.changeDetectorRef.detectChanges();
         });
     }
@@ -331,15 +342,16 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         params?: Params,
         linkParams?: Params
     ): Observable<GlobalSearchGroup> {
-        return (this.permissionService.isGranted(permission)
-                ? this.http.get(
-                    odataUrl,
-                    this.getOptions(search, {
-                        $select: selectFields.join(','),
-                        ...params
-                    }))
-                : of(null)
+        return (this.permissionService.isGranted(permission) ?
+            this.http.get(
+                odataUrl,
+                this.getOptions(search, {
+                    $select: selectFields.join(','),
+                    ...params
+                })
+            ) : of(null)
         ).pipe(
+            takeUntil(this._stopSearch),
             catchError(() => of({ value: [] })),
             startWith({ value: [] }),
             map((entities: any) => {
@@ -451,7 +463,20 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         e.preventDefault();
     }
 
-    clearSearch() {
+    clearSearch(event?) {
+        if (event && (event.name != 'value' || event.value))
+            return ;
+        
+        this.hideSpinner();
+        if (event) {
+            if (!this.isCRMModule || (this.showSearchMode && this.selectedSearchMode != this.globalSearchPlaceholder)) {
+                if (this.searchConfig && this.searchConfig.options.onValueChanged)
+                    this.searchConfig.options.onValueChanged({value: ''});
+            } else {
+                this._stopSearch.next(null);
+            }
+        }
+
         this.searchGroups = [];
         this.textBox.instance.option('value', '');
     }
@@ -461,6 +486,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.hideSpinner();
         this.lifecycleService.destroy.next(null);
     }
 }

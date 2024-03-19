@@ -11,6 +11,13 @@
     max-width: 361px;
     
     &.showSearchMode {
+        &:hover {
+            ::ng-deep .spinner,
+            ::ng-deep .blockUI.blockOverlay {
+                display: none!important;
+            }
+        }
+
         ::ng-deep .dx-searchbox {
             .dx-texteditor-input-container {
                 width: 330px;
@@ -29,9 +36,10 @@
                 .dx-icon-search {
                     visibility: hidden;
                 }
-            }
+            }            
         }
         ::ng-deep dx-select-box {
+            background: transparent!important;
             input {
                 display: none;
             }

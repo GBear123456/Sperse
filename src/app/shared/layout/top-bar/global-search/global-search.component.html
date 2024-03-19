@@ -4,8 +4,7 @@
     placeholder=""
     [disabled]="isLoading"
     [(value)]="selectedSearchMode"
-    [items]="[globalSearchPlaceholder, localSearchPlaceholder]"
-    (onValueChanged)="clearSearch()"
+    [items]="[globalSearchPlaceholder, localSearchPlaceholder]"    
 ></dx-select-box>
 <div *ngIf="showSearchMode" class="drop-down-icon" (click)="openModeSelector(searchModeSelect)"></div>
 <div class="global-search-container">
@@ -18,6 +17,7 @@
                 (onFocusOut)="onFocusOut()"
                 (onEnterKey)="search($event)"
                 (onValueChanged)="valueChanged($event)"
+                (onOptionChanged)="clearSearch($event)"
                 [elementAttr]="{ id: 'global-search-textbox' }">
     </dx-text-box>
     <dx-tooltip #dropdown
