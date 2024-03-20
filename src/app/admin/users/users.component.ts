@@ -64,10 +64,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     isActive = true;
     role: number;
 
+
+    isGrantedImpersonation = this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
     public actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('LoginAsThisUser'),
-            visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
+            visible: this.isGrantedImpersonation,
             class: 'login',
             action: () => {
                 this.impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
@@ -663,6 +665,18 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     onShowingPopup(e) {
         e.component.option('visible', false);
         e.component.hide();
+    }
+
+    onGearClick(user, event) {
+        this.actionRecord = user.data;
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    impersonate(user, event) {
+        this.impersonationService.impersonate(user.data.id, this.appSession.tenantId);
+        event.stopPropagation();
+        event.preventDefault();
     }
   
     getRolesTitle(list) {

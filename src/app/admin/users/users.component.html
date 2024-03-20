@@ -82,11 +82,20 @@
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
 
                         <div *dxTemplate="let user of 'dataRowTemplate'" (click)="editUser(user)">
-                            <img class="galery-image" width="240px" height="240px" [src]="profileService.getProfilePictureUrl(user.data.profileThumbnailId, noPhotoUrl)" />
-                            <span class="role-container" [title]="getRolesTitle(user.data.roles)">
+                            <img class="galery-image" width="240px" height="240px" [src]="profileService.getProfilePictureUrl(user.data.profilePictureId, noPhotoUrl)" />
+                            <h3>{{user.data.name}} {{user.data.surname}}</h3>
+                            <span class="role-container top" [title]="getRolesTitle(user.data.roles)">
                                 {{getRolesTitle(user.data.roles)}}
                             </span>
-                            <h3>{{user.data.name}} {{user.data.surname}}</h3>
+                            <div class="active-block">
+                                <h3>{{user.data.name}} {{user.data.surname}}</h3>
+                                <span class="role-container" [title]="getRolesTitle(user.data.roles)">
+                                    {{getRolesTitle(user.data.roles)}}
+                                </span>
+                                <span class="email-container">{{user.data.emailAddress}}</span>
+                                <p><label>Last Login:</label> {{user.data.lastLoginTime | datetime: formatting.dateTimeMoment }}</p>
+                                <div class="actions"><img class="dx-link dx-link-edit" width="18px" height="18px" src="assets/common/icons/gear-icon.svg" (click)="onGearClick(user, $event)"><a *ngIf="isGrantedImpersonation" (click)="impersonate(user, $event)">Login as a {{user.data.surname}} &#8594;</a></div>
+                            </div>
                         </div>
 
                         <div *dxTemplate="let data of 'photoTemplate'">
