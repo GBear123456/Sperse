@@ -79,6 +79,7 @@ export class PaymentWizardComponent implements AfterViewInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
+        this.selectedUpgradeProductId = data && data.upgrade ? data.productId : null;
     }
     
     ngAfterViewInit() {

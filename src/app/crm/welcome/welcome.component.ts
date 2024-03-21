@@ -83,6 +83,7 @@ export class WelcomeComponent implements OnInit {
     subscriptions: any[];
     localization = AppConsts.localization.CRMLocalizationSourceName;
     isZendeskEnabled = !this.appService.isHostTenant && abp.setting.values['Integrations:Zendesk:AccountUrl'];
+    headlineBackground = abp.setting.get('App.Appearance.NavBackground');
 
     constructor(
         public router: Router,

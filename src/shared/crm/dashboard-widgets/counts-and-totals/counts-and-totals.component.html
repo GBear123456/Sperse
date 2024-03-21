@@ -4,7 +4,7 @@
             <div class="chart-head">
                 <span>{{ls.l('Total') + ' ' + ls.l(field.title)}}</span>
                 <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'currency'">
-                    {{ data[field.name] | currency:currency }}
+                    {{ data[field.name] | currency:currency:'symbol' }}
                 </span>
                 <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'number'">
                     {{ data[field.name] | number }}

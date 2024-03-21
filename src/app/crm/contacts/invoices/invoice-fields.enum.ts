@@ -3,6 +3,7 @@ import { InvoiceDto } from '@app/crm/contacts/invoices/invoice-dto.interface';
 
 export const InvoiceFields: KeysEnum<InvoiceDto> = {
     Amount: 'Amount',
+    CurrencyId: 'CurrencyId',
     Date: 'Date',
     ContactId: 'ContactId',
     InvoiceDueDate: 'InvoiceDueDate',

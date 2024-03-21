@@ -78,7 +78,7 @@
 
                     <div *dxTemplate="let cell of 'valueTemplate'" class="clipboard-holder">
                         <span *ngIf="cell.data.Type == couponTypes.Fixed; else Percent">
-                            {{ cell.data.Value | currency:currency:'symbol':'1.2-2' }}
+                            {{ cell.data.Value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }}
                         </span>
                         <ng-template #Percent>
                             <span> {{ cell.data.Value / 100 | percent:'1.0-2' }}</span>

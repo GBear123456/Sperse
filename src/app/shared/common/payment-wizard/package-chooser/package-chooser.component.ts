@@ -265,6 +265,8 @@ export class PackageChooserComponent implements OnInit {
             const paymentOptions: PaymentOptions = {
                 productId: this.selectedPackageCardComponent.productInfo.id,
                 productName: this.selectedPackageCardComponent.productInfo.name,
+                currencyId: this.selectedPackageCardComponent.productInfo.currencyId,
+                currencySymbol: this.selectedPackageCardComponent.currencySymbol,
                 paymentPeriodType: PaymentService.getPaymentPeriodType(this.selectedBillingPeriod),
                 customPeriodDescription: this.selectedBillingPeriod == BillingPeriod.Custom ? this.selectedPackageCardComponent.getPriceDescription() : null,
                 total: selectedOption ? selectedOption.fee : this.selectedPackageCardComponent.pricePerPeriod,

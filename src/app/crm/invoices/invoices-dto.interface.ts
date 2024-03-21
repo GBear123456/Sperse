@@ -5,6 +5,7 @@ export interface InvoiceDto {
     Status: InvoiceStatus;
     Number: string;
     GrandTotal: number;
+    CurrencyId: string;
     Date: string;
     DueDate: string;
     Description: string;

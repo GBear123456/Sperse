@@ -195,7 +195,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     getEntitySubtitle(entity: any): string {
         let subtitle: string;
         if (entity) {
-            let prioritizedSubtitle = this.currencyPipe.transform(entity.Amount, this.currency);
+            let prioritizedSubtitle = this.currencyPipe.transform(entity.Amount, entity.CurrencyId || this.currency);
             if (this.pipeline.entityTypeSysId && this.pipeline.entityTypeSysId.startsWith(EntityTypeSys.PropertyRentAndSale)) {
                 prioritizedSubtitle = prioritizedSubtitle || entity.PropertyName;
             } else if (this.pipeline.entityTypeSysId === EntityTypeSys.PropertyAcquisition) {

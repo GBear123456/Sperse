@@ -139,8 +139,7 @@
                         <dxi-column width="120px"
                                     [dataField]="commissionFields.ProductAmount"
                                     [caption]="l('Price')"
-                                    [format]="currencyFormat"
-                                    cssClass="clipboard-holder padding-right">
+                                    cellTemplate="amountTemplate">
                         </dxi-column>
                         <dxi-column width="100px"
                                     [dataField]="commissionFields.Tier"
@@ -150,8 +149,7 @@
                         <dxi-column width="120px"
                                     [dataField]="commissionFields.CommissionableAmount"
                                     [caption]="l('CV')"
-                                    [format]="currencyFormat"
-                                    cssClass="clipboard-holder padding-right">
+                                    cellTemplate="amountTemplate">
                         </dxi-column>
                         <dxi-column width="200px"
                                     cellTemplate="staticWidthCell"
@@ -221,8 +219,7 @@
                         <dxi-column width="140px"
                                     [dataField]="commissionFields.CommissionAmount"
                                     [caption]="l('Commission')"
-                                    [format]="currencyFormat"
-                                    cssClass="clipboard-holder padding-right">
+                                    cellTemplate="amountTemplate">
                         </dxi-column>
                         <dxi-column width="120px"
                                     [dataField]="commissionFields.Status"
@@ -248,6 +245,9 @@
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | datetime: formatting.dateTimeMoment}}
+                        </div>
+                        <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
+                            <span> {{ cell.value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -344,28 +344,27 @@
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column *ngIf="!isBankCodeLayoutType"
-                                    [caption]="l('Payout System')" 
+                                    [caption]="l('Payout System')"
                                     cellTemplate="payoutSystemCell">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.StartDate"
-                                    [caption]="l('StartDate')" 
-                                    cellTemplate="dateCell" 
+                                    [caption]="l('StartDate')"
+                                    cellTemplate="dateCell"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.EndDate"
-                                    [caption]="l('EndDate')" 
-                                    cellTemplate="dateCell" 
+                                    [caption]="l('EndDate')"
+                                    cellTemplate="dateCell"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.EntryDate"
-                                    [caption]="l('EntryDate')" 
-                                    cellTemplate="dateCell" 
+                                    [caption]="l('EntryDate')"
+                                    cellTemplate="dateCell"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.TotalAmount"
-                                    [caption]="l('TotalAmount')" 
-                                    [format]="currencyFormat"
-                                    cssClass="clipboard-holder padding-right">
+                                    [caption]="l('TotalAmount')"
+                                    cellTemplate="amountTemplate">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.PaymentSystem"
                                     [caption]="l('PaymentSystem')"
@@ -397,6 +396,9 @@
 
                         <div *dxTemplate="let cellData of 'payoutSystemCell'" class="clipboard-holder">
                             <img *ngIf="cellData?.data?.StripeAccountID || cellData?.data?.PayPalEmailAddress" [src]="'assets/common/icons/' + (cellData.data.StripeAccountID ? 'stripe': 'paypal') + '.svg'" [title]="l(cellData.data.StripeAccountID ? 'Stripe' : 'PayPal')" height="25px" width="100px">
+                        </div>
+                        <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
+                            <span> {{ cell.value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>

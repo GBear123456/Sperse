@@ -49,6 +49,8 @@ import { InvoiceGridMenuDto } from './invoice-grid-menu/invoice-grid-menu.interf
 import { InvoicesService } from '../contacts/invoices/invoices.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DateHelper } from '../../../shared/helpers/DateHelper';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { CurrencyHelper } from '../shared/helpers/currency.helper';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -116,7 +118,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         key: this.invoiceFields.Id,
         deserializeDates: false,
         url: this.getODataUrl(
-            this.dataSourceURI, this.getOdataFilterByNonZeroTotal()
+            this.dataSourceURI,
+            [FilterHelpers.filterByCurrencyId(this.currency), this.getOdataFilterByNonZeroTotal()]
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
@@ -132,7 +135,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     FullName: [this.invoiceFields.PhotoPublicId],
                     OrderStageName: [this.invoiceFields.OrderId],
                     DueStatus: [this.invoiceFields.Date, this.invoiceFields.DueDate, this.invoiceFields.Status, this.invoiceFields.FutureSubscriptionIsSetUp],
-                    LastPaymentType: [this.invoiceFields.LastPaymentDate]
+                    LastPaymentType: [this.invoiceFields.LastPaymentDate],
+                    GrandTotal: [this.invoiceFields.CurrencyId]
                 }
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -157,7 +161,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         store: new ODataStore({
             version: AppConsts.ODataVersion,
             url: this.getODataUrl(
-                this.dataSourceCountURI
+                this.dataSourceCountURI,
+                [FilterHelpers.filterByCurrencyId(this.currency)]
             ),
             beforeSend: (request) => {
                 this.totalCount = this.totalSum = this.totalErrorMsg = undefined;
@@ -344,6 +349,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 field: this.invoiceFields.GrandTotal,
                 items: { from: new FilterItemModel(), to: new FilterItemModel() }
             }),
+            CurrencyHelper.getCurrencyFilter(this.currency),
             new FilterModel({
                 component: FilterCalendarComponent,
                 operator: { from: 'ge', to: 'le' },
@@ -359,7 +365,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     products: new FilterServicesAndProductsModel(
                         {
                             dataSource$: this.productProxy.getProducts(
-                                undefined, false
+                                undefined, this.currency, false
                             ).pipe(
                                 map((products: ProductDto[]) => {
                                     let productsWithGroups = products.filter(x => x.group);
@@ -695,6 +701,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     Number: oDataDto.Number,
                     Status: oDataDto.Status,
                     Amount: oDataDto.GrandTotal,
+                    CurrencyId: oDataDto.CurrencyId,
                     PublicId: oDataDto.PublicId,
                     OrderId: oDataDto.OrderId,
                     OrderStage: oDataDto.OrderStageName,

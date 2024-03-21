@@ -173,4 +173,8 @@ export class FilterHelpers {
     static filterByParentId(value = null) {
         return { 'ParentId': {'eq': value} };
     }
+
+    static filterByCurrencyId(value = null) {
+        return { 'CurrencyId': { 'eq': value } };
+    }
 }

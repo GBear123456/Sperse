@@ -9,11 +9,13 @@ export const ProductFields: KeysEnum<ProductDto> = {
     Group: 'Group',
     Type: 'Type',
     Price: 'Price',
+    CurrencyId: 'CurrencyId',
     Unit: 'Unit',
     ThumbnailUrl: 'ThumbnailUrl',
     PublicName: 'PublicName',
     CreateUser: 'CreateUser',
     AllowCoupon: 'AllowCoupon',
     IsPublished: 'IsPublished',
-    PublishDate: 'PublishDate'
+    PublishDate: 'PublishDate',
+    ProductSubscriptionOptions: 'ProductSubscriptionOptions'
 };

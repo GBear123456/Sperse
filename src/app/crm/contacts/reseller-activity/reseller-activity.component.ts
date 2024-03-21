@@ -32,13 +32,12 @@ import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { AppPermissions } from '@shared/AppPermissions';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
-import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'reseller-activity',
     templateUrl: './reseller-activity.component.html',
     styleUrls: ['./reseller-activity.component.less'],
-    providers: [ LifecycleSubjectsService ]
+    providers: [LifecycleSubjectsService]
 })
 export class ResellerActivityComponent implements OnInit, OnDestroy {
     @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
@@ -88,11 +87,6 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     isCGManageAllowed = false;
     isCommissionsAllowed = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions)
         && this.permissionService.isGranted(AppPermissions.CRMAffiliatesCommissions);
-    currencyFormat: DevExpress.ui.Format = {
-        type: 'currency',
-        precision: 2,
-        currency: SettingsHelper.getCurrency()
-    };
 
     constructor(
         private router: Router,
@@ -150,7 +144,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
                 key: this.clientFields.Id,
                 url: this.oDataService.getODataUrl(
                     this.contactDataSourceURI,
-                    {[this.clientFields.AffiliateContactId]: this.data.contactInfo.id}
+                    { [this.clientFields.AffiliateContactId]: this.data.contactInfo.id }
                 ),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
@@ -176,7 +170,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
             store: new ODataStore({
                 key: this.ledgerFields.Id,
                 url: this.oDataService.getODataUrl(this.ledgerDataSourceURI,
-                    {[this.ledgerFields.ContactId]: this.data.contactInfo.id}
+                    { [this.ledgerFields.ContactId]: this.data.contactInfo.id }
                 ),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
@@ -186,7 +180,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     request.params.$select = DataGridService.getSelectFields(
                         this.ledgerDataGrid,
-                        [ this.ledgerFields.Id, this.ledgerFields.ContactId ]
+                        [this.ledgerFields.Id, this.ledgerFields.ContactId, this.ledgerFields.CurrencyId]
                     );
                 }
             })
@@ -209,7 +203,8 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
                         dataGrid,
                         [
                             this.commissionFields.Id,
-                            this.commissionFields.ResellerContactId
+                            this.commissionFields.ResellerContactId,
+                            this.commissionFields.CurrencyId
                         ]
                     );
                 }
@@ -221,13 +216,13 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
         if (this.data.contactInfo.id)
             this.commissionDataSource = this.getCommissionDataGrid(
                 this.commissionDataGrid,
-                {[this.commissionFields.ResellerContactId]: this.data.contactInfo.id}
+                { [this.commissionFields.ResellerContactId]: this.data.contactInfo.id }
             );
     }
 
     removeTabQueryParam() {
         this.router.navigate([], {
-            queryParams: {tab: null},
+            queryParams: { tab: null },
             queryParamsHandling: 'merge'
         });
     }

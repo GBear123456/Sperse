@@ -150,7 +150,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     currentUserId = abp.session.userId;
     person = new PersonInfoDto();
-    currencyFormat = { style: 'currency', currency: SettingsHelper.getCurrency(), useGrouping: true };
+    currency = SettingsHelper.getCurrency();
+    currencyFormat = { style: 'currency', currency: this.currency, useGrouping: true };
 
     emailsComponent: any;
     phonesComponent: any;
@@ -395,6 +396,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             trackingInfo: trackingInfo,
             parentContactId: this.data.parentId,
             dealAmount: this.dealAmount,
+            currencyId: this.currency,
             installmentAmount: this.installmentAmount,
             bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null,
             bankCodeSource: this.bankCode && this.bankCode !== '????' ? 'CRM' : null,

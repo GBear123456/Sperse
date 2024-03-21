@@ -9,6 +9,7 @@ export interface CommissionDto {
     CommissionAmount: number;
     CommissionRate: number;
     CommissionableAmount: number;
+    CurrencyId: string;
     EarnedDate: string;
     Id: number;
     InvoiceDate: string;
