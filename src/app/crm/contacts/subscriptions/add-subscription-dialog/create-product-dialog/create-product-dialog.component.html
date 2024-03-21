@@ -560,7 +560,7 @@
                                     <dx-number-box [placeholder]="ls.l('Duration')"
                                                    height="65px"
                                                    [(value)]="eventDuration"
-                                                   (onValueChanged)="eventDurationType = eventDurationType || eventDurationTypes[0]"
+                                                   (onValueChanged)="eventDurationType = eventDurationType || eventDurationTypes[0].value"
                                                    [disabled]="isReadOnly">
                                     </dx-number-box>
                                 </div>
@@ -568,6 +568,8 @@
                                     <label></label>
                                     <dx-select-box class="hide-placeholder"
                                                    [dataSource]="eventDurationTypes"
+                                                   displayExpr="displayValue"
+                                                   valueExpr="value"
                                                    [(value)]="eventDurationType"
                                                    [showClearButton]="!eventDuration"
                                                    [disabled]="isReadOnly">

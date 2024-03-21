@@ -201,7 +201,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     isOneTime = false;
 
     eventLocation = ProductEventLocation;
-    eventDurationTypes: string[] = Object.keys(EventDurationTypes).filter((v) => isNaN(Number(v)));
+    eventDurationTypes = EventDurationHelper.eventDurationDataSource;
     languages: LanguageDto[] = [];
     timezones: any[] = [];
     eventAddress: string;
@@ -457,7 +457,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         this.product.productEvent.time = undefined;
                     }
 
-                    this.product.productEvent.durationMinutes = this.eventDuration ? this.eventDuration * <any>EventDurationTypes[this.eventDurationType] : undefined;
+                    this.product.productEvent.durationMinutes = this.eventDuration ? this.eventDuration * this.eventDurationType : undefined;
                 }
 
                 if (this.product instanceof UpdateProductInput) {

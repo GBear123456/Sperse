@@ -172,7 +172,7 @@ export class ReceiptComponent implements OnInit {
 
             if (event.durationMinutes) {
                 let durationInfo = EventDurationHelper.ParseDuration(event.durationMinutes);
-                event['durationStr'] = `${durationInfo.eventDuration} ${durationInfo.eventDurationType}`;
+                event['durationStr'] = `${durationInfo.eventDuration} ${EventDurationHelper.getDisplayValue(durationInfo.eventDurationType)}`;
             }
         }
     }
