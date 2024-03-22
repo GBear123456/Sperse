@@ -85,7 +85,9 @@
 
     </div>
     <div class="right">
-        <h2>{{l('Color')}} {{l('Settings')}}</h2>
+        <h2>
+            {{l('Color')}} {{l('Settings')}}
+        </h2>        
 
         <span>{{l('Set a custom color for all of your backgrounds, texts, elements')}}</span>
 
@@ -117,5 +119,89 @@
             ></dx-color-box>
         </div>
 
+        <h2>{{l('Font')}} {{l('Settings')}}</h2>
+
+        <span>{{l('Choose any font from Google Fonts for your Dashboard')}}</span>
+
+        <div class="app-font-family">
+            <dx-select-box
+                height="46px"
+                [(value)]="appearance.fontName"
+                [searchEnabled]="true"
+                [dataSource]="fontFamilyList"
+            ></dx-select-box>
+        </div>
+
+        <h2>{{l('Button')}} {{l('Styling')}}</h2>
+
+        <span>{{l('Choose the style of your buttons')}}</span>
+
+        <div class="app-button-color">
+            <dx-color-box
+                height="48"
+                [(value)]="appearance.buttonColor"
+                [showClearButton]="true"
+                [showDropDownButton]="false"
+                stylingMode="filled"
+                [openOnFieldClick]="true"
+                labelMode="hidden"
+                placeholder="Main Button Color"
+                (onValueChanged)="onColorValueChanged($event, defaultButtonColor)"
+            ></dx-color-box>
+        </div>
+
+        <div class="app-button-color">
+            <dx-color-box
+                height="48"
+                [(value)]="appearance.buttonTextColor"
+                [showClearButton]="true"
+                [showDropDownButton]="false"
+                stylingMode="filled"
+                [openOnFieldClick]="true"
+                labelMode="hidden"
+                placeholder="Text Button Color"
+                (onValueChanged)="onColorValueChanged($event, defaultButtonTextColor)"
+            ></dx-color-box>
+        </div>
+
+        <div class="app-button-color">
+            <dx-color-box
+                height="48"
+                [(value)]="appearance.buttonHighlightedColor"
+                [showClearButton]="true"
+                [showDropDownButton]="false"
+                stylingMode="filled"
+                [openOnFieldClick]="true"
+                labelMode="hidden"
+                placeholder="Highlight Button Color"
+                (onValueChanged)="onColorValueChanged($event, defaultButtonHighlightedColor)"
+            ></dx-color-box>
+        </div>
+
+        <div class="app-button-round" style="--button-color: {{appearance.buttonColor || defaultButtonColor}} ;--button-radius: {{(appearance.borderRadius || defaultBorderRadius) + 'px'}};--button-text-color: {{appearance.buttonTextColor || defaultButtonTextColor}};--button-hover-color: {{appearance.buttonHighlightedColor || defaultButtonHighlightedColor}};">
+            <div [ngClass]="{selected: appearance.borderRadius == 0}" (click)="appearance.borderRadius = '0'">
+                <label>Sharp Corners<br><br>Radius 0</label>
+                <div class="example predefined0">Select</div>
+            </div>
+            <div [ngClass]="{selected: appearance.borderRadius == 10}" (click)="appearance.borderRadius = '10'">
+                <label>Round Edges<br><br>Radius 10</label>
+                <div class="example predefined10">Select</div>
+            </div>
+            <div [ngClass]="{selected: appearance.borderRadius == 25}" (click)="appearance.borderRadius = '25'">
+                <label>Pill Shaped<br><br>Radius 25</label>
+                <div class="example predefined25">Select</div>
+            </div>
+            <div [ngClass]="{selected: !['0', '10', '25'].includes(appearance.borderRadius)}">
+                <label>Custom Value</label>
+                <dx-number-box
+                    min="0"
+                    max="50"
+                    width="40px"
+                    valueChangeEvent="keyup"
+                    [value]="['0', '10', '25'].includes(appearance.borderRadius) ? 0 : appearance.borderRadius"
+                    (onChange)="appearance.borderRadius = '' + $event.component.option('value')"                    
+                ></dx-number-box>
+            </div>
+        </div>
     </div>
 </div>

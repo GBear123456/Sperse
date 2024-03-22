@@ -107,7 +107,12 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                     new AppearanceSettingsEditDto({
                         navPosition: this.navPosition,
                         navBackground: this.settingService.get('App.Appearance.NavBackground'),
-                        navTextColor: this.settingService.get('App.Appearance.NavTextColor')                     
+                        navTextColor: this.settingService.get('App.Appearance.NavTextColor'),
+                        buttonColor: this.settingService.get('App.Appearance.ButtonColor'),
+                        buttonTextColor: this.settingService.get('App.Appearance.ButtonTextColor'),
+                        buttonHighlightedColor: this.settingService.get('App.Appearance.ButtonHighlightedColor'),
+                        fontName: this.settingService.get('App.Appearance.FontName'),
+                        borderRadius: this.settingService.get('App.Appearance.BorderRadius')
                     })
                 ).pipe(tap(() => {
                     this.onOptionChanged.emit('navPosition');

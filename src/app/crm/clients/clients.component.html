@@ -259,7 +259,7 @@
                             <div class="star star-{{starsLookup[cellData.value] ? starsLookup[cellData.value].colorType.toLowerCase() : 'default'}}"></div>
                         </ng-container>
                         <div *dxTemplate="let cellData of 'emailCell'" class="clipboard-holder">
-                            <span style="font-family: 'Montserrat' !important;">
+                            <span style="font-family: var(--app-font-family) !important;">
                                 {{cellData.value}}
                                 <span *ngIf="!cellData.data.IsSubscribedToEmails" id="unsubscribedStatus{{cellData.data.Id}}" class="unsubscribed-status">
                                     <dx-tooltip position="bottom"
