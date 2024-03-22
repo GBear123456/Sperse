@@ -116,5 +116,6 @@
     <button class="btn btn-layout" (click)="import()" [disabled]="selectedImportType == 0 || importInProgress">
         <i class="icon-la la la-download"></i>
         {{l('Import')}}
+        <i *ngIf="importInProgress" class="fa fa-spinner fa-spin"></i>
     </button>
 </div>

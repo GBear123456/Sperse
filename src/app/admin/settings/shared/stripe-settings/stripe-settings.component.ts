@@ -49,13 +49,14 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     loadSettings() {
         this.startLoading();
         if (this.isPaymentsEnabled) {
-            this.tenantPaymentSettingsService.getStripeSettings()
+            this.tenantPaymentSettingsService.getStripeSettings(true)
                 .pipe(
                     finalize(() => this.finishLoading())
                 )
                 .subscribe(res => {
                     this.stripePaymentSettings = res;
                     this.showAdvancedSettings = this.isHost || !!this.stripePaymentSettings.apiKey;
+                    this.importInProgress = res.hasRunningImport;
                     this.updateShowImportSection();
                     this.changeDetection.detectChanges();
                 })
