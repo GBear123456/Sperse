@@ -76,6 +76,7 @@
                     <dxi-column [dataField]="invoiceFields.DueDate" [caption]="l('DueDate')" cellTemplate="dueDateCell" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.LastPaymentDate" [caption]="l('PaymentDate')" cellTemplate="dateTimeCell" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="invoiceFields.LastPaymentGateway" [caption]="l('Gateway')" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="invoiceFields.EmailAddress" [caption]="l('Email')" [visible]="false"></dxi-column>
 
                     <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
@@ -107,9 +108,9 @@
                             <span class="due-text">{{ cellData.data.DueStatusMessage }}</span>
                         </ng-container>
                     </div>
-                    <div *dxTemplate="let cellData of 'fullNameCell'">
+                    <div *dxTemplate="let cellData of 'fullNameCell'" class="fullname-cell">
                         <img class="photo" src="{{profileService.getContactPhotoUrl(cellData.data.PhotoPublicId)}}" />
-                        <span class="clipboard-holder">{{cellData.value}}</span>
+                        <span class="clipboard-holder" (click)="openContactDialog(cellData.data, $event)">{{cellData.value}}</span>
                     </div>
                     <div *dxTemplate="let cellData of 'stageCell'">
                         <dx-select-box displayExpr="name"

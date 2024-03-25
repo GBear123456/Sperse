@@ -16,7 +16,9 @@ import * as moment from 'moment';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
+import { ContactGroup } from '@shared/AppEnums';
 import { AppFeatures } from '@shared/AppFeatures';
+import { CrmService } from '@app/crm/crm.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -139,6 +141,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     GrandTotal: [this.invoiceFields.CurrencyId]
                 }
             );
+
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         },
         onLoaded: (data) => {
@@ -194,6 +197,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private changeDetectorRef: ChangeDetectorRef,
         private appService: AppService,
         private currencyPipe: CurrencyPipe,
+        public crmService: CrmService,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -356,7 +360,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 caption: 'creation',
                 field: this.invoiceFields.Date,
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
+                options: { method: 'getFilterByDate', params: { useUserTimezone: false }, allowFutureDates: true }
             }),
             this.prodcutsFilter = new FilterModel({
                 component: FilterServicesAndProductsComponent,
@@ -688,7 +692,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 return;
 
             let invoice = event.data;
-            if (event.columnIndex > 1 && invoice) {
+            if (event.column.cellTemplate != 'actionsCellTemplate' && event.column.command != 'select' && invoice) {
                 this.showInvoiceDialog(invoice);
             }
             else if (!this.isReadOnly && event.event.target.closest('.dx-link.dx-link-edit')) {
@@ -754,6 +758,22 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         });
 
         return result;
+    }
+
+    openContactDialog(data, event) {
+        if (data.ContactId) {
+            this._router.navigate(
+                CrmService.getEntityDetailsLink(data.ContactId),
+                {
+                    queryParams: {
+                        contactGroupId: ContactGroup.Client,
+                        referrer: 'app/crm/invoices'
+                    }
+                }
+            );
+            event.preventDefault();
+            event.stopPropagation();            
+        }
     }
 
     deactivate() {
