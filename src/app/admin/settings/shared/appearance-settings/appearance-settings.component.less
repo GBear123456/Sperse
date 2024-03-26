@@ -119,14 +119,15 @@
                 margin-right: 25px;
 
                 & > div {
+                    background: #F8FAFC;
                     min-width: 100px;
                     cursor: pointer;
                     text-align: center;
-                    border: 2px solid #dedede;
+                    border: 3px solid #dedede;
                     border-radius: 10px;
                     padding: 8px 4px;
                     &.selected {
-                        border: 2px solid #00aeef;                
+                        border: 3px solid #00aeef;                
                     }
     
                     ::ng-deep dx-number-box {
@@ -155,6 +156,9 @@
                         }
                         &.predefined25 {
                             border-radius: 25px!important;
+                        }
+                        &.predefined-custom {
+                            border-radius: var(--custom-radius-value)!important;                            
                         }
                     }
                 }

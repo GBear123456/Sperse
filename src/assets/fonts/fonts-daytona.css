@@ -1,0 +1,55 @@
+/* Daytona-300 - DaytonaPro-Thin */
+@font-face {
+ font-family: 'Daytona';
+ font-style: normal;
+ font-weight: 300;
+ src: url('./Daytona/DaytonaPro-Thin.eot'); /* IE9 Compat Modes */
+ src: local('Daytona Thin'), local('Daytona-Thin'), url('./Daytona/DaytonaPro-Thin.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+ url('./Daytona/DaytonaPro-Thin.woff') format('woff'), /* Modern Browsers */
+ url('./Daytona/DaytonaPro-Thin.ttf') format('truetype'), /* Safari, Android, iOS */
+ url('./Daytona/DaytonaPro-Thin.svg#Daytona') format('svg'); /* Legacy iOS */
+}
+/* Daytona-regular - DaytonaPro-Regular */
+@font-face {
+ font-family: 'Daytona';
+ font-style: normal;
+ font-weight: 400;
+ src: url('./Daytona/DaytonaPro-Regular.eot'); /* IE9 Compat Modes */
+ src: local('Daytona Regular'), local('Daytona-Regular'), url('./Daytona/DaytonaPro-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+ url('./Daytona/DaytonaPro-Regular.woff') format('woff'), /* Modern Browsers */
+ url('./Daytona/DaytonaPro-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
+ url('./Daytona/DaytonaPro-Regular.svg#Daytona') format('svg'); /* Legacy iOS */
+}
+/* Daytona-500 - DaytonaPro-Light */
+@font-face {
+ font-family: 'Daytona';
+ font-style: normal;
+ font-weight: 500;
+ src: url('./Daytona/DaytonaPro-Light.eot'); /* IE9 Compat Modes */
+ src: local('Daytona Light'), local('Daytona-Light'), url('./Daytona/DaytonaPro-Light.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+ url('./Daytona/DaytonaPro-Light.woff') format('woff'), /* Modern Browsers */
+ url('./Daytona/DaytonaPro-Light.ttf') format('truetype'), /* Safari, Android, iOS */
+ url('./Daytona/DaytonaPro-Light.svg#Daytona') format('svg'); /* Legacy iOS */
+}
+/* Daytona-600 - DaytonaPro-Semibold */
+@font-face {
+ font-family: 'Daytona';
+ font-style: normal;
+ font-weight: 600;
+ src: url('./Daytona/DaytonaPro-Semibold.eot'); /* IE9 Compat Modes */
+ src: local('Daytona SemiBold'), local('Daytona-SemiBold'), url('./Daytona/DaytonaPro-Semibold.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+ url('./Daytona/DaytonaPro-Semibold.woff') format('woff'), /* Modern Browsers */
+ url('./Daytona/DaytonaPro-Semibold.ttf') format('truetype'), /* Safari, Android, iOS */
+ url('./Daytona/DaytonaPro-Semibold.svg#Daytona') format('svg'); /* Legacy iOS */
+}
+/* Daytona-700 - DaytonaPro-Bold */
+@font-face {
+ font-family: 'Daytona';
+ font-style: normal;
+ font-weight: 700;
+ src: url('./Daytona/DaytonaPro-Bold.eot'); /* IE9 Compat Modes */
+ src: local('Daytona Bold'), local('Daytona-Bold'), url('./Daytona/DaytonaPro-Bold.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+ url('./Daytona/DaytonaPro-Bold.woff') format('woff'), /* Modern Browsers */
+ url('./Daytona/DaytonaPro-Bold.ttf') format('truetype'), /* Safari, Android, iOS */
+ url('./Daytona/DaytonaPro-Bold.svg#Daytona') format('svg'); /* Legacy iOS */
+}

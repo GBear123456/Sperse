@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Injector, ViewChild, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
@@ -21,6 +21,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
+import { FontService } from '@shared/common/font-service/font.service';
 import { SettingService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -31,7 +32,7 @@ import { AppConsts } from '@shared/AppConsts';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantCustomizationServiceProxy, TenantSettingsServiceProxy]
 })
-export class AppearanceSettingsComponent extends SettingsComponentBase implements OnInit {
+export class AppearanceSettingsComponent extends SettingsComponentBase {
     @ViewChild('logoUploader') logoUploader: UploaderComponent;
     @ViewChild('cssUploader') cssUploader: UploaderComponent;
     @ViewChild('loginCssUploader') loginCssUploader: UploaderComponent;
@@ -66,7 +67,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
             text: this.l('NavPosition_' + item)
         };
     });
-    fontFamilyList: string[] = [];
+    fontFamilyList: string[] = this.fontService.getSupportedFontsList();
 
     constructor(
         _injector: Injector,
@@ -75,6 +76,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
         private settingsProxy: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
+        private fontService: FontService,
         private settingService: SettingService,
         private http: HttpClient
     ) {
@@ -102,10 +104,6 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
                 this.changeDetection.detectChanges();
             }
         );
-    }
-
-    ngOnInit() {
-        this.getFontFamilyMetadataList();
     }
 
     getFontFamilyMetadataList() {
@@ -238,6 +236,11 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
 
     getNavPosition(): NavPosition {
         return NavPosition[this.settingService.get('App.Appearance.NavPosition')];
+    }
+
+    onCustomRadiusChange(event) {
+        this.appearance.borderRadius = '' + event.component.option('value');
+        this.changeDetection.detectChanges();
     }
 
     onColorValueChanged(event, defaultColor) {

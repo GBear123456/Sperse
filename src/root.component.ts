@@ -17,6 +17,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { LayoutType, CustomCssType, HostSettingsServiceProxy, MaintenanceSettingsDto } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { FontService } from '@shared/common/font-service/font.service';
 
 /*
     Root App Component (App Selector)
@@ -39,6 +40,7 @@ export class RootComponent implements OnInit, AfterViewInit {
         private loadingService: LoadingService,
         private hostSettingsProxy: HostSettingsServiceProxy,
         private uiCustomizationService: AppUiCustomizationService,
+        private fontService: FontService,
         @Inject(AppSessionService) private SS,
         @Inject(DOCUMENT) private document
     ) {
@@ -92,7 +94,10 @@ export class RootComponent implements OnInit, AfterViewInit {
                 borderRadius = abp.setting.values['App.Appearance.BorderRadius'] || AppConsts.defaultBorderRadius,
                 rootStyle = this.document.querySelector(':root').style;
 
-            this.addStyleSheet('googleapis', 'https://fonts.googleapis.com/css?family=' + fontName);
+            if (this.fontService.supportedCustomFonts.includes(fontName))
+                this.addStyleSheet('custom-font', '/assets/fonts/fonts-' + fontName.toLowerCase() + '.css');            
+            else
+                this.addStyleSheet('googleapis', 'https://fonts.googleapis.com/css?family=' + fontName);
 
             rootStyle.setProperty('--app-font-family', fontName);
             rootStyle.setProperty('--app-button-color', buttonColor);

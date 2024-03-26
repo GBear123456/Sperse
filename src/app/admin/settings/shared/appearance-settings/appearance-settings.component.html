@@ -197,10 +197,12 @@
                     min="0"
                     max="50"
                     width="40px"
+                    height="40px"
                     valueChangeEvent="keyup"
                     [value]="['0', '10', '25'].includes(appearance.borderRadius) ? 0 : appearance.borderRadius"
-                    (onChange)="appearance.borderRadius = '' + $event.component.option('value')"                    
+                    (onValueChanged)="onCustomRadiusChange($event)"                    
                 ></dx-number-box>
+                <div class="example predefined-custom" style="--custom-radius-value:{{ (['0', '10', '25'].includes(appearance.borderRadius) ? 0 : appearance.borderRadius) + 'px' }}">Select</div>
             </div>
         </div>
     </div>
