@@ -368,7 +368,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                             this.isGalleryView = !this.isGalleryView;
                         },
                         options: {
-                            icon: 'image',
+                            icon: 'mediumiconslayout',
                             checkPressed: () => this.isGalleryView
                         }
                     }
