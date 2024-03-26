@@ -44,6 +44,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
 
     ngOnInit(): void {
         this.loadSettings();
+        this.subscribeToEvent('abp.notifications.received', this.onImportFinished.bind(this));
     }
 
     loadSettings() {
@@ -167,11 +168,18 @@ export class StripeSettingsComponent extends SettingsComponentBase {
                 finalize(() => this.finishLoading())
             )
             .subscribe(() => {
-                this.notify.info(this.l('Import started'));
+                this.notify.info(this.l('Stripe Import Started'));
                 this.changeDetection.detectChanges();
             }, (e) => {
-                this.importInProgress = false;
-                this.changeDetection.detectChanges();
+                this.onImportFinished();
             });
+    }
+
+    onImportFinished(userNotification = null) {
+        if (userNotification != null && userNotification.notification.notificationName != 'CRM.StripeImportFinished')
+            return;
+
+        this.importInProgress = false;
+        this.changeDetection.detectChanges();
     }
 }
