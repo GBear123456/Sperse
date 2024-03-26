@@ -47,7 +47,8 @@ export class PayPalComponent implements AfterViewInit {
         let model = new RequestPaymentInput({
             productId: this.productId,
             paymentPeriodType: this.paymentPeriodType,
-            quantity: this.quantity
+            quantity: this.quantity,
+            couponId: undefined
         });
         let receiptUrl = '';
         //https://developer.paypal.com/sdk/js/reference/#link-paypalbuttonsoptions

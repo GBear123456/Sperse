@@ -4,6 +4,7 @@ import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Inp
 /** Third party imports */
 import { forkJoin, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import round from 'lodash/round';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -27,7 +28,10 @@ import {
     BankTransferSettingsDto,
     RequestPaymentResult,
     RequestPaymentInput,
-    PaymentSystemSettingsDto
+    PaymentSystemSettingsDto,
+    PublicProductServiceProxy,
+    CouponDiscountDuration,
+    PublicCouponInfo
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -41,7 +45,7 @@ import { AppService } from '@app/app.service';
     templateUrl: './payment-options.component.html',
     styleUrls: ['./payment-options.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantSubscriptionServiceProxy]
+    providers: [TenantSubscriptionServiceProxy, PublicProductServiceProxy]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
     @Input() plan: PaymentOptions;
@@ -94,11 +98,18 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
 
     isPayByStripeDisabled = false;
 
+    couponInfoCache: { [code: string]: PublicCouponInfo } = {};
+    couponLoading: boolean = false;
+    showCouponError: boolean = false;
+    couponInfo: PublicCouponInfo = null;
+    couponCode: string = '';
+
     constructor(
         injector: Injector,
         private appHttpConfiguration: AppHttpConfiguration,
         private appService: AppService,
         private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy,
+        private publicProductService: PublicProductServiceProxy,
         private changeDetector: ChangeDetectorRef,
         private elementRef: ElementRef,
     ) {
@@ -149,6 +160,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     paymentPeriodType: this.plan.paymentPeriodType,
                     productId: this.plan.productId,
                     quantity: this.quantity,
+                    couponId: this.couponInfo ? this.couponInfo.id : undefined
                 }))
             ]
         ).subscribe(([settings, isApplicable]) => {
@@ -294,7 +306,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         this.tenantSubscriptionServiceProxy.requestStripePayment(new RequestPaymentInput({
             productId: this.plan.productId,
             paymentPeriodType: this.plan.paymentPeriodType,
-            quantity: 1
+            quantity: 1,
+            couponId: this.couponInfo ? this.couponInfo.id : undefined
         })).subscribe((response) => {
             window.location.href = response.paymentLink;
         }, () => {
@@ -303,13 +316,83 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         });
     }
 
+    couponChange() {
+        this.showCouponError = false;
+    }
+
+    clearCoupon() {
+        this.couponInfo = null;
+        this.couponCode = null;
+        this.showCouponError = false;
+    }
+
+    loadCouponInfo() {
+        if (!this.couponCode)
+            return;
+
+        if (this.couponInfoCache.hasOwnProperty(this.couponCode)) {
+            this.couponInfo = this.couponInfoCache[this.couponCode];
+            this.changeDetector.detectChanges();
+            return;
+        }
+
+        this.couponLoading = true;
+        this.publicProductService.getCouponInfo(0, this.couponCode, this.plan.currencyId)
+            .pipe(
+                finalize(() => {
+                    this.couponLoading = false;
+                    this.changeDetector.detectChanges();
+                })
+            )
+            .subscribe(info => {
+                info = Object.keys(info).length == 0 ? null : info;
+                if (info) {
+                    this.setCouponDescription(info);
+                } else {
+                    this.showCouponError = true;
+                }
+                this.couponInfo = info;
+                this.couponInfoCache[this.couponCode] = info;
+            });
+
+    }
+
+    setCouponDescription(coupon: PublicCouponInfo): void {
+        let description = coupon.percentOff ?
+            `${coupon.percentOff}%` : `${coupon.amountOff} ${this.plan.currencySymbol}`;
+
+        coupon['description'] = `${description} Off ${coupon.duration}`;
+    }
+
+    applyCoupon(amount: number, usedAmountOff: number = 0): number {
+        if (!this.couponInfo)
+            return amount;
+
+        if (this.couponInfo.amountOff)
+            return amount - this.couponInfo.amountOff + usedAmountOff > 0 ? amount - this.couponInfo.amountOff + usedAmountOff : 0;
+
+        return round(amount * (1 - this.couponInfo.percentOff / 100), 2);
+    }
+
+    getDiscount(): number {
+        let amount = this.plan.total - this.applyCoupon(this.plan.total);
+        if (this.plan.signUpFee)
+            amount = amount + this.plan.signUpFee - this.applyCoupon(this.plan.signUpFee);
+        return amount;
+    }
+
+    isOnceCoupon() {
+        return this.couponInfo ? this.couponInfo.duration == CouponDiscountDuration.Once : false;
+    }
+
     subscribeToFree() {
         this.onStatusChange.emit({ status: PaymentStatusEnum.BeingConfirmed });
         this.onChangeStep.emit(2);
         this.tenantSubscriptionServiceProxy.requestFreeProduct(new RequestPaymentInput({
             productId: this.plan.productId,
             paymentPeriodType: this.plan.paymentPeriodType,
-            quantity: 1
+            quantity: 1,
+            couponId: this.couponInfo ? this.couponInfo.id : undefined
         })).subscribe(() => {
             this.refreshAfterClose.emit();
             this.onStatusChange.emit({

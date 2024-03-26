@@ -32,7 +32,10 @@
         </div>
         <div *ngIf="plan.total" class="usersAmountAndBilledInfo">
             <!-- span>{{ l('Price') }}: </span -->
-            <span>{{ (plan.currencySymbol || '$') + (plan.total | number : '1.2-2') }} </span><span>{{ getProductUnit(plan) }}</span>
+            <span>{{ (plan.currencySymbol || '$') + (applyCoupon(plan.total) | number : '1.2-2') }} </span><span>{{ getProductUnit(plan) }}</span>
+            <div class="coupon-info" *ngIf="couponInfo && plan.total != 0">
+                <div class="save-line">You saved: {{plan.currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
+            </div>
         </div>
         <div *ngIf="plan.total && plan.pricePerUserPerMonth" class="planPrice">
             <div>
@@ -56,6 +59,23 @@
                 <span>{{ plan.discount }}%</span>
             </div>
         </div>
+        <div class="input name__input" *ngIf="plan.total != 0">
+            <label class="coupon">
+                Coupon
+            </label>
+            <div class="coupon-row">
+                <div class="coupon-input">
+                    <input type="text" placeholder="" name="coupon" maxlength="36" [(ngModel)]="couponCode"
+                           (change)="couponChange()" [attr.disabled]="couponLoading || couponInfo ? true : null">
+                    <i *ngIf="couponInfo" class="fa fa-close" (click)="clearCoupon()"></i>
+                </div>
+                <i *ngIf="couponLoading" class="fa fa-spinner fa-spin"></i>
+                <button class="button_global button_global_green" [ngClass]="{disabled: !couponCode || couponLoading}" (click)="loadCouponInfo()">Apply</button>
+            </div>
+            <div *ngIf="couponInfo" class="applied-coupon">Applied {{couponInfo['description']}}</div>
+            <div *ngIf="showCouponError" class="error-coupon">Coupon is invalid</div>
+        </div>
+
         <!-- div class="total">
         <span>{{ l('Total') }}</span>
         <span>{{ (plan.currencySymbol || '$') + (plan.total | number : '1.2-2') }}</span>
@@ -88,7 +108,7 @@
                         <button [disabled]="isPayByStripeDisabled" class="pay-by-stripe" (click)="payByStripe()">Pay</button>
                     </div>
                 </mat-tab>
-                <mat-tab *ngIf="showPayPal" [label]="l('PayPal')">
+                <mat-tab *ngIf="showPayPal && !isOnceCoupon()" [label]="l('PayPal')">
                     <ng-template mat-tab-label="">
                         <img [src]="'./assets/common/icons/paypal-logo.png'">
                     </ng-template>
