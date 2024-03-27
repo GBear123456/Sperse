@@ -200,6 +200,11 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 hint: this.ls.l('Toolbar_PivotGrid'),
                 icon: this.getImgURI('pivot-grid')
             },
+            gallery: {
+                accessKey: 'gallery',
+                hint: this.ls.l('Gallery'),
+                icon: 'mediumiconslayout'
+            },
             map: {
                 accessKey: 'map',
                 hint: this.ls.l('Map'),

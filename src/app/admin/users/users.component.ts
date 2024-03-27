@@ -108,7 +108,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             label: this.l('CreateNewUser')
         }
     ];
-
+    
     isGalleryView: boolean = false;
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
     formatting = AppConsts.formatting;
@@ -361,14 +361,24 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             {
                 location: 'after',
                 locateInMenu: 'auto',
+                areItemsDependent: true,
                 items: [
                     {
-                        name: 'Gallery',
+                        name: 'dataGrid',
                         action: () => {
-                            this.isGalleryView = !this.isGalleryView;
+                            this.isGalleryView = false;
                         },
                         options: {
-                            icon: 'mediumiconslayout',
+                            checkPressed: () => !this.isGalleryView
+                        }
+                    },
+                    {
+                        name: 'gallery',
+                        action: () => {
+                            this.isGalleryView = true;
+                        },
+                        options: {
+                            hint: this.l('Team Carousel'),
                             checkPressed: () => this.isGalleryView
                         }
                     }

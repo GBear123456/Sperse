@@ -81,7 +81,7 @@
                         <dxi-column dataField="lastLoginTime" [caption]="l('LastLoginTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
 
-                        <div *dxTemplate="let user of 'dataRowTemplate'" (click)="editUser(user)">
+                        <div *dxTemplate="let user of 'dataRowTemplate'" (click)="editUser(user)" (mouseenter)="actionRecord = null">
                             <img class="galery-image" width="240px" height="240px" [src]="profileService.getProfilePictureUrl(user.data.profilePictureId, noPhotoUrl)" />
                             <h3>{{user.data.name}} {{user.data.surname}}</h3>
                             <span class="role-container top" [title]="getRolesTitle(user.data.roles)">
