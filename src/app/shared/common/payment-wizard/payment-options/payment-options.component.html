@@ -117,6 +117,7 @@
                              [currencyId]="plan.currencyId"
                              [paymentPeriodType]="plan.paymentPeriodType"
                              [quantity]="quantity"
+                             [couponInfo]="couponInfo"
                              [clientId]="paymentSystemSettings.paypalClientId"
                              (onSubmit)="submitData($event, paymentMethods.PayPal)">
                     </pay-pal>

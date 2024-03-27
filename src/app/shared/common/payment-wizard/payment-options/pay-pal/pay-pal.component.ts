@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import {
     TenantSubscriptionServiceProxy,
+    PublicCouponInfo,
     PaymentPeriodType,
     RequestPaymentInput,
     RequestPaypalSubscriptionOutput
@@ -22,6 +23,7 @@ export class PayPalComponent implements AfterViewInit {
     @Input() paymentPeriodType: PaymentPeriodType;
     @Input() quantity: number;
     @Input() clientId: string;
+    @Input() couponInfo: PublicCouponInfo;
     @Output() onSubmit: EventEmitter<PayPalDataModel> = new EventEmitter<PayPalDataModel>();
     descriptionText = this.ls.l('PayPalPaymentDescriptionText');
 
@@ -48,7 +50,7 @@ export class PayPalComponent implements AfterViewInit {
             productId: this.productId,
             paymentPeriodType: this.paymentPeriodType,
             quantity: this.quantity,
-            couponId: undefined
+            couponId: this.couponInfo ? this.couponInfo.id : undefined
         });
         let receiptUrl = '';
         //https://developer.paypal.com/sdk/js/reference/#link-paypalbuttonsoptions
