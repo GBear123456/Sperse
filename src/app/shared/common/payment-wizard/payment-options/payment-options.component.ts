@@ -353,6 +353,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 }
                 this.couponInfo = info;
                 this.couponInfoCache[this.couponCode] = info;
+                this.changeDetector.detectChanges();
             });
 
     }
