@@ -128,8 +128,11 @@
                 height="46px"
                 [(value)]="appearance.fontName"
                 [searchEnabled]="true"
-                [dataSource]="fontFamilyList"
-            ></dx-select-box>
+                [dataSource]="fontFamilyList">
+                <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
+                    {{ data }}
+                </div>
+            </dx-select-box>
         </div>
 
         <h2>{{l('Button')}} {{l('Styling')}}</h2>
@@ -179,30 +182,26 @@
         </div>
 
         <div class="app-button-round" style="--button-color: {{appearance.buttonColor || defaultButtonColor}} ;--button-radius: {{(appearance.borderRadius || defaultBorderRadius) + 'px'}};--button-text-color: {{appearance.buttonTextColor || defaultButtonTextColor}};--button-hover-color: {{appearance.buttonHighlightedColor || defaultButtonHighlightedColor}};">
-            <div [ngClass]="{selected: appearance.borderRadius == 0}" (click)="appearance.borderRadius = '0'">
+            <div [ngClass]="{selected: appearance.borderRadius == '0'}" (click)="appearance.borderRadius = '0'">
                 <label>Sharp Corners<br><br>Radius 0</label>
                 <div class="example predefined0">Select</div>
             </div>
-            <div [ngClass]="{selected: appearance.borderRadius == 10}" (click)="appearance.borderRadius = '10'">
-                <label>Round Edges<br><br>Radius 10</label>
-                <div class="example predefined10">Select</div>
-            </div>
-            <div [ngClass]="{selected: appearance.borderRadius == 25}" (click)="appearance.borderRadius = '25'">
-                <label>Pill Shaped<br><br>Radius 25</label>
-                <div class="example predefined25">Select</div>
-            </div>
-            <div [ngClass]="{selected: !['0', '10', '25'].includes(appearance.borderRadius)}">
-                <label>Custom Value</label>
+            <div [ngClass]="{selected: !['0', '25'].includes(appearance.borderRadius)}" (click)="['0', '25'].includes(appearance.borderRadius) ? appearance.borderRadius = '10' : null">
+                <label>Round Edges</label>
                 <dx-number-box
                     min="0"
-                    max="50"
+                    max="25"
                     width="40px"
                     height="40px"
                     valueChangeEvent="keyup"
-                    [value]="['0', '10', '25'].includes(appearance.borderRadius) ? 0 : appearance.borderRadius"
-                    (onValueChanged)="onCustomRadiusChange($event)"                    
+                    [value]="['0', '25'].includes(appearance.borderRadius) ? 10 : appearance.borderRadius"
+                    (onChange)="onCustomRadiusChange($event)"                    
                 ></dx-number-box>
-                <div class="example predefined-custom" style="--custom-radius-value:{{ (['0', '10', '25'].includes(appearance.borderRadius) ? 0 : appearance.borderRadius) + 'px' }}">Select</div>
+                <div class="example predefined-custom" style="--custom-radius-value:{{ (['0', '25'].includes(appearance.borderRadius) ? 10 : appearance.borderRadius) + 'px' }}" >Select</div>
+            </div>
+            <div [ngClass]="{selected: appearance.borderRadius == '25'}" (click)="appearance.borderRadius = '25'">
+                <label>Pill Shaped<br><br>Radius 25</label>
+                <div class="example predefined25">Select</div>
             </div>
         </div>
     </div>

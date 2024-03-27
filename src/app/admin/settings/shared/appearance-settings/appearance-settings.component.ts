@@ -104,6 +104,14 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                 this.changeDetection.detectChanges();
             }
         );
+
+        let root = this.getRootComponent();
+        root.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
+            + this.fontService.supportedGoogleFonts.join('|')
+        );
+        this.fontService.supportedCustomFonts.map(font =>
+            root.addStyleSheet('custom-font', '/assets/fonts/fonts-' + font.toLowerCase() + '.css')
+        );
     }
 
     getFontFamilyMetadataList() {
