@@ -46,12 +46,6 @@ export class PayPalComponent implements AfterViewInit {
 
         this.loadingService.finishLoading();
 
-        let model = new RequestPaymentInput({
-            productId: this.productId,
-            paymentPeriodType: this.paymentPeriodType,
-            quantity: this.quantity,
-            couponId: this.couponInfo ? this.couponInfo.id : undefined
-        });
         let receiptUrl = '';
         //https://developer.paypal.com/sdk/js/reference/#link-paypalbuttonsoptions
         (<any>window).paypal.Buttons({
@@ -63,7 +57,12 @@ export class PayPalComponent implements AfterViewInit {
             },
             createSubscription(data, actions) {
                 return self.tenantSubscriptionServiceProxy
-                    .requestPaypalSubscription(model)
+                    .requestPaypalSubscription(new RequestPaymentInput({
+                        productId: self.productId,
+                        paymentPeriodType: self.paymentPeriodType,
+                        quantity: self.quantity,
+                        couponId: self.couponInfo ? self.couponInfo.id : undefined
+                    }))
                     .toPromise()
                     .then((result: RequestPaypalSubscriptionOutput) => {
                         receiptUrl = result.receiptUrl;
