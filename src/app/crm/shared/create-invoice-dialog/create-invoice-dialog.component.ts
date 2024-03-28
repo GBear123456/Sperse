@@ -747,9 +747,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (this.featureMaxProductCount)
             this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10, this.currency).subscribe(res => {
                 if (!phrase || phrase == this.lastProductPhrase) {
-                    this.products = res.map((item: any) => {
-                        item.details = item.description;
-                        item.description = item.name;
+                    this.products = res.map((item: any, itemIndex: number) => {
+                        item.details = item.description;                        
+                        item.description = item.name + (
+                            res.some((prod, prodIndex) => 
+                                item.name == prod.name && itemIndex != prodIndex
+                            ) ? ' (' + item.code + ')' : ''
+                        );
                         item.caption = item.name;
                         return item;
                     });
@@ -1241,6 +1245,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     initiatePaymentMethodsCheck(timeout = 1000) {
+        if ([InvoiceStatus.Paid, InvoiceStatus.PartiallyPaid].includes(this.invoiceInfo.status))
+            return;
+
         if (this.paymentMethodsCheckLoading) {
             this.paymentMethodsCheckReload = true;
             return;
