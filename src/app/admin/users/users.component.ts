@@ -230,6 +230,9 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

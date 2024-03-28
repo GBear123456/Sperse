@@ -1542,6 +1542,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             placeholder: this.l('Search') + ' ' + this.l('Leads').toLowerCase(),
                             onValueChanged: (e) => this.searchValueChange(e)
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },
@@ -1959,7 +1962,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 setTimeout(() => {
                     this.pipelineDataSource = cloneDeep(this.dataSourceConfig);
                     this.pipelineDataSource['exportIgnoreOnLoaded'] = true;
-                });
+                }, 500);
         } else if (this.showDataGrid) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {

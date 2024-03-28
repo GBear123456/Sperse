@@ -11,13 +11,21 @@
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="invalidate()"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <dx-select-box [items]="headerOptions"
-                       [(value)]="activeHeaderOption"
-                       (onValueChanged)="navigateToProducts($event)">
-        </dx-select-box>
+        <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <ng-template #titleTemplate>
+        <dx-select-box class="title-options"
+            [items]="headerOptions"
+            [(value)]="activeHeaderOption"
+            (onValueChanged)="navigateToProducts($event)">
+        </dx-select-box>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate"
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
     <div class="main-wrapper">
         <action-menu [items]="actionMenuGroups"
                      [visible]="!!actionEvent"

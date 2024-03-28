@@ -10,7 +10,7 @@
         <ngx-file-drop [accept]="acceptFileExt" [multiple]="false" (onFileDrop)="fileDropped($event)">
             <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                 <a href="javascript:void(0);" class="attach-link" (click)="openFileSelector()">
-                    + {{ uploadButtonText }}
+                    {{showPlusSign ? '+' : ''}} {{ uploadButtonText }}
                 </a>
             </ng-template>
         </ngx-file-drop>

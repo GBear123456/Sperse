@@ -1,20 +1,24 @@
 /** Core imports */
-import { ChangeDetectorRef, Directive, Injector } from '@angular/core';
+import { ChangeDetectorRef, Directive, Injector, OnDestroy } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { SettingsComponent } from '../settings/settings.component';
 
 @Directive()
-export abstract class SettingsComponentBase extends AppComponentBase {
+export abstract class SettingsComponentBase extends AppComponentBase implements OnDestroy {
     changeDetection: ChangeDetectorRef;
     clipboardService: ClipboardService;
 
     abstract getSaveObs(): Observable<any>;
+
+    private parentComponent: SettingsComponent;
+    private _destroy: Subject<any> = new Subject();
 
     constructor(
         _injector: Injector
@@ -22,6 +26,13 @@ export abstract class SettingsComponentBase extends AppComponentBase {
         super(_injector);
         this.changeDetection = _injector.get(ChangeDetectorRef);
         this.clipboardService = _injector.get(ClipboardService);
+        this.parentComponent = _injector.get(SettingsComponent);
+
+        this.parentComponent.saveSubject.pipe(
+            takeUntil(this._destroy.asObservable())
+        ).subscribe(() => {
+            this.save();
+        });
     }
 
     isValid(): boolean {
@@ -53,5 +64,9 @@ export abstract class SettingsComponentBase extends AppComponentBase {
 
     get isHost(): boolean {
         return !this.appSession.tenantId;
+    }
+
+    ngOnDestroy() {
+        this._destroy.next();
     }
 }

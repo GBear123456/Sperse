@@ -18,7 +18,19 @@
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
-    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <ng-template #titleTemplate>
+        <app-headline-title
+            [names]="[ l('Users') ]"
+            [showTotalCount]="true"
+            [totalErrorMsg]="totalErrorMsg"
+            [totalCount]="totalCount">
+        </app-headline-title>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate"
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
     <div class="main-wrapper">
         <action-menu [width]="'250px'"
                      [items]="actionMenuItems"

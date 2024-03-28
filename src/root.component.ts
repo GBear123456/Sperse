@@ -17,6 +17,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { LayoutType, CustomCssType, HostSettingsServiceProxy, MaintenanceSettingsDto } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { FontService } from '@shared/common/font-service/font.service';
 
 /*
     Root App Component (App Selector)
@@ -39,6 +40,7 @@ export class RootComponent implements OnInit, AfterViewInit {
         private loadingService: LoadingService,
         private hostSettingsProxy: HostSettingsServiceProxy,
         private uiCustomizationService: AppUiCustomizationService,
+        private fontService: FontService,
         @Inject(AppSessionService) private SS,
         @Inject(DOCUMENT) private document
     ) {
@@ -80,8 +82,31 @@ export class RootComponent implements OnInit, AfterViewInit {
     
     ngOnInit() {
         sessionStorage.clear();
-        if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] && this.SS.userId)
-            this.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
+        if (abp && abp.setting && abp.setting.values) {
+            let mapKey = abp.setting.values['Integrations:Google:MapsJavascriptApiKey'];
+            if (mapKey && this.SS.userId)
+                this.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', mapKey));
+
+            let fontName = abp.setting.values['App.Appearance.FontName'] || AppConsts.defaultFontName,
+                buttonColor = abp.setting.values['App.Appearance.ButtonColor'] || AppConsts.defaultButtonColor,
+                buttonTextColor = abp.setting.values['App.Appearance.ButtonTextColor'] || AppConsts.defaultButtonTextColor,
+                buttonHighlightedColor = abp.setting.values['App.Appearance.ButtonHighlightedColor'] || AppConsts.defaultButtonHighlightedColor,
+                borderRadius = abp.setting.values['App.Appearance.BorderRadius'] || AppConsts.defaultBorderRadius,
+                rootStyle = this.document.querySelector(':root').style;
+
+            if (this.fontService.supportedCustomFonts.includes(fontName))
+                this.addStyleSheet('custom-font', '/assets/fonts/fonts-' + fontName.toLowerCase() + '.css');            
+            else
+                this.addStyleSheet('googleapis', 'https://fonts.googleapis.com/css?family=' + fontName);
+
+            rootStyle.setProperty('--app-font-family', fontName);
+            rootStyle.setProperty('--app-button-color', buttonColor);
+            rootStyle.setProperty('--app-button-text-color', buttonTextColor);
+            rootStyle.setProperty('--app-button-highlighted-color', buttonHighlightedColor);
+            rootStyle.setProperty('--app-border-radius', borderRadius + 'px');
+            rootStyle.setProperty('--app-button-context-color', 
+                abp.setting.values['App.Appearance.ButtonColor'] || '#00a0dc');
+        }
 
         //tenant specific custom css
         let tenant = this.SS.tenant;

@@ -30,6 +30,7 @@ import { AppStoreService } from '@app/store/app-store.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { SearchTooltipModule } from '@shared/common/dialogs/search-tooltip/search-tooltip.module';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 
 export class ZendeskConfig extends NgxZendeskWebwidgetConfig {
     override lazyLoad = true;
@@ -74,7 +75,8 @@ export class ZendeskConfig extends NgxZendeskWebwidgetConfig {
         CfoPreferencesService,
         CashFlowForecastServiceProxy,
         ItemDetailsService,
-        EmailSmtpSettingsService
+        EmailSmtpSettingsService,
+        ToolbarService
     ]
 })
 export class AppModule {}

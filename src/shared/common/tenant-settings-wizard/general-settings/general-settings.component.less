@@ -18,7 +18,7 @@
             height: 30px;
             border-radius: 0;
             font-size: 15px;
-            font-family: Montserrat;
+            font-family: var(--app-font-family);
             font-weight: 500;
             letter-spacing: 0.3px;
             color: #424c56;
@@ -30,18 +30,21 @@
     }
     label[for="Currency"],
     label[for="DefaultCountry"] {
-        min-width: 90px!important;
+        min-width: 80px!important;
     }
     .payment-settings {
         display: flex;
         padding-left: 20px;
-        width: 388px;
+        width: 400px;
+        .selected-flag-icon {
+            border-bottom: 1px solid #dfdfdf;
+        }
     }
     ::ng-deep dx-select-box {
         border-bottom: 1px solid #dfdfdf!important;
         .dx-placeholder, input {
             font-size: 15px;
-            font-family: Montserrat;
+            font-family: var(--app-font-family);
             font-weight: 500;
             letter-spacing: 0.3px;
             color: #424c56;
@@ -63,5 +66,25 @@
                 padding: 0;
             }
         }
+    }
+}
+
+::ng-deep .currency-row {
+    border-bottom: 1px solid #E5E8F3;
+    padding: 7px 0px!important;
+    margin: 0 10px;
+    display: flex;
+    width: calc(100% - 20px);
+
+    .flag-icon {
+        border-radius: 10px;
+        border: 1px solid #dedede;
+    }
+    div {
+        display: inline-block;
+        margin: auto 0 auto 10px;
+        white-space: pre-wrap;
+    }
+    .currency-name {
     }
 }

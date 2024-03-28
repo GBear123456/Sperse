@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, OnInit, NgZone, ViewEncapsulation, HostBinding, HostListener } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -22,6 +22,7 @@ import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 
 @Component({
     templateUrl: './app.component.html',
@@ -62,6 +63,7 @@ export class AppComponent implements OnInit {
         public appSession: AppSessionService,
         public appService: AppService,
         public filtersService: FiltersService,
+        public toolbarService: ToolbarService,
         public dialog: MatDialog
     ) {
         if (!appService.isHostTenant)
@@ -77,6 +79,13 @@ export class AppComponent implements OnInit {
     ngOnInit(): void {
         this.initModuleAttribute();
         this.appService.initModule();
+
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationStart)
+        ).subscribe((event: any) => {
+            if (!location.href.includes(event.url.split('?').shift()))
+                this.toolbarService.showSearchBox(false);
+        });
 
         this.appService.subscribeModuleChange(this.initModuleAttribute.bind(this));
         if (this.appSession.application && this.isChatEnabled) {

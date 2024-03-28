@@ -1140,6 +1140,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },
@@ -1294,6 +1297,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

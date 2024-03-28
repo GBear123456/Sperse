@@ -222,11 +222,16 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         this.layoutService.expandedLeftBarSubject.next(!this.layoutService.expandedLeftBarSubject.value);
     }
 
-    switchNavBar(event) {
+    switchNavBar() {
         this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({
-            navPosition: event.value ? NavPosition.Vertical : NavPosition.Horizontal,
+            navPosition: this.settingService.get('App.Appearance.NavPosition') == 'Horizontal' ? NavPosition.Vertical : NavPosition.Horizontal,
             navTextColor: this.settingService.get('App.Appearance.NavTextColor'),
-            navBackground: this.settingService.get('App.Appearance.NavBackground')
+            navBackground: this.settingService.get('App.Appearance.NavBackground'),
+            buttonColor: this.settingService.get('App.Appearance.ButtonColor'),
+            buttonTextColor: this.settingService.get('App.Appearance.ButtonTextColor'),
+            buttonHighlightedColor: this.settingService.get('App.Appearance.ButtonHighlightedColor'),
+            fontName: this.settingService.get('App.Appearance.FontName'),
+            borderRadius: this.settingService.get('App.Appearance.BorderRadius')
         })).subscribe(() => {
             abp.message.info(
                 this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'))
