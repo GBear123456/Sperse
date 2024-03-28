@@ -16,6 +16,7 @@ import { ConditionsType } from '@shared/AppEnums';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { AppConsts } from '@shared/AppConsts';
+import { EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
 
 @Component({
     selector: 'public-receipt',
@@ -170,9 +171,8 @@ export class ReceiptComponent implements OnInit {
             }
 
             if (event.durationMinutes) {
-                let hour = Math.floor(event.durationMinutes / 60);
-                let min = event.durationMinutes % 60;
-                event['durationStr'] = `${hour}h ${min}min`;
+                let durationInfo = EventDurationHelper.ParseDuration(event.durationMinutes);
+                event['durationStr'] = `${durationInfo.eventDuration} ${EventDurationHelper.getDisplayValue(durationInfo.eventDurationType)}`;
             }
         }
     }

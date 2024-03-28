@@ -296,6 +296,7 @@
                                 [placeholder]="ls.lr('Select')"
                                 [(value)]="cellData.data.unitId"
                                 [dataSource]="cellData.data.units || invoiceUnits"
+                                [dropDownOptions]="{ width: 220 }"
                                 (onValueChanged)="onUnitChanged($event, cellData)"
                                 (onOpened)="onUnitOpened($event, cellData)">
                                 <dx-validator>
