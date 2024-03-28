@@ -95,7 +95,7 @@ export class RootComponent implements OnInit, AfterViewInit {
                 rootStyle = this.document.querySelector(':root').style;
 
             if (this.fontService.supportedCustomFonts.includes(fontName))
-                this.addStyleSheet('custom-font', '/assets/fonts/fonts-' + fontName.toLowerCase() + '.css');            
+                this.addStyleSheet('custom-font', './assets/fonts/fonts-' + fontName.toLowerCase() + '.css');            
             else
                 this.addStyleSheet('googleapis', 'https://fonts.googleapis.com/css?family=' + fontName);
 

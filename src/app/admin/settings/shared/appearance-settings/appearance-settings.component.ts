@@ -110,7 +110,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             + this.fontService.supportedGoogleFonts.join('|')
         );
         this.fontService.supportedCustomFonts.map(font =>
-            root.addStyleSheet('custom-font', '/assets/fonts/fonts-' + font.toLowerCase() + '.css')
+            root.addStyleSheet('custom-font', './assets/fonts/fonts-' + font.toLowerCase() + '.css')
         );
     }
 
