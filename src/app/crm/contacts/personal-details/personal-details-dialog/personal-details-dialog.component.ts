@@ -15,7 +15,6 @@ import { Observable, ReplaySubject, BehaviorSubject, combineLatest, of } from 'r
 import { first, map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import * as moment from 'moment-timezone';
-import buildQuery from 'odata-query';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -30,7 +29,7 @@ import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
-    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, 
+    GetSourceContactInfoOutput, UpdateAffiliateContactInput, UpdateContactAffiliateRateInput, 
     ActivityType, CommissionTier, UpdateAffiliateIsAdvisorInput, TenantPaymentSettingsServiceProxy, 
     CommissionSettings, ActivityServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -53,7 +52,6 @@ import { ContactGroup } from '@shared/AppEnums';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
-import { ActivityFields } from '@app/crm/activity/activity-fields.enum';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -114,12 +112,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     private slider: any;
     private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
     private readonly ident = 'PersonalDetailsDialog';
-    private contactXref: ReplaySubject<string> = new ReplaySubject(1);
     affiliateCode$: Observable<string> = this.affiliateCode.asObservable().pipe(
         map((affiliateCode: string) => (affiliateCode || '').trim())
-    );
-    contactXref$: Observable<string> = this.contactXref.asObservable().pipe(
-        map((contactXref: string) => (contactXref || '').trim())
     );
     private stripeCustomerId: ReplaySubject<string> = new ReplaySubject(1);
     stripeCustomerId$: Observable<string> = this.stripeCustomerId.asObservable();
@@ -240,8 +234,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     this.contactInfo.affiliateRateTier2 === null ? null : this.contactInfo.affiliateRateTier2;
                 this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groups);
                 this.affiliateCode.next(contactInfo.affiliateCode);
-                if (contactInfo.personContactInfo.xref)
-                    this.contactXref.next(contactInfo.personContactInfo.xref);
+                if (!contactInfo.personContactInfo.xrefs.length)
+                    contactInfo.personContactInfo.xrefs = [''];
                 if (contactInfo.personContactInfo.stripeCustomerId)
                     this.getCheckStripeSettings().subscribe((isEnabled: boolean) => {
                         if (isEnabled)
@@ -658,9 +652,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             case this.ls.l('Affiliate'):
                 this.updateAffiliateCode('');
                 break;
-            case this.ls.l('Xref'):
-                this.updateXref('');
-                break;
             case this.ls.l('AffiliateRate'):
                 this.updateAffiliateRate(undefined, 'affiliateRate', 'affiliateRateInitil', CommissionTier.Tier1);
                 break;
@@ -692,14 +683,19 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         });
     }
 
-    updateXref(value) {
-        value = value.trim();
+    updateXref(value, index) {
+        let xrefs = this.contactInfo.personContactInfo.xrefs.slice(0);
+        xrefs[index] = value.trim();
+        xrefs = xrefs.filter(x => !!x);
+
         this.contactProxy.updateXref(new UpdateContactXrefInput({
             contactId: this.contactInfo.personContactInfo.id,
-            xref: value
+            xref: null,
+            xrefs: xrefs
         })).subscribe(() => {
-            this.contactInfo.personContactInfo.xref = value;
-            this.contactXref.next(value);
+            if (!xrefs.length)
+                xrefs.push('');
+            this.contactInfo.personContactInfo.xrefs = xrefs;
         });
     }
 

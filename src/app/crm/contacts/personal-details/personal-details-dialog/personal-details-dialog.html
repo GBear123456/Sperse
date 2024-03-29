@@ -206,20 +206,24 @@
                             <hr/>
                             <div class="field">
                                 <label>{{ ls.l('Xref') }}:</label>
-                                <inplace-edit [id]="contactInfo?.id"
-                                              lEntityName="Name"
-                                              [editPlaceholder]="ls.l('Xref')"
-                                              [value]="contactXref$ | async"
-                                              [isOptional]="true"
-                                              [showInlineEditButton]="true"
-                                              [isDeleteEnabled]="true"
-                                              [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
-                                              [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
-                                              [validationRules]="xrefValidationRules"
-                                              [isReadOnlyField]="!manageAllowed"
-                                              (valueChanged)="updateXref($event)"
-                                              (itemDeleted)="deleteItem(ls.l('Xref'))">
-                                </inplace-edit>
+                                <div>
+                                    <inplace-edit *ngFor="let xref of contactInfo?.personContactInfo.xrefs || []; let i = index"
+                                                  [id]="xref"
+                                                  lEntityName="Name"
+                                                  [editPlaceholder]="ls.l('Xref')"
+                                                  [value]="xref"
+                                                  [isOptional]="true"
+                                                  [showInlineEditButton]="true"
+                                                  [isDeleteEnabled]="true"
+                                                  [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
+                                                  [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
+                                                  [validationRules]="xrefValidationRules"
+                                                  [isReadOnlyField]="!manageAllowed"
+                                                  (valueChanged)="updateXref($event, i)"
+                                                  (itemDeleted)="updateXref('', i)">
+                                    </inplace-edit>
+                                    <span class="add-xref" (click)="contactInfo.personContactInfo.xrefs.push('')">Add +</span>
+                                </div>
                             </div>
                             <hr/>
                             <div class="field stripe" *ngIf="(stripeCustomerId$ | async) as stripeId" [title]="ls.l('StripeCustomerID')">
