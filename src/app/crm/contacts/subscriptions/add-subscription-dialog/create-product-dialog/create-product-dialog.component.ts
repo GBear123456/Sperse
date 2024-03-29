@@ -20,7 +20,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { CacheService } from 'ng2-cache-service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { DxValidatorComponent, DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
+import { DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable, of, zip } from 'rxjs';
 import * as moment from 'moment';
 import { map, switchMap, finalize, first, filter } from 'rxjs/operators';
@@ -103,7 +103,6 @@ export class FilterAssignmentsPipe implements PipeTransform {
 export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(DxTextAreaComponent) descriptionHtmlComponent: DxTextAreaComponent;
-    @ViewChild('customPeriodValidator') customPeriodValidator: DxValidatorComponent;
 
     isFreePriceType = false;
     baseUrl = AppConsts.remoteServiceBaseUrl;
@@ -582,7 +581,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         return frequencies;
     }
 
-    onFrequencyChanged(event, option: ProductSubscriptionOptionInfo) {
+    onFrequencyChanged(event, option: ProductSubscriptionOptionInfo, customPeriodValidator?) {
         this.isOneTime = event.value == RecurringPaymentFrequency.OneTime;
 
         if (this.isOneTime) {
@@ -590,12 +589,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             option.trialDayCount = undefined;
             option.signupFee = undefined;
             option.customPeriodType = CustomPeriodType.Days;
-        } else if (event.value != RecurringPaymentFrequency.Custom) {
+        } else if (event.value == RecurringPaymentFrequency.Custom) {
+            option.customPeriodType = CustomPeriodType.Days;
+        } else {
             option.customPeriodCount = undefined;
             option.customPeriodType = undefined;
 
-            if (this.customPeriodValidator)
-                this.customPeriodValidator.instance.reset();
+            if (customPeriodValidator)
+                customPeriodValidator.instance.reset();
         }
 
         if ([RecurringPaymentFrequency.OneTime, RecurringPaymentFrequency.LifeTime].indexOf(event.value) != -1) {
