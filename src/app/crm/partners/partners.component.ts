@@ -986,11 +986,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 caption: 'xref',
                 hidden: this.appSession.hideUserSourceFilters,
                 filterMethod: this.filtersService.filterByMultiline,
-                field: 'Xref',
+                field: 'Xrefs',
                 items: {
                     element: new FilterMultilineInputModel({
                         ls: this.localizationService,
-                        name: 'xref'
+                        name: 'xref',
+                        manyToMany: true
                     })
                 }
             }),

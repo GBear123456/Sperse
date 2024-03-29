@@ -30,7 +30,7 @@ export const LeadFields: KeysEnum<LeadDto> = {
     Website: 'Website',
     PhoneExtension: 'PhoneExtension',
     Title: 'Title',
-    ContactXref: 'ContactXref',
+    ContactXrefs: 'ContactXrefs',
     ContactAffiliateCode: 'ContactAffiliateCode',
     SourceContactName: 'SourceContactName',
     AssignedUserName: 'AssignedUserName',

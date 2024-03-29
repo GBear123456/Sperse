@@ -169,7 +169,7 @@
                         <dxi-column *ngIf="isBankCodeLayoutType" [dataField]="clientFields.StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column [dataField]="clientFields.Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="clientFields.Xrefs" [caption]="l('Xrefs')" [visible]="false" cssClass="clipboard-holder" cellTemplate="arrayCell"></dxi-column>
                         <dxi-column [dataField]="clientFields.AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <ng-container *ngIf="tenantHasBankCodeFeature">
                             <dxi-column [dataField]="clientFields.BankCode"
@@ -276,6 +276,9 @@
                         </div>
                         <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder" (click)="showClientOrderInvoices(cell.data)">
                             <span> {{ (isNumber(cell.value) ? cell.value : 0) | currency:currency:'symbol':'1.2-2' }} </span>
+                        </div>
+                        <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
+                            {{cellData.value && cellData.value.join(', ')}}
                         </div>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>

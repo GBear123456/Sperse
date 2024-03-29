@@ -27,7 +27,7 @@ export interface LeadDto {
     Website: string;
     PhoneExtension: string;
     Title: string;
-    ContactXref: string;
+    ContactXrefs: string[];
     ContactAffiliateCode: string;
     SourceContactName: string;
     AssignedUserName: string;

@@ -127,9 +127,9 @@
                                        mode="multiple">
                         </dxo-selection>
                         <dxo-editing mode="popup"
-                            [texts]="{ editRow: '' }"
-                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
-                            [allowUpdating]="true">
+                                     [texts]="{ editRow: '' }"
+                                     [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                                     [allowUpdating]="true">
                         </dxo-editing>
                         <dxo-scrolling mode="infinite"></dxo-scrolling>
                         <dxi-column caption=""
@@ -172,7 +172,7 @@
                             </div>
                         </div>
                         <dxi-column [dataField]="partnerFields.ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column [dataField]="partnerFields.Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Xrefs" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder" cellTemplate="arrayCell"></dxi-column>
                         <dxi-column [dataField]="partnerFields.AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="partnerFields.AffiliateContactName"
                                     [caption]="l('AffiliateContactName')"
@@ -202,13 +202,13 @@
                             {{cellData.value | datetime: formatting.dateTimeMoment}}
                         </div>
                         <div *dxTemplate="let cellData of 'emailCell'" class="clipboard-holder">
-                            <span style="font-family: var(--app-font-family) !important;">{{cellData.value}}
+                            <span style="font-family: var(--app-font-family) !important;">
+                                {{cellData.value}}
                                 <span *ngIf="!cellData.data.IsSubscribedToEmails" id="unsubscribedStatus{{cellData.data.Id}}" class="unsubscribed-status">
-                                    <dx-tooltip
-                                        position="bottom" 
-                                        target="#unsubscribedStatus{{cellData.data.Id}}" 
-                                        showEvent="dxhoverstart" 
-                                        hideEvent="dxhoverend">
+                                    <dx-tooltip position="bottom"
+                                                target="#unsubscribedStatus{{cellData.data.Id}}"
+                                                showEvent="dxhoverstart"
+                                                hideEvent="dxhoverend">
                                         <div>{{ l('ContactIsUnsubscribedFromEmails') }}</div>
                                     </dx-tooltip>
                                 </span>
@@ -222,6 +222,9 @@
                                                [showDescriptionsOnClick]="true"
                                                [showReportLink]="true">
                             </bank-code-letters>
+                        </div>
+                        <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
+                            {{cellData.value && cellData.value.join(', ')}}
                         </div>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>

@@ -16,7 +16,7 @@ export const PartnerFields: KeysEnum<PartnerDto> = {
     ContactDate: 'ContactDate',
     Id: 'Id',
     PartnerType: 'PartnerType',
-    Xref: 'Xref',
+    Xrefs: 'Xrefs',
     AffiliateCode: 'AffiliateCode',
     UserId: 'UserId',
     StreetAddress: 'StreetAddress',

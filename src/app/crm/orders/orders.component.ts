@@ -275,11 +275,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'xref',
             hidden: this.appSession.hideUserSourceFilters,
             filterMethod: this.filtersService.filterByMultiline,
-            field: this.orderFields.ContactXref,
+            field: this.orderFields.ContactXrefs,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
-                    name: 'xref'
+                    name: 'xref',
+                    manyToMany: true
                 })
             }
         }),
@@ -387,11 +388,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'xref',
             hidden: this.appSession.hideUserSourceFilters,
             filterMethod: this.filtersService.filterByMultiline,
-            field: this.subscriptionFields.ContactXref,
+            field: this.subscriptionFields.ContactXrefs,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
-                    name: 'xref'
+                    name: 'xref',
+                    manyToMany: true
                 })
             }
         }),

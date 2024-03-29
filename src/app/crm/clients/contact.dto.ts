@@ -12,7 +12,7 @@ export interface ContactDto {
     IsProspective: boolean;
     ContactDate: string;
     OrganizationId: number;
-    Xref: string;
+    Xrefs: string[];
     AffiliateCode: string;
     AssignedUserName: string;
     BankCode: string;

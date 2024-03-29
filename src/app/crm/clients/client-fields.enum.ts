@@ -15,7 +15,7 @@ export const ClientFields: KeysEnum<ContactDto> = {
     IsProspective: 'IsProspective',
     ContactDate: 'ContactDate',
     OrganizationId: 'OrganizationId',
-    Xref: 'Xref',
+    Xrefs: 'Xrefs',
     AffiliateCode: 'AffiliateCode',
     AssignedUserName: 'AssignedUserName',
     BankCode: 'BankCode',

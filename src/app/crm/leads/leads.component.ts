@@ -1299,11 +1299,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     caption: 'xref',
                     hidden: this.appSession.hideUserSourceFilters,
                     filterMethod: this.filtersService.filterByMultiline,
-                    field: 'ContactXref',
+                    field: 'ContactXrefs',
                     items: {
                         element: new FilterMultilineInputModel({
                             ls: this.localizationService,
-                            name: 'xref'
+                            name: 'xref',
+                            manyToMany: true
                         })
                     }
                 }),

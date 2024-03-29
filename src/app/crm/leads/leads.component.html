@@ -101,18 +101,18 @@
                     <div id="LeadsTable">
                         <ghost-list *ngIf="!isDataLoaded"></ghost-list>
                         <dx-data-grid class="limitedPagerTotal main-component-view"
-                            accessKey="narrowHeaderPanel"
-                            noDataText=""
-                            [renderAsync]="true"
-                            [allowColumnReordering]="true"
-                            [columnAutoWidth]="true"
-                            [rowDragging]="{
+                                      accessKey="narrowHeaderPanel"
+                                      noDataText=""
+                                      [renderAsync]="true"
+                                      [allowColumnReordering]="true"
+                                      [columnAutoWidth]="true"
+                                      [rowDragging]="{
                                 cursorOffset: {x: 30},
                                 allowDropInsideItem: isMergeAllowed,
                                 showDragIcons: false,
                                 onDragEnd: onDragEnd
                             }"
-                            [remoteOperations]="{
+                                      [remoteOperations]="{
                                     filtering: false,
                                     grouping: false,
                                     groupPaging: true,
@@ -120,22 +120,22 @@
                                     sorting: true,
                                     summary: true
                                 }"
-                            [allowColumnResizing]="true"
-                            [loadPanel]="{ enabled: false }"
-                            [hoverStateEnabled]="true"
-                            [columnChooser]="{
+                                      [allowColumnResizing]="true"
+                                      [loadPanel]="{ enabled: false }"
+                                      [hoverStateEnabled]="true"
+                                      [columnChooser]="{
                                 height: rowsViewHeight
                             }"
-                            (onOptionChanged)="onGridOptionChanged($event)"
-                            (onContentReady)="onContentReady($event)"
-                            (onCellClick)="onCellClick($event)"
-                            (onEditingStart)="toggleActionsMenu($event)"
-                            (onSelectionChanged)="onSelectionChanged($event)"
-                            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                                      (onOptionChanged)="onGridOptionChanged($event)"
+                                      (onContentReady)="onContentReady($event)"
+                                      (onCellClick)="onCellClick($event)"
+                                      (onEditingStart)="toggleActionsMenu($event)"
+                                      (onSelectionChanged)="onSelectionChanged($event)"
+                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxo-pager [visible]="true"></dxo-pager>
                             <dxo-selection selectAllMode="page"
-                                showCheckBoxesMode="always"
-                                mode="multiple">
+                                           showCheckBoxesMode="always"
+                                           mode="multiple">
                             </dxo-selection>
                             <dxo-editing mode="popup"
                                          [texts]="{ editRow: '' }"
@@ -302,10 +302,11 @@
                                         [visible]="false"
                                         cssClass="clipboard-holder">
                             </dxi-column>
-                            <dxi-column [dataField]="leadFields.ContactXref"
+                            <dxi-column [dataField]="leadFields.ContactXrefs"
                                         [caption]="l('ContactXref')"
                                         [visible]="false"
-                                        cssClass="clipboard-holder">
+                                        cssClass="clipboard-holder"
+                                        cellTemplate="arrayCell">
                             </dxi-column>
                             <dxi-column [dataField]="leadFields.ContactAffiliateCode"
                                         [caption]="l('ContactAffiliateCode')"
@@ -326,13 +327,13 @@
                                 <div class="star star-{{starsLookup[cellData.value] ? starsLookup[cellData.value].colorType.toLowerCase() : 'default'}}"></div>
                             </ng-container>
                             <div *dxTemplate="let cellData of 'emailCell'" class="clipboard-holder">
-                                <span style="font-family: var(--app-font-family) !important;">{{cellData.value}}
+                                <span style="font-family: var(--app-font-family) !important;">
+                                    {{cellData.value}}
                                     <span *ngIf="!cellData.data.IsSubscribedToEmails" id="unsubscribedStatus{{cellData.data.Id}}" class="unsubscribed-status">
-                                        <dx-tooltip
-                                            position="bottom" 
-                                            target="#unsubscribedStatus{{cellData.data.Id}}" 
-                                            showEvent="dxhoverstart" 
-                                            hideEvent="dxhoverend">
+                                        <dx-tooltip position="bottom"
+                                                    target="#unsubscribedStatus{{cellData.data.Id}}"
+                                                    showEvent="dxhoverstart"
+                                                    hideEvent="dxhoverend">
                                             <div>{{ l('ContactIsUnsubscribedFromEmails') }}</div>
                                         </dx-tooltip>
                                     </span>
@@ -351,11 +352,14 @@
                                                    [showReportLink]="true">
                                 </bank-code-letters>
                             </div>
+                            <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
+                                {{cellData.value && cellData.value.join(', ')}}
+                            </div>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-sorting mode="multiple"></dxo-sorting>
                             <dxo-summary>
                                 <dxi-group-item [column]="leadFields.Id" summaryType="count"
-                                    [displayFormat]="'{0} ' + l('Records').toLocaleLowerCase()"> 
+                                                [displayFormat]="'{0} ' + l('Records').toLocaleLowerCase()">
                                 </dxi-group-item>
                             </dxo-summary>
                         </dx-data-grid>

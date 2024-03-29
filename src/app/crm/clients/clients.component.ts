@@ -1167,12 +1167,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 component: FilterMultilineInputComponent,
                 caption: 'xref',
                 filterMethod: this.filtersService.filterByMultiline,
-                field: 'Xref',
+                field: 'Xrefs',
                 hidden: this.appSession.hideUserSourceFilters,
                 items: {
                     element: new FilterMultilineInputModel({
                         ls: this.localizationService,
-                        name: 'xref'
+                        name: 'xref',
+                        manyToMany: true
                     })
                 }
             }),

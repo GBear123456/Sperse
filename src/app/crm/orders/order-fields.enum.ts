@@ -25,6 +25,6 @@ export const OrderFields: KeysEnum<OrderDto> = {
     SourceEntryUrl: 'SourceEntryUrl',
     DateProcessed: 'DateProcessed',
     ContactGroupId: 'ContactGroupId',
-    ContactXref: 'ContactXref',
+    ContactXrefs: 'ContactXrefs',
     SourceOrganizationUnitId: 'SourceOrganizationUnitId'
 };

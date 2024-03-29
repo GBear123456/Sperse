@@ -22,6 +22,6 @@ export interface SubscriptionDto {
     OrderAmount: string;
     SourceAffiliateCode: string;
     SourceEntryUrl: string;
-    ContactXref: string;
+    ContactXrefs: string;
     SourceOrganizationUnitId: number;
 }
