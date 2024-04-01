@@ -589,14 +589,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             option.trialDayCount = undefined;
             option.signupFee = undefined;
             option.customPeriodType = CustomPeriodType.Days;
-        } else if (event.value == RecurringPaymentFrequency.Custom) {
-            option.customPeriodType = CustomPeriodType.Days;
-        } else {
-            option.customPeriodCount = undefined;
-            option.customPeriodType = undefined;
-
-            if (customPeriodValidator)
+        } else if (customPeriodValidator) {
+            if (event.value == RecurringPaymentFrequency.Custom) {
+                option.customPeriodType = CustomPeriodType.Days;
+            } else {
+                option.customPeriodCount = undefined;
+                option.customPeriodType = undefined;
                 customPeriodValidator.instance.reset();
+            }
         }
 
         if ([RecurringPaymentFrequency.OneTime, RecurringPaymentFrequency.LifeTime].indexOf(event.value) != -1) {
