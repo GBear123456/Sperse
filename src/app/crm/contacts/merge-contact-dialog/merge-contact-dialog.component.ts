@@ -58,6 +58,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
     public readonly CONTACT_ADDRESSES_FIELD   = 'contactAddresses';
     public readonly CONTACT_XREFS_FIELD       = 'xrefs';
     public readonly CONTACT_BANK_CODE         = 'bankCode';
+    public readonly CONTACT_STRIPECUSTOMERID  = 'stripeCustomerId';
     public readonly LEAD_STAGE_FIELD          = 'stage';
     public readonly LEAD_OWNER_FIELD          = 'sourceOrganizationUnitName';
     public readonly LEAD_REQUEST_DATE_FIELD   = 'leadDate';
@@ -126,6 +127,10 @@ export class MergeContactDialogComponent implements AfterViewInit {
             alt: this.ls.l('Alternative', this.ls.l('Xrefs')),
             getId: x => x,
             getText: x => x,
+            hidden: this.isSameContact
+        },
+        [this.CONTACT_STRIPECUSTOMERID]: {
+            caption: this.ls.l('StripeCustomerID'),
             hidden: this.isSameContact
         },
         [this.MERGE_OPTIONS_FIELD]: {
@@ -556,7 +561,8 @@ export class MergeContactDialogComponent implements AfterViewInit {
     getPreferredProperties() {
         return (this.isFieldSelected(this.CONTACT_FULL_NAME_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.FullName : 0)
             | (this.isFieldSelected(this.CONTACT_DATE_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.ContactDate : 0)
-            | (this.isFieldSelected(this.CONTACT_BANK_CODE, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.BANKCode : 0);
+            | (this.isFieldSelected(this.CONTACT_BANK_CODE, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.BANKCode : 0)
+            | (this.isFieldSelected(this.CONTACT_STRIPECUSTOMERID, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.StripeCustomerId : 0);
     }
 
     getMergeContactInput() {
