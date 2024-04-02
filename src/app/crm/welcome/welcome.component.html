@@ -19,7 +19,7 @@
                         </div>
                         <img class="icon-box" src="assets/common/images/add-product-form.svg" />
                         <p class="title">{{ls.l('Welcome_ProductsTitle')}} <br />&amp; {{ls.l('Welcome_ProductsTitle2')}}</p>
-                        <button class="button" (click)="openProductDialog()">
+                        <button class="button" [disabled]="!isGrantedCRMProductsManage" (click)="openProductDialog()">
                             <img class="btn-img" src="assets/common/icons/plus.svg" />
                             <div class="btn-text">New Product</div>
                         </button>
@@ -28,12 +28,12 @@
                             <div class="btn-text">New Coupons</div>
                         </button -->
                         <div class="points">
-                            <div class="point" (click)="router.navigate(['app/crm/products'])">
+                            <div class="point" [ngClass]="{disabled: !isGrantedCRMProducts}" (click)="router.navigate(['app/crm/products'])">
                                 <img class="icon" src="assets/common/icons/new-subscription.svg" />
                                 <div class="label">Show All Products</div>
                             </div>
                             <div class="point">
-                                <img class="icon" src="assets/common/icons/new-coupon.svg" />
+                                <img class="icon" [ngClass]="{disabled: !isGrantedCRMProducts}" src="assets/common/icons/new-coupon.svg" />
                                 <div class="label"><u (click)="router.navigate(['app/crm/coupons'])">Show</u> or <u (click)="openCouponDialog()">Add</u> Coupons</div>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                             <div class="btn-text">{{stripePaymentSettings.isConnectedAccountSetUpCompleted ? ls.l('Stripe Connected'): (stripePaymentSettings.connectedAccountId ? ls.l('Finish onboarding Stripe') : ls.l('Connect Stripe'))}}</div>
                         </button>
                         <div class="links">
-                            <img class="link paypal" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'paypal' } })" src="assets/common/images/paypal.svg" />
+                            <img class="link paypal" *ngIf="isPaymentsEnabled" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'paypal' } })" src="assets/common/images/paypal.svg" />
                             <img class="link ach-payment" src="assets/common/images/ach-payment-solutions.svg" />
                             <img class="link add-card" src="assets/common/images/zelle.svg" />
                         </div>
@@ -74,7 +74,7 @@
                         </div>
                         <img class="icon-box" src="assets/common/images/settings.svg" />
                         <div class="title">{{ls.l('Welcome_SettingsTitle')}} <br />&amp; {{ls.l('Welcome_SettingsTitle2')}} </div>
-                        <button class="button" (click)="openProfileTenantSettingsDialog()">
+                        <button class="button" [disabled]="!hasTenantOrCRMSettings" (click)="openProfileTenantSettingsDialog()">
                             <img class="btn-img" src="assets/common/icons/invoice-settings.svg" />
                             <div class="btn-text">My Settings</div>
                         </button>
@@ -87,11 +87,11 @@
                                 <img class="icon" src="assets/common/icons/task-square.svg" />
                                 <div class="label">Invoice Settings</div>
                             </div>
-                            <div class="point">
+                            <div class="point" *ngIf="hasTenantOrCRMSettings">
                                 <img class="icon" src="assets/common/icons/email-icon.svg" />
                                 <div class="label">Email <u (click)="openProfileTenantSettingsDialog('email')">SMTP</u> or <u (click)="openProfileTenantSettingsDialog('gmail')">Gmail</u></div>
                             </div>
-                            <div class="point" (click)="router.navigate(['app/crm/documents'])">
+                            <div class="point" *ngIf="isGrantedCRMFileStorage" (click)="router.navigate(['app/crm/documents'])">
                                 <img class="icon" src="assets/common/icons/document-sketch.svg" />
                                 <div class="label">Tenant Files</div>
                             </div>
@@ -111,7 +111,7 @@
                         <img class="icon-box" src="assets/common/images/category.svg" />
                         <div class="title">{{ls.l('Welcome_AppsTitle')}} <br />{{ls.l('Welcome_AppsTitle2')}} </div>
                         <div class="points">                                     
-                            <div class="point" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Mailchimp' } })">
+                            <div class="point" *ngIf="hasTenantOrCRMSettings" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Mailchimp' } })">
                                 <img class="icon" src="assets/common/icons/mailchimp-freddie-icon.svg" />
                                 <div class="label">MailChimp</div>
                             </div>
@@ -142,7 +142,7 @@
                         </div>
                         <img class="icon-box" src="assets/common/images/user-square.svg" />
                         <p class="title">{{ls.l('Welcome_ImportTitle')}} <br />{{ls.l('Welcome_ImportTitle2')}} </p>
-                        <button class="button" (click)="openContactDialog()">
+                        <button class="button" [disabled]="isGrantedCRMCustomers" (click)="openContactDialog()">
                             <img class="btn-img" src="assets/common/icons/plus.svg" />
                             <div class="btn-text">New Contact</div>
                         </button>
@@ -151,7 +151,7 @@
                                 <img class="icon" src="assets/common/icons/user-edit.svg" />
                                 <div class="label">Manage Leads</div>
                             </div>
-                            <div class="point" (click)="router.navigate(['app/crm/clients'])">
+                            <div class="point" *ngIf="isGrantedCRMCustomers" (click)="router.navigate(['app/crm/clients'])">
                                 <img class="icon" src="assets/common/icons/peoples.svg" />
                                 <div class="label">Manage Clients</div>
                             </div>
