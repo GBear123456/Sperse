@@ -29,7 +29,7 @@ import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/
 import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ProductServiceProxy, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
+import { ProductServiceProxy, ProductType, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
 import { ProductDto, ProductSubscriptionOption } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
@@ -467,10 +467,10 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getUnitColumnText(data: ProductDto) {
-        if (data.Unit)
-            return data.Unit;
+        if (data.Type == ProductType.Subscription)
+            return this.getSubscrOptionDescription(data.ProductSubscriptionOptions[0]);
 
-        return this.getSubscrOptionDescription(data.ProductSubscriptionOptions[0]);
+        return data.Unit;
     }
 
     getSubscrOptionDescription(data: ProductSubscriptionOption) {
