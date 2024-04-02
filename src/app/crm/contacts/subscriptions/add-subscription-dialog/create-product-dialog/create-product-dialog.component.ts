@@ -14,12 +14,13 @@ import {
 } from '@angular/core';
 import { getCurrencySymbol } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 /** Third party imports */
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { CacheService } from 'ng2-cache-service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { DxValidatorComponent, DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
+import { DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable, of, zip } from 'rxjs';
 import * as moment from 'moment';
 import { map, switchMap, finalize, first, filter } from 'rxjs/operators';
@@ -72,6 +73,7 @@ import { ContactsService } from '../../../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { LanguagesStoreSelectors, RootStore, LanguagesStoreActions } from '@root/store';
 import { EditAddressDialog } from '../../../edit-address-dialog/edit-address-dialog.component';
+import { EventDurationTypes, EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
@@ -101,7 +103,6 @@ export class FilterAssignmentsPipe implements PipeTransform {
 export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(DxTextAreaComponent) descriptionHtmlComponent: DxTextAreaComponent;
-    @ViewChild('customPeriodValidator') customPeriodValidator: DxValidatorComponent;
 
     isFreePriceType = false;
     baseUrl = AppConsts.remoteServiceBaseUrl;
@@ -124,8 +125,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     tenantId = abp.session.tenantId || 0;
     defaultProductUri = '';
 
-    trialEnabled: boolean = false;
-    gracePeriodEnabled: boolean = false;
     enableCommissions: boolean = true;
     isReadOnly = !!this.data.isReadOnly;
     saveButtonId = 'saveProductOptions';
@@ -188,6 +187,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     recurringPaymentFrequency = RecurringPaymentFrequency;
     frequencies = Object.keys(RecurringPaymentFrequency);
     customPeriodTypes = Object.keys(CustomPeriodType);
+    billingCyclesEnable = [
+        { key: false, displayValue: this.ls.l('Forever') },
+        { key: true, displayValue: this.ls.l('Limited') }
+    ];
     gracePeriodDefaultValue: number;
     customGroup: string;
     isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
@@ -197,10 +200,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     isOneTime = false;
 
     eventLocation = ProductEventLocation;
-    eventDurations: any[] = [];
+    eventDurationTypes = EventDurationHelper.eventDurationDataSource;
     languages: LanguageDto[] = [];
     timezones: any[] = [];
     eventAddress: string;
+    eventDuration: number;
+    eventDurationType: EventDurationTypes;
     eventDate: Date;
     eventTime: Date;
 
@@ -211,6 +216,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         private productProxy: ProductServiceProxy,
         productGroupProxy: ProductGroupServiceProxy,
         private notify: NotifyService,
+        private clipboard: Clipboard,
         private changeDetection: ChangeDetectorRef,
         memberServiceProxy: MemberServiceServiceProxy,
         public contactsService: ContactsService,
@@ -314,6 +320,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.eventDate = this.product.productEvent.date ? new Date(this.product.productEvent.date) : undefined;
             this.eventTime = undefined;
         }
+
+        if (this.product.productEvent.durationMinutes) {
+            let durationInfo = EventDurationHelper.ParseDuration(this.product.productEvent.durationMinutes);
+            this.eventDurationType = durationInfo.eventDurationType;
+            this.eventDuration = durationInfo.eventDuration;
+        }
     }
 
     initEventProps() {
@@ -328,27 +340,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     initEventDataSources() {
-        this.initEventDurations();
         this.initLanguages();
         this.initTimezones();
-    }
-
-    initEventDurations() {
-        let durations = [];
-        for (var i = 15; i <= 1440; i += 5) {
-            let hour = Math.floor(i / 60);
-            let min = i % 60;
-            let displayValue = hour ? `${hour}H ` : '';
-            displayValue += min ? `${min}Min` : '';
-            durations.push({
-                hour: hour,
-                minutes: min,
-                displayValue: displayValue,
-                totalMinutes: i
-            });
-        }
-        this.eventDurations = durations;
-        this.changeDetection.markForCheck();
     }
 
     initLanguages() {
@@ -462,6 +455,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         this.product.productEvent.date = this.eventDate ? DateHelper.removeTimezoneOffset(this.eventDate, false, 'from') : undefined;
                         this.product.productEvent.time = undefined;
                     }
+
+                    this.product.productEvent.durationMinutes = this.eventDuration ? this.eventDuration * this.eventDurationType : undefined;
                 }
 
                 if (this.product instanceof UpdateProductInput) {
@@ -586,7 +581,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         return frequencies;
     }
 
-    onFrequencyChanged(event, option: ProductSubscriptionOptionInfo) {
+    onFrequencyChanged(event, option: ProductSubscriptionOptionInfo, customPeriodValidator?) {
         this.isOneTime = event.value == RecurringPaymentFrequency.OneTime;
 
         if (this.isOneTime) {
@@ -594,12 +589,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             option.trialDayCount = undefined;
             option.signupFee = undefined;
             option.customPeriodType = CustomPeriodType.Days;
-        } else if (event.value != RecurringPaymentFrequency.Custom) {
-            option.customPeriodCount = undefined;
-            option.customPeriodType = undefined;
+        } else if (customPeriodValidator) {
+            if (event.value == RecurringPaymentFrequency.Custom) {
+                option.customPeriodType = CustomPeriodType.Days;
+            } else {
+                option.customPeriodCount = undefined;
+                option.customPeriodType = undefined;
+                customPeriodValidator.instance.reset();
+            }
+        }
 
-            if (this.customPeriodValidator)
-                this.customPeriodValidator.instance.reset();
+        if ([RecurringPaymentFrequency.OneTime, RecurringPaymentFrequency.LifeTime].indexOf(event.value) != -1) {
+            option['billingCyclesEnabled'] = false;
+            option.cycles = undefined;
         }
 
         this.detectChanges();
@@ -1110,6 +1112,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
         let addr = this.product.productEvent.address;
         this.eventAddress = [addr.streetAddress, addr.city, addr.stateName, addr.countryName, addr.zip].filter(x => !!x).join(', ');
+    }
+
+    copyTextToClipboard(text) {
+        this.clipboard.copy(text);
+        this.notify.info(this.ls.l('SavedToClipboard'));
     }
 
     ngOnDestroy() {

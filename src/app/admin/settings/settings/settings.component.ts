@@ -6,11 +6,13 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
+import { Subject } from 'rxjs';
 import { first, delay, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatVerticalStepper } from '@angular/material/stepper';
 
 /** Application imports */
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import {
@@ -29,8 +31,8 @@ import { AppService } from '@app/app.service';
     providers: [TenantSettingsServiceProxy]
 })
 export class SettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('tabGroup') tabGroup: ElementRef;
     @ViewChild(MatVerticalStepper) stepper: MatVerticalStepper;
+    @ViewChild('tabGroup') tabGroup: ElementRef;
     @HostBinding('class.showLeftBar') showLeftBar;
 
     private rootComponent;
@@ -50,6 +52,18 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
 
     settingsConfig: { key: string, visible: boolean, index?: number }[] = [];
     visibleSettings: { key: string, visible: boolean, index?: number }[] = [];
+    saveSubject: Subject<any> = new Subject();
+
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: true,
+            icon: 'la la la-floppy-o',
+            action: () => {
+                this.saveSubject.next();
+            },
+            label: this.l('Save Settings')
+        }
+    ];
 
     constructor(
         injector: Injector,

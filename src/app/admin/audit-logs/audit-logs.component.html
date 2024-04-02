@@ -13,7 +13,16 @@
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
-    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <ng-template #titleTemplate>
+        <app-headline-title
+            [names]="[ l('AuditLogs') ]">
+        </app-headline-title>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate" 
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
     <div [hidden]="isDataLoaded && !totalRowCount" class="main-wrapper portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div id="operationsLogsGridContainer">

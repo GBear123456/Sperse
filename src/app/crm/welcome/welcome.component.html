@@ -11,7 +11,7 @@
     </div -->
     <dx-scroll-view showScrollbar="onHover" height="calc(100vh - 180px)">
         <div class="boxes">
-            <div class="box">
+            <div class="box" [ngClass]="{disabled: !isProductsGranted}">
                 <div class="element">
                     <div class="overlap products">
                         <div class="overlap-group-wrapper">
@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" [ngClass]="{disabled: !isPaymentsGranted}">
                 <div class="element">
                     <div class="overlap payment">
                         <div class="overlap-group-wrapper">
@@ -132,7 +132,7 @@
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" [ngClass]="{disabled: !showImportLeads && !showImportUsersStep && !isCustomersGranted}">
                 <div class="element">
                     <div class="overlap import">
                         <div class="overlap-group-wrapper">
@@ -147,7 +147,7 @@
                             <div class="btn-text">New Contact</div>
                         </button>
                         <div class="points">
-                            <div class="point" (click)="router.navigate(['app/crm/leads'])">
+                            <div class="point" (click)="router.navigate(['app/crm/leads'])" *ngIf="isCustomersGranted">
                                 <img class="icon" src="assets/common/icons/user-edit.svg" />
                                 <div class="label">Manage Leads</div>
                             </div>
@@ -168,7 +168,7 @@
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" [ngClass]="{disabled: !showCommissionsSettings}">
                 <div class="element">
                     <div class="overlap affiliate">
                         <div class="overlap-group-wrapper">
@@ -179,11 +179,11 @@
                         <img class="icon-box" src="assets/common/images/format-square.svg" />
                         <div class="title">{{ls.l('Welcome_SetupTitle')}} <br />{{ls.l('Welcome_SetupTitle2')}} </div>
                         <div class="points">
-                            <div class="point" (click)="openProfileTenantSettingsDialog('commissions')" *ngIf="showCommissionsSettings">
+                            <div class="point" (click)="openProfileTenantSettingsDialog('commissions')" *ngIf="hasTenantPermission">
                                 <img class="icon" src="assets/common/icons/archive-book.svg" />
                                 <div class="label">Affilate Rules</div>
                             </div>
-                            <div class="point" (click)="router.navigate(['app/crm/commission-history'])" *ngIf="showCommissionsSettings">
+                            <div class="point" (click)="router.navigate(['app/crm/commission-history'])">
                                 <img class="icon" src="assets/common/icons/money-time.svg" />
                                 <div class="label">Commission History</div>
                             </div>                                                             

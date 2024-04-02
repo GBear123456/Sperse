@@ -19,7 +19,19 @@
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <ng-template #titleTemplate>
+        <app-headline-title
+            [names]="[ l('Customers') ]"
+            [showTotalCount]="true"
+            [totalErrorMsg]="totalErrorMsg"
+            [totalCount]="totalCount">
+        </app-headline-title>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig" 
+        [titleTemplate]="titleTemplate"
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
     <div class="main-wrapper">
         <dx-context-menu [items]="[
                 { text: this.l('AffectOnPageItems'), mode: 'page' },
@@ -247,7 +259,7 @@
                             <div class="star star-{{starsLookup[cellData.value] ? starsLookup[cellData.value].colorType.toLowerCase() : 'default'}}"></div>
                         </ng-container>
                         <div *dxTemplate="let cellData of 'emailCell'" class="clipboard-holder">
-                            <span style="font-family: 'Montserrat' !important;">
+                            <span style="font-family: var(--app-font-family) !important;">
                                 {{cellData.value}}
                                 <span *ngIf="!cellData.data.IsSubscribedToEmails" id="unsubscribedStatus{{cellData.data.Id}}" class="unsubscribed-status">
                                     <dx-tooltip position="bottom"

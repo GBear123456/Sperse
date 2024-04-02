@@ -214,6 +214,9 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

@@ -257,6 +257,14 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     location: 'before',
                     items: [
                         {
+                            name: 'title'
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
                             name: 'select-box',
                             text: '',
                             widget: 'dxDropDownMenu',

@@ -156,6 +156,9 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

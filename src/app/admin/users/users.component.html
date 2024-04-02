@@ -18,7 +18,19 @@
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
-    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <ng-template #titleTemplate>
+        <app-headline-title
+            [names]="[ l('Users') ]"
+            [showTotalCount]="true"
+            [totalErrorMsg]="totalErrorMsg"
+            [totalCount]="totalCount">
+        </app-headline-title>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate"
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
     <div class="main-wrapper">
         <action-menu [width]="'250px'"
                      [items]="actionMenuItems"
@@ -31,6 +43,7 @@
                 <div>
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid class="limitedPagerTotal main-component-view"
+                                  [ngClass]="{'gallery-view': isGalleryView}"
                                   [renderAsync]="true"
                                   [remoteOperations]="true"
                                   [dataSource]="dataSource"
@@ -39,6 +52,7 @@
                                   [columnAutoWidth]="true"
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
+                                  [dataRowTemplate]="isGalleryView ? 'dataRowTemplate' : undefined"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onInitialized)="onInitialized($event)"
                                   (onContentReady)="setGridDataLoaded()"
@@ -56,7 +70,7 @@
                                 [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                                 [allowUpdating]="true">
                         </dxo-editing>
-                        <dxo-scrolling mode="infinite"></dxo-scrolling>
+                        <dxo-scrolling [mode]="isGalleryView ? 'standard' : 'infinite'"></dxo-scrolling>
                         <dxi-column
                                 caption=" "
                                 dataField="profileThumbnailId"
@@ -79,14 +93,31 @@
                         <dxi-column dataField="lastLoginTime" [caption]="l('LastLoginTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
 
+                        <div *dxTemplate="let user of 'dataRowTemplate'" (click)="editUser(user)" (mouseenter)="actionRecord = null">
+                            <img class="galery-image" width="240px" height="240px" [src]="profileService.getProfilePictureUrl(user.data.profilePictureId, noPhotoUrl)" />
+                            <h3>{{user.data.name}} {{user.data.surname}}</h3>
+                            <span class="role-container top" [title]="getRolesTitle(user.data.roles)">
+                                {{getRolesTitle(user.data.roles)}}
+                            </span>
+                            <div class="active-block">
+                                <h3>{{user.data.name}} {{user.data.surname}}</h3>
+                                <span class="role-container" [title]="getRolesTitle(user.data.roles)">
+                                    {{getRolesTitle(user.data.roles)}}
+                                </span>
+                                <span class="email-container">{{user.data.emailAddress}}</span>
+                                <p><label>Last Login:</label> {{user.data.lastLoginTime | datetime: formatting.dateTimeMoment }}</p>
+                                <div class="actions"><img class="dx-link dx-link-edit" width="18px" height="18px" src="assets/common/icons/gear-icon.svg" (click)="onGearClick(user, $event)"><a *ngIf="isGrantedImpersonation" (click)="impersonate(user, $event)">Login as a {{user.data.surname}} &#8594;</a></div>
+                            </div>
+                        </div>
+
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(data.data.profileThumbnailId, noPhotoUrl) + ')'}" class="img-circle"></div>
                         </div>
 
                         <div *dxTemplate="let cellData of 'roleCell'" class="clipboard-holder">
-                        <span class="role-container" *ngIf="getRolesTitle(cellData.value) as roles" [title]="roles">
-                            {{roles}}
-                        </span>
+                            <span class="role-container" *ngIf="getRolesTitle(cellData.value) as roles" [title]="roles">
+                                {{roles}}
+                            </span>
                         </div>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">

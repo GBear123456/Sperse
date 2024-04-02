@@ -41,6 +41,18 @@
             }
         }
 
+        .right {
+            .product-xref {
+                span {
+                    float: right;
+                }
+
+                .save-to-clipboard {
+                    visibility: visible;
+                }
+            }
+        }
+
         .block {
             position: relative;
             padding: 20px;
@@ -626,6 +638,21 @@
                 }
             }
         }
+
+        .clipboard-holder {
+            .save-to-clipboard {
+                visibility: hidden;
+            }
+
+            &:hover .save-to-clipboard {
+                visibility: visible;
+            }
+        }
+
+        i.save-to-clipboard {
+            height: 16px;
+            margin-bottom: -3px;
+        }
     }
 
     ::ng-deep inplace-edit {
@@ -658,7 +685,7 @@
         }
 
         .option {
-            .prices, .periods, .trials, .grace {
+            .option-row {
                 display: flex;
                 justify-content: space-between;
 
@@ -675,7 +702,7 @@
                 }
             }
 
-            .prices {
+            .width-50 {
                 & > div {
                     width: 50%;
                 }
@@ -797,7 +824,7 @@
     }
 
     .event-type {
-        .dx-textbox {
+        .dx-textbox, .dx-numberbox {
             margin: 10px 0;
         }
 

@@ -144,10 +144,10 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                     message = this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'));
                     break;
                 case 'currency':
-                    message = this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Currency')));
+                    message = this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Currency'));
                     break;
                 case 'appearance':
-                    message = this.messageService.info(this.ls.l('ReloadPageStylesMessage'));
+                    message = this.ls.l('ReloadPageStylesMessage');
                     break;
             }
 

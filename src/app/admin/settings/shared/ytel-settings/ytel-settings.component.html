@@ -30,7 +30,3 @@
     <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span><br />
     <span class="copy-url"><b>{{getYtelInboundSMSUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span><br /><br />
 </p>
-<button class="btn btn-layout" (click)="save()">
-    <i class="icon-la la la-floppy-o"></i>
-    {{l('Save')}}
-</button>

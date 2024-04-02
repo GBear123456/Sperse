@@ -368,6 +368,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         location: 'before',
                         items: [
                             {
+                                name: 'title'
+                            }
+                        ]
+                    },
+                    {
+                        location: 'before',
+                        items: [
+                            {
                                 name: 'select-box',
                                 text: '',
                                 widget: 'dxDropDownMenu',
