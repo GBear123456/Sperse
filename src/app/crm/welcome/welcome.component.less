@@ -195,6 +195,7 @@
                 .disabled {
                     opacity: 0.4;
                     cursor: default;
+                    pointer-events: none;
                 }        
             }
 
@@ -242,6 +243,7 @@
                 }
                 &[disabled] {
                     opacity: 0.4;
+                    cursor: default;
                 }
             }
 
@@ -270,9 +272,10 @@
                     cursor: pointer;
                     margin-right: 22px;
 
-                    &.ach-payment, &.add-card {
+                    &.disabled {
                         opacity: 0.1;
                         cursor: default;
+                        pointer-events: none;
                     }
                 }
             }

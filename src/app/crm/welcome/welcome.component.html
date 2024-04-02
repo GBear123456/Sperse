@@ -11,7 +11,7 @@
     </div -->
     <dx-scroll-view showScrollbar="onHover" height="calc(100vh - 180px)">
         <div class="boxes">
-            <div class="box" [ngClass]="{disabled: !isProductsGranted}">
+            <div class="box" [ngClass]="{disabled: !isGrantedCRMProducts}">
                 <div class="element">
                     <div class="overlap products">
                         <div class="overlap-group-wrapper">
@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="box" [ngClass]="{disabled: !isPaymentsGranted}">
+            <div class="box" [ngClass]="{disabled: !isPaymentsEnabled}">
                 <div class="element">
                     <div class="overlap payment">
                         <div class="overlap-group-wrapper">
@@ -56,15 +56,15 @@
                             <div class="btn-text">{{stripePaymentSettings.isConnectedAccountSetUpCompleted ? ls.l('Stripe Connected'): (stripePaymentSettings.connectedAccountId ? ls.l('Finish onboarding Stripe') : ls.l('Connect Stripe'))}}</div>
                         </button>
                         <div class="links">
-                            <img class="link paypal" *ngIf="isPaymentsEnabled" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'paypal' } })" src="assets/common/images/paypal.svg" />
-                            <img class="link ach-payment" src="assets/common/images/ach-payment-solutions.svg" />
-                            <img class="link add-card" src="assets/common/images/zelle.svg" />
+                            <img class="link paypal" [ngClass]="{disabled: !isPaymentsEnabled}" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'paypal' } })" src="assets/common/images/paypal.svg" />
+                            <img class="link ach-payment disabled" src="assets/common/images/ach-payment-solutions.svg" />
+                            <img class="link add-card disabled" src="assets/common/images/zelle.svg" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" [ngClass]="{disabled: !hasTenantOrCRMSettings && !isGrantedCRMFileStorage}">
                 <div class="element">
                     <div class="overlap settings">
                         <div class="overlap-group-wrapper">
@@ -79,19 +79,19 @@
                             <div class="btn-text">My Settings</div>
                         </button>
                         <div class="points">
-                            <div class="point" *ngIf="showLandingPageSettings" (click)="openProfileTenantSettingsDialog('landingPage')">
+                            <div class="point" [ngClass]="{disabled: !showLandingPageSettings}" (click)="openProfileTenantSettingsDialog('landingPage')">
                                 <img class="icon" src="assets/common/icons/grid.svg" />
                                 <div class="label">Sales Landing Page</div>
                             </div>
-                            <div class="point" *ngIf="showInvoiceSettings" (click)="openProfileTenantSettingsDialog('invoice')">
+                            <div class="point" [ngClass]="{disabled: !showInvoiceSettings}" (click)="openProfileTenantSettingsDialog('invoice')">
                                 <img class="icon" src="assets/common/icons/task-square.svg" />
                                 <div class="label">Invoice Settings</div>
                             </div>
-                            <div class="point" *ngIf="hasTenantOrCRMSettings">
+                            <div class="point" [ngClass]="{disabled: !hasTenantOrCRMSettings}">
                                 <img class="icon" src="assets/common/icons/email-icon.svg" />
                                 <div class="label">Email <u (click)="openProfileTenantSettingsDialog('email')">SMTP</u> or <u (click)="openProfileTenantSettingsDialog('gmail')">Gmail</u></div>
                             </div>
-                            <div class="point" *ngIf="isGrantedCRMFileStorage" (click)="router.navigate(['app/crm/documents'])">
+                            <div class="point" [ngClass]="{disabled: !isGrantedCRMFileStorage}" (click)="router.navigate(['app/crm/documents'])">
                                 <img class="icon" src="assets/common/icons/document-sketch.svg" />
                                 <div class="label">Tenant Files</div>
                             </div>
@@ -100,7 +100,7 @@
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" [ngClass]="{disabled: !hasTenantOrCRMSettings && !showZapier}">
                 <div class="element">
                     <div class="overlap favorite">
                         <div class="overlap-group-wrapper">
@@ -111,7 +111,7 @@
                         <img class="icon-box" src="assets/common/images/category.svg" />
                         <div class="title">{{ls.l('Welcome_AppsTitle')}} <br />{{ls.l('Welcome_AppsTitle2')}} </div>
                         <div class="points">                                     
-                            <div class="point" *ngIf="hasTenantOrCRMSettings" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Mailchimp' } })">
+                            <div class="point" [ngClass]="{disabled: !hasTenantOrCRMSettings}" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Mailchimp' } })">
                                 <img class="icon" src="assets/common/icons/mailchimp-freddie-icon.svg" />
                                 <div class="label">MailChimp</div>
                             </div>
@@ -123,7 +123,7 @@
                                 <img class="icon" src="assets/common/icons/meta.svg" />
                                 <div class="label">Meta</div>
                             </div>
-                            <div class="point" *ngIf="showZapier" (click)="router.navigate(['/app/crm/zapier'])">
+                            <div class="point" [ngClass]="{disabled: !showZapier}" (click)="router.navigate(['/app/crm/zapier'])">
                                 <img class="icon" src="assets/common/icons/zapier-icon.svg" />
                                 <div class="label">Zapier</div>
                             </div>
@@ -132,7 +132,7 @@
                 </div>
             </div>
 
-            <div class="box" [ngClass]="{disabled: !showImportLeads && !showImportUsersStep && !isCustomersGranted}">
+            <div class="box" [ngClass]="{disabled: !showImportLeads && !showImportUsersStep && !isGrantedCRMCustomers}">
                 <div class="element">
                     <div class="overlap import">
                         <div class="overlap-group-wrapper">
@@ -147,19 +147,19 @@
                             <div class="btn-text">New Contact</div>
                         </button>
                         <div class="points">
-                            <div class="point" (click)="router.navigate(['app/crm/leads'])" *ngIf="isCustomersGranted">
+                            <div class="point" [ngClass]="{disabled: !isGrantedCRMCustomers}" (click)="router.navigate(['app/crm/leads'])">
                                 <img class="icon" src="assets/common/icons/user-edit.svg" />
                                 <div class="label">Manage Leads</div>
                             </div>
-                            <div class="point" *ngIf="isGrantedCRMCustomers" (click)="router.navigate(['app/crm/clients'])">
+                            <div class="point" [ngClass]="{disabled: !isGrantedCRMCustomers}" (click)="router.navigate(['app/crm/clients'])">
                                 <img class="icon" src="assets/common/icons/peoples.svg" />
                                 <div class="label">Manage Clients</div>
                             </div>
-                            <div class="point" (click)="router.navigate(['app/crm/import-leads'])" *ngIf="showImportLeads">
+                            <div class="point" [ngClass]="{disabled: !showImportLeads}" (click)="router.navigate(['app/crm/import-leads'])">
                                 <img class="icon" src="assets/common/icons/send-square.svg" />
                                 <div class="label">Import Your List</div>
                             </div>
-                            <div class="point" (click)="openIntroDialog(true)" *ngIf="showImportUsersStep">
+                            <div class="point" [ngClass]="{disabled: !showImportUsersStep}" (click)="openIntroDialog(true)">
                                 <img class="icon" src="assets/common/icons/user-add.svg" />
                                 <div class="label">Add and Invite Team Members</div>
                             </div>
@@ -179,11 +179,11 @@
                         <img class="icon-box" src="assets/common/images/format-square.svg" />
                         <div class="title">{{ls.l('Welcome_SetupTitle')}} <br />{{ls.l('Welcome_SetupTitle2')}} </div>
                         <div class="points">
-                            <div class="point" (click)="openProfileTenantSettingsDialog('commissions')" *ngIf="hasTenantPermission">
+                            <div class="point" [ngClass]="{disabled: !hasTenantPermission}" (click)="openProfileTenantSettingsDialog('commissions')">
                                 <img class="icon" src="assets/common/icons/archive-book.svg" />
                                 <div class="label">Affilate Rules</div>
                             </div>
-                            <div class="point" (click)="router.navigate(['app/crm/commission-history'])">
+                            <div class="point" [ngClass]="{disabled: !showCommissions}"(click)="router.navigate(['app/crm/commission-history'])">
                                 <img class="icon" src="assets/common/icons/money-time.svg" />
                                 <div class="label">Commission History</div>
                             </div>                                                             
