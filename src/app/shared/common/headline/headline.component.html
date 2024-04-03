@@ -2,19 +2,19 @@
     <ng-container *ngIf="toggleButtonPosition === 'left'">
         <ng-container *ngTemplateOutlet="toggleButtonContainer"></ng-container>
     </ng-container>
-    <div class="headline-title">
-        <i *ngIf="icon" class="icon-{{icon}}"></i>
-        <img class="title-icon" *ngIf="iconSrc" [src]="iconSrc">
-        <div class="header-names">
-            <ng-template ngFor let-item [ngForOf]="names" let-i="index">
-                <span class="header-name">{{item}}</span>
-                <span class="right-arrow"></span>
-            </ng-template>
-        </div>
-        <small *ngIf="text">&nbsp;{{text}}</small><div class="transclude"></div>
-        <span *ngIf="showTotalCount" class="total-count {{totalErrorMsg ? 'error' : ''}}" [title]="totalErrorMsg || ''">({{ isTotalCountValid() ? (totalCount | number) : '?'}})</span>
-    </div>
-    <div class="headline-content" [ngClass]="{'menu-empty': (!buttons || !buttons.length) && !showReloadButton && !showToggleToolbarButton && !showToggleCompactViewButton && !showToggleFullScreenButton}">
+    <app-headline-title
+        *ngIf="layoutService.showTopBar"
+        [icon]="icon"
+        [iconSrc]="iconSrc"
+        [names]="names"
+        [text]="text"
+        [showTotalCount]="showTotalCount"
+        [totalErrorMsg]="totalErrorMsg"
+        [totalCount]="totalCount">
+    </app-headline-title>
+    <div *ngIf="layoutService.showTopBar || !buttons" 
+        class="headline-content" 
+        [ngClass]="{'menu-empty': (!buttons || !buttons.length) && !showReloadButton && !showToggleToolbarButton && !showToggleCompactViewButton && !showToggleFullScreenButton}">
         <ng-content></ng-content>
     </div>
     <div class="headline-buttons" [ngClass]="{ 'need-refresh': reloadIsNecessary }">
@@ -35,21 +35,14 @@
     <div class="toggle-button-container" [ngClass]="toggleButtonPosition" *ngIf="showHeadlineMenuToggleButton">
         <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons()"></button>
         <ul *ngIf="showHeadlineButtons" class="buttons">
-            <li *ngIf="isAdminCustomizations">
+            <li *ngIf="isAdminCustomizations" (click)="switchNavBar()">
                 <div>
-                    <dx-switch
-                        width="42px"
-                        style="margin: auto;"
-                        switchedOffText="Top"
-                        switchedOnText="Left"
-                        [value]="settingService.get('App.Appearance.NavPosition') == 'Vertical'"
-                        (onValueChanged)="switchNavBar($event)"> 
-                    </dx-switch>
+                    <i class="icon {{settingService.get('App.Appearance.NavPosition') == 'Vertical' ? 'top' : 'left'}}-bar"></i>
                 </div>
-                <span class="text">{{ls.l('Navigation Bar')}}</span>
+                <span class="text">{{ls.l((settingService.get('App.Appearance.NavPosition') == 'Vertical' ? 'Top' : 'Left') + ' Navigation Bar')}}</span>
             </li>
             <li *ngIf="layoutService.showLeftBar" (click)="toggleLeftBar()">
-                <div><i class="icon left-menu {{'dx-icon-' + (layoutService.expandedLeftBarSubject.value ? 'hide' : 'show') + 'panel'}}"></i></div>
+                <div><i class="icon left-panel-{{layoutService.expandedLeftBarSubject.value ? 'hide' : 'show'}}"></i></div>
                 <span class="text">{{( layoutService.expandedLeftBarSubject.value ? ls.l('Collapse') : ls.l('Expand') ) + ' Left Bar'}}</span>
             </li>
             <li *ngIf="showReloadButton && !showRefreshButtonSeparately" (click)="reload($event)">
@@ -57,7 +50,7 @@
                 <span class="text">{{ ls.l('ReloadTheCurrentPage') }}</span>
             </li>
             <li *ngIf="showToggleToolbarButton" (click)="toggleToolbar()">
-                <div><span class="icon toggleToolbar"></span></div>
+                <div><span class="icon toolbar-menu-{{(appService.toolbarIsHidden$ | async) ? 'show' : 'hide'}}"></span></div>
                 <span class="text">{{ toolbarMenuToggleButtonText$ | async }}</span>
             </li>
             <li *ngIf="showToggleTotalsButton" (click)="toggleTotals()">
@@ -65,15 +58,15 @@
                 <span class="text">{{ showTotals ? ls.l('HideTotals') : ls.l('ShowTotals') }}</span>
             </li>
             <li *ngIf="showToggleCompactViewButton" (click)="toggleCompactView()">
-                <div><span class="icon toggleCompactView"></span></div>
+                <div><span class="icon compact-view"></span></div>
                 <span class="text">{{ showCompactView ? ls.l('HideCompactView') : ls.l('ShowCompactView') }}</span>
             </li>
             <li *ngIf="showToggleFullScreenButton" (click)="toggleFullScreen()">
-                <div><span class="icon toggleFullScreenView"></span></div>
+                <div><span class="icon fullscreen-view"></span></div>
                 <span class="text">{{ fullScreenButtonText$ | async }}</span>
             </li>
             <li *ngIf="showToggleColumnSelectorButton" (click)="toggleColumnSelector()">
-                <div><span class="icon toggleColumnSelector"></span></div>
+                <div><span class="icon column-selector"></span></div>
                 <span class="text">{{ ls.l('ColumnSelector') }}</span>
             </li>
             <li *ngIf="showPrintButton" (click)="print()">
@@ -81,15 +74,15 @@
                 <span class="text">{{ ls.l('PrintResultsPage') }}</span>
             </li>
             <li *ngIf="showToggleLeftMenuButton" (click)="toggleLeftMenu()">
-                <div><i class="icon left-menu" [ngClass]="toggleLeftMenuButtonIconClass$ | async"></i></div>
+                <div><i class="icon left-panel-{{(leftMenuService.collapsed$ | async) ? 'show' : 'hide'}}"></i></div>
                 <span class="text">{{ toggleLeftMenuButtonText$ | async }}</span>
             </li>
             <li *ngIf="showToggleFilterMenuButton" (click)="toggleLeftFilterDialog($event)">
-                <div><span class="icon left-menu dx-icon-filter"></span></div>
+                <div><span class="icon filter"></span></div>
                 <span class="text">{{ toggleFilterMenuButtonText$ | async }}</span>
             </li>
             <li *ngIf="showStateResetButton" (click)="onStateReset.emit()">
-                <div><span class="icon dx-icon-undo resetGridState"></span></div>
+                <div><span class="icon reset"></span></div>
                 <span class="text">{{ ls.l('ResetGridToDefault') }}</span>
             </li>
         </ul>

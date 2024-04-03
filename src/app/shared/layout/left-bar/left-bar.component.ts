@@ -96,7 +96,6 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (config.name.toLowerCase() == module.title.toLowerCase() && this.selectedModuleIndex != index)
                     this.selectedModuleIndex = index;
             });        
-
             this.menu = new PanelMenu(
                 'MainMenu',
                 'MainMenu',
@@ -106,12 +105,8 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
                 )
             );
             this.navbarItems = this.menu.items || [];
-            const selectedItem = this.navbarItems.find((navBarItem: PanelMenuItem) => {
-                return navBarItem.route === this.router.url.split('?')[0];
-            });
-
-            this.selectedItem = selectedItem || this.menu.items[0];
             this.appService.topMenu = this.menu;
+            this.updateSelectedItem();
         });
     }
 
@@ -146,9 +141,9 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     updateSelectedItem() {
         setTimeout(() => {
             let route = this.router.url.split('?').shift();
-            this.menu.items.forEach((item: PanelMenuItem, i: number) => {
-                if (route === item.route || _.contains(item.alterRoutes, route))
-                    this.selectedItem = item;
+            this.menu.items.some((item: PanelMenuItem, i: number) => {
+                if (route == item.route || _.contains(item.alterRoutes, route))
+                    return this.selectedItem = item;
             });
         });
     }
@@ -225,7 +220,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
                     location.href = AppConsts.appMemberPortalUrl;
                 } else
                     this.router.navigate([event.itemData.route], event.itemData.params ? 
-                        {queryParams: event.itemData.params} : undefined);
+                        {queryParams: event.itemData.params} : undefined).then(() => this.updateSelectedItem());
             } else
                 window.open(route, '_blank');
         }
@@ -285,13 +280,15 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
             event.event.stopPropagation();
         } else {
             let module = event.itemData.title;
-            this.navbarItems = [];
-            this.appService.switchModule(module);
-            setTimeout(() => {
-                this.router.navigate(['app/' + module.toLowerCase()])
-                    .then(() => this.updateSelectedItem());
-            }, 200);
+            this.router.navigate(['app/' + module.toLowerCase()]).then(() => {
+                this.appService.switchModule(module, { instance: this.getModuleUri(module) });
+                this.updateSelectedItem();
+            });
         }
+    }
+
+    getModuleUri(name: string) {
+        return this.appService.getModules().find(module => module.name.toLowerCase() == name.toLowerCase()).uri;
     }
 
     getTargetByTitle(val: string) {

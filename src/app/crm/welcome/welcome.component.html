@@ -11,7 +11,7 @@
     </div -->
     <dx-scroll-view showScrollbar="onHover" height="calc(100vh - 180px)">
         <div class="boxes">
-            <div class="box">
+            <div class="box" [ngClass]="{disabled: !isProductsGranted}">
                 <div class="element">
                     <div class="overlap products">
                         <div class="overlap-group-wrapper">
@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" [ngClass]="{disabled: !isPaymentsGranted}">
                 <div class="element">
                     <div class="overlap payment">
                         <div class="overlap-group-wrapper">
@@ -74,7 +74,7 @@
                         </div>
                         <img class="icon-box" src="assets/common/images/settings.svg" />
                         <div class="title">{{ls.l('Welcome_SettingsTitle')}} <br />&amp; {{ls.l('Welcome_SettingsTitle2')}} </div>
-                        <button class="button" (click)="openProfileTenantSettingsDialog()">
+                        <button class="button" (click)="openProfileTenantSettingsDialog()" *ngIf="hasTenantPermission">
                             <img class="btn-img" src="assets/common/icons/invoice-settings.svg" />
                             <div class="btn-text">My Settings</div>
                         </button>
@@ -87,7 +87,7 @@
                                 <img class="icon" src="assets/common/icons/task-square.svg" />
                                 <div class="label">Invoice Settings</div>
                             </div>
-                            <div class="point">
+                            <div class="point" *ngIf="hasTenantPermission">
                                 <img class="icon" src="assets/common/icons/email-icon.svg" />
                                 <div class="label">Email <u (click)="openProfileTenantSettingsDialog('email')">SMTP</u> or <u (click)="openProfileTenantSettingsDialog('gmail')">Gmail</u></div>
                             </div>
@@ -132,7 +132,7 @@
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" [ngClass]="{disabled: !showImportLeads && !showImportUsersStep && !isCustomersGranted}">
                 <div class="element">
                     <div class="overlap import">
                         <div class="overlap-group-wrapper">
@@ -142,16 +142,16 @@
                         </div>
                         <img class="icon-box" src="assets/common/images/user-square.svg" />
                         <p class="title">{{ls.l('Welcome_ImportTitle')}} <br />{{ls.l('Welcome_ImportTitle2')}} </p>
-                        <button class="button" (click)="openContactDialog()">
+                        <button class="button" (click)="openContactDialog()" *ngIf="isCustomersGranted">
                             <img class="btn-img" src="assets/common/icons/plus.svg" />
                             <div class="btn-text">New Contact</div>
                         </button>
                         <div class="points">
-                            <div class="point" (click)="router.navigate(['app/crm/leads'])">
+                            <div class="point" (click)="router.navigate(['app/crm/leads'])" *ngIf="isCustomersGranted">
                                 <img class="icon" src="assets/common/icons/user-edit.svg" />
                                 <div class="label">Manage Leads</div>
                             </div>
-                            <div class="point" (click)="router.navigate(['app/crm/clients'])">
+                            <div class="point" (click)="router.navigate(['app/crm/clients'])" *ngIf="isCustomersGranted">
                                 <img class="icon" src="assets/common/icons/peoples.svg" />
                                 <div class="label">Manage Clients</div>
                             </div>
@@ -168,7 +168,7 @@
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" [ngClass]="{disabled: !showCommissionsSettings}">
                 <div class="element">
                     <div class="overlap affiliate">
                         <div class="overlap-group-wrapper">
@@ -179,11 +179,11 @@
                         <img class="icon-box" src="assets/common/images/format-square.svg" />
                         <div class="title">{{ls.l('Welcome_SetupTitle')}} <br />{{ls.l('Welcome_SetupTitle2')}} </div>
                         <div class="points">
-                            <div class="point" (click)="openProfileTenantSettingsDialog('commissions')" *ngIf="showCommissionsSettings">
+                            <div class="point" (click)="openProfileTenantSettingsDialog('commissions')" *ngIf="hasTenantPermission">
                                 <img class="icon" src="assets/common/icons/archive-book.svg" />
                                 <div class="label">Affilate Rules</div>
                             </div>
-                            <div class="point" (click)="router.navigate(['app/crm/commission-history'])" *ngIf="showCommissionsSettings">
+                            <div class="point" (click)="router.navigate(['app/crm/commission-history'])">
                                 <img class="icon" src="assets/common/icons/money-time.svg" />
                                 <div class="label">Commission History</div>
                             </div>                                                             

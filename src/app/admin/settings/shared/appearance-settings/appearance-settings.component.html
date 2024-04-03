@@ -1,37 +1,9 @@
-<h2>{{l('Appearance')}} {{l('Settings')}}</h2>
-<div class="form-group">
-    <h5>{{l("NavigationMenuPosition")}}</h5>
-    <dx-select-box width="576"
-                   height="46"
-                   [items]="navPositionOptions"
-                   displayExpr="text"
-                   valueExpr="id"
-                   placeholder=""
-                   [(value)]="navPosition"
-                   stylingMode="outlined">
-    </dx-select-box>
-</div>
-<div class="row m-form color-theme">
-    <div class="col-lg-4 col-md-6 app-header-color">
-        <dx-color-box 
-        [(value)]="appearance.navBackground"
-        [showClearButton]="true"
-            label="Navigation Menu Background Color"
-        (onValueChanged)="onColorValueChanged($event, defaultHeaderColor)"
-    ></dx-color-box>
-    </div>
-    <div class="col-lg-4 col-md-6 app-text-color">
-        <dx-color-box
-        [(value)]="appearance.navTextColor"
-        [showClearButton]="true"
-            label="Navigation Menu Text Color"
-        (onValueChanged)="onColorValueChanged($event, defaultTextColor)"
-    ></dx-color-box>
-    </div>
-</div>
-<div class="row m-form file-uploads">
-    <div class="col-lg-4 col-md-6 app-logo-upload">
+<div class="wrapper">
+    <div class="left">
+        <h2>{{l('Appearance')}} {{l('Settings')}}</h2>
+
         <uploader #logoUploader
+                  [showPlusSign]="false"
                   [title]="l('ApplicationLogo')"
                   [documentId]="tenant.logoId"
                   [documentLink]="tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId : undefined"
@@ -42,9 +14,9 @@
                   [maxFileSize]="maxLogoFileSize"
                   (onDocumentClear)="clearLogo()">
         </uploader>
-    </div>
-    <div class="col-lg-4 col-md-6">
+
         <uploader #faviconsUploader
+                  [showPlusSign]="false"
                   [title]="l('CustomFavicons')"
                   [documentId]="tenant.tenantCustomizations.favicons?.length"
                   [documentLink]="tenant.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons' : undefined"
@@ -54,11 +26,9 @@
                   acceptFileExt=".zip"
                   (onDocumentClear)="clearFavicons()">
         </uploader>
-    </div>
-</div>
-<div class="row m-form file-uploads">
-    <div class="col-lg-4 col-md-6">
+
         <uploader #cssUploader
+                  [showPlusSign]="false"
                   [title]="l('CustomCSS')"
                   [documentId]="tenant.customCssId"
                   [documentLink]="tenant.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id : undefined"
@@ -70,9 +40,9 @@
                   [maxFileSize]="maxCssFileSize"
                   (onDocumentClear)="clearCustomCss(CustomCssType.Platform)">
         </uploader>
-    </div>
-    <div class="col-lg-4 col-md-6">
+
         <uploader #loginCssUploader
+                  [showPlusSign]="false"
                   [title]="l('CustomLoginCSS')"
                   [documentId]="tenant.loginCustomCssId"
                   [documentLink]="tenant.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.loginCustomCssId + '/' + tenant.id : undefined"
@@ -84,9 +54,9 @@
                   [maxFileSize]="maxCssFileSize"
                   (onDocumentClear)="clearCustomCss(CustomCssType.Login)">
         </uploader>
-    </div>
-    <div class="col-lg-4 col-md-6">
+
         <uploader #portalCssUploader
+                  [showPlusSign]="false"
                   [title]="l('CustomPortalCSS')"
                   [documentId]="tenant.portalCustomCssId"
                   [documentLink]="tenant.portalCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.portalCustomCssId + '/' + tenant.id : undefined"
@@ -98,11 +68,9 @@
                   [maxFileSize]="maxCssFileSize"
                   (onDocumentClear)="clearCustomCss(CustomCssType.Portal)">
         </uploader>
-    </div>
-</div>
-<div class="row m-form" *ngIf="signUpPagesEnabled">
-    <div class="col-lg-4 col-md-6">
+
         <uploader #signUpCssUploader
+                  [showPlusSign]="false"
                   [title]="l('CustomSignUpCSS')"
                   [documentId]="tenant.signUpCustomCssId"
                   [documentLink]="tenant.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.signUpCustomCssId + '/' + tenant.id : undefined"
@@ -114,9 +82,127 @@
                   [maxFileSize]="maxCssFileSize"
                   (onDocumentClear)="clearCustomCss(CustomCssType.SignUp)">
         </uploader>
+
+    </div>
+    <div class="right">
+        <h2>
+            {{l('Color')}} {{l('Settings')}}
+        </h2>        
+
+        <span>{{l('Set a custom color for all of your backgrounds, texts, elements')}}</span>
+
+        <div class="app-header-color">
+            <dx-color-box
+                height="48" 
+                [(value)]="appearance.navBackground"
+                [showClearButton]="true"
+                [showDropDownButton]="false"
+                stylingMode="filled"
+                [openOnFieldClick]="true"
+                labelMode="hidden"
+                placeholder="Header Background Color"
+                (onValueChanged)="onColorValueChanged($event, defaultHeaderColor)"
+            ></dx-color-box>
+        </div>
+
+        <div class="app-text-color">
+            <dx-color-box
+                height="48"
+                [(value)]="appearance.navTextColor"
+                [showClearButton]="true"
+                [showDropDownButton]="false"
+                stylingMode="filled"
+                [openOnFieldClick]="true"
+                labelMode="hidden"
+                placeholder="Header Text Color"
+                (onValueChanged)="onColorValueChanged($event, defaultTextColor)"
+            ></dx-color-box>
+        </div>
+
+        <h2>{{l('Font')}} {{l('Settings')}}</h2>
+
+        <span>{{l('Choose any font from Google Fonts for your Dashboard')}}</span>
+
+        <div class="app-font-family">
+            <dx-select-box
+                height="46px"
+                [(value)]="appearance.fontName"
+                [searchEnabled]="true"
+                [dataSource]="fontFamilyList">
+                <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
+                    {{ data }}
+                </div>
+            </dx-select-box>
+        </div>
+
+        <h2>{{l('Button')}} {{l('Styling')}}</h2>
+
+        <span>{{l('Choose the style of your buttons')}}</span>
+
+        <div class="app-button-color">
+            <dx-color-box
+                height="48"
+                [(value)]="appearance.buttonColor"
+                [showClearButton]="true"
+                [showDropDownButton]="false"
+                stylingMode="filled"
+                [openOnFieldClick]="true"
+                labelMode="hidden"
+                placeholder="Main Button Color"
+                (onValueChanged)="onColorValueChanged($event, defaultButtonColor)"
+            ></dx-color-box>
+        </div>
+
+        <div class="app-button-color">
+            <dx-color-box
+                height="48"
+                [(value)]="appearance.buttonTextColor"
+                [showClearButton]="true"
+                [showDropDownButton]="false"
+                stylingMode="filled"
+                [openOnFieldClick]="true"
+                labelMode="hidden"
+                placeholder="Text Button Color"
+                (onValueChanged)="onColorValueChanged($event, defaultButtonTextColor)"
+            ></dx-color-box>
+        </div>
+
+        <div class="app-button-color">
+            <dx-color-box
+                height="48"
+                [(value)]="appearance.buttonHighlightedColor"
+                [showClearButton]="true"
+                [showDropDownButton]="false"
+                stylingMode="filled"
+                [openOnFieldClick]="true"
+                labelMode="hidden"
+                placeholder="Highlight Button Color"
+                (onValueChanged)="onColorValueChanged($event, defaultButtonHighlightedColor)"
+            ></dx-color-box>
+        </div>
+
+        <div class="app-button-round" style="--button-color: {{appearance.buttonColor || defaultButtonColor}} ;--button-radius: {{(appearance.borderRadius || defaultBorderRadius) + 'px'}};--button-text-color: {{appearance.buttonTextColor || defaultButtonTextColor}};--button-hover-color: {{appearance.buttonHighlightedColor || defaultButtonHighlightedColor}};">
+            <div [ngClass]="{selected: appearance.borderRadius == '0'}" (click)="appearance.borderRadius = '0'">
+                <label>Sharp Corners<br><br>Radius 0</label>
+                <div class="example predefined0">Select</div>
+            </div>
+            <div [ngClass]="{selected: !['0', '25'].includes(appearance.borderRadius)}" (click)="['0', '25'].includes(appearance.borderRadius) ? appearance.borderRadius = '10' : null">
+                <label>Round Edges</label>
+                <dx-number-box
+                    min="0"
+                    max="25"
+                    width="40px"
+                    height="40px"
+                    valueChangeEvent="keyup"
+                    [value]="['0', '25'].includes(appearance.borderRadius) ? 10 : appearance.borderRadius"
+                    (onChange)="onCustomRadiusChange($event)"                    
+                ></dx-number-box>
+                <div class="example predefined-custom" style="--custom-radius-value:{{ (['0', '25'].includes(appearance.borderRadius) ? 10 : appearance.borderRadius) + 'px' }}" >Select</div>
+            </div>
+            <div [ngClass]="{selected: appearance.borderRadius == '25'}" (click)="appearance.borderRadius = '25'">
+                <label>Pill Shaped<br><br>Radius 25</label>
+                <div class="example predefined25">Select</div>
+            </div>
+        </div>
     </div>
 </div>
-<button class="btn btn-layout" (click)="save()">
-    <i class="icon-la la la-floppy-o"></i>
-    {{l('Save')}}
-</button>

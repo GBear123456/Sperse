@@ -129,6 +129,17 @@ export class AppConsts {
     static defaultCountryPhoneCode = '+1';
     static defaultCountryCode = 'US';
 
+    /* Appearance Default Settings */
+
+    static readonly defaultHeaderBgColor: string = '#FFFFFF';
+    static readonly defaultHeaderTextColor: string = '#202b35';
+    static readonly defaultHeaderUnderlineColor: string = '#00aeef';
+    static readonly defaultButtonColor: string = '#00aeef';
+    static readonly defaultButtonTextColor: string = '#ffffff';
+    static readonly defaultButtonHighlightedColor: string = '#00aeef';
+    static readonly defaultFontName: string = 'Montserrat';
+    static readonly defaultBorderRadius: string = '10';
+
     /* System Action IDs */
     static readonly SYS_ID_CRM_CANCEL_LEAD           = 'CRM.CancelLead';
     static readonly SYS_ID_CRM_UPDATE_LEAD_STAGE     = 'CRM.UpdateLeadStage';

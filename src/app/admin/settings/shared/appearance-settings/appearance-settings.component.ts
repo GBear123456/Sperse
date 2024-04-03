@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
@@ -19,9 +20,10 @@ import {
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
-import { AppConsts } from '@shared/AppConsts';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
+import { FontService } from '@shared/common/font-service/font.service';
 import { SettingService } from 'abp-ng2-module';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'appearance-settings',
@@ -50,6 +52,11 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     defaultHeaderColor: string = this.layoutService.defaultHeaderBgColor;
     defaultTextColor: string = this.layoutService.defaultHeaderTextColor;
+    defaultButtonColor: string = this.layoutService.defaultButtonColor;
+    defaultButtonTextColor: string = this.layoutService.defaultButtonTextColor;
+    defaultButtonHighlightedColor: string = this.layoutService.defaultButtonHighlightedColor;
+    defaultFontName: string = this.layoutService.defaultFontName;
+    defaultBorderRadius: string = this.layoutService.defaultBorderRadius;
 
     appearance: AppearanceSettingsEditDto = new AppearanceSettingsEditDto();
 
@@ -60,6 +67,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             text: this.l('NavPosition_' + item)
         };
     });
+    fontFamilyList: string[] = this.fontService.getSupportedFontsList();
 
     constructor(
         _injector: Injector,
@@ -68,7 +76,9 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         private settingsProxy: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
-        private settingService: SettingService
+        private fontService: FontService,
+        private settingService: SettingService,
+        private http: HttpClient
     ) {
         super(_injector);
 
@@ -79,12 +89,43 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                     this.appearance.navBackground = this.defaultHeaderColor;
                 if (!this.appearance.navTextColor)
                     this.appearance.navTextColor = this.defaultTextColor;
+
+                if (!this.appearance.buttonColor)
+                    this.appearance.buttonColor = this.defaultButtonColor;
+                if (!this.appearance.buttonTextColor)
+                    this.appearance.buttonTextColor = this.defaultButtonTextColor;
+                if (!this.appearance.buttonHighlightedColor)
+                    this.appearance.buttonHighlightedColor = this.defaultButtonHighlightedColor;
+                if (!this.appearance.fontName)
+                    this.appearance.fontName = this.defaultFontName;
+                if (!this.appearance.borderRadius)
+                    this.appearance.borderRadius = this.defaultBorderRadius;
+
                 this.changeDetection.detectChanges();
             }
         );
+
+        let root = this.getRootComponent();
+        root.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
+            + this.fontService.supportedGoogleFonts.join('|')
+        );
+        this.fontService.supportedCustomFonts.map(font =>
+            root.addStyleSheet('custom-font', './assets/fonts/fonts-' + font.toLowerCase() + '.css')
+        );
     }
 
-    ngOnInit() {
+    getFontFamilyMetadataList() {
+        if (localStorage.getItem('fonts'))
+            this.fontFamilyList = JSON.parse(localStorage.getItem('fonts'));
+        else
+            this.http.get('https://fonts.google.com/metadata/fonts').subscribe((res: any) => {
+                if (res && res.familyMetadataList) {
+                    this.fontFamilyList = res.familyMetadataList
+                        .filter(item => Object.keys(item.fonts).length > 4 && item.stroke == 'Sans Serif')
+                        .map(item => item.family);
+                    localStorage.setItem('fonts', JSON.stringify(this.fontFamilyList));
+                }
+            });
     }
 
     getSaveObs(): Observable<any> {
@@ -92,6 +133,16 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.appearance.navBackground = null;
         if (this.appearance.navTextColor == this.defaultTextColor)
             this.appearance.navTextColor = null;
+        if (this.appearance.buttonColor == this.defaultButtonColor)
+            this.appearance.buttonColor = null;
+        if (this.appearance.buttonTextColor == this.defaultButtonTextColor)
+            this.appearance.buttonTextColor = null;
+        if (this.appearance.buttonHighlightedColor == this.defaultButtonHighlightedColor)
+            this.appearance.buttonHighlightedColor = null;
+        if (this.appearance.fontName == this.defaultFontName)
+            this.appearance.fontName = null;
+        if (this.appearance.borderRadius == this.defaultBorderRadius)
+            this.appearance.borderRadius = null;
 
         if (this.getNavPosition() != this.navPosition)
             this.appearance.navPosition = this.navPosition;
@@ -193,6 +244,11 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     getNavPosition(): NavPosition {
         return NavPosition[this.settingService.get('App.Appearance.NavPosition')];
+    }
+
+    onCustomRadiusChange(event) {
+        this.appearance.borderRadius = '' + event.component.option('value');
+        this.changeDetection.detectChanges();
     }
 
     onColorValueChanged(event, defaultColor) {

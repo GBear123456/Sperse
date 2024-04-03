@@ -264,6 +264,9 @@ export class TenantReportsComponent extends AppComponentBase implements OnDestro
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },

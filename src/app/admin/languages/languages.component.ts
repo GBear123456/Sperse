@@ -143,6 +143,14 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
                     },
                     { name: 'print', action: Function(), visible: false }
                 ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'title'                        
+                    }
+                ]
             }
         ];
     }

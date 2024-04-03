@@ -19,7 +19,7 @@ html,
 body {
     width: 100%;
     height: 100%;
-    font-family: Montserrat !important;
+    font-family: var(--app-font-family) !important;
 }
 
 body.page-md {
@@ -35,7 +35,7 @@ button {
 }
 
 .btn {
-    font-family: Montserrat !important;
+    font-family: var(--app-font-family) !important;
 }
 
 .btn + .btn {
@@ -44,7 +44,7 @@ button {
 
 .btn-layout,
 .btn-default {
-    border-radius: 21px !important;
+    border-radius: var(--app-border-radius) !important;
     font-size: 15px !important;
     font-weight: 500 !important;
     text-transform: initial !important;
@@ -61,12 +61,12 @@ button {
 }
 
 .btn-layout {
-    background-color: #00aeef;
-    color: #ffffff;
+    background-color: var(--app-button-color);
+    color: var(--app-button-text-color);
 
     &:hover {
-        color: #ffffff;
-        background-color: #00aeef;
+        color: var(--app-button-text-color);
+        background-color: var(--app-button-highlighted-color);
     }
 }
 
@@ -119,7 +119,7 @@ button {
             content: '';
             width: 30px;
             height: 100%;
-            background-color: #00a0dc;
+            background-color: var(--app-button-context-color);
             border-top-right-radius: 21px;
             border-bottom-right-radius: 21px;
             display: block;
@@ -152,9 +152,14 @@ button {
 }
 
 .button-primary {
-    background-color: #00aeef;
+    background-color: var(--app-button-color);
+    color: var(--app-button-text-color);
     border: none;
-    color: #ffffff;
+
+    &:hover {
+        color: var(--app-button-text-color);
+        background-color: var(--app-button-highlighted-color);
+    }
 }
 
 .cdk-overlay-container {

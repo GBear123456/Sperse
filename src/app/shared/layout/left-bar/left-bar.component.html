@@ -1,6 +1,6 @@
 <div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
 
-<a routerLink="/app/crm/{{appService.isHostTenant ? 'dashboard' : 'welcome'}}" class="top-home" (mouseover)="showPlatformSelect()">
+<a routerLink="/app/crm/{{appService.isHostTenant ? 'dashboard' : 'welcome'}}" class="top-home" (click)="updateSelectedItem()" (mouseover)="showPlatformSelect()">
     <platform-select></platform-select>
 </a>                
 
@@ -39,7 +39,7 @@
                                     showEvent="dxhoverstart"
                                     hideEvent="dxhoverend">
                                     <div *dxTemplate="let item of 'content'">
-                                        <span class="menu-tooltip">{{data.text}}</span>
+                                        <span class="menu-tooltip">{{ls.l(data.text)}}</span>
                                     </div>
                                 </dx-tooltip>
                             </ng-container>

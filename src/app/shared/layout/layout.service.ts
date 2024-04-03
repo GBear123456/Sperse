@@ -3,6 +3,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LayoutType, ModuleType, NavPosition } from '@shared/service-proxies/service-proxies';
 import { AppFeatures } from '@shared/AppFeatures';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class LayoutService {
@@ -14,9 +15,14 @@ export class LayoutService {
     public showTopBar = true;
     public showLeftBar = false;
 
-    defaultHeaderBgColor: string = '#FFFFFF';
-    defaultHeaderTextColor: string = '#202b35';
-    defaultHeaderUnderlineColor: string = '#00aeef';
+    defaultHeaderBgColor: string = AppConsts.defaultHeaderBgColor;
+    defaultHeaderTextColor: string = AppConsts.defaultHeaderTextColor;
+    defaultHeaderUnderlineColor: string = AppConsts.defaultHeaderUnderlineColor;
+    defaultButtonColor: string = AppConsts.defaultButtonColor;
+    defaultButtonTextColor: string = AppConsts.defaultButtonTextColor;
+    defaultButtonHighlightedColor: string = AppConsts.defaultButtonHighlightedColor;
+    defaultFontName: string = AppConsts.defaultFontName;
+    defaultBorderRadius: string = AppConsts.defaultBorderRadius;
 
     layoutColors = {
         [LayoutType.Default]: {

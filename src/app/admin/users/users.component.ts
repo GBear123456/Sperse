@@ -64,10 +64,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     isActive = true;
     role: number;
 
+
+    isGrantedImpersonation = this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
     public actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('LoginAsThisUser'),
-            visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
+            visible: this.isGrantedImpersonation,
             class: 'login',
             action: () => {
                 this.impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
@@ -106,6 +108,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             label: this.l('CreateNewUser')
         }
     ];
+    
+    isGalleryView: boolean = false;
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
     formatting = AppConsts.formatting;
     dataSource: DataSource;
@@ -226,6 +230,9 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },
@@ -352,6 +359,32 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         }
                     },
                     { name: 'print', action: Function(), visible: false }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                areItemsDependent: true,
+                items: [
+                    {
+                        name: 'dataGrid',
+                        action: () => {
+                            this.isGalleryView = false;
+                        },
+                        options: {
+                            checkPressed: () => !this.isGalleryView
+                        }
+                    },
+                    {
+                        name: 'gallery',
+                        action: () => {
+                            this.isGalleryView = true;
+                        },
+                        options: {
+                            hint: this.l('Team Carousel'),
+                            checkPressed: () => this.isGalleryView
+                        }
+                    }
                 ]
             }
         ];
@@ -646,8 +679,20 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         e.component.option('visible', false);
         e.component.hide();
     }
+
+    onGearClick(user, event) {
+        this.actionRecord = user.data;
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    impersonate(user, event) {
+        this.impersonationService.impersonate(user.data.id, this.appSession.tenantId);
+        event.stopPropagation();
+        event.preventDefault();
+    }
   
     getRolesTitle(list) {
-        return list.map(item => item.roleName).join(', ');
+        return list ? list.map(item => item.roleName).join(', ') : '';
     }
 }

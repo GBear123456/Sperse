@@ -41,6 +41,7 @@ export class CrmConfig implements ConfigInterface {
             text: 'Orders',
             icon: 'assets/common/icons/crm/orders.svg',
             permission: AppPermissions.CRMOrders,
+            alterRoutes: ['/app/crm/invoices'],
             route: '/app/crm/orders',
             items: [{
                 text: 'Orders',
@@ -62,6 +63,7 @@ export class CrmConfig implements ConfigInterface {
             text: 'Products',
             icon: 'assets/common/icons/crm/products.svg',
             permission: AppPermissions.CRMProducts,
+            alterRoutes: ['/app/crm/coupons'],
             route: '/app/crm/products',
             items: [{
                 text: 'Products',

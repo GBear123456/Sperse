@@ -19,13 +19,20 @@
         </dx-select-box>
         <div class="payment-settings">
             <label for="Currency">{{ls.l("Currency")}}</label>
+            <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings.currency.toLowerCase()}}.svg" width="19px" height="auto">
             <dx-select-box
-                width="290px"
+                width="340px"
                 valueExpr="id"
                 displayExpr="displayName"
+                [searchExpr]="['id', 'displayName']"
+                [searchEnabled]="true"
+                [placeholder]="Search"
                 [(value)]="settings.currency"
                 [dataSource]="currencies$ | async"
                 [searchEnabled]="true">
+                <div *dxTemplate="let item of 'item'" class="currency-row">
+                    <img class="flag-icon" src="assets/common/icons/flags/{{item.id.toLowerCase()}}.svg" width="52px" height="38px"><div><span class="currency-name">{{item.displayName}}</span><br><b class="currency-id">{{item.id}}</b></div>
+                </div>
             </dx-select-box>
         </div>
     </div>

@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, Input, HostBinding, OnDestroy, ChangeDetectorRef,
-    ViewChild, ChangeDetectionStrategy, OnInit } from '@angular/core';
+    ViewChild, ChangeDetectionStrategy, OnInit, TemplateRef } from '@angular/core';
 
 /** Third party imports */
 import cloneDeep from 'lodash/cloneDeep';
@@ -17,6 +17,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppService } from '@app/app.service';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'app-toolbar',
@@ -26,6 +27,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 })
 export class ToolBarComponent implements OnDestroy, OnInit {
     @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
+    @Input() titleTemplate: TemplateRef<any>;
     @Input() isDisabled = false;
     @Input() width = '100%';
     _config: ToolbarGroupModel[];
@@ -52,6 +54,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
         private filtersService: FiltersService,
         private ls: AppLocalizationService,
         private userManagementService: UserManagementService,
+        private toolbarService: ToolbarService,
+        public layoutService: LayoutService,
         public appService: AppService
     ) {}
 
@@ -89,7 +93,13 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('folder')
             },
             search: {
-                accessKey: 'search'
+                accessKey: 'search',
+                visible: this.layoutService.showTopBar
+            },
+            title: {
+                accessKey: 'title',
+                itemTemplate: 'titleTemplate',
+                visible: this.layoutService.showLeftBar
             },
             filters: {
                 hint: this.ls.l('Filters'),
@@ -199,6 +209,11 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 accessKey: 'pivotGrid',
                 hint: this.ls.l('Toolbar_PivotGrid'),
                 icon: this.getImgURI('pivot-grid')
+            },
+            gallery: {
+                accessKey: 'gallery',
+                hint: this.ls.l('Gallery'),
+                icon: 'mediumiconslayout'
             },
             map: {
                 accessKey: 'map',
@@ -447,8 +462,9 @@ export class ToolBarComponent implements OnDestroy, OnInit {
     }
 
     initToolbarItems() {
-        let supportedButtons = this.getSupportedButtons();
-        let items = [];
+        let supportedButtons = this.getSupportedButtons(),
+            isSearchEnabled = false,
+            items = [];
         if (this._config)
             this._config.forEach((group: ToolbarGroupModel, configIndex: number) => {
                 let groupItems = group.items.filter((item => this.checkItemVisible(item))),
@@ -471,16 +487,22 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                         }
                     );
 
+                    if (item.name == 'search') {
+                        this.toolbarService.setSearchConfig(item);
+                        isSearchEnabled = true;
+                    }
+
                     this.checkItemVisible(item) && items.push({
                         name: item.name,
                         location: group.location,
                         locateInMenu: group.locateInMenu,
                         disabled: item.disabled,
                         widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
-                        visible: !item.hasOwnProperty('visible') || item.visible,
+                        visible: (!item.hasOwnProperty('visible') || item.visible) && (!mergedConfig.hasOwnProperty('visible') || mergedConfig.visible),
                         text: !item.widget && item.text,
                         html: !item.widget && item.html,
                         itemTemplate: item.itemTemplate || group.itemTemplate,
+                        template: item.itemTemplate || mergedConfig.itemTemplate,
                         options: _.extend({
                             focusStateEnabled: true,
                             onClick: (e) => this.toolbarItemAction(item, group, e),
@@ -495,6 +517,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                     });
                 });
             });
+
+        this.toolbarService.showSearchBox(isSearchEnabled);
         this.items = items;
     }
 

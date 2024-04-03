@@ -25,6 +25,7 @@ import { FeatureCheckerService } from 'abp-ng2-module';
 import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { ChatSignalrService } from '../chat/chat-signalr.service';
 import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 
 @Component({
     templateUrl: './header.component.html',
@@ -45,7 +46,12 @@ export class HeaderComponent implements OnInit {
     userCompany$: Observable<string>;
     dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
     isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
-
+    get showGlobalSearch(): boolean {
+        return this.layoutService.showLeftBar &&
+            (this.toolbarService.isSearchBoxEnabled || this.appService.getModule() == 'crm') &&
+            !location.href.includes('welcome');
+    }; 
+    
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -55,6 +61,7 @@ export class HeaderComponent implements OnInit {
         private commonUserInfoService: CommonUserInfoServiceProxy,
         private feature: FeatureCheckerService,
         private chatSignalrService: ChatSignalrService,
+        private toolbarService: ToolbarService,
         public appSession: AppSessionService,
         public userManagementService: UserManagementService,
         public quickSideBarChat: QuickSideBarChat,
@@ -75,12 +82,6 @@ export class HeaderComponent implements OnInit {
         this.registerToEvents();
     }
 
-    showGlobalSearch() {
-        return this.layoutService.showLeftBar && 
-            !location.href.includes('welcome') &&
-            this.appService.getModule() == 'crm'; 
-    }
-    
     registerToEvents() {
         if (this.isChatEnabled && this.layoutService.showChatButton) {
             abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {

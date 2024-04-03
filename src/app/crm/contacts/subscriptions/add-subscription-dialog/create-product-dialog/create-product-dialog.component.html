@@ -157,7 +157,7 @@
                                     <div *ngIf="!isReadOnly && i" class="remove-button" (click)="removePaymentPeriod(i)"><span>-</span></div>
 
                                     <div class="option">
-                                        <div class="prices">
+                                        <div class="option-row width-50">
                                             <div [ngClass]="{disabled: !i && isFreePriceType}">
                                                 <label class="wide">{{ls.l('Subscription fee')}}</label>
                                                 <dx-number-box name="price"
@@ -181,15 +181,14 @@
                                                 </dx-number-box>
                                             </div>
                                         </div>
-
-                                        <div class="periods">
+                                        <div class="option-row periods">
                                             <div>
                                                 <dx-select-box name="name"
                                                                [dataSource]="getFrequencies(option, i)"
                                                                [placeholder]="ls.l('PaymentPeriod')"
                                                                [(value)]="option.frequency"
                                                                [disabled]="isReadOnly"
-                                                               (onValueChanged)="onFrequencyChanged($event, option)">
+                                                               (onValueChanged)="onFrequencyChanged($event, option, customPeriodValidator)">
                                                     <dx-validator>
                                                         <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('PaymentPeriod'))}}."></dxi-validation-rule>
                                                     </dx-validator>
@@ -222,19 +221,70 @@
                                                     </dx-validator>
                                                 </dx-number-box>
                                             </div>
-
                                         </div>
-
                                         <hr>
-
-                                        <div class="trials">
-                                            <div [ngClass]="{disabled: !(option.frequency && !isOneTime) || (!i && isFreePriceType)}">
+                                        <div class="option-row width-50" [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime || option.frequency == recurringPaymentFrequency.LifeTime }">
+                                            <div>
+                                                <dx-select-box name="name"
+                                                               [dataSource]="billingCyclesEnable"
+                                                               [placeholder]="ls.l('Billing cycles')"
+                                                               valueExpr="key"
+                                                               displayExpr="displayValue"
+                                                               [(value)]="option.billingCyclesEnabled"
+                                                               [disabled]="isReadOnly"
+                                                               (onValueChanged)="option.cycles = option.billingCyclesEnabled ? option.cycles : undefined"
+                                                               (onInitialized)="option.billingCyclesEnabled = (option.frequency && !!option.cycles) || false">
+                                                </dx-select-box>
+                                            </div>
+                                            <div [ngClass]="{disabled: !option.billingCyclesEnabled}">
+                                                <dx-number-box name="cycles"
+                                                               [min]="1"
+                                                               [max]="999"
+                                                               mode="number"
+                                                               format="###0"
+                                                               class="label"
+                                                               valueChangeEvent="keyup"
+                                                               [placeholder]="ls.l('Set number of cycles')"
+                                                               [(value)]="option.cycles"
+                                                               [disabled]="isReadOnly">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule [type]="option.billingCyclesEnabled ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('Cycles'))}}."></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="option-row width-50">
+                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime}">
+                                                <label class="wide">{{ls.l('SignupFee')}}</label>
+                                                <dx-number-box name="price"
+                                                               width="100%"
+                                                               [format]="amountFormat"
+                                                               [(value)]="option.signupFee"
+                                                               [disabled]="isReadOnly"
+                                                               (onValueChanged)="checkShowAmountChangeWarrning()">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule [type]="option.frequency && !isOneTime && option.trialDayCount ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-number-box>
+                                            </div>
+                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime || !isCommissionsEnabled}">
+                                                <label class="wide">{{ls.l('CommissionableAmount')}}</label>
+                                                <dx-number-box name="commissionableSignupFeeAmount"
+                                                               width="100%"
+                                                               [format]="amountNullableFormat"
+                                                               [(value)]="option.commissionableSignupFeeAmount"
+                                                               [disabled]="isReadOnly">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="option-row width-50">
+                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime}">
                                                 <label class="wide" for="level">
                                                     <dx-switch #trialSwitch
                                                                switchedOffText=""
                                                                switchedOnText=""
                                                                [(value)]="option.trialEnabled"
-                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount || !!option.signupFee">
+                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount">
                                                     </dx-switch>&nbsp;<span (click)="option.trialEnabled = !option.trialEnabled">{{ls.l('Add Trial Period')}}</span>
                                                 </label>
                                                 <dx-number-box name="count"
@@ -248,31 +298,6 @@
                                                                [disabled]="isReadOnly || !option.trialEnabled">
                                                 </dx-number-box>
                                             </div>
-                                            <div [ngClass]="{disabled: !option.trialEnabled || !(option.frequency && !isOneTime) || (!i && isFreePriceType)}">
-                                                <label class="wide">{{ls.l('SignupFee')}}</label>
-                                                <dx-number-box name="price"
-                                                               width="100%"
-                                                               [format]="amountFormat"
-                                                               [(value)]="option.signupFee"
-                                                               [disabled]="isReadOnly || !option.trialEnabled"
-                                                               (onValueChanged)="checkShowAmountChangeWarrning()">
-                                                    <dx-validator>
-                                                        <dxi-validation-rule [type]="option.frequency && !isOneTime && option.trialDayCount ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-number-box>
-                                            </div>
-                                            <div [ngClass]="{disabled: !option.trialEnabled || (!i && isFreePriceType) || !(option.frequency && !isOneTime && isCommissionsEnabled)}">
-                                                <label class="wide">{{ls.l('CommissionableAmount')}}</label>
-                                                <dx-number-box name="commissionableSignupFeeAmount"
-                                                               width="100%"
-                                                               [format]="amountNullableFormat"
-                                                               [(value)]="option.commissionableSignupFeeAmount"
-                                                               [disabled]="isReadOnly || !option.trialEnabled">
-                                                </dx-number-box>
-                                            </div>
-                                        </div>
-
-                                        <div class="grace">
                                             <div>
                                                 <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">
                                                     <dx-switch switchedOffText=""
@@ -291,8 +316,20 @@
                                                 </dx-number-box>
                                             </div>
                                         </div>
+                                        <ng-container *ngIf="option.stripeXref || option.paypalXref">
+                                            <hr>
+                                            <div class="option-row width-50">
+                                                <div *ngIf="option.stripeXref">
+                                                    <label>Stripe xref</label>
+                                                    <div class="clipboard-holder">{{option.stripeXref}} <i class="save-to-clipboard" (click)="copyTextToClipboard(option.stripeXref)"></i></div>
+                                                </div>
+                                                <div *ngIf="option.paypalXref">
+                                                    <label>Paypal xref</label>
+                                                    <div class="clipboard-holder">{{option.paypalXref}} <i class="save-to-clipboard" (click)="copyTextToClipboard(option.paypalXref)"></i></div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
                                     </div>
-
                                 </div>
                             </ng-container>
                         </div>
@@ -499,7 +536,7 @@
                             </div>
                             <p class="small-gray">Single event happens once and can last multiple days</p>
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-3">
                                     <label>Date</label>
                                     <dx-date-box [(value)]="eventDate"
                                                  type="date"
@@ -520,12 +557,21 @@
                                 </div>
                                 <div class="col-3">
                                     <label>Duration</label>
+                                    <dx-number-box [placeholder]="ls.l('Duration')"
+                                                   height="65px"
+                                                   [(value)]="eventDuration"
+                                                   (onValueChanged)="eventDurationType = eventDurationType || eventDurationTypes[0].value"
+                                                   [disabled]="isReadOnly">
+                                    </dx-number-box>
+                                </div>
+                                <div class="col-3">
+                                    <label></label>
                                     <dx-select-box class="hide-placeholder"
-                                                   [dataSource]="eventDurations"
+                                                   [dataSource]="eventDurationTypes"
                                                    displayExpr="displayValue"
-                                                   valueExpr="totalMinutes"
-                                                   [(value)]="product.productEvent.durationMinutes"
-                                                   [showClearButton]="true"
+                                                   valueExpr="value"
+                                                   [(value)]="eventDurationType"
+                                                   [showClearButton]="!eventDuration"
                                                    [disabled]="isReadOnly">
                                     </dx-select-box>
                                 </div>
@@ -587,6 +633,13 @@
                                            switchedOnText=""
                                            [(value)]="product.publicAllowCoupon">
                                 </dx-switch>
+                            </p>
+                            <hr>
+                            <p *ngIf="product.stripeXref" class="product-xref clipboard-holder">
+                                Stripe Xref <span>{{product.stripeXref}}<i class="save-to-clipboard" (click)="copyTextToClipboard(product.stripeXref)"></i></span>
+                            </p>
+                            <p *ngIf="product.paypalXref" class="product-xref clipboard-holder">
+                                Paypal Xref <span>{{product.paypalXref}}<i class="save-to-clipboard" (click)="copyTextToClipboard(product.paypalXref)"></i></span>
                             </p>
                         </div>
                         <div class="block">
