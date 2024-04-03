@@ -14,6 +14,7 @@ import {
 import { AppConsts } from '@root/shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingsComponentBase } from './../settings-base.component';
+import { AppPermissions } from '../../../../../shared/AppPermissions';
 
 @Component({
     selector: 'stripe-settings',
@@ -120,6 +121,15 @@ export class StripeSettingsComponent extends SettingsComponentBase {
 
     getStripeOAuthConnectRedirectUrl(): string {
         return AppConsts.remoteServiceBaseUrl + `/stripeConnectAccount/oauth`;
+    }
+
+    showImportType(importType: StripeEntityType) {
+        if (importType == StripeEntityType.Payment)
+            return this.feature.isEnabled(AppFeatures.CRMInvoicesManagement) && this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage);
+        if (importType == StripeEntityType.Subscription)
+            return this.feature.isEnabled(AppFeatures.CRMInvoicesManagement) && this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage) &&
+                this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && this.permission.isGranted(AppPermissions.CRMOrdersManage);
+        return true;
     }
 
     getImportTypeValue(importType: StripeEntityType): boolean {
