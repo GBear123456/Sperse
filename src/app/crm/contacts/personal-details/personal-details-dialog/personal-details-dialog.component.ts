@@ -334,7 +334,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings)
             )
         )
-            return this.tenantPaymentSettingsService.getStripeSettings().pipe(map(res => {
+            return this.tenantPaymentSettingsService.getStripeSettings(false).pipe(map(res => {
                 sessionStorage.setItem(storageKey, res.apiKey || '');
                 return !!res.apiKey;
             }));
