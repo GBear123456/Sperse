@@ -288,11 +288,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'affiliateCode',
             filterMethod: this.filtersService.filterByMultiline,
-            field: this.orderFields.PersonalAffiliateCode,
+            field: this.orderFields.PersonalAffiliateCodes,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
-                    name: 'AffiliateCode'
+                    name: 'AffiliateCode',
+                    manyToMany: true
                 })
             }
         }),
@@ -401,11 +402,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'affiliateCode',
             filterMethod: this.filtersService.filterByMultiline,
-            field: this.subscriptionFields.PersonalAffiliateCode,
+            field: this.subscriptionFields.PersonalAffiliateCodes,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
-                    name: 'AffiliateCode'
+                    name: 'AffiliateCode',
+                    manyToMany: true
                 })
             }
         }),

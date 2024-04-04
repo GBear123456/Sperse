@@ -170,7 +170,7 @@
                         <dxi-column [dataField]="clientFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.Xrefs" [caption]="l('Xrefs')" [visible]="false" cssClass="clipboard-holder" cellTemplate="arrayCell"></dxi-column>
-                        <dxi-column [dataField]="clientFields.AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="clientFields.AffiliateCodes" [caption]="l('AffiliateCode')" [visible]="false" [allowSorting]="false" cellTemplate="arrayCell"></dxi-column>
                         <ng-container *ngIf="tenantHasBankCodeFeature">
                             <dxi-column [dataField]="clientFields.BankCode"
                                         cellTemplate="bankCodeCell"
@@ -214,10 +214,11 @@
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="clientFields.AffiliateContactAffiliateCode"
+                        <dxi-column [dataField]="clientFields.AffiliateContactAffiliateCodes"
                                     [caption]="l('AffiliateContactAffiliateCode')"
                                     [visible]="false"
-                                    cssClass="clipboard-holder">
+                                    [allowSorting]="false"
+                                    cellTemplate="arrayCell">
                         </dxi-column>
                         <dxi-column [dataField]="clientFields.AffiliateRate"
                                     [caption]="l('AffiliateRate')"

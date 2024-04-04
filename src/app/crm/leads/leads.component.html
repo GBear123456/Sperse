@@ -227,10 +227,11 @@
                                         [visible]="false"
                                         cssClass="clipboard-holder">
                             </dxi-column>
-                            <dxi-column [dataField]="leadFields.AffiliateContactAffiliateCode"
+                            <dxi-column [dataField]="leadFields.AffiliateContactAffiliateCodes"
                                         [caption]="l('AffiliateContactAffiliateCode')"
                                         [visible]="false"
-                                        cssClass="clipboard-holder">
+                                        [allowSorting]="false"
+                                        cellTemplate="arrayCell">
                             </dxi-column>
                             <ng-container *ngIf="tenantHasBankCodeFeature">
                                 <dxi-column dataField="BankCode"
@@ -305,13 +306,14 @@
                             <dxi-column [dataField]="leadFields.ContactXrefs"
                                         [caption]="l('ContactXref')"
                                         [visible]="false"
-                                        cssClass="clipboard-holder"
+                                        [allowSorting]="false"
                                         cellTemplate="arrayCell">
                             </dxi-column>
-                            <dxi-column [dataField]="leadFields.ContactAffiliateCode"
+                            <dxi-column [dataField]="leadFields.ContactAffiliateCodes"
                                         [caption]="l('ContactAffiliateCode')"
                                         [visible]="false"
-                                        cssClass="clipboard-holder">
+                                        [allowSorting]="false"
+                                        cellTemplate="arrayCell">
                             </dxi-column>
                             <dxi-column [dataField]="leadFields.SourceContactName"
                                         [caption]="l('SourceContactName')"

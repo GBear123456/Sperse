@@ -13,7 +13,7 @@ export interface ContactDto {
     ContactDate: string;
     OrganizationId: number;
     Xrefs: string[];
-    AffiliateCode: string;
+    AffiliateCodes: string[];
     AssignedUserName: string;
     BankCode: string;
     UserId: number;
@@ -24,7 +24,7 @@ export interface ContactDto {
     StreetAddress: string;
     AffiliateContactName: string;
     AffiliateContactEmailAddress: string;
-    AffiliateContactAffiliateCode: string;
+    AffiliateContactAffiliateCodes: string[];
     AffiliateContactId: number;
     AffiliateRate: number;
     AffiliateRateTier2: number;

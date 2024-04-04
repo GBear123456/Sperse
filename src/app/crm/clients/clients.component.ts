@@ -1181,11 +1181,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 component: FilterMultilineInputComponent,
                 caption: 'affiliateCode',
                 filterMethod: this.filtersService.filterByMultiline,
-                field: 'AffiliateCode',
+                field: 'AffiliateCodes',
                 items: {
                     element: new FilterMultilineInputModel({
                         ls: this.localizationService,
-                        name: 'AffiliateCode'
+                        name: 'AffiliateCode',
+                        manyToMany: true
                     })
                 }
             }),

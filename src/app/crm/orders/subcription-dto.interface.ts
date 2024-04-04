@@ -10,7 +10,7 @@ export interface SubscriptionDto {
     StateName: string;
     Zip: string;
     CountryCode: string;
-    PersonalAffiliateCode: string;
+    PersonalAffiliateCodes: string[];
     ContactDate: string;
     ProductName: string;
     StartDate: string;
