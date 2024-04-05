@@ -104,7 +104,7 @@ export class AppConsts {
         emailWithName: new RegExp(`^((("[^"]+")|([a-zA-Z\\s]+))\\s*<(?=.+>$)|(?!.+>$))${AppConsts.emailRegexString}>?$`),
         phone: /^[\d\+\-\(\)\s]{10,24}$/,
         url: /^(http[s]?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
-        fullName: /^[\w|\s|\`|\'|\u2019|\,|\.|\-|\u00C0-\u00FA]+(\(.+\))?$/,
+        fullName: /^[^~\!\?\\/@#$%\^\&\*\(\)\<\>\:;\|]+(\(.+\))?$/,
         affiliateCode: /^(?!.*?\.\.)[a-zA-Z0-9\._-]*$/,
         affiliateRateZeroBase: /^0(\.[0-9]{1,4})?$/,
         affiliateRate: /^[0-9]{1,2}(\.[0-9]{1,2})*$/,
