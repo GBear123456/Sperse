@@ -45,6 +45,7 @@ export class InplaceEditComponent extends AppComponentBase {
             this.validationRules = model.validationRules;
             this.isReadOnlyField = model.isReadOnlyField;
             this.isEditDialogEnabled = model.isEditDialogEnabled;
+            this.isEditEnabled = model.isEditEnabled;
             this.isDeleteEnabled = model.isDeleteEnabled;
             this.lEntityName = model.lEntityName;
             this.editPlaceholder = model.editPlaceholder;
@@ -72,6 +73,7 @@ export class InplaceEditComponent extends AppComponentBase {
     @Input() isReadOnlyField = false;
     @Input() isEditDialogEnabled = false;
     @Input() showInlineEditButton = false;
+    @Input() isEditEnabled = true;
     @Input() isDeleteEnabled = false;
     @Input() isCopyEnabled = true;
     @Input() isHistoryEnabled = false;
