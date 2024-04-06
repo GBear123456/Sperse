@@ -21,17 +21,19 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from 'abp-ng2-module';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ODataService } from '@shared/common/odata/odata.service';
-import { VerificationChecklistItemType, VerificationChecklistItem,
-    VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
+import {
+    VerificationChecklistItemType, VerificationChecklistItem,
+    VerificationChecklistItemStatus
+} from '../../verification-checklist/verification-checklist.model';
 import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity-dialog/create-activity-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
-    GetSourceContactInfoOutput, UpdateAffiliateContactInput, UpdateContactAffiliateRateInput, 
-    ActivityType, CommissionTier, UpdateAffiliateIsAdvisorInput, TenantPaymentSettingsServiceProxy, 
-    CommissionSettings, ActivityServiceProxy
+    GetSourceContactInfoOutput, UpdateAffiliateContactInput, UpdateContactAffiliateRateInput,
+    ActivityType, CommissionTier, UpdateAffiliateIsAdvisorInput, TenantPaymentSettingsServiceProxy,
+    CommissionSettings, ActivityServiceProxy, ContactAffiliateCodeDto, ContactAffiliateCodeServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -55,7 +57,8 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
-    styleUrls: ['personal-details-dialog.less']
+    styleUrls: ['personal-details-dialog.less'],
+    providers: [ContactAffiliateCodeServiceProxy]
 })
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
@@ -74,8 +77,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         verification: true
     };
 
-    private readonly TAB_INDEX_GENERAL  = 0;
-    private readonly TAB_INDEX_OVERVIEW = 1;    
+    private readonly TAB_INDEX_GENERAL = 0;
+    private readonly TAB_INDEX_OVERVIEW = 1;
     private readonly TAB_INDEX_ACTIVITY = 2;
 
     public cellDuration = 15;
@@ -110,11 +113,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     private NoName = `<${this.ls.l('ClientNoName')}>`;
 
     private slider: any;
-    private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
     private readonly ident = 'PersonalDetailsDialog';
-    affiliateCode$: Observable<string> = this.affiliateCode.asObservable().pipe(
-        map((affiliateCode: string) => (affiliateCode || '').trim())
-    );
     private stripeCustomerId: ReplaySubject<string> = new ReplaySubject(1);
     stripeCustomerId$: Observable<string> = this.stripeCustomerId.asObservable();
     private isAdvisor: ReplaySubject<boolean> = new ReplaySubject(null);
@@ -144,11 +143,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         }
     ];
     xrefValidationRules = [
-    {
-        type: 'stringLength',
-        max: 255,
-        message: this.ls.l('MaxLengthIs', 255)
-    }];
+        {
+            type: 'stringLength',
+            max: 255,
+            message: this.ls.l('MaxLengthIs', 255)
+        }];
     selectedTabIndex = 0;
     lastModificationInfo: ContactLastModificationInfoDto;
     formatting = AppConsts.formatting;
@@ -173,7 +172,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     affiliateManageAllowed = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesManage);
-    isCRMGranted = this.permissionCheckerService.isGranted(AppPermissions.CRM);        
+    isCRMGranted = this.permissionCheckerService.isGranted(AppPermissions.CRM);
     formatPercentValue = formatPercent;
 
     constructor(
@@ -185,6 +184,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private cacheHelper: CacheHelper,
         private cacheService: CacheService,
         private contactProxy: ContactServiceProxy,
+        private contactAffiliateCodeProxy: ContactAffiliateCodeServiceProxy,
         private elementRef: ElementRef,
         private contactsService: ContactsService,
         private pipelineService: PipelineService,
@@ -233,7 +233,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.affiliateRate2Initil = this.affiliateRate2 =
                     this.contactInfo.affiliateRateTier2 === null ? null : this.contactInfo.affiliateRateTier2;
                 this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groups);
-                this.affiliateCode.next(contactInfo.affiliateCode);
+
+                if (!contactInfo.affiliateCodes.length)
+                    contactInfo.affiliateCodes = [new ContactAffiliateCodeDto()];
+                else
+                    contactInfo.affiliateCodes.sort((a, b) => a.id == contactInfo.primaryAffiliateCodeId ? -1 : b.id == contactInfo.primaryAffiliateCodeId ? 1 : 0);
                 if (!contactInfo.personContactInfo.xrefs.length)
                     contactInfo.personContactInfo.xrefs = [''];
                 if (contactInfo.personContactInfo.stripeCustomerId)
@@ -296,7 +300,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             this.contactsService.contactId$.pipe(distinctUntilChanged()),
             this.refreshSourceContactInfo.asObservable()
         ).pipe(
-            switchMap(([contactGroupId, contactId, ]: [string, number, null]) =>
+            switchMap(([contactGroupId, contactId,]: [string, number, null]) =>
                 this.contactProxy.getSourceContactInfo(contactId)
             )
         );
@@ -339,7 +343,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     updateAffiliateRate(value: number, valueProp, valueInitialProp, tier) {
         ContactsHelper.showConfirmMessage(
             this.ls.l(value >= 0 ? 'ChangeCommissionRate' : 'ClearCommissionRate'),
-            (isConfirmed: boolean, [ updatePending ]: boolean[]) => {
+            (isConfirmed: boolean, [updatePending]: boolean[]) => {
                 if (isConfirmed) {
                     this[valueProp] = value >= 0 ? value : null;
                     this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
@@ -351,12 +355,12 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                         this[valueInitialProp] = this[valueProp];
                         this.notifyService.info(this.ls.l('SavedSuccessfully'));
                     }, () => {
-                            this[valueProp] = this[valueInitialProp];
+                        this[valueProp] = this[valueInitialProp];
                     });
                 } else
                     this[valueProp] = this[valueInitialProp];
             },
-            [ { text: this.ls.l('AssignCommissionRateForPending'), visible: true, checked: true }]
+            [{ text: this.ls.l('AssignCommissionRateForPending'), visible: true, checked: true }]
         );
     }
 
@@ -368,9 +372,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         this.checklistOrderId = order.id || order.Id;
         return this.initChecklistDataSource(
             AppConsts.PipelinePurposeIds.order,
-            this.ls.l('Post-sale Checklist'), 
+            this.ls.l('Post-sale Checklist'),
             order.Stage,
-            order.contactGroupId || order.ContactGroupId        
+            order.contactGroupId || order.ContactGroupId
         ).pipe(
             switchMap((dataSource: any[]) => this.loadChecklistPoints(dataSource, true))
         );
@@ -383,8 +387,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
         this.checklistLeadId = leadId;
         return this.initChecklistDataSource(
-            AppConsts.PipelinePurposeIds.lead, 
-            this.ls.l('Pre-sale Checklist'), 
+            AppConsts.PipelinePurposeIds.lead,
+            this.ls.l('Pre-sale Checklist'),
             lead.stage || lead.Stage,
             lead.contactGroupId || lead.ContactGroupId
         ).pipe(
@@ -437,7 +441,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         dataSource[0].progress = selectedCount;
         return dataSource;
     }
-     
+
     initAgendaDataSource() {
         if (this.contactInfo.personContactInfo.userId)
             this.agendaUserDataSource = new DataSource({
@@ -448,9 +452,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     let filterStartDate = this.getStartDate(),
                         filterEndDate = this.getEndDate();
                     return this.activityServiceProxy.getAll(
-                        this.contactInfo.personContactInfo.userId, 
-                        undefined, 
-                        filterStartDate, 
+                        this.contactInfo.personContactInfo.userId,
+                        undefined,
+                        filterStartDate,
                         filterEndDate
                     ).toPromise().then(response => {
                         return response.map((item: any) => {
@@ -470,9 +474,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 let filterStartDate = this.getStartDate(),
                     filterEndDate = this.getEndDate();
                 return this.activityServiceProxy.getAll(
-                    undefined, 
-                    this.contactInfo.id, 
-                    filterStartDate, 
+                    undefined,
+                    this.contactInfo.id,
+                    filterStartDate,
                     filterEndDate
                 ).toPromise().then(response => {
                     return response.map((item: any) => {
@@ -500,7 +504,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        request.params.$select = ['Id',  'Name', 'Stage', 'LeadDate', 'ContactGroupId'];
+                        request.params.$select = ['Id', 'Name', 'Stage', 'LeadDate', 'ContactGroupId'];
                         request.params.$filter = 'CustomerId eq ' + this.contactInfo.id;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     }
@@ -519,15 +523,15 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        request.params.$select = ['Id',  'Number', 'Name', 'Stage', 'OrderDate', 'ContactGroupId'];
+                        request.params.$select = ['Id', 'Number', 'Name', 'Stage', 'OrderDate', 'ContactGroupId'];
                         request.params.$filter = 'ContactId eq ' + this.contactInfo.id + ' and LeadId eq ' + this.checklistLeadId;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (data: any[]) => {
                         if (data.length) {
                             let params = (this.route.queryParams as BehaviorSubject<Params>).getValue(),
-                            orderId = params && params['orderId'] && parseInt(params['orderId']),
-                            order = orderId ? data.filter(item => item.Id == orderId)[0] : data[0];
+                                orderId = params && params['orderId'] && parseInt(params['orderId']),
+                                order = orderId ? data.filter(item => item.Id == orderId)[0] : data[0];
                             if (!order)
                                 order = data[0];
                             this.initChecklistByOrder(order).subscribe(
@@ -541,9 +545,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     initChecklistDataSource(
-        purposeId: string, 
-        rootName: string, 
-        stageName: string, 
+        purposeId: string,
+        rootName: string,
+        stageName: string,
         contactGroupId: ContactGroup = ContactGroup.Client
     ): Observable<any> {
         return this.pipelineService.getPipelineDefinitionObservable(
@@ -583,7 +587,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 });
                 return [rootItem];
             })
-        );        
+        );
     }
 
     getTabContentHeight(subtract = 0) {
@@ -649,9 +653,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     deleteItem(item) {
         switch (item) {
-            case this.ls.l('Affiliate'):
-                this.updateAffiliateCode('');
-                break;
             case this.ls.l('AffiliateRate'):
                 this.updateAffiliateRate(undefined, 'affiliateRate', 'affiliateRateInitil', CommissionTier.Tier1);
                 break;
@@ -661,15 +662,35 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         }
     }
 
-    updateAffiliateCode(value) {
+    addEmptyAffiliateCode() {
+        this.contactInfo.affiliateCodes.push(new ContactAffiliateCodeDto());
+    }
+
+    updateAffiliateCode(value, i) {
         value = value.trim();
-        this.contactProxy.updateAffiliateCode(new UpdateContactAffiliateCodeInput({
+        if (!value)
+            return;
+        if (this.contactInfo.affiliateCodes[i].id) {
+            this.notifyService.info('Edit is not supported');
+            return;
+        }
+
+        this.contactAffiliateCodeProxy.createAffiliateCode(new UpdateContactAffiliateCodeInput({
             contactId: this.contactInfo.personContactInfo.id,
-            affiliateCode: value || null
-        })).subscribe(() => {
-            this.contactInfo.affiliateCode = value;
-            this.affiliateCode.next(value);
+            affiliateCode: value
+        })).subscribe((res) => {
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.contactInfo.affiliateCodes[i].affiliateCode = value;
+            this.contactInfo.affiliateCodes[i].id = res.id;
         });
+    }
+
+    deleteAffiliateCode(i) {
+        this.contactAffiliateCodeProxy.deleteAffiliateCode(this.contactInfo.personContactInfo.id, this.contactInfo.affiliateCodes[i].id)
+            .subscribe(() => {
+                this.notifyService.info(this.ls.l('SuccessfullyDeleted'));
+                this.contactInfo.affiliateCodes.splice(i, 1);
+            });
     }
 
     updateIsAdvisor($event) {
@@ -742,10 +763,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         this.startLoading();
         let top = this.checklistScroll.instance.scrollTop();
         (isOrder ? this.orderProxy.updateStagePoint(new UpdateOrderStagePointInput({
-                pointId: event.itemData.id,
-                orderId: this.checklistOrderId,
-                isDone: event.itemData.selected
-            })) :
+            pointId: event.itemData.id,
+            orderId: this.checklistOrderId,
+            isDone: event.itemData.selected
+        })) :
             this.leadProxy.updateLeadStagePoint(new UpdateLeadStagePointInput({
                 pointId: event.itemData.id,
                 leadId: this.checklistLeadId,
@@ -857,7 +878,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     onSourceContactChanged(contact?) {
         ContactsHelper.showConfirmMessage(
             this.ls.l(contact ? 'ReassignAffiliateContact' : 'ClearAffiliateContact'),
-            (isConfirmed: boolean, [ updatePending ]: boolean[]) => {
+            (isConfirmed: boolean, [updatePending]: boolean[]) => {
                 if (isConfirmed) {
                     this.contactProxy.updateAffiliateContact(
                         new UpdateAffiliateContactInput({
@@ -872,7 +893,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     });
                 }
             },
-            [ {
+            [{
                 text: this.ls.l('AssignAffiliateContactForPending'),
                 visible: this.hasCommissionsFeature && this.hasCommissionsManagePermission && !!contact,
                 checked: !!contact
@@ -945,7 +966,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     AllDay: appointment.allDay,
                     StartDate: appointment.startDate,
                     EndDate: appointment.endDate,
-                    Title:  appointment.title,
+                    Title: appointment.title,
                     Description: appointment.description,
                     Type: appointment.type
                 }
