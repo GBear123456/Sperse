@@ -17,6 +17,7 @@ import { map, startWith } from 'rxjs/operators';
 import { fadeIn } from '@shared/animations/fade-animations';
 import { AppService } from '@app/app.service';
 import { FullScreenService } from '../../../../shared/common/fullscreen/fullscreen.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'ghost-list',
@@ -34,12 +35,13 @@ export class GhostListComponent implements OnChanges {
     ).pipe(
         startWith(true),
         map(([toolbarIsHidden, isFullScreenMode]: [boolean, boolean]) => {
-            return `calc(100vh - ${(toolbarIsHidden ? 150 : 212) - (isFullScreenMode ? 151 : 0)}px)`;
+            return `calc(100vh - ${(toolbarIsHidden ? 150 : 212) - (isFullScreenMode ? 151 : 0) - (this.layoutService.showLeftBar ? 75 : 0)}px)`;
         })
     );
 
     constructor(
         private appService: AppService,
+        private layoutService: LayoutService,
         private changeDetectorRef: ChangeDetectorRef,
         private fullscreenService: FullScreenService
     ) {}
