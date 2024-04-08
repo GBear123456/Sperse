@@ -64,7 +64,8 @@
                                     </dx-text-box>
                                 </div>
                             </div>
-                            <inplace-edit [id]="'product-url'"
+                            <inplace-edit *ngIf="isPublicProductsEnabled" 
+                                          [id]="'product-url'"
                                           [value]="product.publicName"
                                           [showInlineEditButton]="true"
                                           [displayValue]="baseUrl + '/p/' + tenantId + '/' + (product.publicName || '')"

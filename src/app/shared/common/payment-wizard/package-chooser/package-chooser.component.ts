@@ -176,7 +176,14 @@ export class PackageChooserComponent implements OnInit {
             });
             this.initAvailablePeriods();
             this.preselectPackage();
-            this.changeDetectionRef.detectChanges();
+            
+            if (this.packages.length == 1)               
+                setTimeout(() => {
+                    this.selectPackage(0);
+                    this.changeDetectionRef.detectChanges();
+                }, 100);
+            else
+                this.changeDetectionRef.detectChanges();
         });
     }
 

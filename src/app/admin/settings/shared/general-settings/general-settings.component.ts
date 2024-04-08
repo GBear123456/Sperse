@@ -3,7 +3,8 @@ import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angula
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize, filter, tap } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
 
 /** Application imports */
 import {
@@ -19,6 +20,7 @@ import { AbstractControlDirective } from '@angular/forms';
 import { AppFeatures } from '@shared/AppFeatures';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
+import { RootStore, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
 
 @Component({
     selector: 'general-settings',
@@ -52,12 +54,23 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
     initialTimezone: string;
     initialCountry: string;
 
+    currencies$: Observable<any[]> = this.store$.pipe(
+        select(CurrenciesCrmStoreSelectors.getCurrencies),
+        filter(x => x != null),
+        tap(data => {
+            data.forEach(c => c['displayName'] = `${c.name}, ${c.symbol}`);
+            return data;
+        })
+    );
+
     constructor(
         _injector: Injector,
+        private store$: Store<RootStore.State>,
         private phoneNumberService: PhoneNumberService,
         private tenantSettingsService: TenantSettingsServiceProxy,
     ) {
         super(_injector);
+        this.store$.dispatch(new CurrenciesCrmStoreActions.LoadRequestAction());
     }
 
     ngOnInit(): void {

@@ -13,14 +13,21 @@
                   (onReload)="refresh()"
                   (onStateReset)="dxDataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
+        <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+    </app-headline>
+    <ng-template #titleTemplate>
         <types-dropdown [items]="viewTypes"
                         [showTotalCount]="true"
                         [totalCount]="totalRowCount > 0 ? totalRowCount : undefined"
                         [value]="selectedViewType"
                         (onValueChanged)="onViewTypeChanged($event)">
         </types-dropdown>
-    </app-headline>
-    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig" 
+        [titleTemplate]="titleTemplate"
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
     <div class="main-wrapper">
         <action-menu [items]="actionMenuGroups"
                 [visible]="!!actionEvent"
