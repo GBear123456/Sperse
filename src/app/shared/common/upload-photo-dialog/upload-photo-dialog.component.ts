@@ -46,6 +46,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     private thumbData: string;
     title: string = this.data.title;
     selectedTabIndex = this.TAB_INDEX_BROWSE;
+    maintainAspectRatio = true;
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -55,7 +56,10 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
         public dialogRef: MatDialogRef<UploadPhotoDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: UploadPhotoData
-    ) {}
+    ) {
+        if (data && data.hasOwnProperty('maintainAspectRatio'))
+            this.maintainAspectRatio = data.maintainAspectRatio;
+    }
 
     ngAfterViewInit() {
         this.dialogRef.updateSize('700px', '560px');
