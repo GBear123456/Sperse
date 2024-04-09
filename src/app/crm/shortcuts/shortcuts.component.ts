@@ -13,7 +13,7 @@ import { NgxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, Subject, ReplaySubject, combineLatest } from 'rxjs';
+import { Observable, Subject, ReplaySubject, combineLatest, of } from 'rxjs';
 import { finalize, filter, first, takeUntil, map, delay } from 'rxjs/operators';
 import { FeatureCheckerService, MessageService } from 'abp-ng2-module';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
@@ -31,6 +31,8 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ModuleType, LayoutType, StripeSettingsDto, TenantPaymentSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
+import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal/notification-settings-modal.component';
 import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
@@ -55,17 +57,21 @@ export class ShortcutsComponent implements OnInit {
     dialogConfig = new MatDialogConfig();
     isGrantedOrders = this.permission.isGranted(AppPermissions.CRMOrders);
 
+    waitFor$ = of(true);
+
     calendlyUri = AppConsts.calendlyUri;
     stripePaymentSettings: StripeSettingsDto = new StripeSettingsDto();
-    isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
     hasTenantPermission = this.permission.isGranted(AppPermissions.AdministrationTenantSettings);
     hasTenantOrCRMSettings = this.hasTenantPermission || 
         this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
+    isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments) && this.hasTenantOrCRMSettings;
     showLandingPageSettings = !this.appService.isHostTenant && 
         this.feature.isEnabled(AppFeatures.CRMTenantLandingPage) && 
         this.permission.isGranted(AppPermissions.AdministrationUsers);
     showInvoiceSettings = this.hasTenantOrCRMSettings && 
-        this.feature.isEnabled(AppFeatures.CRMInvoicesManagement);        
+        this.feature.isEnabled(AppFeatures.CRMInvoicesManagement);
+    showInvoices = this.permission.isGranted(AppPermissions.CRMOrdersInvoices);
+    manageInvoices = this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage);
     showImportLeads = this.permission.isGranted(AppPermissions.CRMBulkImport);
     showImportUsersStep = (this.appService.isHostTenant || this.feature.isEnabled(AppFeatures.Admin))
             && this.permission.isGranted(AppPermissions.AdministrationUsers)
@@ -74,9 +80,11 @@ export class ShortcutsComponent implements OnInit {
     showSubscriptionManagement = this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement); 
     showCommissionsSettings = this.feature.isEnabled(AppFeatures.CRMCommissions) &&
         (this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasTenantPermission);
-    isProductsGranted = this.permission.isGranted(AppPermissions.CRMProducts);
-    isPaymentsGranted = this.feature.isEnabled(AppFeatures.CRMPayments);
-    isCustomersGranted = this.permission.isGranted(AppPermissions.CRMCustomers);    
+
+    isGrantedCRMCustomers = this.permission.isGranted(AppPermissions.CRMCustomers);
+    isGrantedCRMFileStorage = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);
+    isGrantedCRMProductsManage = this.permission.isGranted(AppPermissions.CRMProductsManage);
+    isGrantedCRMProducts = this.permission.isGranted(AppPermissions.CRMProducts);
 
     hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();    
     showZapier = location.href.includes(AppConsts.defaultDomain) &&
@@ -264,6 +272,30 @@ export class ShortcutsComponent implements OnInit {
 
     openCalendly() {
         window.open('https://calendly.com/' + this.calendlyUri, '_blank');
+    }
+
+    openNotificationModal(e): void {
+        this.dialog.open(NotificationSettingsModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
+    }
+
+    showInvoiceDialog() {
+        this.dialog.open(CreateInvoiceDialogComponent, {
+            panelClass: ['slider'],
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                addNew: true,
+                invoice: null
+            }
+        });
     }
 
     activate() {

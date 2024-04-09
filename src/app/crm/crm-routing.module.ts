@@ -34,7 +34,7 @@ import { ZapierComponent } from '@shared/common/zapier/zapier.component';
                 children: [
                     { path: 'zapier', component: ZapierComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'welcome', component: WelcomeComponent, data: { permission: AppPermissions.CRM, reuse: true } },
-                    { path: 'shortcuts', component: ShortcutsComponent, data: { permission: AppPermissions.CRM, reuse: true } },
+                    { path: 'start', component: ShortcutsComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'dashboard', component: DashboardComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'documents', component: DocumentsComponent, data: { permission: AppPermissions.CRMFileStorageTemplates, reuse: true } },
                     { path: 'clients', component: ClientsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },

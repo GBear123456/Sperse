@@ -141,6 +141,9 @@
                         line-height: 27px;
                         letter-spacing: -0.02em;
                         outline: none;
+                        &[disabled] {
+                            opacity: 0.4;
+                        }
                     }
                 }
             }
@@ -163,6 +166,33 @@
         & > div {
             width: 50%;
             min-height: calc(100vh / 3);
+        }
+
+        .sales-grid {
+            .data-grid {
+                position: relative;
+                margin-top: 55px;
+                overflow: visible;
+            }
+
+            ::ng-deep recent-clients {
+                header {
+                    position: absolute;
+                    top: -70px;
+                }
+                dx-select-box {
+                    background: transparent;
+                    input {
+                        font-family: Manrope;
+                        font-size: 26px;
+                        font-weight: 600;
+                        line-height: 27px;
+                        letter-spacing: -0.02em;
+                        text-align: left;
+                        color: #08295b;
+                    }
+                }
+            }
         }
 
         .grid-header {
@@ -205,8 +235,9 @@
             background: #fff;
             border-radius: 14px;
             margin-top: 20px;
-
-            height: calc(100vh - 620px);
+            overflow: hidden;
+            height: 100%;
+            min-height: 250px;
         }
     }
 }
