@@ -166,10 +166,9 @@
                                     cssClass="clipboard-holder clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.BuyerAffiliateCodes"
+                        <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
                                     [caption]="l('BuyerAffiliateCode')"
-                                    [allowSorting]="false"
-                                    cellTemplate="arrayCell">
+                                    cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column width="200px"
                                     cellTemplate="staticWidthCell"
@@ -191,10 +190,9 @@
                                     [visible]="false"
                                     [caption]="l('ResellerEmailAddress')">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ResellerAffiliateCodes"
+                        <dxi-column [dataField]="commissionFields.ResellerAffiliateCode"
                                     [caption]="l('ResellerAffiliateCode')"
-                                    [allowSorting]="false"
-                                    cellTemplate="arrayCell">
+                                    cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ResellerAffiliateRate"
                                     [caption]="l('ResellerAffiliateRate')"
@@ -250,9 +248,6 @@
                         </div>
                         <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
                             <span> {{ cell.value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
-                        </div>
-                        <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
-                            {{cellData.value && cellData.value.join(', ')}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -336,10 +331,9 @@
                                     [dataField]="ledgerFields.EmailAddress"
                                     [caption]="l('EmailAddress')">
                         </dxi-column>
-                        <dxi-column [dataField]="ledgerFields.AffiliateCodes"
+                        <dxi-column [dataField]="ledgerFields.AffiliateCode"
                                     [caption]="l('AffiliateCode')"
-                                    [allowSorting]="false"
-                                    cellTemplate="arrayCell">
+                                    cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.Type"
                                     [caption]="l('Type')"
@@ -405,9 +399,6 @@
                         </div>
                         <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
                             <span> {{ cell.value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
-                        </div>
-                        <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
-                            {{cellData.value && cellData.value.join(', ')}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -497,18 +488,15 @@
                                     [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
-                        <dxi-column [dataField]="resellersFields.AffiliateCodes"
+                        <dxi-column [dataField]="resellersFields.AffiliateCode"
                                     [caption]="l('ResellerAffiliateCode')"
                                     [visible]="false"
-                                    [allowSorting]="false"
-                                    cellTemplate="arrayCell">
+                                    cssClass="clipboard-holder">
                         </dxi-column>
+
 
                         <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
                             {{cellData.value}}
-                        </div>
-                        <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
-                            {{cellData.value && cellData.value.join(', ')}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>

@@ -3,7 +3,7 @@ import { TransactionDto } from '@app/crm/reports/transction-dto';
 export interface SubscriptionTrackerDto {
     ContactId: number;
     Email: string;
-    AffiliateCodes: string[];
+    AffiliateCode: string;
     FirstName: string;
     LastName: string;
     FullName: string;

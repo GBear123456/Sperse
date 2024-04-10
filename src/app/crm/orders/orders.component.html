@@ -123,11 +123,11 @@
                                 <dxi-column [dataField]="orderFields.Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column [dataField]="orderFields.Amount" [caption]="l('Amount')" cellTemplate="amountCell" [width]="185" cssClass="padding-right"></dxi-column>
                                 <dxi-column [dataField]="orderFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
-                                <dxi-column [dataField]="orderFields.AffiliateContactAffiliateCodes" [caption]="l('AffiliateContactAffiliateCode')" [visible]="false" [allowSorting]="false" cellTemplate="arrayCell"></dxi-column>
+                                <dxi-column [dataField]="orderFields.AffiliateContactAffiliateCode" [caption]="l('AffiliateContactAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column [dataField]="orderFields.AffiliateContactId" [caption]="l('AffiliateContactId')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column [dataField]="orderFields.AffiliateContactName" [caption]="l('AffiliateContactName')" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column [dataField]="orderFields.OrderDate" [caption]="l('Created')" sortOrder="desc" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                                <dxi-column [dataField]="orderFields.PersonalAffiliateCodes" [caption]="l('ContactAffiliateCode')" [visible]="false" [allowSorting]="false" cellTemplate="arrayCell"></dxi-column>
+                                <dxi-column [dataField]="orderFields.PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.SourceEntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.ContactGroupId" [caption]="l('ContactGroup')" [visible]="false">
@@ -144,9 +144,6 @@
                                 </div>
                                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                                     {{cellData.value | datetime: formatting.dateTimeMoment}}
-                                </div>
-                                <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
-                                    {{cellData.value && cellData.value.join(', ')}}
                                 </div>
                                 <dxo-summary>
                                     <dxi-group-item [column]="orderFields.Id"
@@ -261,7 +258,7 @@
                     <dxi-column [dataField]="subscriptionFields.StateName" [caption]="l('Contact.State')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.Zip" [caption]="l('ZipCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.CountryCode" [caption]="l('CountryCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                    <dxi-column [dataField]="subscriptionFields.PersonalAffiliateCodes" [caption]="l('ContactAffiliateCode')" [visible]="false" [allowSorting]="false" cellTemplate="arrayCell"></dxi-column>
+                    <dxi-column [dataField]="subscriptionFields.PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.ContactDate" [caption]="l('Contact.Date')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.ProductName" [caption]="l('Subscriptions.ProductName')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.StartDate" [caption]="l('StartDate')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
@@ -280,9 +277,6 @@
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
                         <span *ngIf="cell.text >= 0"> {{ cell.text | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
-                    </div>
-                    <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
-                        {{cellData.value && cellData.value.join(', ')}}
                     </div>
                     <dxo-summary>
                         <dxo-texts sum="{0}"></dxo-texts>

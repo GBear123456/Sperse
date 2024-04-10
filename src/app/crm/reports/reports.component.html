@@ -345,11 +345,9 @@
                 <dxi-column [dataField]="subscriptionTrackerFields.FullName"
                             [visible]="subscriptionTrackerColumnsVisibility.buyerInfo">
                 </dxi-column>
-                <dxi-column [dataField]="subscriptionTrackerFields.AffiliateCodes"
+                <dxi-column [dataField]="subscriptionTrackerFields.AffiliateCode"
                             [caption]="ls.l('AffiliateCode')"
-                            [visible]="subscriptionTrackerColumnsVisibility.buyerInfo"
-                            [allowSorting]="false"
-                            cellTemplate="arrayCell">
+                            [visible]="subscriptionTrackerColumnsVisibility.buyerInfo">
                 </dxi-column>
                 <dxi-column [dataField]="subscriptionTrackerFields.ContactId"
                             [visible]="false"
@@ -429,9 +427,6 @@
             <div *dxTemplate="let cell of 'headerCellTemplate'">
                 <span>{{ cell.column.caption }}</span>
                 <i class="toggle-button fa fa-{{ subscriptionTrackerColumnsVisibility[cell.column.name] ? 'minus' : 'plus' }}"></i>
-            </div>
-            <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
-                {{cellData.value && cellData.value.join(', ')}}
             </div>
         </dx-data-grid>
     </div>

@@ -4,7 +4,7 @@ import { SubscriptionTrackerDto } from '@app/crm/reports/subscription-tracker-dt
 export const SubscriptionTrackerFields: KeysEnum<SubscriptionTrackerDto> = {
     ContactId: 'ContactId',
     Email: 'Email',
-    AffiliateCodes: 'AffiliateCodes',
+    AffiliateCode: 'AffiliateCode',
     FirstName: 'FirstName',
     LastName: 'LastName',
     FullName: 'FullName',

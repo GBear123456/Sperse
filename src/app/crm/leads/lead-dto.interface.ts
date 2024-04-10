@@ -28,6 +28,7 @@ export interface LeadDto {
     PhoneExtension: string;
     Title: string;
     ContactXrefs: string[];
+    ContactAffiliateCode: string;
     ContactAffiliateCodes: string[];
     SourceContactName: string;
     AssignedUserName: string;
@@ -35,6 +36,7 @@ export interface LeadDto {
     StageChecklistPointDoneCount: number;
     ContactGroupId: string;
     AffiliateContactName: string;
+    AffiliateContactAffiliateCode: string;
     AffiliateContactAffiliateCodes: string[];
     PipelineId: number;
     PropertyId: number;

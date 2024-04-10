@@ -1,6 +1,7 @@
 export interface CommissionDto {
     BuyerAffiliateContactId: string;
     BuyerAffiliateName: string;
+    BuyerAffiliateCode: string;
     BuyerAffiliateCodes: string[];
     BuyerContactId: number;
     BuyerEmailAddress: string;
@@ -21,6 +22,7 @@ export interface CommissionDto {
     ProductCode: string;
     ProductName: string;
     ResellerAffiliateRate: number;
+    ResellerAffiliateCode: string;
     ResellerAffiliateCodes: string[];
     ResellerContactId: number;
     ResellerEmailAddress: string;

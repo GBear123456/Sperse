@@ -227,11 +227,10 @@
                                         [visible]="false"
                                         cssClass="clipboard-holder">
                             </dxi-column>
-                            <dxi-column [dataField]="leadFields.AffiliateContactAffiliateCodes"
+                            <dxi-column [dataField]="leadFields.AffiliateContactAffiliateCode"
                                         [caption]="l('AffiliateContactAffiliateCode')"
                                         [visible]="false"
-                                        [allowSorting]="false"
-                                        cellTemplate="arrayCell">
+                                        cssClass="clipboard-holder">
                             </dxi-column>
                             <ng-container *ngIf="tenantHasBankCodeFeature">
                                 <dxi-column dataField="BankCode"
@@ -309,11 +308,10 @@
                                         [allowSorting]="false"
                                         cellTemplate="arrayCell">
                             </dxi-column>
-                            <dxi-column [dataField]="leadFields.ContactAffiliateCodes"
+                            <dxi-column [dataField]="leadFields.ContactAffiliateCode"
                                         [caption]="l('ContactAffiliateCode')"
                                         [visible]="false"
-                                        [allowSorting]="false"
-                                        cellTemplate="arrayCell">
+                                        cssClass="clipboard-holder">
                             </dxi-column>
                             <dxi-column [dataField]="leadFields.SourceContactName"
                                         [caption]="l('SourceContactName')"

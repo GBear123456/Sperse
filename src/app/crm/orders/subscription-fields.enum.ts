@@ -13,6 +13,7 @@ export const SubscriptionFields: KeysEnum<SubscriptionDto> = {
     StateName: 'StateName',
     Zip: 'Zip',
     CountryCode: 'CountryCode',
+    PersonalAffiliateCode: 'PersonalAffiliateCode',
     PersonalAffiliateCodes: 'PersonalAffiliateCodes',
     ContactDate: 'ContactDate',
     ProductName: 'ProductName',
