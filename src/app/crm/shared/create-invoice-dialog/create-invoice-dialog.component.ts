@@ -1246,7 +1246,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     initiatePaymentMethodsCheck(timeout = 1000) {
-        if (this.invoiceInfo && [
+        if (this.invoiceId && this.invoiceInfo && [
                 InvoiceStatus.Paid, 
                 InvoiceStatus.Canceled
             ].includes(this.invoiceInfo.status)
