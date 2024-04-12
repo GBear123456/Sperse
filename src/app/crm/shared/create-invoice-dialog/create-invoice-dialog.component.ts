@@ -845,8 +845,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff :
                 this.subTotal * (coupon.percentOff / 100);
             this.discountTotal = round(discountTotal, 2);
-        }
-        else {
+        } else if (this.invoiceInfo.id) {
+            this.discountTotal = this.invoiceInfo.discountTotal || 0;
+        } else {
             this.discountTotal = 0;
         }
     }
@@ -1245,8 +1246,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     initiatePaymentMethodsCheck(timeout = 1000) {
-        if ([InvoiceStatus.Paid, InvoiceStatus.Canceled].includes(this.invoiceInfo.status))
-            return;
+        if (this.invoiceInfo && [
+                InvoiceStatus.Paid, 
+                InvoiceStatus.Canceled
+            ].includes(this.invoiceInfo.status)
+        ) return;
 
         if (this.paymentMethodsCheckLoading) {
             this.paymentMethodsCheckReload = true;
