@@ -35,8 +35,9 @@
                    class="form-control"
                    [(ngModel)]="generalSettings.publicSiteUrl"
                    maxlength="128"
-                   [pattern]="siteUrlRegexPattern"
-                   (change)="changeDetection.detectChanges()">
+                   [pattern]="siteUrlRegexPattern.source"
+                   (change)="onUrlPaste($event)"
+                   (paste)="onUrlPaste($event)">
         </div>
         <div>
             <span class="help-block text-danger"

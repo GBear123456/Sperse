@@ -87,6 +87,15 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
         return super.isValid();
     }
 
+    onUrlPaste(event) {
+        setTimeout(() => {
+            this.generalSettings.publicSiteUrl = 
+            event.target.value = event.target.value.trim();
+            this.changeDetection.detectChanges();
+            event.target.blur();
+        }, 100);
+    }
+
     getSaveObs(): Observable<any> {
         return forkJoin(
             this.tenantSettingsService.updateGeneralSettings(this.generalSettings).pipe(tap(() => {

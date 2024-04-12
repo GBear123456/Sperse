@@ -109,6 +109,15 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         this.settings.publicPhone = phone == elm.getCountryCode() ? undefined : phone;
     }
 
+    onUrlPaste(event) {
+        setTimeout(() => {
+            this.settings.publicSiteUrl = 
+            event.target.value = event.target.value.trim();
+            this.changeDetectorRef.detectChanges();
+            event.target.blur();
+        }, 100);
+    }
+
     save(): Observable<any> {
         if ((!this.publicSiteUrl || this.publicSiteUrl.valid) && 
             (!this.publicPhoneNumber || this.publicPhoneNumber.isValid())
