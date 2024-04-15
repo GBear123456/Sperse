@@ -20,6 +20,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
+import { DxColorBoxModule } from 'devextreme-angular/ui/color-box';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
@@ -63,6 +64,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { CalendarDialogComponent } from './dialogs/calendar/calendar-dialog.component';
+import { ShareDialogComponent } from './dialogs/share/share-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
 import { ImportProgressBarComponent } from './import-wizard/import-progress-bar/import-progress-bar.component';
@@ -129,6 +131,7 @@ import { ActionMenuModule } from './action-menu/action-menu.module';
         PapaParseModule,
         ImageCropperModule,
 
+        DxColorBoxModule,
         DxListModule,
         DxCheckBoxModule,
         DxContextMenuModule,
@@ -186,6 +189,7 @@ import { ActionMenuModule } from './action-menu/action-menu.module';
         CalendarDialogComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
+        ShareDialogComponent,
         PaymentsInfoComponent,
         PaymentWizardComponent,
         PackageCardComponent,
@@ -220,6 +224,7 @@ import { ActionMenuModule } from './action-menu/action-menu.module';
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
+        ShareDialogComponent,
         StarsListComponent,
         LeftMenuComponent,
         CalendarButtonComponent,
@@ -233,6 +238,7 @@ import { ActionMenuModule } from './action-menu/action-menu.module';
         CalendarDialogComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
+        ShareDialogComponent,
         PaymentWizardComponent,
         CommonLookupModalComponent
     ]

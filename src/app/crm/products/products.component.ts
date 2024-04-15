@@ -27,6 +27,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
+import { ShareDialogComponent } from '@app/shared/common/dialogs/share/share-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ProductServiceProxy, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
@@ -206,6 +207,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+
     invalidate() {
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
@@ -267,6 +269,19 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         }).afterClosed().subscribe(
             () => this.invalidate()
         );
+    }
+
+    showShareDialog(event, product) {
+        const dialogData = {
+            title: this.l('Product share link options'),
+            linkUrl: this.getProductPublicLink(product)
+        };
+        this.dialog.open(ShareDialogComponent, {
+            panelClass: '',
+            disableClose: false,
+            closeOnNavigation: true,
+            data: dialogData
+        });
     }
 
     navigateToCoupons(event) {
