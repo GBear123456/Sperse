@@ -66,10 +66,36 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     actionEvent: any;
     actionMenuGroups: ActionMenuItem[] = [
         {
+            text: this.l('Add Bookmark'),
+            class: 'bookmark',
+            disabled: true,
+            action: () => {}
+        },
+        {
+            text: this.l('View'),
+            class: 'preview',
+            action: () => {
+                window.open(this.getProductPublicLink(this.actionEvent));
+            }
+        },
+        {
+            text: this.l('Test'),
+            class: 'status',
+            disabled: true,
+            action: () => {}
+        },
+        {
             text: this.l('Edit'),
             class: 'edit',
             action: () => {
                 this.editProduct(this.actionEvent.Id);
+            }
+        },
+        {
+            text: this.l('Duplicate'),
+            class: 'copy',
+            action: () => {
+                this.editProduct(this.actionEvent.Id, true);                
             }
         },
         {
@@ -186,15 +212,19 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         this.processFilterInternal();
     }
 
-    editProduct(id: number) {
+    editProduct(id: number, duplicate = false) {
         this.startLoading();
         this.productProxy.getProductInfo(id).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(product => {
-            this.showProductDialog({
-                id: id,
-                ...product
-            });
+            if (duplicate) {
+                product.id = undefined;
+                product.name += ' (2)';
+                product.code += ' (2)';
+                product.publicName += '2';
+            }
+
+            this.showProductDialog(product);
         });
     }
 
