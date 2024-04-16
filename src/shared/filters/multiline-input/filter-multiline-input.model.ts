@@ -7,6 +7,7 @@ import capitalize from 'underscore.string/capitalize';
 export class FilterMultilineInputModel extends FilterItemModel {
     public name: string;
     public normalize: (value: string) => string;
+    public manyToMany: boolean;
     private _valuesArray: string[];
     tip: string = '';
 

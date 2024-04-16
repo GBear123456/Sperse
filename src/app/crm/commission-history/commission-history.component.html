@@ -30,24 +30,24 @@
     </app-toolbar>
     <div class="main-wrapper">
         <action-menu [items]="actionMenuGroups"
-                [visible]="!!actionEvent"
-                [grouped]="true"
-                class="grouped-action-menu"
-                width="300px"
-                target=".dx-state-hover .dx-link.dx-link-edit"
-                (onItemClick)="onMenuItemClick($event)">
+                     [visible]="!!actionEvent"
+                     [grouped]="true"
+                     class="grouped-action-menu"
+                     width="300px"
+                     target=".dx-state-hover .dx-link.dx-link-edit"
+                     (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <source-contact-list #sourceList
-            targetSelector=".dx-button[aria-label^=Reassign]"
-            [selectedLeads]="[]"
-            [selectedKeys]="[]"
-            [relatedItemsKeys]="selectedRecords"
-            (onApply)="onSourceApply($event)">
+                             targetSelector=".dx-button[aria-label^=Reassign]"
+                             [selectedLeads]="[]"
+                             [selectedKeys]="[]"
+                             [relatedItemsKeys]="selectedRecords"
+                             (onApply)="onSourceApply($event)">
         </source-contact-list>
         <div class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                <div>                    
+                <div>
                     <dx-data-grid #commissionDataGrid
                                   [hint]="l('Commissions')"
                                   class="main-component-view limitedPagerTotal"
@@ -466,22 +466,22 @@
                                     [caption]="l('EmailAddress')">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.EarnedAmount"
-                                    [caption]="l('EarnedAmount')" 
+                                    [caption]="l('EarnedAmount')"
                                     [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.PendingEarningsAmount"
-                                    [caption]="l('PendingEarningsAmount')" 
+                                    [caption]="l('PendingEarningsAmount')"
                                     [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.PendingWithdrawalsAmount"
-                                    [caption]="l('PendingWithdrawalsAmount')" 
+                                    [caption]="l('PendingWithdrawalsAmount')"
                                     [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.UnaccountedEarningsAmount"
-                                    [caption]="l('UnaccountedEarningsAmount')" 
+                                    [caption]="l('UnaccountedEarningsAmount')"
                                     [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
@@ -491,7 +491,7 @@
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.AvailableBalance"
-                                    [caption]="l('AvailableBalance')" 
+                                    [caption]="l('AvailableBalance')"
                                     [format]="currencyFormat"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
@@ -500,6 +500,7 @@
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
+
 
                         <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
                             {{cellData.value}}
@@ -521,7 +522,6 @@
     </div>
 </div>
 
-<app-no-data
-    [hidden]="!isDataLoaded || totalRowCount"
-    [showLink]="false">
+<app-no-data [hidden]="!isDataLoaded || totalRowCount"
+             [showLink]="false">
 </app-no-data>

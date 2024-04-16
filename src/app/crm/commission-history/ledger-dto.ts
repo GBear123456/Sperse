@@ -1,5 +1,6 @@
 export interface LedgerDto {
     AffiliateCode: string;
+    AffiliateCodes: string[];
     ContactId: number;
     ContactName: string;
     EmailAddress: string;

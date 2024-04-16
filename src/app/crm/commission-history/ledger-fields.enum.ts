@@ -3,6 +3,7 @@ import { LedgerDto } from '@app/crm/commission-history/ledger-dto';
 
 export const LedgerFields: KeysEnum<LedgerDto> = {
     AffiliateCode: 'AffiliateCode',
+    AffiliateCodes: 'AffiliateCodes',
     ContactId: 'ContactId',
     ContactName: 'ContactName',
     EmailAddress: 'EmailAddress',

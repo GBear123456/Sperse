@@ -13,7 +13,7 @@ export interface PartnerDto {
     ContactDate: string;
     Id: number;
     PartnerType: string;
-    Xref: string;
+    Xrefs: string;
     AffiliateCode: string;
     UserId: number;
     StreetAddress: string;
