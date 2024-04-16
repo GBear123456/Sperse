@@ -137,7 +137,9 @@ export class AppConsts {
     static readonly defaultButtonColor: string = '#00aeef';
     static readonly defaultButtonTextColor: string = '#ffffff';
     static readonly defaultButtonHighlightedColor: string = '#00aeef';
+    static readonly defaultLeftSideMenuColor: string = '#ffffff';
     static readonly defaultFontName: string = 'Montserrat';
+    static readonly defaultTabularFontName: string = 'Lato';
     static readonly defaultBorderRadius: string = '10';
 
     /* System Action IDs */
