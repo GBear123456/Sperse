@@ -172,7 +172,7 @@
                             </div>
                         </div>
                         <dxi-column [dataField]="partnerFields.ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column [dataField]="partnerFields.Xrefs" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder" cellTemplate="arrayCell"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Xrefs" [caption]="l('Xref')" [visible]="false" width="200" cellTemplate="arrayCell"></dxi-column>
                         <dxi-column [dataField]="partnerFields.AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="partnerFields.AffiliateContactName"
                                     [caption]="l('AffiliateContactName')"
@@ -224,7 +224,7 @@
                             </bank-code-letters>
                         </div>
                         <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
-                            {{cellData.value && cellData.value.join(', ')}}
+                            {{cellData.data.Xrefs && cellData.data.Xrefs.join(', ')}}
                         </div>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>

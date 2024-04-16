@@ -306,6 +306,7 @@
                                         [caption]="l('ContactXref')"
                                         [visible]="false"
                                         [allowSorting]="false"
+                                        width="200"
                                         cellTemplate="arrayCell">
                             </dxi-column>
                             <dxi-column [dataField]="leadFields.ContactAffiliateCode"
@@ -353,7 +354,7 @@
                                 </bank-code-letters>
                             </div>
                             <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
-                                {{cellData.value && cellData.value.join(', ')}}
+                                {{cellData.data.ContactXrefs && cellData.data.ContactXrefs.join(', ')}}
                             </div>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-sorting mode="multiple"></dxo-sorting>
