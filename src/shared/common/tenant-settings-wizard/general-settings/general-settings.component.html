@@ -10,18 +10,19 @@
     <div class="form-group">
         <label for="DefaultCountry">{{ls.l("Country")}}</label>
         <dx-select-box
-            width="120px"
+            width="410px"
             valueExpr="key"
             displayExpr="text"
             [(value)]="settings.defaultCountryCode"
             [dataSource]="supportedCountries"
             (onValueChanged)="onCountryChanged($event)">
         </dx-select-box>
-        <div class="payment-settings">
+    </div>
+    <div class="form-group payment-settings">
             <label for="Currency">{{ls.l("Currency")}}</label>
             <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings.currency.toLowerCase()}}.svg" width="19px" height="auto">
             <dx-select-box
-                width="340px"
+                width="380px"
                 valueExpr="id"
                 displayExpr="displayName"
                 [searchExpr]="['id', 'displayName']"
@@ -34,7 +35,6 @@
                     <img class="flag-icon" src="assets/common/icons/flags/{{item.id.toLowerCase()}}.svg" width="52px" height="38px"><div><span class="currency-name">{{item.displayName}}</span><br><b class="currency-id">{{item.id}}</b></div>
                 </div>
             </dx-select-box>
-        </div>
     </div>
     <ng-container *ngIf="tenant">
         <div class="form-group">

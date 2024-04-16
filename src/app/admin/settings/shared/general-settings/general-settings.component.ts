@@ -2,15 +2,17 @@
 import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { select, Store } from '@ngrx/store';
 import { forkJoin, Observable, of } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize, tap, first, filter, map } from 'rxjs/operators';
 
 /** Application imports */
 import {
     GeneralSettingsEditDto,
     SettingScopes,
     TenantLoginInfoDto,
-    TenantSettingsServiceProxy
+    TenantSettingsServiceProxy,
+    CountryDto
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
@@ -19,6 +21,8 @@ import { AbstractControlDirective } from '@angular/forms';
 import { AppFeatures } from '@shared/AppFeatures';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
+import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-item.interface';
+import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
 
 @Component({
     selector: 'general-settings',
@@ -42,26 +46,32 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
 
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
-    supportedCountries = Object.keys(Country).map(item => {
-        return {
-            key: Country[item],
-            text: this.l(item)
-        };
-    });
+    supportedCountries;
+    currencies$: Observable<any[]> = this.store$.pipe(
+        select(CurrenciesCrmStoreSelectors.getCurrencies),
+        filter(x => x != null),
+        tap(data => {
+            data.forEach(c => c['displayName'] = `${c.name}, ${c.symbol}`);
+            return data;
+        })
+    );
 
     initialTimezone: string;
     initialCountry: string;
 
     constructor(
         _injector: Injector,
+        private store$: Store<RootStore.State>,
         private phoneNumberService: PhoneNumberService,
         private tenantSettingsService: TenantSettingsServiceProxy,
     ) {
         super(_injector);
+        this.store$.dispatch(new CurrenciesCrmStoreActions.LoadRequestAction());
     }
 
     ngOnInit(): void {
         this.startLoading();
+        this.initCountries();
         this.tenantSettingsService.getGeneralSettings()
             .pipe(
                 finalize(() => this.finishLoading())
@@ -72,6 +82,21 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
                 this.initialCountry = res.defaultCountryCode;
                 this.changeDetection.detectChanges();
             });
+    }
+
+    getSelectListFromObject(collection): SelectListItem[] {
+        return (collection || []).map(item => ({ key: item.code, text: this.l(item.name) }));
+    }
+
+    private initCountries() {
+        this.store$.pipe(
+            select(CountriesStoreSelectors.getCountries),
+            filter(Boolean),
+            first(),
+            map((countries: CountryDto[]) => this.getSelectListFromObject(countries))
+        ).subscribe((countries: SelectListItem[]) => {
+            this.supportedCountries = countries;
+        });
     }
 
     onPhoneNumberChange(phone, elm) {
