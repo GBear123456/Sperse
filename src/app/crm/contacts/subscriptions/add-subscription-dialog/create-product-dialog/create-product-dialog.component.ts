@@ -248,8 +248,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.addUpgradeToProduct();
             if (this.product.publishDate)
                 this.publishDate = DateHelper.addTimezoneOffset(new Date(this.product.publishDate), true);
-            this.initProductResources();
-            this.initProductEvent();
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -260,6 +258,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             }
             this.initEventProps();
         }
+
+        this.initProductResources();
+        this.initProductEvent();
 
         this.product.currencyId = this.currency;
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {

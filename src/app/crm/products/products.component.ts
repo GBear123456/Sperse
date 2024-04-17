@@ -223,7 +223,24 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 product.id = undefined;
                 product.name += ' (2)';
                 product.code += ' (2)';
-                product.publicName += '2';
+                if (product.publicName)
+                    product.publicName += '2';
+                product.stripeXref = undefined;
+                product.paypalXref = undefined;
+                if (product.productSubscriptionOptions)
+                    product.productSubscriptionOptions =
+                        product.productSubscriptionOptions.map(sub => {
+                            sub.stripeXref = undefined;
+                            sub.paypalXref = undefined;
+                            return sub;
+                        });
+                product.imageUrl = undefined;
+                if (product.productResources)
+                    product.productResources = 
+                        product.productResources.filter(res => {
+                            res.id = undefined;
+                            return !res.fileId;
+                        });
             }
 
             this.showProductDialog(product);
