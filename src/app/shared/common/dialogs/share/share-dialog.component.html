@@ -2,45 +2,42 @@
 <mat-dialog-content>
     <div class="field">
         <label>{{ls.l('Share Link')}}</label>
-        <dx-text-box
-            width="500px"
-            [value]="data.linkUrl"
-            [readOnly]="true"
-        ></dx-text-box><button class="btn-layout" (click)="copyToClipbord(data.linkUrl)">{{ls.l('Copy Link')}}</button>
+        <dx-text-area #cmpSimpleLink
+            height="50px"
+            width="600px"
+            value="{{data.linkUrl}}"
+        ></dx-text-area><button class="btn-layout" (click)="copyToClipbord(cmpSimpleLink.instance.option('value'))">{{ls.l('Copy Link')}}</button>
     </div>
     <div class="field">
         <label>{{ls.l('Place Link on Your Website')}}</label>
-        <dx-text-box
-            width="500px"
-            [value]="getLink()"
-            [readOnly]="true"
-        ></dx-text-box><button class="btn-layout" (click)="copyToClipbord(getLink())">{{ls.l('Copy Link')}}</button>
+        <dx-text-area #cmpHTMLLink
+            width="600px"
+            value="{{getLink()}}"
+        ></dx-text-area><button class="btn-layout" (click)="copyToClipbord(cmpHTMLLink.instance.option('value'))">{{ls.l('Copy Link')}}</button>
     </div>
     <div class="field">
         <label>{{ls.l('Embed Page on Your Website')}}</label>
-        <dx-text-box
-            width="500px"
-            [value]="getFrame()"
-            [readOnly]="true"
-        ></dx-text-box><button class="btn-layout" (click)="copyToClipbord(getFrame())">{{ls.l('Copy Link')}}</button>
+        <dx-text-area #cmpEmbedPage
+            width="600px"
+            value="{{getFrame()}}"
+        ></dx-text-area><button class="btn-layout" (click)="copyToClipbord(cmpEmbedPage.instance.option('value'))">{{ls.l('Copy Link')}}</button>
     </div>
     <div class="field">
         <label>{{ls.l('Create Button For Your Website')}}</label>
-        <dx-text-box
-            width="500px"
-            [value]="getButton()"
-            [readOnly]="true"
-        ></dx-text-box><button class="btn-layout" (click)="copyToClipbord(getButton())">{{ls.l('Copy Link')}}</button>
+        <dx-text-area #cmpButtonLink
+            width="600px"
+            value="{{getButton()}}"
+        ></dx-text-area><button class="btn-layout" (click)="copyToClipbord(cmpButtonLink.instance.option('value'))">{{ls.l('Copy Link')}}</button>
     </div>
     <div class="field">
         <label>{{ls.l('Button Text And Color')}}</label>
-        <dx-text-box
-            width="300px"
+        <dx-text-area
+            width="350px"
             [(value)]="btnCaption"
             valueChangeEvent="keyup"
-        ></dx-text-box>
+        ></dx-text-area>
         <dx-color-box
-            width="280px"
+            width="330px"
             [(value)]="btnColor"
             [showClearButton]="false"
             [showDropDownButton]="false"

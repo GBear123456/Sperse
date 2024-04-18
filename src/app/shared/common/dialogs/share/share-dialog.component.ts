@@ -39,7 +39,7 @@ export class ShareDialogComponent {
     }
 
     getButton() {
-        return '<button href="' + this.data.linkUrl + '" role="button" style="outline: none;cursor: pointer;border: none;background-color: ' + this.btnColor + ';color: white;border-radius: 5px;padding: 15px 35px;font-family: Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;font-weight: 500;text-decoration: none;font-size: 18px;white-space: nowrap;cursor: pointer;">' + this.btnCaption + '</button>';
+        return '<button onclick="window.open(\'' + this.data.linkUrl + '\')" role="button" style="outline: none;cursor: pointer;border: none;background-color: ' + this.btnColor + ';color: white;border-radius: 5px;padding: 15px 35px;font-family: Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;font-weight: 500;text-decoration: none;font-size: 18px;white-space: nowrap;cursor: pointer;">' + this.btnCaption + '</button>';
     }
 
     copyToClipbord(data) {
