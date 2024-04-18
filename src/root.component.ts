@@ -92,7 +92,7 @@ export class RootComponent implements OnInit, AfterViewInit {
                 buttonColor = abp.setting.values['App.Appearance.ButtonColor'] || AppConsts.defaultButtonColor,
                 buttonTextColor = abp.setting.values['App.Appearance.ButtonTextColor'] || AppConsts.defaultButtonTextColor,
                 buttonHighlightedColor = abp.setting.values['App.Appearance.ButtonHighlightedColor'] || AppConsts.defaultButtonHighlightedColor,
-                leftSideMenuColor = abp.setting.values['App.Appearance.LeftSideMenuColor'] || AppConsts.defaultLeftSideMenuColor,
+                leftSideMenuColor = abp.setting.values['App.Appearance.LeftsideMenuColor'] || AppConsts.defaultLeftSideMenuColor,
                 borderRadius = abp.setting.values['App.Appearance.BorderRadius'] || AppConsts.defaultBorderRadius,
                 rootStyle = this.document.querySelector(':root').style;
 
