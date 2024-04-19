@@ -845,7 +845,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff :
                 this.subTotal * (coupon.percentOff / 100);
             this.discountTotal = round(discountTotal, 2);
-        } else if (this.invoiceInfo && this.invoiceInfo.id) {
+        } else if (this.invoiceInfo && this.invoiceInfo.id && !this.invoiceInfo.couponId) {
             this.discountTotal = this.invoiceInfo.discountTotal || 0;
         } else {
             this.discountTotal = 0;
