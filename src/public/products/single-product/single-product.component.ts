@@ -118,7 +118,9 @@ export class SingleProductComponent implements OnInit {
     ngOnInit(): void {
         this.tenantId = +this.route.snapshot.paramMap.get('tenantId');
         this.productPublicName = this.route.snapshot.paramMap.get('productPublicName');
-        this.ref = this.route.snapshot.queryParamMap.get('ref');
+        this.ref = this.route.snapshot.paramMap.get('refCode');
+        if (!this.ref)
+            this.ref = this.route.snapshot.queryParamMap.get('ref');
         this.optionId = Number(this.route.snapshot.queryParamMap.get('optionId'));
 
         this.getProductInfo();
