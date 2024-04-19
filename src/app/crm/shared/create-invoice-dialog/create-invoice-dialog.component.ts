@@ -747,9 +747,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (this.featureMaxProductCount)
             this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10, this.currency).subscribe(res => {
                 if (!phrase || phrase == this.lastProductPhrase) {
-                    this.products = res.map((item: any) => {
-                        item.details = item.description;
-                        item.description = item.name;
+                    this.products = res.map((item: any, itemIndex: number) => {
+                        item.details = item.description;                        
+                        item.description = item.name + (
+                            res.some((prod, prodIndex) => 
+                                item.name == prod.name && itemIndex != prodIndex
+                            ) ? ' (' + item.code + ')' : ''
+                        );
                         item.caption = item.name;
                         return item;
                     });
@@ -841,8 +845,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff :
                 this.subTotal * (coupon.percentOff / 100);
             this.discountTotal = round(discountTotal, 2);
-        }
-        else {
+        } else if (this.invoiceInfo && this.invoiceInfo.id) {
+            this.discountTotal = this.invoiceInfo.discountTotal || 0;
+        } else {
             this.discountTotal = 0;
         }
     }
@@ -1241,6 +1246,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     initiatePaymentMethodsCheck(timeout = 1000) {
+        if (this.invoiceId && this.invoiceInfo && [
+                InvoiceStatus.Paid, 
+                InvoiceStatus.Canceled
+            ].includes(this.invoiceInfo.status)
+        ) return;
+
         if (this.paymentMethodsCheckLoading) {
             this.paymentMethodsCheckReload = true;
             return;

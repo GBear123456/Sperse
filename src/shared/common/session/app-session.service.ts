@@ -44,6 +44,10 @@ export class AppSessionService {
         });
     }
 
+    get isPublicPage(): boolean {
+        return !location.pathname.startsWith('/app');
+    }
+
     get isLendspaceDemoUser() {  //!!VP should be added corresponding permissions for such case (temp solution)
         return this.user && this.user.userName == 'demo@lendspace.com';
     }
@@ -126,7 +130,7 @@ export class AppSessionService {
                 this._user = result.user;
                 this._tenant = result.tenant;
                 this._theme = result.theme;
-                if (this.featureService.isEnabled(AppFeatures.AdminCustomizations))
+                if (!this.isPublicPage && this.featureService.isEnabled(AppFeatures.AdminCustomizations))
                     this.tenantHostProxy.getMemberPortalUrl().subscribe(res => {
                         AppConsts.appMemberPortalUrl = res.url;
                     });

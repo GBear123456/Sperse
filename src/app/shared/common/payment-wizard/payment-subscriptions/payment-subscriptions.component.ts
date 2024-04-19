@@ -74,6 +74,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
             text: this.l('Cancel'),
             class: 'delete',
             action: this.cancelSubscription.bind(this),
+            checkVisible: () => this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)
         }
     ];
     actionRecordData: ModuleSubscriptionInfoDto;

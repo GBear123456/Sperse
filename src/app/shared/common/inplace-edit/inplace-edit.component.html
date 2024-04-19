@@ -9,13 +9,13 @@
         </a>
     </span>
     <div class="actions {{ buttonsPosition }}" [ngClass]="{ empty: !displayValue && !hasValue && !editPlaceholder}">
-        <i *ngIf="isEditDialogEnabled"
+        <i *ngIf="isEditEnabled && isEditDialogEnabled"
            [ngClass]="{ hidden: isReadOnlyField }"
            class="edit fa fa-pencil"
            aria-hidden="true"
            (click)="showDialog($event)">
         </i>
-        <i *ngIf="showInlineEditButton"
+        <i *ngIf="isEditEnabled && showInlineEditButton"
            [ngClass]="{ hidden: isReadOnlyField }"
            class="edit fa fa-pencil"
            aria-hidden="true"

@@ -1,4 +1,4 @@
-import { CustomPeriodType, RecurringPaymentFrequency } from "@shared/service-proxies/service-proxies";
+import { CustomPeriodType, ProductType, RecurringPaymentFrequency } from "@shared/service-proxies/service-proxies";
 
 export interface ProductDto {
     Id: number;
@@ -6,7 +6,7 @@ export interface ProductDto {
     Name: string;
     Description: string;
     Group: string;
-    Type: string;
+    Type: ProductType;
     Price: number;
     CurrencyId: number;
     Unit: string;

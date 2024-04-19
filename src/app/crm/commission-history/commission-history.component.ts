@@ -705,6 +705,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 this.searchValueChange(e);
                             }
                         }
+                    },
+                    {
+                        name: 'title'
                     }
                 ]
             },
