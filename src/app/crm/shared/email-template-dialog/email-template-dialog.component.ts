@@ -794,7 +794,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.attachments = this.attachments.concat(
                     data.map(item => {
                         return {
-                            id: item.key,
+                            id: item.key.split('_')[0],
                             name: item.name,
                             size: item.size,
                             progress: 0
