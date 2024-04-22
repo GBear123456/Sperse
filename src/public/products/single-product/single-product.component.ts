@@ -121,6 +121,8 @@ export class SingleProductComponent implements OnInit {
         this.ref = this.route.snapshot.paramMap.get('refCode');
         if (!this.ref)
             this.ref = this.route.snapshot.queryParamMap.get('ref');
+        if (!this.ref)
+            this.ref = this.route.snapshot.queryParamMap.get('referralCode');
         this.optionId = Number(this.route.snapshot.queryParamMap.get('optionId'));
 
         this.getProductInfo();
