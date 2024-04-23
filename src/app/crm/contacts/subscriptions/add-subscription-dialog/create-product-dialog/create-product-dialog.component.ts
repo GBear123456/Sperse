@@ -279,7 +279,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     ngOnInit() {
-        if (!this.data.product || !this.data.product.id)
+        if (!this.data.product || !this.product.productSubscriptionOptions)
             this.addNewPaymentPeriod();
 
         let contextMenu = this.buttons[0].contextMenu;
