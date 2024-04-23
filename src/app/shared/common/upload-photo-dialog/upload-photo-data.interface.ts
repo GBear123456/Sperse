@@ -3,4 +3,5 @@ export interface UploadPhotoData {
     source: string;
     maxSizeBytes?: number;
     fileUrl?: string;
+    maintainAspectRatio?: boolean;
 }

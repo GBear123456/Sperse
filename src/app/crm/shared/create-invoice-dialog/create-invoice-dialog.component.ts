@@ -689,12 +689,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     return address;
                 });
                 this.shippingAddresses = this.sortAddresses(addresses, 'S');
-                if (this.shippingAddresses && this.shippingAddresses.length) {
+                if (!this.selectedShippingAddress && this.shippingAddresses && this.shippingAddresses.length) {
                     this.selectedShippingAddress = this.shippingAddresses[0];
                     this.showEditAddressDialog(null, 'selectedShippingAddress');
                 }
                 this.billingAddresses = this.sortAddresses(addresses, 'B');
-                if (this.billingAddresses && this.billingAddresses.length) {
+                if (!this.selectedBillingAddress && this.billingAddresses && this.billingAddresses.length) {
                     this.selectedBillingAddress = this.billingAddresses[0];
                     this.showEditAddressDialog(null, 'selectedBillingAddress');
                 }
@@ -845,7 +845,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff :
                 this.subTotal * (coupon.percentOff / 100);
             this.discountTotal = round(discountTotal, 2);
-        } else if (this.invoiceInfo && this.invoiceInfo.id) {
+        } else if (this.invoiceInfo && this.invoiceInfo.id && !this.invoiceInfo.couponId) {
             this.discountTotal = this.invoiceInfo.discountTotal || 0;
         } else {
             this.discountTotal = 0;

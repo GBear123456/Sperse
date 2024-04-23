@@ -670,7 +670,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             this.contactsService.showUploadPhotoDialog(
                 organizationContactInfo.id,
                 organizationContactInfo.primaryPhoto,
-                event
+                event, false
             ).subscribe((logo: string) => {
                 organizationContactInfo.primaryPhoto = logo;
             });

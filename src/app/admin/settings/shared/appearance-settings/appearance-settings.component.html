@@ -119,6 +119,20 @@
             ></dx-color-box>
         </div>
 
+        <div class="app-left-bar-color">
+            <dx-color-box
+                height="48"
+                [(value)]="appearance.leftsideMenuColor"
+                [showClearButton]="true"
+                [showDropDownButton]="false"
+                stylingMode="filled"
+                [openOnFieldClick]="true"
+                labelMode="hidden"
+                placeholder="Left Bar Color"
+                (onValueChanged)="onColorValueChanged($event, defaultLeftSideMenuColor)"
+            ></dx-color-box>
+        </div>
+
         <h2>{{l('Font')}} {{l('Settings')}}</h2>
 
         <span>{{l('Choose any font from Google Fonts for your Dashboard')}}</span>
@@ -129,6 +143,20 @@
                 [(value)]="appearance.fontName"
                 [searchEnabled]="true"
                 [dataSource]="fontFamilyList">
+                <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
+                    {{ data }}
+                </div>
+            </dx-select-box>
+        </div>
+
+        <span>{{l('Choose tabular font from Google Fonts for numbers')}}</span>
+
+        <div class="app-font-family">
+            <dx-select-box
+                height="46px"
+                [(value)]="appearance.tabularFont"
+                [searchEnabled]="true"
+                [dataSource]="tabularFontFamilyList">
                 <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
                     {{ data }}
                 </div>

@@ -25,18 +25,16 @@
             [placeholder]="Search"
             fieldTemplate="field"
             [(value)]="generalSettings.currency"
-            [dataSource]="currencies$ | async"
-            [searchEnabled]="true">
+            [dataSource]="currencies$ | async">
             <div *dxTemplate="let item of 'field'" class="currency-field">
-                <img class="selected-flag-icon" src="assets/common/icons/flags/{{generalSettings.currency.toLowerCase()}}.svg" width="19px" height="auto">&nbsp;<span class="currency-name">{{item?.displayName}}</span><b class="currency-id">{{item?.id}}</b>
-                <dx-text-box [visible]="false"></dx-text-box>
+                <img class="selected-flag-icon" src="assets/common/icons/flags/{{generalSettings?.currency?.toLowerCase()}}.svg" width="19px" height="auto">&nbsp;<!-- span class="currency-name">{{item?.displayName}}</span><b class="currency-id">{{item?.id}}</b -->
+                <dx-text-box [value]="item?.displayName"></dx-text-box>
             </div>
             <div *dxTemplate="let item of 'item'" class="currency-row">
-                <img class="flag-icon" src="assets/common/icons/flags/{{item.id.toLowerCase()}}.svg" width="52px" height="38px"><div><span class="currency-name">{{item.displayName}}</span><br><b class="currency-id">{{item.id}}</b></div>
+                <img class="flag-icon" src="assets/common/icons/flags/{{item?.id?.toLowerCase()}}.svg" width="52px" height="38px"><div><span class="currency-name">{{item.displayName}}</span><br><b class="currency-id">{{item.id}}</b></div>
             </div>
         </dx-select-box>
     </div>
-
     <ng-container *ngIf="!isHost">
         <div class="form-group">
             <label for="PublicPhone">{{l("PublicPhone")}}</label>
@@ -57,8 +55,9 @@
                    class="form-control"
                    [(ngModel)]="generalSettings.publicSiteUrl"
                    maxlength="128"
-                   [pattern]="siteUrlRegexPattern"
-                   (change)="changeDetection.detectChanges()">
+                   [pattern]="siteUrlRegexPattern.source"
+                   (change)="onUrlPaste($event)"
+                   (paste)="onUrlPaste($event)">
         </div>
         <div>
             <span class="help-block text-danger"

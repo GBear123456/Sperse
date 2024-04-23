@@ -10,15 +10,15 @@ export class FontService {
         "Bai Jamjuree","Baloo 2","Baloo Bhai 2","Baloo Bhaijaan 2","Baloo Bhaina 2","Baloo Chettan 2","Baloo Da 2","Baloo Paaji 2","Barlow",
         "Barlow Condensed","Barlow Semi Condensed","Be Vietnam Pro","Bellota Text","Big Shoulders Display","Big Shoulders Inline Display",
         "Big Shoulders Inline Text","Big Shoulders Stencil Display","Big Shoulders Stencil Text","Big Shoulders Text","Biryani","Blinker",
-        "Bricolage Grotesque","Cabin","Cairo","Cairo Play","Catamaran","Chakra Petch","Changa","Chathura","Chivo","Chivo Mono","Comfortaa",
-        "Comme","Commissioner","Cuprum","DM Mono","DM Sans","Darker Grotesque","Dosis","Encode Sans","Encode Sans Condensed","Encode Sans Expanded",
+        "Bricolage Grotesque","Cabin","Cairo","Cairo Play","Catamaran","Chakra Petch","Changa","Chathura","Chivo","Comfortaa",
+        "Comme","Commissioner","Cuprum","DM Sans","Darker Grotesque","Dosis","Encode Sans","Encode Sans Condensed","Encode Sans Expanded",
         "Encode Sans SC","Encode Sans Semi Condensed","Encode Sans Semi Expanded","Epilogue","Exo","Exo 2","Expletus Sans","Fahkwang","Familjen Grotesk",
         "Figtree","Finlandica","Fira Sans","Fira Sans Condensed","Fira Sans Extra Condensed","Foldit","Fredoka","Gabarito","Gantari","Gemunu Libre",
         "Genos","Geologica","Glory","Golos Text","Gothic A1","Handjet","Hanken Grotesk","Heebo","Hind","Hind Guntur","Hind Madurai",
         "Hind Siliguri","Hind Vadodara","IBM Plex Sans","IBM Plex Sans Arabic","IBM Plex Sans Condensed","IBM Plex Sans Devanagari","IBM Plex Sans Hebrew",
         "IBM Plex Sans JP","IBM Plex Sans KR","IBM Plex Sans Thai","IBM Plex Sans Thai Looped","Inria Sans","Instrument Sans","Inter","Inter Tight",
         "Josefin Sans","Jost","Jura","K2D","Kanit","Kantumruy Pro","Karla","Khand","Khula","KoHo","Kodchasan","Krub","Kufam","Kulim Park","Kumbh Sans",
-        "Lato","League Spartan","Lemonada","Lexend","Lexend Deca","Lexend Exa","Lexend Giga","Lexend Mega","Lexend Peta","Lexend Tera","Lexend Zetta",
+        "League Spartan","Lemonada","Lexend","Lexend Deca","Lexend Exa","Lexend Giga","Lexend Mega","Lexend Peta","Lexend Tera","Lexend Zetta",
         "Libre Franklin","Livvic","M PLUS 1","M PLUS 1p","M PLUS 2","M PLUS Code Latin","M PLUS Rounded 1c","Mada","Manrope","Marhey","Martel Sans",
         "Maven Pro","Merriweather Sans","Mitr","Mohave","Montserrat Alternates","Mukta","Mukta Mahee","Mukta Malar","Mukta Vaani","Mulish",
         "Murecho","MuseoModerno","Niramit","Nobile","Nokora","Noto Emoji","Noto Kufi Arabic","Noto Sans","Noto Sans Arabic","Noto Sans Armenian",
@@ -32,12 +32,19 @@ export class FontService {
         "REM","Radio Canada","Rajdhani","Raleway","Readex Pro","Recursive","Red Hat Display","Red Hat Text","Rethink Sans","Roboto","Roboto Condensed",
         "Roboto Flex","Rosario","Rubik","Ruda","Saira","Saira Condensed","Saira Extra Condensed","Saira Semi Condensed","Sansita","Sarabun","Sarpanch",
         "Schibsted Grotesk","Sen","Shantell Sans","Signika","Signika Negative","Smooch Sans","Sofia Sans","Sofia Sans Condensed",
-        "Sofia Sans Extra Condensed","Sofia Sans Semi Condensed","Sometype Mono","Sono","Sora","Source Sans 3","Space Grotesk","Spline Sans",
-        "Spline Sans Mono","Stick No Bills","Syne","Tajawal","Teko","Tektur","Titillium Web","Tomorrow","Tourney","Trispace","Truculenta",
-        "Tsukimi Rounded","Turret Road","Ubuntu","Unbounded","Urbanist","Varta","Vazirmatn","Victor Mono","Wix Madefor Display","Wix Madefor Text",
+        "Sofia Sans Extra Condensed","Sofia Sans Semi Condensed","Sono","Sora","Source Sans 3","Space Grotesk","Spline Sans",
+        "Stick No Bills","Syne","Tajawal","Teko","Tektur","Titillium Web","Tomorrow","Tourney","Trispace","Truculenta",
+        "Tsukimi Rounded","Turret Road","Ubuntu","Unbounded","Urbanist","Varta","Vazirmatn","Wix Madefor Display","Wix Madefor Text",
         "Work Sans","Yaldevi","Yanone Kaffeesatz","Yantramanav","Ysabeau","Ysabeau Infant","Ysabeau Office","Ysabeau SC","Zen Kaku Gothic Antique",
         "Zen Kaku Gothic New"
     ];
+
+    public readonly supportedTabularGoogleFonts = [
+        "Lato", "Anonymous Pro","Azeret Mono","B612 Mono","Chivo Mono","Courier Prime","Cousine","Cutive Mono",
+        "DM Mono","Fira Code","Fira Mono","Fragment Mono","IBM Plex Mono","Inconsolata","JetBrains Mono","Kode Mono","M PLUS 1 Code","Major Mono Display",
+        "Martian Mono","Monofett","Nova Mono","Overpass Mono","Oxygen Mono","PT Mono","Red Hat Mono","Reddit Mono","Roboto Mono","Share Tech Mono",
+        "Sixtyfour","Sometype Mono","Source Code Pro","Space Mono","Spline Sans Mono","Syne Mono","Ubuntu Mono","VT323","Victor Mono","Workbench",
+        "Xanh Mono"];
 
     public readonly supportedCustomFonts = [
         'Daytona'
@@ -46,6 +53,6 @@ export class FontService {
     constructor(@Inject(DOCUMENT) private document) {}
 
     getSupportedFontsList() {
-        return this.supportedCustomFonts.concat(this.supportedGoogleFonts);
+        return this.supportedCustomFonts.concat(this.supportedGoogleFonts, this.supportedTabularGoogleFonts);
     }    
 }

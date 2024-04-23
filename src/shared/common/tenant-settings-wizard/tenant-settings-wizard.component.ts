@@ -256,7 +256,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             }
         ];
 
-        if (this.data.tab) {
+        if (this.data && this.data.tab) {
             let selectedIndex = 0;
             this.steps.map((step, index) => {
                 if (step.visible) {                    

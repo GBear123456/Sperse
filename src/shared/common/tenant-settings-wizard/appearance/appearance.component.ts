@@ -112,7 +112,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                         buttonTextColor: this.settingService.get('App.Appearance.ButtonTextColor'),
                         buttonHighlightedColor: this.settingService.get('App.Appearance.ButtonHighlightedColor'),
                         fontName: this.settingService.get('App.Appearance.FontName'),
-                        borderRadius: this.settingService.get('App.Appearance.BorderRadius')
+                        borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
+                        tabularFont: undefined,
+                        leftsideMenuColor: undefined
                     })
                 ).pipe(tap(() => {
                     this.onOptionChanged.emit('navPosition');

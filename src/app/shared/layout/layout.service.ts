@@ -21,7 +21,9 @@ export class LayoutService {
     defaultButtonColor: string = AppConsts.defaultButtonColor;
     defaultButtonTextColor: string = AppConsts.defaultButtonTextColor;
     defaultButtonHighlightedColor: string = AppConsts.defaultButtonHighlightedColor;
+    defaultLeftSideMenuColor: string = AppConsts.defaultLeftSideMenuColor;
     defaultFontName: string = AppConsts.defaultFontName;
+    defaultTabularFontName: string = AppConsts.defaultTabularFontName;
     defaultBorderRadius: string = AppConsts.defaultBorderRadius;
 
     layoutColors = {

@@ -35,7 +35,7 @@
                                 </div>
                                 <div class="col-2 status-data-column">
                                     <div class="status-wrapper">
-                                        <div id="payment{{index}}" class="status status-{{payment.success ? 'success' : 'failed' }}">
+                                        <div id="payment{{index}}" class="status status-{{payment.success ? 'success' : 'failed' }} {{payment.statusString.toLowerCase()}}">
                                             {{ payment.statusString }} <i *ngIf="!payment.success && payment.messages" class="fa fa fa-info-circle"></i>
                                             <dx-tooltip *ngIf="!payment.success && payment.messages"
                                                         position="bottom"

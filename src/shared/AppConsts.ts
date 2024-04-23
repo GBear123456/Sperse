@@ -103,7 +103,7 @@ export class AppConsts {
         email: new RegExp(`^${AppConsts.emailRegexString}$`),
         emailWithName: new RegExp(`^((("[^"]+")|([a-zA-Z\\s]+))\\s*<(?=.+>$)|(?!.+>$))${AppConsts.emailRegexString}>?$`),
         phone: /^[\d\+\-\(\)\s]{10,24}$/,
-        url: /^(http[s]?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
+        url: /^([Hh][Tt][Tt][Pp][Ss]?:\/\/)?(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?$/,
         fullName: /^[^~\!\?\\/@#$%\^\&\*\(\)\<\>\:;\|]+(\(.+\))?$/,
         affiliateCode: /^(?!.*?\.\.)[a-zA-Z0-9\._-]*$/,
         affiliateRateZeroBase: /^0(\.[0-9]{1,4})?$/,
@@ -137,7 +137,9 @@ export class AppConsts {
     static readonly defaultButtonColor: string = '#00aeef';
     static readonly defaultButtonTextColor: string = '#ffffff';
     static readonly defaultButtonHighlightedColor: string = '#00aeef';
+    static readonly defaultLeftSideMenuColor: string = '#ffffff';
     static readonly defaultFontName: string = 'Montserrat';
+    static readonly defaultTabularFontName: string = 'Lato';
     static readonly defaultBorderRadius: string = '10';
 
     /* System Action IDs */

@@ -13,7 +13,7 @@ import { AbstractControlDirective } from '@angular/forms';
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
-import { filter, tap } from 'rxjs/operators';
+import { tap, filter, first, map } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 
 /** Application imports */
@@ -23,7 +23,8 @@ import {
     GeneralSettingsEditDto,
     SettingScopes,
     TenantLoginInfoDto,
-    TenantSettingsServiceProxy
+    TenantSettingsServiceProxy,
+    CountryDto
 } from '@shared/service-proxies/service-proxies';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
@@ -31,7 +32,8 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
-import { RootStore, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
+import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
+import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-item.interface';
 
 @Component({
     selector: 'general-settings',
@@ -68,13 +70,8 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
-    supportedCountries = Object.keys(Country).map(item => {
-        return {
-            key: Country[item],
-            text: this.ls.l(item)
-        };
-    });
 
+    supportedCountries;
     currencies$: Observable<any[]> = this.store$.pipe(
         select(CurrenciesCrmStoreSelectors.getCurrencies),
         filter(x => x != null),
@@ -95,7 +92,23 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {
+        this.initCountries();
         this.store$.dispatch(new CurrenciesCrmStoreActions.LoadRequestAction());
+    }
+
+    private initCountries() {
+        this.store$.pipe(
+            select(CountriesStoreSelectors.getCountries),
+            filter(Boolean),
+            first(),
+            map((countries: CountryDto[]) => this.getSelectListFromObject(countries))
+        ).subscribe((countries: SelectListItem[]) => {
+            this.supportedCountries = countries;
+        });
+    }
+
+    getSelectListFromObject(collection): SelectListItem[] {
+        return (collection || []).map(item => ({ key: item.code, text: this.ls.l(item.name) }));
     }
 
     onCountryChanged(event) {
@@ -107,6 +120,15 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
 
     onPhoneNumberChange(phone, elm) {
         this.settings.publicPhone = phone == elm.getCountryCode() ? undefined : phone;
+    }
+
+    onUrlPaste(event) {
+        setTimeout(() => {
+            this.settings.publicSiteUrl = 
+            event.target.value = event.target.value.trim();
+            this.changeDetectorRef.detectChanges();
+            event.target.blur();
+        }, 100);
     }
 
     save(): Observable<any> {

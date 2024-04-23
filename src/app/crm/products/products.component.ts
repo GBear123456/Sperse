@@ -27,6 +27,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
+import { ShareDialogComponent } from '@app/shared/common/dialogs/share/share-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ProductServiceProxy, ProductType, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
@@ -66,10 +67,36 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     actionEvent: any;
     actionMenuGroups: ActionMenuItem[] = [
         {
+            text: this.l('Add Bookmark'),
+            class: 'bookmark',
+            disabled: true,
+            action: () => {}
+        },
+        {
+            text: this.l('View'),
+            class: 'preview',
+            action: () => {
+                window.open(this.getProductPublicLink(this.actionEvent));
+            }
+        },
+        {
+            text: this.l('Test'),
+            class: 'status',
+            disabled: true,
+            action: () => {}
+        },
+        {
             text: this.l('Edit'),
             class: 'edit',
             action: () => {
                 this.editProduct(this.actionEvent.Id);
+            }
+        },
+        {
+            text: this.l('Duplicate'),
+            class: 'copy',
+            action: () => {
+                this.editProduct(this.actionEvent.Id, true);                
             }
         },
         {
@@ -180,21 +207,43 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+
     invalidate() {
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
         this.processFilterInternal();
     }
 
-    editProduct(id: number) {
+    editProduct(id: number, duplicate = false) {
         this.startLoading();
         this.productProxy.getProductInfo(id).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(product => {
-            this.showProductDialog({
-                id: id,
-                ...product
-            });
+            if (duplicate) {
+                product.id = undefined;
+                product.name += ' (2)';
+                product.code += ' (2)';
+                if (product.publicName)
+                    product.publicName += '2';
+                product.stripeXref = undefined;
+                product.paypalXref = undefined;
+                if (product.productSubscriptionOptions)
+                    product.productSubscriptionOptions =
+                        product.productSubscriptionOptions.map(sub => {
+                            sub.stripeXref = undefined;
+                            sub.paypalXref = undefined;
+                            return sub;
+                        });
+                product.imageUrl = undefined;
+                if (product.productResources)
+                    product.productResources = 
+                        product.productResources.filter(res => {
+                            res.id = undefined;
+                            return !res.fileId;
+                        });
+            }
+
+            this.showProductDialog(product);
         });
     }
 
@@ -237,6 +286,19 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         }).afterClosed().subscribe(
             () => this.invalidate()
         );
+    }
+
+    showShareDialog(event, product) {
+        const dialogData = {
+            title: this.l('Product share link options'),
+            linkUrl: this.getProductPublicLink(product)
+        };
+        this.dialog.open(ShareDialogComponent, {
+            panelClass: '',
+            disableClose: false,
+            closeOnNavigation: true,
+            data: dialogData
+        });
     }
 
     navigateToCoupons(event) {
