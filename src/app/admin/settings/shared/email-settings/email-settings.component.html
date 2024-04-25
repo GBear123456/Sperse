@@ -31,6 +31,16 @@
     </div>
     <div [hidden]="!showCustomSmptSettings">
         <div class="form-group">
+            <label for="provider">{{l("Provider")}}</label>
+            <dx-select-box
+                [showClearButton]="true"
+                [dataSource]="supportedProviders"
+                displayExpr="name"
+                [(value)]="selectedProvider"
+                (onValueChanged)="onProviderChanged()">
+            </dx-select-box>
+        </div>
+        <div class="form-group">
             <label for="SmtpHost">{{l("SmtpHost")}}</label>
             <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':emailSettings.smtpHost}"
                    [(ngModel)]="emailSettings.smtpHost"

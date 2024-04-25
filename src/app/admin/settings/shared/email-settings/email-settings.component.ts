@@ -26,6 +26,8 @@ export class EmailSettingsComponent extends SettingsComponentBase {
     testEmailAddress: string = undefined;
     smtpProviderErrorLink: string;
     showCustomSmptSettings = true;
+    supportedProviders = [{name: 'Gmail', host: 'smtp.gmail.com', port: '465', ssl: true, domain: 'gmail.com', imap: {host: 'imap.gmail.com', port: 993, ssl: true}}];
+    selectedProvider: any;
 
     constructor(
         _injector: Injector,
@@ -46,8 +48,38 @@ export class EmailSettingsComponent extends SettingsComponentBase {
             .subscribe(res => {
                 this.emailSettings = res;
                 this.showCustomSmptSettings = this.isHost || !!this.emailSettings.smtpHost;
+
+                if (this.emailSettings.smtpHost) {
+                    this.selectedProvider = this.supportedProviders.find(item => item.host == this.emailSettings.smtpHost);
+                } else {
+                    let provider = this.supportedProviders[0];
+                }
+
                 this.changeDetection.detectChanges();
             });
+    }
+
+    onProviderChanged() {
+        if (this.selectedProvider) {
+            this.emailSettings.smtpHost = this.selectedProvider.host;
+            this.emailSettings.smtpPort = this.selectedProvider.port;
+            this.emailSettings.smtpEnableSsl = this.selectedProvider.ssl;
+            this.emailSettings.smtpDomain = this.selectedProvider.domain;
+            this.emailSettings.imapHost = this.selectedProvider.imap.host;
+            this.emailSettings.imapPort = this.selectedProvider.imap.port;
+            this.emailSettings.imapUseSsl = this.selectedProvider.imap.ssl;
+
+        } else {
+            this.emailSettings.smtpHost = undefined;
+            this.emailSettings.smtpPort = undefined;
+            this.emailSettings.smtpEnableSsl = false;
+            this.emailSettings.smtpDomain = undefined;
+            this.emailSettings.imapHost = undefined;
+            this.emailSettings.imapPort = undefined;
+            this.emailSettings.imapUseSsl = undefined;
+        }
+
+        this.changeDetection.detectChanges();
     }
 
     sendTestEmail(): void {
@@ -65,6 +97,12 @@ export class EmailSettingsComponent extends SettingsComponentBase {
     }
 
     getSaveObs(): Observable<any> {
+        if (!this.emailSettings.isImapEnabled) {
+            this.emailSettings.imapHost = undefined;
+            this.emailSettings.imapPort = undefined;
+            this.emailSettings.imapUseSsl = undefined;
+        }
+
         return this.tenantSettingsService.updateEmailSettings(this.emailSettings).pipe(
             catchError(error => {
                 this.checkHandlerErrorWarning(true);
