@@ -1,7 +1,7 @@
 <h2>{{l('Email')}} {{l('Settings')}}</h2>
 <div *ngIf="emailSettings">
     <div class="smtp-error-block" *ngIf="smtpProviderErrorLink">
-        <a [href]="smtpProviderErrorLink" target="blank">{{l("CheckProviderRecommendation")}}</a>
+        Please follow <a target="blank" [href]="smtpProviderErrorLink">this link</a> to check SMTP provider recommendations to solve the issue or <a target="blank" href="https://support.google.com/mail/answer/185833?hl=en&sjid=11778352184322423563-EU">use App Password</a>.
     </div>
     <div class="form-group">
         <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>

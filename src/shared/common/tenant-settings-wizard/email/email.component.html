@@ -1,7 +1,7 @@
 <h2>{{ ls.l('EmailSmtp') }}</h2>
 <ng-container *ngIf="settings">
     <div class="smtp-error-block" *ngIf="smtpProviderErrorLink">
-        <a [href]="smtpProviderErrorLink" target="blank">{{ls.l("CheckProviderRecommendation")}}</a>
+        Please follow <a target="blank" [href]="smtpProviderErrorLink">this link</a> to check SMTP provider recommendations to solve the issue or <a target="blank" href="https://support.google.com/mail/answer/185833?hl=en&sjid=11778352184322423563-EU">use App Password</a>.
     </div>
     <dx-scroll-view [height]="smtpProviderErrorLink ? '360px' : '469px'">
         <h5>{{ ls.l('ServerSettings') }}</h5>
