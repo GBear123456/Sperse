@@ -333,7 +333,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             )
         )
             return this.tenantPaymentSettingsService.getStripeSettings(false).pipe(map(res => {
-                isConnected = (res.apiKey || res.connectedAccountId ? 'true' : '');
+                isConnected = (res.apiKey || res.isConnectedAccountSetUpCompleted ? 'true' : '');
                 sessionStorage.setItem(storageKey, isConnected);
                 return !!isConnected;
             }));
