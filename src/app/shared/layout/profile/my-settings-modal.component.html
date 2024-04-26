@@ -75,6 +75,18 @@
                                        [(ngModel)]="userEmailSettings.from.displayName" maxlength="128">
                             </div>
                             <div class="form-group">
+                                <label for="provider">{{ls.l("Provider")}}</label>
+                                <dx-select-box
+                                    width="100%"
+                                    height="47px"
+                                    [showClearButton]="true"
+                                    [dataSource]="supportedProviders"
+                                    displayExpr="name"
+                                    [(value)]="selectedProvider"
+                                    (onValueChanged)="onProviderChanged()">
+                                </dx-select-box>
+                            </div>
+                            <div class="form-group">
                                 <label for="SmtpHost">{{ls.l("SmtpHost")}}</label>
                                 <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':userEmailSettings.smtp.host}"
                                        [(ngModel)]="userEmailSettings.smtp.host"

@@ -114,6 +114,9 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     gmailSettings: GmailSettingsDto = new GmailSettingsDto();
     signatureHtml: string;
 
+    supportedProviders = [{name: 'Gmail', host: 'smtp.gmail.com', port: '465', ssl: true, domain: 'gmail.com', imap: {host: 'imap.gmail.com', port: 993, ssl: true}}];
+    selectedProvider: any;
+
     constructor(
         private dialog: MatDialog,
         private profileService: ProfileServiceProxy,
@@ -144,6 +147,10 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.modalDialog.startLoading();
         this.profileService.getEmailSettings().subscribe((settings: UserEmailSettings) => {
             this.userEmailSettings = settings;
+
+            if (settings && settings.smtp.host)
+                this.selectedProvider = this.supportedProviders.find(item => item.host == settings.smtp.host);
+
             if (!this.userEmailSettings.isUserSmtpEnabled) {
                 if (!this.userEmailSettings.from || !this.userEmailSettings.from.emailAddress || this.userEmailSettings.from.emailAddress.length == 0) {
                     this.userEmailSettings.from = new EmailFromSettings({
@@ -191,6 +198,29 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.testEmailAddress = this.appSessionService.user.emailAddress;
     }
 
+    onProviderChanged() {
+        if (this.selectedProvider) {
+            this.userEmailSettings.smtp.host = this.selectedProvider.host;
+            this.userEmailSettings.smtp.port = this.selectedProvider.port;
+            this.userEmailSettings.smtp.enableSsl = this.selectedProvider.ssl;
+            this.userEmailSettings.smtp.domain = this.selectedProvider.domain;
+            this.userEmailSettings.imapHost = this.selectedProvider.imap.host;
+            this.userEmailSettings.imapPort = this.selectedProvider.imap.port;
+            this.userEmailSettings.imapUseSsl = this.selectedProvider.imap.ssl;
+
+        } else {
+            this.userEmailSettings.smtp.host = undefined;
+            this.userEmailSettings.smtp.port = undefined;
+            this.userEmailSettings.smtp.enableSsl = undefined;
+            this.userEmailSettings.smtp.domain = undefined;
+            this.userEmailSettings.imapHost = undefined;
+            this.userEmailSettings.imapPort = undefined;
+            this.userEmailSettings.imapUseSsl = undefined;
+        }
+
+        this.changeDetectorRef.detectChanges();
+    }
+
     updateQrCodeSetupImageUrl(): void {
         //this.profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
         //    this.user.qrCodeSetupImageUrl = result.qrCodeSetupImageUrl;
@@ -222,6 +252,12 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.modalDialog.startLoading();
         let saveObs: Observable<void>;
         if (this.currentTab == this.ls.l('SMTP')) {
+            if (!this.userEmailSettings.isImapEnabled) {
+                this.userEmailSettings.imapHost = undefined;
+                this.userEmailSettings.imapPort = undefined;
+                this.userEmailSettings.imapUseSsl = undefined;
+            }
+
             saveObs = this.profileService.updateEmailSettings(this.userEmailSettings).pipe(tap(() => {
                 sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
             }));
