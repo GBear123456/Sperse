@@ -114,7 +114,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     gmailSettings: GmailSettingsDto = new GmailSettingsDto();
     signatureHtml: string;
 
-    supportedProviders = [{name: 'Gmail', host: 'smtp.gmail.com', port: '465', ssl: true, domain: 'gmail.com', imap: {host: 'imap.gmail.com', port: 993, ssl: true}}];
+    supportedProviders = this.emailSmtpSettingsService.supportedProviders;
     selectedProvider: any;
 
     constructor(

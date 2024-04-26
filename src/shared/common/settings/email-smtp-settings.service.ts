@@ -20,6 +20,71 @@ export class EmailSmtpSettingsService {
         'office': 'https://aka.ms/smtp_auth_disabled'
     };
 
+    public supportedProviders = [{
+        name: 'Gmail', 
+        host: 'smtp.gmail.com', 
+        port: '465', 
+        ssl: true, 
+        domain: 'gmail.com', 
+        imap: {host: 'imap.gmail.com', port: 993, ssl: true}
+    }, {
+        name: 'HotMail (OutLook)', 
+        host: 'smtp-mail.outlook.com', 
+        port: '587', 
+        ssl: true, 
+        domain: 'outlook.com', 
+        imap: {host: 'outlook.office365.com', port: 993, ssl: true}
+    }, {
+        name: 'Yahoo', 
+        host: 'smtp.mail.yahoo.com', 
+        port: '465', 
+        ssl: true, 
+        domain: 'yahoo.com', 
+        imap: {host: 'imap.mail.yahoo.com', port: 993, ssl: true}
+    }, {
+        name: 'Migadu', 
+        host: 'smtp.migadu.com', 
+        port: '465', 
+        ssl: true, 
+        domain: 'migadu.com', 
+        imap: {host: 'imap.migadu.com', port: 993, ssl: true}
+    }, {
+        name: 'Mandrill', 
+        host: 'smtp.mandrillapp.com', 
+        port: '465', 
+        ssl: true, 
+        domain: 'mandrillapp.com', 
+        imap: {host: undefined, port: undefined, ssl: false}
+    }, {
+        name: 'Mailtrap', 
+        host: 'smtp.mailtrap.io', 
+        port: '465', 
+        ssl: true, 
+        domain: 'mailtrap.io', 
+        imap: {host: 'imap.mailtrap.io', port: 993, ssl: true}
+    }, {
+        name: 'AOL', 
+        host: 'smtp.aol.com', 
+        port: '465', 
+        ssl: true, 
+        domain: 'aol.com', 
+        imap: {host: 'imap.aol.com', port: 993, ssl: true}
+    }, {
+        name: 'ProtonMail', 
+        host: 'smtp.protonmail.com', 
+        port: '465', 
+        ssl: true, 
+        domain: 'protonmail.com', 
+        imap: {host: 'imap.protonmail.com', port: 993, ssl: true}
+    }, {
+        name: 'Zoho', 
+        host: 'smtp.protonmail.com', 
+        port: '465', 
+        ssl: true, 
+        domain: 'zoho.com', 
+        imap: {host: 'imap.zoho.com', port: 993, ssl: true}
+    }];
+
     constructor(injector: Injector) {
         this.emailSmtpSettingsService = injector.get(EmailSettingsTestServiceProxy);
         this.notify = injector.get(NotifyService);

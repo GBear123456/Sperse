@@ -24,7 +24,7 @@ import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-set
 export class EmailComponent implements ITenantSettingsStepComponent, AfterViewInit {
     @Input() settings: EmailSettingsEditDto;
 
-    supportedProviders = [{name: 'Gmail', host: 'smtp.gmail.com', port: '465', ssl: true, domain: 'gmail.com', imap: {host: 'imap.gmail.com', port: 993, ssl: true}}];
+    supportedProviders = this.emailSmtpSettingsService.supportedProviders;
     selectedProvider: any;
 
     smtpProviderErrorLink: string;

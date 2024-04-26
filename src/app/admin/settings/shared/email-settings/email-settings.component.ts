@@ -26,7 +26,7 @@ export class EmailSettingsComponent extends SettingsComponentBase {
     testEmailAddress: string = undefined;
     smtpProviderErrorLink: string;
     showCustomSmptSettings = true;
-    supportedProviders = [{name: 'Gmail', host: 'smtp.gmail.com', port: '465', ssl: true, domain: 'gmail.com', imap: {host: 'imap.gmail.com', port: 993, ssl: true}}];
+    supportedProviders = this.emailSmtpSettingsService.supportedProviders;
     selectedProvider: any;
 
     constructor(
