@@ -78,7 +78,7 @@ export class EmailSmtpSettingsService {
         imap: {host: 'imap.protonmail.com', port: 993, ssl: true}
     }, {
         name: 'Zoho', 
-        host: 'smtp.protonmail.com', 
+        host: 'smtp.zoho.eu', 
         port: '465', 
         ssl: true, 
         domain: 'zoho.com', 
