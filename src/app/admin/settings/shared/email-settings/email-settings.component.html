@@ -20,6 +20,7 @@
         <input id="DefaultReplyTo" type="text" name="DefaultReplyTo"
                class="form-control" [ngClass]="{'edited':emailSettings.defaultReplyTo}"
                [(ngModel)]="emailSettings.defaultReplyTo" maxlength="100" [attr.disabled]="showCustomSmptSettings ? '' : null">
+        <span class="info">* "Default Reply-To" email is not used when SMTP settings are configured</span>
     </div>
     <div *ngIf="!isHost">
         <dx-check-box id="ShowCustomSmtp"
