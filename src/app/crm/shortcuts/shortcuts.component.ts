@@ -51,7 +51,7 @@ import { AppFeatures } from '@shared/AppFeatures';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ShortcutsComponent implements OnInit {
-    @ViewChild(DxScrollViewComponent) scrollView: DxScrollViewComponent;
+    @ViewChild('shortcutsScroll') scrollView: DxScrollViewComponent;
 
     private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();

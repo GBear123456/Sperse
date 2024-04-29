@@ -176,11 +176,16 @@
             }
 
             ::ng-deep recent-clients {
+                height: 100%;
+                .wrapper {
+                    height: inherit;
+                }
                 header {
                     position: absolute;
                     top: -70px;
                 }
                 dx-select-box {
+                    min-width: 230px;
                     background: transparent;
                     input {
                         font-family: Manrope;
@@ -190,6 +195,31 @@
                         letter-spacing: -0.02em;
                         text-align: left;
                         color: #08295b;
+                    }
+                }
+                ::ng-deep dx-data-grid {
+                    &#gridContainer .dx-datagrid-headers .dx-column-lines td,
+                    &#gridContainer .dx-datagrid-headers .dx-datagrid-table td {
+                        height: 48px !important;
+                        padding-bottom: 16px;    
+                        border-bottom: 1px solid #ddd!important;
+                        &:first-child {
+                            padding-left: 40px !important;
+                        }
+                    }
+                    &#gridContainer .dx-datagrid-rowsview .dx-column-lines td,
+                    &#gridContainer .dx-datagrid-rowsview .dx-datagrid-table td {
+                        height: 58px !important;
+                        border-bottom: 1px solid #ddd!important;
+                        &:first-child {
+                            padding-left: 40px !important;
+                        }
+                    }
+                    &#gridContainer .dx-datagrid-rowsview .dx-datagrid-table tr:last-child td {
+                        border-bottom: 1px solid transparent!important;
+                    }
+                    .dx-datagrid-rowsview .dx-data-row:nth-child(odd) {
+                        background-color: transparent;
                     }
                 }
             }
@@ -236,8 +266,8 @@
             border-radius: 14px;
             margin-top: 20px;
             overflow: hidden;
-            height: 100%;
-            min-height: 250px;
+            height: 90%;
+            min-height: 350px;
         }
     }
 }

@@ -7,7 +7,7 @@
             <button (click)="router.navigate(['app/crm/dashboard'])" class="btn-layout"><img src="./assets/common/icons/keyboard-open.svg">{{ls.l('My Dashboard')}}</button>
         </div>
     </div>
-    <dx-scroll-view showScrollbar="onHover" [direction]="'horizontal'" width="100%">
+    <dx-scroll-view #shortcutsScroll showScrollbar="onHover" [direction]="'horizontal'" width="100%">
         <div class="blocks">
             <div class="block" [hidden]="!isPaymentsEnabled">
                 <div class="image">
