@@ -34,7 +34,8 @@ import { MessageService } from 'abp-ng2-module';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { GmailSettingsService } from '@shared/common/settings/gmail-settings.service';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
@@ -114,8 +115,10 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     gmailSettings: GmailSettingsDto = new GmailSettingsDto();
     signatureHtml: string;
 
+    smtpProviderErrorLink: string;
     supportedProviders = this.emailSmtpSettingsService.supportedProviders;
     selectedProvider: any;
+
 
     constructor(
         private dialog: MatDialog,
@@ -282,7 +285,11 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
 
         saveObs
             .pipe(
-                finalize(() => this.modalDialog.finishLoading())
+                finalize(() => this.modalDialog.finishLoading()),
+                catchError(error => {
+                    this.checkHandlerErrorWarning(true);
+                    return throwError(error);
+                })
             )
             .subscribe(() => {
                 this.appSessionService.user.name = this.user.name;
@@ -309,9 +316,18 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         input.emailAddress = this.testEmailAddress;
         input.from = this.userEmailSettings.from;
         input.smtp = this.userEmailSettings.smtp;
+        this.smtpProviderErrorLink = undefined;
         this.emailSmtpSettingsService.sendTestEmail(input,
-            this.modalDialog.finishLoading.bind(this.modalDialog)
+            this.modalDialog.finishLoading.bind(this.modalDialog),
+            () => this.checkHandlerErrorWarning()
         );
+    }
+
+    checkHandlerErrorWarning(forced = false) {
+        this.smtpProviderErrorLink = (forced || this.testEmailAddress) &&
+            this.emailSmtpSettingsService.getSmtpErrorHelpLink(this.userEmailSettings.smtp.host);
+        if (this.smtpProviderErrorLink)
+            this.changeDetectorRef.detectChanges();
     }
 
     isUserSettingsChanged(): boolean {
