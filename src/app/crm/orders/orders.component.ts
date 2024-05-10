@@ -275,11 +275,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'xref',
             hidden: this.appSession.hideUserSourceFilters,
             filterMethod: this.filtersService.filterByMultiline,
-            field: this.orderFields.ContactXref,
+            field: this.orderFields.ContactXrefs,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
-                    name: 'xref'
+                    name: 'xref',
+                    manyToMany: true
                 })
             }
         }),
@@ -287,11 +288,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'affiliateCode',
             filterMethod: this.filtersService.filterByMultiline,
-            field: this.orderFields.PersonalAffiliateCode,
+            field: this.orderFields.PersonalAffiliateCodes,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
-                    name: 'AffiliateCode'
+                    name: 'AffiliateCode',
+                    manyToMany: true
                 })
             }
         }),
@@ -387,11 +389,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'xref',
             hidden: this.appSession.hideUserSourceFilters,
             filterMethod: this.filtersService.filterByMultiline,
-            field: this.subscriptionFields.ContactXref,
+            field: this.subscriptionFields.ContactXrefs,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
-                    name: 'xref'
+                    name: 'xref',
+                    manyToMany: true
                 })
             }
         }),
@@ -399,11 +402,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'affiliateCode',
             filterMethod: this.filtersService.filterByMultiline,
-            field: this.subscriptionFields.PersonalAffiliateCode,
+            field: this.subscriptionFields.PersonalAffiliateCodes,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
-                    name: 'AffiliateCode'
+                    name: 'AffiliateCode',
+                    manyToMany: true
                 })
             }
         }),

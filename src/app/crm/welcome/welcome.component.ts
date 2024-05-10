@@ -55,10 +55,10 @@ export class WelcomeComponent implements OnInit {
 
     calendlyUri = AppConsts.calendlyUri;
     stripePaymentSettings: StripeSettingsDto = new StripeSettingsDto();
-    isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
     hasTenantPermission = this.permission.isGranted(AppPermissions.AdministrationTenantSettings);
     hasTenantOrCRMSettings = this.hasTenantPermission || 
         this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
+    isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments) && this.hasTenantOrCRMSettings;
     showLandingPageSettings = !this.appService.isHostTenant && 
         this.feature.isEnabled(AppFeatures.CRMTenantLandingPage) && 
         this.permission.isGranted(AppPermissions.AdministrationUsers);
@@ -70,12 +70,15 @@ export class WelcomeComponent implements OnInit {
             && this.permission.isGranted(AppPermissions.AdministrationUsersCreate)
             && this.permission.isGranted(AppPermissions.AdministrationRoles);
     showSubscriptionManagement = this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement); 
+    showCommissions = this.feature.isEnabled(AppFeatures.CRMCommissions) &&
+        this.permission.isGranted(AppPermissions.CRMAffiliatesCommissions);
     showCommissionsSettings = this.feature.isEnabled(AppFeatures.CRMCommissions) &&
         (this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasTenantPermission);
-    isProductsGranted = this.permission.isGranted(AppPermissions.CRMProducts);
-    isPaymentsGranted = this.feature.isEnabled(AppFeatures.CRMPayments);
-    isCustomersGranted = this.permission.isGranted(AppPermissions.CRMCustomers);    
 
+    isGrantedCRMCustomers = this.permission.isGranted(AppPermissions.CRMCustomers);
+    isGrantedCRMFileStorage = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);
+    isGrantedCRMProductsManage = this.permission.isGranted(AppPermissions.CRMProductsManage);
+    isGrantedCRMProducts = this.permission.isGranted(AppPermissions.CRMProducts);
     hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();    
     showZapier = location.href.includes(AppConsts.defaultDomain) &&
         this.permission.isGranted(AppPermissions.CRM);
@@ -145,13 +148,14 @@ export class WelcomeComponent implements OnInit {
     }
 
     openProfileTenantSettingsDialog(selectedTab: string) {
-        this.dialog.open(TenantSettingsWizardComponent, {
-            width: '960px',
-            height: '700px',
-            id: 'tenant-settings',
-            panelClass: ['tenant-settings'],
-            data: {tab: selectedTab}
-        });
+        if (this.hasTenantOrCRMSettings)
+            this.dialog.open(TenantSettingsWizardComponent, {
+                width: '960px',
+                height: '700px',
+                id: 'tenant-settings',
+                panelClass: ['tenant-settings'],
+                data: {tab: selectedTab}
+            });
     }
 
     subscribeToRefreshParam() {
@@ -187,7 +191,7 @@ export class WelcomeComponent implements OnInit {
         const dialogData = {
             fullHeigth: true,
             product: undefined,
-            isReadOnly: !this.permission.isGranted(AppPermissions.CRMProductsManage)
+            isReadOnly: !this.isGrantedCRMProductsManage
         };
         this.dialog.open(CreateProductDialogComponent, {
             panelClass: 'slider',
@@ -204,7 +208,7 @@ export class WelcomeComponent implements OnInit {
         const dialogData = {
             fullHeigth: true,
             coupon: undefined,
-            isReadOnly: false
+            isReadOnly: !this.isGrantedCRMProductsManage
         };
         this.dialog.open(AddCouponDialogComponent, {
             panelClass: 'slider',
@@ -235,7 +239,7 @@ export class WelcomeComponent implements OnInit {
     loadSettings() {
         if (this.isPaymentsEnabled) {
             this.loadingService.startLoading();
-            this.tenantPaymentSettingsService.getStripeSettings()
+            this.tenantPaymentSettingsService.getStripeSettings(false)
                 .pipe(
                     finalize(() => this.loadingService.finishLoading())
                 )

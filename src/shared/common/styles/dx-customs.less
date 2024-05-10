@@ -334,7 +334,7 @@ dx-data-grid.main-component-view, dx-file-manager {
 
     .dx-datagrid-content tr td.tabular {
         &, & *:not(.fa):not(.dx-icon):not(.dx-dropdowneditor-icon) {
-            font-family: 'Lato' !important;
+            font-family: var(--app-tabular-font-family) !important;
         }
     }
 
@@ -766,4 +766,13 @@ dx-data-grid.main-component-view, dx-file-manager {
 dx-check-box {
     display: block!important;
     width: max-content;
+}
+
+.dx-colorview-controls-container {
+    width: 100px!important;
+    margin-left: 10px!important;
+}
+
+.dx-colorview-container label .dx-texteditor {
+    width: 80px!important;
 }

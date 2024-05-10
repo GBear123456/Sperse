@@ -212,7 +212,7 @@ export class InvoiceAddressDialog {
         this.data.city = address.city;
         this.data.zip = address.zip;
         this.data.address1 = address.streetAddress;
-        this.address = [address.streetAddress];
+        this.address = address.streetAddress;
         setTimeout(() => this.checkCountryByName());
         component.instance.hide();
     }

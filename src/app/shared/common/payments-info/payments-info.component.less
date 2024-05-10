@@ -123,7 +123,7 @@
 
                             .status-wrapper {
                                 .status {
-                                    width: 110px;
+                                    width: auto;
                                     height: 26px;
                                     background: #f3f7fa;
                                     padding: 2px 15px;
@@ -136,6 +136,7 @@
                                     letter-spacing: 0.88px;
                                     text-transform: uppercase;
                                     color: #40596b;
+                                    white-space: nowrap;
 
                                     &:before {
                                         content: "\A";
@@ -145,6 +146,10 @@
                                         display: inline-block;
                                         margin-right: 5px;
                                         background: #1fb430;
+                                    }
+                                    
+                                    &.authorized:before {
+                                        background: #ffa025;
                                     }
 
                                     &.status-failed:before {

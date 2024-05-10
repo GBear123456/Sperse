@@ -56,7 +56,10 @@ export class MergeContactDialogComponent implements AfterViewInit {
     public readonly CONTACT_PHONES_FIELD      = 'contactPhones';
     public readonly CONTACT_EMAILS_FIELD      = 'contactEmails';
     public readonly CONTACT_ADDRESSES_FIELD   = 'contactAddresses';
+    public readonly CONTACT_XREFS_FIELD       = 'xrefs';
+    public readonly CONTACT_AFFILIATECODES_FIELD = 'contactAffiliateCodes';
     public readonly CONTACT_BANK_CODE         = 'bankCode';
+    public readonly CONTACT_STRIPECUSTOMERID  = 'stripeCustomerId';
     public readonly LEAD_STAGE_FIELD          = 'stage';
     public readonly LEAD_OWNER_FIELD          = 'sourceOrganizationUnitName';
     public readonly LEAD_REQUEST_DATE_FIELD   = 'leadDate';
@@ -119,6 +122,23 @@ export class MergeContactDialogComponent implements AfterViewInit {
             caption: this.ls.l('Orders'),
             hidden: this.isSameContact,
             disabled: true
+        },
+        [this.CONTACT_AFFILIATECODES_FIELD]: {
+            caption: this.ls.l('AffiliateCode'),
+            alt: this.ls.l('Alternative', ''),
+            fieldText: 'affiliateCode',
+            hidden: this.isSameContact
+        },
+        [this.CONTACT_XREFS_FIELD]: {
+            caption: this.ls.l('Xrefs'),
+            alt: this.ls.l('Alternative', this.ls.l('Xrefs')),
+            getId: x => x,
+            getText: x => x,
+            hidden: this.isSameContact
+        },
+        [this.CONTACT_STRIPECUSTOMERID]: {
+            caption: this.ls.l('StripeCustomerID'),
+            hidden: this.isSameContact
         },
         [this.MERGE_OPTIONS_FIELD]: {
             name: this.MERGE_OPTIONS_FIELD,
@@ -275,13 +295,14 @@ export class MergeContactDialogComponent implements AfterViewInit {
         if (data) {
             if (data instanceof Array)
                 return data.sort((prev) => prev.isPrimary ? -1 : 1).map(item => {
-                    let method = this.fieldsConfig[field].getText;
+                    let getIdMethod = this.fieldsConfig[field].getId;
+                    let getTextMethod = this.fieldsConfig[field].getText;
                     return {
-                        id: item.id,
+                        id: getIdMethod ? getIdMethod(item) : item.id,
                         selected: false,
                         isPrimary: item.isPrimary,
                         usageTypeId: item.usageTypeId,
-                        text: method ? method(item) :
+                        text: getTextMethod ? getTextMethod(item) :
                             item[this.fieldsConfig[field].fieldText]
                     };
                 });
@@ -501,6 +522,14 @@ export class MergeContactDialogComponent implements AfterViewInit {
         return this.getFieldIdsToIgnore(this.CONTACT_ADDRESSES_FIELD, this.COLUMN_SOURCE_FIELD);
     }
 
+    getXrefsToIgnore() {
+        return this.getFieldIdsToIgnore(this.CONTACT_XREFS_FIELD, this.COLUMN_SOURCE_FIELD);
+    }
+
+    getAffiliateCodeIdsToIgnore() {
+        return this.getFieldIdsToIgnore(this.CONTACT_AFFILIATECODES_FIELD, this.COLUMN_SOURCE_FIELD);
+    }
+
     getEmailIdsToRemove() {
         return this.getFieldIdsToIgnore(this.CONTACT_EMAILS_FIELD, this.COLUMN_TARGET_FIELD);
     }
@@ -511,6 +540,14 @@ export class MergeContactDialogComponent implements AfterViewInit {
 
     getAddressIdsToRemove() {
         return this.getFieldIdsToIgnore(this.CONTACT_ADDRESSES_FIELD, this.COLUMN_TARGET_FIELD);
+    }
+
+    getXrefsToRemove() {
+        return this.getFieldIdsToIgnore(this.CONTACT_XREFS_FIELD, this.COLUMN_TARGET_FIELD);
+    }
+
+    getAffiliateCodeIdsToRemove() {
+        return this.getFieldIdsToIgnore(this.CONTACT_AFFILIATECODES_FIELD, this.COLUMN_TARGET_FIELD);
     }
 
     getPrimaryFieldId(field) {
@@ -530,6 +567,10 @@ export class MergeContactDialogComponent implements AfterViewInit {
         return this.getPrimaryFieldId(this.CONTACT_ADDRESSES_FIELD);
     }
 
+    getPrimaryAffiliateCodeId() {
+        return this.getPrimaryFieldId(this.CONTACT_AFFILIATECODES_FIELD);
+    }
+
     isFieldSelected(field, source, index = 0) {
         let data = this.fieldsConfig[field][source];
         return data && data.values[index]
@@ -539,7 +580,8 @@ export class MergeContactDialogComponent implements AfterViewInit {
     getPreferredProperties() {
         return (this.isFieldSelected(this.CONTACT_FULL_NAME_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.FullName : 0)
             | (this.isFieldSelected(this.CONTACT_DATE_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.ContactDate : 0)
-            | (this.isFieldSelected(this.CONTACT_BANK_CODE, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.BANKCode : 0);
+            | (this.isFieldSelected(this.CONTACT_BANK_CODE, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.BANKCode : 0)
+            | (this.isFieldSelected(this.CONTACT_STRIPECUSTOMERID, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.StripeCustomerId : 0);
     }
 
     getMergeContactInput() {
@@ -550,19 +592,24 @@ export class MergeContactDialogComponent implements AfterViewInit {
                 emailIdsToIgnore: this.getEmailIdsToIgnore(),
                 phoneIdsToIgnore: this.getPhoneIdsToIgnore(),
                 addressIdsToIgnore: this.getAddressIdsToIgnore(),
-                preferredProperties: this.getPreferredProperties()
+                xrefsToIgnore: this.getXrefsToIgnore(),
+                affiliateCodeIdsToIgnore: this.getAffiliateCodeIdsToIgnore(),
+                preferredProperties: this.getPreferredProperties(),
             }),
             targetContactId: this.mergeInfo.targetContactInfo.id,
             targetContactLeadId: this.mergeInfo.targetContactLeadInfo.id,
             targetContactMergeOptions: new TargetContactMergeOptions({
                 emailIdsToRemove: this.getEmailIdsToRemove(),
                 phoneIdsToRemove: this.getPhoneIdsToRemove(),
-                addressIdsToRemove: this.getAddressIdsToRemove()
+                addressIdsToRemove: this.getAddressIdsToRemove(),
+                xrefsToIgnore: this.getXrefsToRemove(),
+                affiliateCodeIdsToIgnore: this.getAffiliateCodeIdsToRemove()
             }),
             primaryContactInfo: new PrimaryContactInfo(this.isSameContact ? undefined : {
                 primaryEmailId: this.getPrimaryEmailId(),
                 primaryPhoneId: this.getPrimaryPhoneId(),
-                primaryAddressId: this.getPrimaryAddressId()
+                primaryAddressId: this.getPrimaryAddressId(),
+                primaryAffiliateCodeId: this.getPrimaryAffiliateCodeId()
             }),
             mergeLeadMode: this.getMergeLeadMode()
         });

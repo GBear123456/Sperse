@@ -98,7 +98,7 @@
                     <div *dxTemplate="let cell of 'shareTemplate'" class="share">
                         <ng-container *ngIf="cell.data.PublicName">
                             <img src="assets/common/icons/share-black.svg" (click)="openProductPage($event, cell.data)" />
-                            <img src="assets/common/icons/copy-black.svg" (click)="copyToClipbord($event, cell.data)" />
+                            <img src="assets/common/icons/copy-black.svg" (click)="showShareDialog($event, cell.data)" />
                         </ng-container>
                     </div>
                     <div *dxTemplate="let cell of 'actionTemplate'"

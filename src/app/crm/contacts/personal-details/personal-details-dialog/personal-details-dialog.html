@@ -11,19 +11,22 @@
                                 <span class="dx-icon-clock history-icon" (click)="showAffiliateHistory($event)" [title]="ls.l('AffiliateHistory')"></span>
                             </mat-expansion-panel-header>
                             <div class="field affiliate-code {{contactInfo?.affiliateServiceStatus}}">
-                                <inplace-edit [id]="contactInfo?.id"
-                                              lEntityName="Name"
-                                              [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
-                                              [value]="affiliateCode$ | async"
-                                              [showInlineEditButton]="true"
-                                              [isDeleteEnabled]="true"
-                                              [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
-                                              [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
-                                              [validationRules]="affiliateValidationRules"
-                                              [isReadOnlyField]="!affiliateManageAllowed"
-                                              (valueChanged)="updateAffiliateCode($event)"
-                                              (itemDeleted)="deleteItem(ls.l('Affiliate'))">
+                                <inplace-edit *ngFor="let affiliateCodeInfo of contactInfo?.affiliateCodes || [];  let i = index"
+                                                [id]="affiliateCodeInfo.id"
+                                                lEntityName="Name"
+                                                [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
+                                                [value]="affiliateCodeInfo.affiliateCode"
+                                                [showInlineEditButton]="true"
+                                                [isEditEnabled]="!affiliateCodeInfo.id"
+                                                [isDeleteEnabled]="true"
+                                                [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
+                                                [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
+                                                [validationRules]="affiliateValidationRules"
+                                                [isReadOnlyField]="!affiliateManageAllowed"
+                                                (valueChanged)="updateAffiliateCode($event, i)"
+                                                (itemDeleted)="deleteAffiliateCode(i)">
                                 </inplace-edit>
+                                <span class="add-affiliateCode" (click)="addEmptyAffiliateCode()">Add +</span>
                             </div>
                             <div class="field isAdvisor" *ngIf="hasBankCodeFeature">
                                 <dx-check-box [disabled]="!affiliateManageAllowed || !contactInfo?.personContactInfo.userId"
@@ -206,20 +209,24 @@
                             <hr/>
                             <div class="field">
                                 <label>{{ ls.l('Xref') }}:</label>
-                                <inplace-edit [id]="contactInfo?.id"
-                                              lEntityName="Name"
-                                              [editPlaceholder]="ls.l('Xref')"
-                                              [value]="contactXref$ | async"
-                                              [isOptional]="true"
-                                              [showInlineEditButton]="true"
-                                              [isDeleteEnabled]="true"
-                                              [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
-                                              [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
-                                              [validationRules]="xrefValidationRules"
-                                              [isReadOnlyField]="!manageAllowed"
-                                              (valueChanged)="updateXref($event)"
-                                              (itemDeleted)="deleteItem(ls.l('Xref'))">
-                                </inplace-edit>
+                                <div>
+                                    <inplace-edit *ngFor="let xref of contactInfo?.personContactInfo.xrefs || []; let i = index"
+                                                  [id]="xref"
+                                                  lEntityName="Name"
+                                                  [editPlaceholder]="ls.l('Xref')"
+                                                  [value]="xref"
+                                                  [isOptional]="true"
+                                                  [showInlineEditButton]="true"
+                                                  [isDeleteEnabled]="true"
+                                                  [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
+                                                  [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
+                                                  [validationRules]="xrefValidationRules"
+                                                  [isReadOnlyField]="!manageAllowed"
+                                                  (valueChanged)="updateXref($event, i)"
+                                                  (itemDeleted)="updateXref('', i)">
+                                    </inplace-edit>
+                                    <span class="add-xref" (click)="contactInfo.personContactInfo.xrefs.push('')">Add +</span>
+                                </div>
                             </div>
                             <hr/>
                             <div class="field stripe" *ngIf="(stripeCustomerId$ | async) as stripeId" [title]="ls.l('StripeCustomerID')">

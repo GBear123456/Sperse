@@ -248,8 +248,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.addUpgradeToProduct();
             if (this.product.publishDate)
                 this.publishDate = DateHelper.addTimezoneOffset(new Date(this.product.publishDate), true);
-            this.initProductResources();
-            this.initProductEvent();
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -260,6 +258,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             }
             this.initEventProps();
         }
+
+        this.initProductResources();
+        this.initProductEvent();
 
         this.product.currencyId = this.currency;
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
@@ -278,7 +279,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     ngOnInit() {
-        if (!this.data.product || !this.data.product.id)
+        if (!this.data.product || !this.product.productSubscriptionOptions)
             this.addNewPaymentPeriod();
 
         let contextMenu = this.buttons[0].contextMenu;
@@ -688,13 +689,16 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 if (option.frequency == RecurringPaymentFrequency.Custom && option.customPeriodType) {
                     switch (option.customPeriodType) {
                         case CustomPeriodType.Days:
-                            isPeriodValid = event.value <= 365;
+                            isPeriodValid = event.value <= 1095;
                             break;
                         case CustomPeriodType.Weeks:
-                            isPeriodValid = event.value <= 52;
+                            isPeriodValid = event.value <= 156;
                             break;
                         case CustomPeriodType.Months:
-                            isPeriodValid = event.value <= 12;
+                            isPeriodValid = event.value <= 36;
+                            break;
+                        case CustomPeriodType.Years:
+                            isPeriodValid = event.value <= 3;
                             break;
                     }
                 }

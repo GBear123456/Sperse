@@ -195,6 +195,7 @@
                 .disabled {
                     opacity: 0.4;
                     cursor: default;
+                    pointer-events: none;
                 }        
             }
 
@@ -240,6 +241,10 @@
                 &.add-coupon {
                     margin-left: 10px;
                 }
+                &[disabled] {
+                    opacity: 0.4;
+                    cursor: default;
+                }
             }
 
            .btn-text {
@@ -267,9 +272,10 @@
                     cursor: pointer;
                     margin-right: 22px;
 
-                    &.ach-payment, &.add-card {
+                    &.disabled {
                         opacity: 0.1;
                         cursor: default;
+                        pointer-events: none;
                     }
                 }
             }

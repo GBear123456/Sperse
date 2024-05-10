@@ -1,6 +1,6 @@
 {
   "name": "abp-zero-template",
-  "version": "8.3.1",
+  "version": "8.3.5",
   "license": "MIT",
   "angular-cli": {},
   "scripts": {

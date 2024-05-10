@@ -88,9 +88,11 @@ export class RootComponent implements OnInit, AfterViewInit {
                 this.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', mapKey));
 
             let fontName = abp.setting.values['App.Appearance.FontName'] || AppConsts.defaultFontName,
+                tabularFontName = abp.setting.values['App.Appearance.TabularFont'] || AppConsts.defaultTabularFontName,
                 buttonColor = abp.setting.values['App.Appearance.ButtonColor'] || AppConsts.defaultButtonColor,
                 buttonTextColor = abp.setting.values['App.Appearance.ButtonTextColor'] || AppConsts.defaultButtonTextColor,
                 buttonHighlightedColor = abp.setting.values['App.Appearance.ButtonHighlightedColor'] || AppConsts.defaultButtonHighlightedColor,
+                leftSideMenuColor = abp.setting.values['App.Appearance.LeftsideMenuColor'] || AppConsts.defaultLeftSideMenuColor,
                 borderRadius = abp.setting.values['App.Appearance.BorderRadius'] || AppConsts.defaultBorderRadius,
                 rootStyle = this.document.querySelector(':root').style;
 
@@ -100,6 +102,8 @@ export class RootComponent implements OnInit, AfterViewInit {
                 this.addStyleSheet('googleapis', 'https://fonts.googleapis.com/css?family=' + fontName);
 
             rootStyle.setProperty('--app-font-family', fontName);
+            rootStyle.setProperty('--app-tabular-font-family', tabularFontName);
+            rootStyle.setProperty('--app-left-bar-color', leftSideMenuColor);
             rootStyle.setProperty('--app-button-color', buttonColor);
             rootStyle.setProperty('--app-button-text-color', buttonTextColor);
             rootStyle.setProperty('--app-button-highlighted-color', buttonHighlightedColor);

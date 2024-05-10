@@ -148,6 +148,10 @@
                     width: 280px;
                 }
             }
+
+            .add-xref {
+                cursor: pointer;
+            }
         }
 
         .affiliate-field {
@@ -224,6 +228,7 @@
                     display: inline-block;
                     width: 330px !important;
                     height: auto;
+                    margin-bottom: 5px;
 
                     dx-text-box input {
                         border-radius: 3px;
@@ -263,6 +268,7 @@
 
                 .inplace-edit-view-mode {
                     display: flex;
+                    margin-bottom: 5px;
                     //padding-bottom: 30px;
                     span {
                         flex: 1;
@@ -480,19 +486,23 @@
 
     ::ng-deep dx-scheduler {
         .dx-scheduler-navigator {
-            min-width: 220px!important;
+            min-width: 220px !important;
         }
+
         .dx-scheduler-header {
             display: none;
         }
+
         .dx-scheduler-work-space-overlapping {
             padding-top: 0px;
             margin-top: 0px;
             margin-bottom: 10px;
             border: 1px solid rgba(221,221,221,.6);
         }
+
         .dx-scheduler-date-table-scrollable {
-            margin: 5px!important;
+            margin: 5px !important;
+
             .dx-scrollable-content {
                 min-height: 150px;
             }

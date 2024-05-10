@@ -41,10 +41,10 @@
                             <ng-container *ngIf="!isFreeProductSelected else freeOption">
                                 <span class="currency-symbol">{{ currencySymbol }}</span>
                                 <span class="number">
-                                    {{ getPricePerPeriod(true) | customNumber: '1.0-0' | currency: productInfo.data.currency : '' : '1.0-0' }}
+                                    {{ getSubscriptionPrice(true) | customNumber: '1.0-0' | currency: productInfo.data.currency : '' : '1.0-0' }}
                                 </span>
                                 <div class="number-info">
-                                    <span class="decimal">{{ getPricePerPeriod(true) | customNumber: '0.2-2' }}</span>
+                                    <span class="decimal">{{ getSubscriptionPrice(true) | customNumber: '0.2-2' }}</span>
                                     <span>/{{ getPriceDescription() }}</span>
                                 </div>
                             </ng-container>

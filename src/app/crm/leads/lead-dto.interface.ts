@@ -27,8 +27,9 @@ export interface LeadDto {
     Website: string;
     PhoneExtension: string;
     Title: string;
-    ContactXref: string;
+    ContactXrefs: string[];
     ContactAffiliateCode: string;
+    ContactAffiliateCodes: string[];
     SourceContactName: string;
     AssignedUserName: string;
     BankCode: string;
@@ -36,6 +37,7 @@ export interface LeadDto {
     ContactGroupId: string;
     AffiliateContactName: string;
     AffiliateContactAffiliateCode: string;
+    AffiliateContactAffiliateCodes: string[];
     PipelineId: number;
     PropertyId: number;
     PropertyName: string;

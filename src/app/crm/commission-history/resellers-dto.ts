@@ -1,6 +1,7 @@
 export interface ResellersDto {
     Id: number;
     AffiliateCode: string;
+    AffiliateCodes: string[];
     AvailableBalance: number;
     EarnedAmount: number;
     EmailAddress: string;

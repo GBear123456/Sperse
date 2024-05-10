@@ -12,6 +12,13 @@ import { SingleProductComponent } from './single-product/single-product.componen
                 canActivate: [LocalizationResolver],
                 canActivateChild: [],
                 data: { localizationSource: 'CRM' }
+            },
+            {
+                path: ':tenantId/:productPublicName/:refCode',
+                component: SingleProductComponent,
+                canActivate: [LocalizationResolver],
+                canActivateChild: [],
+                data: { localizationSource: 'CRM' }
             }
         ])
     ],

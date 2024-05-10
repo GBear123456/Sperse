@@ -28,16 +28,13 @@
             }
         }
     }
-    label[for="Currency"],
-    label[for="DefaultCountry"] {
-        min-width: 80px!important;
-    }
     .payment-settings {
         display: flex;
-        padding-left: 20px;
-        width: 400px;
         .selected-flag-icon {
             border-bottom: 1px solid #dfdfdf;
+        }
+        label {
+            min-width: 190px;
         }
     }
     ::ng-deep dx-select-box {
@@ -49,8 +46,12 @@
             letter-spacing: 0.3px;
             color: #424c56;
         }
+        input {
+            max-width: 84%!important;
+            text-overflow: ellipsis!important;
+            overflow: hidden;
+        }
     }
-
     ::ng-deep country-phone-number {
         width: 100%;
 

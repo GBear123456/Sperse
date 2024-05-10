@@ -50,12 +50,14 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     someCssChanged: boolean;
     someColorChanged: boolean;
 
+    defaultLeftSideMenuColor: string = this.layoutService.defaultLeftSideMenuColor;
     defaultHeaderColor: string = this.layoutService.defaultHeaderBgColor;
     defaultTextColor: string = this.layoutService.defaultHeaderTextColor;
     defaultButtonColor: string = this.layoutService.defaultButtonColor;
     defaultButtonTextColor: string = this.layoutService.defaultButtonTextColor;
     defaultButtonHighlightedColor: string = this.layoutService.defaultButtonHighlightedColor;
     defaultFontName: string = this.layoutService.defaultFontName;
+    defaultTabularFontName: string = this.layoutService.defaultTabularFontName;
     defaultBorderRadius: string = this.layoutService.defaultBorderRadius;
 
     appearance: AppearanceSettingsEditDto = new AppearanceSettingsEditDto();
@@ -68,6 +70,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         };
     });
     fontFamilyList: string[] = this.fontService.getSupportedFontsList();
+    tabularFontFamilyList: string[] = this.fontService.supportedTabularGoogleFonts;
 
     constructor(
         _injector: Injector,
@@ -89,15 +92,19 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                     this.appearance.navBackground = this.defaultHeaderColor;
                 if (!this.appearance.navTextColor)
                     this.appearance.navTextColor = this.defaultTextColor;
-
                 if (!this.appearance.buttonColor)
                     this.appearance.buttonColor = this.defaultButtonColor;
                 if (!this.appearance.buttonTextColor)
                     this.appearance.buttonTextColor = this.defaultButtonTextColor;
                 if (!this.appearance.buttonHighlightedColor)
                     this.appearance.buttonHighlightedColor = this.defaultButtonHighlightedColor;
+                if (!this.appearance.leftsideMenuColor)
+                    this.appearance.leftsideMenuColor = this.defaultLeftSideMenuColor;
                 if (!this.appearance.fontName)
                     this.appearance.fontName = this.defaultFontName;
+                if (!this.appearance.tabularFont)
+                    this.appearance.tabularFont = this.defaultTabularFontName;
+
                 if (!this.appearance.borderRadius)
                     this.appearance.borderRadius = this.defaultBorderRadius;
 
@@ -107,25 +114,11 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
         let root = this.getRootComponent();
         root.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
-            + this.fontService.supportedGoogleFonts.join('|')
+            + this.fontService.supportedGoogleFonts.concat(this.fontService.supportedTabularGoogleFonts).join('|')
         );
         this.fontService.supportedCustomFonts.map(font =>
             root.addStyleSheet('custom-font', './assets/fonts/fonts-' + font.toLowerCase() + '.css')
         );
-    }
-
-    getFontFamilyMetadataList() {
-        if (localStorage.getItem('fonts'))
-            this.fontFamilyList = JSON.parse(localStorage.getItem('fonts'));
-        else
-            this.http.get('https://fonts.google.com/metadata/fonts').subscribe((res: any) => {
-                if (res && res.familyMetadataList) {
-                    this.fontFamilyList = res.familyMetadataList
-                        .filter(item => Object.keys(item.fonts).length > 4 && item.stroke == 'Sans Serif')
-                        .map(item => item.family);
-                    localStorage.setItem('fonts', JSON.stringify(this.fontFamilyList));
-                }
-            });
     }
 
     getSaveObs(): Observable<any> {
@@ -139,8 +132,12 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.appearance.buttonTextColor = null;
         if (this.appearance.buttonHighlightedColor == this.defaultButtonHighlightedColor)
             this.appearance.buttonHighlightedColor = null;
+        if (this.appearance.leftsideMenuColor == this.defaultLeftSideMenuColor)
+            this.appearance.leftsideMenuColor = null;
         if (this.appearance.fontName == this.defaultFontName)
             this.appearance.fontName = null;
+        if (this.appearance.tabularFont == this.defaultTabularFontName)
+            this.appearance.tabularFont = null;
         if (this.appearance.borderRadius == this.defaultBorderRadius)
             this.appearance.borderRadius = null;
 

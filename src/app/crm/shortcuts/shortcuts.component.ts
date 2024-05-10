@@ -241,7 +241,7 @@ export class ShortcutsComponent implements OnInit {
     loadSettings() {
         if (this.isPaymentsEnabled) {
             this.loadingService.startLoading();
-            this.tenantPaymentSettingsService.getStripeSettings()
+            this.tenantPaymentSettingsService.getStripeSettings(false)
                 .pipe(
                     finalize(() => this.loadingService.finishLoading())
                 )

@@ -11,6 +11,7 @@ export interface SubscriptionDto {
     Zip: string;
     CountryCode: string;
     PersonalAffiliateCode: string;
+    PersonalAffiliateCodes: string[];
     ContactDate: string;
     ProductName: string;
     StartDate: string;
@@ -22,6 +23,6 @@ export interface SubscriptionDto {
     OrderAmount: string;
     SourceAffiliateCode: string;
     SourceEntryUrl: string;
-    ContactXref: string;
+    ContactXrefs: string;
     SourceOrganizationUnitId: number;
 }

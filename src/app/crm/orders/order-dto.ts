@@ -15,13 +15,15 @@ export interface OrderDto {
     OrderType: string;
     OrderDate: string;
     AffiliateContactAffiliateCode: string;
+    AffiliateContactAffiliateCodes: string[];
     AffiliateContactId: string;
     AffiliateContactName: string;
     PersonalAffiliateCode: string;
+    PersonalAffiliateCodes: string[];
     SourceAffiliateCode: string;
     SourceEntryUrl: string;
     DateProcessed: string;
     ContactGroupId: string;
-    ContactXref: string;
+    ContactXrefs: string[];
     SourceOrganizationUnitId: number;
 }

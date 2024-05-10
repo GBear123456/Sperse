@@ -36,17 +36,19 @@
             </div>
         </div>
 
-        <div *ngIf="descriptionHtml" [innerHtml]="descriptionHtml"></div>
-        <div *ngIf="features && !descriptionHtml" class="features">
-            <ul>
-                <li *ngFor="let feature of features.included">
-                    <span class="included"></span>{{feature}}
-                </li>
-                <li *ngFor="let feature of features.excluded">
-                    <span class="excluded"></span>{{feature}}
-                </li>
-            </ul>
-        </div>
+        <dx-scroll-view showScrollbar="onHover" [direction]="'vertical'" height="310px" width="310px">
+            <div *ngIf="descriptionHtml" [innerHtml]="descriptionHtml"></div>
+            <div *ngIf="features && !descriptionHtml" class="features">
+                    <ul>
+                        <li *ngFor="let feature of features.included">
+                            <span class="included"></span>{{feature}}
+                        </li>
+                        <li *ngFor="let feature of features.excluded">
+                            <span class="excluded"></span>{{feature}}
+                        </li>
+                    </ul>
+            </div>
+        </dx-scroll-view>
     </div>
 </div>
 <div class="trial-period-note" *ngIf="trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>

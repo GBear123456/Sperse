@@ -118,7 +118,11 @@ export class SingleProductComponent implements OnInit {
     ngOnInit(): void {
         this.tenantId = +this.route.snapshot.paramMap.get('tenantId');
         this.productPublicName = this.route.snapshot.paramMap.get('productPublicName');
-        this.ref = this.route.snapshot.queryParamMap.get('ref');
+        this.ref = this.route.snapshot.paramMap.get('refCode');
+        if (!this.ref)
+            this.ref = this.route.snapshot.queryParamMap.get('ref');
+        if (!this.ref)
+            this.ref = this.route.snapshot.queryParamMap.get('referralCode');
         this.optionId = Number(this.route.snapshot.queryParamMap.get('optionId'));
 
         this.getProductInfo();
@@ -383,7 +387,7 @@ export class SingleProductComponent implements OnInit {
                     this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.OneTime))
                 return false;
 
-            if (this.couponInfo && this.getPricePerPeriod(true) == 0)
+            if (this.couponInfo && this.getSubscriptionPrice(true) == 0)
                 return false;
         }
 
@@ -398,7 +402,7 @@ export class SingleProductComponent implements OnInit {
         if (this.productInfo.type == ProductType.Subscription && this.couponInfo &&
             (this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.OneTime ||
                 this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.LifeTime) &&
-            this.getPricePerPeriod(true) == 0)
+            this.getSubscriptionPrice(true) == 0)
             return true;
 
         if (this.productInfo.type != ProductType.Subscription && this.couponInfo && this.getGeneralPrice(true) == 0)
@@ -445,13 +449,6 @@ export class SingleProductComponent implements OnInit {
         return price;
     }
 
-    getPricePerPeriod(includeCoupon: boolean): number {
-        let price = this.getSubscriptionPrice(includeCoupon);
-        return this.selectedBillingPeriod === BillingPeriod.Yearly ?
-            round(price / 12, 2) :
-            price;
-    }
-
     getSignUpFee(includeCoupon: boolean): number {
         let fee = this.selectedSubscriptionOption.signupFee;
         if (includeCoupon) {
@@ -479,7 +476,9 @@ export class SingleProductComponent implements OnInit {
                 this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[this.selectedSubscriptionOption.customPeriodType]));
         } else if (this.selectedBillingPeriod == BillingPeriod.OneTime) {
             return this.ls.l('price' + BillingPeriod[this.selectedBillingPeriod], this.selectedSubscriptionOption.customPeriodCount);
-        } else {
+        } else if (this.selectedBillingPeriod == BillingPeriod.Yearly)
+            return this.ls.l(BillingPeriod[this.selectedBillingPeriod]);
+        else {
             return this.ls.l('price' + BillingPeriod[this.selectedBillingPeriod]);
         }
     }
@@ -493,7 +492,7 @@ export class SingleProductComponent implements OnInit {
 
     getDiscount(): number {
         if (this.productInfo.type == ProductType.Subscription) {
-            let amount = this.getPricePerPeriod(false) - this.getPricePerPeriod(true);
+            let amount = this.getSubscriptionPrice(false) - this.getSubscriptionPrice(true);
             if (this.selectedSubscriptionOption.signupFee)
                 amount = amount + this.getSignUpFee(false) - this.getSignUpFee(true);
             return amount;

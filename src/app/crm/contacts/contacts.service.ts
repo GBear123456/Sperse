@@ -289,11 +289,12 @@ export class ContactsService {
         );
     }
 
-    showUploadPhotoDialog(companyId: number, companyPhoto: string, event): Observable<any> {
+    showUploadPhotoDialog(companyId: number, companyPhoto: string, event, maintainAspectRatio?: boolean): Observable<any> {
         event.stopPropagation();
         const uploadPhotoData: UploadPhotoData = {
             title: this.ls.l('ChangeCompanyLogo'),
             source: companyPhoto ? 'data:image/jpeg;base64,' + companyPhoto : null,
+            maintainAspectRatio: maintainAspectRatio,
             maxSizeBytes: AppConsts.maxImageSize
         };
         return this.dialog.open(UploadPhotoDialogComponent, {
