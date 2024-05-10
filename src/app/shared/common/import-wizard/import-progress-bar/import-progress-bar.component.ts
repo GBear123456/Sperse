@@ -1,18 +1,20 @@
 /** Core imports */
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, HostBinding } from '@angular/core';
 
 /** Application imports */
 import { ImportStatus } from '@shared/AppEnums';
 import { ImportWizardService } from '../import-wizard.service';
 import { MessageService } from 'abp-ng2-module';
 import { AppLocalizationService } from '../../localization/app-localization.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'import-progress-bar',
     templateUrl: 'import-progress-bar.component.html',
     styleUrls: ['import-progress-bar.component.less']
 })
-export class ImportProgressBarComponent implements OnDestroy {
+export class ImportProgressBarComponent implements OnInit, OnDestroy {
+    @HostBinding('class.showLeftBar') showLeftBar = false;
     @Input() summaryTooltip = true;
     importStatuses = ImportStatus;
     progress = 100;
@@ -27,6 +29,7 @@ export class ImportProgressBarComponent implements OnDestroy {
     constructor(
         private importService: ImportWizardService,
         private messageService: MessageService,
+        public layoutService: LayoutService,
         public ls: AppLocalizationService
     ) {
         this.subscription = importService.progressListen((data) => {
@@ -46,6 +49,10 @@ export class ImportProgressBarComponent implements OnDestroy {
                 importService.finishStatusCheck(true);
             }
         });
+    }
+
+    ngOnInit() {
+        this.showLeftBar = this.layoutService.showLeftBar;
     }
 
     showStatus = () => {

@@ -22,7 +22,7 @@
                   (onReload)="invalidate()"
                   (onStateReset)="dxDataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <ng-container *ngTemplateOutlet="headerDropdown"></ng-container>
+        <ng-container *ngTemplateOutlet="layoutService.showLeftBar ? undefined : headerDropdown"></ng-container>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <ng-template #headerDropdown>

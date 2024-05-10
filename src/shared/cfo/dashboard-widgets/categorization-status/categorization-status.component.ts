@@ -16,7 +16,6 @@ import { BankAccountsService } from '../../bank-accounts/helpers/bank-accounts.s
 import { DashboardService } from '../dashboard.service';
 import { LifecycleSubjectsService } from '@root/shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CategorizationStatus } from '@shared/service-proxies/service-proxies';
-import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'app-categorization-status',
@@ -44,7 +43,6 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
         private classificationService: ClassificationServiceProxy,
         private lifeCycleService: LifecycleSubjectsService,
         private store$: Store<RootStore.State>,
-        private layoutService: LayoutService,
         public dialog: MatDialog
     ) {
         super(injector);

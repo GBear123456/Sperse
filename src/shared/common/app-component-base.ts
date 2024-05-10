@@ -36,6 +36,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
 import { UiCustomizationSettingsDto } from '@shared/service-proxies/service-proxies';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Directive()
 export abstract class AppComponentBase implements OnDestroy {
@@ -67,6 +68,7 @@ export abstract class AppComponentBase implements OnDestroy {
     localizationService: AppLocalizationService;
     oDataService: ODataService;
     titleService: TitleService;
+    layoutService: LayoutService;
     protected _activatedRoute: ActivatedRoute;
     protected _router: Router;
     get componentIsActivated(): boolean {
@@ -102,6 +104,7 @@ export abstract class AppComponentBase implements OnDestroy {
     constructor(
         private _injector: Injector
     ) {
+        this.layoutService = _injector.get(LayoutService);
         this.localization = _injector.get(LocalizationService);
         this.permission = _injector.get(AppPermissionService);
         this.feature = _injector.get(FeatureCheckerService);

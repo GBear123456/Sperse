@@ -17,7 +17,6 @@ import {
     TenantSettingsServiceProxy,
     AppearanceSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
-import { LayoutService } from '@app/shared/layout/layout.service';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
@@ -74,7 +73,6 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     constructor(
         _injector: Injector,
-        private layoutService: LayoutService,
         private faviconsService: FaviconService,
         private settingsProxy: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,

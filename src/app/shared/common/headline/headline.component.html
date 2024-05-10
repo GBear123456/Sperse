@@ -12,7 +12,7 @@
         [totalErrorMsg]="totalErrorMsg"
         [totalCount]="totalCount">
     </app-headline-title>
-    <div *ngIf="layoutService.showTopBar || !buttons" 
+    <div
         class="headline-content" 
         [ngClass]="{'menu-empty': (!buttons || !buttons.length) && !showReloadButton && !showToggleToolbarButton && !showToggleCompactViewButton && !showToggleFullScreenButton}">
         <ng-content></ng-content>

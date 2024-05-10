@@ -13,7 +13,7 @@
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+        <ng-container *ngTemplateOutlet="layoutService.showLeftBar ? undefined : titleTemplate"></ng-container>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <ng-template #titleTemplate>
