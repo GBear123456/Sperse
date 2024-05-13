@@ -52,6 +52,9 @@ export class EmailSettingsComponent extends SettingsComponentBase {
                 if (this.emailSettings.smtpHost)
                     this.selectedProvider = this.supportedProviders.find(item => item.host == this.emailSettings.smtpHost);
 
+                if (!this.selectedProvider)
+                    this.onProviderChanged(this.supportedProviders[0]);                
+
                 this.changeDetection.detectChanges();
             });
     }
