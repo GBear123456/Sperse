@@ -32,7 +32,7 @@ export class EmailSettingsComponent extends SettingsComponentBase {
     constructor(
         _injector: Injector,
         private tenantSettingsService: TenantSettingsServiceProxy,
-        private emailSmtpSettingsService: EmailSmtpSettingsService
+        public emailSmtpSettingsService: EmailSmtpSettingsService
     ) {
         super(_injector);
     }
@@ -56,8 +56,11 @@ export class EmailSettingsComponent extends SettingsComponentBase {
             });
     }
 
-    onProviderChanged() {
+    onProviderChanged(provider) {
+        this.selectedProvider = provider;
+        this.smtpProviderErrorLink = undefined;
         if (this.selectedProvider) {
+            this.showCustomSmptSettings = true;
             this.emailSettings.smtpHost = this.selectedProvider.host;
             this.emailSettings.smtpPort = this.selectedProvider.port;
             this.emailSettings.smtpEnableSsl = this.selectedProvider.ssl;
@@ -65,8 +68,9 @@ export class EmailSettingsComponent extends SettingsComponentBase {
             this.emailSettings.imapHost = this.selectedProvider.imap.host;
             this.emailSettings.imapPort = this.selectedProvider.imap.port;
             this.emailSettings.imapUseSsl = this.selectedProvider.imap.ssl;
-
+            this.emailSettings.isImapEnabled = !!this.selectedProvider.imap.host;
         } else {
+            this.showCustomSmptSettings = this.selectedProvider === null;
             this.emailSettings.smtpHost = undefined;
             this.emailSettings.smtpPort = undefined;
             this.emailSettings.smtpEnableSsl = false;
@@ -74,6 +78,7 @@ export class EmailSettingsComponent extends SettingsComponentBase {
             this.emailSettings.imapHost = undefined;
             this.emailSettings.imapPort = undefined;
             this.emailSettings.imapUseSsl = undefined;
+            this.emailSettings.isImapEnabled = false;
         }
 
         this.changeDetection.detectChanges();

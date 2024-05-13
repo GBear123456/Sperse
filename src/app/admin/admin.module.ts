@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
@@ -150,6 +151,7 @@ import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-l
         DxListModule,
         DxColorBoxModule,
         DxTreeViewModule,
+        DxSwitchModule,
 
         MatTabsModule,
         MatInputModule,
