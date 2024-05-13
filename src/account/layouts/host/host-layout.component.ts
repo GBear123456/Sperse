@@ -28,10 +28,6 @@ export class HostLayoutComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        let tenant = this.appSession.tenant;
-        if (tenant)
-            this.tenantName = tenant.name || tenant.tenancyName;
-
         if (abp.session.multiTenancySide == abp.multiTenancy.sides.HOST)
             this.originUrl = environment.publicUrl;
     }
