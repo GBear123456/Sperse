@@ -59,6 +59,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     CustomCssType = CustomCssType;
 
     signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
+    welcomePageOptions = [{name: 'Default', uri: 'welcome'}, {name: 'Modern', uri: 'start'}];
+    welcomePageUri: string = this.settingService.get('App.Appearance.WelcomePageAppearance') 
+        || AppConsts.defaultWelcomePageUri;
 
     navPosition = this.getNavPosition();
     navPositionOptions = Object.keys(NavPosition).map(item => {
@@ -101,7 +104,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             }))
         ];
 
-        if (this.getNavPosition() != this.navPosition) {
+        let isNavPosChanged = this.getNavPosition() != this.navPosition,
+            isWelcomePageChanged = this.welcomePageUri != this.settingService.get('App.Appearance.WelcomePageAppearance');            
+        if (isNavPosChanged || isWelcomePageChanged) {
             saveObs.push(
                 this.tenantSettingsServiceProxy.updateAppearanceSettings(
                     new AppearanceSettingsEditDto({
@@ -113,12 +118,12 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                         buttonHighlightedColor: this.settingService.get('App.Appearance.ButtonHighlightedColor'),
                         fontName: this.settingService.get('App.Appearance.FontName'),
                         borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
-                        welcomePageAppearance: this.settingService.get('App.Appearance.WelcomePageAppearance'),
+                        welcomePageAppearance: this.welcomePageUri == AppConsts.defaultWelcomePageUri ? null : this.welcomePageUri,
                         tabularFont: undefined,
                         leftsideMenuColor: undefined
                     })
                 ).pipe(tap(() => {
-                    this.onOptionChanged.emit('navPosition');
+                    this.onOptionChanged.emit(isWelcomePageChanged ? 'appearance' : 'navPosition');
                 }))
             );
         }
