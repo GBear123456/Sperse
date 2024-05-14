@@ -67,7 +67,7 @@
                             <label><img width="18px" height="21px" style="margin-right: 5px;" src="./assets/common/icons/mailchimp-freddie-icon.svg"> Mailchimp</label><button [disabled]="!hasTenantOrCRMSettings" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Mailchimp' } })"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
                         </div>
                         <div class="detail-item">
-                            <label><img width="21px" height="21px" style="margin-right: 2px;" src="./assets/common/icons/pngwing.svg"> Google Analyticks</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            <label><img width="21px" height="21px" style="margin-right: 2px;" src="./assets/common/icons/pngwing.svg"> Google Analytics</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
                         </div>
                         <div class="detail-item">
                             <label><img width="27px" height="18px" style="margin-left: -3px;" src="./assets/common/icons/meta.svg"> Meta</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
@@ -119,7 +119,7 @@
                             <label>Import from Gmail</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/import.svg"> Import</button>
                         </div>
                         <div class="detail-item">
-                            <label>View My Leads</label><button [disabled]="!showImportLeads" (click)="router.navigate(['app/crm/import-leads'])"><img width="13px" height="13px" src="./assets/common/icons/people2.svg"> View</button>
+                            <label>View My Leads</label><button [disabled]="!showImportLeads" (click)="router.navigate(['app/crm/leads'])"><img width="13px" height="13px" src="./assets/common/icons/people2.svg"> View</button>
                         </div>
                     </dx-scroll-view>
                 </div>
