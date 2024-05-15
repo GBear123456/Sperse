@@ -131,7 +131,7 @@ export class AppSessionService {
                 this._tenant = result.tenant;
                 this._theme = result.theme;
                 if (!this.isPublicPage && this.featureService.isEnabled(AppFeatures.AdminCustomizations))
-                    this.tenantHostProxy.getMemberPortalUrl().subscribe(res => {
+                    this.tenantHostProxy.getMemberPortalUrl(undefined).subscribe(res => {
                         AppConsts.appMemberPortalUrl = res.url;
                     });
 
