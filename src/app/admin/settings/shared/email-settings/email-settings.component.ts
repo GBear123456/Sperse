@@ -102,6 +102,7 @@ export class EmailSettingsComponent extends SettingsComponentBase {
     }
 
     getSaveObs(): Observable<any> {
+        this.smtpProviderErrorLink = undefined;
         if (!this.emailSettings.isImapEnabled) {
             this.emailSettings.imapHost = undefined;
             this.emailSettings.imapPort = undefined;

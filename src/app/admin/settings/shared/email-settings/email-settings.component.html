@@ -46,16 +46,18 @@
             </div>
             <div class="information" [ngClass]="{error: smtpProviderErrorLink}">
                 <div class="block" *ngIf="selectedProvider?.domain == 'gmail.com'">
-                    Gmail requires using an app-specific password for third-party apps, instead of your regular password for your security. You Google account requires 2FA turned on to use this feature.
+                    Gmail requires using an app-specific password for third-party apps, instead of your regular password for your security. Your Google account requires 2FA turned on to use this feature.
                     <br><br>
+                    <a href="https://myaccount.google.com/apppasswords"><b>Generate an app-specific password</b></a>
+                    <br>
                     <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('gmail.com')">Provider recommendations</a>
                     <br>
                     <a target="blank" href="https://support.google.com/mail/answer/185833">How to generate App Password</a>
-                    <br>
-                    <a href="https://myaccount.google.com/apppasswords">Generate an app-specific password</a>
                 </div>
                 <div class="block" *ngIf="selectedProvider?.domain == 'outlook.com'">
-                    Check this <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('office365.com')">link</a> for SMTP provider recommendations.
+                    If you face with any troubles on connecting your account check the link below.
+                    <br><br>
+                    <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('office365.com')">Provider recommendations</a>
                 </div>
             </div>
         </div>
