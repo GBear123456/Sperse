@@ -160,6 +160,7 @@ export class AppConsts {
     static readonly generalDictionariesCacheLifetime = 2 * 60 * 60 * 1000;
 
     static readonly maxImageSize = 1048576;
+    static readonly maxImageDialogWidth = '669px';
 
     static readonly maxDocumentSizeMB = 100;
     static readonly maxDocumentSizeBytes = 1024 * 1024 * AppConsts.maxDocumentSizeMB;

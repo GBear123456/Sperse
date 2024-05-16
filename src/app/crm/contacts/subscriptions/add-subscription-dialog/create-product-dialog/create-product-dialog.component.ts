@@ -740,6 +740,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: uploadPhotoData,
+            maxWidth: AppConsts.maxImageDialogWidth,
             hasBackdrop: true
         }).afterClosed().subscribe((result: UploadPhotoResult) => {
             if (result) {

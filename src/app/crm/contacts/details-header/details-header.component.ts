@@ -450,6 +450,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
+            maxWidth: AppConsts.maxImageDialogWidth,
             hasBackdrop: true
         }).afterClosed()
             .pipe(filter(Boolean))

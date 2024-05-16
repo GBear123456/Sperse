@@ -278,6 +278,7 @@ export class CreateUserDialogComponent implements OnInit {
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: uploadPhotoData,
+            maxWidth: AppConsts.maxImageDialogWidth,
             hasBackdrop: true
         }).afterClosed().subscribe((result: UploadPhotoResult) => {
             if (result) {

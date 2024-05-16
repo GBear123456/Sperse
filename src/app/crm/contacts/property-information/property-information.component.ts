@@ -564,6 +564,7 @@ export class PropertyInformationComponent implements OnInit {
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
+            maxWidth: AppConsts.maxImageDialogWidth,
             hasBackdrop: true
         }).afterClosed()
             .pipe(filter(Boolean))
