@@ -122,8 +122,6 @@ export class LoginService {
         this.authenticateModel.returnUrl = UrlHelper.getReturnUrl();
         this.authenticateModel.autoDetectTenancy = autoDetectTenancy;
 
-        this.removeAntiforgeryCookie();
-
         this.tokenAuthService
             .authenticate(this.authenticateModel)
             .pipe(finalize(finallyCallback)).subscribe((result: AuthenticateResultModel) => {
@@ -137,17 +135,6 @@ export class LoginService {
                 );
                 abp.multiTenancy.setTenantIdCookie();
             });
-    }
-
-    removeAntiforgeryCookie() {
-        document.cookie.split(';').forEach(val => {
-            let parts = val.split('=');
-            if (parts.length == 2) {
-                if (parts[0].trim().startsWith('.AspNetCore.Antiforgery.')) {
-                    abp.utils.deleteCookie(parts[0].trim());
-                }
-            }
-        });
     }
 
     externalAuthenticateByResult(result: ExternalAuthenticateResultModel,
