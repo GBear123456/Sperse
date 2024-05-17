@@ -1,27 +1,286 @@
 :host {
     display: block;
 
+    .header {
+        display: flex;
+        & > div {
+            margin: 20px 0 0 120px;
+            font-family: Manrope;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 27px;
+            letter-spacing: -0.02em;
+            text-align: left;
+        }
+    }
+
+    .content {
+        display: flex;
+        .form-group {
+            margin-bottom: 0;
+        }
+    }
+
+    .providers {
+        position: relative;
+        width: 281px;
+
+        h3 {
+            font-family: Manrope;
+            font-size: 19px;
+            font-weight: 600;
+            line-height: 23px;
+            letter-spacing: -0.02em;
+            text-align: left;
+            margin-bottom: 28px;
+        }
+
+        .group-wrapper {
+          position: relative;
+          width: 283px;
+          height: 45px;
+          margin: 0 0 6px;
+        }
+
+        .provider-icon {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            top: 13px;
+            left: 14px;
+        }
+
+        .overlap-group {
+          background-color: #f8fafc;
+          position: relative;
+          width: 281px;
+          height: 45px;
+          border-radius: 10px;
+          cursor: pointer;
+          &:hover, &.selected {
+              background-color: #08295b;
+              .text-wrapper {
+                  color: #FFF;        
+              }
+          }
+        }
+
+        .text-wrapper {
+          position: absolute;
+          top: 8px;
+          left: 45px;
+          font-family: "Manrope", Helvetica;
+          font-weight: 500;
+          color: #08295b;
+          font-size: 14px;
+          letter-spacing: -0.28px;
+          line-height: 27px;
+          white-space: nowrap;
+        }
+    }
+
+    .settings {
+        width: 100%;
+        margin: 0 0 0 50px;
+
+        h3 {
+            font-family: Manrope;
+            font-size: 19px;
+            font-weight: 600;
+            line-height: 23px;
+            letter-spacing: -0.02em;
+            text-align: left;
+            margin-bottom: 0;
+        }
+        label {
+            position: relative;
+            top: 20px;
+            left: 9px;
+            background: #FFF;
+            display: inline-block;
+            padding: 0 5px;
+            font-family: Manrope;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 27px;
+            letter-spacing: -0.02em;
+        }
+        input {
+            border: 1px solid rgba(225, 231, 237, 1);
+            border-radius: 10px;
+            font-family: Manrope;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 27px;
+            text-align: left;
+            padding: 12px 14px;
+
+            &:placeholder {
+                color: rgba(121, 133, 151, 1);
+            }
+        }
+        
+        .credentials {
+            width: 40%;
+        }
+
+        .flex-2 {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 50px;
+        }
+
+        .servers {
+            width: 45%;
+            min-width: 600px;
+            margin-top: 68px;
+            .columns {
+                display: flex;
+                gap: 30px;        
+            }
+            .outgoing, .ingoing {
+                width: 50%;
+            }
+            .outgoing-field, .ingoing-field {
+                background: rgba(248, 250, 252, 1);
+                height: 53px;
+                margin-top: 34px;
+                font-family: Manrope;
+                font-size: 13px;
+                font-weight: 600;
+                line-height: 22px;
+                letter-spacing: -0.02em;
+                text-align: left;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            .ingoing-field {
+                ::ng-deep dx-switch {
+                    float: right;
+                }
+            }
+            .port {
+                width: 64%;
+                display: inline-block;
+            }
+            .disabled {
+                opacity: 0.5;
+                pointer-events: none;
+                cursor: default;
+            }
+        }
+    
+        .default {
+            width: 40%;
+            min-width: 500px;
+
+            .test-email {
+                position: relative; 
+                button {
+                    position: absolute;
+                    background: rgba(8, 41, 91, 1);
+                    right: 0;
+                    top: 34px;
+                    font-family: Manrope!important;
+                    font-size: 13px!important;
+                    font-weight: 600!important;
+                    letter-spacing: -0.02em;
+                }
+            }
+        }
+
+        ::ng-deep dx-switch {
+            display: inline-block;
+
+            &.tls {
+                margin: 0 8px 0 20px;
+                .dx-switch-container {
+                    background: rgba(248, 250, 252, 1);
+                }
+            }
+
+            &:not(.dx-switch-on-value) {
+                .dx-switch-handle::before {
+                    background: #00005e30;                    
+                }
+            }
+
+            .dx-switch-container, 
+            .dx-switch-handle::before {
+                border-radius: 12px;
+            }
+            .dx-switch-container {
+                border: 1px solid transparent;
+                background: rgba(234, 236, 239, 1);
+            }
+            .dx-switch-handle::before {
+                width: 120%;
+                background: rgba(0, 168, 237, 1);
+            }
+            .dx-switch-inner {
+                width: 180%;
+            }
+        }
+
+        .information {
+            width: 50%;
+            position: relative;
+            &.error {
+                .block {
+                    border: 1px solid red;
+                }
+            }
+
+            .block {
+                width: 100%;
+                height: 100%;
+                max-width: 730px;
+                font-family: Manrope;
+                font-size: 13px;
+                font-weight: 400;
+                line-height: 23px;
+                text-align: left;
+                background: rgba(248, 250, 252, 1);
+                border-radius: 10px;
+                padding: 15px;
+                bottom: 0;
+                position: absolute;
+                a {
+                    font-family: Manrope;
+                    font-size: 13px;
+                    font-weight: 600;
+                    line-height: 27px;
+                    letter-spacing: -0.02em;
+                    text-align: left;
+                }
+            }
+        }
+    }
+    
+    h2 {
+        font-family: Manrope;
+        font-size: 26px;
+        font-weight: 600;
+        line-height: 27px;
+        letter-spacing: -0.02em;
+        text-align: left;
+        margin: 26px 0 50px 0;
+        .arrow-left {
+            top: -2px;
+            position: relative;
+        }
+    }
+
     .hidden-field {
         position: absolute !important;
         left: -10000px !important;
         top: -10000px !important;
     }
 
-    .smtp-error-block {
-        height: 50px;
-        margin: auto;
-        margin-bottom: 20px;
-        background: #d96262;
-        border: 1px solid #000;
-        border-radius: 10px;
-
-        a {
-            line-height: 45px;
-            font-size: 18px;
-            color: #fff;
-            font-weight: 600;
-            text-decoration: underline;
-            padding-left: 20px;
-        }
+    .info {
+        font-size: 12px;
+        font-style: italic;
     }
 }

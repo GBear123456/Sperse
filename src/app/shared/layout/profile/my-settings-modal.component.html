@@ -59,6 +59,10 @@
                         </div>
                     </mat-tab>
                     <mat-tab [label]="ls.l('SMTP')">
+                        <div class="smtp-error-block" *ngIf="smtpProviderErrorLink">
+                            Check this <a target="blank" [href]="smtpProviderErrorLink">link</a> for SMTP provider recommendations<ng-container *ngIf="selectedProvider.name == 'Gmail'"> or follow the <a target="blank" href="https://support.google.com/mail/answer/185833">link how to generate App Password</a> for login or use direct <a target="blank" href="https://myaccount.google.com/apppasswords">link to App Password</a></ng-container>.
+                        </div>
+
                         <dx-check-box class="is-user-smtp-enabled" [text]="ls.l('AllowToSendFromYourEmailAddress')" [(value)]="userEmailSettings.isUserSmtpEnabled"></dx-check-box>
                         <div [hidden]="!userEmailSettings.isUserSmtpEnabled">
                             <br />
@@ -73,6 +77,18 @@
                                 <input id="FromDisplayName" type="text" name="FromDisplayName" class="form-control"
                                        [ngClass]="{'edited':userEmailSettings.from.displayName}"
                                        [(ngModel)]="userEmailSettings.from.displayName" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="provider">{{ls.l("Provider")}}</label>
+                                <dx-select-box
+                                    width="100%"
+                                    height="47px"
+                                    [showClearButton]="true"
+                                    [dataSource]="supportedProviders"
+                                    displayExpr="name"
+                                    [(value)]="selectedProvider"
+                                    (onValueChanged)="onProviderChanged()">
+                                </dx-select-box>
                             </div>
                             <div class="form-group">
                                 <label for="SmtpHost">{{ls.l("SmtpHost")}}</label>

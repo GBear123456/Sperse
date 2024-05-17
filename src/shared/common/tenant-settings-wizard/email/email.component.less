@@ -7,6 +7,12 @@
         margin-bottom: 10px;
     }
 
+    ::ng-deep {
+        .dx-placeholder, input {
+            font-size: 16px;
+        }
+    }
+
     .form-group {
         display: flex;
         margin-bottom: 11px;
@@ -70,20 +76,22 @@
     }
 
     .smtp-error-block {
-        height: 90px;
+        height: auto;
         margin: auto;
         text-align: center;
         margin-bottom: 20px;
         background: #d96262;
         border: 1px solid #000;
         border-radius: 10px;
+        padding-left: 20px;
+        line-height: 45px;
+        font-size: 18px;
+        color: #fff;
+        font-weight: 600;
+
         a {
-            line-height: 45px;
-            font-size: 18px;
-            color: #fff;
-            font-weight: 600;
+            color: #dedede;
             text-decoration: underline;
-            padding-left: 20px;
         }
     }
 }
