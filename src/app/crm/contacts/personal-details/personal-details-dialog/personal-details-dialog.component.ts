@@ -321,10 +321,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     getCheckStripeSettings(): Observable<boolean> {
-        let storageKey = 'stripeApiKey' + this.appSession.tenantId,
-            stripeApiKey = sessionStorage.getItem(storageKey);
-        if (stripeApiKey != null)
-            return of(!!stripeApiKey);
+        let storageKey = 'stripeIsConnected' + this.appSession.tenantId,
+            isConnected = sessionStorage.getItem(storageKey);
+        if (isConnected != null)
+            return of(!!isConnected);
         else if (
             abp.features.isEnabled(AppFeatures.CRMPayments) && (
                 this.permissionCheckerService.isGranted(AppPermissions.CRMSettingsConfigure) ||
@@ -333,8 +333,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             )
         )
             return this.tenantPaymentSettingsService.getStripeSettings(false).pipe(map(res => {
-                sessionStorage.setItem(storageKey, res.apiKey || '');
-                return !!res.apiKey;
+                isConnected = (res.apiKey || res.isConnectedAccountSetUpCompleted ? 'true' : '');
+                sessionStorage.setItem(storageKey, isConnected);
+                return !!isConnected;
             }));
         else
             return of(false);
