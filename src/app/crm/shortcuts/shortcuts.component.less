@@ -1,13 +1,17 @@
 :host {
     display: block;
     position: relative;
-    padding: 55px 25px 0;
+    padding: 55px 5px 0px 25px;
 
     background: rgba(214, 238, 255, 0.6);
     background-image: url(../../../assets/common/images/bg-shortcuts.svg);
     background-size: cover;
     min-height: calc(100vh - 75px);
     width: 100%;
+
+    .margin-wrapper {
+        margin-right: 20px;
+    }
 
     .header {
         display: flex;
@@ -166,6 +170,22 @@
         & > div {
             width: 50%;
             min-height: calc(100vh / 3);
+        }
+
+        a.all-records {
+            font-size: 15px;
+            font-weight: 500;
+            color: #17AEEB;
+            float: right;
+            padding-right: 20px;
+            margin-left: auto;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            line-height: 29px;
+
+            i {
+                margin-left: 8px;
+            }
         }
 
         .sales-grid {
