@@ -157,6 +157,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             [
                 this.tenantSubscriptionServiceProxy.getPaymentSettingsInfo(),
                 this.tenantSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
+                    type: RequestPaymentType.PayPal,
                     paymentPeriodType: this.plan.paymentPeriodType,
                     productId: this.plan.productId,
                     quantity: this.quantity,
@@ -303,13 +304,14 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     payByStripe() {
         this.isPayByStripeDisabled = true;
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.tenantSubscriptionServiceProxy.requestStripePayment(new RequestPaymentInput({
+        this.tenantSubscriptionServiceProxy.requestProductPayment(new RequestPaymentInput({
+            type: RequestPaymentType.Stripe,
             productId: this.plan.productId,
             paymentPeriodType: this.plan.paymentPeriodType,
             quantity: 1,
             couponId: this.couponInfo ? this.couponInfo.id : undefined
         })).subscribe((response) => {
-            window.location.href = response.paymentLink;
+            window.location.href = response.stripePaymentLink;
         }, () => {
             this.isPayByStripeDisabled = false;
             this.loadingService.finishLoading();
@@ -389,7 +391,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     subscribeToFree() {
         this.onStatusChange.emit({ status: PaymentStatusEnum.BeingConfirmed });
         this.onChangeStep.emit(2);
-        this.tenantSubscriptionServiceProxy.requestFreeProduct(new RequestPaymentInput({
+        this.tenantSubscriptionServiceProxy.requestProductPayment(new RequestPaymentInput({
+            type: RequestPaymentType.Free,
             productId: this.plan.productId,
             paymentPeriodType: this.plan.paymentPeriodType,
             quantity: 1,
