@@ -64,7 +64,7 @@
                                     </dx-text-box>
                                 </div>
                             </div>
-                            <inplace-edit *ngIf="isPublicProductsEnabled" 
+                            <inplace-edit *ngIf="isPublicProductsEnabled"
                                           [id]="'product-url'"
                                           [value]="product.publicName"
                                           [showInlineEditButton]="true"
@@ -733,6 +733,22 @@
                                         </dx-validator>
                                     </dx-select-box>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="block">
+                            <h3>{{ls.l('Redirect Url')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                            <div class="add-link">
+                                <dx-text-box name="file"
+                                             [placeholder]="ls.l('Default receipt page')"
+                                             [(value)]="product.redirectUrl"
+                                             [disabled]="isReadOnly">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="pattern"
+                                                             [pattern]="urlRegexPattern"
+                                                             [message]="ls.l('InvalidUrl')">
+                                        </dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
                             </div>
                         </div>
                     </div>
