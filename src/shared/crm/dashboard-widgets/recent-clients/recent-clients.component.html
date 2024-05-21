@@ -8,9 +8,11 @@
                 (onSelectionChanged)="onSelectionChanged($event)">
             </dx-select-box>
             <span>{{selectedItem.value.message}}</span>
-            <a [routerLink]="selectedItem.value.allRecordsLink"
-               [queryParams]="selectedItem.value.linkParams">
-                {{ls.l('CRMDashboard_SeeAllRecords')}}
+
+            <a class="view-all"
+                [routerLink]="selectedItem.value.allRecordsLink"
+                [queryParams]="selectedItem.value.linkParams">                
+                {{viewAllText}}
                 <i class="fa fa-angle-right"></i>
             </a>
         </h2>

@@ -1,3 +1,10 @@
+<app-headline *ngIf="layoutService.showLeftBar"
+    [names]="[ '' ]"
+    [buttons]="[]"
+    [showToggleFullScreenButton]="true"
+    [showReloadButton]="true">
+</app-headline>
+
 <dx-scroll-view showScrollbar="onHover" height="calc(100vh - 150px)">
     <div class="margin-wrapper">
         <div class="header">
@@ -203,26 +210,18 @@
         </dx-scroll-view>
         <div class="data-grids">
             <div class="sales-grid">
-                <!-- div class="grid-header">
-                    <h1>Sales Activity</h1><div class="actions"><div class="recent"><img width="17px" height="17px" src="./assets/common/icons/star.svg"> Recent</div><div class="favorites"><img width="17px" height="17px" src="./assets/common/icons/heart.svg"> Favorites</div><div class="upload"><img width="14px" src="./assets/common/icons/upload.svg"> Upload</div><div class="view-all" (click)="router.navigate(['app/crm/orders'])">View All <img width="14px" src="./assets/common/icons/arrow-right2.svg"></div></div>
-                </div -->
                 <div class="data-grid">
-                    <recent-clients 
+                    <recent-clients
+                        [viewAllText]="'View All'"
                         [waitFor$]="waitFor$">
                     </recent-clients>
-
-                    <!-- app-no-data
-                       [hidden]="false"
-                       [showLink]="false">
-                    </app-no-data -->
                 </div>
             </div>
             <div class="products-grid">
                 <div class="grid-header">
                     <h1>My Products</h1>
                     <div class="actions">
-                        <a class="all-records" routerLink="/app/crm/products"> See all records <i class="fa fa-angle-right"></i></a>
-                        <!-- div class="recent"><img width="17px" height="17px" src="./assets/common/icons/star.svg"> Recent</div><div class="favorites"><img width="17px" height="17px" src="./assets/common/icons/heart.svg"> Favorites</div><div class="upload"><img width="14px" src="./assets/common/icons/upload.svg"> Upload</div><div class="view-all" (click)="router.navigate(['app/crm/products'])">View All <img width="14px" src="./assets/common/icons/arrow-right2.svg"></div -->
+                        <div class="view-all" (click)="router.navigate(['app/crm/products'])">View All <img width="14px" src="./assets/common/icons/arrow-right2.svg"></div>
                     </div>
                 </div>
                 <div class="data-grid">

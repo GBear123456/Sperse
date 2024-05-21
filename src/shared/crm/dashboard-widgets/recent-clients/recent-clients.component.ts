@@ -39,6 +39,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     @Input() waitFor$: Observable<any> = of().pipe(
         publishReplay(), refCount()
     );
+    @Input() viewAllText: string = this.ls.l('CRMDashboard_SeeAllRecords');
     @Output() loadComplete: EventEmitter<any> = new EventEmitter();
 
     recordsCount = 10;
