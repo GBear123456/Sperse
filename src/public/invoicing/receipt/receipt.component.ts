@@ -91,6 +91,11 @@ export class ReceiptComponent implements OnInit {
                         }
                     case InvoiceStatus.Paid:
                         {
+                            if (result.redirectUrl) {
+                                location.href = result.redirectUrl;
+                                return;
+                            }
+
                             this.invoiceInfo = result;
                             this.invoiceInfo.resources = result.resources.sort((a, b) => Boolean(a.url) > Boolean(b.url) ? 1 : -1);
                             this.initEventsInfo();
