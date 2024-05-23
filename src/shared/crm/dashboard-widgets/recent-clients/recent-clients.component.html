@@ -54,7 +54,7 @@
                     {{cellData.value | currency:cellData.data.currency:'symbol':'1.2-2'}}
                 </div>
                 <div *dxTemplate="let cellData of 'paidByTemplate'">
-                    {{cellData.value || 'unknown'}}
+                    <img width="41px" src="./assets/common/images/payments/card-logo/{{getIconNameByType(cellData.value)}}.svg" [title]="ls.l(cellData.value || 'Unknown')">
                 </div>
                 <div *dxTemplate="let cellData of 'dateTemplate'" class="date">
                     {{cellData.value | datetime: formatting.dateTimeMoment}}

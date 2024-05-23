@@ -198,6 +198,20 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         }
     }
 
+    getIconNameByType(type: string | null) {
+        if (type == 'BankCard')
+            return 'bank-card';
+
+        if (type == 'PayPal')
+            return 'pay-pal';
+
+
+        if (type == 'ACH')
+            return 'stripe';
+
+        return 'cash-icon';
+    }
+
     onSelectionChanged($event) {        
         this.selectedItem.next($event.selectedItem);
     }
