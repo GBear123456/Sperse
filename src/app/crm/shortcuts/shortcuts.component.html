@@ -52,13 +52,13 @@
                                 <label>Currency</label><button (click)="openProfileTenantSettingsDialog('general')"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
                             </div>
                             <div class="detail-item">
-                                <label>My Branding</label><button (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Appearance' }})"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
+                                <label>My Branding</label><button [disabled]="!showMyBranding" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Appearance' }})"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
                             </div>
                             <div class="detail-item">
                                 <label>Email Settings</label><button (click)="openProfileTenantSettingsDialog('gmail')"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
                             </div>
                             <div class="detail-item">
-                                <label>Notifications</label><button (click)="openNotificationModal($event)"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
+                                <label>Notifications</label><button [disabled]="!showNotification" (click)="openNotificationModal($event)"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
                             </div>
                         </dx-scroll-view>
                     </div>
@@ -155,7 +155,7 @@
                         </dx-scroll-view>
                     </div>
                 </div>
-                <div class="block" [disabled]="!showCommissionsSettings">
+                <div class="block" [hidden]="!showCommissionsSettings && !showCommissions">
                     <div class="image">
                         <img src="./assets/common/images/shortcuts/affiliate.svg">
                     </div>
@@ -164,13 +164,13 @@
                     <div class="details">
                         <dx-scroll-view showScrollbar="onHover" height="183px">
                             <div class="detail-item">
-                                <label>Add an Affiliate</label><button disabled><img width="7px" height="7px" src="./assets/common/icons/plus2.svg"> Add</button>
+                                <label>Add an Affiliate</label><button [disabled]="!isGrantedCRMCustomers" (click)="openContactDialog()"><img width="7px" height="7px" src="./assets/common/icons/plus2.svg"> Add</button>
                             </div>
                             <div class="detail-item">
-                                <label>Set Affiliate Rules</label><button disabled><img width="11px" height="11px" src="./assets/common/icons/candle.svg"> Set</button>
+                                <label>Set Commission Rules</label><button (click)="openProfileTenantSettingsDialog('commissions')"><img width="11px" height="11px" src="./assets/common/icons/candle.svg"> Set</button>
                             </div>
                             <div class="detail-item">
-                                <label>Commissions</label><button [disabled]="!showCommissions"(click)="router.navigate(['app/crm/commission-history'])"><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
+                                <label>Commissions</label><button [disabled]="!showCommissions" (click)="router.navigate(['app/crm/commission-history'], {queryParams: {viewType: 1}})"><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
                             </div>
                             <div class="detail-item">
                                 <label>Payouts</label><button disabled><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
@@ -178,7 +178,7 @@
                         </dx-scroll-view>
                     </div>
                 </div>
-                <div class="block">
+                <div class="block" [hidden]="!showBioPage">
                     <div class="image">
                         <img src="./assets/common/images/shortcuts/like-a-boss.svg">
                     </div>

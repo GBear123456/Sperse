@@ -77,7 +77,9 @@ export class ShortcutsComponent implements OnInit {
             && this.permission.isGranted(AppPermissions.AdministrationUsers)
             && this.permission.isGranted(AppPermissions.AdministrationUsersCreate)
             && this.permission.isGranted(AppPermissions.AdministrationRoles);
-    showSubscriptionManagement = this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement); 
+    showSubscriptionManagement = this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);
+    showCommissions = this.feature.isEnabled(AppFeatures.CRMCommissions) &&
+        this.permission.isGranted(AppPermissions.CRMAffiliatesCommissions); 
     showCommissionsSettings = this.feature.isEnabled(AppFeatures.CRMCommissions) &&
         (this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasTenantPermission);
 
@@ -94,6 +96,10 @@ export class ShortcutsComponent implements OnInit {
     localization = AppConsts.localization.CRMLocalizationSourceName;
     isZendeskEnabled = !this.appService.isHostTenant && abp.setting.values['Integrations:Zendesk:AccountUrl'];
     headlineBackground = abp.setting.get('App.Appearance.NavBackground');
+
+    showBioPage = this.feature.isEnabled(AppFeatures.AdvancedProfiles);
+    showMyBranding = this.feature.isEnabled(AppFeatures.AdminCustomizations);
+    showNotification = this.feature.isEnabled(AppFeatures.Notification);
 
     constructor(
         public router: Router,
