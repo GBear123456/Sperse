@@ -751,6 +751,19 @@
                                 </dx-text-box>
                             </div>
                         </div>
+                        <div class="block paid-email-template">
+                            <h3>{{ls.l('Email Paid Template')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                            <div class="options">
+                                <div *ngIf="!isReadOnly" class="remove-button" (click)="product.paidEmailTemplateId = undefined"><span>-</span></div>
+                                <div class="upgrade-field">
+                                    <email-template-selector [(templateId)]="product.paidEmailTemplateId"
+                                                             [templateType]="EmailTemplateType.ProductPaid"
+                                                             [showSystemDefault]="false"
+                                                             [title]="ls.l('TemplateName')">
+                                    </email-template-selector>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="footer"></div>

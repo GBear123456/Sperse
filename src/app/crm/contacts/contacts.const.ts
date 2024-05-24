@@ -39,14 +39,20 @@ export enum EmailTags {
     UnsubscribeLink = 'UnsubscribeLink'
 }
 
+export enum ProductEmailTags {
+    ClientFullName = 'ClientFullName',
+    ProductName = 'ProductName',
+    ProductDescription = 'ProductDescription'
+}
+
 export enum WelcomeEmailTags {
-    FirstName = "FirstName",
-    LastName = "LastName",
-    UserEmail = "UserEmail",
-    Password = "Password",
-    BaseUrl = "BaseUrl",
-    SenderSystemName = "SenderSystemName",
-    SenderEmailSignature = "SenderEmailSignature",
-    AutologinLink = "AutologinLink",
-    TrackingPixel = "TrackingPixel"
+    FirstName = 'FirstName',
+    LastName = 'LastName',
+    UserEmail = 'UserEmail',
+    Password = 'Password',
+    BaseUrl = 'BaseUrl',
+    SenderSystemName = 'SenderSystemName',
+    SenderEmailSignature = 'SenderEmailSignature',
+    AutologinLink = 'AutologinLink',
+    TrackingPixel = 'TrackingPixel'
 }

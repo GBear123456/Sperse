@@ -52,7 +52,8 @@ import {
     AddressInfoDto,
     ProductEventLocation,
     LanguageDto,
-    TimingServiceProxy
+    TimingServiceProxy,
+    EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -198,6 +199,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     image: string = null;
     imageChanged: boolean = false;
     isOneTime = false;
+    EmailTemplateType = EmailTemplateType;
 
     eventLocation = ProductEventLocation;
     eventDurationTypes = EventDurationHelper.eventDurationDataSource;
