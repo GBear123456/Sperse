@@ -270,6 +270,102 @@
             }
         }
 
+        .products-grid {
+            .grid-wrapper {
+                height: 500px;
+                padding-top: 15px;
+            }
+            ::ng-deep dx-data-grid {
+                height: 100% !important;
+
+                &#gridContainer .dx-datagrid-headers .dx-column-lines td,
+                &#gridContainer .dx-datagrid-headers .dx-datagrid-table td {
+                    height: 48px !important;
+                    padding-bottom: 16px;    
+                    border-bottom: 1px solid #ddd!important;
+                    &:first-child {
+                        padding-left: 40px !important;
+                    }
+                }
+                &#gridContainer .dx-datagrid-rowsview .dx-column-lines td,
+                &#gridContainer .dx-datagrid-rowsview .dx-datagrid-table td {
+                    height: 58px !important;
+                    border-bottom: 1px solid #ddd!important;
+                    &:first-child {
+                        padding-left: 40px !important;
+                    }
+                }
+                &#gridContainer .dx-datagrid-rowsview .dx-datagrid-table tr:last-child td {
+                    border-bottom: 1px solid transparent!important;
+                }
+                .dx-datagrid-rowsview .dx-data-row:nth-child(odd) {
+                    background-color: transparent!important;
+                }
+                .dx-datagrid-headers {
+                    border: none;
+
+                    .dx-datagrid-content {
+                        border-bottom: none !important;
+                    }
+
+                    .dx-column-lines td {
+                        height: 25px!important;
+                        padding-left: 10px;
+                        .dx-datagrid-text-content {
+                            color: #4a4a4a!important;
+                        }
+                    }
+                }
+                .dx-datagrid-rowsview {
+                    border-top: none;
+                    .dx-data-row {
+                        &:nth-child(odd) {
+                            background-color: rgba(243, 247, 250, 0.7);
+                        }
+
+                        td {
+                            cursor: pointer;
+                            padding: 8px 10px!important;
+                            border-bottom: none !important;
+                            font-weight: 500 !important;
+                            font-size: 15px !important;
+                            height: 21px !important;
+                            letter-spacing: 0.3px;
+                            h3 {
+                                font-family: Manrope;
+                                font-size: 14px;
+                                font-weight: 500;
+                                color: rgba(16, 33, 58, 1);
+                            }
+                            span {
+                                font-family: Manrope;
+                                font-size: 12px;
+                                font-weight: 400;
+                                line-height: 27px;
+                                text-align: left;
+                                color: rgba(16, 33, 58, 0.7);
+                            }
+                            .amount {
+                                padding-right: 30px;
+                                font-family: Plus Jakarta Sans;
+                                font-size: 14px;
+                                font-weight: 500;
+                                letter-spacing: -0.02em;
+                                color: rgba(8, 41, 91, 1);
+                            }
+                            .date {
+                                font-family: Manrope;
+                                font-size: 14px;
+                                font-weight: 400;
+                                text-align: left;
+                                color: rgba(16, 33, 58, 0.7);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
         .grid-header {
             h1 {
                 display: inline-block;

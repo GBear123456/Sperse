@@ -9,6 +9,8 @@ import {
 import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
+import ODataStore from 'devextreme/data/odata/store';
+import { DataSource } from 'devextreme/data/data_source/data_source';
 import { NgxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
@@ -17,12 +19,14 @@ import { Observable, Subject, ReplaySubject, combineLatest, of } from 'rxjs';
 import { finalize, filter, first, takeUntil, map, delay } from 'rxjs/operators';
 import { FeatureCheckerService, MessageService } from 'abp-ng2-module';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 /** Application imports */
 import { AppStore } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
 import { ContactGroup } from '@shared/AppEnums';
+import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
@@ -30,6 +34,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ModuleType, LayoutType, StripeSettingsDto, TenantPaymentSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
+import { ODataService } from '@shared/common/odata/odata.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal/notification-settings-modal.component';
@@ -52,13 +58,14 @@ import { AppFeatures } from '@shared/AppFeatures';
 })
 export class ShortcutsComponent implements OnInit {
     @ViewChild('shortcutsScroll') scrollView: DxScrollViewComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
     isGrantedOrders = this.permission.isGranted(AppPermissions.CRMOrders);
 
-    waitFor$ = of(true);
-
+    waitFor$ = of(true);    
+    formatting = AppConsts.formatting;
     calendlyUri = AppConsts.calendlyUri;
     stripePaymentSettings: StripeSettingsDto = new StripeSettingsDto();
     hasTenantPermission = this.permission.isGranted(AppPermissions.AdministrationTenantSettings);
@@ -101,6 +108,30 @@ export class ShortcutsComponent implements OnInit {
     showMyBranding = this.feature.isEnabled(AppFeatures.AdminCustomizations);
     showNotification = this.feature.isEnabled(AppFeatures.Notification);
 
+    isDataLoaded = false;
+    productsDataSource = new DataSource({ 
+        store: new ODataStore({
+            key: 'Id',
+            deserializeDates: false,
+            url: this.oDataService.getODataUrl('Product', { 'LastSold': { 'ne': null } }),
+            version: AppConsts.ODataVersion,
+            beforeSend: (request) => {
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.params.$select = DataGridService.getSelectFields(
+                    this.dataGrid, [
+                        'Id', 'Code'
+                    ]
+                );
+                request.params.$orderby = 'LastSold DESC';
+                request.params.$top = 10;
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
+            }
+        })
+    });
+
     constructor(
         public router: Router,
         private appService: AppService,
@@ -118,6 +149,8 @@ export class ShortcutsComponent implements OnInit {
         private message: MessageService,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private ngxZendeskWebwidgetService: NgxZendeskWebwidgetService,
+        private oDataService: ODataService,
+        public httpInterceptor: AppHttpInterceptor,
         public layoutService: LayoutService,
         public dialog: MatDialog
     ) {
