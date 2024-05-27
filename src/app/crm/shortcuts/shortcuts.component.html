@@ -170,10 +170,10 @@
                                 <label>Set Commission Rules</label><button (click)="openProfileTenantSettingsDialog('commissions')"><img width="11px" height="11px" src="./assets/common/icons/candle.svg"> Set</button>
                             </div>
                             <div class="detail-item">
-                                <label>Commissions</label><button [disabled]="!showCommissions" (click)="router.navigate(['app/crm/commission-history'], {queryParams: {viewType: 1}})"><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
+                                <label>Commissions</label><button [disabled]="!showCommissions" (click)="router.navigate(['app/crm/commission-history'])"><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
                             </div>
                             <div class="detail-item">
-                                <label>Payouts</label><button disabled><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
+                                <label>Payouts</label><button [disabled]="!showCommissions" (click)="router.navigate(['app/crm/commission-history'], {queryParams: {viewType: 1}})"><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
                             </div>
                         </dx-scroll-view>
                     </div>
