@@ -400,7 +400,8 @@ export class ContactsService {
                 ];
             case EmailTemplateType.ProductPaid:
                 return [
-                    ProductEmailTags.ClientFullName, ProductEmailTags.ProductName, ProductEmailTags.ProductDescription
+                    ProductEmailTags.ClientFullName, ProductEmailTags.ProductName, ProductEmailTags.ProductDescription, ProductEmailTags.ProductQuantity, ProductEmailTags.ProductSubscriptionOption,
+                    ProductEmailTags.ProductInvoiceUrl, ProductEmailTags.ProductReceiptUrl
                 ];
             default:
                 return [];
