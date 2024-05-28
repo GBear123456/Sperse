@@ -1,6 +1,16 @@
 <li class="m-nav__item m-topbar__user-profile m-topbar__user-profile--img  m-dropdown m-dropdown--medium m-dropdown--arrow m-dropdown--header-bg-fill {{layoutService.showTopBar ? 'm-dropdown--align-right' : 'm-dropdown--align-left m-dropdown--up'}} m-dropdown--mobile-full-width m-dropdown--skin-light"
     data-dropdown-toggle="click"
     #topBarUserProfile>
+
+    <action-menu [items]="actionMenuGroups"
+                 [visible]="!!actionEvent"
+                 class="grouped-action-menu"
+                 target=".gear.active"
+                 width="300px"
+                 (onHidden)="onMenuHidden($event)"
+                 (onItemClick)="onMenuItemClick($event)">
+    </action-menu>
+
     <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
         <span class="m-topbar__userpic">            
             <img alt="" *ngIf="appSession?.user?.profileThumbnailId; else stub"
@@ -12,115 +22,264 @@
             </ng-template>
         </span>
     </a>
-    <div class="m-dropdown__wrapper" [ngClass]="hasBankCodeFeature || showAccessCode ? 'bank-code' : ''" (click)="onClick($event)">
+
+    <div *ngIf="!isCustomLayout; else default" class="m-dropdown__wrapper wide-menu" (click)="onClick($event)">
         <span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust user-info-drop-down-arrow"></span>
         <div class="m-dropdown__inner">
-            <div class="m-dropdown__header m--align-center" [ngStyle]="dropdownHeaderStyle">
-                <div [ngStyle]="{ maxWidth: hasBankCodeFeature && bankCode ? '210px' : 'initial' }">
-                    <div class="m-card-user m-card-user--skin-dark">
-                        <div class="m-card-user__details">
-                        <span class="user-info fullName">
-                            {{ shownLoginInfo.fullName }}
-                        </span>
-                            <span class="user-info email" title="{{ shownLoginInfo.email }}">
-                            {{ shownLoginInfo.email }}
-                        </span>
-                        </div>
-                    </div>
-                    <div *ngIf="subtitle" class="user-info tenantName">
-                        {{ subtitle }}
-                    </div>
-                </div>
-                <div *ngIf="hasBankCodeFeature && bankCode" class="bank-code-section">
-                    <div>{{ bankCodeService.bankCodeConfig[bankCode[0]].definition }}</div>
-                    <a [href]="bankCodeService.getBankCodeReportLink('EN', bankCode)"
-                       target="_blank"
-                       download>{{ ls.l('GetReport') }}</a>
-                </div>
-            </div>
-            <div *ngIf="hasBankCodeFeature || showAccessCode" class="bank-code-block">
-                <div>
-                    <div *ngIf="hasBankCodeFeature" class="bank-code">
-                        <label>{{ ls.l('MyBANKCODE') }}</label>
-                        <bank-code-letters [(bankCode)]="bankCode"
-                                           [allowAdd]="true"
-                                           [allowEdit]="true"
-                                           [showDialogOnBottom]="true" 
-                                           [editDialogPosition]="{ x: 400 }"
-                                           [showDescriptionsOnHover]="true"
-                                           (bankCodeChange)="bankCodeChange()">
-                        </bank-code-letters>
-                    </div>
-                    <ng-container *ngIf="showAccessCode">
-                        <div class="access-code">
-                            <label>{{ ls.l('MyAccessCode') }}</label>
-                            <inplace-edit [value]="accessCode$ | async"
-                                          [isCopyEnabled]="true"
-                                          [isEditDialogEnabled]="true"
-                                          [showEditModeOnEditButtonClick]="true"
-                                          [validationRules]="accessCodeValidationRules"
-                                          buttonsPosition="below"
-                                          [ngStyle]="{ color: bankCodeColor }"
-                                          (valueChanged)="accessCodeChanged($event)">
-                            </inplace-edit>
-                        </div>
-                        <img src="./assets/common/icons/info-icon-blue.svg"
-                             id="accessCodeTooltip"
-                             (mouseenter)="isAccessCodeTooltipVisible = true">
-                        <dx-tooltip [position]="{
-                                        my: 'left top',
-                                        at: 'right bottom',
-                                        of: '#accessCodeTooltip',
-                                        offset: '-38 5'
-                                    }"
-                                    [(visible)]="isAccessCodeTooltipVisible"
-                                    (click)="onInstructionsClick($event)"
-                                    [width]="345">
-                            <div *dxTemplate="let data of 'content'">
-                                <access-code-instructions (click)="onInstructionsClick($event)"></access-code-instructions>
+
+            <div class="rows">
+                <div class="top-row">
+                    <div class="user">
+                        <img alt="" *ngIf="appSession?.user?.profileThumbnailId; else stub"
+                             class="header-profile-picture m--img-rounded m--marginless m--img-centered"
+                             [ngClass]="{square: showSquareIcon}"
+                             [src]="profileService.getProfilePictureUrl(appSession?.user?.profileThumbnailId)"/>
+
+                        <div class="box">
+                            <div class="m-card-user m-card-user--skin-dark">
+                                <div class="m-card-user__details">
+                                    <span *ngIf="userManagementService.isImpersonatedLogin" class="user-info selected">
+                                        Selected account
+                                    </span>
+                                    <span class="user-info fullName">
+                                        {{ shownLoginInfo.fullName }}
+                                    </span>
+                                    <span class="user-info email" title="{{ shownLoginInfo.email }}">
+                                        {{ shownLoginInfo.email }}
+                                    </span>
+                                </div>
                             </div>
-                        </dx-tooltip>
-                    </ng-container>
-                </div>
-            </div>
-            <dx-scroll-view showScrollbar="onHover" [height]="getScrollHeight()" [width]="'100%'">
-                <div class="m-dropdown__body">
-                    <div class="m-dropdown__content">
-                        <ul class="m-nav m-nav--skin-light">
-                            <ng-container *ngFor="let menuItem of dropdownMenuItems">
-                                <li class="m-nav__item" [ngClass]="menuItem.cssClass" *ngIf="menuItem.type !== menuItemTypes.Separator && (menuItem.visible === undefined || menuItem.visible)">
-                                    <a href="javascript:;" class="m-nav__link" (click)="!menuItem.disabled && menuItemClick(menuItem, $event)">
-                                        <i class="m-nav__link-icon" *ngIf="menuItem.iconClass" [ngClass]="menuItem.iconClass"></i>
-                                        <img class="m-nav__link-icon" *ngIf="menuItem.iconSrc" [src]="menuItem.iconSrc">
-                                        <span class="m-nav__link-title">
-                                            <span class="m-nav__link-wrap">
-                                                <span [id]="menuItem.id" class="m-nav__link-text" [ngClass]="{disabled: menuItem.disabled}">
-                                                    {{ menuItem.name }}
-                                                </span>
-                                            </span>
-                                        </span>
-                                    </a>
-                                </li>
-                                <ng-container *ngIf="menuItem.submenuItems">
-                                    <ul [id]="menuItem.submenuItems.id" class="m-nav linked-accounts" *ngIf="menuItem.submenuItems.items">
-                                        <li *ngFor="let submenuItem of menuItem.submenuItems.items" class="m-nav__item">
-                                            <a href="javascript:;" (click)="menuItem.submenuItems.onItemClick(submenuItem)" class="m-nav__link">
-                                                <span class="m-nav__link-bullet m-nav__link-bullet--dot">
-                                                    <span></span>
-                                                </span>
-                                                <span class="m-nav__link-text">
-                                                    {{ menuItem.submenuItems.onItemDisplay(submenuItem) }}
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </ng-container>
-                                <li *ngIf="menuItem.type === menuItemTypes.Separator && (menuItem.visible || menuItem.visible === undefined)" class="m-nav__separator m-nav__separator--fit"></li>
-                            </ng-container>
-                        </ul>
+                            <div *ngIf="subtitle" class="user-info tenantName">
+                                {{ subtitle }}
+                            </div>
+                        </div>                        
+                    </div>
+                         
+                    <div class="subscription">
+
+                        <div class="box">
+                            <div class="group">
+                                <div class="overlap-group">
+                                    <img class="vuesax-linear-share" src="./assets/common/icons/current-plan.svg" />
+                                    <div class="text-wrapper">Agency Elite Plan</div>
+                                    <div class="div">You've been upgraded!</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="login">
+                        <div class="box"> 
+                            <div class="group"> 
+                                <div class="overlap-group"> 
+                                    <div class="text-wrapper">Login To CRM</div> 
+                                    <img class="vuesax-linear" src="./assets/common/icons/sidebar-right.svg" /> 
+                                    <div class="div">Access advanced features</div> 
+                                </div> 
+                            </div> 
+                        </div>
                     </div>
                 </div>
-            </dx-scroll-view>
+                <div class="middle-row">
+                    <div class="linked-accounts">
+                        <div class="box">
+                            <div class="switch-selected">SWITCH SELECTED COMPANY</div>
+                            <dx-list 
+                                [items]="linkedAccounts"
+                                (onItemClick)="switchToUser($event.itemData)">
+                                <div *dxTemplate="let item of 'item'">
+                                    <div class="linked-account">
+                                      <div class="logo">{{getUserNameFirstLatters(item.username)}}</div>
+                                      <div class="name">{{getShownLinkedUserName(item)}}</div>
+                                      <div [ngClass]="{active: actionEvent?.id == item?.id}" class="gear" (click)="openLinkedAccountMenu($event, item)"></div>
+                                    </div>
+                                </div>
+                            </dx-list>
+                        </div>
+                    </div>
+
+                    <div class="user-menu-left">
+                        <div class="box">
+                            <div class="group">
+                                <div class="div">                                        
+                                    <div class="text-link" [ngClass]="{disabled: !portalUrl}" (click)="openLink(portalUrl)"><img class="img" src="./assets/common/icons/3dcube.svg" /> Customer Portal</div>                                    
+                                    <div class="text-link" [ngClass]="{disabled: !permissionChecker.isGranted(appPermissions.CRMProducts)}" (click)="router.navigateByUrl('app/crm/coupons');close()"><img class="img" src="./assets/common/icons/ticket.svg" /> Coupons</div>                                    
+                                    <div class="text-link disabled"><img class="img" src="./assets/common/icons/element-3.png" /> Integrations</div>                                    
+                                    <div class="text-link disabled"><img class="img" src="./assets/common/icons/magicpen.svg" /> Themes</div>                                    
+                                    <div class="text-link"><img class="img" src="./assets/common/icons/setting-2.svg" /> Account Settings</div>
+                                    <div class="text-link" (click)="userNotificationHelper.openSettingsModal($event);close()"><img class="img" src="./assets/common/icons/notification-bing.png" /> Notifications</div>
+                                    <div class="text-link" [ngClass]="{disabled: !userManagementService.helpLink}" (click)="openLink(userManagementService.helpLink)"><img class="img" src="./assets/common/icons/lifebuoy.svg" /> Help Center</div>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-menu-right">
+                        <div class="box">
+                            <div class="group">
+                                <div class="overlap-group">
+                                    <div class="group-wrapper">
+                                        <div class="div">
+                                            <div class="text-link" [ngClass]="{disabled: !isHostTenant}"><img class="img" src="./assets/common/icons/dollar-square.svg" /> My Billing History</div>
+                                            <div class="text-link" (click)="userManagementService.changePassword($event);close()"><img class="img" src="./assets/common/icons/lock.svg" /> Change my password</div>
+                                            <div class="text-link" (click)="userManagementService.changeProfilePicture($event);close()"><img class="img" src="./assets/common/icons/user-square.png" /> Change my photo</div>
+                                            <div class="text-link" [ngClass]="{disabled: !featureCheckerService.isEnabled(appFeatures.CRM) || !permissionChecker.isGranted(appPermissions.CRM)}" (click)="router.navigateByUrl('app/crm/activity');close()"><img class="img" src="./assets/common/icons/calendar-edit.svg" /> My Calendar</div>
+                                            <div class="text-link" (click)="userManagementService.changeMySettings($event);close()"><img class="img" src="./assets/common/icons/setting-4.svg" /> My Settings</div>
+                                            <div class="text-link" (click)="userManagementService.showLoginAttempts($event);close()"><img class="img" src="./assets/common/icons/clipboard-text.svg" /> My Login Activity</div>
+                                            <div class="text-link" [ngClass]="{disabled: !calendlyUri}" (click)="openLink('https://calendly.com/' + calendlyUri)"><img class="img" src="./assets/common/icons/calendar4.svg" /> Book a Meeting</div>
+                                        </div>
+                                    </div>                                                                        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-row">
+                    <div class="add-account">
+                        <div class="box"> 
+                            <div class="group" (click)="manageLinkedAccounts()"> 
+                                <div class="text-wrapper">Add a New Account</div> 
+                                <p class="div">({{linkedAccountsCount}} of 10 accounts available)</p> 
+                                <img class="vuesax-linear-add" src="./assets/common/icons/add-circle.svg" /> 
+                            </div> 
+                        </div>                    
+                    </div>
+
+                    <div class="logout">
+                        <div class="box">
+                            <div class="group">
+                                <div class="overlap" (click)="userManagementService.logout()">
+                                    <div class="text-wrapper">Logout</div>
+                                    <img class="vuesax-linear-login" src="./assets/common/icons/linear-login.svg" />
+                                </div>
+                                <div class="overlap-group-wrapper">
+                                    <div class="overlap-group" *ngIf="userManagementService.isImpersonatedLogin" (click)="userManagementService.backToMyAccount()">
+                                        <div class="text-wrapper">Back to my account</div>
+                                        <img class="vuesax-linear-undo" src="./assets/common/icons/linear-undo.svg" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
         </div>
     </div>
+
+    <ng-template #default>
+        <div class="m-dropdown__wrapper" [ngClass]="hasBankCodeFeature || showAccessCode ? 'bank-code' : ''" (click)="onClick($event)">
+            <span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust user-info-drop-down-arrow"></span>
+            <div class="m-dropdown__inner">
+                <div class="m-dropdown__header m--align-center" [ngStyle]="dropdownHeaderStyle">
+                    <div [ngStyle]="{ maxWidth: hasBankCodeFeature && bankCode ? '210px' : 'initial' }">
+                        <div class="m-card-user m-card-user--skin-dark">
+                            <div class="m-card-user__details">
+                            <span class="user-info fullName">
+                                {{ shownLoginInfo.fullName }}
+                            </span>
+                                <span class="user-info email" title="{{ shownLoginInfo.email }}">
+                                {{ shownLoginInfo.email }}
+                            </span>
+                            </div>
+                        </div>
+                        <div *ngIf="subtitle" class="user-info tenantName">
+                            {{ subtitle }}
+                        </div>
+                    </div>
+                    <div *ngIf="hasBankCodeFeature && bankCode" class="bank-code-section">
+                        <div>{{ bankCodeService.bankCodeConfig[bankCode[0]].definition }}</div>
+                        <a [href]="bankCodeService.getBankCodeReportLink('EN', bankCode)"
+                           target="_blank"
+                           download>{{ ls.l('GetReport') }}</a>
+                    </div>
+                </div>
+                <div *ngIf="hasBankCodeFeature || showAccessCode" class="bank-code-block">
+                    <div>
+                        <div *ngIf="hasBankCodeFeature" class="bank-code">
+                            <label>{{ ls.l('MyBANKCODE') }}</label>
+                            <bank-code-letters [(bankCode)]="bankCode"
+                                               [allowAdd]="true"
+                                               [allowEdit]="true"
+                                               [showDialogOnBottom]="true" 
+                                               [editDialogPosition]="{ x: 400 }"
+                                               [showDescriptionsOnHover]="true"
+                                               (bankCodeChange)="bankCodeChange()">
+                            </bank-code-letters>
+                        </div>
+                        <ng-container *ngIf="showAccessCode">
+                            <div class="access-code">
+                                <label>{{ ls.l('MyAccessCode') }}</label>
+                                <inplace-edit [value]="accessCode$ | async"
+                                              [isCopyEnabled]="true"
+                                              [isEditDialogEnabled]="true"
+                                              [showEditModeOnEditButtonClick]="true"
+                                              [validationRules]="accessCodeValidationRules"
+                                              buttonsPosition="below"
+                                              [ngStyle]="{ color: bankCodeColor }"
+                                              (valueChanged)="accessCodeChanged($event)">
+                                </inplace-edit>
+                            </div>
+                            <img src="./assets/common/icons/info-icon-blue.svg"
+                                 id="accessCodeTooltip"
+                                 (mouseenter)="isAccessCodeTooltipVisible = true">
+                            <dx-tooltip [position]="{
+                                            my: 'left top',
+                                            at: 'right bottom',
+                                            of: '#accessCodeTooltip',
+                                            offset: '-38 5'
+                                        }"
+                                        [(visible)]="isAccessCodeTooltipVisible"
+                                        (click)="onInstructionsClick($event)"
+                                        [width]="345">
+                                <div *dxTemplate="let data of 'content'">
+                                    <access-code-instructions (click)="onInstructionsClick($event)"></access-code-instructions>
+                                </div>
+                            </dx-tooltip>
+                        </ng-container>
+                    </div>
+                </div>
+                <dx-scroll-view showScrollbar="onHover" [height]="getScrollHeight()" [width]="'100%'">
+                    <div class="m-dropdown__body">
+                        <div class="m-dropdown__content">
+                            <ul class="m-nav m-nav--skin-light">
+                                <ng-container *ngFor="let menuItem of dropdownMenuItems">
+                                    <li class="m-nav__item" [ngClass]="menuItem.cssClass" *ngIf="menuItem.type !== menuItemTypes.Separator && (menuItem.visible === undefined || menuItem.visible)">
+                                        <a href="javascript:;" class="m-nav__link" (click)="!menuItem.disabled && menuItemClick(menuItem, $event)">
+                                            <i class="m-nav__link-icon" *ngIf="menuItem.iconClass" [ngClass]="menuItem.iconClass"></i>
+                                            <img class="m-nav__link-icon" *ngIf="menuItem.iconSrc" [src]="menuItem.iconSrc">
+                                            <span class="m-nav__link-title">
+                                                <span class="m-nav__link-wrap">
+                                                    <span [id]="menuItem.id" class="m-nav__link-text" [ngClass]="{disabled: menuItem.disabled}">
+                                                        {{ menuItem.name }}
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <ng-container *ngIf="menuItem.submenuItems">
+                                        <ul [id]="menuItem.submenuItems.id" class="m-nav linked-accounts" *ngIf="menuItem.submenuItems.items">
+                                            <li *ngFor="let submenuItem of menuItem.submenuItems.items" class="m-nav__item">
+                                                <a href="javascript:;" (click)="menuItem.submenuItems.onItemClick(submenuItem)" class="m-nav__link">
+                                                    <span class="m-nav__link-bullet m-nav__link-bullet--dot">
+                                                        <span></span>
+                                                    </span>
+                                                    <span class="m-nav__link-text">
+                                                        {{ menuItem.submenuItems.onItemDisplay(submenuItem) }}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </ng-container>
+                                    <li *ngIf="menuItem.type === menuItemTypes.Separator && (menuItem.visible || menuItem.visible === undefined)" class="m-nav__separator m-nav__separator--fit"></li>
+                                </ng-container>
+                            </ul>
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </div>
+        </div>
+    </ng-template>
+
 </li>
