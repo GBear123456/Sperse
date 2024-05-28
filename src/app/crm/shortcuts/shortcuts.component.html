@@ -2,7 +2,8 @@
     [names]="[ '' ]"
     [buttons]="[]"
     [showToggleFullScreenButton]="true"
-    [showReloadButton]="true">
+    [showReloadButton]="true"
+    (onReload)="refresh()">
 </app-headline>
 
 <dx-scroll-view showScrollbar="onHover" height="calc(100vh - 150px)">
@@ -229,6 +230,7 @@
                         <dx-data-grid id="gridContainer"
                                       accessKey="product-stats"
                                       class="grid-compact-view"
+                                      [loadPanel]="{enabled: false}"
                                       [dataSource]="productsDataSource"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxi-column dataField="Name" [caption]="ls.l('Product Title')" cellTemplate="titleTemplate"></dxi-column>

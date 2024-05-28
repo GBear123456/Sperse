@@ -33,6 +33,7 @@ import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customizatio
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ModuleType, LayoutType, StripeSettingsDto, TenantPaymentSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
@@ -108,7 +109,6 @@ export class ShortcutsComponent implements OnInit {
     showMyBranding = this.feature.isEnabled(AppFeatures.AdminCustomizations);
     showNotification = this.feature.isEnabled(AppFeatures.Notification);
 
-    isDataLoaded = false;
     productsDataSource = new DataSource({ 
         store: new ODataStore({
             key: 'Id',
@@ -116,6 +116,7 @@ export class ShortcutsComponent implements OnInit {
             url: this.oDataService.getODataUrl('Product', { 'LastSold': { 'ne': null } }),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
+                this.loadingService.startLoading(this.dataGrid.instance.element());
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$select = DataGridService.getSelectFields(
                     this.dataGrid, [
@@ -125,8 +126,11 @@ export class ShortcutsComponent implements OnInit {
                 request.params.$top = 10;
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             },
+            onLoaded: (records) => {
+                this.loadingService.finishLoading(this.dataGrid.instance.element());
+            },
             errorHandler: (error) => {
-                setTimeout(() => this.isDataLoaded = true);
+                this.loadingService.finishLoading(this.dataGrid.instance.element());
             }
         })
     });
@@ -146,6 +150,7 @@ export class ShortcutsComponent implements OnInit {
         public ls: AppLocalizationService,
         private loadingService: LoadingService,
         private message: MessageService,
+        private dashboardWidgetsService: DashboardWidgetsService,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private ngxZendeskWebwidgetService: NgxZendeskWebwidgetService,
         private oDataService: ODataService,
@@ -334,6 +339,11 @@ export class ShortcutsComponent implements OnInit {
                 invoice: null
             }
         });
+    }
+
+    refresh() {
+        this.productsDataSource.reload();
+        this.dashboardWidgetsService.refresh();
     }
 
     activate() {

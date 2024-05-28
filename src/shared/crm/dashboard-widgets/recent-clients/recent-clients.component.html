@@ -23,6 +23,7 @@
             <dx-data-grid id="gridContainer"
                           accessKey="recent-records"
                           class="grid-compact-view"
+                          [loadPanel]="{enabled: false}"
                           [dataSource]="recentlyCreatedCustomers"
                           (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                           (onCellClick)="onCellClick($event)">
@@ -40,7 +41,7 @@
                 <dxi-column dataField="amount" [caption]="ls.l('Amount')" cellTemplate="currencyTemplate" [visible]="isSalesSelected" cssClass="tabular"></dxi-column>
                 <dxi-column dataField="paidBy" [caption]="ls.l('Paid By')" cellTemplate="paidByTemplate" [visible]="isSalesSelected"></dxi-column>
                 <dxi-column dataField="date" [caption]="ls.l('Date')" cellTemplate="dateagoTemplate" [visible]="isSalesSelected" cssClass="tabular"></dxi-column>
-                <dxi-column dataField="mentor" [caption]="ls.l('Refered By')" cellTemplate="mentorTemplate" [visible]="isSalesSelected"></dxi-column>
+                <dxi-column dataField="mentor" [caption]="ls.l('Refered By')" cellTemplate="mentorTemplate" [visible]="isSalesSelected" minWidth="250"></dxi-column>
 
                 <dxo-paging [pageSize]="10"></dxo-paging>
                 <div *dxTemplate="let cellData of 'bankCodeCell'">
@@ -64,7 +65,7 @@
                 </div>
                 <div *dxTemplate="let cellData of 'mentorTemplate'">
                     <h3>{{cellData.value}}</h3>
-                    <span>{{cellData.data.mentorEmail}}</span>
+                    <span class="mentor-email" [title]="cellData.data.mentorEmail">{{cellData.data.mentorEmail}}</span>
                 </div>
             </dx-data-grid>
         </div>
