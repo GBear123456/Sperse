@@ -39,7 +39,7 @@
                 <dxi-column dataField="customerName" [caption]="ls.l('Customer.Name')" cellTemplate="customerNameTemplate" [visible]="isSalesSelected"></dxi-column>
                 <dxi-column dataField="amount" [caption]="ls.l('Amount')" cellTemplate="currencyTemplate" [visible]="isSalesSelected" cssClass="tabular"></dxi-column>
                 <dxi-column dataField="paidBy" [caption]="ls.l('Paid By')" cellTemplate="paidByTemplate" [visible]="isSalesSelected"></dxi-column>
-                <dxi-column dataField="date" [caption]="ls.l('Date')" cellTemplate="dateTemplate" [visible]="isSalesSelected" cssClass="tabular"></dxi-column>
+                <dxi-column dataField="date" [caption]="ls.l('Date')" cellTemplate="dateagoTemplate" [visible]="isSalesSelected" cssClass="tabular"></dxi-column>
                 <dxi-column dataField="mentor" [caption]="ls.l('Refered By')" cellTemplate="mentorTemplate" [visible]="isSalesSelected"></dxi-column>
 
                 <dxo-paging [pageSize]="10"></dxo-paging>
@@ -58,6 +58,9 @@
                 </div>
                 <div *dxTemplate="let cellData of 'dateTemplate'" class="date">
                     {{cellData.value | datetime: formatting.dateTimeMoment}}
+                </div>
+                <div *dxTemplate="let cellData of 'dateagoTemplate'" class="date">
+                    {{cellData.value | dateAgo}}
                 </div>
                 <div *dxTemplate="let cellData of 'mentorTemplate'">
                     <h3>{{cellData.value}}</h3>

@@ -232,7 +232,7 @@
                                       [dataSource]="productsDataSource"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxi-column dataField="Name" [caption]="ls.l('Product Title')" cellTemplate="titleTemplate"></dxi-column>
-                            <dxi-column dataField="LastSold" [caption]="ls.l('Last Sold')" cellTemplate="dateTemplate" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="LastSold" [caption]="ls.l('Last Sold')" cellTemplate="dateagoTemplate" sortOrder="desc"  alignment="right"></dxi-column>
                             <dxi-column dataField="UnitSold" [caption]="ls.l('Units Sold')" cssClass="tabular"></dxi-column>
                             <dxi-column dataField="GrossSales" [caption]="ls.l('Gross Sales')" cellTemplate="currencyTemplate" cssClass="tabular"></dxi-column>
 
@@ -245,8 +245,8 @@
                             <div *dxTemplate="let cellData of 'currencyTemplate'" class="amount">
                                 {{cellData.value | currency:cellData.data.currency:'symbol':'1.2-2'}}
                             </div>
-                            <div *dxTemplate="let cellData of 'dateTemplate'" class="date">
-                                {{cellData.value | datetime: formatting.dateTimeMoment}}
+                            <div *dxTemplate="let cellData of 'dateagoTemplate'">
+                                {{cellData.value | dateAgo}}
                             </div>
                         </dx-data-grid>
                     </div>

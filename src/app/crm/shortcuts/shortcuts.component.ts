@@ -122,7 +122,6 @@ export class ShortcutsComponent implements OnInit {
                         'Id', 'Code'
                     ]
                 );
-                request.params.$orderby = 'LastSold DESC';
                 request.params.$top = 10;
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             },

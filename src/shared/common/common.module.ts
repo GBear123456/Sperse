@@ -15,6 +15,7 @@ import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zi
 import { InfoComponent } from '@shared/common/widgets/info/info.component';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells-copying.service';
+import { DateAgoPipe } from './pipes/dateago/date-ago.pipe';
 import { PhoneFormatPipe } from './pipes/phone-format/phone-format.pipe';
 import { CustomNumberPipe } from './pipes/custom-number/custom-number.pipe';
 import { NumberToWordsPipe } from './pipes/number-to-words/number-to-words.pipe';
@@ -46,6 +47,7 @@ import { NgxFileDropModule } from 'ngx-file-drop';
         NumberToWordsPipe,
         AddressFormatPipe,
         FileSizePipe,
+        DateAgoPipe,
         ZipCodeFormatterPipe,
         InfoComponent,
         TitleCasePipe,
@@ -63,6 +65,7 @@ import { NgxFileDropModule } from 'ngx-file-drop';
         PhoneFormatPipe,
         AddressFormatPipe,
         FileSizePipe,
+        DateAgoPipe,
         ZipCodeFormatterPipe,
         InfoComponent,
         TitleCasePipe,
