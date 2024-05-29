@@ -241,7 +241,7 @@
                             <dxo-paging [enabled]="false"></dxo-paging>
 
                             <div *dxTemplate="let cellData of 'titleTemplate'">
-                                <h3>{{cellData.value}}</h3>
+                                <h3 class="ellipsis" [title]="cellData.value">{{cellData.value}}</h3>
                                 <span>SKU #{{cellData.data.Code}}</span>
                             </div>
                             <div *dxTemplate="let cellData of 'currencyTemplate'" class="amount">

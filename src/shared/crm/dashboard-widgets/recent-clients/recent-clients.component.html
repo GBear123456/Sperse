@@ -48,8 +48,8 @@
                     <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                 </div>
                 <div *dxTemplate="let cellData of 'customerNameTemplate'">
-                    <h3>{{cellData.value}}</h3>
-                    <span>{{cellData.data.customerEmail}}</span>
+                    <h3 class="ellipsis" [title]="cellData.value">{{cellData.value}}</h3>
+                    <span class="ellipsis" [title]="cellData.data.customerEmail">{{cellData.data.customerEmail}}</span>
                 </div>
                 <div *dxTemplate="let cellData of 'currencyTemplate'" class="amount">
                     {{cellData.value | currency:cellData.data.currency:'symbol':'1.2-2'}}
@@ -64,8 +64,8 @@
                     {{cellData.value | dateAgo}}
                 </div>
                 <div *dxTemplate="let cellData of 'mentorTemplate'">
-                    <h3>{{cellData.value}}</h3>
-                    <span class="mentor-email" [title]="cellData.data.mentorEmail">{{cellData.data.mentorEmail}}</span>
+                    <h3 class="ellipsis" [title]="cellData.value">{{cellData.value}}</h3>
+                    <span class="ellipsis" [title]="cellData.data.mentorEmail">{{cellData.data.mentorEmail}}</span>
                 </div>
             </dx-data-grid>
         </div>
