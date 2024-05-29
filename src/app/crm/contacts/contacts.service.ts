@@ -408,14 +408,14 @@ export class ContactsService {
         }
     }
 
-    showEmailTemplateDialog(templateData?: EmailTemplateData): EmailTemplateDialogComponent {
-        const addMode = !(templateData && templateData.templateId);
+    showEmailTemplateDialog(templateId?: number): EmailTemplateDialogComponent {
+        const addMode = !templateId;
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                ...templateData,
+                templateId: templateId,
                 title: addMode ? this.ls.l('Add Template') : this.ls.l('Edit Template'),
                 templateType: EmailTemplateType.Contact,
                 saveTitle: this.ls.l('Save'),
@@ -431,7 +431,7 @@ export class ContactsService {
         return dialogComponent;
     }
 
-    showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?: (templateId: number, emailData: any) => Observable<void>): Observable<number> {
+    showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?: (templateId: number, dialogComponent: EmailTemplateDialogComponent) => Observable<void>): Observable<number> {
         let emailData: EmailTemplateData = {
             saveTitle: this.ls.l('Send'),
             title: this.ls.l(title),
@@ -457,8 +457,8 @@ export class ContactsService {
         }).componentInstance;
 
         if (emailData.templateType == EmailTemplateType.Contact)
-            dialogComponent.onTemplateCreate.subscribe((templateData: EmailTemplateData) => {
-                const emailTemplateDialog = this.showEmailTemplateDialog(templateData);
+            dialogComponent.onTemplateCreate.subscribe((templateId: number) => {
+                const emailTemplateDialog = this.showEmailTemplateDialog(templateId);
                 emailTemplateDialog.onSave.subscribe((data: EmailTemplateData) => {
                     dialogComponent.data.templateId = data.templateId;
                     dialogComponent.onTemplateChanged({ value: data.templateId });
@@ -479,7 +479,7 @@ export class ContactsService {
 
                 let dataLoader$: Observable<any>;
                 if (onTemplateChange)
-                    dataLoader$ = onTemplateChange(templateId, emailData);
+                    dataLoader$ = onTemplateChange(templateId, dialogComponent);
                 else {
                     if (data.contactIds)
                         dataLoader$ = this.emailTemplateProxy.getTemplate(templateId).pipe(map(res => {
@@ -488,7 +488,8 @@ export class ContactsService {
                                 cc: res.cc,
                                 bcc: res.bcc,
                                 previewText: res.previewText,
-                                body: res.body
+                                body: res.body,
+                                attachments: res.attachments
                             };
                         }));
                     else
@@ -502,6 +503,7 @@ export class ContactsService {
                                 data.bcc = [].concat(data.bcc, emailData.bcc);
 
                             Object.assign(emailData, data);
+                            dialogComponent.updateTemplateAttachments(data.attachments);
                         })
                     );
                 }
@@ -595,15 +597,17 @@ export class ContactsService {
 
     showInvoiceEmailDialog(invoiceId: number, data: any = {}) {
         data.templateType = EmailTemplateType.Invoice;
-        return this.showEmailDialog(data, 'Email', (tmpId: number, emailData) => {
+        return this.showEmailDialog(data, 'Email', (tmpId: number, dialogComponent: EmailTemplateDialogComponent) => {
             return this.invoiceProxy.getEmailData(tmpId, invoiceId).pipe(
                 map((email: GetEmailDataOutput) => {
+                    let emailData = dialogComponent.data;
                     if (emailData.cc && emailData.cc.length)
                         data.cc = [].concat(data.cc, emailData.cc);
                     if (emailData.bcc && emailData.bcc.length)
                         data.bcc = [].concat(data.bcc, emailData.bcc);
 
                     Object.assign(emailData, email);
+                    dialogComponent.updateTemplateAttachments(email.attachments);
                 })
             );
         });
