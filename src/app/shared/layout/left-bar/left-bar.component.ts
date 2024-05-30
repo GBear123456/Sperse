@@ -275,7 +275,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onItemTitleClick(event) {
         if (event.itemData.title == 'Home') {
-            this.router.navigate(['app/crm/welcome']);
+            this.router.navigate(['app/crm/' + this.layoutService.getWelcomePageUri()]);
             event.event.preventDefault();
             event.event.stopPropagation();
         } else {

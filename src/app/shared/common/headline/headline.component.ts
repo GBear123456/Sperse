@@ -233,7 +233,8 @@ export class HeadLineComponent implements OnInit, OnDestroy {
             fontName: this.settingService.get('App.Appearance.FontName'),
             borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
             tabularFont: this.settingService.get('App.Appearance.TabularFont'),
-            leftsideMenuColor: this.settingService.get('App.Appearance.LeftsideMenuColor')
+            leftsideMenuColor: this.settingService.get('App.Appearance.LeftsideMenuColor'),
+            welcomePageAppearance: this.settingService.get('App.Appearance.WelcomePageAppearance')
         })).subscribe(() => {
             abp.message.info(
                 this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'))

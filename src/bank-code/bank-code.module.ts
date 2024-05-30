@@ -21,6 +21,7 @@ import { WelcomeVideoComponent } from './dashboard/welcome-video/welcome-video.c
 import { AnnouncementsComponent } from './dashboard/announcements/announcements.component';
 import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @NgModule({
     declarations: [
@@ -40,7 +41,7 @@ import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/comm
         DxProgressBarModule,
         NgxPageScrollModule,
     ],
-    providers: [ MemberSubscriptionServiceProxy ]
+    providers: [ MemberSubscriptionServiceProxy, LayoutService ]
 })
 export class BankCodeModule {
     constructor(
