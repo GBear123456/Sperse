@@ -33,7 +33,6 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
-import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-item.interface';
 
 @Component({
     selector: 'general-settings',
@@ -71,7 +70,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
 
-    supportedCountries;
+    supportedCountries: CountryDto[];
     currencies$: Observable<any[]> = this.store$.pipe(
         select(CurrenciesCrmStoreSelectors.getCurrencies),
         filter(x => x != null),
@@ -100,22 +99,21 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         this.store$.pipe(
             select(CountriesStoreSelectors.getCountries),
             filter(Boolean),
-            first(),
-            map((countries: CountryDto[]) => this.getSelectListFromObject(countries))
-        ).subscribe((countries: SelectListItem[]) => {
+            first()
+        ).subscribe((countries: CountryDto[]) => {
             this.supportedCountries = countries;
         });
     }
 
-    getSelectListFromObject(collection): SelectListItem[] {
-        return (collection || []).map(item => ({ key: item.code, text: this.ls.l(item.name) }));
-    }
-
     onCountryChanged(event) {
-        if (event.value == Country.Canada)
-            this.settings.currency = 'CAD';
-        else if (event.value == Country.USA)
-            this.settings.currency = 'USD';
+        let country = this.supportedCountries.find(country => country.code == event.value);
+        if (country) {
+            this.settings.currency = country.currencyId;
+            if (this.publicPhoneNumber && this.publicPhoneNumber.isEmpty()) {
+                this.publicPhoneNumber.intPhoneNumber.phoneNumber = '';
+                this.publicPhoneNumber.intPhoneNumber.updatePhoneInput(country.code.toLowerCase());
+            }
+        }
     }
 
     onPhoneNumberChange(phone, elm) {

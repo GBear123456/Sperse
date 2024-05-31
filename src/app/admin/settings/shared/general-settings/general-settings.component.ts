@@ -21,7 +21,6 @@ import { AbstractControlDirective } from '@angular/forms';
 import { AppFeatures } from '@shared/AppFeatures';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
-import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-item.interface';
 import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
 
 @Component({
@@ -46,7 +45,7 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
 
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
-    supportedCountries;
+    supportedCountries: CountryDto[];
     currencies$: Observable<any[]> = this.store$.pipe(
         select(CurrenciesCrmStoreSelectors.getCurrencies),
         filter(x => x != null),
@@ -84,19 +83,25 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
             });
     }
 
-    getSelectListFromObject(collection): SelectListItem[] {
-        return (collection || []).map(item => ({ key: item.code, text: this.l(item.name) }));
-    }
-
     private initCountries() {
         this.store$.pipe(
             select(CountriesStoreSelectors.getCountries),
             filter(Boolean),
-            first(),
-            map((countries: CountryDto[]) => this.getSelectListFromObject(countries))
-        ).subscribe((countries: SelectListItem[]) => {
+            first()
+        ).subscribe((countries: CountryDto[]) => {
             this.supportedCountries = countries;
         });
+    }
+
+    onCountryChanged(event) {
+        let country = this.supportedCountries.find(country => country.code == event.value);
+        if (country) {
+            this.generalSettings.currency = country.currencyId;
+            if (this.publicPhoneNumber && this.publicPhoneNumber.isEmpty()) {
+                this.publicPhoneNumber.intPhoneNumber.phoneNumber = '';
+                this.publicPhoneNumber.intPhoneNumber.updatePhoneInput(country.code.toLowerCase());
+            }
+        }
     }
 
     onPhoneNumberChange(phone, elm) {
