@@ -46,6 +46,7 @@ export class ReceiptComponent implements OnInit {
 
     tenantId: number = Number(this.activatedRoute.snapshot.paramMap.get('tenantId'));
     publicId = this.activatedRoute.snapshot.paramMap.get('publicId');
+    preventRedirect: boolean = Boolean(this.activatedRoute.snapshot.queryParamMap.get('preventRedirect'));
     usePortal = !!this.activatedRoute.snapshot.queryParamMap.get('usePortal');
 
     constructor(
@@ -91,8 +92,8 @@ export class ReceiptComponent implements OnInit {
                         }
                     case InvoiceStatus.Paid:
                         {
-                            if (result.redirectUrl) {
-                                location.href = result.redirectUrl;
+                            if (!this.preventRedirect && result.redirectUrls && result.redirectUrls.length == 1) {
+                                location.href = result.redirectUrls[0];
                                 return;
                             }
 
