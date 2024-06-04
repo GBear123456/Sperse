@@ -57,6 +57,7 @@ import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ShortcutsComponent } from './shortcuts/shortcuts.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { LeftMenuModule } from './shared/common/left-menu/left-menu.module';
 import { CommissionHistoryComponent } from './commission-history/commission-history.component';
@@ -198,7 +199,8 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         InvoicesComponent,
         ReportsComponent,
         WelcomeComponent,
-        DashboardComponent,        
+        DashboardComponent,
+        ShortcutsComponent,
         ImportListComponent,
         ImportLeadsComponent,
         BankSettingsDialogComponent,

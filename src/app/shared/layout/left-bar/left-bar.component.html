@@ -1,6 +1,6 @@
 <div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
 
-<a routerLink="/app/crm/{{appService.isHostTenant ? 'dashboard' : 'welcome'}}" class="top-home" (click)="updateSelectedItem()" (mouseover)="showPlatformSelect()">
+<a routerLink="/app/crm/{{appService.isHostTenant ? 'dashboard' : layoutService.getWelcomePageUri()}}" class="top-home" (click)="updateSelectedItem()" (mouseover)="showPlatformSelect()">
     <platform-select></platform-select>
 </a>                
 

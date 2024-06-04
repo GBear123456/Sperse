@@ -980,6 +980,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
+            maxWidth: AppConsts.maxImageDialogWidth,
             hasBackdrop: true
         }).afterClosed().subscribe((result: UploadPhotoResult) => {
             if (result) {

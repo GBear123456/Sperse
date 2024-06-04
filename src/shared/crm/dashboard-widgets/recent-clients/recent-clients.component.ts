@@ -12,7 +12,8 @@ import { catchError, finalize, first, switchMap, tap, distinctUntilChanged,
 import {
     DashboardServiceProxy,
     GetRecentlyCreatedCustomersOutput,
-    GetRecentlyCreatedLeadsOutput
+    GetRecentlyCreatedLeadsOutput,
+    GetRecentlySalesOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -38,12 +39,22 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     @Input() waitFor$: Observable<any> = of().pipe(
         publishReplay(), refCount()
     );
+    @Input() viewAllText: string = this.ls.l('CRMDashboard_SeeAllRecords');
     @Output() loadComplete: EventEmitter<any> = new EventEmitter();
 
     recordsCount = 10;
     formatting = AppConsts.formatting;
-    recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[]>;
+    recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[] | GetRecentlySalesOutput[]>;
     selectItems: IRecentClientsSelectItem[] = [
+        {
+            name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('Sales')),
+            message: this.ls.l('CRMDashboard_LastNEntitiesRecords', this.recordsCount, this.ls.l('Sales').toLowerCase()),
+            dataLink: 'app/crm/contact/{contactId}/invoices',
+            allRecordsLink: '/app/crm/invoices',
+            visible: this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices),
+            dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlySalesOutput[]> =>
+                this.dashboardServiceProxy.getRecentlySales(this.recordsCount, undefined, contactId, orgUnitIds)
+        },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Client')),
             message: this.ls.l('CRMDashboard_LastNEntitiesRecords', this.recordsCount, this.ls.l('ContactGroup_Client').toLowerCase()),
@@ -120,6 +131,10 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     userTimezone = DateHelper.getUserTimezone();
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
 
+    get isSalesSelected(): boolean {
+        return this.lastSelectedItem == this.selectItems[0];
+    }
+
     constructor(
         private dashboardServiceProxy: DashboardServiceProxy,
         private dashboardWidgetsService: DashboardWidgetsService,
@@ -181,6 +196,20 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             $event.row && this.router.navigate([dataLink], { queryParams: { referrer: this.router.url } }
             );
         }
+    }
+
+    getIconNameByType(type: string | null) {
+        if (type == 'BankCard')
+            return 'bank-card';
+
+        if (type == 'PayPal')
+            return 'pay-pal';
+
+
+        if (type == 'ACH')
+            return 'stripe';
+
+        return 'cash-icon';
     }
 
     onSelectionChanged($event) {        

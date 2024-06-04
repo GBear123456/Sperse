@@ -6,6 +6,7 @@ import {
     Injector,
     OnDestroy,
     OnInit,
+    AfterViewInit,
     ViewChild
 } from '@angular/core';
 import { Params } from '@angular/router';
@@ -73,6 +74,7 @@ import { CrmService } from '@app/crm/crm.service';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { CurrencyHelper } from '../shared/helpers/currency.helper';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     templateUrl: './commission-history.component.html',
@@ -85,7 +87,7 @@ import { CurrencyHelper } from '../shared/helpers/currency.helper';
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CommissionHistoryComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class CommissionHistoryComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('commissionDataGrid') commissionDataGrid: DxDataGridComponent;
     @ViewChild('resellersDataGrid') resellersDataGrid: DxDataGridComponent;
     @ViewChild('sourceList') sourceComponent: SourceContactListComponent;
@@ -254,6 +256,11 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         })
     });
 
+    public readonly COMMISSION_VIEW = 0;
+    public readonly LEDGER_VIEW = 1;
+    public readonly RESELLERS_VIEW = 2;
+    selectedViewType = parseInt(this._activatedRoute.snapshot.queryParams.viewType) || this.COMMISSION_VIEW;
+
     get gridDataSource() {
         return [
             this.commissionDataSource,
@@ -262,10 +269,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         ][this.selectedViewType];
     }
 
-    public readonly COMMISSION_VIEW = 0;
-    public readonly LEDGER_VIEW = 1;
-    public readonly RESELLERS_VIEW = 2;
-    selectedViewType = this.COMMISSION_VIEW;
     viewTypes = [{
         value: this.COMMISSION_VIEW,
         text: this.l('Commissions')
@@ -481,6 +484,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         injector: Injector,
         public dialog: MatDialog,
         public appService: AppService,
+        public layoutService: LayoutService,
         private filtersService: FiltersService,
         private productProxy: ProductServiceProxy,
         private commissionProxy: CommissionServiceProxy,
@@ -511,6 +515,10 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         this.handleDataGridUpdate();
         this.handleFiltersPining();
         this.activate();
+    }
+
+    ngAfterViewInit() {
+        this.setDataGridInstance();
     }
 
     private handleFiltersPining() {

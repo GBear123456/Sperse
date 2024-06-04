@@ -246,8 +246,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.isFreePriceType = !data.product.price;
             if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
                 this.addUpgradeToProduct();
-            if (this.product.publishDate)
-                this.publishDate = DateHelper.addTimezoneOffset(new Date(this.product.publishDate), true);
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -258,6 +256,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             }
             this.initEventProps();
         }
+
+        if (this.product.publishDate)
+            this.publishDate = DateHelper.addTimezoneOffset(new Date(this.product.publishDate), true);
 
         this.initProductResources();
         this.initProductEvent();
@@ -736,10 +737,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             title: this.ls.l('AddProductImage'),
             fileUrl: imageSource ? undefined : this.uploadFileUrl,
             source: imageSource,
+            maintainAspectRatio: false,
             maxSizeBytes: AppConsts.maxImageSize
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: uploadPhotoData,
+            maxWidth: AppConsts.maxImageDialogWidth,
             hasBackdrop: true
         }).afterClosed().subscribe((result: UploadPhotoResult) => {
             if (result) {

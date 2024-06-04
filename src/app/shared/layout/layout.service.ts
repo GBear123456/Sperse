@@ -114,4 +114,11 @@ export class LayoutService {
             this.showLeftBar = false;
         }        
     }
+
+    getWelcomePageUri(): string {
+        let pageUri = abp.setting.get('App.Appearance.WelcomePageAppearance');
+        if (!pageUri)
+            pageUri = AppConsts.defaultWelcomePageUri;
+        return pageUri;        
+    }
 }

@@ -332,6 +332,10 @@ dx-data-grid.main-component-view, dx-file-manager {
 
     @font-size: 16px;
 
+    .dx-datagrid-rowsview .dx-virtual-row > td:not(.dx-datagrid-group-space)::before {
+        background-image: none;
+    }
+
     .dx-datagrid-content tr td.tabular {
         &, & *:not(.fa):not(.dx-icon):not(.dx-dropdowneditor-icon) {
             font-family: var(--app-tabular-font-family) !important;

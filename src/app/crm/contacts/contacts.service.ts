@@ -299,6 +299,7 @@ export class ContactsService {
         };
         return this.dialog.open(UploadPhotoDialogComponent, {
             data: uploadPhotoData,
+            maxWidth: AppConsts.maxImageDialogWidth,
             hasBackdrop: true
         }).afterClosed().pipe(
             filter(Boolean),

@@ -34,7 +34,8 @@ import { MessageService } from 'abp-ng2-module';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { GmailSettingsService } from '@shared/common/settings/gmail-settings.service';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
@@ -114,6 +115,11 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     gmailSettings: GmailSettingsDto = new GmailSettingsDto();
     signatureHtml: string;
 
+    smtpProviderErrorLink: string;
+    supportedProviders = this.emailSmtpSettingsService.supportedProviders;
+    selectedProvider: any;
+
+
     constructor(
         private dialog: MatDialog,
         private profileService: ProfileServiceProxy,
@@ -144,6 +150,10 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.modalDialog.startLoading();
         this.profileService.getEmailSettings().subscribe((settings: UserEmailSettings) => {
             this.userEmailSettings = settings;
+
+            if (settings && settings.smtp.host)
+                this.selectedProvider = this.supportedProviders.find(item => item.host == settings.smtp.host);
+
             if (!this.userEmailSettings.isUserSmtpEnabled) {
                 if (!this.userEmailSettings.from || !this.userEmailSettings.from.emailAddress || this.userEmailSettings.from.emailAddress.length == 0) {
                     this.userEmailSettings.from = new EmailFromSettings({
@@ -191,6 +201,29 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.testEmailAddress = this.appSessionService.user.emailAddress;
     }
 
+    onProviderChanged() {
+        if (this.selectedProvider) {
+            this.userEmailSettings.smtp.host = this.selectedProvider.host;
+            this.userEmailSettings.smtp.port = this.selectedProvider.port;
+            this.userEmailSettings.smtp.enableSsl = this.selectedProvider.ssl;
+            this.userEmailSettings.smtp.domain = this.selectedProvider.domain;
+            this.userEmailSettings.imapHost = this.selectedProvider.imap.host;
+            this.userEmailSettings.imapPort = this.selectedProvider.imap.port;
+            this.userEmailSettings.imapUseSsl = this.selectedProvider.imap.ssl;
+
+        } else {
+            this.userEmailSettings.smtp.host = undefined;
+            this.userEmailSettings.smtp.port = undefined;
+            this.userEmailSettings.smtp.enableSsl = undefined;
+            this.userEmailSettings.smtp.domain = undefined;
+            this.userEmailSettings.imapHost = undefined;
+            this.userEmailSettings.imapPort = undefined;
+            this.userEmailSettings.imapUseSsl = undefined;
+        }
+
+        this.changeDetectorRef.detectChanges();
+    }
+
     updateQrCodeSetupImageUrl(): void {
         //this.profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
         //    this.user.qrCodeSetupImageUrl = result.qrCodeSetupImageUrl;
@@ -222,6 +255,12 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.modalDialog.startLoading();
         let saveObs: Observable<void>;
         if (this.currentTab == this.ls.l('SMTP')) {
+            if (!this.userEmailSettings.isImapEnabled) {
+                this.userEmailSettings.imapHost = undefined;
+                this.userEmailSettings.imapPort = undefined;
+                this.userEmailSettings.imapUseSsl = undefined;
+            }
+
             saveObs = this.profileService.updateEmailSettings(this.userEmailSettings).pipe(tap(() => {
                 sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
             }));
@@ -246,7 +285,11 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
 
         saveObs
             .pipe(
-                finalize(() => this.modalDialog.finishLoading())
+                finalize(() => this.modalDialog.finishLoading()),
+                catchError(error => {
+                    this.checkHandlerErrorWarning(true);
+                    return throwError(error);
+                })
             )
             .subscribe(() => {
                 this.appSessionService.user.name = this.user.name;
@@ -273,9 +316,18 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         input.emailAddress = this.testEmailAddress;
         input.from = this.userEmailSettings.from;
         input.smtp = this.userEmailSettings.smtp;
+        this.smtpProviderErrorLink = undefined;
         this.emailSmtpSettingsService.sendTestEmail(input,
-            this.modalDialog.finishLoading.bind(this.modalDialog)
+            this.modalDialog.finishLoading.bind(this.modalDialog),
+            () => this.checkHandlerErrorWarning()
         );
+    }
+
+    checkHandlerErrorWarning(forced = false) {
+        this.smtpProviderErrorLink = (forced || this.testEmailAddress) &&
+            this.emailSmtpSettingsService.getSmtpErrorHelpLink(this.userEmailSettings.smtp.host);
+        if (this.smtpProviderErrorLink)
+            this.changeDetectorRef.detectChanges();
     }
 
     isUserSettingsChanged(): boolean {

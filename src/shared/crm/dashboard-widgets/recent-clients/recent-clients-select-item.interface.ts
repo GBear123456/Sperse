@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { GetRecentlyCreatedCustomersOutput } from '@shared/service-proxies/service-proxies';
+import { GetRecentlyCreatedCustomersOutput, GetRecentlySalesOutput } from '@shared/service-proxies/service-proxies';
 import { Params } from '@angular/router';
 
 export class IRecentClientsSelectItem {
@@ -7,7 +7,7 @@ export class IRecentClientsSelectItem {
     message: string;
     dataLink: string;
     allRecordsLink: string;
-    dataSource: (contactId: number, orgUnitIds: number[]) => Observable<GetRecentlyCreatedCustomersOutput[]>;
+    dataSource: (contactId: number, orgUnitIds: number[]) => Observable<GetRecentlyCreatedCustomersOutput[] | GetRecentlySalesOutput[]>;
     linkParams?: Params;
     visible?: boolean;
 }

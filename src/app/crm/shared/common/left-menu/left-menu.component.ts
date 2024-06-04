@@ -63,7 +63,7 @@ export class LeftMenuComponent implements OnInit {
                 caption: this.ls.l('Home'),
                 visible: !this.appService.isHostTenant,
                 iconSrc: 'assets/common/icons/home.svg',
-                component: '/welcome'
+                component: '/' + this.layoutService.getWelcomePageUri()
             },
             {
                 caption: this.ls.l('MySubscriptions'),

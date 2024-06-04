@@ -12,6 +12,19 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col">
+        <div class="form-group">
+            <label>{{ls.l('Welcome Page Type')}}</label>
+            <dx-select-box [items]="welcomePageOptions"
+                           displayExpr="name"
+                           valueExpr="uri"
+                           placeholder=""
+                           [(value)]="welcomePageUri">
+            </dx-select-box>
+        </div>
+    </div>
+</div>
 <ng-container *ngIf="tenant">
     <div class="row m-form file-uploads">
         <div class="col-md-6 app-logo-upload">

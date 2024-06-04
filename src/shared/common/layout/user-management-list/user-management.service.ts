@@ -271,6 +271,7 @@ export class UserManagementService {
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: uploadPhotoData,
+            maxWidth: AppConsts.maxImageDialogWidth,
             hasBackdrop: true
         }).afterClosed()
             .pipe(filter(result => result))

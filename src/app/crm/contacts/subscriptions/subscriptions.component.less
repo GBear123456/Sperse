@@ -278,13 +278,14 @@
             }
         }
         .product-name-wrapper {
-            display: inline-table;
+            display: flex;
             vertical-align: middle;
         }
         .product-name {
             font-weight: 500;
             color: #00aeef;
             font-size: 14px;
+            margin: auto;
             b {
                 color: #000;
                 font-size: 14px;
@@ -296,13 +297,17 @@
             }
         }
         .product-icon-wrapper {
-            display: inline-block;
+            display: flex;
             text-align: center;
             padding: 4px 15px;
             height: 72px;
             width: 100px;
             img {
+                max-width: 64px;
+                max-height: 64px;
                 cursor: pointer;
+                margin: auto;
+
                 &.default {
                     opacity: 0.6;
                 }
@@ -360,6 +365,7 @@
         .services {
             font-size: 13px;
             color: #777E84;
+            margin: auto;
         }
         .status {
             background: #f3f7fa;
