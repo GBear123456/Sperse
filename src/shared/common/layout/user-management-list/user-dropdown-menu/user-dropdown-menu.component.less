@@ -663,8 +663,10 @@
         }
 
         @media (max-height: 800px) {
-            top: -15px;
-            right: 35px;
+            &:not(.wide-menu) {
+                top: -15px;
+                right: 35px;
+            }
         }
 
         &.bank-code {
