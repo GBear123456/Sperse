@@ -66,6 +66,7 @@ export class PaymentWizardComponent implements AfterViewInit {
     trackingCode: string;
     selectedUpgradeProductId: number;
     productsGroupName: string;
+    selectedTab: number;
 
     constructor(
         private appService: AppService,
@@ -80,6 +81,7 @@ export class PaymentWizardComponent implements AfterViewInit {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.selectedUpgradeProductId = data && data.upgrade ? data.productId : null;
+        this.selectedTab = Number(data ? data.showPaymentsTab : null);
     }
     
     ngAfterViewInit() {

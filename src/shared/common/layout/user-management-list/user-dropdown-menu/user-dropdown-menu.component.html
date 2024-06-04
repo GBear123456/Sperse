@@ -38,8 +38,8 @@
                         <div class="box">
                             <div class="m-card-user m-card-user--skin-dark">
                                 <div class="m-card-user__details">
-                                    <span *ngIf="userManagementService.isImpersonatedLogin" class="user-info selected">
-                                        Selected account
+                                    <span *ngIf="shownLoginInfo.tenantName" class="user-info selected">
+                                        {{shownLoginInfo.tenantName}}
                                     </span>
                                     <span class="user-info fullName">
                                         {{ shownLoginInfo.fullName }}
@@ -57,12 +57,12 @@
                          
                     <div class="subscription">
 
-                        <div class="box">
+                        <div class="box" *ngIf="!appService.isHostTenant" (click)="openPaymentWizardDialog()">
                             <div class="group">
                                 <div class="overlap-group">
                                     <img class="vuesax-linear-share" src="./assets/common/icons/current-plan.svg" />
-                                    <div class="text-wrapper">Agency Elite Plan</div>
-                                    <div class="div">You've been upgraded!</div>
+                                    <div class="text-wrapper">Your Active Plan</div>
+                                    <div class="plans" [title]="subscriptions">{{subscriptions}}</div>
                                 </div>
                             </div>
                         </div>
@@ -70,7 +70,7 @@
                     </div>
 
                     <div class="login">
-                        <div class="box"> 
+                        <div class="box" *ngIf="false">
                             <div class="group"> 
                                 <div class="overlap-group"> 
                                     <div class="text-wrapper">Login To CRM</div> 
@@ -90,9 +90,12 @@
                                 (onItemClick)="switchToUser($event.itemData)">
                                 <div *dxTemplate="let item of 'item'">
                                     <div class="linked-account">
-                                      <div class="logo">{{getUserNameFirstLatters(item.username)}}</div>
-                                      <div class="name">{{getShownLinkedUserName(item)}}</div>
-                                      <div [ngClass]="{active: actionEvent?.id == item?.id}" class="gear" (click)="openLinkedAccountMenu($event, item)"></div>
+                                        <div class="logo">{{getUserNameFirstLatters(item.tenantName || item.userFullName || item.username)}}</div>
+                                        <div class="name">
+                                            <span class="company">{{item.tenantName || item.userFullName}}</span>
+                                            <span class="user-line">{{getShownLinkedUserName(item)}}</span>                                            
+                                        </div>
+                                        <div [ngClass]="{active: actionEvent?.id == item?.id}" class="gear" (click)="openLinkedAccountMenu($event, item)"></div>
                                     </div>
                                 </div>
                             </dx-list>
@@ -103,11 +106,11 @@
                         <div class="box">
                             <div class="group">
                                 <div class="div">                                        
-                                    <div class="text-link" [ngClass]="{disabled: !portalUrl}" (click)="openLink(portalUrl)"><img class="img" src="./assets/common/icons/3dcube.svg" /> Customer Portal</div>                                    
+                                    <div class="text-link" [ngClass]="{disabled: !appMemberPortalUrl}" (click)="openLink(appMemberPortalUrl)"><img class="img" src="./assets/common/icons/3dcube.svg" /> Customer Portal</div>                                    
                                     <div class="text-link" [ngClass]="{disabled: !permissionChecker.isGranted(appPermissions.CRMProducts)}" (click)="router.navigateByUrl('app/crm/coupons');close()"><img class="img" src="./assets/common/icons/ticket.svg" /> Coupons</div>                                    
                                     <div class="text-link disabled"><img class="img" src="./assets/common/icons/element-3.png" /> Integrations</div>                                    
                                     <div class="text-link disabled"><img class="img" src="./assets/common/icons/magicpen.svg" /> Themes</div>                                    
-                                    <div class="text-link"><img class="img" src="./assets/common/icons/setting-2.svg" /> Account Settings</div>
+                                    <div class="text-link" (click)="router.navigateByUrl('app/admin/settings');close()" [ngClass]="{disabled: !isAccountSettingsEnabled}"><img class="img" src="./assets/common/icons/setting-2.svg" /> Account Settings</div>
                                     <div class="text-link" (click)="userNotificationHelper.openSettingsModal($event);close()"><img class="img" src="./assets/common/icons/notification-bing.png" /> Notifications</div>
                                     <div class="text-link" [ngClass]="{disabled: !userManagementService.helpLink}" (click)="openLink(userManagementService.helpLink)"><img class="img" src="./assets/common/icons/lifebuoy.svg" /> Help Center</div>                                    
                                 </div>
@@ -121,13 +124,13 @@
                                 <div class="overlap-group">
                                     <div class="group-wrapper">
                                         <div class="div">
-                                            <div class="text-link" [ngClass]="{disabled: !isHostTenant}"><img class="img" src="./assets/common/icons/dollar-square.svg" /> My Billing History</div>
+                                            <div class="text-link" (click)="openPaymentWizardDialog(true)" [ngClass]="{disabled: !isHostTenant}"><img class="img" src="./assets/common/icons/dollar-square.svg" /> My Billing History</div>
                                             <div class="text-link" (click)="userManagementService.changePassword($event);close()"><img class="img" src="./assets/common/icons/lock.svg" /> Change my password</div>
                                             <div class="text-link" (click)="userManagementService.changeProfilePicture($event);close()"><img class="img" src="./assets/common/icons/user-square.png" /> Change my photo</div>
-                                            <div class="text-link" [ngClass]="{disabled: !featureCheckerService.isEnabled(appFeatures.CRM) || !permissionChecker.isGranted(appPermissions.CRM)}" (click)="router.navigateByUrl('app/crm/activity');close()"><img class="img" src="./assets/common/icons/calendar-edit.svg" /> My Calendar</div>
+                                            <div class="text-link" (click)="router.navigateByUrl('app/crm/activity');close()" [ngClass]="{disabled: !featureCheckerService.isEnabled(appFeatures.CRM) || !permissionChecker.isGranted(appPermissions.CRM)}"><img class="img" src="./assets/common/icons/calendar-edit.svg" /> My Calendar</div>
                                             <div class="text-link" (click)="userManagementService.changeMySettings($event);close()"><img class="img" src="./assets/common/icons/setting-4.svg" /> My Settings</div>
                                             <div class="text-link" (click)="userManagementService.showLoginAttempts($event);close()"><img class="img" src="./assets/common/icons/clipboard-text.svg" /> My Login Activity</div>
-                                            <div class="text-link" [ngClass]="{disabled: !calendlyUri}" (click)="openLink('https://calendly.com/' + calendlyUri)"><img class="img" src="./assets/common/icons/calendar4.svg" /> Book a Meeting</div>
+                                            <div class="text-link" (click)="openLink('https://calendly.com/' + calendlyUri)" [ngClass]="{disabled: !calendlyUri}"><img class="img" src="./assets/common/icons/calendar4.svg" /> Book a Meeting</div>
                                         </div>
                                     </div>                                                                        
                                 </div>

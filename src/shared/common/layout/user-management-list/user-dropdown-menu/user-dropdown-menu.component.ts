@@ -18,6 +18,7 @@ import { Observable, of, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 /** Application imports */
+import { AppService } from '@app/app.service';
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
 import {
     CommonUserInfoServiceProxy,
@@ -43,6 +44,8 @@ import { PermissionCheckerService } from 'abp-ng2-module';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
+import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
+import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { BankCodeLettersComponent } from '@app/shared/common/bank-code-letters/bank-code-letters.component';
 import { LinkAccountModalComponent } from '@app/shared/layout/link-account-modal/link-account-modal.component';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
@@ -50,6 +53,7 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { environment } from '@root/environments/environment';
 import { UserHelper } from '@app/shared/helpers/UserHelper';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -74,7 +78,6 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
 
     appFeatures = AppFeatures;
     appPermissions = AppPermissions;
-    portalUrl = AppConsts.appMemberPortalUrl;
     calendlyUri = AppConsts.calendlyUri;
     isHostTenant = abp.session.tenantId;
 
@@ -134,6 +137,19 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     ];
     isCustomLayout = this.appSession.tenant && 
         this.appSession.tenant.customLayoutType == LayoutType.Default;
+    subscriptions: string;
+
+    isAccountSettingsEnabled = 
+        this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSettings) ||
+        this.permissionChecker.isGranted(AppPermissions.AdministrationHostSettings) || 
+        this.permissionChecker.isGranted(AppPermissions.AdministrationTenantHosts);
+
+    enabledAdminCustomizations = this.featureCheckerService.isEnabled(AppFeatures.AdminCustomizations);
+    enabledPortal = this.featureCheckerService.isEnabled(AppFeatures.Portal);
+
+    appMemberPortalUrl = 
+        (this.enabledAdminCustomizations && AppConsts.appMemberPortalUrl) || 
+        (this.enabledPortal && environment.portalUrl);
 
     constructor(
         injector: Injector,
@@ -148,6 +164,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         private userLinkService: UserLinkServiceProxy,
         private linkedAccountService: LinkedAccountService,
         public router: Router,
+        public appService: AppService,
         public userManagementService: UserManagementService,
         public userNotificationHelper: UserNotificationHelper,
         public profileService: ProfileService,
@@ -162,9 +179,19 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
+        if (this.appService.moduleSubscriptions$)
+            this.appService.moduleSubscriptions$.subscribe(
+                () => this.initSubscriptionInfo());
+
         this.showAccessCode$.subscribe((showAccessCode: boolean) => {
             this.showAccessCode = showAccessCode;
         });
+    }
+
+    initSubscriptionInfo() {
+        if (this.appService.moduleSubscriptions)
+            this.subscriptions = this.appService.moduleSubscriptions.filter(
+                sub => sub.statusId == 'A').map(sub => sub.productName).join(', ');
     }
 
     ngAfterViewInit() {
@@ -275,12 +302,29 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         );
     }
 
+    openPaymentWizardDialog(showPayments: boolean = false) {
+        this.dialog.closeAll();
+        this.dialog.open(PaymentWizardComponent, {
+            height: '800px',
+            width: '1200px',
+            id: 'payment-wizard',
+            panelClass: ['payment-wizard', 'setup'],
+            data: {
+                showPaymentsTab: showPayments,
+                showSubscriptions: true
+            }
+        });
+        this.close();
+    }
+
     manageLinkedAccounts(): void {
         this.dialog.open(LinkAccountModalComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {}
+        }).afterClosed().subscribe(() => {
+            this.initLinkedUsers();
         });
         this.close();
     }
