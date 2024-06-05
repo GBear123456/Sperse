@@ -13,7 +13,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import {
     EmailTemplateType,
     TenantPaymentSettingsServiceProxy,
-    InvoiceSettings,
+    UpdateInvoiceSettingsDto,
     InvoiceSettingsDto,
     InvoicePaymentMethod
 } from '@shared/service-proxies/service-proxies';
@@ -106,7 +106,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             return;
 
         this.modalDialog.startLoading();
-        this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings))
+        this.tenantPaymentSettingsProxy.updateInvoiceSettings(new UpdateInvoiceSettingsDto(this.settings))
             .pipe(
                 finalize(() => {
                     this.modalDialog.finishLoading();
@@ -120,10 +120,10 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
 
     initPaymentMethods() {
         this.paymentMethods.forEach(v => {
-            v.checked = !((this.settings.forbiddenPaymentMethods & v.value) == v.value);
+            v.checked = (this.settings.forbiddenPaymentMethods & v.value) != v.value;
         });
         this.paymentMethods.forEach(v => {
-            v.visible = (this.settings.configuredPaymentMethods & v.value) == v.value;
+            v.visible = (this.settings.unsupportedPaymentMethods & v.value) != v.value && (this.settings.configuredPaymentMethods & v.value) == v.value;
         });
     }
 

@@ -15,7 +15,7 @@ import capitalize from 'underscore.string/capitalize';
 /** Application imports */
 import { ContactGroup } from '@shared/AppEnums';
 import {
-    ApplicationServiceProxy, LeadServiceProxy, LeadInfoDto, UpdateLeadSourceOrganizationUnitInput, InvoiceSettings,
+    ApplicationServiceProxy, LeadServiceProxy, LeadInfoDto, UpdateLeadSourceOrganizationUnitInput,
     ContactInfoDto, ContactServiceProxy, UpdateLeadInfoInput, OrganizationUnitShortDto, UpdateLeadSourceContactInput
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';

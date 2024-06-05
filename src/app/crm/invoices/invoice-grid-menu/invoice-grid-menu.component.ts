@@ -13,7 +13,7 @@ import { MessageService } from 'abp-ng2-module';
 import { NotifyService } from 'abp-ng2-module';
 import {
     InvoiceServiceProxy,
-    InvoiceSettings,
+    InvoiceSettingsDto,
     InvoiceStatus,
     PipelineDto,
     StageDto
@@ -57,7 +57,7 @@ export class InvoiceGridMenuComponent {
     previewDisabled = false;
     copyLinkDisabled = false;
 
-    private settings = new InvoiceSettings();
+    private settings = new InvoiceSettingsDto();
     stages$: Observable<StageDto[]> = this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order, null).pipe(
         map((pipeline: PipelineDto) => pipeline.stages)
     );
@@ -77,7 +77,7 @@ export class InvoiceGridMenuComponent {
         private pipelineService: PipelineService,
     ) {
         this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(
-            (settings: InvoiceSettings) => {
+            (settings: InvoiceSettingsDto) => {
                 this.settings = settings;
             }
         );
