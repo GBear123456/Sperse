@@ -100,7 +100,7 @@
                 <h2>Payment systems are not configured</h2>
             </div>
             <mat-tab-group *ngIf="hasAnyPaymentSystem == true" [(selectedIndex)]="selectedGateway" (selectedTabChange)="selectedTabChange($event)">
-                <mat-tab *ngIf="paymentSystemSettings.stripeIsEnabled" [label]="l('Stripe')">
+                <mat-tab *ngIf="showStripe" [label]="l('Stripe')">
                     <div class="stripe-wrap">
                         <p class="stripe-text">
                             You will be redirected to Stripe payment page
