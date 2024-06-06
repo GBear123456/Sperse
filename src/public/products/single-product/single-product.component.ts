@@ -84,7 +84,8 @@ export class SingleProductComponent implements OnInit {
     showNoPaymentSystems = false;
     productType = ProductType;
     billingPeriod = BillingPeriod;
-
+    
+    defaultCountryCode = abp.setting.get('App.TenantManagement.DefaultCountryCode');
     selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
     static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.OneTime, BillingPeriod.Custom];
     availablePeriods: BillingPeriod[] = [];
@@ -126,6 +127,15 @@ export class SingleProductComponent implements OnInit {
         this.optionId = Number(this.route.snapshot.queryParamMap.get('optionId'));
 
         this.getProductInfo();
+    }
+
+    onPhoneFieldInitialize(phoneField) {
+        if (phoneField && phoneField.intPhoneNumber && this.defaultCountryCode) {
+            setTimeout(() => {
+                phoneField.intPhoneNumber.phoneNumber = '';            
+                phoneField.intPhoneNumber.updatePhoneInput(this.defaultCountryCode.toLowerCase());        
+            });
+        }
     }
 
     initializePayPal() {

@@ -112,8 +112,9 @@
                     <span class="phone__label">Phone</span>
                     <div>
                         <country-phone-number #phoneNumber
-                                              [required]="false"
-                                              [(phoneNumber)]="requestInfo.phone">
+                            [required]="false"
+                            [(phoneNumber)]="requestInfo.phone"
+                            (onInitialized)="onPhoneFieldInitialize($event)">
                         </country-phone-number>
                     </div>
                 </div>
