@@ -88,7 +88,6 @@ import { PaymentStatusComponent } from './payment-wizard/payment-status/payment-
 import { PaymentOptionsComponent } from './payment-wizard/payment-options/payment-options.component';
 import { PaymentOptionsFooterComponent } from '@app/shared/common/payment-wizard/payment-options/payment-options-footer/payment-options-footer.component';
 import { CreditCardComponent } from './payment-wizard/payment-options/credit-card/credit-card.component';
-import { PayPalComponent } from './payment-wizard/payment-options/pay-pal/pay-pal.component';
 import { BankTransferComponent } from './payment-wizard/payment-options/bank-transfer/bank-transfer.component';
 import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-check.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
@@ -100,6 +99,7 @@ import { AppRatingModule } from './rating/app-rating.module';
 import { CalendarButtonComponent } from '@app/shared/common/calendar-button/calendar-button.component';
 import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.module';
 import { ActionMenuModule } from './action-menu/action-menu.module';
+import { PaypalModule } from '@shared/common/paypal/paypal.module';
 
 @NgModule({
     imports: [
@@ -170,7 +170,8 @@ import { ActionMenuModule } from './action-menu/action-menu.module';
         AppRatingModule,
         GooglePlaceModule,
         TimeZoneComboModule,
-        ActionMenuModule
+        ActionMenuModule,
+        PaypalModule
     ],
     declarations: [
         TimeAgoPipe,
@@ -199,7 +200,6 @@ import { ActionMenuModule } from './action-menu/action-menu.module';
         PaymentOptionsFooterComponent,
         PaymentSubscriptionsComponent,
         CreditCardComponent,
-        PayPalComponent,
         BankTransferComponent,
         ECheckComponent,
         StarsListComponent,

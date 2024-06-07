@@ -77,9 +77,9 @@
         </div>
 
         <!-- div class="total">
-        <span>{{ l('Total') }}</span>
-        <span>{{ (plan.currencySymbol || '$') + (plan.total | number : '1.2-2') }}</span>
-    </div -->
+            <span>{{ l('Total') }}</span>
+            <span>{{ (plan.currencySymbol || '$') + (plan.total | number : '1.2-2') }}</span>
+        </div -->
     </div>
 </div>
 <div class="right">
@@ -112,36 +112,33 @@
                     <ng-template mat-tab-label="">
                         <img [src]="'./assets/common/icons/paypal-logo.png'">
                     </ng-template>
-                    <pay-pal *ngIf="paymentSystemSettings.paypalClientId && selectedGateway == GATEWAY_PAYPAL"
-                             [productId]="plan.productId"
-                             [currencyId]="plan.currencyId"
-                             [paymentPeriodType]="plan.paymentPeriodType"
-                             [quantity]="quantity"
-                             [couponInfo]="couponInfo"
-                             [clientId]="paymentSystemSettings.paypalClientId"
-                             (onSubmit)="submitData($event, paymentMethods.PayPal)">
-                    </pay-pal>
+                    <div class="paypal-wrap">
+                        <p class="pay-pal-text">
+                            {{ l('PayPalPaymentDescriptionText') }}
+                        </p>
+                        <pay-pal [height]="54" (onApprove)="onPayPalApprove()"></pay-pal>
+                    </div>
                 </mat-tab>
 
-            <!--<mat-tab [label]="l('CreditCard')">
-                <credit-card (onSubmit)="submitData($event, paymentMethods.CreditCard)"></credit-card>
-            </mat-tab>-->
-            <!-- mat-tab [label]="l('eCheck')" -->
-            <!-- e-check [price]="plan.total" (onSubmit)="submitData($event, paymentMethods.eCheck)"></e-check -->
-            <!-- /mat-tab -->
-            <!-- <mat-tab [label]="l('BankTransfer')">
-                <bank-transfer *ngIf="bankTransferSettings$"
-                               [bankTransferSettings]="bankTransferSettings$ | async"
-                               (onSubmit)="submitData($event, paymentMethods.BankTransfer)">
-                </bank-transfer>
-            </mat-tab> -->
-            <!--<mat-tab [label]="l('Bitcoin')">-->
-            <!--<div class="row align-items-center h-100">-->
-            <!--<div class="col-12 text-center">-->
-            <!--<h4>{{ l("This payment option will be available soon") }}</h4>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</mat-tab>-->
+                <!--<mat-tab [label]="l('CreditCard')">
+                    <credit-card (onSubmit)="submitData($event, paymentMethods.CreditCard)"></credit-card>
+                </mat-tab>-->
+                <!-- mat-tab [label]="l('eCheck')" -->
+                <!-- e-check [price]="plan.total" (onSubmit)="submitData($event, paymentMethods.eCheck)"></e-check -->
+                <!-- /mat-tab -->
+                <!-- <mat-tab [label]="l('BankTransfer')">
+                    <bank-transfer *ngIf="bankTransferSettings$"
+                                   [bankTransferSettings]="bankTransferSettings$ | async"
+                                   (onSubmit)="submitData($event, paymentMethods.BankTransfer)">
+                    </bank-transfer>
+                </mat-tab> -->
+                <!--<mat-tab [label]="l('Bitcoin')">-->
+                <!--<div class="row align-items-center h-100">-->
+                <!--<div class="col-12 text-center">-->
+                <!--<h4>{{ l("This payment option will be available soon") }}</h4>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</mat-tab>-->
             </mat-tab-group>
         </ng-container>
         <div *ngIf="!plan.total" class="freeBlock">

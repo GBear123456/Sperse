@@ -1,9 +1,9 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef, ElementRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { forkJoin, Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import round from 'lodash/round';
 
 /** Application imports */
@@ -31,7 +31,8 @@ import {
     PaymentSystemSettingsDto,
     PublicProductServiceProxy,
     CouponDiscountDuration,
-    PublicCouponInfo
+    PublicCouponInfo,
+    RequestProductPaymentOutput
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -39,6 +40,8 @@ import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/paym
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { AppService } from '@app/app.service';
+import { PayPalComponent } from '@shared/common/paypal/paypal.component';
+import { ButtonType } from '@shared/common/paypal/button-type.enum';
 
 @Component({
     selector: 'payment-options',
@@ -48,6 +51,13 @@ import { AppService } from '@app/app.service';
     providers: [TenantSubscriptionServiceProxy, PublicProductServiceProxy]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
+    private payPal: PayPalComponent;
+    @ViewChild(PayPalComponent) set paypPalComponent(paypalComp: PayPalComponent) {
+        this.payPal = paypalComp;
+        if (this.selectedGateway == this.GATEWAY_PAYPAL)
+            this.initializePayPal();
+    };
+
     @Input() plan: PaymentOptions;
     @Input() steps: Step[] = [
         {
@@ -96,6 +106,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     hasAnyPaymentSystem;
     showPayPal: boolean = false;
     showStripe: boolean = false;
+    receiptLink: string;
 
     isPayByStripeDisabled = false;
 
@@ -147,6 +158,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     selectedTabChange(e) {
+        if (e.index == this.GATEWAY_PAYPAL)
+            this.initializePayPal(true);
         if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
             /** Load transfer data */
             this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
@@ -175,11 +188,24 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 this.showStripe = true;
             }
             this.hasAnyPaymentSystem = this.showStripe || this.showPayPal;
-            if (this.hasAnyPaymentSystem && !this.showStripe)
+            if (this.hasAnyPaymentSystem && !this.showStripe) {
                 this.selectedGateway = this.GATEWAY_PAYPAL;
+                this.initializePayPal();
+            }
             this.changeDetector.detectChanges();
             this.finishLoading();
         });
+    }
+
+    initializePayPal(reinitialize = false) {
+        if (this.showPayPal && this.payPal && (!this.payPal.initialized || reinitialize)) {
+            let type = this.plan.paymentPeriodType == PaymentPeriodType.OneTime || this.plan.paymentPeriodType == PaymentPeriodType.LifeTime ? ButtonType.Payment : ButtonType.Subscription;
+            this.payPal.initialize(this.paymentSystemSettings.paypalClientId, type,
+                () => this.payByPaypal(),
+                () => this.payByPaypal(),
+                this.plan.currencyId
+            );
+        }
     }
 
     submitData(data: any, paymentMethod: PaymentMethods = PaymentMethods.Free) {
@@ -307,21 +333,40 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         this.onClose.emit();
     }
 
-    payByStripe() {
-        this.isPayByStripeDisabled = true;
-        this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.tenantSubscriptionServiceProxy.requestProductPayment(new RequestPaymentInput({
-            type: RequestPaymentType.Stripe,
+    getPaymentRequest(type: RequestPaymentType): Observable<RequestProductPaymentOutput> {
+        return this.tenantSubscriptionServiceProxy.requestProductPayment(new RequestPaymentInput({
+            type: type,
             productId: this.plan.productId,
             paymentPeriodType: this.plan.paymentPeriodType,
             quantity: 1,
             couponId: this.couponInfo ? this.couponInfo.id : undefined
-        })).subscribe((response) => {
+        }));
+    }
+
+    payByStripe() {
+        this.isPayByStripeDisabled = true;
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        this.getPaymentRequest(RequestPaymentType.Stripe).subscribe((response) => {
             window.location.href = response.stripePaymentLink;
         }, () => {
             this.isPayByStripeDisabled = false;
-            this.loadingService.finishLoading();
+            this.loadingService.finishLoading(this.elementRef.nativeElement);
         });
+    }
+
+    payByPaypal(): Promise<string> {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        return this.getPaymentRequest(RequestPaymentType.PayPal).pipe(
+            map(v => {
+                this.receiptLink = v.receiptUrl;
+                return v.paypalCode
+            }),
+            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+        ).toPromise();
+    }
+
+    onPayPalApprove() {
+        location.href = this.receiptLink;
     }
 
     couponChange() {
