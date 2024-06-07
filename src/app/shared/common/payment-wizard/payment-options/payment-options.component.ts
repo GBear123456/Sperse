@@ -92,14 +92,14 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         }
     };
 
-    readonly GATEWAY_STRIPE = 0;
-    readonly GATEWAY_PAYPAL = 1;
-    readonly GATEWAY_C_CARD = 2;
-    readonly GATEWAY_ECHECK = 3;
+    GATEWAY_STRIPE = 0;
+    GATEWAY_PAYPAL = 1;
+    GATEWAY_C_CARD = 2;
+    GATEWAY_ECHECK = 3;
 
     quantity = 1;
 
-    selectedGateway: number = this.GATEWAY_STRIPE;
+    selectedGateway: number = 0;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
     paymentSystemSettings: PaymentSystemSettingsDto;
@@ -160,10 +160,10 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     selectedTabChange(e) {
         if (e.index == this.GATEWAY_PAYPAL)
             this.initializePayPal(true);
-        if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
-            /** Load transfer data */
-            this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
-        }
+        //if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
+        /** Load transfer data */
+        //    this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
+        //}
     }
 
     initPaymentSystems() {
@@ -189,7 +189,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             }
             this.hasAnyPaymentSystem = this.showStripe || this.showPayPal;
             if (this.hasAnyPaymentSystem && !this.showStripe) {
-                this.selectedGateway = this.GATEWAY_PAYPAL;
+                this.GATEWAY_PAYPAL = 0;
                 this.initializePayPal();
             }
             this.changeDetector.detectChanges();
