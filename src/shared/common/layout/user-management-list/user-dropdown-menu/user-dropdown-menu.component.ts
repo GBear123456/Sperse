@@ -81,6 +81,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     calendlyUri = AppConsts.calendlyUri;
     isHostTenant = abp.session.tenantId;
 
+    isListScrollInProgress = false;
     profileThumbnailId = this.appSession.user.profileThumbnailId;
     shownLoginInfo: { fullName, email, tenantName? } = this.appSession.getShownLoginInfo();
     menuItemTypes = UserDropdownMenuItemType;
@@ -195,7 +196,8 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     }
 
     ngAfterViewInit() {
-        $(this.topBarUserProfile.nativeElement)['mDropdown']().on('beforeShow', () => {
+        let dialog = $(this.topBarUserProfile.nativeElement)['mDropdown']();
+        dialog.on('beforeShow', () => {
             if (!this.userManagementService.recentlyLinkedUsers) {
                 this.userManagementService.getRecentlyLinkedUsers().subscribe((recentlyLinkedUsers: LinkedUserDto[]) => {
                     this.userManagementService.recentlyLinkedUsers = recentlyLinkedUsers;
@@ -208,11 +210,14 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
                 });
             }
         });
-        $(this.topBarUserProfile.nativeElement)['mDropdown']().on('beforeHide', (e) => {
+        dialog.on('beforeHide', (e) => {
+            if (this.isListScrollInProgress) {
+                return this.isListScrollInProgress = false;
+            }
             return this.closeBankCodeDialogs();
         });
     }
-
+    
     private closeBankCodeDialogs() {
         if (this.bankCodeLetters) {
             if (this.bankCodeLetters.editPopupIsOpened) {
@@ -327,6 +332,10 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
             this.initLinkedUsers();
         });
         this.close();
+    }
+
+    onListScroll() {
+        this.isListScrollInProgress = true;
     }
 
     switchToUser(linkedUser: LinkedUserDto): void {
