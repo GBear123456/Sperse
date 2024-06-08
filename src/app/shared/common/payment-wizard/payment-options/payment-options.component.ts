@@ -103,9 +103,9 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
     paymentSystemSettings: PaymentSystemSettingsDto;
-    hasAnyPaymentSystem;
-    showPayPal: boolean = false;
-    showStripe: boolean = false;
+    hasAnyPaymentSystem = false;
+    payPalConfigured: boolean = false;
+    stripeConfigured: boolean = false;
     receiptLink: string;
 
     isPayByStripeDisabled = false;
@@ -182,13 +182,13 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         ).subscribe(([settings, paymentTypes]) => {
             this.paymentSystemSettings = settings;
             if (settings.paypalClientId && paymentTypes.some(v => v == RequestPaymentType.PayPal)) {
-                this.showPayPal = true;
+                this.payPalConfigured = true;
             }
             if (settings.stripeIsEnabled && paymentTypes.some(v => v == RequestPaymentType.Stripe)) {
-                this.showStripe = true;
+                this.stripeConfigured = true;
             }
-            this.hasAnyPaymentSystem = this.showStripe || this.showPayPal;
-            if (this.hasAnyPaymentSystem && !this.showStripe) {
+            this.hasAnyPaymentSystem = this.stripeConfigured || this.payPalConfigured;
+            if (this.hasAnyPaymentSystem && !this.stripeConfigured) {
                 this.GATEWAY_PAYPAL = 0;
                 this.initializePayPal();
             }
@@ -198,7 +198,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     initializePayPal(reinitialize = false) {
-        if (this.showPayPal && this.payPal && (!this.payPal.initialized || reinitialize)) {
+        if (this.payPalConfigured && this.payPal && (!this.payPal.initialized || reinitialize)) {
             let type = this.plan.paymentPeriodType == PaymentPeriodType.OneTime || this.plan.paymentPeriodType == PaymentPeriodType.LifeTime ? ButtonType.Payment : ButtonType.Subscription;
             this.payPal.initialize(this.paymentSystemSettings.paypalClientId, type,
                 () => this.payByPaypal(),
@@ -273,6 +273,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 break;
         }
         /** Start submitting data and change status in a case of error or success */
+        /*
         let method: Observable<any> = paymentMethod == PaymentMethods.PayPal
             ? this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo)
             : paymentMethod === PaymentMethods.BankTransfer
@@ -311,6 +312,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     });
                 }
             );
+            */
     }
 
     getPaymentStatusText(paymentMethod: PaymentMethods, res: any) {
@@ -435,8 +437,21 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         return amount;
     }
 
+    anyPaymentSystemIsApplicable() {
+        return !this.isFreeSinglePayment() && (this.stripeConfigured || this.showPayPal());
+    }
+
+    showPayPal() {
+        return this.payPalConfigured && !this.isOnceCoupon() && this.applyCoupon(this.plan.total) > 0;
+    }
+
     isOnceCoupon() {
         return this.couponInfo ? this.couponInfo.duration == CouponDiscountDuration.Once : false;
+    }
+
+    isFreeSinglePayment() {
+        return (this.plan.paymentPeriodType == PaymentPeriodType.OneTime || this.plan.paymentPeriodType == PaymentPeriodType.LifeTime) &&
+            this.applyCoupon(this.plan.total) == 0;
     }
 
     subscribeToFree() {
