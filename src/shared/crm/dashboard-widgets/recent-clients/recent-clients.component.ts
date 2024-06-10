@@ -53,7 +53,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             allRecordsLink: '/app/crm/invoices',
             visible: this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlySalesOutput[]> =>
-                this.dashboardServiceProxy.getRecentlySales(this.recordsCount, undefined, contactId, orgUnitIds)
+                this.dashboardServiceProxy.getRecentlySales(undefined, this.recordsCount, undefined, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Client')),
