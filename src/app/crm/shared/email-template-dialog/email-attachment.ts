@@ -7,4 +7,5 @@ export class EmailAttachment extends AttachmentDto {
     xhr!: XMLHttpRequest;
     loader!: Subscription;
     url!: SafeResourceUrl;
+    fromTemplate!: boolean;
 }

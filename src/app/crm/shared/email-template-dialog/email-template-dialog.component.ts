@@ -1,6 +1,8 @@
-  /** Core imports */
-import { Component, ChangeDetectionStrategy, ViewChild, OnInit, ElementRef,
-    Inject, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
+/** Core imports */
+import {
+    Component, ChangeDetectionStrategy, ViewChild, OnInit, ElementRef,
+    Inject, ChangeDetectorRef, Input, Output, EventEmitter
+} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -37,7 +39,9 @@ import {
     ContactServiceProxy,
     GetEmailDataOutput,
     EmailSettingsSource,
-    EmailTemplateType
+    EmailTemplateType,
+    FileInfo,
+    Attachment
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -52,8 +56,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 @Component({
     selector: 'email-template-dialog',
     templateUrl: 'email-template-dialog.component.html',
-    styleUrls: [ 'email-template-dialog.component.less' ],
-    providers: [ CacheHelper, PhoneFormatPipe, EmailTemplateServiceProxy ],
+    styleUrls: ['email-template-dialog.component.less'],
+    providers: [CacheHelper, PhoneFormatPipe, EmailTemplateServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent implements OnInit {
@@ -78,17 +82,17 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Input() editorHeight;
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
-    @Output() onTemplateCreate: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
+    @Output() onTemplateCreate: EventEmitter<number> = new EventEmitter<number>();
     @Output() onTemplateChange: EventEmitter<number> = new EventEmitter<number>();
     @Output() onTagItemClick: EventEmitter<string> = new EventEmitter<string>();
     @Output() onTemplateDelete: EventEmitter<number> = new EventEmitter<number>();
 
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
-    isSettingsAllowed = this.permission.isGranted(AppPermissions.AdministrationTenantHosts) 
-        || (this.appService.isHostTenant ? 
+    isSettingsAllowed = this.permission.isGranted(AppPermissions.AdministrationTenantHosts)
+        || (this.appService.isHostTenant ?
             this.permission.isGranted(AppPermissions.AdministrationHostSettings) :
             this.permission.isGranted(AppPermissions.AdministrationTenantSettings)
-    );
+        );
 
     buttons: IDialogButton[];
     _refresh: Subject<null> = new Subject<null>();
@@ -115,19 +119,19 @@ export class EmailTemplateDialogComponent implements OnInit {
         stylesSet: [],
         contentsCss: [],
         toolbar: [
-            { name: 'document', items: [ 'Source', '-', 'Preview', 'Templates', '-', 'ExportPdf', 'Print' ] },
-            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-            { name: 'editing', items: [ 'Find', 'Replace', '-', 'Scayt' ] },
-            { name: 'forms', items: [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField' ] },
+            { name: 'document', items: ['Source', '-', 'Preview', 'Templates', '-', 'ExportPdf', 'Print'] },
+            { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo'] },
+            { name: 'editing', items: ['Find', 'Replace', '-', 'Scayt'] },
+            { name: 'forms', items: ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'] },
             '/',
-            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strikethrough', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
-            { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
-            { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'Mathjax' ] },
+            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strikethrough', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat'] },
+            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language'] },
+            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'Mathjax'] },
             '/',
-            { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
-            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
-            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
-            { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
+            { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
+            { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+            { name: 'colors', items: ['TextColor', 'BGColor'] },
+            { name: 'tools', items: ['Maximize', 'ShowBlocks'] }
         ],
         removePlugins: 'elementspath',
         extraPlugins: 'preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting',
@@ -218,7 +222,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (fromEmails && fromEmails.length)
             this.fromDataSource = fromEmails;
         else if (this.data.from)
-            this.fromDataSource = this.data.from instanceof Array ? 
+            this.fromDataSource = this.data.from instanceof Array ?
                 this.data.from : [this.data.from];
         if (this.fromDataSource.length) {
             let from = this.fromDataSource.find(item => item.emailSettingsSource == EmailSettingsSource.User) || this.fromDataSource[0];
@@ -242,7 +246,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                         if (index2 > index) {
                             let firstItem = item.toLowerCase(),
                                 secondItem = item2.toLowerCase();
-                            return secondItem.includes(firstItem) 
+                            return secondItem.includes(firstItem)
                                 || firstItem.includes(secondItem);
                         }
                         return false;
@@ -289,19 +293,19 @@ export class EmailTemplateDialogComponent implements OnInit {
         setTimeout(() => {
             if (this.validateData()) {
                 this.storeAttachmentsToDocumentsCache();
-                if (this.templateEditMode)
-                    this.saveTemplateData();
-                else {
-                    this.data.attachments = [];
-                    if (this.attachments.every((item: Partial<EmailAttachment>) => {
-                        if (item.loader)
-                            this.notifyService.info(this.ls.l('AttachmentsUploadInProgress'));
-                        else
-                            this.data.attachments.push(item);
-                        return !item.loader;
-                    }))
+                this.data.attachments = [];
+                if (this.attachments.every((item: Partial<EmailAttachment>) => {
+                    if (item.loader)
+                        this.notifyService.info(this.ls.l('AttachmentsUploadInProgress'));
+                    else
+                        this.data.attachments.push(item);
+                    return !item.loader;
+                }))
+                    if (this.templateEditMode)
+                        this.saveTemplateData();
+                    else {
                         this.onSave.emit(this.data);
-                }
+                    }
             }
         }, 100);
     }
@@ -326,7 +330,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
             if (!this.fromDataSource.length)
                 return this.notifyService.error(
-                    this.ls.l('MailerSettingsAreNotConfigured', this.ls.l('SMTP')), 
+                    this.ls.l('MailerSettingsAreNotConfigured', this.ls.l('SMTP')),
                     this.ls.l('RequiredField', this.ls.l('From'))
                 );
 
@@ -349,8 +353,18 @@ export class EmailTemplateDialogComponent implements OnInit {
     saveTemplateData() {
         this.forceValidationBypass = false;
         if (this.validator.instance.validate().isValid) {
+            let attachments = [];
+            if (this.data.attachments) {
+                attachments = this.data.attachments.map(item => {
+                    return new FileInfo({
+                        id: item.fileId || item.id,
+                        name: item.name
+                    });
+                });
+            }
+
             let templateId = this.data.templateId || this.lastSelectedTemplateId,
-                isUpdating = templateId && !this.data.addMode && !this.isSaveAsNew(), 
+                isUpdating = templateId && !this.data.addMode && !this.isSaveAsNew(),
                 data = {
                     id: isUpdating ? templateId : undefined,
                     name: this.getTemplateName(),
@@ -359,13 +373,14 @@ export class EmailTemplateDialogComponent implements OnInit {
                     cc: this.data.cc,
                     bcc: this.data.bcc,
                     previewText: this.data.previewText,
-                    body: this.data.body
+                    body: this.data.body,
+                    attachments: attachments
                 };
 
             this.startLoading();
             let request$: Observable<any> = isUpdating
-                    ? this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data))
-                    : this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
+                ? this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data))
+                : this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
 
             request$.pipe(finalize(() => this.finishLoading())).subscribe((id: number) => {
                 if (id) {
@@ -373,6 +388,10 @@ export class EmailTemplateDialogComponent implements OnInit {
                     if (this.customItem)
                         this.customItem.id = id;
                 }
+                this.data.attachments.map(item => {
+                    item.fromTemplate = true;
+                    delete item.loader;
+                });
                 this.onSave.emit(this.data);
 
                 if (this.isSaveAndClose())
@@ -451,7 +470,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             {},
             defaultAdapter,
             {
-                bypass: function() {
+                bypass: function () {
                     return forceValidationBypass || this.editor.option('disabled');
                 }
             });
@@ -472,23 +491,48 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     loadTemplateById(templateId) {
-        if (this.templateEditMode) {
-            this.startLoading();
-            this.emailTemplateProxy.getTemplate(templateId).pipe(
-                finalize(() => this.finishLoading())
-            ).subscribe((res: GetTemplateReponse) => {
-                this.data.bcc = res.bcc;
-                this.data.body = res.body;
-                this.data.cc = res.cc;
-                this.data.subject = res.subject;
-                this.data.previewText = res.previewText;
-                this.showCC = Boolean(res.cc && res.cc.length);
-                this.showBCC = Boolean(res.bcc && res.bcc.length);
-                this.onTemplateChange.emit(templateId);
-                this.invalidate();
-                this.templateLoaded = true;
-            });
-        }
+        if (!this.templateEditMode)
+            return;
+
+        this.startLoading();
+        this.emailTemplateProxy.getTemplate(templateId).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe((res: GetTemplateReponse) => {
+            this.data.bcc = res.bcc;
+            this.data.body = res.body;
+            this.data.cc = res.cc;
+            this.data.subject = res.subject;
+            this.data.previewText = res.previewText;
+            this.showCC = Boolean(res.cc && res.cc.length);
+            this.showBCC = Boolean(res.bcc && res.bcc.length);
+            this.updateTemplateAttachments(res.attachments);
+
+            this.onTemplateChange.emit(templateId);
+            this.invalidate();
+            this.templateLoaded = true;
+        });
+    }
+
+    updateTemplateAttachments(templateAttachments: Attachment[]) {
+        this.removeTemplateAttachments();
+
+        if (!templateAttachments)
+            return;
+
+        this.attachments = this.attachments.concat(
+            templateAttachments.map(item => {
+                return <EmailAttachment>{
+                    id: item.id,
+                    name: item.name,
+                    size: item.size,
+                    progress: 0,
+                    fromTemplate: true
+                };
+            }));
+    }
+
+    removeTemplateAttachments() {
+        this.attachments = this.attachments.filter(v => !v.fromTemplate);
     }
 
     validateEmailList(element) {
@@ -512,9 +556,9 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.fromDataSource.forEach(item => {
                     let index = this.data.cc.indexOf(item.ccEmailAddress);
                     if (index >= 0)
-                        this.data.cc.splice(index, 1);                    
+                        this.data.cc.splice(index, 1);
                 });
-                this.checkUpdateCCFromEmail(from);
+            this.checkUpdateCCFromEmail(from);
         }
     }
 
@@ -558,8 +602,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.lastSelectedTemplateId = this.data.templateId;
         if (event.text)
             this.templateComponent.isValid = true;
-        this.customItem = 
-        event.customItem = { name: event.text, id: undefined };
+        this.customItem =
+            event.customItem = { name: event.text, id: undefined };
     }
 
     onTemplateOptionChanged(event) {
@@ -577,6 +621,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     reset() {
         this.data.cc = this.data.bcc = [];
         this.data.subject = this.data.body = '';
+        this.removeTemplateAttachments();
     }
 
     onCKReady(event) {
@@ -752,7 +797,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     editTemplate(data: EmailTemplateData) {
-        this.onTemplateCreate.emit(data);
+        this.onTemplateCreate.emit(data.templateId);
     }
 
     deleteTemplate(event, template, component) {

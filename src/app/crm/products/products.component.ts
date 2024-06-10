@@ -7,6 +7,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { finalize } from 'rxjs/operators';
 import { DataSource } from 'devextreme/data/data_source/data_source';
 import ODataStore from 'devextreme/data/odata/store';
+import * as moment from 'moment';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
@@ -37,6 +38,7 @@ import { ProductFields } from '@app/crm/products/products-fields.enum';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { CurrencyHelper } from '../shared/helpers/currency.helper';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     templateUrl: './products.component.html',
@@ -241,6 +243,8 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                             res.id = undefined;
                             return !res.fileId;
                         });
+                if (product.isPublished)
+                    product.publishDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());
             }
 
             this.showProductDialog(product);

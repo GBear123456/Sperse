@@ -141,6 +141,7 @@ export class AppConsts {
     static readonly defaultFontName: string = 'Montserrat';
     static readonly defaultTabularFontName: string = 'Lato';
     static readonly defaultBorderRadius: string = '10';
+    static readonly defaultWelcomePageUri = 'welcome';
 
     /* System Action IDs */
     static readonly SYS_ID_CRM_CANCEL_LEAD           = 'CRM.CancelLead';

@@ -4,7 +4,7 @@ import {
     PublicCouponInfo,
     PaymentPeriodType,
     RequestPaymentInput,
-    RequestPaypalSubscriptionOutput
+    RequestPaymentType
 } from '@shared/service-proxies/service-proxies';
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -57,16 +57,17 @@ export class PayPalComponent implements AfterViewInit {
             },
             createSubscription(data, actions) {
                 return self.tenantSubscriptionServiceProxy
-                    .requestPaypalSubscription(new RequestPaymentInput({
+                    .requestProductPayment(new RequestPaymentInput({
+                        type: RequestPaymentType.PayPal,
                         productId: self.productId,
                         paymentPeriodType: self.paymentPeriodType,
                         quantity: self.quantity,
                         couponId: self.couponInfo ? self.couponInfo.id : undefined
                     }))
                     .toPromise()
-                    .then((result: RequestPaypalSubscriptionOutput) => {
+                    .then(result => {
                         receiptUrl = result.receiptUrl;
-                        return result.code;
+                        return result.paypalCode;
                     });
             },
             onApprove(data, actions) {

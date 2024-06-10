@@ -25,7 +25,7 @@
                         <i class="fa fa-print"></i>
                         <span>Print</span>
                     </button>
-                    <button *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Paid" mat-menu-item [routerLink]="['/receipt', tenantId, publicId]">
+                    <button *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Paid" mat-menu-item [routerLink]="['/receipt', tenantId, publicId]" [queryParams]="{preventRedirect: true}">
                         <i class="fa fa-file-text"></i>
                         <span>Receipt</span>
                     </button>

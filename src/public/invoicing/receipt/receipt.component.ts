@@ -3,7 +3,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
     GetInvoiceReceiptInfoOutput, InvoiceEventInfo, InvoiceStatus,
-    UserInvoiceServiceProxy
+    UserInvoiceServiceProxy,
+    TenantHostServiceProxy
 } from '@root/shared/service-proxies/service-proxies';
 
 /** Third party imports */
@@ -25,7 +26,8 @@ import { EventDurationHelper } from '@shared/crm/helpers/event-duration-types.en
         '../../../shared/common/styles/core.less',
         './receipt.component.less'
     ],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    providers: [TenantHostServiceProxy]
 })
 export class ReceiptComponent implements OnInit {
     loading: boolean = true;
@@ -42,22 +44,35 @@ export class ReceiptComponent implements OnInit {
     failedToLoad: boolean = false;
     failMessage: string = '';
 
-    tenantId: any = this.activatedRoute.snapshot.paramMap.get('tenantId');
+    tenantId: number = Number(this.activatedRoute.snapshot.paramMap.get('tenantId'));
     publicId = this.activatedRoute.snapshot.paramMap.get('publicId');
+    preventRedirect: boolean = Boolean(this.activatedRoute.snapshot.queryParamMap.get('preventRedirect'));
+    usePortal = !!this.activatedRoute.snapshot.queryParamMap.get('usePortal');
 
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute,
         public ls: AppLocalizationService,
         private userInvoiceService: UserInvoiceServiceProxy,
+        private tenantHostService: TenantHostServiceProxy,
         private clipboardService: ClipboardService,
         public conditionsModalService: ConditionsModalService
     ) {
     }
 
     ngOnInit(): void {
+        this.clearQueryParam();
         abp.ui.setBusy();
         this.getInvoiceInfo(this.tenantId, this.publicId);
+    }
+
+    clearQueryParam() {
+        this.router.navigate([], {
+            queryParams: {
+                'usePortal': null
+            },
+            queryParamsHandling: 'merge'
+        });
     }
 
     getInvoiceInfo(tenantId, publicId) {
@@ -77,6 +92,11 @@ export class ReceiptComponent implements OnInit {
                         }
                     case InvoiceStatus.Paid:
                         {
+                            if (!this.preventRedirect && result.redirectUrls && result.redirectUrls.length == 1) {
+                                location.href = result.redirectUrls[0];
+                                return;
+                            }
+
                             this.invoiceInfo = result;
                             this.invoiceInfo.resources = result.resources.sort((a, b) => Boolean(a.url) > Boolean(b.url) ? 1 : -1);
                             this.initEventsInfo();
@@ -107,17 +127,24 @@ export class ReceiptComponent implements OnInit {
     }
 
     setReturnLinkInfo() {
-        if (!this.invoiceInfo.isTenantInvoice)
-            return;
-
-        this.returnText = abp.session.userId ?
-            'Return to System' :
-            'Login to System';
+        if (this.invoiceInfo.isTenantInvoice) {
+            this.returnText = abp.session.userId ? 'Return to System' : 'Login to System';
+        }
+        else if (this.usePortal) {
+            this.returnText = 'Return to System';
+        }
     }
 
     returnLinkClick() {
         abp.ui.setBusy();
-        if (abp.session.userId) {
+
+        if (this.usePortal) {
+            this.tenantHostService.getMemberPortalUrl(this.tenantId || undefined)
+                .subscribe(output => {
+                    window.location.href = output.url;
+                });
+        }
+        else if (abp.session.userId) {
             window.location.href = location.origin + '/app/crm';
         }
         else {

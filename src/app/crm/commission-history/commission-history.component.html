@@ -13,7 +13,7 @@
                   (onReload)="refresh()"
                   (onStateReset)="dxDataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+        <ng-container *ngTemplateOutlet="layoutService.showLeftBar ? undefined : titleTemplate"></ng-container>
     </app-headline>
     <ng-template #titleTemplate>
         <types-dropdown [items]="viewTypes"
