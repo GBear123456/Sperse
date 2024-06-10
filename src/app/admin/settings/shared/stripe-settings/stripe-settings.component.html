@@ -16,6 +16,10 @@
             <span class="disconnect" (click)="disconnedConnectedAccount()">{{l("Disconnect")}}</span>
         </ng-container>-->
     </div>
+    <div class="payment-methods" *ngIf="stripePaymentSettings.isConnectedAccountSetUpCompleted">
+        <span class="small">Available payment methods: <b>{{availablePaymentMethods}}</b></span>
+        <i class="fa fa-refresh" [ngClass]="{'fa-spin': paymentMethodUpdateInProgress}" (click)="updatePaymentMethods()" title="Refresh payment methods"></i>
+    </div>
     <hr />
     <div>
         <dx-check-box id="ShowAdvancedSettings"
