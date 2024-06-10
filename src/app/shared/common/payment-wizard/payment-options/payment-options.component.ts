@@ -400,7 +400,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 })
             )
             .subscribe(info => {
-                info = Object.keys(info).length == 0 ? null : info;
+                info = info && info.id ? info : null;
                 if (info) {
                     this.setCouponDescription(info);
                 } else {
