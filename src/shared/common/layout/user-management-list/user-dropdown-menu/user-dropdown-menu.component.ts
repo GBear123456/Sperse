@@ -137,7 +137,8 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         }
     ];
     isCustomLayout = this.appSession.tenant && 
-        this.appSession.tenant.customLayoutType == LayoutType.Default;
+        this.appSession.tenant.customLayoutType &&
+        this.appSession.tenant.customLayoutType != LayoutType.Default;
     subscriptions: string;
 
     isAccountSettingsEnabled = 
