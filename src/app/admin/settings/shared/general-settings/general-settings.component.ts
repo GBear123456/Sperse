@@ -5,6 +5,7 @@ import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angula
 import { select, Store } from '@ngrx/store';
 import { forkJoin, Observable, of } from 'rxjs';
 import { finalize, tap, first, filter, map } from 'rxjs/operators';
+import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
 
 /** Application imports */
 import {
@@ -63,6 +64,7 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
         private store$: Store<RootStore.State>,
         private phoneNumberService: PhoneNumberService,
         private tenantSettingsService: TenantSettingsServiceProxy,
+        private countryPhoneService: CountryService
     ) {
         super(_injector);
         this.store$.dispatch(new CurrenciesCrmStoreActions.LoadRequestAction());
@@ -96,10 +98,14 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
     onCountryChanged(event) {
         let country = this.supportedCountries.find(country => country.code == event.value);
         if (country) {
-            this.generalSettings.currency = country.currencyId;
+            this.generalSettings.currency = country.currencyId || abp.setting.get('App.TenantManagement.Currency');
             if (this.publicPhoneNumber && this.publicPhoneNumber.isEmpty()) {
+                let countryCode = country.code.toLowerCase();
+                if (!this.countryPhoneService.getPhoneCodeByCountryCode(countryCode))
+                    countryCode = abp.setting.get('App.TenantManagement.DefaultCountryCode').toLowerCase();
+
                 this.publicPhoneNumber.intPhoneNumber.phoneNumber = '';
-                this.publicPhoneNumber.intPhoneNumber.updatePhoneInput(country.code.toLowerCase());
+                this.publicPhoneNumber.intPhoneNumber.updatePhoneInput(countryCode);
             }
         }
     }

@@ -15,6 +15,7 @@ import { AbstractControlDirective } from '@angular/forms';
 import { forkJoin, Observable, of } from 'rxjs';
 import { tap, filter, first, map } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
+import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
 
 /** Application imports */
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
@@ -88,6 +89,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         private phoneNumberService: PhoneNumberService,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         private store$: Store<RootStore.State>,
+        private countryPhoneService: CountryService,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {
@@ -108,10 +110,14 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     onCountryChanged(event) {
         let country = this.supportedCountries.find(country => country.code == event.value);
         if (country) {
-            this.settings.currency = country.currencyId;
+            this.settings.currency = country.currencyId || abp.setting.get('App.TenantManagement.Currency');
             if (this.publicPhoneNumber && this.publicPhoneNumber.isEmpty()) {
+                let countryCode = country.code.toLowerCase();
+                if (!this.countryPhoneService.getPhoneCodeByCountryCode(countryCode))
+                    countryCode = abp.setting.get('App.TenantManagement.DefaultCountryCode').toLowerCase();
+
                 this.publicPhoneNumber.intPhoneNumber.phoneNumber = '';
-                this.publicPhoneNumber.intPhoneNumber.updatePhoneInput(country.code.toLowerCase());
+                this.publicPhoneNumber.intPhoneNumber.updatePhoneInput(countryCode);
             }
         }
     }
