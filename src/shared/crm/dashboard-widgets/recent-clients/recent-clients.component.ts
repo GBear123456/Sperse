@@ -27,6 +27,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@root/shared/common/auth/permission.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'recent-clients',
@@ -42,6 +43,8 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     @Input() viewAllText: string = this.ls.l('CRMDashboard_SeeAllRecords');
     @Output() loadComplete: EventEmitter<any> = new EventEmitter();
 
+    currency = SettingsHelper.getCurrency();
+
     recordsCount = 10;
     formatting = AppConsts.formatting;
     recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[] | GetRecentlySalesOutput[]>;
@@ -53,7 +56,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             allRecordsLink: '/app/crm/invoices',
             visible: this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlySalesOutput[]> =>
-                this.dashboardServiceProxy.getRecentlySales(undefined, this.recordsCount, undefined, contactId, orgUnitIds)
+                this.dashboardServiceProxy.getRecentlySales(this.currency, this.recordsCount, undefined, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Client')),
