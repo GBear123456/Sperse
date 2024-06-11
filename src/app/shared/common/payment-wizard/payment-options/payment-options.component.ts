@@ -420,6 +420,17 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         coupon['description'] = `${description} Off ${coupon.duration}`;
     }
 
+    getSubscriptionPrice(includeCoupon: boolean) {
+        let price = this.plan.total;
+        if (includeCoupon) {
+            if (!this.plan.trialDayCount ||
+                (this.plan.trialDayCount && !this.plan.signUpFee) ||
+                (this.couponInfo && this.couponInfo.duration != CouponDiscountDuration.Once))
+                price = this.applyCoupon(price);
+        }
+        return price;
+    }
+
     applyCoupon(amount: number, usedAmountOff: number = 0): number {
         if (!this.couponInfo)
             return amount;
@@ -430,10 +441,23 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         return round(amount * (1 - this.couponInfo.percentOff / 100), 2);
     }
 
+    getSignUpFee(includeCoupon: boolean): number {
+        let fee = this.plan.signUpFee;
+        if (includeCoupon) {
+            let usedAmountOff = 0;
+            if (!this.plan.trialDayCount) {
+                usedAmountOff = this.getSubscriptionPrice(false) - this.getSubscriptionPrice(true);
+            }
+            fee = this.applyCoupon(fee, usedAmountOff);
+        }
+
+        return fee;
+    }
+
     getDiscount(): number {
-        let amount = this.plan.total - this.applyCoupon(this.plan.total);
+        let amount = this.getSubscriptionPrice(false) - this.getSubscriptionPrice(true);
         if (this.plan.signUpFee)
-            amount = amount + this.plan.signUpFee - this.applyCoupon(this.plan.signUpFee);
+            amount = amount + this.getSignUpFee(false) - this.getSignUpFee(true);
         return amount;
     }
 
@@ -442,7 +466,9 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     showPayPal() {
-        return this.payPalConfigured && !this.isOnceCoupon() && this.applyCoupon(this.plan.total) > 0;
+        return this.payPalConfigured &&
+            !this.isOnceCoupon() &&
+            this.getSubscriptionPrice(true) > 0;
     }
 
     isOnceCoupon() {
@@ -451,7 +477,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
 
     isFreeSinglePayment() {
         return (this.plan.paymentPeriodType == PaymentPeriodType.OneTime || this.plan.paymentPeriodType == PaymentPeriodType.LifeTime) &&
-            this.applyCoupon(this.plan.total) == 0;
+            this.getSubscriptionPrice(true) == 0;
     }
 
     subscribeToFree() {

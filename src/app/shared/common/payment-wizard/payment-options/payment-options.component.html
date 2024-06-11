@@ -23,16 +23,15 @@
         <h4 class="planName">{{ plan.productName }}</h4>
         <div class="trial-day-count" *ngIf="plan.trialDayCount || plan.signUpFee">
             <ng-container *ngIf="plan.trialDayCount; else signupBlock">
-                <span *ngIf="plan.signUpFee; else free">{{ plan.currencySymbol  || '$'}}{{plan.signUpFee | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span> for {{plan.trialDayCount}}* day(s) then
+                <span *ngIf="plan.signUpFee; else free">{{ plan.currencySymbol  || '$'}}{{getSignUpFee(true) | customNumber: '1.0-0' | currency: plan.currencyId : '' : '1.0-0'}}</span> for {{plan.trialDayCount}}* day(s) then
                 <ng-template #free>{{l('Free')}}</ng-template>
             </ng-container>
             <ng-template #signupBlock>
-                <span>{{ plan.currencySymbol  || '$'}}{{plan.signUpFee | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span> signup fee
+                <span>{{ plan.currencySymbol  || '$'}}{{getSignUpFee(true) | customNumber: '1.0-0' | currency: plan.currencyId : '' : '1.0-0'}}</span> signup fee
             </ng-template>
         </div>
         <div *ngIf="plan.total" class="usersAmountAndBilledInfo">
-            <!-- span>{{ l('Price') }}: </span -->
-            <span>{{ (plan.currencySymbol || '$') + (applyCoupon(plan.total) | number : '1.2-2') }} </span><span>{{ getProductUnit(plan) }}</span>
+            <span>{{ (plan.currencySymbol || '$') + (getSubscriptionPrice(true) | number : '1.2-2') }} </span><span>{{ getProductUnit(plan) }}</span>
             <div class="coupon-info" *ngIf="couponInfo && plan.total != 0">
                 <div class="save-line">You saved: {{plan.currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
             </div>
