@@ -15,6 +15,7 @@ import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
@@ -64,6 +65,7 @@ import { StaticListModule } from '@app/shared/common/static-list/static-list.mod
         DxDateBoxModule,
         DxValidatorModule,
         DxValidationGroupModule,
+        DxSwitchModule,
         MatInputModule,
         FormsModule,
         TimeZoneComboModule,

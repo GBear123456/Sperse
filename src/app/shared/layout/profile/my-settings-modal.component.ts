@@ -114,11 +114,21 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
 
     gmailSettings: GmailSettingsDto = new GmailSettingsDto();
     signatureHtml: string;
-
+    
     smtpProviderErrorLink: string;
-    supportedProviders = this.emailSmtpSettingsService.supportedProviders;
+    supportedProviders: any = [
+        ...this.emailSmtpSettingsService.supportedProviders,
+        {
+            name: 'Other Mail Provdier', 
+            host: '', 
+            port: '', 
+            ssl: false, 
+            domain: '', 
+            icon: 'email.svg',
+            imap: {host: '', port: '', ssl: false}
+        }
+    ];
     selectedProvider: any;
-
 
     constructor(
         private dialog: MatDialog,
@@ -202,7 +212,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     }
 
     onProviderChanged() {
-        if (this.selectedProvider) {
+        if (this.selectedProvider.host) {
             this.userEmailSettings.smtp.host = this.selectedProvider.host;
             this.userEmailSettings.smtp.port = this.selectedProvider.port;
             this.userEmailSettings.smtp.enableSsl = this.selectedProvider.ssl;
@@ -210,7 +220,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             this.userEmailSettings.imapHost = this.selectedProvider.imap.host;
             this.userEmailSettings.imapPort = this.selectedProvider.imap.port;
             this.userEmailSettings.imapUseSsl = this.selectedProvider.imap.ssl;
-
+            this.userEmailSettings.isImapEnabled = !!this.selectedProvider.imap.host;
         } else {
             this.userEmailSettings.smtp.host = undefined;
             this.userEmailSettings.smtp.port = undefined;
@@ -219,9 +229,19 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             this.userEmailSettings.imapHost = undefined;
             this.userEmailSettings.imapPort = undefined;
             this.userEmailSettings.imapUseSsl = undefined;
+            this.userEmailSettings.isImapEnabled = false;
         }
 
         this.changeDetectorRef.detectChanges();
+    }
+
+    onSmtpStateChange(event) {
+        if (event.value) {
+            if (!this.selectedProvider)
+                this.selectedProvider = this.supportedProviders[0];
+
+            this.onProviderChanged();
+        }
     }
 
     updateQrCodeSetupImageUrl(): void {
