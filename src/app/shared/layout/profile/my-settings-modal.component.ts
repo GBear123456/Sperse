@@ -163,6 +163,9 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
 
             if (settings && settings.smtp.host)
                 this.selectedProvider = this.supportedProviders.find(item => item.host == settings.smtp.host);
+            
+            if (!this.selectedProvider)
+                this.selectedProvider = this.supportedProviders[this.supportedProviders.length - 1];
 
             if (!this.userEmailSettings.isUserSmtpEnabled) {
                 if (!this.userEmailSettings.from || !this.userEmailSettings.from.emailAddress || this.userEmailSettings.from.emailAddress.length == 0) {

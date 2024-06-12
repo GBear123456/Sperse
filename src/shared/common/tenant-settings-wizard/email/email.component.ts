@@ -58,8 +58,14 @@ export class EmailComponent implements ITenantSettingsStepComponent, AfterViewIn
         setTimeout(() => {
             if (this.settings && this.settings.smtpHost) {
                 this.selectedProvider = this.supportedProviders.find(item => item.host == this.settings.smtpHost);
-                this.changeDetectorRef.detectChanges();
+
+                if (!this.selectedProvider)
+                    this.selectedProvider = this.supportedProviders[this.supportedProviders.length - 1];
+            } else {
+                this.selectedProvider = this.supportedProviders[1];
+                this.onProviderChanged();
             }
+            this.changeDetectorRef.detectChanges();
         }, 300);
     }
 

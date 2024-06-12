@@ -30,7 +30,7 @@ export class EmailSmtpSettingsService {
         imap: {host: 'imap.gmail.com', port: 993, ssl: true}
     }, {
         name: 'HotMail (OutLook)', 
-        host: 'smtp-mail.outlook.com', 
+        host: 'outlook.office365.com', 
         port: '587', 
         ssl: true, 
         domain: 'outlook.com', 
