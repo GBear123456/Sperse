@@ -68,6 +68,37 @@
 
 #payment-wizard {
     padding: 0;
+    position: relative;
     box-sizing: content-box;
     border-radius: 23px;
+
+    .gear-menu {        
+        position: absolute;
+        background-image: url(../../../../assets/common/icons/gear-icon.svg);
+        background-repeat: no-repeat;
+        background-position: center;
+        cursor: pointer;
+        z-index: 1;
+        width: 20px;
+        height: 20px;
+        top: 20px;
+        right: 20px;
+    }
+}
+
+#paymentWizzardTooltipMenu {
+    ul {
+        margin: 0;
+        padding: 0;
+        li {
+            margin: 15px 5px;
+            cursor: pointer;
+            text-align: left;
+            list-style-type: none;
+
+            img {
+                margin-right: 10px;
+            }
+        }
+    }
 }
