@@ -21,7 +21,7 @@
         </div>
 
         <h4 class="planName">{{ plan.productName }}</h4>
-        <div class="trial-day-count" *ngIf="plan.trialDayCount || plan.signUpFee">
+        <div class="trial-day-count" *ngIf="(plan.trialDayCount || plan.signUpFee) && !productSubscriptionPreviouslyUsed">
             <ng-container *ngIf="plan.trialDayCount; else signupBlock">
                 <span *ngIf="plan.signUpFee; else free">{{ plan.currencySymbol  || '$'}}{{getSignUpFee(true) | customNumber: '1.0-0' | currency: plan.currencyId : '' : '1.0-0'}}</span> for {{plan.trialDayCount}}* day(s) then
                 <ng-template #free>{{l('Free')}}</ng-template>

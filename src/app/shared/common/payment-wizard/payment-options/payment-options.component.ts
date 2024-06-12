@@ -103,6 +103,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
     paymentSystemSettings: PaymentSystemSettingsDto;
+    productSubscriptionPreviouslyUsed: boolean = false;
     hasAnyPaymentSystem = false;
     payPalConfigured: boolean = false;
     stripeConfigured: boolean = false;
@@ -171,7 +172,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         forkJoin(
             [
                 this.tenantSubscriptionServiceProxy.getPaymentSettingsInfo(),
-                this.tenantSubscriptionServiceProxy.checkApplicablePaymentTypes(new RequestPaymentInput({
+                this.tenantSubscriptionServiceProxy.checkPaymentInfo(new RequestPaymentInput({
                     type: RequestPaymentType.PayPal,
                     paymentPeriodType: this.plan.paymentPeriodType,
                     productId: this.plan.productId,
@@ -179,12 +180,13 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     couponId: this.couponInfo ? this.couponInfo.id : undefined
                 }))
             ]
-        ).subscribe(([settings, paymentTypes]) => {
+        ).subscribe(([settings, productPaymentInfo]) => {
             this.paymentSystemSettings = settings;
-            if (settings.paypalClientId && paymentTypes.some(v => v == RequestPaymentType.PayPal)) {
+            this.productSubscriptionPreviouslyUsed = productPaymentInfo.previouslyUsed;
+            if (settings.paypalClientId && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.PayPal)) {
                 this.payPalConfigured = true;
             }
-            if (settings.stripeIsEnabled && paymentTypes.some(v => v == RequestPaymentType.Stripe)) {
+            if (settings.stripeIsEnabled && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.Stripe)) {
                 this.stripeConfigured = true;
             }
             this.hasAnyPaymentSystem = this.stripeConfigured || this.payPalConfigured;
@@ -423,7 +425,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     getSubscriptionPrice(includeCoupon: boolean) {
         let price = this.plan.total;
         if (includeCoupon) {
-            if (!this.plan.trialDayCount ||
+            if (this.productSubscriptionPreviouslyUsed ||
+                !this.plan.trialDayCount ||
                 (this.plan.trialDayCount && !this.plan.signUpFee) ||
                 (this.couponInfo && this.couponInfo.duration != CouponDiscountDuration.Once))
                 price = this.applyCoupon(price);
@@ -456,7 +459,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
 
     getDiscount(): number {
         let amount = this.getSubscriptionPrice(false) - this.getSubscriptionPrice(true);
-        if (this.plan.signUpFee)
+        if (this.plan.signUpFee && !this.productSubscriptionPreviouslyUsed)
             amount = amount + this.getSignUpFee(false) - this.getSignUpFee(true);
         return amount;
     }
