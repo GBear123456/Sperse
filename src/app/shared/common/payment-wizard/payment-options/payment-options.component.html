@@ -95,10 +95,10 @@
     </div>
     <div class="paymentMethods">
         <ng-container *ngIf="plan.total">
-            <div *ngIf="!hasAnyPaymentSystem" class="no-payment-systems">
+            <div *ngIf="!hasAnyPaymentSystemConfigured" class="no-payment-systems">
                 <h2>Payment systems are not configured</h2>
             </div>
-            <ng-container *ngIf="hasAnyPaymentSystem">
+            <ng-container *ngIf="hasAnyPaymentSystemConfigured">
                 <div *ngIf="!anyPaymentSystemIsApplicable()" class="no-payment-systems">
                     <div *ngIf="isFreeSinglePayment(); else noAvailablePaymentSystems">
                         <p class="payment-text">Press the button below to subscribe to <b>{{plan.productName}}</b></p>
@@ -108,8 +108,8 @@
                         <h2>No available payment systems support this case</h2>
                     </ng-template>
                 </div>
-                <mat-tab-group *ngIf="hasAnyPaymentSystem && anyPaymentSystemIsApplicable()" [(selectedIndex)]="selectedGateway" (selectedTabChange)="selectedTabChange($event)">
-                    <mat-tab *ngIf="stripeConfigured" [label]="l('Stripe')">
+                <mat-tab-group *ngIf="anyPaymentSystemIsApplicable()" [(selectedIndex)]="selectedGateway" (selectedTabChange)="selectedTabChange($event)">
+                    <mat-tab *ngIf="stripeApplicable" [label]="l('Stripe')">
                         <div class="stripe-wrap">
                             <p class="payment-text">
                                 You will be redirected to Stripe payment page

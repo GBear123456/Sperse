@@ -104,9 +104,9 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
     paymentSystemSettings: PaymentSystemSettingsDto;
     productSubscriptionPreviouslyUsed: boolean = false;
-    hasAnyPaymentSystem = false;
-    payPalConfigured: boolean = false;
-    stripeConfigured: boolean = false;
+    hasAnyPaymentSystemConfigured = false;
+    payPalApplicable: boolean = false;
+    stripeApplicable: boolean = false;
     receiptLink: string;
 
     isPayByStripeDisabled = false;
@@ -183,14 +183,12 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         ).subscribe(([settings, productPaymentInfo]) => {
             this.paymentSystemSettings = settings;
             this.productSubscriptionPreviouslyUsed = productPaymentInfo.previouslyUsed;
-            if (settings.paypalClientId && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.PayPal)) {
-                this.payPalConfigured = true;
-            }
-            if (settings.stripeIsEnabled && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.Stripe)) {
-                this.stripeConfigured = true;
-            }
-            this.hasAnyPaymentSystem = this.stripeConfigured || this.payPalConfigured;
-            if (this.hasAnyPaymentSystem && !this.stripeConfigured) {
+            this.hasAnyPaymentSystemConfigured = !!settings.paypalClientId || settings.stripeIsEnabled;
+
+            this.stripeApplicable = settings.stripeIsEnabled && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.Stripe);
+            this.payPalApplicable = settings.paypalClientId && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.PayPal);
+
+            if (this.payPalApplicable && !this.stripeApplicable) {
                 this.GATEWAY_PAYPAL = 0;
                 this.initializePayPal();
             }
@@ -200,7 +198,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     initializePayPal(reinitialize = false) {
-        if (this.payPalConfigured && this.payPal && (!this.payPal.initialized || reinitialize)) {
+        if (this.payPalApplicable && this.payPal && (!this.payPal.initialized || reinitialize)) {
             let type = this.plan.paymentPeriodType == PaymentPeriodType.OneTime || this.plan.paymentPeriodType == PaymentPeriodType.LifeTime ? ButtonType.Payment : ButtonType.Subscription;
             this.payPal.initialize(this.paymentSystemSettings.paypalClientId, type,
                 () => this.payByPaypal(),
@@ -465,11 +463,11 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     anyPaymentSystemIsApplicable() {
-        return !this.isFreeSinglePayment() && (this.stripeConfigured || this.showPayPal());
+        return !this.isFreeSinglePayment() && (this.stripeApplicable || this.showPayPal());
     }
 
     showPayPal() {
-        return this.payPalConfigured &&
+        return this.payPalApplicable &&
             !this.isOnceCoupon() &&
             this.getSubscriptionPrice(true) > 0;
     }
