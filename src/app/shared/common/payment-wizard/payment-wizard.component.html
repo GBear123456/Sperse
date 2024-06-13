@@ -1,4 +1,4 @@
-<div class="gear-menu" (click)="tooltipMenuVisible=true"></div>
+<div *ngIf="!data.showSubscriptions" class="gear-menu" (click)="tooltipMenuVisible=true"></div>
 <dx-tooltip target="div.gear-menu"
             [wrapperAttr]="{ id: 'paymentWizzardTooltipMenu', class: 'payment-wizzard-tooltip-menu' }"
             [(visible)]="tooltipMenuVisible">
