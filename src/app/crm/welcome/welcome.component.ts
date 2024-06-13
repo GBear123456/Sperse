@@ -125,8 +125,14 @@ export class WelcomeComponent implements OnInit {
     }
 
     updateSubscriptionInfo() {
-        this.subscriptions = this.appService.moduleSubscriptions.filter(sub => sub.statusId == 'A');
-        this.changeDetectorRef.markForCheck()
+        this.subscriptions = [];
+        this.appService.moduleSubscriptions.filter(
+            sub => sub.statusId == 'A'
+        ).map(item => {
+            if (!this.subscriptions.some(sub => sub.id == item.id))
+                this.subscriptions.push(item);
+        });
+        this.changeDetectorRef.markForCheck();
     }
 
     openIntroDialog(showLastStep: boolean = false) {
