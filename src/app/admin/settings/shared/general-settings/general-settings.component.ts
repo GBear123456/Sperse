@@ -23,6 +23,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
+import { TimeZoneComboComponent } from '@app/shared/common/timing/timezone-combo.component';
 
 @Component({
     selector: 'general-settings',
@@ -32,6 +33,7 @@ import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, Currenci
     providers: [PhoneNumberService, TenantSettingsServiceProxy]
 })
 export class GeneralSettingsComponent extends SettingsComponentBase {
+    @ViewChild(TimeZoneComboComponent, { static: false }) timezoneComponent: TimeZoneComboComponent;
     @ViewChild('privacyPolicyUploader', { static: false }) privacyPolicyUploader: UploaderComponent;
     @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;
     @ViewChild('publicSiteUrl', { static: false }) publicSiteUrl: AbstractControlDirective;
@@ -99,6 +101,7 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
         let country = this.supportedCountries.find(country => country.code == event.value);
         if (country) {
             this.generalSettings.currency = country.currencyId || abp.setting.get('App.TenantManagement.Currency');
+            this.timezoneComponent.setTimezoneByCountryCode(country.code);
             if (this.publicPhoneNumber && this.publicPhoneNumber.isEmpty()) {
                 let countryCode = country.code.toLowerCase();
                 if (!this.countryPhoneService.getPhoneCodeByCountryCode(countryCode))

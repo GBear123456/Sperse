@@ -1,12 +1,5 @@
 <h2>{{ ls.l('GeneralSettings') }}</h2>
 <ng-container *ngIf="settings">
-    <div class="form-group" *ngIf="showTimezoneSelection">
-        <label for="Timezone">{{ls.l("Timezone")}}</label>
-        <timezone-combo id="Timezone"
-            [(selectedTimeZone)]="settings.timezone"
-            [defaultTimezoneScope]="defaultTimezoneScope">
-        </timezone-combo>
-    </div>
     <div class="form-group flag-settings">
         <label for="DefaultCountry">{{ls.l("Country")}}</label>
         <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings?.defaultCountryCode?.toLowerCase()}}.svg" width="19px" height="auto">
@@ -24,6 +17,13 @@
                 <img class="flag-icon" src="assets/common/icons/flags/{{item?.code?.toLowerCase()}}.svg" width="auto" height="38px"><div><span class="currency-name">{{item.name}}</span><br><b class="currency-id">{{item.code}}</b></div>
             </div>
         </dx-select-box>
+    </div>
+    <div class="form-group" *ngIf="showTimezoneSelection">
+        <label for="Timezone">{{ls.l("Timezone")}}</label>
+        <timezone-combo id="Timezone"
+            [(selectedTimeZone)]="settings.timezone"
+            [defaultTimezoneScope]="defaultTimezoneScope">
+        </timezone-combo>
     </div>
     <div class="form-group flag-settings">
             <label for="Currency">{{ls.l("Currency")}}</label>

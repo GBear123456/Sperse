@@ -34,6 +34,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
+import { TimeZoneComboComponent } from '@app/shared/common/timing/timezone-combo.component';
 
 @Component({
     selector: 'general-settings',
@@ -43,6 +44,7 @@ import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, Currenci
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
+    @ViewChild(TimeZoneComboComponent, { static: false }) timezoneComponent: TimeZoneComboComponent;
     @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
     @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
     @ViewChild('privacyPolicyUploader', { static: false }) privacyPolicyUploader: UploaderComponent;
@@ -110,6 +112,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     onCountryChanged(event) {
         let country = this.supportedCountries.find(country => country.code == event.value);
         if (country) {
+            this.timezoneComponent.setTimezoneByCountryCode(country.code);
             this.settings.currency = country.currencyId || abp.setting.get('App.TenantManagement.Currency');
             if (this.publicPhoneNumber && this.publicPhoneNumber.isEmpty()) {
                 let countryCode = country.code.toLowerCase();

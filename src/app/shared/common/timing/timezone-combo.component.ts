@@ -1,6 +1,7 @@
 /** Core imports */
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Input,
@@ -11,17 +12,16 @@ import {
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { pluck } from 'rxjs/operators';
+import moment from 'moment-timezone';
 
 /** Application imports */
 import { SettingScopes, NameValueDto, TimingServiceProxy } from '@shared/service-proxies/service-proxies';
+import { defaultCountryZone } from './timezone-combo.data';
 
 @Component({
     selector: 'timezone-combo',
-    template: `<select class='form-control'
-                       [(ngModel)]='selectedTimeZone'
-                       (ngModelChange)='selectedTimeZoneChange.emit($event)'>
-                        <option *ngFor='let timeZone of timeZones$ | async' [value]='timeZone.value'>{{timeZone.name}}</option>
-                </select>`,
+    templateUrl: './timezone-combo.component.html',
+    styleUrls: ['./timezone-combo.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimeZoneComboComponent implements OnInit {
@@ -30,11 +30,22 @@ export class TimeZoneComboComponent implements OnInit {
     @Output() selectedTimeZoneChange: EventEmitter<string> = new EventEmitter<string>();
     timeZones$: Observable<NameValueDto[]>;
 
-    constructor(private timingService: TimingServiceProxy) {}
+    constructor(
+        private timingService: TimingServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef
+    ) {}
 
     ngOnInit() {
         this.timeZones$ = this.timingService.getTimezones(this.defaultTimezoneScope).pipe(
             pluck('items')
         );
+    }
+
+    setTimezoneByCountryCode(code: string) {
+        let countryTimezone = defaultCountryZone[code];
+        if (countryTimezone) {
+            this.selectedTimeZone = countryTimezone;
+            this.changeDetectorRef.detectChanges();
+        }
     }
 }
