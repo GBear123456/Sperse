@@ -91,7 +91,17 @@
                     <dxi-column [dataField]="productFields.CreateUser" [caption]="l('Create User')" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.AllowCoupon" [caption]="l('Allow Coupon')" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.PublishDate" [caption]="l('Publish Date')" [visible]="false" cellTemplate="dateCell"></dxi-column>
+                    <dxi-column dataField="LastSold" [caption]="l('Last Sold')" cellTemplate="dateagoTemplate" sortOrder="desc"  alignment="right" [visible]="false"></dxi-column>
+                    <dxi-column dataField="UnitSold" [caption]="l('Units Sold')" cssClass="tabular" [visible]="false"></dxi-column>
+                    <dxi-column dataField="GrossSales" [caption]="l('Gross Sales')" cellTemplate="currencyTemplate" cssClass="tabular" [visible]="false"></dxi-column>
                     <dxi-column caption="" cellTemplate="actionTemplate" [width]="60"></dxi-column>
+
+                    <div *dxTemplate="let cellData of 'dateagoTemplate'">
+                        {{cellData.value | dateAgo}}
+                    </div>
+                    <div *dxTemplate="let cellData of 'currencyTemplate'" class="clipboard-holder">
+                        {{cellData.value | currency:cellData.data.CurrencyId:'symbol':'1.2-2'}}
+                    </div>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                         {{cellData.value | datetime: formatting.dateTimeMoment }}
                     </div>
