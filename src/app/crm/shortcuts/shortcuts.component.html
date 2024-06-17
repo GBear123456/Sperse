@@ -226,7 +226,7 @@
                     </div>
                 </div>
                 <div class="data-grid">
-                    <div class="grid-wrapper">
+                    <div class="grid-wrapper" *ngIf="isGrantedCRMProducts; else noData">
                         <dx-data-grid id="gridContainer"
                                       accessKey="product-stats"
                                       class="grid-compact-view"
@@ -252,6 +252,10 @@
                             </div>
                         </dx-data-grid>
                     </div>
+                    <ng-template #noData>
+                        <app-no-data>
+                        </app-no-data>
+                    </ng-template>
                 </div>
             </div>
         </div>

@@ -283,7 +283,7 @@ export class PlatformSelectComponent {
     }
 
     onDropDownOpen() {
-        if (!this.productLinks || !this.productLinks.length)
+        if (this.isProductEnabled && (!this.productLinks || !this.productLinks.length))
             this.productDataSource.load();
     }
 
