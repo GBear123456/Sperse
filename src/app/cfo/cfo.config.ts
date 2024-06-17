@@ -12,6 +12,7 @@ export class CfoConfig implements ConfigInterface {
     localizationSource = 'CFO';
     navigation: ConfigNavigation[] = [
         {
+            text: 'Dashboard',
             route: '/app/cfo/:instance/start',
             alterRoutes: ['/app/cfo/:instance/business-entities', '/app/cfo/:instance/chart-of-accounts'],
             icon: 'assets/common/icons/cfo/pie-chart.svg'
