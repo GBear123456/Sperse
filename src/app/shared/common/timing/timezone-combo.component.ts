@@ -41,6 +41,10 @@ export class TimeZoneComboComponent implements OnInit {
         );
     }
 
+    getDefaultValue(name) {
+        return name && name.split('[').pop().split(']').shift();
+    }
+
     setTimezoneByCountryCode(code: string) {
         let countryTimezone = defaultCountryZone[code];
         if (countryTimezone) {

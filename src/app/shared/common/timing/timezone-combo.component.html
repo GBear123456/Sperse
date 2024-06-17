@@ -1,9 +1,3 @@
-<!-- select class='form-control'
-       [(ngModel)]='selectedTimeZone'
-       (ngModelChange)='selectedTimeZoneChange.emit($event)'>
-        <option *ngFor='let timeZone of timeZones$ | async' [value]='timeZone.value'>{{timeZone.name}}</option>
-</select -->
-
 <dx-select-box 
     height="30px"
     displayExpr="name"
@@ -14,5 +8,10 @@
     [(value)]="selectedTimeZone"
     [dataSource]="timeZones$ | async"
     (onValueChanged)="selectedTimeZoneChange.emit($event.value)">
+    <div *dxTemplate="let data of 'item'" class="timezone-item">
+        <b [title]="data.name">{{data.value ? data.name : data.name.split(' ')[0]}}</b>
+        <br>
+        <i>{{data.value || getDefaultValue(data.name)}}</i>
+    </div>
 </dx-select-box>
 
