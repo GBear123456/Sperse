@@ -1217,7 +1217,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     hideNotConfiguredPaymentMethods() {
         this.paymentMethods.forEach(v => {
-            v.visible = (this.invoiceSettings.configuredPaymentMethods & v.value) == v.value;
+            v.visible = (this.invoiceSettings.unsupportedPaymentMethods & v.value) != v.value && (this.invoiceSettings.configuredPaymentMethods & v.value) == v.value;
         });
     }
 

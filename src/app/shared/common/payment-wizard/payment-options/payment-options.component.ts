@@ -1,9 +1,9 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef, ElementRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { forkJoin, Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import round from 'lodash/round';
 
 /** Application imports */
@@ -31,7 +31,8 @@ import {
     PaymentSystemSettingsDto,
     PublicProductServiceProxy,
     CouponDiscountDuration,
-    PublicCouponInfo
+    PublicCouponInfo,
+    RequestProductPaymentOutput
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -39,6 +40,8 @@ import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/paym
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { AppService } from '@app/app.service';
+import { PayPalComponent } from '@shared/common/paypal/paypal.component';
+import { ButtonType } from '@shared/common/paypal/button-type.enum';
 
 @Component({
     selector: 'payment-options',
@@ -48,6 +51,13 @@ import { AppService } from '@app/app.service';
     providers: [TenantSubscriptionServiceProxy, PublicProductServiceProxy]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
+    private payPal: PayPalComponent;
+    @ViewChild(PayPalComponent) set paypPalComponent(paypalComp: PayPalComponent) {
+        this.payPal = paypalComp;
+        if (this.selectedGateway == this.GATEWAY_PAYPAL)
+            this.initializePayPal();
+    };
+
     @Input() plan: PaymentOptions;
     @Input() steps: Step[] = [
         {
@@ -82,19 +92,22 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         }
     };
 
-    readonly GATEWAY_STRIPE = 0;
-    readonly GATEWAY_PAYPAL = 1;
-    readonly GATEWAY_C_CARD = 2;
-    readonly GATEWAY_ECHECK = 3;
+    GATEWAY_STRIPE = 0;
+    GATEWAY_PAYPAL = 1;
+    GATEWAY_C_CARD = 2;
+    GATEWAY_ECHECK = 3;
 
     quantity = 1;
 
-    selectedGateway: number = this.GATEWAY_STRIPE;
+    selectedGateway: number = 0;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
     paymentSystemSettings: PaymentSystemSettingsDto;
-    hasAnyPaymentSystem;
-    showPayPal: boolean = false;
+    productSubscriptionPreviouslyUsed: boolean = false;
+    hasAnyPaymentSystemConfigured = false;
+    payPalApplicable: boolean = false;
+    stripeApplicable: boolean = false;
+    receiptLink: string;
 
     isPayByStripeDisabled = false;
 
@@ -146,17 +159,20 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     selectedTabChange(e) {
-        if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
-            /** Load transfer data */
-            this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
-        }
+        if (e.index == this.GATEWAY_PAYPAL)
+            this.initializePayPal(true);
+        //if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
+        /** Load transfer data */
+        //    this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
+        //}
     }
 
     initPaymentSystems() {
+        this.startLoading();
         forkJoin(
             [
                 this.tenantSubscriptionServiceProxy.getPaymentSettingsInfo(),
-                this.tenantSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
+                this.tenantSubscriptionServiceProxy.checkPaymentInfo(new RequestPaymentInput({
                     type: RequestPaymentType.PayPal,
                     paymentPeriodType: this.plan.paymentPeriodType,
                     productId: this.plan.productId,
@@ -164,16 +180,32 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     couponId: this.couponInfo ? this.couponInfo.id : undefined
                 }))
             ]
-        ).subscribe(([settings, isApplicable]) => {
+        ).subscribe(([settings, productPaymentInfo]) => {
             this.paymentSystemSettings = settings;
-            if (settings.paypalClientId && isApplicable) {
-                this.showPayPal = true;
+            this.productSubscriptionPreviouslyUsed = productPaymentInfo.previouslyUsed;
+            this.hasAnyPaymentSystemConfigured = !!settings.paypalClientId || settings.stripeIsEnabled;
+
+            this.stripeApplicable = settings.stripeIsEnabled && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.Stripe);
+            this.payPalApplicable = settings.paypalClientId && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.PayPal);
+
+            if (this.payPalApplicable && !this.stripeApplicable) {
+                this.GATEWAY_PAYPAL = 0;
+                this.initializePayPal();
             }
-            this.hasAnyPaymentSystem = settings.stripeIsEnabled || this.showPayPal;
-            if (this.hasAnyPaymentSystem && !settings.stripeIsEnabled)
-                this.selectedGateway = this.GATEWAY_PAYPAL;
             this.changeDetector.detectChanges();
+            this.finishLoading();
         });
+    }
+
+    initializePayPal(reinitialize = false) {
+        if (this.payPalApplicable && this.payPal && (!this.payPal.initialized || reinitialize)) {
+            let type = this.plan.paymentPeriodType == PaymentPeriodType.OneTime || this.plan.paymentPeriodType == PaymentPeriodType.LifeTime ? ButtonType.Payment : ButtonType.Subscription;
+            this.payPal.initialize(this.paymentSystemSettings.paypalClientId, type,
+                () => this.payByPaypal(),
+                () => this.payByPaypal(),
+                this.plan.currencyId
+            );
+        }
     }
 
     submitData(data: any, paymentMethod: PaymentMethods = PaymentMethods.Free) {
@@ -241,6 +273,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 break;
         }
         /** Start submitting data and change status in a case of error or success */
+        /*
         let method: Observable<any> = paymentMethod == PaymentMethods.PayPal
             ? this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo)
             : paymentMethod === PaymentMethods.BankTransfer
@@ -279,6 +312,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     });
                 }
             );
+            */
     }
 
     getPaymentStatusText(paymentMethod: PaymentMethods, res: any) {
@@ -301,21 +335,40 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         this.onClose.emit();
     }
 
-    payByStripe() {
-        this.isPayByStripeDisabled = true;
-        this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.tenantSubscriptionServiceProxy.requestProductPayment(new RequestPaymentInput({
-            type: RequestPaymentType.Stripe,
+    getPaymentRequest(type: RequestPaymentType): Observable<RequestProductPaymentOutput> {
+        return this.tenantSubscriptionServiceProxy.requestProductPayment(new RequestPaymentInput({
+            type: type,
             productId: this.plan.productId,
             paymentPeriodType: this.plan.paymentPeriodType,
             quantity: 1,
             couponId: this.couponInfo ? this.couponInfo.id : undefined
-        })).subscribe((response) => {
+        }));
+    }
+
+    payByStripe() {
+        this.isPayByStripeDisabled = true;
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        this.getPaymentRequest(RequestPaymentType.Stripe).subscribe((response) => {
             window.location.href = response.stripePaymentLink;
         }, () => {
             this.isPayByStripeDisabled = false;
-            this.loadingService.finishLoading();
+            this.loadingService.finishLoading(this.elementRef.nativeElement);
         });
+    }
+
+    payByPaypal(): Promise<string> {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        return this.getPaymentRequest(RequestPaymentType.PayPal).pipe(
+            map(v => {
+                this.receiptLink = v.receiptUrl;
+                return v.paypalCode
+            }),
+            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+        ).toPromise();
+    }
+
+    onPayPalApprove() {
+        location.href = this.receiptLink;
     }
 
     couponChange() {
@@ -347,7 +400,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 })
             )
             .subscribe(info => {
-                info = Object.keys(info).length == 0 ? null : info;
+                info = info && info.id ? info : null;
                 if (info) {
                     this.setCouponDescription(info);
                 } else {
@@ -367,6 +420,18 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         coupon['description'] = `${description} Off ${coupon.duration}`;
     }
 
+    getSubscriptionPrice(includeCoupon: boolean) {
+        let price = this.plan.total;
+        if (includeCoupon) {
+            if (this.productSubscriptionPreviouslyUsed ||
+                !this.plan.trialDayCount ||
+                (this.plan.trialDayCount && !this.plan.signUpFee) ||
+                (this.couponInfo && this.couponInfo.duration != CouponDiscountDuration.Once))
+                price = this.applyCoupon(price);
+        }
+        return price;
+    }
+
     applyCoupon(amount: number, usedAmountOff: number = 0): number {
         if (!this.couponInfo)
             return amount;
@@ -377,15 +442,43 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         return round(amount * (1 - this.couponInfo.percentOff / 100), 2);
     }
 
+    getSignUpFee(includeCoupon: boolean): number {
+        let fee = this.plan.signUpFee;
+        if (includeCoupon) {
+            let usedAmountOff = 0;
+            if (!this.plan.trialDayCount) {
+                usedAmountOff = this.getSubscriptionPrice(false) - this.getSubscriptionPrice(true);
+            }
+            fee = this.applyCoupon(fee, usedAmountOff);
+        }
+
+        return fee;
+    }
+
     getDiscount(): number {
-        let amount = this.plan.total - this.applyCoupon(this.plan.total);
-        if (this.plan.signUpFee)
-            amount = amount + this.plan.signUpFee - this.applyCoupon(this.plan.signUpFee);
+        let amount = this.getSubscriptionPrice(false) - this.getSubscriptionPrice(true);
+        if (this.plan.signUpFee && !this.productSubscriptionPreviouslyUsed)
+            amount = amount + this.getSignUpFee(false) - this.getSignUpFee(true);
         return amount;
+    }
+
+    anyPaymentSystemIsApplicable() {
+        return !this.isFreeSinglePayment() && (this.stripeApplicable || this.showPayPal());
+    }
+
+    showPayPal() {
+        return this.payPalApplicable &&
+            !this.isOnceCoupon() &&
+            this.getSubscriptionPrice(true) > 0;
     }
 
     isOnceCoupon() {
         return this.couponInfo ? this.couponInfo.duration == CouponDiscountDuration.Once : false;
+    }
+
+    isFreeSinglePayment() {
+        return (this.plan.paymentPeriodType == PaymentPeriodType.OneTime || this.plan.paymentPeriodType == PaymentPeriodType.LifeTime) &&
+            this.getSubscriptionPrice(true) == 0;
     }
 
     subscribeToFree() {
