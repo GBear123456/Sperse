@@ -5,6 +5,7 @@ import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angula
 import { select, Store } from '@ngrx/store';
 import { forkJoin, Observable, of } from 'rxjs';
 import { finalize, tap, first, filter, map } from 'rxjs/operators';
+import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
 
 /** Application imports */
 import {
@@ -21,8 +22,8 @@ import { AbstractControlDirective } from '@angular/forms';
 import { AppFeatures } from '@shared/AppFeatures';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
-import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-item.interface';
 import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
+import { TimeZoneComboComponent } from '@app/shared/common/timing/timezone-combo.component';
 
 @Component({
     selector: 'general-settings',
@@ -32,6 +33,7 @@ import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, Currenci
     providers: [PhoneNumberService, TenantSettingsServiceProxy]
 })
 export class GeneralSettingsComponent extends SettingsComponentBase {
+    @ViewChild(TimeZoneComboComponent, { static: false }) timezoneComponent: TimeZoneComboComponent;
     @ViewChild('privacyPolicyUploader', { static: false }) privacyPolicyUploader: UploaderComponent;
     @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;
     @ViewChild('publicSiteUrl', { static: false }) publicSiteUrl: AbstractControlDirective;
@@ -46,7 +48,7 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
 
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
-    supportedCountries;
+    supportedCountries: CountryDto[];
     currencies$: Observable<any[]> = this.store$.pipe(
         select(CurrenciesCrmStoreSelectors.getCurrencies),
         filter(x => x != null),
@@ -64,6 +66,7 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
         private store$: Store<RootStore.State>,
         private phoneNumberService: PhoneNumberService,
         private tenantSettingsService: TenantSettingsServiceProxy,
+        private countryPhoneService: CountryService
     ) {
         super(_injector);
         this.store$.dispatch(new CurrenciesCrmStoreActions.LoadRequestAction());
@@ -84,19 +87,30 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
             });
     }
 
-    getSelectListFromObject(collection): SelectListItem[] {
-        return (collection || []).map(item => ({ key: item.code, text: this.l(item.name) }));
-    }
-
     private initCountries() {
         this.store$.pipe(
             select(CountriesStoreSelectors.getCountries),
             filter(Boolean),
-            first(),
-            map((countries: CountryDto[]) => this.getSelectListFromObject(countries))
-        ).subscribe((countries: SelectListItem[]) => {
+            first()
+        ).subscribe((countries: CountryDto[]) => {
             this.supportedCountries = countries;
         });
+    }
+
+    onCountryChanged(event) {
+        let country = this.supportedCountries.find(country => country.code == event.value);
+        if (country) {
+            this.generalSettings.currency = country.currencyId || abp.setting.get('App.TenantManagement.Currency');
+            this.timezoneComponent.setTimezoneByCountryCode(country.code);
+            if (this.publicPhoneNumber && this.publicPhoneNumber.isEmpty()) {
+                let countryCode = country.code.toLowerCase();
+                if (!this.countryPhoneService.getPhoneCodeByCountryCode(countryCode))
+                    countryCode = abp.setting.get('App.TenantManagement.DefaultCountryCode').toLowerCase();
+
+                this.publicPhoneNumber.intPhoneNumber.phoneNumber = '';
+                this.publicPhoneNumber.intPhoneNumber.updatePhoneInput(countryCode);
+            }
+        }
     }
 
     onPhoneNumberChange(phone, elm) {

@@ -1,3 +1,16 @@
+<div *ngIf="!data.showSubscriptions" class="gear-menu" (click)="tooltipMenuVisible=true"></div>
+<dx-tooltip target="div.gear-menu"
+            [wrapperAttr]="{ id: 'paymentWizzardTooltipMenu', class: 'payment-wizzard-tooltip-menu' }"
+            [(visible)]="tooltipMenuVisible">
+    <div *dxTemplate="let data of 'content'">
+        <ul class="menu-list">
+            <li *ngIf="isImpersonatedLogin" (click)="backToMyAccount()"><img src="./assets/common/icons/linear-undo.svg">{{ls.l('BackToMyAccount')}}</li>
+            <li *ngIf="dialogRef.disableClose" (click)="logout()"><img src="./assets/common/icons/linear-login.svg">{{ls.l('Logout')}}</li>
+            <li *ngIf="!dialogRef.disableClose" (click)="close()"><img src="./assets/common/icons/close.svg">{{ls.l('Close')}}</li>
+        </ul>
+    </div>
+</dx-tooltip>
+
 <div class="my-subscriptions-header">
     <mat-tab-group *ngIf="data.showSubscriptions; else paymentWizard" mat-stretch-tabs="true" mat-align-tabs="center" [selectedIndex]="selectedTab">
         <mat-tab label="{{ ls.l('MySubscriptions') }}">

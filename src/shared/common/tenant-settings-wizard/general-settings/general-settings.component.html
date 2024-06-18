@@ -1,5 +1,23 @@
 <h2>{{ ls.l('GeneralSettings') }}</h2>
 <ng-container *ngIf="settings">
+    <div class="form-group flag-settings">
+        <label for="DefaultCountry">{{ls.l("Country")}}</label>
+        <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings?.defaultCountryCode?.toLowerCase()}}.svg" width="19px" height="auto">
+        <dx-select-box
+            width="380px"
+            valueExpr="code"
+            displayExpr="name"
+            [searchExpr]="['code', 'name']"
+            [searchEnabled]="true"
+            [placeholder]="Search"
+            [(value)]="settings.defaultCountryCode"
+            [dataSource]="supportedCountries"
+            (onValueChanged)="onCountryChanged($event)">
+            <div *dxTemplate="let item of 'item'" class="flag-row">
+                <img class="flag-icon" src="assets/common/icons/flags/{{item?.code?.toLowerCase()}}.svg" width="auto" height="38px"><div><span class="currency-name">{{item.name}}</span><br><b class="currency-id">{{item.code}}</b></div>
+            </div>
+        </dx-select-box>
+    </div>
     <div class="form-group" *ngIf="showTimezoneSelection">
         <label for="Timezone">{{ls.l("Timezone")}}</label>
         <timezone-combo id="Timezone"
@@ -7,18 +25,7 @@
             [defaultTimezoneScope]="defaultTimezoneScope">
         </timezone-combo>
     </div>
-    <div class="form-group">
-        <label for="DefaultCountry">{{ls.l("Country")}}</label>
-        <dx-select-box
-            width="410px"
-            valueExpr="key"
-            displayExpr="text"
-            [(value)]="settings.defaultCountryCode"
-            [dataSource]="supportedCountries"
-            (onValueChanged)="onCountryChanged($event)">
-        </dx-select-box>
-    </div>
-    <div class="form-group payment-settings">
+    <div class="form-group flag-settings">
             <label for="Currency">{{ls.l("Currency")}}</label>
             <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings?.currency?.toLowerCase()}}.svg" width="19px" height="auto">
             <dx-select-box
@@ -30,7 +37,7 @@
                 [placeholder]="Search"
                 [(value)]="settings.currency"
                 [dataSource]="currencies$ | async">
-                <div *dxTemplate="let item of 'item'" class="currency-row">
+                <div *dxTemplate="let item of 'item'" class="flag-row">
                     <img class="flag-icon" src="assets/common/icons/flags/{{item?.id?.toLowerCase()}}.svg" width="52px" height="38px"><div><span class="currency-name">{{item.displayName}}</span><br><b class="currency-id">{{item.id}}</b></div>
                 </div>
             </dx-select-box>

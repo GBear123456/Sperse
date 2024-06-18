@@ -27,6 +27,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@root/shared/common/auth/permission.service';
+import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'recent-clients',
@@ -42,6 +43,8 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     @Input() viewAllText: string = this.ls.l('CRMDashboard_SeeAllRecords');
     @Output() loadComplete: EventEmitter<any> = new EventEmitter();
 
+    currency = SettingsHelper.getCurrency();
+
     recordsCount = 10;
     formatting = AppConsts.formatting;
     recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[] | GetRecentlySalesOutput[]>;
@@ -53,7 +56,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             allRecordsLink: '/app/crm/invoices',
             visible: this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlySalesOutput[]> =>
-                this.dashboardServiceProxy.getRecentlySales(this.recordsCount, undefined, contactId, orgUnitIds)
+                this.dashboardServiceProxy.getRecentlySales(this.currency, this.recordsCount, undefined, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Client')),
@@ -131,6 +134,14 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     userTimezone = DateHelper.getUserTimezone();
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
 
+    accessilbeContactGroups = Object.keys(ContactGroup).map(item => {
+        if (this.permissionService.checkCGPermission([ContactGroup[item]], ''))
+            return {
+                id: ContactGroup[item],
+                name: this.ls.l('ContactGroup_' + item)
+            };
+    }).filter(Boolean);
+
     get isSalesSelected(): boolean {
         return this.lastSelectedItem == this.selectItems[0];
     }
@@ -150,41 +161,44 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.lifeCycleSubject.activate.next();
-        this.recentlyCreatedCustomers$ = combineLatest(
-            this.selectedItem$,
-            this.dashboardWidgetsService.contactId$,
-            this.dashboardWidgetsService.sourceOrgUnitIds$,
-            this.dashboardWidgetsService.refresh$
-        ).pipe(
-            tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-            switchMap(([selectedItem, contactId, orgUnitIds, ]) => 
-                (this.lastSelectedItem != selectedItem ? of(selectedItem) : this.waitFor$).pipe(first(), switchMap(() =>
-                    selectedItem.dataSource(contactId, orgUnitIds).pipe(
-                        catchError(() => of([])),
-                        finalize(() => {
-                            this.loadComplete.next();
-                            this.lastSelectedItem = selectedItem;
-                            this.loadingService.finishLoading(this.elementRef.nativeElement);
-                        })
-                    )
-                ))
-            )
-        );
-        this.dashboardWidgetsService.contactGroupId$.pipe(
-            takeUntil(this.lifeCycleSubject.deactivate$)
-        ).subscribe((groupId: ContactGroup) => {
-            if (groupId == ContactGroup.Client)
-                this.selectedItem.next(this.selectItems[0]);
-            else {
-                let selectedList = this.selectItems.filter(item => {
-                    return item.linkParams && ContactGroup[item.linkParams.contactGroup] == groupId;
-                });
-                if (selectedList.length)
-                    this.selectedItem.next(selectedList[0]);
-                else
+        if (this.accessilbeContactGroups.length) {
+            this.recentlyCreatedCustomers$ = combineLatest(
+                this.selectedItem$,
+                this.dashboardWidgetsService.contactId$,
+                this.dashboardWidgetsService.sourceOrgUnitIds$,
+                this.dashboardWidgetsService.refresh$
+            ).pipe(
+                tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
+                switchMap(([selectedItem, contactId, orgUnitIds, ]) => 
+                    (this.lastSelectedItem != selectedItem ? of(selectedItem) : this.waitFor$).pipe(first(), switchMap(() =>
+                        selectedItem.dataSource(contactId, orgUnitIds).pipe(
+                            catchError(() => of([])),
+                            finalize(() => {
+                                this.loadComplete.next();
+                                this.lastSelectedItem = selectedItem;
+                                this.loadingService.finishLoading(this.elementRef.nativeElement);
+                            })
+                        )
+                    ))
+                )
+            );
+            this.dashboardWidgetsService.contactGroupId$.pipe(
+                takeUntil(this.lifeCycleSubject.deactivate$)
+            ).subscribe((groupId: ContactGroup) => {
+                if (groupId == ContactGroup.Client)
                     this.selectedItem.next(this.selectItems[0]);
-            }
-        });
+                else {
+                    let selectedList = this.selectItems.filter(item => {
+                        return item.linkParams && ContactGroup[item.linkParams.contactGroup] == groupId;
+                    });
+                    if (selectedList.length)
+                        this.selectedItem.next(selectedList[0]);
+                    else
+                        this.selectedItem.next(this.selectItems[0]);
+                }
+            });
+        } else
+            this.recentlyCreatedCustomers$ = of([]);
     }
 
     onCellClick($event) {

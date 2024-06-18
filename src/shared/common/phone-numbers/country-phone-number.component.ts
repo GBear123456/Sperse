@@ -38,10 +38,10 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         if (!this.phoneNumber)
             this.phoneNumber = AppConsts.defaultCountryPhoneCode;
-        this.onInitialized.emit(this);
     }
 
     ngAfterViewInit() {
+        this.onInitialized.emit(this);
         this.intPhoneNumber.registerOnChange((value) => {
             this.phoneNumberChange.emit(this.value = value);
             this.phoneCountryChange.emit(this.intPhoneNumber.selectedCountry);

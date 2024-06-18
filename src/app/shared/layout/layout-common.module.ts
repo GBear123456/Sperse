@@ -22,6 +22,8 @@ import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxSwitchModule } from 'devextreme-angular/ui/switch';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 
 /** Application imports */
 import { SmsVerificationModalComponent } from '@app/shared/layout/profile/sms-verification-modal.component';
@@ -85,6 +87,8 @@ let COMPONENTS = [
         DxDataGridModule,
         ModalDialogModule,
         DxTooltipModule,
+        DxSwitchModule,
+        DxTextBoxModule,
         DxListModule,
         MatTabsModule,
         CountryPhoneNumberModule

@@ -15,6 +15,7 @@ import { AbstractControlDirective } from '@angular/forms';
 import { forkJoin, Observable, of } from 'rxjs';
 import { tap, filter, first, map } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
+import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
 
 /** Application imports */
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
@@ -33,7 +34,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
-import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-item.interface';
+import { TimeZoneComboComponent } from '@app/shared/common/timing/timezone-combo.component';
 
 @Component({
     selector: 'general-settings',
@@ -43,6 +44,7 @@ import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-i
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
+    @ViewChild(TimeZoneComboComponent, { static: false }) timezoneComponent: TimeZoneComboComponent;
     @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
     @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
     @ViewChild('privacyPolicyUploader', { static: false }) privacyPolicyUploader: UploaderComponent;
@@ -71,7 +73,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
 
-    supportedCountries;
+    supportedCountries: CountryDto[];
     currencies$: Observable<any[]> = this.store$.pipe(
         select(CurrenciesCrmStoreSelectors.getCurrencies),
         filter(x => x != null),
@@ -89,6 +91,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         private phoneNumberService: PhoneNumberService,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         private store$: Store<RootStore.State>,
+        private countryPhoneService: CountryService,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {
@@ -100,22 +103,26 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         this.store$.pipe(
             select(CountriesStoreSelectors.getCountries),
             filter(Boolean),
-            first(),
-            map((countries: CountryDto[]) => this.getSelectListFromObject(countries))
-        ).subscribe((countries: SelectListItem[]) => {
+            first()
+        ).subscribe((countries: CountryDto[]) => {
             this.supportedCountries = countries;
         });
     }
 
-    getSelectListFromObject(collection): SelectListItem[] {
-        return (collection || []).map(item => ({ key: item.code, text: this.ls.l(item.name) }));
-    }
-
     onCountryChanged(event) {
-        if (event.value == Country.Canada)
-            this.settings.currency = 'CAD';
-        else if (event.value == Country.USA)
-            this.settings.currency = 'USD';
+        let country = this.supportedCountries.find(country => country.code == event.value);
+        if (country) {
+            this.timezoneComponent.setTimezoneByCountryCode(country.code);
+            this.settings.currency = country.currencyId || abp.setting.get('App.TenantManagement.Currency');
+            if (this.publicPhoneNumber && this.publicPhoneNumber.isEmpty()) {
+                let countryCode = country.code.toLowerCase();
+                if (!this.countryPhoneService.getPhoneCodeByCountryCode(countryCode))
+                    countryCode = abp.setting.get('App.TenantManagement.DefaultCountryCode').toLowerCase();
+
+                this.publicPhoneNumber.intPhoneNumber.phoneNumber = '';
+                this.publicPhoneNumber.intPhoneNumber.updatePhoneInput(countryCode);
+            }
+        }
     }
 
     onPhoneNumberChange(phone, elm) {

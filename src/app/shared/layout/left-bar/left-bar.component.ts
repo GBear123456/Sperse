@@ -1,6 +1,6 @@
 /** Core imports */
-import { Component, Inject, HostListener, HostBinding, 
-    OnDestroy, AfterViewInit, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, HostListener, HostBinding, OnDestroy, AfterViewInit, 
+    OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -42,7 +42,8 @@ import { PlatformSelectComponent } from '../platform-select/platform-select.comp
     templateUrl: './left-bar.component.html',
     styleUrls: ['./left-bar.component.less'],
     selector: 'left-bar',
-    providers: [ LifecycleSubjectsService, CommonUserInfoServiceProxy ]
+    providers: [ LifecycleSubjectsService, CommonUserInfoServiceProxy ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {     
     @ViewChild(PlatformSelectComponent) platformSelector: PlatformSelectComponent;
@@ -53,19 +54,11 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     config: ConfigInterface;
-    selectedItem: PanelMenuItem;
-    navbarItems: PanelMenuItem[] = [];
-    menu: PanelMenu = <PanelMenu>{
-        items: []
-    };
     selectedModuleIndex: number;
-    moduleItems = [
-        {title: 'CRM', disabled: false}, 
-        {title: 'CFO', disabled: false},
-        {title: 'API', disabled: false}, 
-        {title: 'Admin', disabled: false}
-    ].filter(item => this.isModuleVisible(item.title));
-
+    moduleItems = ['CRM', 'CFO', 'API', 'Admin'].map(name => {
+        return {title: name, disabled: false, items: [], selectedItem: undefined}
+    }).filter(item => this.isModuleVisible(item.title));
+    panelMenuList: PanelMenu[] = [];
     isChatConnected = this.chatSignalrService.isChatConnected;
     isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
     unreadChatMessageCount = 0;    
@@ -76,6 +69,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         private authService: AppAuthService,
         public appSessionService: AppSessionService,
         public appService: AppService,
+        private changeDetectorRef: ChangeDetectorRef,
         private impersonationService: ImpersonationService,
         private permissionChecker: AppPermissionService,
         private lifecycleService: LifecycleSubjectsService,
@@ -92,21 +86,18 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         this.appService.subscribeModuleChange((config: ConfigInterface) => {
             this.config = config;
 
+            if (isNaN(this.selectedModuleIndex))
+                this.initModuleItems();
+
             this.moduleItems.forEach((module, index) => {
                 if (config.name.toLowerCase() == module.title.toLowerCase() && this.selectedModuleIndex != index)
                     this.selectedModuleIndex = index;
             });        
-            this.menu = new PanelMenu(
-                'MainMenu',
-                'MainMenu',
-                this.initMenu(
-                    this.getCheckLayoutMenuConfig(config.navigation, config.code),
-                    config.localizationSource
-                )
-            );
-            this.navbarItems = this.menu.items || [];
-            this.appService.topMenu = this.menu;
-            this.updateSelectedItem();
+
+            if (Number.isInteger(this.selectedModuleIndex))
+                this.appService.topMenu = this.panelMenuList[this.selectedModuleIndex];
+            
+            this.updateSelectedItem();            
         });
     }
 
@@ -121,6 +112,8 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.width = '90px';
                 }
             }
+
+            this.changeDetectorRef.detectChanges();
         });
 
         this.userCompany$ = this.commonUserInfoService.getCompany().pipe(
@@ -130,7 +123,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.appService.initModule();
+        this.appService.initModule();        
         this.updateSelectedItem();
     }
 
@@ -138,14 +131,39 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.appService.isModuleActive(item);
     }
 
-    updateSelectedItem() {
-        setTimeout(() => {
-            let route = this.router.url.split('?').shift();
-            this.menu.items.some((item: PanelMenuItem, i: number) => {
-                if (route == item.route || _.contains(item.alterRoutes, route))
-                    return this.selectedItem = item;
-            });
+    initModuleItems() {
+        this.moduleItems.forEach((module, index) => {
+            let config = this.appService.getModuleConfig(module.title);
+            
+            if (module.title == 'CFO') {
+                this.appService.initModuleNavigationParams(
+                    config, { instance: this.getModuleUri(module.title) });
+            }
+
+            this.panelMenuList[index] = new PanelMenu(
+                'MainMenu',
+                'MainMenu',
+                this.initMenu(
+                    this.getCheckLayoutMenuConfig(config.navigation, config.code),
+                    config.localizationSource
+                )
+            );
+
+            module.items = this.panelMenuList[index].items || [];
+            module.selectedItem = module.items[0];
         });
+        this.changeDetectorRef.detectChanges();
+    }
+
+    updateSelectedItem() {
+        let module = this.moduleItems[this.selectedModuleIndex];
+        if (module && module.items.length) {
+            let route = this.router.url.split('?').shift();
+            module.items.some((item: PanelMenuItem, i: number) => {
+                if (route == item.route || _.contains(item.alterRoutes, route))
+                    return module.selectedItem = item;
+            });
+        }
     }
     
     registerToEvents() {
@@ -204,7 +222,6 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     navigate(event) {
-        this.selectedItem = event.itemData;
         let route = event.itemData.route;
         /** Avoid redirect to the same route */
         if (route && (location.pathname !== event.itemData.route || location.search != UrlHelper.getUrl('', event.itemData.params))) {
@@ -295,7 +312,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         return val ? val.replace(/\W/gim, '') : '';
     }
 
-    getAccordeonHeight() {
-        return innerHeight - 420 < this.navbarItems.length * 25 ? innerHeight - 420 : '100%';
+    getAccordeonHeight(items) {
+        return innerHeight - 420 < items.length * 25 ? innerHeight - 420 : '100%';
     }
 }

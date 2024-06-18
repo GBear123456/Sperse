@@ -83,6 +83,14 @@ export abstract class AppServiceBase {
     switchModule(name: string, params: {}) {
         let config: ConfigInterface = this.getModuleConfig(name);
         if (config) {
+            this.initModuleNavigationParams(config, params);
+            this.params = params;
+            this.config.next(config);
+        }
+    }
+
+    initModuleNavigationParams(config: ConfigInterface, params: {}) {
+        if (params)
             config.navigation = config.navigation.map((record: ConfigNavigation) => {
                 let clone = cloneDeep(record);
                 clone.route = this.replaceParams(record.route, params);
@@ -94,9 +102,6 @@ export abstract class AppServiceBase {
                 }
                 return clone;
             });
-            this.params = params;
-            this.config.next(config);
-        }
     }
 
     subscribeModuleChange(callback: (config: ConfigInterface) => any) {

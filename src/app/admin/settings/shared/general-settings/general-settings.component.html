@@ -1,19 +1,31 @@
 <h2>{{l('General')}} {{l('Settings')}}</h2>
 <div *ngIf="generalSettings">
+    <div class="form-group">
+        <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
+        <dx-select-box valueExpr="code"
+            displayExpr="name"
+            [searchExpr]="['code', 'name']"
+            [searchEnabled]="true"
+            [placeholder]="Search"
+            fieldTemplate="field"
+            [(value)]="generalSettings.defaultCountryCode"
+            [dataSource]="supportedCountries"
+            (onValueChanged)="onCountryChanged($event)">
+            <div *dxTemplate="let item of 'field'" class="flag-field">
+                <img [hidden]="!generalSettings?.defaultCountryCode" class="selected-flag-icon" src="assets/common/icons/flags/{{generalSettings?.defaultCountryCode?.toLowerCase()}}.svg" width="19px" height="auto">&nbsp;
+                <dx-text-box width="90%" [value]="item?.name"></dx-text-box>
+            </div>
+            <div *dxTemplate="let item of 'item'" class="flag-row">
+                <img class="flag-icon" src="assets/common/icons/flags/{{item?.code?.toLowerCase()}}.svg" width="auto" height="38px"><div><span class="country-name">{{item.name}}</span><br><b class="country-id">{{item.code}}</b></div>
+            </div>
+        </dx-select-box>
+    </div>
     <div class="form-group" *ngIf="showTimezoneSelection">
         <label for="Timezone">{{l("Timezone")}}</label>
         <timezone-combo id="Timezone"
                         [(selectedTimeZone)]="generalSettings.timezone"
                         [defaultTimezoneScope]="defaultTimezoneScope">
         </timezone-combo>
-    </div>
-    <div class="form-group">
-        <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
-        <dx-select-box valueExpr="key"
-                       displayExpr="text"
-                       [(value)]="generalSettings.defaultCountryCode"
-                       [dataSource]="supportedCountries">
-        </dx-select-box>
     </div>
     <div class="form-group payment-settings">
         <label for="Currency">{{l("Currency")}}</label>       
@@ -26,11 +38,11 @@
             fieldTemplate="field"
             [(value)]="generalSettings.currency"
             [dataSource]="currencies$ | async">
-            <div *dxTemplate="let item of 'field'" class="currency-field">
-                <img class="selected-flag-icon" src="assets/common/icons/flags/{{generalSettings?.currency?.toLowerCase()}}.svg" width="19px" height="auto">&nbsp;<!-- span class="currency-name">{{item?.displayName}}</span><b class="currency-id">{{item?.id}}</b -->
-                <dx-text-box [value]="item?.displayName"></dx-text-box>
+            <div *dxTemplate="let item of 'field'" class="flag-field">
+                <img [hidden]="!generalSettings?.currency" class="selected-flag-icon" src="assets/common/icons/flags/{{generalSettings?.currency?.toLowerCase()}}.svg" width="19px" height="auto">&nbsp;
+                <dx-text-box width="90%" [value]="item?.displayName"></dx-text-box>
             </div>
-            <div *dxTemplate="let item of 'item'" class="currency-row">
+            <div *dxTemplate="let item of 'item'" class="flag-row">
                 <img class="flag-icon" src="assets/common/icons/flags/{{item?.id?.toLowerCase()}}.svg" width="52px" height="38px"><div><span class="currency-name">{{item.displayName}}</span><br><b class="currency-id">{{item.id}}</b></div>
             </div>
         </dx-select-box>

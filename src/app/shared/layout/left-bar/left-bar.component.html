@@ -4,26 +4,25 @@
     <platform-select></platform-select>
 </a>                
 
-<div class="accordion-wrapper">
+<div class="accordion-wrapper" *ngIf="selectedModuleIndex != undefined">
     <dx-accordion
         [(selectedIndex)]="selectedModuleIndex"
         [items]="moduleItems"
         (onItemTitleClick)="onItemTitleClick($event)">
-        <div *dxTemplate="let data of 'item'" class="{{data.title.toLowerCase()}}">
+        <div *dxTemplate="let module of 'item'" class="{{module.title.toLowerCase()}}">
 
-            <dx-scroll-view [height]="getAccordeonHeight()">
-                <div class="nav-menu"
-                    [hidden]="!moduleItems || !moduleItems.length">
+            <dx-scroll-view [height]="getAccordeonHeight(module.items)">
+                <div class="nav-menu">
                     <dx-menu
-                        [width]="'calc(' + width + ' - 36px)'"                    
-                        [dataSource]="navbarItems"
+                        [width]="'calc(' + width + ' - 36px)'"
+                        [dataSource]="module.items"
                         [selectByClick]="true"
                         [selectionMode]="'single'"
                         [hoverStateEnabled]="true"
                         orientation="vertical"
                         [selectByClick]="true"
                         [adaptivityEnabled]="true"
-                        [(selectedItem)]="selectedItem"
+                        [(selectedItem)]="module.selectedItem"
                         [hideSubmenuOnMouseLeave]="true"
                         [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 200, show: 0 }}"
                         [showSubmenuMode]="{ name: 'onHover', delay: { hide: 200, show: 0 }}"
@@ -32,10 +31,10 @@
                         (onItemClick)="navigate($event)">
                         <div *dxTemplate="let data of 'item'">
                             <ng-container *ngIf="data && data.text">
-                                <img [id]="getTargetByTitle(data.text)" *ngIf="!data.params" [src]="data.icon"><span class="caption" style="padding: 10px 0;" *ngIf="!!data.params || expanded || isSubMenuOpen">{{data.text}}</span><span class="triangle" *ngIf="!data.params && data?.items?.length">&#9656;</span>
+                                <img [id]="getTargetByTitle(data.text)" *ngIf="!data.params" [src]="data.icon"><span class="caption" style="padding: 10px 0;" *ngIf="!!data.params || expanded || isSubMenuOpen">{{ls.l(data.text)}}</span><span class="triangle" *ngIf="!data.params && data?.items?.length">&#9656;</span>
                                 <dx-tooltip *ngIf="!data?.items?.length"
                                     target="#{{getTargetByTitle(data.text)}}"
-                                    [position]="{ my: 'left center', at: 'right', offset: '0 ' + (selectedModuleIndex * 35) }"
+                                    [position]="{ my: 'left center', at: 'right' }"
                                     showEvent="dxhoverstart"
                                     hideEvent="dxhoverend">
                                     <div *dxTemplate="let item of 'content'">

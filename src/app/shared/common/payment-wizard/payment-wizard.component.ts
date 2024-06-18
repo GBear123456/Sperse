@@ -16,9 +16,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { Observable, of } from 'rxjs';
 import { first, finalize, switchMap } from 'rxjs/operators';
+import { AbpSessionService } from 'abp-ng2-module';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
+import { AppAuthService } from 'shared/common/auth/app-auth.service';
+import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
@@ -50,6 +53,8 @@ export class PaymentWizardComponent implements AfterViewInit {
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;
     refreshAfterClose = false;
+
+    isImpersonatedLogin = this.abpSessionService.impersonatorUserId > 0;
     subscriptionIsDraft: boolean = this.data.subscription && this.data.subscription.statusId == 'D';
     subscriptionIsFree: boolean = this.appService.checkSubscriptionIsFree();
     subscriptionIsTrialExpired: boolean = this.data.subscription && this.data.subscription.statusId == 'A' &&
@@ -67,12 +72,16 @@ export class PaymentWizardComponent implements AfterViewInit {
     selectedUpgradeProductId: number;
     productsGroupName: string;
     selectedTab: number;
+    tooltipMenuVisible = false;
 
     constructor(
         private appService: AppService,
+        private authService: AppAuthService,
         private appSessionService: AppSessionService,
-        private dialogRef: MatDialogRef<PaymentWizardComponent>,
+        private impersonationService: ImpersonationService,
+        public dialogRef: MatDialogRef<PaymentWizardComponent>,
         private paymentService: PaymentService,
+        private abpSessionService: AbpSessionService,
         private tenantSubscriptionService: TenantSubscriptionServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private permissionChecker: PermissionCheckerService,
@@ -87,6 +96,14 @@ export class PaymentWizardComponent implements AfterViewInit {
     ngAfterViewInit() {
         if (this.data.upgrade)
             this.showSubscriptionProducts(this.data);
+    }
+
+    backToMyAccount() {
+        this.impersonationService.backToImpersonator();
+    }
+
+    logout() {
+        this.authService.logout(true);
     }
 
     moveToPaymentOptionsStep() {

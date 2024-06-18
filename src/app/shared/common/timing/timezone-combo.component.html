@@ -1,0 +1,17 @@
+<dx-select-box 
+    height="30px"
+    displayExpr="name"
+    valueExpr="value"
+    [searchExpr]="['value', 'name']"
+    [searchEnabled]="true"
+    [placeholder]="Search"
+    [(value)]="selectedTimeZone"
+    [dataSource]="timeZones$ | async"
+    (onValueChanged)="selectedTimeZoneChange.emit($event.value)">
+    <div *dxTemplate="let data of 'item'" class="timezone-item">
+        <b [title]="data.name">{{data.value ? data.name : data.name.split(' ')[0]}}</b>
+        <br>
+        <i>{{data.value || getDefaultValue(data.name)}}</i>
+    </div>
+</dx-select-box>
+
