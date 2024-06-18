@@ -179,6 +179,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
     isOrdersInvoicesAllowed = this.isGranted(AppPermissions.CRMOrdersInvoices);
     isOrdersMergeAllowed = this.isGranted(AppPermissions.CRMOrdersManage);
+    isGalleryView = false;
 
     starsLookup = {};
     formatting = AppConsts.formatting;
@@ -381,14 +382,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('LoginAsThisUser'),
                     class: 'login',
-                    checkVisible: (client: ContactDto) => {
-                        return !!client.UserId && (
-                            this.impersonationIsGranted ||
-                            this.permission.checkCGPermission([client.GroupId], 'UserInformation.AutoLogin')
-                        );
-                    },
+                    checkVisible: this.checkUserLoginAllowed.bind(this),
                     action: () => {
-                        this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId);
+                        this.loginUser(this.actionEvent.UserId);
                     }
                 },
                 {
@@ -1598,6 +1594,17 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         }
                     },
                     {
+                        name: 'gallery',
+                        action: () => {
+                            this.toggleDataLayout(DataLayoutType.DataGrid);
+                            this.isGalleryView = true;
+                            this.changeDetectorRef.detectChanges();
+                        },
+                        options: {
+                            checkPressed: () => this.showGallery
+                        }
+                    },
+                    {
                         name: 'pivotGrid',
                         visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
@@ -1686,6 +1693,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.selectedClientKeys = [];
         this.initDataSource();
         this.initToolbarConfig();
+        this.isGalleryView = false;
         if (this.showDataGrid) {
             this.repaintDataGrid();
         }
@@ -1720,7 +1728,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     get showDataGrid(): boolean {
-        return this.dataLayoutType.value === DataLayoutType.DataGrid;
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && !this.isGalleryView;
     }
 
     get showPivotGrid(): boolean {
@@ -1733,6 +1741,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     get showMap(): boolean {
         return this.dataLayoutType.value === DataLayoutType.Map;
+    }
+
+    get showGallery(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && this.isGalleryView;
     }
 
     searchValueChange(e: object) {
@@ -1947,6 +1959,30 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         }
         this.onGridOptionChanged(event);
+    }
+
+    onGearClick(contact, event) {
+        ActionMenuService.toggleActionMenu(contact, this.actionEvent).subscribe(actionEvent => {
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, contact.data);
+            this.actionEvent = actionEvent;
+            this.changeDetectorRef.detectChanges();
+        });
+
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    checkUserLoginAllowed(client: ContactDto) {
+        return !!client.UserId && (
+            this.impersonationIsGranted ||
+            this.permission.checkCGPermission([client.GroupId], 'UserInformation.AutoLogin')
+        );
+    }
+
+    loginUser(userId, event?) {
+        this.impersonationService.impersonate(userId, this.appSession.tenantId);
+        if (event)
+            event.stopPropagation();
     }
 
     filterByStatusApply(data) {

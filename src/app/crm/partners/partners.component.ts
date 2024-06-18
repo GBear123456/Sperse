@@ -179,6 +179,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private subRouteParams: any;
     private dependencyChanged = false;
 
+    isGalleryView = false;
     impersonationIsGranted = this.permission.isGranted(
         AppPermissions.AdministrationUsersImpersonation
     );
@@ -228,10 +229,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     text: this.l('LoginAsThisUser'),
                     class: 'login',
                     checkVisible: (partner: PartnerDto) => {
-                        return !!partner.UserId && (
-                            this.impersonationIsGranted ||
-                            this.permission.checkCGPermission([ContactGroup.Partner], 'UserInformation.AutoLogin')
-                        );
+                        return this.checkUserLoginAllowed(partner);
                     },
                     action: () => {
                         const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
@@ -939,6 +937,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.pipelineService.toggleDataLayoutType(dataLayoutType);
         this.initDataSource();
         this.initToolbarConfig();
+        this.isGalleryView = false;
         if (dataLayoutType != DataLayoutType.Pipeline) {
             if (this.pipelineComponent)
                 this.pipelineComponent.deselectAllCards();
@@ -1475,6 +1474,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         }
                     },
                     {
+                        name: 'gallery',
+                        action: () => {
+                            this.toggleDataLayout(DataLayoutType.DataGrid);
+                            this.isGalleryView = true;
+                        },
+                        options: {
+                            checkPressed: () => this.showGallery
+                        }
+                    },
+                    {
                         name: 'pipeline',
                         action: () => {
                             //!! should be uncommented when API will be changed accordingly
@@ -1566,7 +1575,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     get showDataGrid(): boolean {
-        return this.dataLayoutType.value === DataLayoutType.DataGrid;
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && !this.isGalleryView;
+    }
+
+    get showGallery(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && this.isGalleryView;
     }
 
     get showPipeline(): boolean {
@@ -1763,6 +1776,28 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.filterModelOrgUnit.items.element.value = filter &&
             (!event || filter[0] == event.id) ? [] : [event.id];
         this.filtersService.change([this.filterModelOrgUnit]);
+    }
+
+    onGearClick(contact, event) {
+        ActionMenuService.toggleActionMenu(contact, this.actionEvent).subscribe((actionRecord) => {
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, contact.data);
+            this.actionEvent = actionRecord;
+        });
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    checkUserLoginAllowed(client: PartnerDto) {
+        return !!client.UserId && (
+            this.impersonationIsGranted ||
+            this.permission.checkCGPermission([ContactGroup.Partner], 'UserInformation.AutoLogin')
+        );
+    }
+
+    loginUser(userId, event?) {
+        this.impersonationService.impersonate(userId, this.appSession.tenantId);
+        if (event)
+            event.stopPropagation();
     }
 
     onDragEnd = e => {
