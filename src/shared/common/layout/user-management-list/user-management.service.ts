@@ -45,7 +45,8 @@ import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wi
 
 @Injectable()
 export class UserManagementService {
-    helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
+    helpLink = abp.setting.values['Integrations:Zendesk:AccountUrl'] ?
+        location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'] : '';
     isImpersonatedLogin = this.abpSessionService.impersonatorUserId > 0;
     recentlyLinkedUsers: LinkedUserDto[];
     hasPlatformPermissions = (this.feature.isEnabled(AppFeatures.CFO) && this.permissionChecker.isGranted(AppPermissions.CFO)) ||

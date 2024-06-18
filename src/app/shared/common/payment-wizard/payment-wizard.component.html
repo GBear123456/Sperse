@@ -1,5 +1,5 @@
 <div class="my-subscriptions-header">
-    <mat-tab-group *ngIf="data.showSubscriptions; else paymentWizard" mat-stretch-tabs="true" mat-align-tabs="center">
+    <mat-tab-group *ngIf="data.showSubscriptions; else paymentWizard" mat-stretch-tabs="true" mat-align-tabs="center" [selectedIndex]="selectedTab">
         <mat-tab label="{{ ls.l('MySubscriptions') }}">
             <payment-subscriptions (onShowProducts)="showSubscriptionProducts($event)"></payment-subscriptions>
         </mat-tab>
