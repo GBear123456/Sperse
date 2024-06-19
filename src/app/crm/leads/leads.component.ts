@@ -172,6 +172,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly dateField = 'LeadDate';
     private _selectedLeads: LeadDto[];
 
+    isGalleryView = false;
     starsLookup = {};
     rowsViewHeight: number;
     get selectedLeads(): LeadDto[] {
@@ -741,12 +742,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         text: this.l('LoginAsThisUser'),
                         class: 'login',
-                        checkVisible: (lead: LeadDto) => {
-                            return !!lead.UserId && (
-                                this.impersonationIsGranted ||
-                                this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
-                            );
-                        },
+                        checkVisible: this.checkUserLoginAllowed.bind(this),
                         action: (data?) => {
                             const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
                             this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
@@ -1187,7 +1183,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     get showDataGrid(): boolean {
-        return this.dataLayoutType.value === DataLayoutType.DataGrid;
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && !this.isGalleryView;
+    }
+
+    get showGallery(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && this.isGalleryView;
     }
 
     get showPivotGrid(): boolean {
@@ -1224,7 +1224,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.exportCallback)
             this.exportCallback();
         else {
-            if (this.showDataGrid)
+            if (this.showDataGrid || this.showGallery)
                 this.setGridDataLoaded();
             event.component.columnOption('command:edit', {
                 visibleIndex: -1,
@@ -1257,6 +1257,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
         this.initToolbarConfig();
+        this.isGalleryView = false;
         this.pipelineService.toggleDataLayoutType(this.dataLayoutType.value);        
         if (!this.showPipeline) {
             if (this.pipelineComponent) {
@@ -1826,6 +1827,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         }
                     },
                     {
+                        name: 'gallery',
+                        action: () => {
+                            this.toggleDataLayout(DataLayoutType.DataGrid);
+                            this.isGalleryView = true;
+                        },
+                        options: {
+                            checkPressed: () => this.showGallery
+                        }
+                    },
+                    {
                         name: 'pivotGrid',
                         visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
@@ -2366,5 +2377,28 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 pipelinePurposeId: this.pipelinePurposeId
             }
         });
+    }
+
+    onGearClick(contact, event) {
+        ActionMenuService.toggleActionMenu(contact, this.actionEvent).subscribe(actionEvent => {
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, contact.data);
+            this.actionEvent = actionEvent;
+        });
+
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    checkUserLoginAllowed(lead: LeadDto) {
+        return !!lead.UserId && (
+            this.impersonationIsGranted ||
+            this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
+        );
+    }
+
+    loginUser(userId, event?) {
+        this.impersonationService.impersonate(userId, this.appSession.tenantId);
+        if (event)
+            event.stopPropagation();
     }
 }
