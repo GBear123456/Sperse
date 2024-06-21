@@ -156,8 +156,6 @@ export class WelcomeComponent implements OnInit {
     openProfileTenantSettingsDialog(selectedTab: string) {
         if (this.hasTenantOrCRMSettings)
             this.dialog.open(TenantSettingsWizardComponent, {
-                width: '960px',
-                height: '700px',
                 id: 'tenant-settings',
                 panelClass: ['tenant-settings'],
                 data: {tab: selectedTab}
