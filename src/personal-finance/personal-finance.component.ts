@@ -9,6 +9,7 @@ import humanize from 'underscore.string/humanize';
 import { AppFeatures } from '@shared/AppFeatures';
 import { LayoutType } from '@root/shared/service-proxies/service-proxies';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
+import { DomHelper } from '@shared/helpers/DomHelper';
 
 declare const Typekit: any;
 
@@ -64,7 +65,7 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     ngOnInit(): void {
         this.render.addClass(document.body, 'pfm');
         /*
-                this.getRootComponent().addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {
+                DomHelper.addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {
                     try { Typekit.load({ async: true }); } catch (e) { }
                 });
         */

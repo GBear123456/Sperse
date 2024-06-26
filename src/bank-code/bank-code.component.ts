@@ -7,6 +7,7 @@ import { DOCUMENT } from '@angular/common';
 import { filter, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
+import { DomHelper } from '@shared/helpers/DomHelper';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
@@ -42,7 +43,7 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit(): void {
-        this.rootComponent.addStyleSheet('', 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,700&display=swap');
+        DomHelper.addStyleSheet('', 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,700&display=swap');
         this.renderer.addClass(this.document.body, 'member-area');
         this._router.events.pipe(
             takeUntil(this.destroy$),

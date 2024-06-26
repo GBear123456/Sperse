@@ -5,6 +5,7 @@ import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
+import { DomHelper } from '@shared/helpers/DomHelper';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
@@ -58,8 +59,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         /** Load sync accounts */
         this.bankAccountsService.load();
         this.rootComponent.overflowHidden(true);
-        this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
-        this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
+        DomHelper.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
+        DomHelper.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
     reload() {
@@ -72,8 +73,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     }
 
     ngOnDestroy(): void {
-        this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
-        this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
+        DomHelper.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
+        DomHelper.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
         this.rootComponent.overflowHidden();
     }
 
