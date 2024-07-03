@@ -1,8 +1,140 @@
-<mat-tab-group>
-    <mat-tab label="{{ls.l('SSLConfiguration')}}">
+<mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange()">
+    <mat-tab>
+        <ng-template mat-tab-label>
+          <img src="./assets/common/icons/house.svg">
+          <div class="title">Introduction</div>
+        </ng-template>
+
+        <div id="CustomDomainsTable" class="tab-body">
+            <dx-scroll-view height="100%">
+                <div class="box-top">
+                    <div class="group">
+                        <div class="overlap-group">
+                            <div class="enter-a-valid-domain">
+                                <p class="p">Add and verify DNS entries</p>
+                                <img class="dns" src="./assets/common/images/dns.svg" />
+                                <p class="text-wrapper-2">You can use your own custom domain ( or subdomain ) for your client portal.</p>
+                            </div>
+                            <div class="enter-a-valid-domain">
+                                <div class="text-wrapper">Enter a valid domain</div>
+                                <img class="domain" src="./assets/common/images/domain.svg" />
+                                <p class="div">You can use your own custom domain ( or subdomain ) for your client portal.</p>
+                            </div>
+                            <div class="enter-a-valid-domain">
+                                <div class="text-wrapper-3">Activate SSL Certidicate</div>
+                                <img class="ssl-certificate" src="./assets/common/images/ssl-certificate.svg" />
+                                <p class="div">You can use your own custom domain ( or subdomain ) for your client portal.</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-layout" (click)="initBindingModal(APP_DOMAIN_TAB)"><i class="fa fa-plus"></i>{{l("AddSSLBinding")}}</button>
+                    </div>
+                </div>
+
+                <div class="box-middle">
+                    <dx-data-grid class="grid-compact-view"
+                                  id="gridContainer"
+                                  #customDomainsGrid
+                                  accessKey="customDomainsGrid"
+                                  [dataSource]="sslBindingsDataSource"
+                                  [allowColumnReordering]="true"
+                                  [allowColumnResizing]="true">
+                        <dxi-column dataField="id" [caption]="l('Id')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="sslCertificateId" [caption]="l('SslCertificateId')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="hostName" [caption]="l('HostName')" cssClass="host-name clipboard-holder"></dxi-column>
+                        <dxi-column [width]="260" dataField="organizationUnitId" [caption]="l('OrganizationUnit')" cellTemplate="organizationCell"></dxi-column>
+                        <dxi-column [width]="180" dataField="hostType" [caption]="l('Type')" cssClass="host-type clipboard-holder">
+                            <dxo-lookup [dataSource]="hostTypes" valueExpr="id" displayExpr="name"></dxo-lookup>
+                        </dxi-column>
+                        <dxi-column [width]="80" dataField="isActive" [caption]="l('Active')"></dxi-column>
+                        <dxi-column dataField="sslCertificateExpiration" [caption]="l('ExpirationDate')" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="sslCertificateThumbprint" [caption]="l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [width]="170" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                        <div *dxTemplate="let data of 'organizationCell'" class="clipboard-holder {{data.value ? '' : 'default'}}">
+                            {{ getOrgUnitName(data.value) }}
+                        </div>
+                        <div *dxTemplate="let data of 'editDeleteTemplate'">
+                            <a class="dx-link action manage" (click)="initBindingModal(getTabIndexByType(data.data), data.data)">{{l('Manage')}}</a>
+                            <a class="dx-link action" (click)="deleteSSLBinding(data)">{{l('Delete')}}</a>
+                        </div>
+                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                            {{cellData.value | datetime: formatting.dateTimeMoment}}
+                        </div>
+                    </dx-data-grid>
+                </div>
+
+                <div class="box-bottom">
+                    <div class="group">
+                        <p class="text-wrapper-2">Benefits of Using Your Own Custom Domain</p>
+                        <div class="overlap-group">
+                            <div class="div">
+                                <div class="text-wrapper">Use Your Own Brand</div>
+                                <p class="rinting-and">
+                                    rinting and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text
+                                </p>
+                                <img class="img" src="./assets/common/icons/crown.svg" />
+                            </div>
+                            <div class="group-2">
+                                <div class="text-wrapper">Customer Traffic Remains Yours</div>
+                                <img class="vuesax-linear" src="./assets/common/icons/presention-chart.svg" />
+                                <p class="p">
+                                    rinting and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text
+                                </p>
+                            </div>
+                            <div class="group-3">
+                                <div class="text-wrapper">Free SSL Included</div>
+                                <img class="img" src="./assets/common/icons/status-up.svg" />
+                                <p class="rinting-and-2">
+                                    rinting and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text
+                                </p>
+                            </div>
+                            <div class="group-4">
+                                <div class="text-wrapper">Quick activation</div>
+                                <img class="img" src="./assets/common/icons/tick-circle.svg" />
+                                <p class="p">
+                                    rinting and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </dx-scroll-view>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+          <img src="./assets/common/icons/blocks.svg">
+          <div class="title">Your CRM App</div>
+        </ng-template>
+
+        <dx-scroll-view height="calc(100vh - 170px)" showScrollbar="onHover">
+            <ng-container *ngTemplateOutlet="domainMapTemplate"></ng-container>
+        </dx-scroll-view>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+          <img src="./assets/common/icons/personal-card.svg">
+          <div class="title">Your Client Portal</div>
+        </ng-template>
+
+        <dx-scroll-view height="calc(100vh - 170px)" showScrollbar="onHover">
+            <ng-container *ngTemplateOutlet="domainMapTemplate"></ng-container>
+        </dx-scroll-view>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+          <img src="./assets/common/icons/shopping.svg">
+          <div class="title">Your Sales Pages</div>
+        </ng-template>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+          <img src="./assets/common/icons/ssl.svg">
+          <div class="title">{{l('SSLConfiguration')}}</div>
+        </ng-template>
+
         <div class="header">
-            <h3>{{ls.l('SSLConfiguration')}}</h3>
-            <button class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{ls.l("UploadCertificate")}}</button>
+            <h3>{{l('SSLConfiguration')}}</h3>
+            <button class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{l("UploadCertificate")}}</button>
         </div>
         <div id="SSLTable" class="tab-body">
             <dx-data-grid id="gridContainer"
@@ -13,48 +145,13 @@
                           [allowColumnResizing]="true"
                           (onRowRemoving)="deleteCertificate($event)"
                           (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                <dxi-column dataField="id" [caption]="ls.l('Id')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="hostNames" [caption]="ls.l('HostName')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="expiration" [caption]="ls.l('ExpirationDate')" cellTemplate="dateCell"></dxi-column>
-                <dxi-column dataField="thumbprint" [caption]="ls.l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="id" [caption]="l('Id')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="hostNames" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="expiration" [caption]="l('ExpirationDate')" cellTemplate="dateCell"></dxi-column>
+                <dxi-column dataField="thumbprint" [caption]="l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
                 <div *dxTemplate="let data of 'editDeleteTemplate'">
-                    <a class="dx-link action" (click)="deleteCertificate(data)">{{ls.l('Delete')}}</a>
-                </div>
-                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                    {{cellData.value | datetime: formatting.dateTimeMoment}}
-                </div>
-            </dx-data-grid>
-        </div>
-    </mat-tab>
-    <mat-tab label="{{ls.l('CustomDomains')}}">
-        <div class="header">
-            <h3>{{ls.l('CustomDomains')}}</h3>
-            <button class="btn btn-layout" (click)="showSSLBindingDialog(null)"><i class="fa fa-plus"></i>{{ls.l("AddSSLBinding")}}</button>
-        </div>
-        <div id="CustomDomainsTable" class="tab-body">
-            <dx-data-grid id="gridContainer"
-                          #customDomainsGrid
-                          [dataSource]="sslBindingsDataSource"
-                          [allowColumnReordering]="true"
-                          [allowColumnResizing]="true">
-                <dxi-column dataField="id" [caption]="ls.l('Id')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="sslCertificateId" [caption]="ls.l('SslCertificateId')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="hostName" [caption]="ls.l('HostName')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="organizationUnitId" [caption]="ls.l('OrganizationUnit')" cellTemplate="organizationCell"></dxi-column>
-                <dxi-column dataField="hostType" [caption]="ls.l('Type')" cssClass="clipboard-holder">
-                    <dxo-lookup [dataSource]="hostTypes" valueExpr="id" displayExpr="name"></dxo-lookup>
-                </dxi-column>
-                <dxi-column dataField="isActive" [caption]="ls.l('Active')"></dxi-column>
-                <dxi-column dataField="sslCertificateExpiration" [caption]="ls.l('ExpirationDate')" cellTemplate="dateCell"></dxi-column>
-                <dxi-column dataField="sslCertificateThumbprint" [caption]="ls.l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
-                <div *dxTemplate="let data of 'organizationCell'" class="clipboard-holder {{data.value ? '' : 'default'}}">
-                    {{ getOrgUnitName(data.value) }}
-                </div>
-                <div *dxTemplate="let data of 'editDeleteTemplate'">
-                    <a class="dx-link action" (click)="showSSLBindingDialog(data)">{{ls.l('Edit')}}</a>
-                    <a class="dx-link action" (click)="deleteSSLBinding(data)">{{ls.l('Delete')}}</a>
+                    <a class="dx-link action" (click)="deleteCertificate(data)">{{l('Delete')}}</a>
                 </div>
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                     {{cellData.value | datetime: formatting.dateTimeMoment}}
@@ -63,3 +160,169 @@
         </div>
     </mat-tab>
 </mat-tab-group>
+<ng-template #domainMapTemplate>
+        <div class="content">
+            <div class="box2">
+              <div class="element">
+                <div class="tab">
+                  <div class="overlap">
+                    <div class="rectangle-3"></div>
+                    <div class="vector-wrapper"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                    <div class="overlap-group-wrapper">
+                      <div class="overlap-group-2">
+                        <div class="ellipse"></div>
+                        <div class="text-wrapper-10">1</div>
+                      </div>
+                    </div>
+                    <p class="text-wrapper-11">Add the required entries to your domain DNS</p>
+                    <img (click)="block2.classList.toggle('hidden')" [ngClass]="{closed: block2.classList.contains('hidden')}" class="vector-2" src="./assets/common/icons/arrow-down-black.svg" />
+                    <div class="rectangle-4"></div>
+                  </div>
+                </div>
+                <div class="block" #block2>
+                  <div class="overlap-group">
+                    <div class="group">
+                      <p class="p">
+                        To map Host Name to the {{defaultTenantName}} {{selectedTabIndex == APP_DOMAIN_TAB ? 'App' : 'Portal'}} the following records need to be added on the Host Name DNS:
+                      </p>
+                      <div class="group-2">
+                        <p class="TXT-record-asuid" *ngIf="selectedTabIndex == APP_DOMAIN_TAB">
+                          <span class="text-wrapper-5">TXT</span>
+                          <span class="text-wrapper-3"> </span>
+                          <span class="text-wrapper-6">record </span>
+                          <span class="text-wrapper-7">asuid.custom.mysite.com</span>
+                          <span class="text-wrapper-6"> with domain verification id </span>
+                          <span class="text-wrapper-5">{{envHost.asuid}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.asuid)"></i></span>
+                        </p>
+                        <div class="rectangle-2" [ngStyle]="{height: selectedTabIndex == APP_DOMAIN_TAB ? '122px' : '16px'}"></div>
+                        <p class="a-record-custom" *ngIf="selectedTabIndex == APP_DOMAIN_TAB">
+                          <span class="text-wrapper-5">A</span>
+                          <span class="text-wrapper-8"> </span>
+                          <span class="text-wrapper-6">record </span>
+                          <span class="text-wrapper-7">custom.mysite.com</span>
+                          <span class="text-wrapper-6"> should point to </span>
+                          <span class="text-wrapper-5">{{envHost.ip}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.ip)"></i></span>
+                        </p>
+                        <div class="text-wrapper-9" *ngIf="selectedTabIndex == APP_DOMAIN_TAB">or</div>
+                        <p class="CNAME-record-custom">
+                          <span class="text-wrapper-5">CNAME</span>
+                          <span class="text-wrapper-6"> record </span>
+                          <span class="text-wrapper-7">custom.mysite.com</span>
+                          <span class="text-wrapper-6"> should point to </span>
+                          <span class="text-wrapper-5">{{selectedTabIndex == APP_DOMAIN_TAB ? envHost.host : envHost.portalCdn}} <i class="copy save-to-clipboard" (click)="copyToClipboard(selectedTabIndex == APP_DOMAIN_TAB ? envHost.host : envHost.portalCdn)"></i></span>
+                        </p>
+                      </div>
+                    </div>
+                    <div class="div"></div>
+                    <p class="once-you-have">
+                      <span class="text-wrapper">Once you have updated your DNS entries,</span>
+                      <span class="span">&nbsp;</span>
+                      <a class="text-wrapper-2" target="_blank" href="https://mxtoolbox.com/DnsLookup.aspx">click here to verify</a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="box1">
+              <div class="element">
+                <div class="tab">
+                  <div class="overlap-2">
+                    <div class="rectangle-2"></div>
+                    <div class="vector-wrapper" [ngClass]="{valid: model?.domainName && model?.id}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                    <div class="overlap-group-wrapper">
+                      <div class="overlap-group-2">
+                        <div class="ellipse"></div>
+                        <div class="text-wrapper-2">2</div>
+                      </div>
+                    </div>
+                    <div class="text-wrapper-3">Enter your custom domain</div>
+                    <img (click)="block1.classList.toggle('hidden')" [ngClass]="{closed: block1.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
+                    <div class="rectangle-3"></div>
+                  </div>
+                </div>
+                <div class="block" #block1>
+                  <div class="overlap">
+                    <div class="rectangle"></div>
+                    <p class="text-wrapper">
+                      You can use your own custom domain ( or subdomain ) for your client portal. We recommend using the
+                      convention of http://my.yourdomain.com for your clients to access your portal.
+                    </p>
+                    <div class="group">
+                      <div class="overlap-group">
+                        <div class="div" *ngIf="model">
+                            <dx-text-box #appDomainName
+                                width="100%"
+                                [placeholder]="l('HostName') + ' (custom.mysite.com)'"
+                                [maxLength]="256" 
+                                [readOnly]="editing"
+                                [(value)]="model.domainName"
+                                (onInput)="onValueChanged($event)">
+                                <dx-validator>
+                                    <dxi-validation-rule 
+                                        type="required" 
+                                        message="{{l('ThisFieldIsRequired')}}.">
+                                    </dxi-validation-rule>
+                                    <dxi-validation-rule 
+                                        type="pattern"
+                                        [pattern]="regexPatterns.url"
+                                        [message]="l('LetsEncrypt_FailedToValidateDomain')">
+                                    </dxi-validation-rule>
+                                    <dxi-validation-rule 
+                                        type="async" 
+                                        [message]="l('HostName_NotMapped')" 
+                                        [validationCallback]="checkHostNameDnsMapping">
+                                     </dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                        <div class="type-the-domain-you-wrapper">
+                          <p class="type-the-domain-you">Type the domain<br />you want to use</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="box3">
+              <div class="group">
+                <div class="overlap">
+                  <div class="rectangle"></div>
+                  <div class="vector-wrapper"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                  <img (click)="block3.classList.toggle('hidden')" [ngClass]="{closed: block3.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
+                  <div class="div"></div>
+                  <p class="text-wrapper">Activate the Secure Socket Layer (SSL) for their domain</p>
+                  <div class="ellipse"></div>
+                  <div class="ellipse-2"></div>
+                  <div class="text-wrapper-2">3</div>
+                </div>
+                <div class="overlap-group" #block3>
+                  <div class="group-2" *ngIf="model && selectedTabIndex == APP_DOMAIN_TAB">
+                    <div class="overlap-group-2">
+                        <dx-select-box [(value)]="model.sslCertificateId"
+                                       [dataSource]="sslCertificates"
+                                       [placeholder]="l('SSLCertificate')"
+                                       valueExpr="id"
+                                       displayExpr="hostNames">
+                        </dx-select-box>
+                    </div>
+                  </div>
+                  <div class="rectangle-3" *ngIf="selectedTabIndex == APP_DOMAIN_TAB"></div>
+                  <div class="group-3">
+                    <div class="overlap-2" *ngIf="model">
+                        <dx-select-box [(value)]="model.organizationUnitId"
+                                       [dataSource]="orgUnits"
+                                       [placeholder]="l('OrganizationUnit')"
+                                       valueExpr="id"
+                                       displayExpr="displayName"
+                                       [showClearButton]="true">
+                        </dx-select-box>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+</ng-template>

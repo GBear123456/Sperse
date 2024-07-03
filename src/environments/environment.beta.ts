@@ -12,6 +12,7 @@ export const environment = {
     ip: '52.176.6.37',
     host: 'sperseapi.azurewebsites.net',
     asuid: '98E5F7681BB2243E6A883B2D1AF5138AE73D2BB9927709C3D5F8B66E746BA48A',
+    portalCdn: 'sperseportalbetauicdn.azureedge.net',
 
     /* Custom tenant domains */
     LENDSPACE_DOMAIN: 'https://betaweb.lendspace.com',

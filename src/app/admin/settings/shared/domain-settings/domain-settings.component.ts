@@ -1,23 +1,26 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
 
 /** Third party imports */
+import { Observable, of } from 'rxjs';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialog } from '@angular/material/dialog';
+import { finalize, map, tap } from 'rxjs/operators';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import {
-    TenantSslCertificateServiceProxy, TenantHostServiceProxy, TenantHostType,
-    TenantSslBindingInfo, DictionaryServiceProxy, TenantSslCertificateInfo
+    CheckHostNameDnsMappingInput, TenantSslCertificateServiceProxy, TenantHostServiceProxy, TenantHostType,
+    TenantSslBindingInfo, DictionaryServiceProxy, TenantSslCertificateInfo, AddSslBindingInput, UpdateSslBindingInput
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from 'abp-ng2-module';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { environment } from '@root/environments/environment';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AddOrEditSSLBindingModalComponent } from './modals/add-or-edit-ssl-binding-modal.component';
 import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-modal.component';
+import { SettingsComponentBase } from './../settings-base.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
 
@@ -28,38 +31,65 @@ import { AppService } from '@app/app.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy]
 })
-export class DomainSettingsComponent implements OnInit {
+export class DomainSettingsComponent extends SettingsComponentBase implements OnInit {
     @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
     @ViewChild('sslGrid') sslGrid: DxDataGridComponent;
     public sslGridDataSource: TenantSslCertificateInfo[];
     public sslBindingsDataSource: TenantSslBindingInfo[];
 
+    public readonly HostType_PlatformApp = TenantHostType.PlatformApp;
+
+    defaultTenantName = AppConsts.defaultTenantName;
     hostTypes = Object.keys(TenantHostType)
         .filter(item => item != TenantHostType.LandingPage)
         .map(item => {
-            return { id: item, name: this.ls.l('HostType_' + item) };
+            return { id: item, name: this.l('HostType_' + item) };
         });
 
-    orgUnits = [];
+    model: any;
+    orgUnits: any[] = [{
+        id: -1,
+        displayName: this.l('AllOrganizationUnits')
+    }];
+
+    isDomainValid = false;
+    regexPatterns = AppConsts.regexPatterns;
+    sslCertificates: TenantSslCertificateInfo[];
+    get editing(): boolean {
+        return this.model && this.model.id && (this.selectedTabIndex > 0);
+    }
+
+    envHost = environment;
     tenantHostsEnabled = abp.features.isEnabled(AppFeatures.AdminCustomizations)
         && this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
     formatting = AppConsts.formatting;
+    selectedTabIndex = 0;
+    prevTabIndex = 0;
+    rowData: any;
+
+    readonly INTRO_TAB          = 0;
+    readonly APP_DOMAIN_TAB     = 1;
+    readonly PORTAL_DOMAIN_TAB  = 2;
+    readonly LANDING_DOMAIN_TAB = 3;
+    readonly SSL_CONFIG_TAB     = 4;
 
     constructor(
+        _injector: Injector,
         private dictionaryProxy: DictionaryServiceProxy,
         private tenantSslCertificateService: TenantSslCertificateServiceProxy,
         private tenantHostService: TenantHostServiceProxy,
-        private changeDetection: ChangeDetectorRef,
-        private notifyService: NotifyService,
-        private permission: AppPermissionService,
         private appService: AppService,
         private dialog: MatDialog,
-        public httpInterceptor: AppHttpInterceptor,
-        public ls: AppLocalizationService
+        public clipboardService: ClipboardService,
+        public httpInterceptor: AppHttpInterceptor
     ) {
+        super(_injector);
+
         this.dictionaryProxy.getOrganizationUnits(
             undefined, undefined, true
-        ).subscribe(res => this.orgUnits = res);
+        ).subscribe(res => this.orgUnits = this.orgUnits.concat(res));
+
+        this.getTenantSslCertificates();
     }
 
     ngOnInit(): void {
@@ -68,6 +98,67 @@ export class DomainSettingsComponent implements OnInit {
             this.refreshSSLGrid();
             this.refreshSSLBindingGrid();
         }
+    }
+
+    getSaveObs(): Observable<any> {
+        if (this.isAppOrPortalTab(this.selectedTabIndex)) {
+            if (this.isDomainValid) {
+                return this.saveHostNameDnsMapping(); 
+            } else {
+            }
+        }
+    }
+
+    afterSave() {
+        if (this.isAppOrPortalTab(this.selectedTabIndex)) {
+            this.customDomainsGrid.instance.refresh();
+        }
+    }
+
+    initBindingModal(index, data?) {
+        this.selectedTabIndex = index;
+        if (!this.isAppOrPortalTab(index))
+            return;
+
+        if (data && data.id) {
+            this.model = new UpdateSslBindingInput({
+                id: data.id,
+                organizationUnitId: data.organizationUnitId || -1,
+                sslCertificateId: data.sslCertificateId,
+                isActive: data.isActive
+            });
+            this.model.tenantHostType = <any>data.hostType;
+            this.model.domainName = data.hostName;
+            this.model.sslCertificateId = data.sslCertificateId || -1;
+            this.isDomainValid = true;            
+            this.rowData = data;
+        } else {
+            this.model = new AddSslBindingInput();
+            this.model.organizationUnitId = -1;
+            this.model.tenantHostType = this.hostTypes[0].id;
+            this.model.sslCertificateId = -1;
+            this.isDomainValid = false;
+            this.rowData = undefined;
+        }
+        this.changeDetection.detectChanges();
+    }
+
+    isModelDataChanged() {
+        if (this.model) {
+            return !this.model.id && (
+                this.model.organizationUnitId != -1 || 
+                this.model.tenantHostType != this.hostTypes[0].id || 
+                this.model.sslCertificateId != -1 ||
+                this.model.domainName
+            ) || this.rowData && (
+                this.model.organizationUnitId != (this.rowData.organizationUnitId || -1) ||
+                this.model.tenantHostType != this.rowData.hostType || 
+                this.model.sslCertificateId != (this.rowData.sslCertificateId || -1) ||
+                this.model.domainName != this.rowData.hostName
+            )
+        }
+
+        return false;
     }
 
     showSSLDialog() {
@@ -120,11 +211,11 @@ export class DomainSettingsComponent implements OnInit {
     }
 
     deleteCertificate(row) {
-        abp.message.confirm('', this.ls.l('DeleteConfiramtion'), result => {
+        abp.message.confirm('', this.l('DeleteConfiramtion'), result => {
             if (result) {
                 this.tenantSslCertificateService.deleteTenantSslCertificate(row.data.id)
                     .subscribe(() => {
-                        this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                        this.notify.info(this.l('SavedSuccessfully'));
                         this.refreshSSLGrid();
                     });
             }
@@ -132,11 +223,11 @@ export class DomainSettingsComponent implements OnInit {
     }
 
     deleteSSLBinding(row) {
-        abp.message.confirm('', this.ls.l('DeleteConfiramtion'), result => {
+        abp.message.confirm('', this.l('DeleteConfiramtion'), result => {
             if (result) {
                 this.tenantHostService.deleteSslBinding(row.data.id)
                     .subscribe(() => {
-                        this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                        this.notify.info(this.l('SavedSuccessfully'));
                         this.refreshSSLBindingGrid();
                     });
             }
@@ -149,6 +240,120 @@ export class DomainSettingsComponent implements OnInit {
                 if (this.orgUnits[i].id == id)
                     return this.orgUnits[i].displayName;
         }
-        return this.ls.l('AllOrganizationUnits');
+        return this.l('AllOrganizationUnits');
+    }
+
+    copyToClipboard(value: string) {
+        this.clipboardService.copyFromContent(value.trim());
+        this.notify.info(this.l('SavedToClipboard'));
+    }
+
+    checkHostNameDnsMapping = (data) => {
+        if (this.model.id)
+            return Promise.resolve(true);
+        else
+            return new Promise((approve, reject) => {
+                (data.value && this.model.tenantHostType == TenantHostType.PlatformApp ?
+                    this.tenantHostService.checkHostNameDnsMapping(
+                        new CheckHostNameDnsMappingInput({
+                            tenantHostType: TenantHostType.PlatformApp,
+                            hostName: data.value
+                        })
+                    ).pipe(map(res => res.hostNameDnsMapped)) : of(true)
+                ).pipe(tap(isValid => {
+                    this.isDomainValid = isValid;
+                    this.changeDetection.detectChanges();
+                })).subscribe(approve, reject);
+            });
+    }
+
+    onValueChanged(event) {
+        this.changeDetection.detectChanges();
+    }
+
+    getTenantSslCertificates() {
+        this.tenantSslCertificateService.getTenantSslCertificates()
+            .subscribe(result => {
+                this.sslCertificates = result;
+                this.sslCertificates.unshift(new TenantSslCertificateInfo({
+                    id: -1,
+                    hostNames: this.l('LetsEncrypt_FreeSSLCertificate'),
+                    expiration: undefined,
+                    thumbprint: undefined
+                }));
+
+                this.changeDetection.markForCheck();
+            });
+    }
+
+    saveHostNameDnsMapping(): Observable<any> {
+        if (!this.isModelDataChanged())
+            return of(null);
+
+        //this.startLoading();
+        return this.editing ?
+            this.tenantHostService.updateSslBinding(new UpdateSslBindingInput({
+                ...this.model,
+                organizationUnitId: this.model.organizationUnitId == -1
+                    ? null : this.model.organizationUnitId,
+                sslCertificateId: this.model.sslCertificateId == -1
+                    ? null : this.model.sslCertificateId
+            })) : this.tenantHostService.addSslBinding(new AddSslBindingInput({
+                ...this.model,
+                organizationUnitId: this.model.organizationUnitId == -1
+                    ? null : this.model.organizationUnitId,
+                sslCertificateId: this.model.sslCertificateId == -1
+                    ? null : this.model.sslCertificateId
+            }));
+/*
+        request.pipe(finalize(() => {
+            this.finishLoading();
+            this.changeDetection.detectChanges();
+        })).subscribe(result => {
+            this.notify.info(this.l('SavedSuccessfully'));
+            this.customDomainsGrid.instance.refresh();
+        });
+*/
+    }
+
+    getTabIndexByType(data) {
+        if (data.hostType == TenantHostType.PlatformApp)
+            return this.APP_DOMAIN_TAB;
+        if (data.hostType == TenantHostType.MemberPortal)
+            return this.PORTAL_DOMAIN_TAB;
+        if (data.hostType == TenantHostType.LandingPage)
+            return this.LANDING_DOMAIN_TAB;
+    }
+
+    onTabChange() {
+        if (!this.isAppOrPortalTab(this.prevTabIndex)) {
+            this.initBindingModal(this.selectedTabIndex);
+            return this.prevTabIndex = this.selectedTabIndex;            
+        }
+
+        if (this.selectedTabIndex != this.prevTabIndex) {
+            if (this.isModelDataChanged())
+                this.message.confirm(
+                    this.l('Unsaved changes have been detected'),
+                    this.l('AreYouSure'),
+                    confirmed => {
+                        if (confirmed) {
+                            this.prevTabIndex = this.selectedTabIndex;
+                            this.initBindingModal(this.selectedTabIndex); 
+                        } else {
+                            this.selectedTabIndex = this.prevTabIndex;
+                            this.changeDetection.detectChanges();
+                        }
+                    }
+                );
+            else {
+                this.prevTabIndex = this.selectedTabIndex;
+                this.initBindingModal(this.selectedTabIndex);
+            }
+        }  
+    }
+
+    isAppOrPortalTab(index): boolean {
+        return [this.APP_DOMAIN_TAB, this.PORTAL_DOMAIN_TAB].includes(index);
     }
 }
