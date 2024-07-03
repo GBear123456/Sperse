@@ -93,7 +93,7 @@ export class EmailComponent implements ITenantSettingsStepComponent, AfterViewIn
             this.settings.imapHost = this.selectedProvider.imap.host;
             this.settings.imapPort = this.selectedProvider.imap.port;
             this.settings.imapUseSsl = this.selectedProvider.imap.ssl;
-            this.settings.isImapEnabled = !!this.settings.imapHost;
+            this.settings.isImapEnabled = false;
         } else {
             this.showCustomSmptSettings = this.selectedProvider.host === '';
             this.settings.smtpHost = undefined;
