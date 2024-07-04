@@ -712,6 +712,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         };
     }
 
+    validateGeneralPrice() {
+        return (event) => {
+            return (event.value && event.value > 0) || this.product.customerChoosesPrice;
+        }
+    }
+
     validateFee(option) {
         return (event) => {
             return option.frequency == RecurringPaymentFrequency.OneTime

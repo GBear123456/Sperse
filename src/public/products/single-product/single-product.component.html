@@ -65,25 +65,39 @@
             </ng-container>
             <ng-template #generalProduct>
                 <div class="price">
-                    <ng-container *ngIf="!isFreeProductSelected else freeProduct">
-                        <div class="quantity" *ngIf="productInfo.type != productType.Digital && productInfo.type != productType.Event">
-                            <div class="quantity-title">Quantity</div>
-                            <div class="quantity-controls">
-                                <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>
-                                <span class="value">{{requestInfo.quantity}}</span>
-                                <span (click)="changeQuantity(requestInfo.quantity + 1)">+</span>
-                            </div>
-                        </div>
-                        <div class="price__new">
+                    <ng-container *ngIf="productInfo.customerChoosesPrice else generalPrice">
+                        <div class="price__new" *ngIf="!customerPriceEditMode">
                             <span [attr.data-currency]="currencySymbol">{{ getGeneralPrice(true) | number : '1.0-2'}}</span>
+                            <i class="fa fa-pencil customer-price-edit" (click)="showCustomerPriceInput()"></i>
                         </div>
-                        <div *ngIf="couponInfo" class="discount-info">
-                            <div>Coupon applied</div>
-                            <div class="save-line">You saved: {{currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
+                        <div *ngIf="customerPriceEditMode">
+                            <input class="customer-price-input" #customerPriceInput="ngModel" #customerPriceElement type="text" [(ngModel)]="productInfo.price"
+                                   (focusout)="customerPriceFocusOut($event, customerPriceInput)"
+                                   [ngModelOptions]="{updateOn: 'blur'}" [pattern]="customerPriceRegexp" required>
+                            <validation-messages [formCtrl]="customerPriceInput" [errorDefs]="[{pattern: ls.l('InvalidPrice')}]"></validation-messages>
                         </div>
                     </ng-container>
-                    <ng-template #freeProduct>
-                        <div class="free-product">{{ls.l('Free')}}</div>
+                    <ng-template #generalPrice>
+                        <ng-container *ngIf="!isFreeProductSelected else freeProduct">
+                            <div class="quantity" *ngIf="productInfo.type != productType.Digital && productInfo.type != productType.Event">
+                                <div class="quantity-title">Quantity</div>
+                                <div class="quantity-controls">
+                                    <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>
+                                    <span class="value">{{requestInfo.quantity}}</span>
+                                    <span (click)="changeQuantity(requestInfo.quantity + 1)">+</span>
+                                </div>
+                            </div>
+                            <div class="price__new">
+                                <span [attr.data-currency]="currencySymbol">{{ getGeneralPrice(true) | number : '1.0-2'}}</span>
+                            </div>
+                            <div *ngIf="couponInfo" class="discount-info">
+                                <div>Coupon applied</div>
+                                <div class="save-line">You saved: {{currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
+                            </div>
+                        </ng-container>
+                        <ng-template #freeProduct>
+                            <div class="free-product">{{ls.l('Free')}}</div>
+                        </ng-template>
                     </ng-template>
                 </div>
             </ng-template>
@@ -201,7 +215,7 @@
                         </ng-container>
                     </div>
                 </div>
-                <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected">
+                <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected && !productInfo.customerChoosesPrice">
                     <label class="coupon">
                         Coupon
                     </label>

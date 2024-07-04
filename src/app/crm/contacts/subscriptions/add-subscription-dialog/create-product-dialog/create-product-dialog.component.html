@@ -125,31 +125,39 @@
                             </div>
                             <hr class="wide">
                             <div class="general-product" *ngIf="product.type == productType.General || product.type == productType.Digital || product.type == productType.Event">
-                                <div [ngClass]="{disabled: isFreePriceType}">
-                                    <dx-number-box name="price"
-                                                   width="100%"
-                                                   height="65px"
-                                                   class="label"
-                                                   [placeholder]="ls.l('Price')"
-                                                   [format]="amountFormat"
-                                                   [(value)]="product.price"
-                                                   [disabled]="isReadOnly"
-                                                   (onValueChanged)="checkShowAmountChangeWarrning()">
-                                        <dx-validator>
-                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Price'))}}."></dxi-validation-rule>
-                                        </dx-validator>
-                                    </dx-number-box>
+                                <div class="customer-price">
+                                    <dx-switch switchedOffText=""
+                                               switchedOnText=""
+                                               [(value)]="product.customerChoosesPrice">
+                                    </dx-switch><span class="" (click)="product.customerChoosesPrice = !product.customerChoosesPrice">{{ls.l('Customer chooses price')}}</span>
                                 </div>
-                                <div *ngIf="product.type == productType.General">
-                                    <dx-select-box [dataSource]="getProductUnits()"
-                                                   width="100%"
-                                                   [placeholder]="ls.l('Unit')"
-                                                   [(value)]="product.unit"
-                                                   [disabled]="isReadOnly">
-                                        <dx-validator>
-                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
-                                        </dx-validator>
-                                    </dx-select-box>
+                                <div class="general-product-price">
+                                    <div [ngClass]="{disabled: isFreePriceType}">
+                                        <dx-number-box name="price"
+                                                       width="100%"
+                                                       height="65px"
+                                                       class="label"
+                                                       [placeholder]="ls.l('Price')"
+                                                       [format]="amountNullableFormat"
+                                                       [(value)]="product.price"
+                                                       [disabled]="isReadOnly"
+                                                       (onValueChanged)="checkShowAmountChangeWarrning()">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="custom" [validationCallback]="validateGeneralPrice()" message="{{ls.l('RequiredField', ls.l('Price'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-number-box>
+                                    </div>
+                                    <div *ngIf="product.type == productType.General">
+                                        <dx-select-box [dataSource]="getProductUnits()"
+                                                       width="100%"
+                                                       [placeholder]="ls.l('Unit')"
+                                                       [(value)]="product.unit"
+                                                       [disabled]="isReadOnly">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-select-box>
+                                    </div>
                                 </div>
                             </div>
                             <ng-container *ngIf="product.type == productType.Subscription">

@@ -51,6 +51,7 @@ import { getCurrencySymbol } from '@angular/common';
 export class SingleProductComponent implements OnInit {
     @ViewChild('firstStepForm') firstStepForm;
     @ViewChild('phoneNumber') phoneNumber;
+    @ViewChild('customerPriceElement') customerPriceElement;
     @ViewChild(PayPalComponent) set paypPalComponent(paypalComp: PayPalComponent) {
         this.payPal = paypalComp;
         this.initializePayPal();
@@ -99,6 +100,9 @@ export class SingleProductComponent implements OnInit {
     couponInfo: PublicCouponInfo = null;
     couponInfoCache: { [code: string]: PublicCouponInfo } = {};
     optionId: number;
+
+    customerPriceEditMode = false;
+    customerPriceRegexp = /^\d+(.\d{1,2})?$/;
 
     constructor(
         private route: ActivatedRoute,
@@ -261,7 +265,7 @@ export class SingleProductComponent implements OnInit {
             paymentPeriodType: PaymentPeriodType[this.selectedSubscriptionOption.frequency],
             quantity: 1
         })];
-        tenancyRequestModel.couponCode = this.isFreeProductSelected ? null : this.requestInfo.couponCode;
+        tenancyRequestModel.couponCode = this.isFreeProductSelected || this.productInfo.customerChoosesPrice ? null : this.requestInfo.couponCode;
         tenancyRequestModel.affiliateCode = this.ref;
 
         this.leadProxy.submitTenancyRequest(tenancyRequestModel).subscribe(response => {
@@ -286,7 +290,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     getSubmitRequest(paymentGateway: string): Observable<SubmitProductRequestOutput> {
-        if (!this.isFormValid()) {
+        if (!this.isFormValid() || (this.productInfo.customerChoosesPrice && (!this.productInfo.price || this.customerPriceEditMode))) {
             abp.notify.error(this.ls.l('SaleProductValidationError'));
             return of();
         }
@@ -298,7 +302,7 @@ export class SingleProductComponent implements OnInit {
         this.requestInfo.affiliateCode = this.ref;
         this.requestInfo.paymentGateway = paymentGateway;
         this.requestInfo.productId = this.productInfo.id;
-        if (this.isFreeProductSelected)
+        if (this.isFreeProductSelected || this.productInfo.customerChoosesPrice)
             this.requestInfo.couponCode = null;
 
         switch (this.productInfo.type) {
@@ -306,6 +310,9 @@ export class SingleProductComponent implements OnInit {
             case ProductType.Digital:
             case ProductType.Event:
                 this.requestInfo.unit = this.productInfo.unit;
+                if (this.productInfo.customerChoosesPrice)
+                    this.requestInfo.price = this.productInfo.price;
+
                 break;
             case ProductType.Subscription:
                 this.requestInfo.optionId = this.selectedSubscriptionOption.id;
@@ -361,7 +368,7 @@ export class SingleProductComponent implements OnInit {
             case ProductType.General:
             case ProductType.Digital:
             case ProductType.Event:
-                this.isFreeProductSelected = this.productInfo.price == 0;
+                this.isFreeProductSelected = this.productInfo.price == 0 && !this.productInfo.customerChoosesPrice;
                 break;
             case ProductType.Subscription:
                 this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0;
@@ -582,5 +589,20 @@ export class SingleProductComponent implements OnInit {
         }
         buttonText += 'Today!';
         return buttonText;
+    }
+
+    showCustomerPriceInput() {
+        this.customerPriceEditMode = true;
+        setTimeout(() => {
+            if (this.customerPriceElement && this.customerPriceElement.nativeElement)
+                this.customerPriceElement.nativeElement.focus();
+        });
+    }
+
+    customerPriceFocusOut(event, input) {
+        if (!input.valid)
+            event.preventDefault();
+        else
+            this.customerPriceEditMode = false;
     }
 }
