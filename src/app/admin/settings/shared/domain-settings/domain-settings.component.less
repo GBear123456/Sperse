@@ -1206,6 +1206,104 @@
         }
     }
 
+    .domains {
+        padding: 30px;
+
+        .box1 {
+            ::ng-deep dx-text-box {
+                width: 515px;
+                display: inline-block;
+            }
+
+            button {
+                display: inline-block;
+                width: 100px;
+                padding: 0 10px;
+                margin: auto;
+            }
+            
+            .generate-domain {
+                font-weight: 600;
+                color: green;
+                text-decoration: underline;
+            }
+        }
+
+        .box2 {
+            .no-found {
+                text-align: center;
+            }
+            .group {
+                left: 0;
+                width: 100%;
+            }
+            .vector-wrapper:not(.valid) {
+                background-color: #d6dde1;
+            }
+        }
+
+        .domain {
+            margin: 0 30px;
+            .domain-info {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 5px 0;
+
+                .domain-name {
+                    font-weight: 500;
+
+                    i {
+                        margin-right: 10px;
+                        margin-left: 3px;
+                    }
+
+                    .fa-check {
+                        color: green;
+                    }
+
+                    .fa-times {
+                        color: red;
+                    }
+                }
+
+                .buttons {
+                    margin-right: 15px;
+
+                    span {
+                        border-bottom: 1px solid;
+                        cursor: pointer;
+                        margin-left: 5px;
+                    }
+
+                    .verify {
+                        border-color: #00aeef;
+                        color: #00aeef;
+                    }
+
+                    .delete {
+                        border-color: red;
+                        color: red;
+                    }
+                }
+            }
+
+            .domain-dns-info {
+                border: 1px solid lightgray;
+                border-radius: 10px;
+                padding: 5px;
+
+                .container {
+                    margin: 10px 0;
+
+                    .header-row {
+                        font-weight: bold;
+                        background-color: lightgray;
+                    }
+                }
+            }
+        }
+    }
+
     ::ng-deep dx-select-box {
         input {
             border: none;

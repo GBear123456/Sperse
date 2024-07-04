@@ -125,6 +125,120 @@
           <img src="./assets/common/icons/shopping.svg">
           <div class="title">Your Sales Pages</div>
         </ng-template>
+
+        <div class="domains">
+
+            <div class="box1">
+              <div class="element">
+                <div class="tab">
+                  <div class="overlap-2">
+                    <div class="rectangle-2"></div>
+                    <div class="vector-wrapper" [ngClass]="{valid: newDomain?.value}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                    <div class="overlap-group-wrapper">
+                      <div class="overlap-group-2">
+                        <div class="ellipse"></div>
+                        <div class="text-wrapper-2">1</div>
+                      </div>
+                    </div>
+                    <div class="text-wrapper-3">Enter your custom domain</div>
+                    <img (click)="lendingBlock.classList.toggle('hidden')" [ngClass]="{closed: lendingBlock.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
+                    <div class="rectangle-3"></div>
+                  </div>
+                </div>
+                <div class="block" #lendingBlock>
+                  <div class="overlap">
+                    <div class="rectangle"></div>
+                    <p class="text-wrapper">
+                      You can use your own custom domain ( or subdomain ) for your sales pages. We recommend using the
+                      convention of http://my.yourdomain.com for your clients to access your sales pages.
+                    </p>
+                    <div class="group">
+                      <div class="overlap-group">
+                        <div class="div">
+                            <dx-text-box #newDomain
+                                valueChangeEvent="keyup"
+                                [placeholder]="l('HostName') + ' (custom.mysite.com)'">
+                            </dx-text-box>
+                            <button class="btn btn-layout" [disabled]="!newDomain?.value" (click)="addDomain(newDomain)">
+                                Add <i [ngClass]="{ 'fa fa-spinner fa-spin': isNewLandingDomainAdding }"></i>
+                            </button>                                                        
+                        </div>
+                        <div class="type-the-domain-you-wrapper">
+                            <p class="type-the-domain-you">Type the domain<br /><a *ngIf="!landingSettings?.landingPageDomains?.length && !isNewLandingDomainAdding; else youWantToUse" class="generate-domain" (click)="generateDomain()">or {{l('Generate here')}}</a>
+                                <ng-template #youWantToUse>you want to use</ng-template>
+                            </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="box2">
+              <div class="element">
+                <div class="tab">
+                  <div class="overlap">
+                    <div class="rectangle-3"></div>
+                    <div class="vector-wrapper" [ngClass]="{valid: landingSettings?.landingPageDomains?.length}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                    <div class="overlap-group-wrapper">
+                      <div class="overlap-group-2">
+                        <div class="ellipse"></div>
+                        <div class="text-wrapper-10">2</div>
+                      </div>
+                    </div>
+                    <p class="text-wrapper-11">Verify/Add the required entries to your DNS provider</p>
+                    <img (click)="domainsBlock.classList.toggle('hidden')" [ngClass]="{closed: domainsBlock.classList.contains('hidden')}" class="vector-2" src="./assets/common/icons/arrow-down-black.svg" />
+                    <div class="rectangle-4"></div>
+                  </div>
+                </div>
+                <div class="block" #domainsBlock>
+                  <div class="overlap-group">
+                    <div class="group">
+                        <p class="no-found" *ngIf="!landingSettings?.landingPageDomains || !landingSettings?.landingPageDomains?.length">No domains found.</p>
+                        <div *ngFor="let domain of landingSettings?.landingPageDomains; index as i" class="domain">
+                            <div class="domain-info">
+                                <div class="domain-name">
+                                    <ng-container *ngIf="domain.isValid else invalidDomain">
+                                        <a href="https://{{domain.name}}" target="_blank">{{domain.name}}</a>
+                                        <i class="fa fa-check"></i>
+                                    </ng-container>
+                                    <ng-template #invalidDomain>
+                                        {{domain.name}} <i class="fa fa-times"></i>
+                                    </ng-template>
+                                </div>
+                                <div class="buttons">
+                                    <span *ngIf="!domain.isValid" class="verify" (click)="verifyDomain(domain)">
+                                        Verify <i [ngClass]="{ 'fa fa-spinner fa-spin': domain.isValidating }"></i>
+                                    </span>
+                                    <span class="delete" (click)="deleteDomain(domain, i)">
+                                        Delete <i [ngClass]="{ 'fa fa-spinner fa-spin': domain.isDeleting }"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div *ngIf="!domain.isVaid && domain.configRecords && domain.configRecords.length" class="domain-dns-info">
+                                <div>Set the following record on your DNS provider to continue:</div>
+                                <div class="container">
+                                    <div class="row header-row">
+                                        <div class="col-2">Type</div>
+                                        <div class="col-4">Name</div>
+                                        <div class="col-6">Value</div>
+                                    </div>
+                                    <div *ngFor="let dnsRecord of domain.configRecords" class="row">
+                                        <div class="col-2">{{dnsRecord.type}}</div>
+                                        <div class="col-4">{{dnsRecord.name}}</div>
+                                        <div class="col-6">{{dnsRecord.value}}</div>
+                                    </div>
+                                </div>
+                                <div>Depending on your provider, it might take some time for the DNS records to apply.</div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
     </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
@@ -245,8 +359,8 @@
                   <div class="overlap">
                     <div class="rectangle"></div>
                     <p class="text-wrapper">
-                      You can use your own custom domain ( or subdomain ) for your client portal. We recommend using the
-                      convention of http://my.yourdomain.com for your clients to access your portal.
+                      You can use your own custom domain ( or subdomain ) for your {{selectedTabIndex == APP_DOMAIN_TAB ? 'platform' : 'portal'}}. We recommend using the
+                      convention of http://my.yourdomain.com for your clients to access your {{selectedTabIndex == APP_DOMAIN_TAB ? 'platform' : 'portal'}}.
                     </p>
                     <div class="group">
                       <div class="overlap-group">

@@ -2,16 +2,18 @@
 import { Component, OnInit, ViewChild, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
 
 /** Third party imports */
-import { Observable, of } from 'rxjs';
+import { throwError, Observable, of } from 'rxjs';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize, map, tap } from 'rxjs/operators';
+import { switchMap, finalize, map, tap } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import {
-    CheckHostNameDnsMappingInput, TenantSslCertificateServiceProxy, TenantHostServiceProxy, TenantHostType,
-    TenantSslBindingInfo, DictionaryServiceProxy, TenantSslCertificateInfo, AddSslBindingInput, UpdateSslBindingInput
+    GetLandingPageSettingsDto, CheckHostNameDnsMappingInput, TenantSslCertificateServiceProxy, 
+    TenantHostServiceProxy, TenantHostType, TenantSslBindingInfo, DictionaryServiceProxy, 
+    TenantSslCertificateInfo, AddSslBindingInput, UpdateSslBindingInput, LandingPageSettingsDomainDto,
+    ContactLandingPageServiceProxy, LandingPageSettingsDto, AddVercelDomainInput
 } from '@shared/service-proxies/service-proxies';
 import { environment } from '@root/environments/environment';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -29,7 +31,7 @@ import { AppService } from '@app/app.service';
     templateUrl: './domain-settings.component.html',
     styleUrls: ['../../../../shared/common/styles/checkbox-radio.less', './domain-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy]
+    providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy, ContactLandingPageServiceProxy]
 })
 export class DomainSettingsComponent extends SettingsComponentBase implements OnInit {
     @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
@@ -39,6 +41,8 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
     public readonly HostType_PlatformApp = TenantHostType.PlatformApp;
 
+    isNewLandingDomainAdding = false;
+    landingSettings: GetLandingPageSettingsDto;
     defaultTenantName = AppConsts.defaultTenantName;
     hostTypes = Object.keys(TenantHostType)
         .filter(item => item != TenantHostType.LandingPage)
@@ -75,6 +79,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
     constructor(
         _injector: Injector,
+        private landingPageProxy: ContactLandingPageServiceProxy,
         private dictionaryProxy: DictionaryServiceProxy,
         private tenantSslCertificateService: TenantSslCertificateServiceProxy,
         private tenantHostService: TenantHostServiceProxy,
@@ -88,6 +93,13 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         this.dictionaryProxy.getOrganizationUnits(
             undefined, undefined, true
         ).subscribe(res => this.orgUnits = this.orgUnits.concat(res));
+
+        this.landingPageProxy.getLandingPageSettings().subscribe(
+            (settings) => {
+                this.landingSettings = settings;
+                this.changeDetection.detectChanges();
+            }
+        );
 
         this.getTenantSslCertificates();
     }
@@ -105,8 +117,10 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
             if (this.isDomainValid) {
                 return this.saveHostNameDnsMapping(); 
             } else {
+                this.notify.error(this.l('HostName_NotMapped'));
             }
         }
+        return this.isAppOrPortalTab(this.selectedTabIndex)  ? throwError(this.l('HostName_NotMapped')) : of(null);
     }
 
     afterSave() {
@@ -117,6 +131,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
     initBindingModal(index, data?) {
         this.selectedTabIndex = index;
+        this.prevTabIndex = this.selectedTabIndex;
         if (!this.isAppOrPortalTab(index))
             return;
 
@@ -327,8 +342,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
     onTabChange() {
         if (!this.isAppOrPortalTab(this.prevTabIndex)) {
-            this.initBindingModal(this.selectedTabIndex);
-            return this.prevTabIndex = this.selectedTabIndex;            
+            return this.initBindingModal(this.selectedTabIndex);            
         }
 
         if (this.selectedTabIndex != this.prevTabIndex) {
@@ -338,7 +352,6 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                     this.l('AreYouSure'),
                     confirmed => {
                         if (confirmed) {
-                            this.prevTabIndex = this.selectedTabIndex;
                             this.initBindingModal(this.selectedTabIndex); 
                         } else {
                             this.selectedTabIndex = this.prevTabIndex;
@@ -347,7 +360,6 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                     }
                 );
             else {
-                this.prevTabIndex = this.selectedTabIndex;
                 this.initBindingModal(this.selectedTabIndex);
             }
         }  
@@ -355,5 +367,100 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
     isAppOrPortalTab(index): boolean {
         return [this.APP_DOMAIN_TAB, this.PORTAL_DOMAIN_TAB].includes(index);
+    }
+
+    generateDomain() {
+        if (this.landingSettings && this.landingSettings.landingPageDomains.length || this.isNewLandingDomainAdding)
+            return;
+
+        let savePageObs = this.saveLandingPageSettings();
+        this.isNewLandingDomainAdding = true;
+        savePageObs.pipe(
+            switchMap(() => this.landingPageProxy.generateVercelDomain()),
+            finalize(() => {
+                this.isNewLandingDomainAdding = false;
+                this.changeDetection.detectChanges();
+            })
+        ).subscribe(res => {
+            let domainDto = new LandingPageSettingsDomainDto({
+                name: res.domainName,
+                isValid: res.isValid
+            });
+            domainDto['configRecords'] = res.configRecords;
+            this.landingSettings.landingPageDomains.unshift(domainDto);
+            this.notify.info(this.l('SavedSuccessfully'));
+        });
+    }
+
+    addDomain(inputComponent) {
+        inputComponent.value = inputComponent.value.trim();
+        if (this.landingSettings.landingPageDomains.find(v => v.name.toLowerCase() == inputComponent.value.toLowerCase())) {
+            this.message.warn(`${inputComponent.value} is already added`);
+            return;
+        }
+
+        let savePageObs = this.saveLandingPageSettings();
+        this.isNewLandingDomainAdding = true;
+        inputComponent.disabled = true;
+        savePageObs.pipe(
+            switchMap(() => this.landingPageProxy.addVercelDomain(new AddVercelDomainInput({ domainName: inputComponent.value }))),
+            finalize(() => {
+                this.isNewLandingDomainAdding = false;
+                inputComponent.disabled = false;
+                this.changeDetection.detectChanges();
+            })
+        ).subscribe(res => {
+            let domainDto = new LandingPageSettingsDomainDto({
+                name: inputComponent.value,
+                isValid: res.isValid
+            });
+            domainDto['configRecords'] = res.configRecords;
+            this.landingSettings.landingPageDomains.unshift(domainDto);
+            inputComponent.value = '';
+            this.notify.info(this.l('SavedSuccessfully'));
+        });
+    }
+
+    verifyDomain(domain: LandingPageSettingsDomainDto) {
+        if (domain.isValid || domain['isValidating'] || domain['isDeleting'])
+            return;
+
+        domain['isValidating'] = true;
+        this.landingPageProxy.validateDomain(domain.name)
+            .pipe(finalize(() => {
+                domain['isValidating'] = false;
+                this.changeDetection.detectChanges();
+            }))
+            .subscribe(configInfo => {
+                domain.isValid = configInfo.isValid;
+                domain['configRecords'] = configInfo.configRecords;
+            });
+    }
+
+    deleteDomain(domain: LandingPageSettingsDomainDto, index: number) {
+        if (domain['isDeleting'])
+            return;
+
+        domain['isDeleting'] = true;
+        this.landingPageProxy.deleteDomain(domain.name)
+            .pipe(finalize(() => {
+                domain['isDeleting'] = false;
+                this.changeDetection.detectChanges();
+            }))
+            .subscribe(() => {
+                this.landingSettings.landingPageDomains.splice(index, 1);
+                this.notify.info(this.l('SuccessfullyDeleted'));
+            });
+    }
+
+    saveLandingPageSettings(): Observable<any> {
+        if (this.isNewLandingDomainAdding) {
+            this.notify.warn('Please correct invalid values');
+            return throwError('');
+        }
+
+        let settings = LandingPageSettingsDto.fromJS(this.landingSettings);
+
+        return this.landingPageProxy.updateLandingPageSettings(settings);
     }
 }
