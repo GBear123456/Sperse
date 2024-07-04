@@ -245,7 +245,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.isFreePriceType = !options[0].fee;
                 this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
             } else
-                this.isFreePriceType = !data.product.price;
+                this.isFreePriceType = !data.product.customerChoosesPrice && !data.product.price;
             if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
                 this.addUpgradeToProduct();
         } else {
@@ -714,7 +714,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     validateGeneralPrice() {
         return (event) => {
-            return (event.value && event.value > 0) || this.product.customerChoosesPrice;
+            return (this.isFreePriceType && !event.value) || event.value > 0 || this.product.customerChoosesPrice;
         }
     }
 
@@ -914,6 +914,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     togglePriceType() {
         if (this.isFreePriceType = !this.isFreePriceType) {
             this.product.price = undefined;
+            this.product.customerChoosesPrice = false;
             let options = this.product.productSubscriptionOptions;
             if (options && options[0]) {
                 options[0].fee = undefined;

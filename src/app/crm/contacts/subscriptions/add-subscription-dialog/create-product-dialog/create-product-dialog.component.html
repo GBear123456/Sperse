@@ -128,7 +128,8 @@
                                 <div class="customer-price">
                                     <dx-switch switchedOffText=""
                                                switchedOnText=""
-                                               [(value)]="product.customerChoosesPrice">
+                                               [(value)]="product.customerChoosesPrice"
+                                               [disabled]="isReadOnly || isFreePriceType">
                                     </dx-switch><span class="" (click)="product.customerChoosesPrice = !product.customerChoosesPrice">{{ls.l('Customer chooses price')}}</span>
                                 </div>
                                 <div class="general-product-price">
@@ -137,13 +138,13 @@
                                                        width="100%"
                                                        height="65px"
                                                        class="label"
-                                                       [placeholder]="ls.l('Price')"
-                                                       [format]="amountNullableFormat"
+                                                       [placeholder]="product.customerChoosesPrice ? ls.l('Preset Price') : ls.l('Price')"
+                                                       [format]="isFreePriceType ? amountFormat : amountNullableFormat"
                                                        [(value)]="product.price"
                                                        [disabled]="isReadOnly"
                                                        (onValueChanged)="checkShowAmountChangeWarrning()">
                                             <dx-validator>
-                                                <dxi-validation-rule type="custom" [validationCallback]="validateGeneralPrice()" message="{{ls.l('RequiredField', ls.l('Price'))}}."></dxi-validation-rule>
+                                                <dxi-validation-rule type="custom" [validationCallback]="validateGeneralPrice()" message="{{ls.l('InvalidField', ls.l('Price'))}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-number-box>
                                     </div>

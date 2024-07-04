@@ -74,7 +74,7 @@
                             <input class="customer-price-input" #customerPriceInput="ngModel" #customerPriceElement type="text" [(ngModel)]="productInfo.price"
                                    (focusout)="customerPriceFocusOut($event, customerPriceInput)"
                                    [ngModelOptions]="{updateOn: 'blur'}" [pattern]="customerPriceRegexp" required>
-                            <validation-messages [formCtrl]="customerPriceInput" [errorDefs]="[{pattern: ls.l('InvalidPrice')}]"></validation-messages>
+                            <validation-messages [formCtrl]="customerPriceInput" [errorDefs]="[{pattern: ls.l('Invalid Price')}]"></validation-messages>
                         </div>
                     </ng-container>
                     <ng-template #generalPrice>

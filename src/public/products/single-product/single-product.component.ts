@@ -593,16 +593,23 @@ export class SingleProductComponent implements OnInit {
 
     showCustomerPriceInput() {
         this.customerPriceEditMode = true;
+        this.focusCustomerPriceInput();
+    }
+
+    customerPriceFocusOut(event, input) {
+        if (!input.valid) {
+            event.preventDefault();
+            this.focusCustomerPriceInput();
+        }
+        else {
+            this.customerPriceEditMode = false;
+        }
+    }
+
+    focusCustomerPriceInput() {
         setTimeout(() => {
             if (this.customerPriceElement && this.customerPriceElement.nativeElement)
                 this.customerPriceElement.nativeElement.focus();
         });
-    }
-
-    customerPriceFocusOut(event, input) {
-        if (!input.valid)
-            event.preventDefault();
-        else
-            this.customerPriceEditMode = false;
     }
 }
