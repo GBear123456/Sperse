@@ -8,6 +8,7 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import {
     ImportStripeDataInput,
+    InvoicePaymentMethod,
     StripeEntityType,
     StripeSettingsDto, TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -29,6 +30,9 @@ export class StripeSettingsComponent extends SettingsComponentBase {
 
     showAdvancedSettings = this.isHost;
     tenantName = this.isHost ? AppConsts.defaultTenantName : this.appSession.tenantName;
+
+    availablePaymentMethods: string;
+    paymentMethodUpdateInProgress = false;
 
     showImportSection = false;
     importInProgress = false;
@@ -59,6 +63,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
                     this.stripePaymentSettings = res;
                     this.showAdvancedSettings = this.isHost || !!this.stripePaymentSettings.apiKey;
                     this.importInProgress = res.hasRunningImport;
+                    this.setPaymentMethods();
                     this.updateShowImportSection();
                     this.changeDetection.detectChanges();
                 })
@@ -143,6 +148,40 @@ export class StripeSettingsComponent extends SettingsComponentBase {
             return true;
 
         return false;
+    }
+
+    setPaymentMethods() {
+        let availablePaymentMethods = '';
+
+        let separator = '';
+        if ((this.stripePaymentSettings.unsupportedPaymentMethods & InvoicePaymentMethod.BankCard) != InvoicePaymentMethod.BankCard) {
+            availablePaymentMethods += 'Bank Card';
+            separator = ', ';
+        }
+        if ((this.stripePaymentSettings.unsupportedPaymentMethods & InvoicePaymentMethod.ACH) != InvoicePaymentMethod.ACH) {
+            availablePaymentMethods += separator + 'ACH';
+        }
+
+        this.availablePaymentMethods = availablePaymentMethods;
+    }
+
+    updatePaymentMethods() {
+        if (this.paymentMethodUpdateInProgress)
+            return;
+
+        this.paymentMethodUpdateInProgress = true;
+        this.tenantPaymentSettingsService.updateConnectedAccountPaymentMethods()
+            .pipe(
+                finalize(() => {
+                    this.paymentMethodUpdateInProgress = false;
+                    this.changeDetection.detectChanges();
+                })
+            )
+            .subscribe(result => {
+                this.stripePaymentSettings.unsupportedPaymentMethods = result;
+                this.setPaymentMethods();
+                this.notify.info(this.l('Payment methods have been refreshed.'));
+            })
     }
 
     updateShowImportSection() {

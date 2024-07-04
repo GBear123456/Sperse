@@ -14,11 +14,11 @@
         .error-coupon {
             color: red;
         }
-    
+
         .applied-coupon {
             color: #65cc65;
             font-weight: 500;
-        }    
+        }
 
         .coupon-row {
             display: flex;
@@ -54,7 +54,6 @@
                 font-family: inherit;
                 border: none;
                 font: inherit;
-
                 padding: 0 10px;
                 border: 1px solid #dedede;
                 border-radius: 7px;
@@ -264,9 +263,11 @@
                 letter-spacing: -0.2px;
                 color: #424c56;
                 line-height: 25px;
+
                 span:first-child {
                     font-weight: 700;
                 }
+
                 span:last-child {
                     font-weight: 500;
                 }
@@ -387,12 +388,54 @@
 
         .paymentMethods {
             height: 90%;
+            font-family: var(--app-font-family);
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.6;
+            letter-spacing: 0.8px;
+            text-align: center;
+            color: #424c56;
 
             .no-payment-systems {
                 height: 100%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+            }
+
+            .payment-text {
+                margin-bottom: 15px;
+            }
+
+            .pay-button {
+                border: none;
+                border-radius: 10px;
+                padding: 0 100px;
+                height: 56px;
+                display: inline-block;
+                color: #ffffff;
+                font-size: 18px;
+                font-weight: 600;
+                background-color: #00aeef;
+                cursor: pointer;
+
+                &-subscribe {
+                    background-color: #4CAF50;
+
+                    &:hover {
+                        background-color: #386E3A !important;
+                    }
+                }
+
+                &:hover {
+                    background-color: #0082b1;
+                }
+
+                &:disabled {
+                    pointer-events: none;
+                    opacity: 0.5;
+                    cursor: default;
+                }
             }
 
             ::ng-deep .mat-tab-header {
@@ -441,30 +484,6 @@
                 height: 100%;
             }
         }
-
-        .freeBlock {
-            height: 100%;
-            display: flex;
-            position: relative;
-            padding-bottom: 63px;
-            align-items: center;
-            flex-direction: column;
-            justify-content: center;
-
-            h2 {
-                text-align: center;
-            }
-
-            button {
-                min-width: 200px;
-                margin-top: 20px;
-            }
-
-            payment-options-footer {
-                position: absolute;
-                bottom: 0;
-            }
-        }
     }
     // global styles
     ::ng-deep .info-icon {
@@ -483,38 +502,15 @@
         height: 100%;
         align-items: center;
         justify-content: center;
+    }
 
-        .stripe-text {
-            margin-bottom: 15px;
-            font-family: var(--app-font-family);
-            font-size: 15px;
-            font-weight: 500;
-            line-height: 1.6;
-            letter-spacing: 0.8px;
-            text-align: center;
-            color: #424c56;
-        }
+    .paypal-wrap {
+        text-align: center;
+        margin-top: 180px;
 
-        .pay-by-stripe {
-            border: none;
-            border-radius: 10px;
-            padding: 20px 100px;
+        pay-pal {
             display: inline-block;
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: 600;
-            background-color: #00aeef;
-            cursor: pointer;
-
-            &:hover {
-                background-color: #0082b1;
-            }
-
-            &:disabled {
-                pointer-events: none;
-                opacity: 0.5;
-                cursor: default;
-            }
+            width: 220px;
         }
     }
 }

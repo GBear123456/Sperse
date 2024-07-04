@@ -14,7 +14,7 @@ import Validator from 'devextreme/ui/validator';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     TenantPaymentSettingsServiceProxy,
-    InvoiceSettings,
+    UpdateInvoiceSettingsDto,
     InvoiceSettingsDto,
     EmailTemplateType,
     InvoicePaymentMethod
@@ -83,10 +83,10 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
 
     initPaymentMethods() {
         this.paymentMethods.forEach(v => {
-            v.checked = !((this.settings.forbiddenPaymentMethods & v.value) == v.value);
+            v.checked = (this.settings.forbiddenPaymentMethods & v.value) != v.value;
         });
         this.paymentMethods.forEach(v => {
-            v.visible = (this.settings.configuredPaymentMethods & v.value) == v.value;
+            v.visible = (this.settings.unsupportedPaymentMethods & v.value) != v.value && (this.settings.configuredPaymentMethods & v.value) == v.value;
         });
     }
 
@@ -109,6 +109,6 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
         if (!dueGraceValidator.validate().isValid)
             return throwError('');
 
-        return this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings));
+        return this.tenantPaymentSettingsProxy.updateInvoiceSettings(new UpdateInvoiceSettingsDto(this.settings));
     }
 }

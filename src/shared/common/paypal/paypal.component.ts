@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
-import { RootComponent } from '@root/root.component';
 
 import { ButtonType } from './button-type.enum';
 import { ButtonConfigInterface } from './button-config.interface';
+import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     selector: 'pay-pal',
@@ -53,7 +53,6 @@ export class PayPalComponent {
     };
 
     constructor(
-        private root: RootComponent
     ) { }
 
     get initialized(): boolean {
@@ -97,7 +96,7 @@ export class PayPalComponent {
             let data = {
                 namespace: typeConfig.namespace
             };
-            this.root.addScriptLink(payPalUrl, 'text/javascript', () => {
+            DomHelper.addScriptLink(payPalUrl, 'text/javascript', () => {
                 this.preparePaypalButton(type, typeConfig.namespace, typeConfig.buttonId);
             }, data);
         }

@@ -16,9 +16,7 @@ import { BankAccountsService } from '@root/shared/cfo/bank-accounts/helpers/bank
 import {
     BudgetImportInput,
     BudgetServiceProxy,
-    InstanceServiceProxy,
-    InvoiceSettings,
-    InstanceType
+    InstanceServiceProxy
 } from '@root/shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';

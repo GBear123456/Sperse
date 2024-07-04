@@ -18,6 +18,7 @@ import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customizatio
 import { LayoutType, CustomCssType, HostSettingsServiceProxy, MaintenanceSettingsDto } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { FontService } from '@shared/common/font-service/font.service';
+import { DomHelper } from '@shared/helpers/DomHelper';
 
 /*
     Root App Component (App Selector)
@@ -85,7 +86,7 @@ export class RootComponent implements OnInit, AfterViewInit {
         if (abp && abp.setting && abp.setting.values) {
             let mapKey = abp.setting.values['Integrations:Google:MapsJavascriptApiKey'];
             if (mapKey && this.SS.userId)
-                this.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', mapKey));
+                DomHelper.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', mapKey));
 
             let fontName = abp.setting.values['App.Appearance.FontName'] || AppConsts.defaultFontName,
                 tabularFontName = abp.setting.values['App.Appearance.TabularFont'] || AppConsts.defaultTabularFontName,
@@ -97,9 +98,9 @@ export class RootComponent implements OnInit, AfterViewInit {
                 rootStyle = this.document.querySelector(':root').style;
 
             if (this.fontService.supportedCustomFonts.includes(fontName))
-                this.addStyleSheet('custom-font', './assets/fonts/fonts-' + fontName.toLowerCase() + '.css');            
+                DomHelper.addStyleSheet('custom-font', './assets/fonts/fonts-' + fontName.toLowerCase() + '.css');            
             else
-                this.addStyleSheet('googleapis', 'https://fonts.googleapis.com/css?family=' + fontName);
+                DomHelper.addStyleSheet('googleapis', 'https://fonts.googleapis.com/css?family=' + fontName);
 
             rootStyle.setProperty('--app-font-family', fontName);
             rootStyle.setProperty('--app-tabular-font-family', tabularFontName);
@@ -119,13 +120,13 @@ export class RootComponent implements OnInit, AfterViewInit {
                 UrlHelper.isSignUpUrl() ?  tenant.signUpCustomCssId : tenant.loginCustomCssId
             );
             if (customCss)
-                this.addStyleSheet(`${CustomCssType.Platform}CustomCss`, AppConsts.remoteServiceBaseUrl + 
+                DomHelper.addStyleSheet(`${CustomCssType.Platform}CustomCss`, AppConsts.remoteServiceBaseUrl + 
                     '/api/TenantCustomization/GetCustomCss/' + customCss + '/' + tenant.id);
 
             if (tenant.customLayoutType && tenant.customLayoutType !== LayoutType.Default) {
                 let layoutName = kebabCase(tenant.customLayoutType);
                 this.document.body.classList.add(layoutName);
-                this.addStyleSheet(tenant.customLayoutType + 'Styles', AppConsts.appBaseHref +
+                DomHelper.addStyleSheet(tenant.customLayoutType + 'Styles', AppConsts.appBaseHref +
                     'assets/common/styles/custom/' + layoutName + '/style.css');
             }
 
@@ -154,41 +155,10 @@ export class RootComponent implements OnInit, AfterViewInit {
         this.uiCustomizationService.overflowHidden(value);
     }
 
-    public addScriptLink(src: String, type: String = 'text/javascript', callback = null, data = {}): void {
-        if (Array.prototype.some.call(this.document.scripts, (script) => {
-            return script.src == src;
-        })) return ;
-
-        let script = this.document.createElement('script');
-        script.type = type;
-        script.src = src;
-        for (const prop in data)
-            script.dataset[prop] = data[prop];
-
-        if (callback)
-            script.addEventListener('load', callback);
-        this.document.head.append(script);
-    }
-
-    public removeScriptLink(src: String): void {
-        let script = this.document.querySelector('script[src="' + src + '"]');
-        if (script) script.remove();
-    }
-
-    public addStyleSheet(id: String, href: String, rel: String = 'stylesheet'): void {
-        let link = this.document.createElement('link');
-         _.mapObject({id: id, href: href, rel: rel},
-             (val, key) => {
-                 link.setAttribute(key, val);
-             }
-        );
-        this.document.head.append(link);
-    }
-
     checkSetGoogleAnalyticsCode(tenant) {
         if (tenant.customLayoutType == LayoutType.LendSpace) {
             let tenantGACode = 'UA-129828500-1'; //!!VP should be used some tenant property
-            this.addScriptLink('https://www.googletagmanager.com/gtag/js?id=' + tenantGACode, '', () => {
+            DomHelper.addScriptLink('https://www.googletagmanager.com/gtag/js?id=' + tenantGACode, '', () => {
                 let dataLayer = window['dataLayer'] = window['dataLayer'] || [];
                 dataLayer.push(['js', new Date()]);
                 dataLayer.push(['config', tenantGACode]);

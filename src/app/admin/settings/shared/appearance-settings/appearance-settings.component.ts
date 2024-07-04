@@ -23,6 +23,7 @@ import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { FontService } from '@shared/common/font-service/font.service';
 import { SettingService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
+import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     selector: 'appearance-settings',
@@ -111,11 +112,11 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         );
 
         let root = this.getRootComponent();
-        root.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
+        DomHelper.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
             + this.fontService.supportedGoogleFonts.concat(this.fontService.supportedTabularGoogleFonts).join('|')
         );
         this.fontService.supportedCustomFonts.map(font =>
-            root.addStyleSheet('custom-font', './assets/fonts/fonts-' + font.toLowerCase() + '.css')
+            DomHelper.addStyleSheet('custom-font', './assets/fonts/fonts-' + font.toLowerCase() + '.css')
         );
     }
 

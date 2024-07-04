@@ -21,18 +21,20 @@
         </div>
 
         <h4 class="planName">{{ plan.productName }}</h4>
-        <div class="trial-day-count" *ngIf="plan.trialDayCount || plan.signUpFee">
+        <div class="trial-day-count" *ngIf="(plan.trialDayCount || plan.signUpFee) && !productSubscriptionPreviouslyUsed">
             <ng-container *ngIf="plan.trialDayCount; else signupBlock">
-                <span *ngIf="plan.signUpFee; else free">{{ plan.currencySymbol  || '$'}}{{plan.signUpFee | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span> for {{plan.trialDayCount}}* day(s) then
+                <span *ngIf="plan.signUpFee; else free">
+                    {{ plan.currencySymbol  || '$'}}{{getSignUpFee(true) | customNumber: '1.0-2' | currency: plan.currencyId : '' : '1.0-2'}}
+                </span>
                 <ng-template #free>{{l('Free')}}</ng-template>
+                for {{plan.trialDayCount}}* day(s) then
             </ng-container>
             <ng-template #signupBlock>
-                <span>{{ plan.currencySymbol  || '$'}}{{plan.signUpFee | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span> signup fee
+                <span>{{ plan.currencySymbol  || '$'}}{{getSignUpFee(true) | customNumber: '1.0-2' | currency: plan.currencyId : '' : '1.0-2'}}</span> signup fee
             </ng-template>
         </div>
         <div *ngIf="plan.total" class="usersAmountAndBilledInfo">
-            <!-- span>{{ l('Price') }}: </span -->
-            <span>{{ (plan.currencySymbol || '$') + (applyCoupon(plan.total) | number : '1.2-2') }} </span><span>{{ getProductUnit(plan) }}</span>
+            <span>{{ (plan.currencySymbol || '$') + (getSubscriptionPrice(true) | number : '1.2-2') }} </span><span>{{ getProductUnit(plan) }}</span>
             <div class="coupon-info" *ngIf="couponInfo && plan.total != 0">
                 <div class="save-line">You saved: {{plan.currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
             </div>
@@ -77,9 +79,9 @@
         </div>
 
         <!-- div class="total">
-        <span>{{ l('Total') }}</span>
-        <span>{{ (plan.currencySymbol || '$') + (plan.total | number : '1.2-2') }}</span>
-    </div -->
+            <span>{{ l('Total') }}</span>
+            <span>{{ (plan.currencySymbol || '$') + (plan.total | number : '1.2-2') }}</span>
+        </div -->
     </div>
 </div>
 <div class="right">
@@ -96,57 +98,67 @@
     </div>
     <div class="paymentMethods">
         <ng-container *ngIf="plan.total">
-            <div *ngIf="hasAnyPaymentSystem == false" class="no-payment-systems">
+            <div *ngIf="!hasAnyPaymentSystemConfigured" class="no-payment-systems">
                 <h2>Payment systems are not configured</h2>
             </div>
-            <mat-tab-group *ngIf="hasAnyPaymentSystem == true" [(selectedIndex)]="selectedGateway" (selectedTabChange)="selectedTabChange($event)">
-                <mat-tab *ngIf="paymentSystemSettings.stripeIsEnabled" [label]="l('Stripe')">
-                    <div class="stripe-wrap">
-                        <p class="stripe-text">
-                            You will be redirected to Stripe payment page
-                        </p>
-                        <button [disabled]="isPayByStripeDisabled" class="pay-by-stripe" (click)="payByStripe()">Pay</button>
+            <ng-container *ngIf="hasAnyPaymentSystemConfigured">
+                <div *ngIf="!anyPaymentSystemIsApplicable()" class="no-payment-systems">
+                    <div *ngIf="isFreeSinglePayment(); else noAvailablePaymentSystems">
+                        <p class="payment-text">Press the button below to subscribe to <b>{{plan.productName}}</b></p>
+                        <button class="pay-button pay-button-subscribe" (click)="subscribeToFree()">Subscribe</button>
                     </div>
-                </mat-tab>
-                <mat-tab *ngIf="showPayPal && !isOnceCoupon()" [label]="l('PayPal')">
-                    <ng-template mat-tab-label="">
-                        <img [src]="'./assets/common/icons/paypal-logo.png'">
+                    <ng-template #noAvailablePaymentSystems>
+                        <h2>No available payment systems support this case</h2>
                     </ng-template>
-                    <pay-pal *ngIf="paymentSystemSettings.paypalClientId && selectedGateway == GATEWAY_PAYPAL"
-                             [productId]="plan.productId"
-                             [currencyId]="plan.currencyId"
-                             [paymentPeriodType]="plan.paymentPeriodType"
-                             [quantity]="quantity"
-                             [couponInfo]="couponInfo"
-                             [clientId]="paymentSystemSettings.paypalClientId"
-                             (onSubmit)="submitData($event, paymentMethods.PayPal)">
-                    </pay-pal>
-                </mat-tab>
+                </div>
+                <mat-tab-group *ngIf="anyPaymentSystemIsApplicable()" [(selectedIndex)]="selectedGateway" (selectedTabChange)="selectedTabChange($event)">
+                    <mat-tab *ngIf="stripeApplicable" [label]="l('Stripe')">
+                        <div class="stripe-wrap">
+                            <p class="payment-text">
+                                You will be redirected to Stripe payment page
+                            </p>
+                            <button [disabled]="isPayByStripeDisabled" class="pay-button" (click)="payByStripe()">Pay</button>
+                        </div>
+                    </mat-tab>
+                    <mat-tab *ngIf="showPayPal()" [label]="l('PayPal')">
+                        <ng-template mat-tab-label="">
+                            <img [src]="'./assets/common/icons/paypal-logo.png'">
+                        </ng-template>
+                        <div class="paypal-wrap">
+                            <p class="payment-text">
+                                {{ l('PayPalPaymentDescriptionText') }}
+                            </p>
+                            <pay-pal [height]="54" (onApprove)="onPayPalApprove()"></pay-pal>
+                        </div>
+                    </mat-tab>
 
-            <!--<mat-tab [label]="l('CreditCard')">
-                <credit-card (onSubmit)="submitData($event, paymentMethods.CreditCard)"></credit-card>
-            </mat-tab>-->
-            <!-- mat-tab [label]="l('eCheck')" -->
-            <!-- e-check [price]="plan.total" (onSubmit)="submitData($event, paymentMethods.eCheck)"></e-check -->
-            <!-- /mat-tab -->
-            <!-- <mat-tab [label]="l('BankTransfer')">
-                <bank-transfer *ngIf="bankTransferSettings$"
-                               [bankTransferSettings]="bankTransferSettings$ | async"
-                               (onSubmit)="submitData($event, paymentMethods.BankTransfer)">
-                </bank-transfer>
-            </mat-tab> -->
-            <!--<mat-tab [label]="l('Bitcoin')">-->
-            <!--<div class="row align-items-center h-100">-->
-            <!--<div class="col-12 text-center">-->
-            <!--<h4>{{ l("This payment option will be available soon") }}</h4>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</mat-tab>-->
-            </mat-tab-group>
+                    <!--<mat-tab [label]="l('CreditCard')">
+                        <credit-card (onSubmit)="submitData($event, paymentMethods.CreditCard)"></credit-card>
+                    </mat-tab>-->
+                    <!-- mat-tab [label]="l('eCheck')" -->
+                    <!-- e-check [price]="plan.total" (onSubmit)="submitData($event, paymentMethods.eCheck)"></e-check -->
+                    <!-- /mat-tab -->
+                    <!-- <mat-tab [label]="l('BankTransfer')">
+                        <bank-transfer *ngIf="bankTransferSettings$"
+                                       [bankTransferSettings]="bankTransferSettings$ | async"
+                                       (onSubmit)="submitData($event, paymentMethods.BankTransfer)">
+                        </bank-transfer>
+                    </mat-tab> -->
+                    <!--<mat-tab [label]="l('Bitcoin')">-->
+                    <!--<div class="row align-items-center h-100">-->
+                    <!--<div class="col-12 text-center">-->
+                    <!--<h4>{{ l("This payment option will be available soon") }}</h4>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--</mat-tab>-->
+                </mat-tab-group>
+            </ng-container>
         </ng-container>
-        <div *ngIf="!plan.total" class="freeBlock">
-            <h2>Are you sure you want to subscribe to {{plan.productName}}?</h2>
-            <button class="btn btn-layout" (click)="subscribeToFree()">Confirm</button>
+        <div *ngIf="!plan.total" class="no-payment-systems">
+            <div>
+                <p class="payment-text">Press the button below to subscribe to <b>{{plan.productName}}</b></p>
+                <button class="pay-button pay-button-subscribe" (click)="subscribeToFree()">Subscribe</button>
+            </div>
         </div>
     </div>
 </div>
