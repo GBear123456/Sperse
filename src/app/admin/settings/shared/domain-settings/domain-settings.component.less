@@ -42,6 +42,15 @@
 
     .tab-body {
         height: calc(100vh - 210px);
+
+        &#SSLTable {
+            width: 100%;
+            position: relative;
+            height: calc(100vh - 235px);
+            background-color: rgba(231, 239, 246, 0.4);
+            border-radius: 10px;
+            padding: 25px;
+        }
     }
 
     .m-checkbox-list {
@@ -58,6 +67,73 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+
+    ::ng-deep dx-data-grid {
+        height: 100% !important;
+
+        .default {
+            font-style: italic;
+        }
+
+        .dx-datagrid-headers td {
+            font-family: Plus Jakarta Sans;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 27px;
+            letter-spacing: -0.01em;
+            text-align: left;
+            color: #000;
+        }
+
+        .dx-checkbox-icon {
+            background-color: rgba(0, 186, 0, 1) !important;
+            border-color: rgba(0, 186, 0, 1) !important;
+            border-radius: 10px;
+        }
+
+        .host-name {
+            font-family: Plus Jakarta Sans;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 27px;
+            letter-spacing: -0.01em;
+            text-align: left;
+            color: #000;
+        }
+
+        .host-type {
+            font-family: Plus Jakarta Sans;
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 27px;
+            letter-spacing: -0.01em;
+            text-align: left;
+            color: rgba(123, 123, 123, 1);
+        }
+
+        .dx-link.action {
+            font-family: Plus Jakarta Sans !important;
+            border: 1px solid rgba(225, 225, 225, 1);
+            height: 31px;
+            border-radius: 8px;
+            display: inline-block;
+            padding: 0 15px;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 27px;
+            letter-spacing: -0.01em;
+            text-align: center;
+            margin: 0 5px;
+            &.manage {
+                color: rgba(0, 168, 237, 1);
+            }
+        }
+
+        .dx-gridbase-container {
+            border-radius: 8px;
+            border: 1px solid rgba(233, 238, 241, 1);                
+        }
     }
 
     .box-top {
@@ -191,73 +267,6 @@
         background-color: rgba(231, 239, 246, 0.4);
         padding: 25px;
         border-radius: 10px;
-
-        ::ng-deep dx-data-grid {
-            height: 100% !important;
-
-            .default {
-                font-style: italic;
-            }
-
-            .dx-datagrid-headers td {
-                font-family: Plus Jakarta Sans;
-                font-size: 13px;
-                font-weight: 600;
-                line-height: 27px;
-                letter-spacing: -0.01em;
-                text-align: left;
-                color: #000;
-            }
-
-            .dx-checkbox-icon {
-                background-color: rgba(0, 186, 0, 1) !important;
-                border-color: rgba(0, 186, 0, 1) !important;
-                border-radius: 10px;
-            }
-
-            .host-name {
-                font-family: Plus Jakarta Sans;
-                font-size: 12px;
-                font-weight: 500;
-                line-height: 27px;
-                letter-spacing: -0.01em;
-                text-align: left;
-                color: #000;
-            }
-
-            .host-type {
-                font-family: Plus Jakarta Sans;
-                font-size: 11px;
-                font-weight: 500;
-                line-height: 27px;
-                letter-spacing: -0.01em;
-                text-align: left;
-                color: rgba(123, 123, 123, 1);
-            }
-
-            .dx-link.action {
-                font-family: Plus Jakarta Sans !important;
-                border: 1px solid rgba(225, 225, 225, 1);
-                height: 31px;
-                border-radius: 8px;
-                display: inline-block;
-                padding: 0 15px;
-                font-size: 11px;
-                font-weight: 600;
-                line-height: 27px;
-                letter-spacing: -0.01em;
-                text-align: center;
-                margin: 0 5px;
-                &.manage {
-                    color: rgba(0, 168, 237, 1);
-                }
-            }
-
-            .dx-gridbase-container {
-                border-radius: 8px;
-                border: 1px solid rgba(233, 238, 241, 1);                
-            }
-        }
     }
 
     .box-bottom {
@@ -666,7 +675,7 @@
 
         .overlap-group {
             height: auto;
-            padding: 10px 0;
+            padding: 25px;
             position: relative;
             width: 872px;
         }
@@ -772,7 +781,7 @@
         }
 
         .text-wrapper-5 {
-            font-weight: 500;
+            font-weight: 600;
             color: #10213a;
         }
 
@@ -804,6 +813,7 @@
             letter-spacing: 0;
             line-height: 23px;
             white-space: nowrap;
+            margin: 0;
         }
 
         .text-wrapper-8 {
@@ -832,8 +842,7 @@
         }
 
         .text-wrapper-9 {
-            position: absolute;
-            top: 86px;
+            position: relative;
             left: 21px;
             font-family: "Plus Jakarta Sans", Helvetica;
             font-weight: 400;
@@ -1243,7 +1252,6 @@
         }
 
         .domain {
-            margin: 0 30px;
             .domain-info {
                 display: flex;
                 justify-content: space-between;
@@ -1298,6 +1306,9 @@
                     .header-row {
                         font-weight: bold;
                         background-color: lightgray;
+                    }
+                    .row {
+                        white-space: break-spaces;
                     }
                 }
             }

@@ -40,12 +40,12 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     public sslBindingsDataSource: TenantSslBindingInfo[];
 
     public readonly HostType_PlatformApp = TenantHostType.PlatformApp;
+    public readonly HostType_LandingPage = TenantHostType.LandingPage;
 
     isNewLandingDomainAdding = false;
     landingSettings: GetLandingPageSettingsDto;
     defaultTenantName = AppConsts.defaultTenantName;
     hostTypes = Object.keys(TenantHostType)
-        .filter(item => item != TenantHostType.LandingPage)
         .map(item => {
             return { id: item, name: this.l('HostType_' + item) };
         });
@@ -96,6 +96,11 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
         this.landingPageProxy.getLandingPageSettings().subscribe(
             (settings) => {
+                settings.landingPageDomains.map((domain, index) => {
+                    domain['index'] = index;
+                    return domain;
+                });
+
                 this.landingSettings = settings;
                 this.changeDetection.detectChanges();
             }
@@ -240,11 +245,14 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     deleteSSLBinding(row) {
         abp.message.confirm('', this.l('DeleteConfiramtion'), result => {
             if (result) {
-                this.tenantHostService.deleteSslBinding(row.data.id)
-                    .subscribe(() => {
-                        this.notify.info(this.l('SavedSuccessfully'));
-                        this.refreshSSLBindingGrid();
-                    });
+                if (row.data.hostType == TenantHostType.LandingPage) {
+                    this.selectedTabIndex = this.LANDING_DOMAIN_TAB; 
+                } else
+                    this.tenantHostService.deleteSslBinding(row.data.id)
+                        .subscribe(() => {
+                            this.notify.info(this.l('SavedSuccessfully'));
+                            this.refreshSSLBindingGrid();
+                        });
             }
         });
     }
@@ -305,7 +313,6 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         if (!this.isModelDataChanged())
             return of(null);
 
-        //this.startLoading();
         return this.editing ?
             this.tenantHostService.updateSslBinding(new UpdateSslBindingInput({
                 ...this.model,
@@ -320,15 +327,6 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                 sslCertificateId: this.model.sslCertificateId == -1
                     ? null : this.model.sslCertificateId
             }));
-/*
-        request.pipe(finalize(() => {
-            this.finishLoading();
-            this.changeDetection.detectChanges();
-        })).subscribe(result => {
-            this.notify.info(this.l('SavedSuccessfully'));
-            this.customDomainsGrid.instance.refresh();
-        });
-*/
     }
 
     getTabIndexByType(data) {
@@ -421,7 +419,8 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         });
     }
 
-    verifyDomain(domain: LandingPageSettingsDomainDto) {
+    verifyDomain(cell, grid) {
+        let domain = cell.data;
         if (domain.isValid || domain['isValidating'] || domain['isDeleting'])
             return;
 
@@ -434,6 +433,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
             .subscribe(configInfo => {
                 domain.isValid = configInfo.isValid;
                 domain['configRecords'] = configInfo.configRecords;
+                this.toogleMasterDatails(cell, grid);
             });
     }
 
@@ -462,5 +462,21 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         let settings = LandingPageSettingsDto.fromJS(this.landingSettings);
 
         return this.landingPageProxy.updateLandingPageSettings(settings);
+    }
+
+    toogleMasterDatails(cell, dataGrid) {
+        if (cell.data['configRecords']) {
+            let instance = dataGrid.instance,
+                isExpanded = instance.isRowExpanded(cell.key);
+            if (!isExpanded)                
+                instance.expandRow(cell.key);
+            setTimeout(() => {
+                let row = instance.getRowElement(cell.rowIndex)[0];
+                if (isExpanded)
+                    row.classList.remove('expanded');
+                else
+                    row.classList.add('expanded');
+            }, 100);
+        }
     }
 }
