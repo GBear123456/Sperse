@@ -714,7 +714,17 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     validateGeneralPrice() {
         return (event) => {
-            return (this.isFreePriceType && !event.value) || event.value > 0 || this.product.customerChoosesPrice;
+            if (this.product.customerChoosesPrice) {
+                if (event.value) {
+                    if (this.product.minCustomerPrice > 0 && event.value < this.product.minCustomerPrice)
+                        return false;
+                    if (this.product.maxCustomerPrice > 0 && event.value > this.product.maxCustomerPrice)
+                        return false;
+                }
+
+                return true;
+            }
+            return (this.isFreePriceType && !event.value) || event.value > 0;
         }
     }
 

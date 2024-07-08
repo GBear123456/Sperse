@@ -294,9 +294,16 @@
             width: 297px;
             font-size: 56px;
             text-align: center;
+            -moz-appearance: textfield;
 
             &:focus {
                 border-color: #fff;
+            }
+
+            &::-webkit-inner-spin-button,
+            &::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
             }
         }
     }

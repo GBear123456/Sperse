@@ -71,10 +71,12 @@
                             <i class="fa fa-pencil customer-price-edit" (click)="showCustomerPriceInput()"></i>
                         </div>
                         <div *ngIf="customerPriceEditMode">
-                            <input class="customer-price-input" #customerPriceInput="ngModel" #customerPriceElement type="text" [(ngModel)]="productInfo.price"
-                                   (focusout)="customerPriceFocusOut($event, customerPriceInput)"
-                                   [ngModelOptions]="{updateOn: 'blur'}" [pattern]="customerPriceRegexp" required>
-                            <validation-messages [formCtrl]="customerPriceInput" [errorDefs]="[{pattern: ls.l('Invalid Price')}]"></validation-messages>
+                            <input class="customer-price-input" #customerPriceInput="ngModel" #customerPriceElement type="number" [(ngModel)]="productInfo.price"
+                                   (focusout)="customerPriceFocusOut($event, customerPriceInput)" [ngModelOptions]="{updateOn: 'blur'}"
+                                   [pattern]="customerPriceRegexp" [min]="productInfo.minCustomerPrice" [max]="productInfo.maxCustomerPrice" required>
+                            <validation-messages [formCtrl]="customerPriceInput"
+                                                 [errorDefs]="customerPriceInputErrorDefs">
+                            </validation-messages>
                         </div>
                     </ng-container>
                     <ng-template #generalPrice>

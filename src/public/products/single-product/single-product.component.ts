@@ -85,7 +85,7 @@ export class SingleProductComponent implements OnInit {
     showNoPaymentSystems = false;
     productType = ProductType;
     billingPeriod = BillingPeriod;
-    
+
     defaultCountryCode = abp.setting.get('App.TenantManagement.DefaultCountryCode');
     selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
     static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.OneTime, BillingPeriod.Custom];
@@ -103,6 +103,10 @@ export class SingleProductComponent implements OnInit {
 
     customerPriceEditMode = false;
     customerPriceRegexp = /^\d+(.\d{1,2})?$/;
+    customerPriceInputErrorDefs: any[] = [
+        { required: this.ls.l('Invalid Price') },
+        { pattern: this.ls.l('Invalid Price') }
+    ]
 
     constructor(
         private route: ActivatedRoute,
@@ -136,8 +140,8 @@ export class SingleProductComponent implements OnInit {
     onPhoneFieldInitialize(phoneField) {
         if (phoneField && phoneField.intPhoneNumber && this.defaultCountryCode) {
             setTimeout(() => {
-                phoneField.intPhoneNumber.phoneNumber = '';            
-                phoneField.intPhoneNumber.updatePhoneInput(this.defaultCountryCode.toLowerCase());        
+                phoneField.intPhoneNumber.phoneNumber = '';
+                phoneField.intPhoneNumber.updatePhoneInput(this.defaultCountryCode.toLowerCase());
             });
         }
     }
@@ -206,6 +210,7 @@ export class SingleProductComponent implements OnInit {
                     if (result.data.hasTenantService)
                         this.initializePasswordComplexity();
                     this.initConditions();
+                    this.initCustomerPrice();
                     this.initSubscriptionProduct();
                     this.initializePayPal();
                     this.checkIsFree();
@@ -589,6 +594,21 @@ export class SingleProductComponent implements OnInit {
         }
         buttonText += 'Today!';
         return buttonText;
+    }
+
+    initCustomerPrice() {
+        if (!this.productInfo.customerChoosesPrice)
+            return;
+
+        if (!this.productInfo.price) {
+            this.customerPriceEditMode = true;
+            this.focusCustomerPriceInput();
+        }
+
+        if (this.productInfo.minCustomerPrice)
+            this.customerPriceInputErrorDefs.push({ min: `${this.ls.l('The minimum amount is ')}${this.currencySymbol}${this.productInfo.minCustomerPrice}` });
+        if (this.productInfo.maxCustomerPrice)
+            this.customerPriceInputErrorDefs.push({ max: `${this.ls.l('The maximum amount is ')}${this.currencySymbol}${this.productInfo.maxCustomerPrice}` });
     }
 
     showCustomerPriceInput() {

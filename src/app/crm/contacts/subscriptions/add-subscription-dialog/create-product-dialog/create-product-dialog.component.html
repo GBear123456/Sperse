@@ -130,7 +130,7 @@
                                                switchedOnText=""
                                                [(value)]="product.customerChoosesPrice"
                                                [disabled]="isReadOnly || isFreePriceType">
-                                    </dx-switch><span class="" (click)="product.customerChoosesPrice = !product.customerChoosesPrice">{{ls.l('Customer chooses price')}}</span>
+                                    </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
                                 </div>
                                 <div class="general-product-price">
                                     <div [ngClass]="{disabled: isFreePriceType}">
@@ -158,6 +158,33 @@
                                                 <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-select-box>
+                                    </div>
+                                </div>
+                                <div class="general-product-price" *ngIf="product.customerChoosesPrice">
+                                    <div>
+                                        <dx-number-box name="minCustomerPrice"
+                                                       width="100%"
+                                                       height="65px"
+                                                       class="label"
+                                                       [placeholder]="ls.l('Min Customer Price')"
+                                                       [format]="amountNullableFormat"
+                                                       [min]="0"
+                                                       [max]="product.maxCustomerPrice ? product.maxCustomerPrice - 1 : null"
+                                                       [(value)]="product.minCustomerPrice"
+                                                       [disabled]="isReadOnly">
+                                        </dx-number-box>
+                                    </div>
+                                    <div>
+                                        <dx-number-box name="maxCustomerPrice"
+                                                       width="100%"
+                                                       height="65px"
+                                                       class="label"
+                                                       [placeholder]="ls.l('Max Customer Price')"
+                                                       [format]="amountNullableFormat"
+                                                       [min]="product.minCustomerPrice ? product.minCustomerPrice + 1 : 0"
+                                                       [(value)]="product.maxCustomerPrice"
+                                                       [disabled]="isReadOnly">
+                                        </dx-number-box>
                                     </div>
                                 </div>
                             </div>
