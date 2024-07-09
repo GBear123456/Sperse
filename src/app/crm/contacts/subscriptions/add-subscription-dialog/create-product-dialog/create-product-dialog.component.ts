@@ -53,7 +53,9 @@ import {
     ProductEventLocation,
     LanguageDto,
     TimingServiceProxy,
-    EmailTemplateType
+    EmailTemplateType,
+    ProductDonationDto,
+    ProductDonationSuggestedAmountDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -257,6 +259,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.addUpgradeToProduct();
             }
             this.initEventProps();
+            this.initDonationProps();
         }
 
         if (this.product.publishDate)
@@ -343,6 +346,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.product.productEvent.address = new AddressInfoDto();
     }
 
+    initDonationProps() {
+        if (this.product.productDonation)
+            return;
+
+        this.product.productDonation = new ProductDonationDto();
+        this.product.productDonation.productDonationSuggestedAmounts = [];
+    }
+
     initEventDataSources() {
         this.initLanguages();
         this.initTimezones();
@@ -395,7 +406,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.unit = undefined;
             this.product.price = undefined;
-
+            this.product.customerChoosesPrice = false;
         } else {
             this.product.productServices = undefined;
             this.product.productSubscriptionOptions = undefined;
@@ -461,6 +472,20 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     }
 
                     this.product.productEvent.durationMinutes = this.eventDuration ? this.eventDuration * this.eventDurationType : undefined;
+                }
+
+                if (this.product.type == ProductType.Donation) {
+                    this.product.commissionableAmount = null;
+                    this.product.maxCommissionRate = null;
+                    this.product.maxCommissionRateTier2 = null;
+                }
+                else {
+                    this.product.productDonation = null;
+                }
+
+                if (!this.product.customerChoosesPrice) {
+                    this.product.minCustomerPrice = null;
+                    this.product.maxCustomerPrice = null;
                 }
 
                 if (this.product instanceof UpdateProductInput) {
@@ -982,6 +1007,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.product.unit = ProductMeasurementUnit.Unit;
                 this.initEventProps();
                 break;
+            case ProductType.Donation:
+                this.product.unit = ProductMeasurementUnit.Unit;
+                if (this.isFreePriceType)
+                    this.togglePriceType();
+                this.initDonationProps();
+                break;
         }
 
         this.product.type = productType;
@@ -1138,6 +1169,17 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
         let addr = this.product.productEvent.address;
         this.eventAddress = [addr.streetAddress, addr.city, addr.stateName, addr.countryName, addr.zip].filter(x => !!x).join(', ');
+    }
+
+    addNewSuggestedAmountFields() {
+        this.product.productDonation.productDonationSuggestedAmounts.push(
+            new ProductDonationSuggestedAmountDto()
+        );
+    }
+
+    removeSuggestedAmountFields(index) {
+        this.product.productDonation.productDonationSuggestedAmounts.splice(index, 1);
+        this.detectChanges();
     }
 
     copyTextToClipboard(text) {
