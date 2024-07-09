@@ -86,10 +86,20 @@
             color: #000;
         }
 
-        .dx-checkbox-icon {
-            background-color: rgba(0, 186, 0, 1) !important;
-            border-color: rgba(0, 186, 0, 1) !important;
-            border-radius: 10px;
+        .fa-check {
+            color: #00ba00;
+        }
+
+        .fa-times {
+            color: red;
+        }
+
+        .dx-checkbox.dx-checkbox-checked {
+            .dx-checkbox-icon {
+                background-color: rgba(0, 186, 0, 1) !important;
+                border-color: rgba(0, 186, 0, 1) !important;
+                border-radius: 10px;
+            }
         }
 
         .host-name {
@@ -286,13 +296,16 @@
 
         .overlap-group {
             position: relative;
-            width: 860px;
-            height: 264px;
             display: flex;
             border-radius: 10px;
             flex-wrap: wrap;
             justify-content: space-around;
-            margin: auto;
+            margin: auto 20px 20px 20px;
+            gap: 10px;
+
+            & > div {
+                margin-top: 30px;
+            }
         }
 
         .div {
@@ -400,7 +413,6 @@
             line-height: 27px;
             white-space: nowrap;
             text-align: center;
-            margin-bottom: 30px;
         }
     }
 

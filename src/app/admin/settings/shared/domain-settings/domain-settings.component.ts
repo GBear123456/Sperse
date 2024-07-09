@@ -140,27 +140,32 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         if (!this.isAppOrPortalTab(index))
             return;
 
-        if (data && data.id) {
-            this.model = new UpdateSslBindingInput({
-                id: data.id,
-                organizationUnitId: data.organizationUnitId || -1,
-                sslCertificateId: data.sslCertificateId,
-                isActive: data.isActive
-            });
-            this.model.tenantHostType = <any>data.hostType;
-            this.model.domainName = data.hostName;
-            this.model.sslCertificateId = data.sslCertificateId || -1;
-            this.isDomainValid = true;            
-            this.rowData = data;
-        } else {
-            this.model = new AddSslBindingInput();
-            this.model.organizationUnitId = -1;
-            this.model.tenantHostType = this.hostTypes[0].id;
-            this.model.sslCertificateId = -1;
-            this.isDomainValid = false;
-            this.rowData = undefined;
-        }
+        this.model = undefined;
         this.changeDetection.detectChanges();
+
+        setTimeout(() => {
+            if (data && data.id) {
+                this.model = new UpdateSslBindingInput({
+                    id: data.id,
+                    organizationUnitId: data.organizationUnitId || -1,
+                    sslCertificateId: data.sslCertificateId,
+                    isActive: data.isActive
+                });
+                this.model.tenantHostType = <any>data.hostType;
+                this.model.domainName = data.hostName;
+                this.model.sslCertificateId = data.sslCertificateId || -1;
+                this.isDomainValid = true;            
+                this.rowData = data;
+            } else {
+                this.model = new AddSslBindingInput();
+                this.model.organizationUnitId = -1;
+                this.model.tenantHostType = this.hostTypes[0].id;
+                this.model.sslCertificateId = -1;
+                this.isDomainValid = false;
+                this.rowData = undefined;
+            }
+            this.changeDetection.detectChanges();
+        });
     }
 
     isModelDataChanged() {
@@ -246,7 +251,12 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         abp.message.confirm('', this.l('DeleteConfiramtion'), result => {
             if (result) {
                 if (row.data.hostType == TenantHostType.LandingPage) {
-                    this.selectedTabIndex = this.LANDING_DOMAIN_TAB; 
+                    this.landingSettings.landingPageDomains.some((item, index) => {
+                        if (row.data.hostName == item.name) {
+                            this.deleteDomain(item, index);
+                            return true;
+                        }
+                    });
                 } else
                     this.tenantHostService.deleteSslBinding(row.data.id)
                         .subscribe(() => {
@@ -448,6 +458,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                 this.changeDetection.detectChanges();
             }))
             .subscribe(() => {
+                this.refreshSSLBindingGrid();
                 this.landingSettings.landingPageDomains.splice(index, 1);
                 this.notify.info(this.l('SuccessfullyDeleted'));
             });

@@ -21,7 +21,7 @@
                                 <p class="div">You can use your own custom domain ( or subdomain ) for your client portal.</p>
                             </div>
                             <div class="enter-a-valid-domain">
-                                <div class="text-wrapper-3">Activate SSL Certidicate</div>
+                                <div class="text-wrapper-3">Activate SSL Certificate</div>
                                 <img class="ssl-certificate" src="./assets/common/images/ssl-certificate.svg" />
                                 <p class="div">You can use your own custom domain ( or subdomain ) for your client portal.</p>
                             </div>
@@ -55,7 +55,7 @@
                         </div>
                         <div *dxTemplate="let data of 'editDeleteTemplate'">
                             <a class="dx-link action manage" (click)="initBindingModal(getTabIndexByType(data.data), data.data)">{{l('Manage')}}</a>
-                            <a *ngIf="data.data.hostType != HostType_LandingPage" class="dx-link action" (click)="deleteSSLBinding(data)">{{l('Delete')}}</a>
+                            <a class="dx-link action" (click)="deleteSSLBinding(data)">{{l('Delete')}}</a>
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'" class="tabular clipboard-holder">
                             {{cellData.value | datetime: formatting.dateTimeMoment}}
@@ -127,118 +127,123 @@
           <div class="title">Your Landing Pages</div>
         </ng-template>
 
-        <div class="domains">
-            <div class="box1">
-              <div class="element">
-                <div class="tab">
-                  <div class="overlap-2">
-                    <div class="rectangle-2"></div>
-                    <div class="vector-wrapper" [ngClass]="{valid: newDomain?.value}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                    <div class="overlap-group-wrapper">
-                      <div class="overlap-group-2">
-                        <div class="ellipse"></div>
-                        <div class="text-wrapper-2">1</div>
+        <dx-scroll-view height="calc(100vh - 170px)" showScrollbar="onHover">
+            <div class="domains">
+                <div class="box1">
+                  <div class="element">
+                    <div class="tab">
+                      <div class="overlap-2">
+                        <div class="rectangle-2"></div>
+                        <div class="vector-wrapper" [ngClass]="{valid: newDomain?.value}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                        <div class="overlap-group-wrapper">
+                          <div class="overlap-group-2">
+                            <div class="ellipse"></div>
+                            <div class="text-wrapper-2">1</div>
+                          </div>
+                        </div>
+                        <div class="text-wrapper-3">Enter your custom domain</div>
+                        <img (click)="lendingBlock.classList.toggle('hidden')" [ngClass]="{closed: lendingBlock.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
+                        <div class="rectangle-3"></div>
                       </div>
                     </div>
-                    <div class="text-wrapper-3">Enter your custom domain</div>
-                    <img (click)="lendingBlock.classList.toggle('hidden')" [ngClass]="{closed: lendingBlock.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
-                    <div class="rectangle-3"></div>
+                    <div class="block" #lendingBlock>
+                      <div class="overlap">
+                        <div class="rectangle"></div>
+                        <p class="text-wrapper">
+                          You can use your own custom domain ( or subdomain ) for your landing pages. We recommend using the
+                          convention of http://my.yourdomain.com for your clients to access your landing pages.
+                        </p>
+                        <div class="group">
+                          <div class="overlap-group">
+                            <div class="div">
+                                <dx-text-box #newDomain
+                                    valueChangeEvent="keyup"
+                                    [placeholder]="l('HostName') + ' (custom.mysite.com)'">
+                                </dx-text-box>
+                                <button class="btn btn-layout" [disabled]="!newDomain?.value" (click)="addDomain(newDomain)">
+                                    Add <i [ngClass]="{ 'fa fa-spinner fa-spin': isNewLandingDomainAdding }"></i>
+                                </button>                                                        
+                            </div>
+                            <div class="type-the-domain-you-wrapper">
+                                <p class="type-the-domain-you">Type the domain<br /><a *ngIf="!landingSettings?.landingPageDomains?.length && !isNewLandingDomainAdding; else youWantToUse" class="generate-domain" (click)="generateDomain()">or {{l('Generate here')}}</a>
+                                    <ng-template #youWantToUse>you want to use</ng-template>
+                                </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="block" #lendingBlock>
-                  <div class="overlap">
-                    <div class="rectangle"></div>
-                    <p class="text-wrapper">
-                      You can use your own custom domain ( or subdomain ) for your landing pages. We recommend using the
-                      convention of http://my.yourdomain.com for your clients to access your landing pages.
-                    </p>
-                    <div class="group">
+
+                <div class="box2">
+                  <div class="element">
+                    <div class="tab">
+                      <div class="overlap">
+                        <div class="rectangle-3"></div>
+                        <div class="vector-wrapper" [ngClass]="{valid: landingSettings?.landingPageDomains?.length}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                        <div class="overlap-group-wrapper">
+                          <div class="overlap-group-2">
+                            <div class="ellipse"></div>
+                            <div class="text-wrapper-10">2</div>
+                          </div>
+                        </div>
+                        <p class="text-wrapper-11">Verify/Add the required entries to your DNS provider</p>
+                        <img (click)="domainsBlock.classList.toggle('hidden')" [ngClass]="{closed: domainsBlock.classList.contains('hidden')}" class="vector-2" src="./assets/common/icons/arrow-down-black.svg" />
+                        <div class="rectangle-4"></div>
+                      </div>
+                    </div>
+                    <div class="block" #domainsBlock>
                       <div class="overlap-group">
-                        <div class="div">
-                            <dx-text-box #newDomain
-                                valueChangeEvent="keyup"
-                                [placeholder]="l('HostName') + ' (custom.mysite.com)'">
-                            </dx-text-box>
-                            <button class="btn btn-layout" [disabled]="!newDomain?.value" (click)="addDomain(newDomain)">
-                                Add <i [ngClass]="{ 'fa fa-spinner fa-spin': isNewLandingDomainAdding }"></i>
-                            </button>                                                        
-                        </div>
-                        <div class="type-the-domain-you-wrapper">
-                            <p class="type-the-domain-you">Type the domain<br /><a *ngIf="!landingSettings?.landingPageDomains?.length && !isNewLandingDomainAdding; else youWantToUse" class="generate-domain" (click)="generateDomain()">or {{l('Generate here')}}</a>
-                                <ng-template #youWantToUse>you want to use</ng-template>
-                            </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="box2">
-              <div class="element">
-                <div class="tab">
-                  <div class="overlap">
-                    <div class="rectangle-3"></div>
-                    <div class="vector-wrapper" [ngClass]="{valid: landingSettings?.landingPageDomains?.length}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                    <div class="overlap-group-wrapper">
-                      <div class="overlap-group-2">
-                        <div class="ellipse"></div>
-                        <div class="text-wrapper-10">2</div>
-                      </div>
-                    </div>
-                    <p class="text-wrapper-11">Verify/Add the required entries to your DNS provider</p>
-                    <img (click)="domainsBlock.classList.toggle('hidden')" [ngClass]="{closed: domainsBlock.classList.contains('hidden')}" class="vector-2" src="./assets/common/icons/arrow-down-black.svg" />
-                    <div class="rectangle-4"></div>
-                  </div>
-                </div>
-                <div class="block" #domainsBlock>
-                  <div class="overlap-group">
-                    <div class="group">
-                        <dx-data-grid *ngIf="landingSettings?.landingPageDomains && landingSettings.landingPageDomains.length"
-                                #landingDomainsGrid
-                                class="grid-compact-view main-component-view"
-                                accessKey="landingDomainsGrid"
-                                [masterDetail]="{template: 'detailsTemplate'}"
-                                [dataSource]="landingSettings.landingPageDomains"
-                                [allowColumnReordering]="false"
-                                [columnAutoWidth]="true"
-                                [allowColumnResizing]="true"
-                                (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                            <dxi-column dataField="name" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="isValid" [caption]="l('Valid')"></dxi-column>
-                            <dxi-column [width]="200" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
-                            <div *dxTemplate="let data of 'editDeleteTemplate'" style="text-align: right;">
-                                <a *ngIf="!data.data.isValid" class="dx-link action manage" (click)="verifyDomain(data, landingDomainsGrid)">{{l('Verify')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isValidating }"></i></a>
-                                <a class="dx-link action" (click)="deleteDomain(data.data, data.data.index)">{{l('Delete')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isDeleting }"></i></a>
-                            </div>
-                            <div *dxTemplate="let data of 'detailsTemplate'" class="domain">
-                                <div *ngIf="!data.data.isVaid && data.data.configRecords && data.data.configRecords.length" class="domain-dns-info">
-                                    <div>Set the following record on your DNS provider to continue:</div>
-                                    <div class="container">
-                                        <div class="row header-row">
-                                            <div class="col-2">Type</div>
-                                            <div class="col-4">Name</div>
-                                            <div class="col-6">Value</div>
-                                        </div>
-                                        <div *ngFor="let dnsRecord of data.data.configRecords" class="row">
-                                            <div class="col-2">{{dnsRecord.type}}</div>
-                                            <div class="col-4">{{dnsRecord.name}}</div>
-                                            <div class="col-6">{{dnsRecord.value}}</div>
-                                        </div>
-                                    </div>
-                                    <div>Depending on your provider, it might take some time for the DNS records to apply.</div>
+                        <div class="group">
+                            <dx-data-grid *ngIf="landingSettings?.landingPageDomains && landingSettings.landingPageDomains.length"
+                                    #landingDomainsGrid
+                                    class="grid-compact-view main-component-view"
+                                    accessKey="landingDomainsGrid"
+                                    [masterDetail]="{template: 'detailsTemplate'}"
+                                    [dataSource]="landingSettings.landingPageDomains"
+                                    [allowColumnReordering]="false"
+                                    [columnAutoWidth]="true"
+                                    [allowColumnResizing]="true"
+                                    (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                                <dxi-column dataField="name" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column dataField="isValid" [caption]="l('Valid')" cellTemplate="validTemplate"></dxi-column>
+                                <dxi-column [width]="200" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                                <div *dxTemplate="let data of 'validTemplate'">
+                                    <i class="fa fa-{{data.data.isValid ? 'check' : 'times'}}"></i>
                                 </div>
-                            </div>
-                        </dx-data-grid>
+                                <div *dxTemplate="let data of 'editDeleteTemplate'" style="text-align: right;">
+                                    <a *ngIf="!data.data.isValid" class="dx-link action manage" (click)="verifyDomain(data, landingDomainsGrid)">{{l('Verify')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isValidating }"></i></a>
+                                    <a class="dx-link action" (click)="deleteDomain(data.data, data.data.index)">{{l('Delete')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isDeleting }"></i></a>
+                                </div>
+                                <div *dxTemplate="let data of 'detailsTemplate'" class="domain">
+                                    <div *ngIf="!data.data.isVaid && data.data.configRecords && data.data.configRecords.length" class="domain-dns-info">
+                                        <div>Set the following record on your DNS provider to continue:</div>
+                                        <div class="container">
+                                            <div class="row header-row">
+                                                <div class="col-2">Type</div>
+                                                <div class="col-4">Name</div>
+                                                <div class="col-6">Value</div>
+                                            </div>
+                                            <div *ngFor="let dnsRecord of data.data.configRecords" class="row">
+                                                <div class="col-2">{{dnsRecord.type}}</div>
+                                                <div class="col-4">{{dnsRecord.name}}</div>
+                                                <div class="col-6">{{dnsRecord.value}}</div>
+                                            </div>
+                                        </div>
+                                        <div>Depending on your provider, it might take some time for the DNS records to apply.</div>
+                                    </div>
+                                </div>
+                            </dx-data-grid>
 
-                        <p class="no-found" *ngIf="!landingSettings?.landingPageDomains || !landingSettings?.landingPageDomains?.length">No domains found.</p>
+                            <p class="no-found" *ngIf="!landingSettings?.landingPageDomains || !landingSettings?.landingPageDomains?.length">No domains found.</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
             </div>
-        </div>
+        </dx-scroll-view>
     </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
