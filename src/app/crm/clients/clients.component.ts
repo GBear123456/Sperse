@@ -1556,23 +1556,23 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     },
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
-                                    visible: this.showDataGrid || this.showPivotGrid
+                                    visible: this.showDataGrid || this.showPivotGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportToCSV.bind(this),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportToGoogleSheet.bind(this),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 },
                                 {
                                     type: 'downloadOptions',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 }
                             ]
                         }
@@ -1694,13 +1694,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.initDataSource();
         this.initToolbarConfig();
         this.isGalleryView = false;
-        if (this.showDataGrid) {
+        if (this.showDataGrid || this.showGallery) {
             this.repaintDataGrid();
         }
     }
 
     initDataSource() {
-        if (this.showDataGrid) {
+        if (this.showDataGrid || this.showGallery) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
@@ -1757,7 +1757,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     processFilterInternal() {
-        if (this.showDataGrid && this.dataGrid && this.dataGrid.instance || this.showPivotGrid &&
+        if ((this.showDataGrid || this.showGallery) && this.dataGrid && this.dataGrid.instance || this.showPivotGrid &&
             this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
         ) {
             this.dataSource['total'] = this.dataSource['entities'] = undefined;

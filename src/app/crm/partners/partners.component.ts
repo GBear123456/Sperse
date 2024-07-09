@@ -730,7 +730,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-            filter(() => this.showDataGrid || this.showPivotGrid)
+            filter(() => this.showDataGrid || this.showPivotGrid || this.showGallery)
         ).subscribe(() => {
             if (this.showPivotGrid)
                 this.pivotGridComponent.dataGrid.instance.updateDimensions();
@@ -941,7 +941,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         if (dataLayoutType != DataLayoutType.Pipeline) {
             if (this.pipelineComponent)
                 this.pipelineComponent.deselectAllCards();
-            if (this.showDataGrid)
+            if (this.showDataGrid || this.showGallery)
                 setTimeout(() => this.repaintDataGrid());
         }
     }
@@ -1430,29 +1430,29 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                                 this.exportService.getFileName(null, 'PivotGrid')
                                             );
                                             this.pivotGridComponent.dataGrid.instance.exportToExcel();
-                                        } else if (this.showDataGrid) {
+                                        } else if (this.showDataGrid || this.showGallery) {
                                             this.exportToXLS(options);
                                         }
                                     },
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
-                                    visible: this.showDataGrid || this.showPivotGrid
+                                    visible: this.showDataGrid || this.showPivotGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportToCSV.bind(this),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportToGoogleSheet.bind(this),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 },
                                 {
                                     type: 'downloadOptions',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 }
                             ]
                         }
@@ -1613,7 +1613,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     processFilterInternal() {
-        if (this.showDataGrid || this.showPivotGrid) {
+        if (this.showDataGrid || this.showPivotGrid || this.showGallery) {
             let dataGrid = (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid;
             if (dataGrid) {
                 this.dataSource['entities'] = this.dataSource['total'] = undefined;
@@ -1638,7 +1638,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     };
                     this.pipelineDataSource.exportIgnoreOnLoaded = true;
                 });
-        } else if (this.showDataGrid) {
+        } else if (this.showDataGrid || this.showGallery) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();

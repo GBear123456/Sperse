@@ -1263,7 +1263,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (this.pipelineComponent) {
                 this.pipelineComponent.deselectAllCards();
             }
-            if (this.showDataGrid) {
+            if (this.showDataGrid || this.showGallery) {
                 setTimeout(() => this.dataGrid.instance.repaint());
             }
         }
@@ -1766,7 +1766,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                                 )
                                             );
                                             this.pivotGridComponent.dataGrid.instance.exportToExcel();
-                                        } else if (this.showPipeline || this.showDataGrid) {
+                                        } else if (this.showPipeline || this.showDataGrid || this.showGallery) {
                                             return this.exportToXLS(
                                                 options,
                                                 null,
@@ -1776,7 +1776,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     }),
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
-                                    visible: this.showDataGrid || this.showPipeline || this.showPivotGrid
+                                    visible: this.showDataGrid || this.showPipeline || this.showPivotGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportData.bind(this, options => this.exportToCSV(
@@ -1786,7 +1786,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     )),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
-                                    visible: this.showPipeline || this.showDataGrid
+                                    visible: this.showPipeline || this.showDataGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportData.bind(this, options => this.exportToGoogleSheet(
@@ -1796,11 +1796,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     )),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
-                                    visible: this.showPipeline || this.showDataGrid
+                                    visible: this.showPipeline || this.showDataGrid || this.showGallery
                                 },
                                 {
                                     type: 'downloadOptions',
-                                    visible: this.showPipeline || this.showDataGrid
+                                    visible: this.showPipeline || this.showDataGrid || this.showGallery
                                 }
                             ]
                         }
@@ -1944,7 +1944,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.pipelineComponent.searchColumns = this.searchColumns;
             this.pipelineComponent.searchValue = this.searchValue;
         }
-        if (this.showPipeline || this.showDataGrid || this.showPivotGrid) {
+        if (this.showPipeline || this.showDataGrid || this.showPivotGrid || this.showGallery) {
             contexts = contexts && contexts.length ? contexts : [ this.showPipeline ? this.pipelineComponent : this ];
             contexts.forEach(context => {
                 if (context && context.processODataFilter) {
@@ -1976,7 +1976,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.pipelineDataSource = cloneDeep(this.dataSourceConfig);
                     this.pipelineDataSource['exportIgnoreOnLoaded'] = true;
                 }, 500);
-        } else if (this.showDataGrid) {
+        } else if (this.showDataGrid || this.showGallery) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
@@ -2104,7 +2104,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.selectedContactGroup,
                 this.selectedPipelineId
             ).subscribe(declinedList => {
-                if (this.showDataGrid) {
+                if (this.showDataGrid || this.showGallery) {
                     let gridInstance = this.dataGrid && this.dataGrid.instance;
                     if (gridInstance && declinedList && declinedList.length)
                         gridInstance.selectRows(declinedList.map((item: LeadDto) => item.Id), false);
