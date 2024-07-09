@@ -4,6 +4,10 @@
 
 /* You can add global styles to this file, and also import other style files */
 
+.cke_notifications_area {
+    display: none;
+}
+
 /* fix scrolling body when mat dialog is open*/
 html,
 body {
