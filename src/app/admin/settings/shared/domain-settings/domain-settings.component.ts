@@ -42,6 +42,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     public readonly HostType_PlatformApp = TenantHostType.PlatformApp;
     public readonly HostType_LandingPage = TenantHostType.LandingPage;
 
+    domainIsValid = false;
     isNewLandingDomainAdding = false;
     landingSettings: GetLandingPageSettingsDto;
     defaultTenantName = AppConsts.defaultTenantName;
@@ -130,7 +131,8 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
     afterSave() {
         if (this.isAppOrPortalTab(this.selectedTabIndex)) {
-            this.customDomainsGrid.instance.refresh();
+            this.initBindingModal(this.INTRO_TAB);
+            this.refreshSSLBindingGrid();
         }
     }
 
@@ -151,7 +153,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                     sslCertificateId: data.sslCertificateId,
                     isActive: data.isActive
                 });
-                this.model.tenantHostType = <any>data.hostType;
+                this.model.tenantHostType = <TenantHostType>data.hostType;
                 this.model.domainName = data.hostName;
                 this.model.sslCertificateId = data.sslCertificateId || -1;
                 this.isDomainValid = true;            
@@ -159,7 +161,8 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
             } else {
                 this.model = new AddSslBindingInput();
                 this.model.organizationUnitId = -1;
-                this.model.tenantHostType = this.hostTypes[0].id;
+                this.model.tenantHostType = this.selectedTabIndex == this.APP_DOMAIN_TAB 
+                    ? TenantHostType.PlatformApp : TenantHostType.MemberPortal;
                 this.model.sslCertificateId = -1;
                 this.isDomainValid = false;
                 this.rowData = undefined;
@@ -172,7 +175,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         if (this.model) {
             return !this.model.id && (
                 this.model.organizationUnitId != -1 || 
-                this.model.tenantHostType != this.hostTypes[0].id || 
+                this.model.tenantHostType != (this.prevTabIndex == this.APP_DOMAIN_TAB ? TenantHostType.PlatformApp : TenantHostType.MemberPortal) ||
                 this.model.sslCertificateId != -1 ||
                 this.model.domainName
             ) || this.rowData && (
@@ -301,6 +304,8 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     }
 
     onValueChanged(event) {
+        this.domainIsValid = this.model && this.model.domainName && 
+            event.component.option('isValid');
         this.changeDetection.detectChanges();
     }
 

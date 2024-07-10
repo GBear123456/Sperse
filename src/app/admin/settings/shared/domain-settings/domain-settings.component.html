@@ -349,7 +349,7 @@
                 <div class="tab">
                   <div class="overlap-2">
                     <div class="rectangle-2"></div>
-                    <div class="vector-wrapper" [ngClass]="{valid: model?.domainName && model?.id}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                    <div class="vector-wrapper" [ngClass]="{valid: model?.domainName && (model?.id || domainIsValid)}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
                     <div class="overlap-group-wrapper">
                       <div class="overlap-group-2">
                         <div class="ellipse"></div>
@@ -377,7 +377,7 @@
                                 [maxLength]="256" 
                                 [readOnly]="editing"
                                 [(value)]="model.domainName"
-                                (onInput)="onValueChanged($event)">
+                                (onValueChanged)="onValueChanged($event)">
                                 <dx-validator>
                                     <dxi-validation-rule 
                                         type="required" 
