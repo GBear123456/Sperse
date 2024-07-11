@@ -16,6 +16,7 @@ import {
     LeadServiceProxy,
     PasswordComplexitySetting,
     PaymentPeriodType,
+    ProductDonationSuggestedAmountInfo,
     ProductType,
     ProfileServiceProxy,
     PublicCouponInfo,
@@ -631,5 +632,10 @@ export class SingleProductComponent implements OnInit {
             if (this.customerPriceElement && this.customerPriceElement.nativeElement)
                 this.customerPriceElement.nativeElement.focus();
         });
+    }
+
+    selectSuggestedAmount(suggestedAmount: ProductDonationSuggestedAmountInfo) {
+        this.customerPriceEditMode = false;
+        this.productInfo.price = suggestedAmount.amount;
     }
 }

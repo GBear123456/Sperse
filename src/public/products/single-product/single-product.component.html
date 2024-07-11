@@ -81,7 +81,7 @@
                     </ng-container>
                     <ng-template #generalPrice>
                         <ng-container *ngIf="!isFreeProductSelected else freeProduct">
-                            <div class="quantity" *ngIf="productInfo.type != productType.Digital && productInfo.type != productType.Event">
+                            <div class="quantity" *ngIf="productInfo.type == productType.General">
                                 <div class="quantity-title">Quantity</div>
                                 <div class="quantity-controls">
                                     <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>
@@ -103,6 +103,15 @@
                     </ng-template>
                 </div>
             </ng-template>
+            <div *ngIf="productInfo.customerChoosesPrice && productInfo.productDonation && productInfo.productDonation.productDonationSuggestedAmounts" class="donation-suggestions">
+                <div *ngFor="let suggestedAmount of productInfo.productDonation.productDonationSuggestedAmounts"
+                     class="suggested-amount"
+                     [ngClass]="{ active: productInfo.price == suggestedAmount.amount }"
+                     (click)="selectSuggestedAmount(suggestedAmount)">
+                    <div class="amount">{{ currencySymbol }}{{suggestedAmount.amount | currency: productInfo.data.currency : '' : '1.0-2'}}</div>
+                    <div class="text">{{suggestedAmount.text}}</div>
+                </div>
+            </div>
             <div *ngIf="descriptionHtml" class="description-html" [innerHtml]="descriptionHtml"></div>
         </div>
         <div class="box__right box__item">
@@ -131,9 +140,9 @@
                     <span class="phone__label">Phone</span>
                     <div>
                         <country-phone-number #phoneNumber
-                            [required]="false"
-                            [(phoneNumber)]="requestInfo.phone"
-                            (onInitialized)="onPhoneFieldInitialize($event)">
+                                              [required]="false"
+                                              [(phoneNumber)]="requestInfo.phone"
+                                              (onInitialized)="onPhoneFieldInitialize($event)">
                         </country-phone-number>
                     </div>
                 </div>

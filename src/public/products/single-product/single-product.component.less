@@ -308,6 +308,43 @@
         }
     }
 
+    .donation-suggestions {
+        width: 493px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px;
+
+        .suggested-amount {
+            width: 245px;
+            min-height: 46px;
+            display: flex;
+            align-items: center;
+            background: #4974db;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            padding: 0 15px;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 80%;
+            }
+
+            &.active {
+                background: #1a99ef;
+            }
+
+            .amount {
+                width: 80px;
+                border-right: 1px white solid;
+                margin-right: 15px;
+            }
+
+            .text {
+                width: 100%;
+            }
+        }
+    }
+
     .name {
         display: grid;
         grid-template: 1fr / 1fr 1fr;
@@ -812,7 +849,6 @@
         color: gray;
     }
 }
-
 
 ::ng-deep .description-html {
     border-top: 1px solid;
