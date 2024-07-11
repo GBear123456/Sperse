@@ -26,7 +26,7 @@
                                 <p class="div">Create a Free SSL certificate or utilize your own certificate.</p>
                             </div>
                         </div>
-                        <button class="btn btn-layout" (click)="initBindingModal(APP_DOMAIN_TAB)"><i class="fa fa-plus"></i>{{l("AddSSLBinding")}}</button>
+                        <button *ngIf="isTenantHostCreateGranted" class="btn btn-layout" (click)="initBindingModal(APP_DOMAIN_TAB)"><i class="fa fa-plus"></i>{{l("AddSSLBinding")}}</button>
                     </div>
                 </div>
 
@@ -49,13 +49,13 @@
                         <dxi-column [width]="80" dataField="isActive" [caption]="l('Active')"></dxi-column>
                         <dxi-column [width]="195" dataField="sslCertificateExpiration" [caption]="l('ExpirationDate')" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="sslCertificateThumbprint" [caption]="l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column [width]="170" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                        <dxi-column [width]="170" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate" [visible]="isTenantHostEditGranted || isTenantHostDeleteGranted"></dxi-column>
                         <div *dxTemplate="let data of 'organizationCell'" class="clipboard-holder {{data.value ? '' : 'default'}}">
                             {{ getOrgUnitName(data.value) }}
                         </div>
                         <div *dxTemplate="let data of 'editDeleteTemplate'">
-                            <a class="dx-link action manage" (click)="initBindingModal(getTabIndexByType(data.data), data.data)">{{l('Manage')}}</a>
-                            <a class="dx-link action" (click)="deleteSSLBinding(data)">{{l('Delete')}}</a>
+                            <a *ngIf="isTenantHostEditGranted" class="dx-link action manage" (click)="initBindingModal(getTabIndexByType(data.data), data.data)">{{l('Manage')}}</a>
+                            <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deleteSSLBinding(data)">{{l('Delete')}}</a>
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'" class="tabular clipboard-holder">
                             {{cellData.value | datetime: formatting.dateTimeMoment}}
@@ -101,7 +101,7 @@
             </dx-scroll-view>
         </div>
     </mat-tab>
-    <mat-tab>
+    <mat-tab *ngIf="isTenantHostCreateGranted || isTenantHostEditGranted">
         <ng-template mat-tab-label>
           <img src="./assets/common/icons/blocks.svg">
           <div class="title">Your CRM App</div>
@@ -111,7 +111,7 @@
             <ng-container *ngTemplateOutlet="domainMapTemplate"></ng-container>
         </dx-scroll-view>
     </mat-tab>
-    <mat-tab>
+    <mat-tab *ngIf="isTenantHostCreateGranted || isTenantHostEditGranted">
         <ng-template mat-tab-label>
           <img src="./assets/common/icons/personal-card.svg">
           <div class="title">Your Client Portal</div>
@@ -121,7 +121,7 @@
             <ng-container *ngTemplateOutlet="domainMapTemplate"></ng-container>
         </dx-scroll-view>
     </mat-tab>
-    <mat-tab>
+    <mat-tab *ngIf="lendingPageEnabled">
         <ng-template mat-tab-label>
           <img src="./assets/common/icons/shopping.svg">
           <div class="title">Your Landing Pages</div>
@@ -214,7 +214,7 @@
                                 </div>
                                 <div *dxTemplate="let data of 'editDeleteTemplate'" style="text-align: right;">
                                     <a *ngIf="!data.data.isValid" class="dx-link action manage" (click)="verifyDomain(data, landingDomainsGrid)">{{l('Verify')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isValidating }"></i></a>
-                                    <a class="dx-link action" (click)="deleteDomain(data.data, data.data.index)">{{l('Delete')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isDeleting }"></i></a>
+                                    <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deleteDomain(data.data, data.data.index)">{{l('Delete')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isDeleting }"></i></a>
                                 </div>
                                 <div *dxTemplate="let data of 'detailsTemplate'" class="domain">
                                     <div *ngIf="!data.data.isVaid && data.data.configRecords && data.data.configRecords.length" class="domain-dns-info">
@@ -253,7 +253,7 @@
 
         <div class="header">
             <h3>{{l('SSLConfiguration')}}</h3>
-            <button class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{l("UploadCertificate")}}</button>
+            <button *ngIf="isTenantHostCreateGranted" class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{l("UploadCertificate")}}</button>
         </div>
         <div id="SSLTable" class="tab-body">
             <dx-data-grid class="grid-compact-view main-component-view"
@@ -271,7 +271,7 @@
                 <dxi-column dataField="thumbprint" [caption]="l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
                 <div *dxTemplate="let data of 'editDeleteTemplate'">
-                    <a class="dx-link action" (click)="deleteCertificate(data)">{{l('Delete')}}</a>
+                    <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deleteCertificate(data)">{{l('Delete')}}</a>
                 </div>
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                     {{cellData.value | datetime: formatting.dateTimeMoment}}

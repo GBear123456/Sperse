@@ -46,10 +46,6 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     isNewLandingDomainAdding = false;
     landingSettings: GetLandingPageSettingsDto;
     defaultTenantName = AppConsts.defaultTenantName;
-    hostTypes = Object.keys(TenantHostType)
-        .map(item => {
-            return { id: item, name: this.l('HostType_' + item) };
-        });
 
     model: any;
     orgUnits: any[] = [{
@@ -65,8 +61,20 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     }
 
     envHost = environment;
+    lendingPageEnabled = abp.features.isEnabled(AppFeatures.CRMTenantLandingPage)
+        && this.permission.isGranted(AppPermissions.AdministrationUsers);
     tenantHostsEnabled = abp.features.isEnabled(AppFeatures.AdminCustomizations)
         && this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
+
+    isTenantHostCreateGranted = this.permission.isGranted(AppPermissions.AdministrationTenantHostsCreate);
+    isTenantHostEditGranted = this.permission.isGranted(AppPermissions.AdministrationTenantHostsEdit);
+    isTenantHostDeleteGranted = this.permission.isGranted(AppPermissions.AdministrationTenantHostsDelete);
+
+    hostTypes = Object.keys(TenantHostType)
+        .map(item => {
+            return { id: item, name: this.l('HostType_' + item) };
+        });
+
     formatting = AppConsts.formatting;
     selectedTabIndex = 0;
     prevTabIndex = 0;
@@ -91,21 +99,29 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     ) {
         super(_injector);
 
-        this.dictionaryProxy.getOrganizationUnits(
-            undefined, undefined, true
-        ).subscribe(res => this.orgUnits = this.orgUnits.concat(res));
+        if ((this.isTenantHostCreateGranted || this.isTenantHostEditGranted) && 
+            (
+                this.permission.isGranted(AppPermissions.CRM) 
+                ||
+                this.permission.isGranted(AppPermissions.AdministrationUsers)
+            )
+        )
+            this.dictionaryProxy.getOrganizationUnits(
+                undefined, undefined, true
+            ).subscribe(res => this.orgUnits = this.orgUnits.concat(res));
 
-        this.landingPageProxy.getLandingPageSettings().subscribe(
-            (settings) => {
-                settings.landingPageDomains.map((domain, index) => {
-                    domain['index'] = index;
-                    return domain;
-                });
+        if (this.lendingPageEnabled)
+            this.landingPageProxy.getLandingPageSettings().subscribe(
+                (settings) => {
+                    settings.landingPageDomains.map((domain, index) => {
+                        domain['index'] = index;
+                        return domain;
+                    });
 
-                this.landingSettings = settings;
-                this.changeDetection.detectChanges();
-            }
-        );
+                    this.landingSettings = settings;
+                    this.changeDetection.detectChanges();
+                }
+            );
 
         this.getTenantSslCertificates();
     }
@@ -232,7 +248,9 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     refreshSSLBindingGrid() {
         this.tenantHostService.getSslBindings()
             .subscribe((result: TenantSslBindingInfo[]) => {
-                this.sslBindingsDataSource = result;
+                this.sslBindingsDataSource = result.filter(item => 
+                    this.lendingPageEnabled || item.hostType != TenantHostType.LandingPage
+                );
                 this.customDomainsGrid.instance.refresh();
                 this.changeDetection.detectChanges();
             });
@@ -354,28 +372,30 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     }
 
     onTabChange() {
-        if (!this.isAppOrPortalTab(this.prevTabIndex)) {
-            return this.initBindingModal(this.selectedTabIndex);            
-        }
-
-        if (this.selectedTabIndex != this.prevTabIndex) {
-            if (this.isModelDataChanged())
-                this.message.confirm(
-                    this.l('Unsaved changes have been detected'),
-                    this.l('AreYouSure'),
-                    confirmed => {
-                        if (confirmed) {
-                            this.initBindingModal(this.selectedTabIndex); 
-                        } else {
-                            this.selectedTabIndex = this.prevTabIndex;
-                            this.changeDetection.detectChanges();
-                        }
-                    }
-                );
-            else {
-                this.initBindingModal(this.selectedTabIndex);
+        if (this.isTenantHostCreateGranted || this.isTenantHostEditGranted) {
+            if (!this.isAppOrPortalTab(this.prevTabIndex)) {
+                return this.initBindingModal(this.selectedTabIndex);            
             }
-        }  
+
+            if (this.selectedTabIndex != this.prevTabIndex) {
+                if (this.isModelDataChanged())
+                    this.message.confirm(
+                        this.l('Unsaved changes have been detected'),
+                        this.l('AreYouSure'),
+                        confirmed => {
+                            if (confirmed) {
+                                this.initBindingModal(this.selectedTabIndex); 
+                            } else {
+                                this.selectedTabIndex = this.prevTabIndex;
+                                this.changeDetection.detectChanges();
+                            }
+                        }
+                    );
+                else {
+                    this.initBindingModal(this.selectedTabIndex);
+                }
+            }
+        }
     }
 
     isAppOrPortalTab(index): boolean {
