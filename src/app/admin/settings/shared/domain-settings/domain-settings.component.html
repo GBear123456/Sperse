@@ -282,68 +282,6 @@
 </mat-tab-group>
 <ng-template #domainMapTemplate>
         <div class="content">
-            <div class="box2">
-              <div class="element">
-                <div class="tab">
-                  <div class="overlap">
-                    <div class="rectangle-3"></div>
-                    <div class="vector-wrapper"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                    <div class="overlap-group-wrapper">
-                      <div class="overlap-group-2">
-                        <div class="ellipse"></div>
-                        <div class="text-wrapper-10">1</div>
-                      </div>
-                    </div>
-                    <p class="text-wrapper-11">Add the required entries to your domain DNS</p>
-                    <img (click)="block2.classList.toggle('hidden')" [ngClass]="{closed: block2.classList.contains('hidden')}" class="vector-2" src="./assets/common/icons/arrow-down-black.svg" />
-                    <div class="rectangle-4"></div>
-                  </div>
-                </div>
-                <div class="block" #block2>
-                  <div class="overlap-group">
-                    <div class="group">
-                      <p class="p">
-                        To map Host Name to the {{defaultTenantName}} {{selectedTabIndex == APP_DOMAIN_TAB ? 'App' : 'Portal'}} the following records need to be added on the Host Name DNS:
-                      </p>
-                      <div class="group-2">
-                        <p class="TXT-record-asuid" *ngIf="selectedTabIndex == APP_DOMAIN_TAB">
-                          <span class="text-wrapper-5">TXT</span>
-                          <span class="text-wrapper-3"> </span>
-                          <span class="text-wrapper-6"> record </span>
-                          <span class="text-wrapper-7">asuid.custom.mysite.com</span>
-                          <span class="text-wrapper-6"> with domain verification id </span>
-                          <span class="text-wrapper-5">{{envHost.asuid}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.asuid)"></i></span>
-                        </p>
-                        <div class="rectangle-2" [ngStyle]="{height: selectedTabIndex == APP_DOMAIN_TAB ? '122px' : '16px'}"></div>
-                        <p class="a-record-custom" *ngIf="selectedTabIndex == APP_DOMAIN_TAB">
-                          <span class="text-wrapper-5">A</span>
-                          <span class="text-wrapper-8"> </span>
-                          <span class="text-wrapper-6"> record </span>
-                          <span class="text-wrapper-7">custom.mysite.com</span>
-                          <span class="text-wrapper-6"> should point to </span>
-                          <span class="text-wrapper-5">{{envHost.ip}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.ip)"></i></span>
-                        </p>
-                        <div class="text-wrapper-9" *ngIf="selectedTabIndex == APP_DOMAIN_TAB">or</div>
-                        <p class="CNAME-record-custom">
-                          <span class="text-wrapper-5">CNAME</span>
-                          <span class="text-wrapper-6"> record </span>
-                          <span class="text-wrapper-7">custom.mysite.com</span>
-                          <span class="text-wrapper-6"> should point to </span>
-                          <span class="text-wrapper-5">{{selectedTabIndex == APP_DOMAIN_TAB ? envHost.host : envHost.portalCdn}} <i class="copy save-to-clipboard" (click)="copyToClipboard(selectedTabIndex == APP_DOMAIN_TAB ? envHost.host : envHost.portalCdn)"></i></span>
-                        </p>
-                      </div>
-                    </div>
-                    <div class="div"></div>
-                    <p class="once-you-have">
-                      <span class="text-wrapper">Once you have updated your DNS entries,</span>
-                      <span class="span">&nbsp;</span>
-                      <a class="text-wrapper-2" target="_blank" href="https://mxtoolbox.com/DnsLookup.aspx">click here to verify</a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             <div class="box1">
               <div class="element">
                 <div class="tab">
@@ -353,7 +291,7 @@
                     <div class="overlap-group-wrapper">
                       <div class="overlap-group-2">
                         <div class="ellipse"></div>
-                        <div class="text-wrapper-2">2</div>
+                        <div class="text-wrapper-2">1</div>
                       </div>
                     </div>
                     <div class="text-wrapper-3">Enter your custom domain</div>
@@ -378,7 +316,7 @@
                                 [readOnly]="editing"
                                 [(value)]="model.domainName"
                                 (onValueChanged)="onValueChanged($event)">
-                                <dx-validator>
+                                <dx-validator #domainValidator>
                                     <dxi-validation-rule 
                                         type="required" 
                                         message="{{l('ThisFieldIsRequired')}}.">
@@ -391,7 +329,7 @@
                                     <dxi-validation-rule 
                                         type="async" 
                                         [message]="l('HostName_NotMapped')" 
-                                        [validationCallback]="checkHostNameDnsMapping">
+                                        [validationCallback]="checkMappingValid">
                                      </dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
@@ -406,11 +344,76 @@
               </div>
             </div>
 
+            <div class="box2">
+              <div class="element">
+                <div class="tab">
+                  <div class="overlap">
+                    <div class="rectangle-3"></div>
+                    <div class="vector-wrapper" [ngClass]="{valid: model?.domainName && (model?.id || isDomainMappingValid)}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                    <div class="overlap-group-wrapper">
+                      <div class="overlap-group-2">
+                        <div class="ellipse"></div>
+                        <div class="text-wrapper-10">2</div>
+                      </div>
+                    </div>
+                    <p class="text-wrapper-11">Add the required entries to your domain DNS</p>
+                    <img (click)="block2.classList.toggle('hidden')" [ngClass]="{closed: block2.classList.contains('hidden')}" class="vector-2" src="./assets/common/icons/arrow-down-black.svg" />
+                    <div class="rectangle-4"></div>
+                  </div>
+                </div>
+                <div class="block" [ngClass]="{hidden: !model?.id && !domainIsValid}" #block2>
+                  <div class="overlap-group">
+                    <div class="group">
+                      <p class="p">
+                        To map Host Name to the {{defaultTenantName}} {{selectedTabIndex == APP_DOMAIN_TAB ? 'App' : 'Portal'}} the following records need to be added on the Host Name DNS:
+                      </p>
+                      <div class="group-2">
+                        <p class="TXT-record-asuid" *ngIf="selectedTabIndex == APP_DOMAIN_TAB">
+                          <span class="text-wrapper-5">TXT</span>
+                          <span class="text-wrapper-3"> </span>
+                          <span class="text-wrapper-6"> record </span>
+                          <span class="text-wrapper-7">asuid.{{model?.domainName}}</span>
+                          <span class="text-wrapper-6"> with domain verification id </span>
+                          <span class="text-wrapper-5">{{envHost.asuid}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.asuid)"></i></span>
+                        </p>
+                        <div class="rectangle-2" [ngStyle]="{height: selectedTabIndex == APP_DOMAIN_TAB ? '122px' : '16px'}"></div>
+                        <p class="a-record-custom" *ngIf="selectedTabIndex == APP_DOMAIN_TAB">
+                          <span class="text-wrapper-5">A</span>
+                          <span class="text-wrapper-8"> </span>
+                          <span class="text-wrapper-6"> record </span>
+                          <span class="text-wrapper-7">{{model?.domainName}}</span>
+                          <span class="text-wrapper-6"> should point to </span>
+                          <span class="text-wrapper-5">{{envHost.ip}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.ip)"></i></span>
+                        </p>
+                        <div class="text-wrapper-9" *ngIf="selectedTabIndex == APP_DOMAIN_TAB">or</div>
+                        <p class="CNAME-record-custom">
+                          <span class="text-wrapper-5">CNAME</span>
+                          <span class="text-wrapper-6"> record </span>
+                          <span class="text-wrapper-7">{{model?.domainName}}</span>
+                          <span class="text-wrapper-6"> should point to </span>
+                          <span class="text-wrapper-5">{{selectedTabIndex == APP_DOMAIN_TAB ? envHost.host : envHost.portalCdn}} <i class="copy save-to-clipboard" (click)="copyToClipboard(selectedTabIndex == APP_DOMAIN_TAB ? envHost.host : envHost.portalCdn)"></i></span>
+                        </p>
+                      </div>
+                      <div class="dns-lookup">To check correct mappings you can use <a target="_blank" href="https://mxtoolbox.com/DnsLookup.aspx">DNS Lookup</a></div>
+                    </div>
+                    <div class="div"></div>
+                    <p class="once-you-have">
+                      <span class="text-wrapper">Once you have updated your DNS entries,</span>
+                      <span class="span">&nbsp;</span>
+                      <a class="text-wrapper-2" (click)="checkHostNameDnsMapping({value: model?.domainName})">click here to verify</a>
+                      <br>
+                      <span *ngIf="isDomainMappingValid != undefined && !isDomainMappingValid" class="host-not-mapped">"{{model?.domainName}}" {{l('HostName_NotMapped')}}</span>
+                    </p>     
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="box3">
               <div class="group">
                 <div class="overlap">
                   <div class="rectangle"></div>
-                  <div class="vector-wrapper"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                  <div class="vector-wrapper" [ngClass]="{valid: isDomainMappingValid}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
                   <img (click)="block3.classList.toggle('hidden')" [ngClass]="{closed: block3.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
                   <div class="div"></div>
                   <p class="text-wrapper">Activate the Secure Socket Layer (SSL) for their domain</p>
@@ -418,7 +421,7 @@
                   <div class="ellipse-2"></div>
                   <div class="text-wrapper-2">3</div>
                 </div>
-                <div class="overlap-group" #block3>
+                <div class="overlap-group" [ngClass]="{hidden: !model?.id && !isDomainMappingValid}" #block3>
                   <div class="group-2" *ngIf="model && selectedTabIndex == APP_DOMAIN_TAB">
                     <div class="overlap-group-2">
                         <dx-select-box [(value)]="model.sslCertificateId"

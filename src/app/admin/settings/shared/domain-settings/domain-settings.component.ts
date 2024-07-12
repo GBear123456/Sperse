@@ -53,7 +53,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         displayName: this.l('AllOrganizationUnits')
     }];
 
-    isDomainValid = false;
+    isDomainMappingValid;
     regexPatterns = AppConsts.regexPatterns;
     sslCertificates: TenantSslCertificateInfo[];
     get editing(): boolean {
@@ -136,7 +136,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
     getSaveObs(): Observable<any> {
         if (this.isAppOrPortalTab(this.selectedTabIndex)) {
-            if (this.isDomainValid) {
+            if (this.isDomainMappingValid) {
                 return this.saveHostNameDnsMapping(); 
             } else {
                 this.notify.error(this.l('HostName_NotMapped'));
@@ -172,7 +172,8 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                 this.model.tenantHostType = <TenantHostType>data.hostType;
                 this.model.domainName = data.hostName;
                 this.model.sslCertificateId = data.sslCertificateId || -1;
-                this.isDomainValid = true;            
+                this.isDomainMappingValid = true;
+                this.domainIsValid = true;            
                 this.rowData = data;
             } else {
                 this.model = new AddSslBindingInput();
@@ -180,7 +181,8 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                 this.model.tenantHostType = this.selectedTabIndex == this.APP_DOMAIN_TAB 
                     ? TenantHostType.PlatformApp : TenantHostType.MemberPortal;
                 this.model.sslCertificateId = -1;
-                this.isDomainValid = false;
+                this.isDomainMappingValid = undefined;
+                this.domainIsValid = false;
                 this.rowData = undefined;
             }
             this.changeDetection.detectChanges();
@@ -305,20 +307,28 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     checkHostNameDnsMapping = (data) => {
         if (this.model.id)
             return Promise.resolve(true);
-        else
-            return new Promise((approve, reject) => {
-                (data.value && this.model.tenantHostType == TenantHostType.PlatformApp ?
-                    this.tenantHostService.checkHostNameDnsMapping(
-                        new CheckHostNameDnsMappingInput({
-                            tenantHostType: TenantHostType.PlatformApp,
-                            hostName: data.value
-                        })
-                    ).pipe(map(res => res.hostNameDnsMapped)) : of(true)
-                ).pipe(tap(isValid => {
-                    this.isDomainValid = isValid;
+
+        this.startLoading();
+        return new Promise((approve, reject) => {
+            (data.value && this.model.tenantHostType == TenantHostType.PlatformApp ?
+                this.tenantHostService.checkHostNameDnsMapping(
+                    new CheckHostNameDnsMappingInput({
+                        tenantHostType: TenantHostType.PlatformApp,
+                        hostName: data.value
+                    })
+                ).pipe(map(res => res.hostNameDnsMapped)) : of(true)
+            ).pipe(
+                finalize(() => this.finishLoading()),
+                tap(isValid => {
+                    this.isDomainMappingValid = isValid;
                     this.changeDetection.detectChanges();
-                })).subscribe(approve, reject);
-            });
+                })
+            ).subscribe(approve, reject);
+        });
+    }
+
+    checkMappingValid = (data) => {
+        return Promise.resolve(this.isDomainMappingValid == undefined ? true : this.isDomainMappingValid);
     }
 
     onValueChanged(event) {

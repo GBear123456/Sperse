@@ -740,6 +740,24 @@
             left: 69px;
         }
 
+        .dns-lookup {
+            font-family: Plus Jakarta Sans;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 23px;
+            text-align: left;
+            color: rgba(16, 33, 58, 1);
+            margin-bottom: 20px;
+            a {
+                font-family: Plus Jakarta Sans;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 23px;
+                text-align: left;
+                color: rgba(0, 168, 237, 1);
+            }
+        }
+
         .p {
             position: relative;
             top: 0;
@@ -916,8 +934,12 @@
             height: 26px;
             top: 20px;
             left: 779px;
-            background-color: #04ca0e;
+            background-color: #d6dde1;
             border-radius: 13px;
+
+            &.valid {
+                background-color: #04ca0e;
+            }
         }
 
         .vector {
@@ -942,6 +964,10 @@
             height: 42px;
             background-color: #ffffff;
             border-radius: 21px;
+        }
+
+        .host-not-mapped {
+            color: red;
         }
 
         .ellipse {
@@ -1038,8 +1064,12 @@
             height: 26px;
             top: 20px;
             left: 779px;
-            background-color: #04ca0e;
+            background-color: #d6dde1;
             border-radius: 13px;
+
+            &.valid {
+                background-color: #04ca0e;
+            }
         }
 
         .vector {
