@@ -143,6 +143,7 @@
 
         &__inner {
             display: grid;
+            position: relative;
             grid-template: 1fr / 1fr 1fr;
             color: #fff;
             max-width: 1144px;
@@ -208,6 +209,38 @@
                     padding: 10px;
                     height: auto;
                 }
+            }
+        }
+    }
+
+    .donation-status {
+        width: 100%;
+
+        .donation-data {
+            display: flex;
+            justify-content: space-between;
+
+            .data {
+                font-size: 25px;
+            }
+
+            .gray {
+                color: gray;
+            }
+        }
+
+        .donation-progress {
+            background-color: #e0e0e0;
+            border-radius: 25px;
+            overflow: hidden;
+            margin: 15px 0;
+
+            .donation-progress-bar {
+                height: 7px;
+                background-color: #1a99ef;
+                width: 0;
+                border-radius: 25px 0 0 25px;
+                transition: width 0.5s ease-in-out;
             }
         }
     }
@@ -841,6 +874,20 @@
                 }
             }
         }
+    }
+
+    .goal-reached-message {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        backdrop-filter: blur(10px);
+        z-index: 3;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 50px;
+        font-size: 28px;
     }
 
     .footer {

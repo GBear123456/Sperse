@@ -109,6 +109,8 @@ export class SingleProductComponent implements OnInit {
         { pattern: this.ls.l('Invalid Price') }
     ]
 
+    showGoalReachedMessage = false;
+
     constructor(
         private route: ActivatedRoute,
         private titleService: Title,
@@ -150,7 +152,7 @@ export class SingleProductComponent implements OnInit {
     initializePayPal() {
         if (this.payPal && this.productInfo && !this.payPal.initialized) {
             let type: ButtonType;
-            if (this.productInfo.type == ProductType.General || this.productInfo.type == ProductType.Digital || this.productInfo.type == ProductType.Event)
+            if (this.productInfo.type == ProductType.General || this.productInfo.type == ProductType.Digital || this.productInfo.type == ProductType.Event || this.productInfo.type == ProductType.Donation)
                 type = ButtonType.Payment;
             else {
                 let hasPayment = false;
@@ -203,18 +205,25 @@ export class SingleProductComponent implements OnInit {
             .subscribe(result => {
                 if (result.id) {
                     this.productInfo = result;
-                    this.currencySymbol = getCurrencySymbol(result.currencyId, 'narrow');
-                    this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
-                    this.titleService.setTitle(this.productInfo.name);
-                    if (result.descriptionHtml)
-                        this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
-                    if (result.data.hasTenantService)
-                        this.initializePasswordComplexity();
-                    this.initConditions();
-                    this.initCustomerPrice();
-                    this.initSubscriptionProduct();
-                    this.initializePayPal();
-                    this.checkIsFree();
+
+                    if (this.productInfo.type == ProductType.Donation && this.productInfo.productDonation.goalAmount &&
+                        this.productInfo.productDonation.raisedAmount >= this.productInfo.productDonation.goalAmount) {
+                        this.showGoalReachedMessage = true;
+                    }
+                    else {
+                        this.currencySymbol = getCurrencySymbol(result.currencyId, 'narrow');
+                        this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
+                        this.titleService.setTitle(this.productInfo.name);
+                        if (result.descriptionHtml)
+                            this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
+                        if (result.data.hasTenantService)
+                            this.initializePasswordComplexity();
+                        this.initConditions();
+                        this.initCustomerPrice();
+                        this.initSubscriptionProduct();
+                        this.initializePayPal();
+                        this.checkIsFree();
+                    }
                 } else {
                     this.showNotFound = true;
                 }
@@ -315,6 +324,7 @@ export class SingleProductComponent implements OnInit {
             case ProductType.General:
             case ProductType.Digital:
             case ProductType.Event:
+            case ProductType.Donation:
                 this.requestInfo.unit = this.productInfo.unit;
                 if (this.productInfo.customerChoosesPrice)
                     this.requestInfo.price = this.productInfo.price;

@@ -15,6 +15,24 @@
                     </span>
                 </span>
             </div>
+            <div *ngIf="productInfo.type == productType.Donation && productInfo.productDonation.goalAmount" class="donation-status">
+                <div class="donation-data">
+                    <div>
+                        <div class="data">{{currencySymbol}}{{productInfo.productDonation.raisedAmount | currency: productInfo.data.currency : '' : '1.0-2'}}</div>
+                        <div class="gray">
+                            {{ls.l('Raised of')}} {{currencySymbol}}{{productInfo.productDonation.goalAmount | currency: productInfo.data.currency : '' : '1.0-2'}}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="data">{{productInfo.productDonation.donationsCount}}</div>
+                        <div class="gray">{{ls.l('Donations')}}</div>
+                    </div>
+                </div>
+                <div class="donation-progress">
+                    <div class="donation-progress-bar" [style.width.%]="productInfo.productDonation.raisedAmount / productInfo.productDonation.goalAmount * 100">
+                    </div>
+                </div>
+            </div>
             <ng-container *ngIf="productInfo.type == productType.Subscription else generalProduct">
                 <div class="subscription-price">
                     <div *ngIf="availablePeriods.length > 1" class="state-slider point{{availablePeriods.length}}">
@@ -289,6 +307,10 @@
                     </ng-template>
                 </div>
             </form>
+        </div>
+        <div *ngIf="showGoalReachedMessage" class="goal-reached-message">
+            <p>Thank you for your interest in supporting our cause.</p>
+            <p>We wanted to inform you that our donation campaign has now closed as we have successfully reached our goal.<br /> We deeply appreciate your willingness to contribute and make a difference.</p>
         </div>
     </div>
     <div class="footer">
