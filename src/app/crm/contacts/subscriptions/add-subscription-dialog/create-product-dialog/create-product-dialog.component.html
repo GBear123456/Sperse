@@ -64,20 +64,28 @@
                                     </dx-text-box>
                                 </div>
                             </div>
-                            <inplace-edit *ngIf="isPublicProductsEnabled"
-                                          [id]="'product-url'"
-                                          [value]="product.publicName"
-                                          [showInlineEditButton]="true"
-                                          [displayValue]="baseUrl + '/p/' + tenantId + '/' + (product.publicName || '')"
-                                          [maxLength]="255"
-                                          [validationRules]="publicNameValidationRules"
-                                          [isReadOnlyField]="isReadOnly"
-                                          lEntityName="Product Url"
-                                          [editPlaceholder]="ls.l('ProductUrl')"
-                                          [isEditDialogEnabled]="false"
-                                          [isHistoryEnabled]="false"
-                                          (valueChanged)="updateProductUrl($event)">
-                            </inplace-edit>
+                            <div class="product-url">
+                                <div class="edit">
+                                    <inplace-edit *ngIf="isPublicProductsEnabled"
+                                                  [id]="'product-url'"
+                                                  [value]="product.publicName"
+                                                  [showInlineEditButton]="true"
+                                                  [displayValue]="baseUrl + '/p/' + tenantId + '/' + (product.publicName || '')"
+                                                  [maxLength]="255"
+                                                  [validationRules]="publicNameValidationRules"
+                                                  [isReadOnlyField]="isReadOnly"
+                                                  lEntityName="Product Url"
+                                                  [editPlaceholder]="ls.l('ProductUrl')"
+                                                  [isEditDialogEnabled]="false"
+                                                  [isHistoryEnabled]="false"
+                                                  (valueChanged)="updateProductUrl($event)"
+                                                  width="80%">
+                                    </inplace-edit>
+                                </div>
+                                <div class="qr-code" (click)="downloadQr()">
+                                    <div #canvas></div>
+                                </div>
+                            </div>
                             <div>
                                 <label for="name">{{ls.l('Description')}}</label>
                                 <dx-text-area name="description"
