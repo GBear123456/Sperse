@@ -134,7 +134,7 @@
                                     <dx-switch switchedOffText=""
                                                switchedOnText=""
                                                [(value)]="product.customerChoosesPrice"
-                                               [disabled]="isReadOnly || isFreePriceType">
+                                               [disabled]="isReadOnly || isFreePriceType || (product.type != productType.Donation && product.stripeXref)">
                                     </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
                                 </div>
                                 <div class="general-product-price">
