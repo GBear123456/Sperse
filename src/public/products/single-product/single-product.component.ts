@@ -109,7 +109,7 @@ export class SingleProductComponent implements OnInit {
         { pattern: this.ls.l('Invalid Price') }
     ]
 
-    showGoalReachedMessage = false;
+    isDonationGoalReached = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -206,11 +206,10 @@ export class SingleProductComponent implements OnInit {
                 if (result.id) {
                     this.productInfo = result;
 
-                    if (this.productInfo.type == ProductType.Donation && this.productInfo.productDonation.goalAmount &&
-                        this.productInfo.productDonation.raisedAmount >= this.productInfo.productDonation.goalAmount) {
-                        this.showGoalReachedMessage = true;
-                    }
-                    else {
+                    this.isDonationGoalReached = this.productInfo.type == ProductType.Donation && this.productInfo.productDonation.goalAmount &&
+                        this.productInfo.productDonation.raisedAmount >= this.productInfo.productDonation.goalAmount;
+
+                    if (!this.isDonationGoalReached || this.productInfo.productDonation.keepActiveIfGoalReached) {
                         this.currencySymbol = getCurrencySymbol(result.currencyId, 'narrow');
                         this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
                         this.titleService.setTitle(this.productInfo.name);
@@ -326,7 +325,7 @@ export class SingleProductComponent implements OnInit {
             case ProductType.Event:
             case ProductType.Donation:
                 this.requestInfo.unit = this.productInfo.unit;
-                if (this.productInfo.customerChoosesPrice)
+                if (this.productInfo.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
                     this.requestInfo.price = this.productInfo.price;
 
                 break;

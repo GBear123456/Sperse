@@ -121,7 +121,7 @@
                     </ng-template>
                 </div>
             </ng-template>
-            <div *ngIf="productInfo.customerChoosesPrice && productInfo.productDonation && productInfo.productDonation.productDonationSuggestedAmounts" class="donation-suggestions">
+            <div *ngIf="productInfo.productDonation && productInfo.productDonation.productDonationSuggestedAmounts" class="donation-suggestions">
                 <div *ngFor="let suggestedAmount of productInfo.productDonation.productDonationSuggestedAmounts"
                      class="suggested-amount"
                      [ngClass]="{ active: productInfo.price == suggestedAmount.amount }"
@@ -308,7 +308,7 @@
                 </div>
             </form>
         </div>
-        <div *ngIf="showGoalReachedMessage" class="goal-reached-message">
+        <div *ngIf="isDonationGoalReached && !productInfo.productDonation.keepActiveIfGoalReached" class="goal-reached-message">
             <p>Thank you for your interest in supporting our cause.</p>
             <p>We wanted to inform you that our donation campaign has now closed as we have successfully reached our goal.<br /> We deeply appreciate your willingness to contribute and make a difference.</p>
         </div>
