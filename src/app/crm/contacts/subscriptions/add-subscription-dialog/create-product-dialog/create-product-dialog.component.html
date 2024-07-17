@@ -34,20 +34,21 @@
                         <div class="block">
                             <h3>{{ls.l('Product')}}</h3>
                             <hr>
+                            <div>
+                                <label>{{ls.l('Product name')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
+                                <dx-text-box name="name"
+                                             width="100%"
+                                             [maxLength]="255"
+                                             [inputAttr]="{ id: 'name' }"
+                                             [(value)]="product.name"
+                                             [disabled]="isReadOnly">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                            </div>
                             <div class="product-ident">
-                                <div>
-                                    <label>{{ls.l('Product name')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
-                                    <dx-text-box name="name"
-                                                 width="100%"
-                                                 [maxLength]="255"
-                                                 [inputAttr]="{ id: 'name' }"
-                                                 [(value)]="product.name"
-                                                 [disabled]="isReadOnly">
-                                        <dx-validator>
-                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
-                                        </dx-validator>
-                                    </dx-text-box>
-                                </div>
+
                                 <div>
                                     <label>{{ls.l('Product SKU or unique code')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
                                     <dx-text-box name="code"
@@ -61,6 +62,15 @@
                                         <dx-validator>
                                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Code'))}}."></dxi-validation-rule>
                                         </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                                <div>
+                                    <label>{{ls.l('Product Barcode')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
+                                    <dx-text-box name="barCode"
+                                                 width="100%"
+                                                 [maxLength]="50"
+                                                 [inputAttr]="{ id: 'barCode' }"
+                                                 [(value)]="product.barCode">
                                     </dx-text-box>
                                 </div>
                             </div>
