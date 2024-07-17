@@ -315,6 +315,7 @@
                                 [maxLength]="256" 
                                 [readOnly]="editing"
                                 [(value)]="model.domainName"
+                                (onKeyUp)="isDomainMappingValid = undefined"
                                 (onValueChanged)="onValueChanged($event)">
                                 <dx-validator #domainValidator>
                                     <dxi-validation-rule 

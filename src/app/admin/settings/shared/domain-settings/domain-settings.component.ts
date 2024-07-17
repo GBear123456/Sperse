@@ -334,6 +334,12 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     onValueChanged(event) {
         this.domainIsValid = this.model && this.model.domainName && 
             event.component.option('isValid');
+
+        if (this.domainIsValid && (this.model.domainName.includes('http') || this.model.domainName.includes('/')))
+            this.model.domainName = this.model.domainName.replace(
+                /^([Hh][Tt][Tt][Pp][Ss]?:\/\/)?/g, ''
+            ).split('/')[0].trim();
+            
         this.changeDetection.detectChanges();
     }
 
