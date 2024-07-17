@@ -55,7 +55,8 @@ import {
     TimingServiceProxy,
     EmailTemplateType,
     ProductDonationDto,
-    ProductDonationSuggestedAmountDto
+    ProductDonationSuggestedAmountDto,
+    TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -99,7 +100,8 @@ export class FilterAssignmentsPipe implements PipeTransform {
         ProductGroupServiceProxy,
         MemberServiceServiceProxy,
         DocumentTemplatesServiceProxy,
-        ProductResourceServiceProxy
+        ProductResourceServiceProxy,
+        TenantPaymentSettingsServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -179,6 +181,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     readonly addNewItemId = -1;
     isPublicProductsEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
+    showDowngrade = this.isHostTenant;
     productTypes: string[] = Object.keys(ProductType).filter(item => item == 'Subscription' ? this.isSubscriptionManagementEnabled : true);
     defaultProductType = this.isSubscriptionManagementEnabled ? ProductType.Subscription : ProductType.General;
     productType = ProductType;
@@ -228,6 +231,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         public dialogRef: MatDialogRef<CreateProductDialogComponent>,
         private productResourceProxy: ProductResourceServiceProxy,
         private documentProxy: DocumentTemplatesServiceProxy,
+        private tenantPaymentSettings: TenantPaymentSettingsServiceProxy,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         private setting: SettingService,
@@ -279,6 +283,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.checkAddManageOption(this.services);
             this.detectChanges();
         });
+
+        if (!this.isHostTenant && this.isSubscriptionManagementEnabled) {
+            this.tenantPaymentSettings.getSubscriptionSettings().subscribe(result => {
+                this.showDowngrade = result.enableClientSubscriptionAutomaticCancel;
+                this.detectChanges();
+            });
+        }
 
         this.gracePeriodDefaultValue = this.setting.getInt('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount');
         this.initEventDataSources();

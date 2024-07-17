@@ -791,7 +791,7 @@
                             <h3>{{ls.l('Product Tags')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                         </div>
                         <div class="block" *ngIf="product.type == productType.Subscription">
-                            <ng-container *ngIf="isHostTenant">
+                            <ng-container *ngIf="showDowngrade">
                                 <h3>{{ls.l('Downgrade to Option')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                                 <div class="options">
                                     <div *ngIf="!isReadOnly" class="remove-button" (click)="product.downgradeProductId = undefined"><span>-</span></div>
