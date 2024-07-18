@@ -144,8 +144,6 @@ export class LeftMenuComponent implements OnInit {
 
     openProfileTenantSettingsDialog() {
         this.dialog.open(TenantSettingsWizardComponent, {
-            width: '960px',
-            height: '700px',
             id: 'tenant-settings',
             panelClass: ['tenant-settings']
         });

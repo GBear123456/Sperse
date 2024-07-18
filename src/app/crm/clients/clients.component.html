@@ -91,7 +91,8 @@
             <div class="portlet-body">
                 <div id="ClientsTable">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                    <dx-data-grid class="main-component-view limitedPagerTotal"
+                    <dx-data-grid [ngClass]="{'gallery-view': isGalleryView}"
+                                  class="main-component-view limitedPagerTotal"                                  
                                   accesskey="narrowHeaderPanel"
                                   [renderAsync]="true"
                                   [rowDragging]="{
@@ -118,6 +119,7 @@
                                       sorting: true,
                                       summary: true
                                   }"
+                                  [dataRowTemplate]="isGalleryView ? 'dataRowTemplate' : undefined"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
                                   (onOptionChanged)="onOptionChanged($event)"
@@ -133,7 +135,7 @@
                                      [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                                      [allowUpdating]="true">
                         </dxo-editing>
-                        <dxo-scrolling mode="infinite"></dxo-scrolling>
+                        <dxo-scrolling [mode]="isGalleryView ? 'standard' : 'infinite'"></dxo-scrolling>
                         <dxi-column caption=""
                                     width="40px"
                                     cssClass="stars"
@@ -237,6 +239,23 @@
                                     [visible]="false"
                                     cellTemplate="amountTemplate">
                         </dxi-column>
+
+                        <div *dxTemplate="let contact of 'dataRowTemplate'" (click)="showClientDetails(contact)" (mouseenter)="actionEvent = null">
+                            <img class="galery-image" width="240px" height="240px" [src]="profileService.getContactPhotoUrl(contact.data.PhotoPublicId, false)" />
+                            <h3 [title]="contact.data.Name">{{contact.data.Name}}</h3>
+                            <span class="role-container top" [title]="''">
+                                {{ contact.data.CompanyName }}
+                            </span>
+                            <div class="active-block">
+                                <h3 [title]="contact.data.Name">{{contact.data.Name}}</h3>
+                                <span class="role-container" [title]="''">
+                                    {{ contact.data.CompanyName }}
+                                </span>
+                                <span class="email-container">{{contact.data.Email}}</span>
+                                <p><label>Created:</label> {{contact.data.ContactDate | datetime: formatting.dateTimeMoment }}</p>
+                                <div class="actions"><img class="dx-link dx-link-edit" width="18px" height="18px" src="assets/common/icons/gear-icon.svg" (click)="onGearClick(contact, $event)"><a *ngIf="checkUserLoginAllowed(contact.data)" (click)="loginUser(contact.data.UserId, $event)">Login as a {{contact.data.Name}} &#8594;</a></div>
+                            </div>
+                        </div>
 
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
                             <div *ngIf="isCFOClientAccessAllowed && usersInstancesLoadingSubscription && usersInstancesLoadingSubscription.closed">

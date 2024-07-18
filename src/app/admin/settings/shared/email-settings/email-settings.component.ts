@@ -71,7 +71,7 @@ export class EmailSettingsComponent extends SettingsComponentBase {
             this.emailSettings.imapHost = this.selectedProvider.imap.host;
             this.emailSettings.imapPort = this.selectedProvider.imap.port;
             this.emailSettings.imapUseSsl = this.selectedProvider.imap.ssl;
-            this.emailSettings.isImapEnabled = !!this.selectedProvider.imap.host;
+            this.emailSettings.isImapEnabled = false;
         } else {
             this.showCustomSmptSettings = this.selectedProvider === null;
             this.emailSettings.smtpHost = undefined;

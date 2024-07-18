@@ -1,11 +1,11 @@
 <h2>{{ ls.l('EmailSmtp') }}</h2>
 <ng-container *ngIf="settings">
-    <dx-scroll-view [height]="smtpProviderErrorLink ? '360px' : '469px'">
+    <dx-scroll-view height="90%" showScrollbar="onHover">
         <div class="information" *ngIf="['gmail.com', 'outlook.com'].includes(selectedProvider?.domain)" [ngClass]="{error: smtpProviderErrorLink}">
             <div class="block" *ngIf="selectedProvider?.domain == 'gmail.com'">
                 Gmail requires using an app-specific password for third-party apps, instead of your regular password for your security. Your Google account requires 2FA turned on to use this feature.
                 <br><br>
-                <a href="https://myaccount.google.com/apppasswords"><b>Generate an app-specific password</b></a>
+                <a target="blank" href="https://myaccount.google.com/apppasswords"><b>Generate an app-specific password</b></a>
                 <br>
                 <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('gmail.com')">Provider recommendations</a>
                 <br>

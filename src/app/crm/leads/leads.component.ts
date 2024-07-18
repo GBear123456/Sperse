@@ -172,6 +172,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly dateField = 'LeadDate';
     private _selectedLeads: LeadDto[];
 
+    isGalleryView = false;
     starsLookup = {};
     rowsViewHeight: number;
     get selectedLeads(): LeadDto[] {
@@ -741,12 +742,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         text: this.l('LoginAsThisUser'),
                         class: 'login',
-                        checkVisible: (lead: LeadDto) => {
-                            return !!lead.UserId && (
-                                this.impersonationIsGranted ||
-                                this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
-                            );
-                        },
+                        checkVisible: this.checkUserLoginAllowed.bind(this),
                         action: (data?) => {
                             const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
                             this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
@@ -1187,7 +1183,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     get showDataGrid(): boolean {
-        return this.dataLayoutType.value === DataLayoutType.DataGrid;
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && !this.isGalleryView;
+    }
+
+    get showGallery(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && this.isGalleryView;
     }
 
     get showPivotGrid(): boolean {
@@ -1224,7 +1224,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.exportCallback)
             this.exportCallback();
         else {
-            if (this.showDataGrid)
+            if (this.showDataGrid || this.showGallery)
                 this.setGridDataLoaded();
             event.component.columnOption('command:edit', {
                 visibleIndex: -1,
@@ -1257,12 +1257,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
         this.initToolbarConfig();
+        this.isGalleryView = false;
         this.pipelineService.toggleDataLayoutType(this.dataLayoutType.value);        
         if (!this.showPipeline) {
             if (this.pipelineComponent) {
                 this.pipelineComponent.deselectAllCards();
             }
-            if (this.showDataGrid) {
+            if (this.showDataGrid || this.showGallery) {
                 setTimeout(() => this.dataGrid.instance.repaint());
             }
         }
@@ -1765,7 +1766,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                                 )
                                             );
                                             this.pivotGridComponent.dataGrid.instance.exportToExcel();
-                                        } else if (this.showPipeline || this.showDataGrid) {
+                                        } else if (this.showPipeline || this.showDataGrid || this.showGallery) {
                                             return this.exportToXLS(
                                                 options,
                                                 null,
@@ -1775,7 +1776,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     }),
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
-                                    visible: this.showDataGrid || this.showPipeline || this.showPivotGrid
+                                    visible: this.showDataGrid || this.showPipeline || this.showPivotGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportData.bind(this, options => this.exportToCSV(
@@ -1785,7 +1786,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     )),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
-                                    visible: this.showPipeline || this.showDataGrid
+                                    visible: this.showPipeline || this.showDataGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportData.bind(this, options => this.exportToGoogleSheet(
@@ -1795,11 +1796,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     )),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
-                                    visible: this.showPipeline || this.showDataGrid
+                                    visible: this.showPipeline || this.showDataGrid || this.showGallery
                                 },
                                 {
                                     type: 'downloadOptions',
-                                    visible: this.showPipeline || this.showDataGrid
+                                    visible: this.showPipeline || this.showDataGrid || this.showGallery
                                 }
                             ]
                         }
@@ -1823,6 +1824,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                         options: {
                             checkPressed: () => this.showDataGrid
+                        }
+                    },
+                    {
+                        name: 'gallery',
+                        action: () => {
+                            this.toggleDataLayout(DataLayoutType.DataGrid);
+                            this.isGalleryView = true;
+                        },
+                        options: {
+                            checkPressed: () => this.showGallery
                         }
                     },
                     {
@@ -1933,7 +1944,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.pipelineComponent.searchColumns = this.searchColumns;
             this.pipelineComponent.searchValue = this.searchValue;
         }
-        if (this.showPipeline || this.showDataGrid || this.showPivotGrid) {
+        if (this.showPipeline || this.showDataGrid || this.showPivotGrid || this.showGallery) {
             contexts = contexts && contexts.length ? contexts : [ this.showPipeline ? this.pipelineComponent : this ];
             contexts.forEach(context => {
                 if (context && context.processODataFilter) {
@@ -1965,7 +1976,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.pipelineDataSource = cloneDeep(this.dataSourceConfig);
                     this.pipelineDataSource['exportIgnoreOnLoaded'] = true;
                 }, 500);
-        } else if (this.showDataGrid) {
+        } else if (this.showDataGrid || this.showGallery) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
@@ -2093,7 +2104,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.selectedContactGroup,
                 this.selectedPipelineId
             ).subscribe(declinedList => {
-                if (this.showDataGrid) {
+                if (this.showDataGrid || this.showGallery) {
                     let gridInstance = this.dataGrid && this.dataGrid.instance;
                     if (gridInstance && declinedList && declinedList.length)
                         gridInstance.selectRows(declinedList.map((item: LeadDto) => item.Id), false);
@@ -2366,5 +2377,28 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 pipelinePurposeId: this.pipelinePurposeId
             }
         });
+    }
+
+    onGearClick(contact, event) {
+        ActionMenuService.toggleActionMenu(contact, this.actionEvent).subscribe(actionEvent => {
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, contact.data);
+            this.actionEvent = actionEvent;
+        });
+
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    checkUserLoginAllowed(lead: LeadDto) {
+        return !!lead.UserId && (
+            this.impersonationIsGranted ||
+            this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
+        );
+    }
+
+    loginUser(userId, event?) {
+        this.impersonationService.impersonate(userId, this.appSession.tenantId);
+        if (event)
+            event.stopPropagation();
     }
 }

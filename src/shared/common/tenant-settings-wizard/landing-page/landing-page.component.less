@@ -1,6 +1,11 @@
 :host {
+    display: block;
+    max-height: 750px;
+    height: calc(100vh - 130px);
+
     ::ng-deep wording-list .form-group, .form-group {
         display: flex;
+        margin-right: 15px;
 
         label {
             width: 40%;
@@ -107,6 +112,7 @@
     }
 
     .domains {
+        margin-right: 15px;
         .domains-caption {
             display: flex;
             justify-content: space-between;
@@ -204,6 +210,8 @@
     }
 
     ::ng-deep wording-list {
+        margin-right: 15px;
+        display: block;
         .wording-container {
             margin-bottom: 21px;
         }
