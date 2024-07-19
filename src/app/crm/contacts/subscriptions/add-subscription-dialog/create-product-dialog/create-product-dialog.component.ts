@@ -23,7 +23,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dial
 import { DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable, of, zip } from 'rxjs';
 import * as moment from 'moment';
-import { map, switchMap, finalize, first, filter } from 'rxjs/operators';
+import { map, switchMap, finalize, first, filter, publishReplay, refCount, tap } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 import { findIana } from 'windows-iana';
 
@@ -56,7 +56,8 @@ import {
     EmailTemplateType,
     ProductDonationDto,
     ProductDonationSuggestedAmountDto,
-    TenantPaymentSettingsServiceProxy
+    TenantPaymentSettingsServiceProxy,
+    RecommendedProductInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -81,8 +82,12 @@ import { EventDurationTypes, EventDurationHelper } from '@shared/crm/helpers/eve
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
-    transform(products: ProductDto[], excludeIds: number[]) {
-        return products && products.filter(product => excludeIds.indexOf(product.id) == -1);
+    transform(products: ProductDto[], excludeIds: number[], type: ProductType, excludeType: ProductType) {
+        return products && products.filter(product =>
+            excludeIds.indexOf(product.id) == -1 &&
+            (!type || product.type == type) &&
+            (!excludeType || product.type != excludeType)
+        );
     }
 }
 
@@ -172,7 +177,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     currency = SettingsHelper.getCurrency();
     amountFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,##0.##';
     amountNullableFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,###.##';
-    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription, this.currency, false).pipe(
+    products$: Observable<ProductDto[]> = this.productProxy.getProducts(undefined, this.currency, false).pipe(
+        publishReplay(),
+        refCount(),
         map((products: ProductDto[]) => {
             return this.data.product && this.data.product.id ?
                 products.filter((product: ProductDto) => product.id != this.data.product.id) : products
@@ -254,6 +261,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.isFreePriceType = !data.product.customerChoosesPrice && !data.product.price;
             if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
                 this.addUpgradeToProduct();
+            if (!this.product.recommendedProducts || !this.product.recommendedProducts.length)
+                this.addRecommendedProduct();
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -261,6 +270,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 if (this.isPublicProductsEnabled)
                     this.product.publicName = this.defaultProductUri;
                 this.addUpgradeToProduct();
+                this.addRecommendedProduct();
             }
             this.initEventProps();
             this.initDonationProps();
@@ -448,6 +458,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 if (upgradeProducts && upgradeProducts.length == 1 && !upgradeProducts[0].upgradeProductId)
                     this.product.productUpgradeAssignments = undefined;
 
+                let recommendedProducts = this.product.recommendedProducts;
+                if (recommendedProducts && recommendedProducts.length == 1 && !recommendedProducts[0].recommendedProductId)
+                    this.product.recommendedProducts = undefined;
+
                 if (this.productTemplates.length || this.productFiles.length || this.productLinks.length)
                     this.product.productResources = this.productTemplates.concat(this.productFiles, this.productLinks).map((item: any) => {
                         if (item.fileId)
@@ -583,6 +597,16 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         );
     }
 
+    addRecommendedProduct() {
+        if (!this.product.recommendedProducts)
+            this.product.recommendedProducts = [];
+        if (this.product.recommendedProducts.some(item => !item.recommendedProductId))
+            return;
+        this.product.recommendedProducts.push(
+            new RecommendedProductInfo()
+        );
+    }
+
     removePaymentPeriod(index) {
         this.product.productSubscriptionOptions.splice(index, 1);
         if (this.isOneTime && !this.product.productSubscriptionOptions.length) {
@@ -596,6 +620,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.product.productUpgradeAssignments.splice(index, 1);
         else
             option.upgradeProductId = undefined;
+        this.detectChanges();
+    }
+
+    removeRecommendedProduct(index, option) {
+        if (index)
+            this.product.recommendedProducts.splice(index, 1);
+        else
+            option.recommendedProductId = undefined;
         this.detectChanges();
     }
 
@@ -824,6 +856,15 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         if (this.product && this.product.productUpgradeAssignments)
             return this.product.productUpgradeAssignments.map(
                 item => option.upgradeProductId == item.upgradeProductId ? undefined : item.upgradeProductId
+            ).filter(Boolean);
+        else
+            return [];
+    }
+
+    getRecommendedIds(option): number[] {
+        if (this.product && this.product.recommendedProducts)
+            return this.product.recommendedProducts.map(
+                item => option.recommendedProductId == item.recommendedProductId ? undefined : item.recommendedProductId
             ).filter(Boolean);
         else
             return [];
