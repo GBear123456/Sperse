@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, AfterViewInit, Inject, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Inject, ElementRef, OnDestroy, HostBinding } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { formatPercent } from '@angular/common';
 
@@ -61,6 +61,7 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
     providers: [ContactAffiliateCodeServiceProxy]
 })
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+    @HostBinding('class.modern') showModernLayout = this.appService.layoutService.showModernLayout;
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild('checklistScroll') checklistScroll: DxScrollViewComponent;
     @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
@@ -307,12 +308,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     ngAfterViewInit() {
+        let topAdjustment = this.appService.layoutService.showModernLayout ? '75px' : '218px'; 
         setTimeout(() => {
             this.slider.classList.remove('hide');
-            this.dialogRef.updateSize('425px', 'calc(100vh - 218px)');
+            this.dialogRef.updateSize('425px', 'calc(100vh - ' + topAdjustment + ')');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
-                    top: '218px',
+                    top: topAdjustment,
                     right: '0px'
                 });
             }, 100);
@@ -592,7 +594,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     getTabContentHeight(subtract = 0) {
-        return innerHeight - 290 - subtract + 'px';
+        return innerHeight - (this.appService.layoutService.showModernLayout ? 150 : 290) - subtract + 'px';
     }
 
     initVerificationChecklist(): void {

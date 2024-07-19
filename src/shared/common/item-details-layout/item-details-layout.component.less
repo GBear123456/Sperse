@@ -3,23 +3,66 @@
     position: relative;
     display: block;
     // width: calc(~"100vw - 60px"); width for layout, need add it and fix some styles later
-    ::ng-deep header {
-        height: 82px;
-        background: #f3f7fa;
-        display: flex;
-        border-bottom: 1px solid #e5e9ec;
-        box-shadow: -2px 2px 6px 0 rgba(0, 0, 0, 0.1);
-        align-items: center;
-        justify-content: space-between;
 
-        mat-progress-spinner {
-            width: 44px;
-            height: 44px;
-            margin: 5px 0 5px 0;
+    &.modern {
+        left: 0px;
 
-            ::ng-deep path {
-                stroke: #00aeef;
+        .close-button {
+            top: 15px;
+            left: 15px;
+            z-index: 2;
+            box-shadow: none;
+            border: 1px solid rgba(220, 227, 232, 1);
+            border-radius: 10px;
+
+            &::before, &::after {
+                top: 13px;
+                left: 19px;
+                height: 13px;
+                width: 1.5px;
+                background-color: rgba(16, 33, 58, 1);                
             }
+        }
+
+        mat-sidenav-container {
+            width: 100%;
+            height: calc(~"100vh - 75px");
+
+            .nav-icon {
+                margin: 14px 9px auto 0;
+            }
+        }
+
+        ::ng-deep .mat-sidenav-content {
+            border-left: none;
+        }
+
+        .mat-tab-nav-bar {
+            margin-bottom: 50px;
+        }
+
+        .mat-tab-link {
+            font-family: Manrope;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 27px;            
+            text-align: left;
+            border: 0px;
+            border-radius: 10px;
+            margin-right: 15px;
+
+            &.active {
+                color: #FFF;
+                background-color: rgba(0, 168, 237, 1);
+                path {
+                    stroke: #FFF;
+                }
+            }
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
         }
     }
 

@@ -1,4 +1,32 @@
 :host {
+    &.modern {
+        ::ng-deep operations-widget {
+            .operations-widget {
+                width: 100%;
+                margin-right: 0;
+            }
+
+            .dx-toolbar {
+                border-bottom: none;
+
+                .dx-button {
+                    border-bottom: none;
+                    border-top: none;
+        
+                    &[group-item-position="single"] {
+                        border-right: none;
+                        border-left: none;
+                    }
+                    &[group-item-position="first"] {
+                        border-left: none;
+                    }
+                    &[group-item-position="last"] {
+                        border-right: none;
+                    }                    
+                }
+            }
+        }
+    }
 
     .cb-visible-section {
         top: 4px;

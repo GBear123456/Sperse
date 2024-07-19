@@ -77,7 +77,7 @@ export class AppService extends AppServiceBase {
 
     constructor(
         injector: Injector,
-        private layoutService: LayoutService,
+        public layoutService: LayoutService,
         private store$: Store<AppStore.State>,
         @Inject(DOCUMENT) private document: Document,
     ) {

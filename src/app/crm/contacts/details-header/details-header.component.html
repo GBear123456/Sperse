@@ -2,46 +2,47 @@
     <div class="avatar">
         <div class="active"></div>
         <div class="photo-area"
-             [ngStyle]="{ 'background-image': getPhoto(data?.personContactInfo?.primaryPhoto) }"
-             (click)="showUploadPhotoDialog($event)">
+            [ngStyle]="{ 'background-image': getPhoto(data?.personContactInfo?.primaryPhoto) }"
+            (click)="showUploadPhotoDialog($event)">
         </div>
     </div>
     <div class="personal_info">
         <div class="full_name">
             <h1 *ngIf="data && data?.personContactInfo as personContactInfo">
                 <inplace-edit [id]="personContactInfo.id"
-                              [value]="trim(personContactInfo.fullName)"
-                              [validationRules]="nameValidationRules"
-                              [isReadOnlyField]="!manageAllowed"
-                              lEntityName="Name"
-                              [editPlaceholder]="ls.l('ClientNamePlaceholder')"
-                              [isEditDialogEnabled]="true"
-                              [isHistoryEnabled]="true"
-                              (valueChanged)="updatePrimaryContactName($event)"
-                              (openDialog)="showEditPersonDialog($event)"
-                              (onHistoryClick)="showPersonHistory($event)">
+                    [value]="trim(personContactInfo.fullName)"
+                    [validationRules]="nameValidationRules"
+                    [isReadOnlyField]="!manageAllowed"
+                    lEntityName="Name"
+                    [editPlaceholder]="ls.l('ClientNamePlaceholder')"
+                    [isEditDialogEnabled]="true"
+                    [isHistoryEnabled]="true"
+                    (valueChanged)="updatePrimaryContactName($event)"
+                    (openDialog)="showEditPersonDialog($event)"
+                    (onHistoryClick)="showPersonHistory($event)">
                 </inplace-edit>
+                <p *ngIf="showModernLayout" class="company-name">{{data?.organizationContactInfo?.fullName}}</p>
             </h1>
         </div>
         <rating-bar *ngIf="!isBankCodeLayout; else bankCode" [rating]="ratingId || 0"></rating-bar>
         <ng-template #bankCode>
             <div class="bank-code">
                 <bank-code-letters [bankCode]="data?.personContactInfo?.person?.bankCode || '????'"
-                                   [allowAdd]="manageAllowed"
-                                   [allowEdit]="manageAllowed"
-                                   [personId]="data.id"
-                                   key="detailsHeader"
-                                   [showDialogOnBottom]="true"
-                                   [showDescriptionsOnHover]="true"
-                                   [showReportLink]="data?.personContactInfo?.person?.bankCode"
-                                   [showHistoryLink]="true"
-                                   reportIconName="blue"
-                                   (bankCodeChange)="contactsService.invalidate()">
+                    [allowAdd]="manageAllowed"
+                    [allowEdit]="manageAllowed"
+                    [personId]="data.id"
+                    key="detailsHeader"
+                    [showDialogOnBottom]="true"
+                    [showDescriptionsOnHover]="true"
+                    [showReportLink]="data?.personContactInfo?.person?.bankCode"
+                    [showHistoryLink]="true"
+                    reportIconName="blue"
+                    (bankCodeChange)="contactsService.invalidate()">
                 </bank-code-letters>
             </div>
         </ng-template>
     </div>
-    <div *ngIf="data" class="organization_info">
+    <div *ngIf="data && !showModernLayout" class="organization_info">
         <div *ngIf="!data?.primaryOrganizationContactId; else companyInfo">
             <div *ngIf="manageCompaniesAllowed" class="add-new-company">
                 <a (click)="addCompanyDialog($event)">+ {{ ls.l('AddCompany') }}</a>

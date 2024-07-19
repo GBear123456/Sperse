@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, HostBinding, OnDestroy, ViewChild } from '@angular/core';
 import { ActivationEnd, Event, NavigationEnd, Params } from '@angular/router';
 
 /** Third party imports */
@@ -69,6 +69,7 @@ import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/mode
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 import { AppFeatures } from '@shared/AppFeatures';
+//import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -78,6 +79,9 @@ import { AppFeatures } from '@shared/AppFeatures';
 export class ContactsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
     @ViewChild(DetailsHeaderComponent) detailsHeaderComponent: DetailsHeaderComponent;
+    @HostBinding('class.modern') get showModernLayout(): boolean {
+        return this.layoutService.showModernLayout
+    };
 
     readonly RP_DEFAULT_ID   = RP_DEFAULT_ID;
     readonly RP_USER_INFO_ID = RP_USER_INFO_ID;
@@ -164,9 +168,15 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     return this.l('ContactInfo')
                 }
             )),
-            route: 'contact-information'
+            route: 'contact-information',
+            icon: 'contact'
         },
-        { name: 'personal-details', label: this.l('PersonalDetails'), route: 'personal-details'},
+        { 
+            name: 'personal-details', 
+            label: this.l('PersonalDetails'), 
+            route: 'personal-details',
+            icon: 'personal'
+        },
         {
             name: 'user-information',
             label$: this.userId$.pipe(map((userId: number) => userId
@@ -179,13 +189,15 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     : this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
                 })
             ),
-            route: 'user-information'
+            route: 'user-information',
+            icon: 'user-tag'
         },
         {
             name: 'user-inbox',
             label: this.l('CommunicationHistory'),
             route: 'user-inbox',
-            visible$: this.isCommunicationHistoryAllowed$
+            visible$: this.isCommunicationHistoryAllowed$,
+            icon: 'communication'
         },
         {
             name: 'documents',
@@ -198,49 +210,63 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     return this.l('Documents')
                 }
             )),
-            route: 'documents'
+            route: 'documents',
+            icon: 'documents'
         },
-        { name: 'notes', label: this.l('Notes'), route: 'notes'},
+        { 
+            name: 'notes', 
+            label: this.l('Notes'), 
+            route: 'notes',
+            icon: 'notes-messages'
+        },
         {
             name: 'invoices',
             label: this.l('OrdersAndInvoices'),
             route: 'invoices',
             disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices),
-            visible$: this.contactIsParent$
+            visible$: this.contactIsParent$,
+            icon: 'orders-invoices'
         },
         {
             name: 'subscriptions',
             label: this.l('Subscriptions'),
             route: 'subscriptions',
-            visible$: this.showSubscriptionsSection$
+            visible$: this.showSubscriptionsSection$,
+            icon: 'subscriptions'
         },
         {
             name: 'payment-information',
             label: this.l('PaymentInformation'),
             route: 'payment-information',
             visible$: this.showPaymentInformationSection$,
-            disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement)
+            disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement),
+            icon: 'personal'
         },
         {
             name: 'reseller-activity',
-            label: this.l('ResellerActivity'), route: 'reseller-activity'
+            label: this.l('ResellerActivity'), 
+            route: 'reseller-activity',
+            icon: 'reseller-activity'
         },
         {
             name: 'lead-information',
             label: this.l('LeadInformation'),
             route: 'lead-information',
-            visible$: this.contactIsParent$
+            visible$: this.contactIsParent$,
+            icon: 'flag'
         },
         {
             name: 'lead-related-contacts',
             label: this.l('LeadsRelatedContacts'),
             route: 'lead-related-contacts',
-            visible$: this.contactIsParent$
+            visible$: this.contactIsParent$,
+            icon: 'level'
         },
         {
             name: 'activity-logs',
             label: this.l('ActivityLogs'),
-            route: 'activity-logs'
+            route: 'activity-logs',
+            icon: 'documents'
         },
         {
             name: 'referral-history',
@@ -283,6 +309,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         private dialog: MatDialog,
+        //private appService: AppService,
         private userService: UserServiceProxy,
         private contactService: ContactServiceProxy,
         private appSessionService: AppSessionService,
@@ -326,10 +353,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     initContextTypeByRoute() {
-        this.detailsHeaderComponent.contextMenuInit$.pipe(first()).subscribe(() => {
-            let section = this._activatedRoute.children[0].routeConfig.path;
-            this.updateContextType(this.navLinks.find(link => link.name == section), false);
-        });
+        if (this.detailsHeaderComponent)
+            this.detailsHeaderComponent.contextMenuInit$.pipe(first()).subscribe(() => {
+                let section = this._activatedRoute.children[0].routeConfig.path;
+                this.updateContextType(this.navLinks.find(link => link.name == section), false);
+            });
     }
 
     private handleContactsOptions() {
