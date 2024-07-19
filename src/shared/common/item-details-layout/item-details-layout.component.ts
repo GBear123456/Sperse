@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener, HostBinding } from '@angular/core';
 import { Params } from '@angular/router';
 import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { Observable, of } from 'rxjs';
@@ -16,6 +16,7 @@ export class ItemDetailsLayoutComponent implements OnInit {
     @Input() queryParams: Params;
     @Input() rightPanelOpened: boolean;
     @Input() rightPanelWidth: string;
+    @HostBinding('class.modern') @Input() showModernLayout: boolean;
     @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
     @Output() onChanged: EventEmitter<NavLink> = new EventEmitter<NavLink>();
 
@@ -33,7 +34,7 @@ export class ItemDetailsLayoutComponent implements OnInit {
     }
 
     isVisible(link: NavLink): Observable<boolean> {
-        return link.visible$ === undefined ? of(true) : link.visible$;
+        return link.visible$ === undefined || link.disabled ? of(!link.disabled) : link.visible$;
     }
 
     getLabel(link: NavLink): Observable<string> {

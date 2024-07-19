@@ -24,6 +24,7 @@ import { PersonalDetailsService } from '../personal-details/personal-details.ser
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
 import { AppStore, TagsStoreSelectors, ListsStoreSelectors, StarsStoreSelectors } from '@app/store';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'contact-information',
@@ -75,6 +76,7 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
         private lifeCycleService: LifecycleSubjectsService,
         private addressServiceProxy: ContactAddressServiceProxy,
         public ls: AppLocalizationService,
+        public layoutService: LayoutService,
         private store$: Store<AppStore.State>
     ) {
         this.dialog.closeAll();

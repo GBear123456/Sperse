@@ -2,6 +2,7 @@
 import {
     Component,
     EventEmitter,
+    HostBinding,
     Injector,
     Input,
     OnDestroy,
@@ -81,6 +82,8 @@ import { PersonHistoryDialogComponent } from '../personal-details/personal-detai
 })
 export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
+    @HostBinding('class.modern') @Input() showModernLayout: boolean = 
+        this.appService.layoutService.showModernLayout;
 
     @Input()
     public set data(data: ContactInfoDto) {
@@ -289,12 +292,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                };
     }
 
-    getPhoto(primaryPhoto: string): string {
-        return primaryPhoto
-            ? 'url(data:image/png;base64,' + this.data.personContactInfo.primaryPhoto + ')'
-            : 'url(' + this.profileService.getContactPhotoUrl(null, true, 'large') + ')';
-    }
-
     getDefaultContextMenuItems(manageAllowed: boolean, showAddProperty: boolean): ContextMenuItem[] {
         return [
             {
@@ -453,6 +450,12 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             if (orgRelation && orgRelation.organization)
                 this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
         }
+    }
+
+    getPhoto(primaryPhoto: string): string {
+        return primaryPhoto
+            ? 'url(data:image/png;base64,' + this.data.personContactInfo.primaryPhoto + ')'
+            : 'url(' + this.profileService.getContactPhotoUrl(null, true, 'large') + ')';
     }
 
     showUploadPhotoDialog(event, isCompany?: boolean) {

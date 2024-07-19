@@ -16,6 +16,10 @@ export class LayoutService {
     public showLeftBar = false;
     public isWideView = false;
 
+    get showModernLayout(): boolean {
+        return this.showLeftBar;
+    }
+
     defaultHeaderBgColor: string = AppConsts.defaultHeaderBgColor;
     defaultHeaderTextColor: string = AppConsts.defaultHeaderTextColor;
     defaultHeaderUnderlineColor: string = AppConsts.defaultHeaderUnderlineColor;

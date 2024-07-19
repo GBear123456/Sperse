@@ -1,4 +1,114 @@
 :host {
+    &.modern {
+        header {
+            height: auto;
+            background: transparent;
+            display: block;
+            border-bottom: none;
+            box-shadow: none;
+
+            .header_buttons {
+                position: fixed;
+                margin-right: 15px;
+                top: 10px;
+                right: 0;
+
+                .vertical-delimiter::before {
+                    height: 78px;
+                }
+    
+                button {
+                    height: 44px;
+                    &#addEntity {
+                        padding: 0 50px 0 20px;
+                        &::before {
+                            top: 20px;
+                        }
+                    }
+                }
+            }
+
+            .avatar {
+                position: relative;
+                top: 0;
+                left: 0;
+                .photo-area {
+                    margin: 40px auto 10px auto;
+                }
+                .active {
+                    right: 95px;
+                }
+            }
+
+            .personal_info {
+                margin: auto;
+
+                .company-name {
+                    font-family: Plus Jakarta Sans;
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 27px;
+                    letter-spacing: -0.02em;
+                    text-align: center;
+                    color: rgba(136, 139, 149, 1);
+                }
+
+                ::ng-deep inplace-edit {
+                    .inplace-edit-view-mode {
+                        display: flex;
+                        flex-direction: column;
+                        width: 287px;
+                        height: auto;
+                        a {
+                            font-family: Plus Jakarta Sans;
+                            font-size: 22px;
+                            font-weight: 500;
+                            line-height: 27px;
+                            letter-spacing: -0.04em;
+                            text-align: center;
+                        }
+                        .actions {
+                            display: none;
+                        }
+                    }
+                }
+
+                ::ng-deep rating-bar {
+                    .rating {
+                        margin: 0 30px 10px;
+                    }
+                    mat-progress-bar {
+                        width: 190px;
+                        max-width: 100%;
+                    }
+                    .mat-progress-bar-fill::after {
+                        background-color: rgba(0, 202, 106, 1);
+                    }
+                }
+            }
+        }
+    }
+
+    header {
+        height: 82px;
+        background: #f3f7fa;
+        display: flex;
+        border-bottom: 1px solid #e5e9ec;
+        box-shadow: -2px 2px 6px 0 rgba(0, 0, 0, 0.1);
+        align-items: center;
+        justify-content: space-between;
+
+        mat-progress-spinner {
+            width: 44px;
+            height: 44px;
+            margin: 5px 0 5px 0;
+
+            ::ng-deep path {
+                stroke: #00aeef;
+            }
+        }
+    }
+
     ::ng-deep inplace-edit {
         .inplace-edit-view-mode {
             height: 30px;
@@ -23,59 +133,6 @@
                 background: inherit;
             }
         }
-    }
-
-    .organization_info {
-        ::ng-deep inplace-edit {
-            .inplace-edit-view-mode {
-                height: auto;
-            }
-            i.dx-icon {
-                font-size: 14px !important;
-            }
-            i.edit {
-                display: none !important;
-            }
-            span {
-                display: inline-block;
-                white-space: nowrap;
-                @media (max-width: 1366px) {
-                    max-width: 260px;
-                }
-            }
-            input {
-                font-size: 16px !important;
-            }
-        }
-    }
-
-    .vertical-delimiter {
-        width: 30px;
-        height: 0;
-        position: relative;
-        display: inline-block;
-        vertical-align: top;
-        align-self: flex-start;
-        &:before {
-            content: '';
-            position: absolute;
-            border-left: 1px solid #dfdfdf;
-            display: block;
-            height: 82px;
-            left: 15px;
-            top: -15px;
-        }
-    }
-
-    .refresh-button {
-        width: 44px;
-        height: 44px;
-        margin: 5px;
-        outline: none;
-        border: none;
-        cursor: pointer;
-        vertical-align: bottom;
-        background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
     }
 
     .full_name {
@@ -294,6 +351,59 @@
         }
     }
     
+    .organization_info {
+        ::ng-deep inplace-edit {
+            .inplace-edit-view-mode {
+                height: auto;
+            }
+            i.dx-icon {
+                font-size: 14px !important;
+            }
+            i.edit {
+                display: none !important;
+            }
+            span {
+                display: inline-block;
+                white-space: nowrap;
+                @media (max-width: 1366px) {
+                    max-width: 260px;
+                }
+            }
+            input {
+                font-size: 16px !important;
+            }
+        }
+    }
+
+    .vertical-delimiter {
+        width: 30px;
+        height: 0;
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        align-self: flex-start;
+        &:before {
+            content: '';
+            position: absolute;
+            border-left: 1px solid #dfdfdf;
+            display: block;
+            height: 82px;
+            left: 15px;
+            top: -15px;
+        }
+    }
+
+    .refresh-button {
+        width: 44px;
+        height: 44px;
+        margin: 5px;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        vertical-align: bottom;
+        background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
+    }
+
     .organization_info {
         ::ng-deep inplace-edit {
             .inplace-edit-view-mode {
@@ -588,16 +698,6 @@
                     display: none;
                 }
             }
-        }
-    }
-
-    .contact-persons-info {
-        cursor: pointer;
-        margin: 3px 0 0 15px;
-        height: 10px;
-        opacity: 0.8;
-        &:hover {
-            opacity: 1;
         }
     }
 

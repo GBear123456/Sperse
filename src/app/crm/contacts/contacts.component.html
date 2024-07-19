@@ -5,7 +5,7 @@
     [showModernLayout]="showModernLayout"    
     (onClose)="close()"
     (onChanged)="updateContextType($event)">
-    <ng-container topHeader>
+    <ng-container topHeader *ngIf="!showModernLayout">
         <details-header [data]="contactInfo"
                         [contactGroupId]="contactGroupId$ | async"
                         [personContactInfo]="personContactInfo"
@@ -13,7 +13,7 @@
                         (onInvalidate)="reloadCurrentSection($event)">
         </details-header>
     </ng-container>
-    <ng-container underHeader>
+    <ng-container underHeader *ngIf="!showModernLayout">
         <div class="general-links">
             <a (click)="contactsService.showEmailDialog({ contact: contactInfo }).subscribe()"
                [class.disabled]="!isSendSmsAndEmailAllowed">
@@ -47,7 +47,15 @@
         </operations-widget>
     </ng-container>
     <ng-container aboveNavigation>
-        <div class="short-contact" *ngIf="!isUserProfile">
+        <details-header *ngIf="showModernLayout"
+            [data]="contactInfo"
+            [contactGroupId]="contactGroupId$ | async"
+            [personContactInfo]="personContactInfo"
+            [ratingId]="contactInfo.ratingId"
+            (onInvalidate)="reloadCurrentSection($event)">
+        </details-header>
+
+        <div class="short-contact" *ngIf="!isUserProfile && !showModernLayout">
             <div class="related-contacts">
                 <div *ngIf="contactInfo && contactInfo['organizationContactInfo']?.contactPersons?.length > 1; else addNew" class="contact-persons-info" (click)="showContactPersons($event)">
                     <img src="./assets/common/icons/similar-contacts.svg" alt="Contact Persons">
