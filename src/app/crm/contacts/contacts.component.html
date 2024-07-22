@@ -1,7 +1,7 @@
 <item-details-layout
     [navLinks]="navLinks"
     [queryParams]="queryParams"
-    [rightPanelOpened]="false"
+    [rightPanelOpened]="showModernLayout ? contactsService?.settingsDialogOpened?.value : false"
     [showModernLayout]="showModernLayout"
     (onClose)="close()"
     (onChanged)="updateContextType($event)">
@@ -109,5 +109,7 @@
             [getAssignmentsPermissionKey]="getAssignmentsPermissionKey">
         </operations-widget>
     </ng-container>
-    <ng-container rightPanel></ng-container>
+    <ng-container rightPanel>
+        <personal-details-dialog [isModal]="false"></personal-details-dialog>
+    </ng-container>
 </item-details-layout>
