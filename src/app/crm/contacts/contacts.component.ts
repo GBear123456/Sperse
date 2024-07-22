@@ -69,7 +69,6 @@ import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/mode
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 import { AppFeatures } from '@shared/AppFeatures';
-//import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -309,7 +308,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         private dialog: MatDialog,
-        //private appService: AppService,
         private userService: UserServiceProxy,
         private contactService: ContactServiceProxy,
         private appSessionService: AppSessionService,
