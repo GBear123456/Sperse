@@ -801,7 +801,7 @@
                                                        valueExpr="id"
                                                        displayExpr="name"
                                                        [showClearButton]="false"
-                                                       [dataSource]="products$ | async | FilterAssignments: getAssignementIds(option):productType.Subscription"
+                                                       [dataSource]="products$ | async | FilterAssignments:[]:productType.Subscription"
                                                        [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
                                                        [(value)]="product.downgradeProductId"
                                                        [disabled]="isReadOnly">
