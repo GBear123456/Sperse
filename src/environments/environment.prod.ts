@@ -5,7 +5,7 @@ export const environment = {
     appConfig: 'appconfig.prod.json',
     publicUrl: 'https://sperse.com',
     appBaseHref: 'https://cdn.sperse.com/current/',
-    portalUrl: 'https://my.sperse.com',
+    portalUrl: 'https://old.sperse.com',
     releaseStage: 'production',
 
     /* DNS Binding Indo */

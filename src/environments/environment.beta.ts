@@ -5,7 +5,7 @@ export const environment = {
     appConfig: 'appconfig.beta.json',
     publicUrl: 'https://betaweb.sperse.com',
     appBaseHref: 'https://sperseuicdn.azureedge.net/current/',
-    portalUrl: 'https://mybeta.sperse.com',
+    portalUrl: 'https://oldbeta.sperse.com',
     releaseStage: 'beta',
 
     /* DNS Binding Info */
