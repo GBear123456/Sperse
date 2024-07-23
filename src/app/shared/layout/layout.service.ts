@@ -14,6 +14,7 @@ export class LayoutService {
     public showUserProfileMenu = true;
     public showTopBar = true;
     public showLeftBar = false;
+    public isWideView = false;
 
     get showModernLayout(): boolean {
         return this.showLeftBar;
