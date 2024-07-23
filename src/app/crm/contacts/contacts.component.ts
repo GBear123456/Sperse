@@ -323,6 +323,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactsService.next.pipe(takeUntil(this.destroy$)).subscribe((e) => {
             this.loadTargetEntity(e, TargetDirectionEnum.Next);
         });
+
+        this.layoutService.isWideView = true;
     }
 
     initContextTypeByRoute() {
@@ -868,6 +870,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.pageHeaderFixed(true);
         this.contactsService.cleanLastContact();
         this.contactsService.unsubscribe();
+
+        this.layoutService.isWideView = false;
+
         super.ngOnDestroy();
     }
 
