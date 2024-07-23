@@ -102,9 +102,9 @@
                             <div class="quantity" *ngIf="productInfo.type == productType.General">
                                 <div class="quantity-title">Quantity</div>
                                 <div class="quantity-controls">
-                                    <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>
-                                    <span class="value">{{requestInfo.quantity}}</span>
-                                    <span (click)="changeQuantity(requestInfo.quantity + 1)">+</span>
+                                    <span [style.visibility]="productInput.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(productInput.quantity - 1)">-</span>
+                                    <span class="value">{{productInput.quantity}}</span>
+                                    <span (click)="changeQuantity(productInput.quantity + 1)">+</span>
                                 </div>
                             </div>
                             <div class="price__new">
