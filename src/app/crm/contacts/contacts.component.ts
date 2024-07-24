@@ -361,7 +361,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     getActiveNavLink() {
         let section = this._activatedRoute.children[0].routeConfig.path;
-        return this.navLinks.find(link => link.name == section);
+        return this.navLinks && this.navLinks.find(link => link.name == section);
     }
 
     getTitle(): Observable<string> {

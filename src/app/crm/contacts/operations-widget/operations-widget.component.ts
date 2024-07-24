@@ -404,7 +404,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 items: this.optionButtonConfig ? [this.optionButtonConfig] : []
             };
             this.toolbarConfig = this._enabled ? [
-                (this.layoutService.showModernLayout ? {
+                ...(this.layoutService.showModernLayout ? [{
                     location: 'before',
                     locateInMenu: 'auto',
                     items: [
@@ -412,7 +412,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             name: 'title'
                         }
                     ]
-                } : {}),
+                }] : []),
                 {
                     location: this.layoutService.showModernLayout ? 'after' : 'before',
                     locateInMenu: 'auto',
