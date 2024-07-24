@@ -1,4 +1,181 @@
 :host {
+    &.modern {
+        ::ng-deep operations-widget {
+            margin-right: 15px;
+
+            .operations-widget {
+                width: 100%;
+                margin-right: 0;
+                margin-top: 15px;
+            }
+
+            .dx-toolbar {
+                border-bottom: none;
+
+                .dx-button {
+                    border-bottom: none;
+                    border-top: none;
+                    border-left: none;
+                    border-right: none;
+
+                    &::after {
+                        content: '';
+                        display: block;
+                        width: 1px;
+                        height: 18px;
+                        background: rgba(205, 211, 218, 1);
+                        position: absolute;
+                        top: 10px;
+                    }
+
+                    &:not([accesskey="login"])::before {
+                        background: url(../../../assets/common/icons/arrow-down-icon.svg);
+                    }
+
+                    &[aria-label="Stage"],
+                    &[aria-label="Groups"],
+                    &[aria-label="Rating"] {
+                        img {
+                            visibility: hidden;
+                        }
+                        .dx-button-content::before {
+                            content: ' ';
+                            display: block;                    
+                            background: url(../../../assets/common/icons/flag.svg);
+                            background-repeat: no-repeat;
+                            position: absolute;
+                            width: 19px;
+                            height: 19px;
+                            top: 7px;
+                        }
+                    }
+
+                    &[aria-label="Assign To"] {
+                        img {
+                            visibility: hidden;
+                        }
+                        .dx-button-content::before {
+                            content: ' ';
+                            display: block;                    
+                            background: url(../../../assets/common/icons/user-assign.svg);
+                            background-repeat: no-repeat;
+                            position: absolute;
+                            width: 18px;
+                            height: 18px;
+                            top: 7px;
+                        }
+                    }
+
+                    &[aria-label="Lists"] {
+                        img {
+                            visibility: hidden;
+                        }
+                        .dx-button-content::before {
+                            content: ' ';
+                            display: block;                    
+                            background: url(../../../assets/common/icons/task.svg);
+                            background-repeat: no-repeat;
+                            position: absolute;
+                            width: 17px;
+                            height: 17px;
+                            top: 7px;
+                        }
+                    }
+
+                    &[aria-label="Tags"] {
+                        img {
+                            visibility: hidden;
+                        }
+                        .dx-button-content::before {
+                            content: ' ';
+                            display: block;                    
+                            background: url(../../../assets/common/icons/tags.svg);
+                            background-repeat: no-repeat;
+                            position: absolute;
+                            width: 15px;
+                            height: 15px;
+                            top: 10px;
+                        }
+                    }
+
+                    &[aria-label="Delete"] {
+                        img {
+                            visibility: hidden;
+                        }
+                        .dx-button-content::before {
+                            content: ' ';
+                            display: block;                    
+                            background: url(../../../assets/common/icons/trash.svg);
+                            background-repeat: no-repeat;
+                            position: absolute;
+                            width: 18px;
+                            height: 18px;
+                            top: 8px;
+                        }
+                    }
+
+                    &[aria-label="star-icon"] {
+                        img {
+                            visibility: hidden;
+                        }
+                        .dx-button-content::before {
+                            content: ' ';
+                            display: block;                    
+                            background: url(../../../assets/common/icons/stars.svg);
+                            background-repeat: no-repeat;
+                            position: absolute;
+                            width: 18px;
+                            height: 18px;
+                            top: 8px;
+                        }
+                    }
+
+                    &[accesskey="login"] {
+                        width: 91px;
+                        margin-right: 0;
+                        background: url('../../../assets/common/icons/enter.svg'), rgba(236, 243, 250, 1);
+                        background-position: 11px center;
+                        background-repeat: no-repeat;
+                        border-radius: 10px;
+                        &::before {
+                            margin-left: 20px;
+                            color: rgba(8, 41, 91, 1);
+                        }
+                    }
+                    
+                    .dx-button-text {
+                        font-family: Manrope !important;
+                        font-size: 13px;
+                        font-weight: 500;
+                        color: rgba(108, 120, 136, 1);
+                    }
+
+                    &[group-item-position="inside"] {
+                        border-right: none;
+                        border-left: none;
+                    }
+                    &[group-item-position="single"] {
+                        border-right: none;
+                        border-left: none;
+                        &::after {
+                            display: none;
+                        }
+                    }
+                    &[group-item-position="first"] {
+                        border-right: none;
+                        border-left: none;
+                        &::after {
+                            display: none;
+                        }
+                    }
+                    &[group-item-position="last"] {
+                        border-right: none;
+                        border-left: none;
+                    }                    
+                }
+            }
+        }
+    }
 
     .cb-visible-section {
         top: 4px;

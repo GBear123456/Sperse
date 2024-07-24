@@ -128,7 +128,7 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
     }
 
     updateToolbar() {
-        let toolbarConfig = {
+        let toolbarConfig = this.layoutService.showModernLayout ? null : {
             optionButton: {
                 name: 'options',
                 options: {

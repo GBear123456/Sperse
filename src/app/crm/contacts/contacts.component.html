@@ -1,7 +1,8 @@
 <item-details-layout
     [navLinks]="navLinks"
     [queryParams]="queryParams"
-    [rightPanelOpened]="false"
+    [rightPanelOpened]="showModernLayout ? contactsService?.settingsDialogOpened?.value : false"
+    [showModernLayout]="showModernLayout"    
     (onClose)="close()"
     (onChanged)="updateContextType($event)">
     <ng-container topHeader>
@@ -81,5 +82,27 @@
             </div>
         </div>
     </ng-container>
-    <ng-container rightPanel></ng-container>
+    <ng-container mainContent *ngIf="showModernLayout">
+        <operations-widget
+            [title]="getTitle() | async"
+            [enabled]="contactInfo && showToolbar"
+            [customerType]="contactGroupId$ | async"
+            [leadId]="leadId"
+            [contactInfo]="contactInfo"
+            [selectedPipelineId]="leadInfo?.pipelineId"
+            [pipelineDataSource]="allPipelines"
+            [selectedStageId]="leadInfo?.stageId"
+            [partnerTypes]="partnerTypes"
+            [selectedPartnerTypeId]="partnerTypeId"
+            (print)="printMainArea()"
+            (onUpdateStatus)="updateStatus($event)"
+            (onDelete)="deleteContact()"
+            [getProxyService]="getProxyService"
+            [assignedUsersSelector]="assignedUsersSelector"
+            [getAssignmentsPermissionKey]="getAssignmentsPermissionKey">
+        </operations-widget>
+    </ng-container>
+    <ng-container rightPanel>
+        <personal-details-dialog [isModal]="false"></personal-details-dialog>
+    </ng-container>
 </item-details-layout>

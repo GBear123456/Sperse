@@ -42,6 +42,7 @@ import { InplaceSelectBox } from '@app/shared/common/inplace-select-box/inplace-
 import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-item.interface';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     templateUrl: './personal-details.component.html',
@@ -147,6 +148,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         private lifeCycleService: LifecycleSubjectsService,
         public dialog: MatDialog,
         private appSessionService: AppSessionService,
+        public layoutService: LayoutService,
         public ls: AppLocalizationService
     ) {
         this.getStates(this.person && this.person.citizenship);
@@ -189,7 +191,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     }
 
     private updateToolbar(contactInfo: ContactInfoDto) {
-        let toolbarConfig = {
+        let toolbarConfig = this.layoutService.showModernLayout ? null : {
             optionButton: {
                 name: 'options',
                 options: {

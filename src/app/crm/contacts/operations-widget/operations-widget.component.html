@@ -1,5 +1,11 @@
 <div class="operations-widget">
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <ng-template #titleTemplate>
+        <h3 class="title">{{title}}</h3>
+    </ng-template>
+    <app-toolbar
+        [titleTemplate]="titleTemplate"
+        [config]="toolbarConfig"
+    ></app-toolbar>
     <ng-container *ngIf="enabled">
         <app-static-list *ngIf="permission.checkCGPermission(contactInfo?.groups, '') && pipelineDataSource?.length && !contactInfo.parentId"
             #stagesList

@@ -161,7 +161,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                         if (lead.typeSysId == EntityTypeSys.PropertyAcquisition) return this.l('SellerContactInfo');
                         if (lead.typeSysId.startsWith(EntityTypeSys.PropertyRentAndSale)) return this.l('BuyerContactInfo');
                     }
-                    return this.l('ContactInfo')
+                    return this.l('Contact Overview')
                 }
             )),
             route: 'contact-information'
@@ -328,10 +328,20 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     initContextTypeByRoute() {
-        this.detailsHeaderComponent.contextMenuInit$.pipe(first()).subscribe(() => {
-            let section = this._activatedRoute.children[0].routeConfig.path;
-            this.updateContextType(this.navLinks.find(link => link.name == section), false);
-        });
+        if (this.detailsHeaderComponent)
+            this.detailsHeaderComponent.contextMenuInit$.pipe(first()).subscribe(() => {
+                this.updateContextType(this.getActiveNavLink(), false);
+            });
+    }
+
+    getActiveNavLink() {
+        let section = this._activatedRoute.children[0].routeConfig.path;
+        return this.navLinks.find(link => link.name == section);
+    }
+
+    getTitle(): Observable<string> {
+        let navLink = this.getActiveNavLink();
+        return navLink ? (navLink.label ? of(navLink.label) : navLink.label$ || of('')) : of('');
     }
 
     private handleContactsOptions() {
