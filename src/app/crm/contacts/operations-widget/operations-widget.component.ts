@@ -72,6 +72,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     get enabled(): Boolean {
         return this._enabled;
     }
+    @Input() title: String;
     @Input() contactInfo: ContactInfoDto;
     @Input() customerType: string;
     @Input() leadId: number;
@@ -403,8 +404,17 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 items: this.optionButtonConfig ? [this.optionButtonConfig] : []
             };
             this.toolbarConfig = this._enabled ? [
-                {
+                (this.layoutService.showModernLayout ? {
                     location: 'before',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'title'
+                        }
+                    ]
+                } : {}),
+                {
+                    location: this.layoutService.showModernLayout ? 'after' : 'before',
                     locateInMenu: 'auto',
                     items: [
                         {
@@ -452,6 +462,13 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             action: this.toggleStars.bind(this),
                             visible: !this.isBankCodeLayout,
                             disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
+                        },
+                        {
+                            name: 'delete',
+                            action: this.delete.bind(this),
+                            visible: this.layoutService.showModernLayout &&
+                                Boolean(this.leadId) && this.permission.checkCGPermission(this.contactInfo.groups) &&
+                                this.route.snapshot.children[0].routeConfig.path == 'contact-information'
                         }
                     ]
                 },
@@ -491,8 +508,9 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'delete',
                             action: this.delete.bind(this),
-                            visible: Boolean(this.leadId) && this.permission.checkCGPermission(this.contactInfo.groups)
-                                && this.route.snapshot.children[0].routeConfig.path == 'contact-information'                                
+                            visible: !this.layoutService.showModernLayout &&
+                                Boolean(this.leadId) && this.permission.checkCGPermission(this.contactInfo.groups) &&
+                                this.route.snapshot.children[0].routeConfig.path == 'contact-information'
                         }
                     ]
                 },
@@ -530,11 +548,13 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 {
                     name: 'prev',
                     action: this.loadPrevItem.bind(this),
+                    visible: !this.layoutService.showModernLayout,
                     disabled: this.contactService.isPrevDisabled
                 },
                 {
                     name: 'next',
                     action: this.loadNextItem.bind(this),
+                    visible: !this.layoutService.showModernLayout,
                     disabled: this.contactService.isNextDisabled
                 }
             ]

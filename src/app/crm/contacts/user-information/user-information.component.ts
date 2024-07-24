@@ -48,6 +48,7 @@ import { NotifyService } from 'abp-ng2-module';
 import { AppStoreService } from '@app/store/app-store.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { OrganizationUnitsDialogData } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog-data.interface';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'user-information',
@@ -135,6 +136,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         private elementRef: ElementRef,
         private lifecycleSubjectService: LifecycleSubjectsService,
         private clipboardService: ClipboardService,
+        public layoutService: LayoutService,
         public dialog: MatDialog,
         public phoneFormatPipe: PhoneFormatPipe,
         public ls: AppLocalizationService
@@ -197,17 +199,18 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     private updateToolbarOptions() {
-        setTimeout(() => this.contactsService.toolbarUpdate({
-            optionButton: {
-                name: 'options',
-                options: {
-                    checkPressed: () => this.contactsService.settingsDialogOpened.value
-                },
-                action: () => {
-                    this.contactsService.toggleSettingsDialog();
+        if (!this.layoutService.showModernLayout)
+            setTimeout(() => this.contactsService.toolbarUpdate({
+                optionButton: {
+                    name: 'options',
+                    options: {
+                        checkPressed: () => this.contactsService.settingsDialogOpened.value
+                    },
+                    action: () => {
+                        this.contactsService.toggleSettingsDialog();
+                    }
                 }
-            }
-        }));
+            }));
     }
 
     private updateInviteDataRoles() {

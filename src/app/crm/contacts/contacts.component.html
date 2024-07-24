@@ -2,7 +2,7 @@
     [navLinks]="navLinks"
     [queryParams]="queryParams"
     [rightPanelOpened]="showModernLayout ? contactsService?.settingsDialogOpened?.value : false"
-    [showModernLayout]="showModernLayout"
+    [showModernLayout]="showModernLayout"    
     (onClose)="close()"
     (onChanged)="updateContextType($event)">
     <ng-container topHeader *ngIf="!showModernLayout">
@@ -92,6 +92,7 @@
     </ng-container>
     <ng-container mainContent *ngIf="showModernLayout">
         <operations-widget
+            [title]="getTitle() | async"
             [enabled]="contactInfo && showToolbar"
             [customerType]="contactGroupId$ | async"
             [leadId]="leadId"
