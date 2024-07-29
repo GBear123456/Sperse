@@ -19,6 +19,7 @@ export enum EmailTags {
     LastName = 'LastName',
     DayOfWeek = 'DayOfWeek',
     LastReferralContact = 'LastReferralContact',
+    CompanyName = 'CompanyName',
     CompanyIndustry = 'CompanyIndustry',
     SenderFullName = 'SenderFullName',
     SenderPhone = 'SenderPhone',
