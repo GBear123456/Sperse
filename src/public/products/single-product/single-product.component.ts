@@ -16,6 +16,7 @@ import {
     LeadServiceProxy,
     PasswordComplexitySetting,
     PaymentPeriodType,
+    ProductDonationSuggestedAmountInfo,
     ProductType,
     ProfileServiceProxy,
     PublicCouponInfo,
@@ -51,6 +52,7 @@ import { getCurrencySymbol } from '@angular/common';
 export class SingleProductComponent implements OnInit {
     @ViewChild('firstStepForm') firstStepForm;
     @ViewChild('phoneNumber') phoneNumber;
+    @ViewChild('customerPriceElement') customerPriceElement;
     @ViewChild(PayPalComponent) set paypPalComponent(paypalComp: PayPalComponent) {
         this.payPal = paypalComp;
         this.initializePayPal();
@@ -84,7 +86,7 @@ export class SingleProductComponent implements OnInit {
     showNoPaymentSystems = false;
     productType = ProductType;
     billingPeriod = BillingPeriod;
-    
+
     defaultCountryCode = abp.setting.get('App.TenantManagement.DefaultCountryCode');
     selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
     static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.OneTime, BillingPeriod.Custom];
@@ -99,6 +101,15 @@ export class SingleProductComponent implements OnInit {
     couponInfo: PublicCouponInfo = null;
     couponInfoCache: { [code: string]: PublicCouponInfo } = {};
     optionId: number;
+
+    customerPriceEditMode = false;
+    customerPriceRegexp = /^\d+(.\d{1,2})?$/;
+    customerPriceInputErrorDefs: any[] = [
+        { required: this.ls.l('Invalid Price') },
+        { pattern: this.ls.l('Invalid Price') }
+    ]
+
+    isDonationGoalReached = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -132,8 +143,8 @@ export class SingleProductComponent implements OnInit {
     onPhoneFieldInitialize(phoneField) {
         if (phoneField && phoneField.intPhoneNumber && this.defaultCountryCode) {
             setTimeout(() => {
-                phoneField.intPhoneNumber.phoneNumber = '';            
-                phoneField.intPhoneNumber.updatePhoneInput(this.defaultCountryCode.toLowerCase());        
+                phoneField.intPhoneNumber.phoneNumber = '';
+                phoneField.intPhoneNumber.updatePhoneInput(this.defaultCountryCode.toLowerCase());
             });
         }
     }
@@ -141,7 +152,7 @@ export class SingleProductComponent implements OnInit {
     initializePayPal() {
         if (this.payPal && this.productInfo && !this.payPal.initialized) {
             let type: ButtonType;
-            if (this.productInfo.type == ProductType.General || this.productInfo.type == ProductType.Digital || this.productInfo.type == ProductType.Event)
+            if (this.productInfo.type == ProductType.General || this.productInfo.type == ProductType.Digital || this.productInfo.type == ProductType.Event || this.productInfo.type == ProductType.Donation)
                 type = ButtonType.Payment;
             else {
                 let hasPayment = false;
@@ -194,17 +205,24 @@ export class SingleProductComponent implements OnInit {
             .subscribe(result => {
                 if (result.id) {
                     this.productInfo = result;
-                    this.currencySymbol = getCurrencySymbol(result.currencyId, 'narrow');
-                    this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
-                    this.titleService.setTitle(this.productInfo.name);
-                    if (result.descriptionHtml)
-                        this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
-                    if (result.data.hasTenantService)
-                        this.initializePasswordComplexity();
-                    this.initConditions();
-                    this.initSubscriptionProduct();
-                    this.initializePayPal();
-                    this.checkIsFree();
+
+                    this.isDonationGoalReached = this.productInfo.type == ProductType.Donation && this.productInfo.productDonation.goalAmount &&
+                        this.productInfo.productDonation.raisedAmount >= this.productInfo.productDonation.goalAmount;
+
+                    if (!this.isDonationGoalReached || this.productInfo.productDonation.keepActiveIfGoalReached) {
+                        this.currencySymbol = getCurrencySymbol(result.currencyId, 'narrow');
+                        this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
+                        this.titleService.setTitle(this.productInfo.name);
+                        if (result.descriptionHtml)
+                            this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
+                        if (result.data.hasTenantService)
+                            this.initializePasswordComplexity();
+                        this.initConditions();
+                        this.initCustomerPrice();
+                        this.initSubscriptionProduct();
+                        this.initializePayPal();
+                        this.checkIsFree();
+                    }
                 } else {
                     this.showNotFound = true;
                 }
@@ -261,7 +279,7 @@ export class SingleProductComponent implements OnInit {
             paymentPeriodType: PaymentPeriodType[this.selectedSubscriptionOption.frequency],
             quantity: 1
         })];
-        tenancyRequestModel.couponCode = this.isFreeProductSelected ? null : this.requestInfo.couponCode;
+        tenancyRequestModel.couponCode = this.isFreeProductSelected || this.productInfo.customerChoosesPrice ? null : this.requestInfo.couponCode;
         tenancyRequestModel.affiliateCode = this.ref;
 
         this.leadProxy.submitTenancyRequest(tenancyRequestModel).subscribe(response => {
@@ -286,7 +304,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     getSubmitRequest(paymentGateway: string): Observable<SubmitProductRequestOutput> {
-        if (!this.isFormValid()) {
+        if (!this.isFormValid() || (this.productInfo.customerChoosesPrice && (!this.productInfo.price || this.customerPriceEditMode))) {
             abp.notify.error(this.ls.l('SaleProductValidationError'));
             return of();
         }
@@ -298,14 +316,18 @@ export class SingleProductComponent implements OnInit {
         this.requestInfo.affiliateCode = this.ref;
         this.requestInfo.paymentGateway = paymentGateway;
         this.requestInfo.productId = this.productInfo.id;
-        if (this.isFreeProductSelected)
+        if (this.isFreeProductSelected || this.productInfo.customerChoosesPrice)
             this.requestInfo.couponCode = null;
 
         switch (this.productInfo.type) {
             case ProductType.General:
             case ProductType.Digital:
             case ProductType.Event:
+            case ProductType.Donation:
                 this.requestInfo.unit = this.productInfo.unit;
+                if (this.productInfo.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
+                    this.requestInfo.price = this.productInfo.price;
+
                 break;
             case ProductType.Subscription:
                 this.requestInfo.optionId = this.selectedSubscriptionOption.id;
@@ -361,7 +383,7 @@ export class SingleProductComponent implements OnInit {
             case ProductType.General:
             case ProductType.Digital:
             case ProductType.Event:
-                this.isFreeProductSelected = this.productInfo.price == 0;
+                this.isFreeProductSelected = this.productInfo.price == 0 && !this.productInfo.customerChoosesPrice;
                 break;
             case ProductType.Subscription:
                 this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0;
@@ -582,5 +604,47 @@ export class SingleProductComponent implements OnInit {
         }
         buttonText += 'Today!';
         return buttonText;
+    }
+
+    initCustomerPrice() {
+        if (!this.productInfo.customerChoosesPrice)
+            return;
+
+        if (!this.productInfo.price) {
+            this.customerPriceEditMode = true;
+            this.focusCustomerPriceInput();
+        }
+
+        if (this.productInfo.minCustomerPrice)
+            this.customerPriceInputErrorDefs.push({ min: `${this.ls.l('The minimum amount is ')}${this.currencySymbol}${this.productInfo.minCustomerPrice}` });
+        if (this.productInfo.maxCustomerPrice)
+            this.customerPriceInputErrorDefs.push({ max: `${this.ls.l('The maximum amount is ')}${this.currencySymbol}${this.productInfo.maxCustomerPrice}` });
+    }
+
+    showCustomerPriceInput() {
+        this.customerPriceEditMode = true;
+        this.focusCustomerPriceInput();
+    }
+
+    customerPriceFocusOut(event, input) {
+        if (!input.valid) {
+            event.preventDefault();
+            this.focusCustomerPriceInput();
+        }
+        else {
+            this.customerPriceEditMode = false;
+        }
+    }
+
+    focusCustomerPriceInput() {
+        setTimeout(() => {
+            if (this.customerPriceElement && this.customerPriceElement.nativeElement)
+                this.customerPriceElement.nativeElement.focus();
+        });
+    }
+
+    selectSuggestedAmount(suggestedAmount: ProductDonationSuggestedAmountInfo) {
+        this.customerPriceEditMode = false;
+        this.productInfo.price = suggestedAmount.amount;
     }
 }

@@ -16,27 +16,32 @@
 
     @media (max-width: 1024px) {
         .box__inner {
-            display: flex!important;
+            display: flex !important;
             flex-direction: column;
         }
+
         .box__left {
-            border-radius: 20px 20px 0 0!important;
+            border-radius: 20px 20px 0 0 !important;
         }
+
         .box__right {
-            border-radius: 0 0 20px 20px!important;
+            border-radius: 0 0 20px 20px !important;
         }
     }
 
     @media (max-width: 512px) {
         height: auto !important;
         min-height: 100vh !important;
+
         .title--h1 {
             font-size: 36px !important;
         }
+
         .subtitle {
             font-size: 24px !important;
             line-height: 32px !important;
         }
+
         .box__inner {
             scale: 0.6;
             margin-top: -170px;
@@ -49,10 +54,12 @@
             font-size: 30px !important;
             line-height: 40px !important;
         }
+
         .subtitle {
             font-size: 18px !important;
             line-height: 26px !important;
         }
+
         .box__inner {
             scale: 0.5;
             margin-top: calc(-100% / 1.5);
@@ -136,6 +143,7 @@
 
         &__inner {
             display: grid;
+            position: relative;
             grid-template: 1fr / 1fr 1fr;
             color: #fff;
             max-width: 1144px;
@@ -205,6 +213,38 @@
         }
     }
 
+    .donation-status {
+        width: 100%;
+
+        .donation-data {
+            display: flex;
+            justify-content: space-between;
+
+            .data {
+                font-size: 25px;
+            }
+
+            .gray {
+                color: gray;
+            }
+        }
+
+        .donation-progress {
+            background-color: #e0e0e0;
+            border-radius: 25px;
+            overflow: hidden;
+            margin: 15px 0;
+
+            .donation-progress-bar {
+                height: 7px;
+                background-color: #1a99ef;
+                width: 0;
+                border-radius: 25px 0 0 25px;
+                transition: width 0.5s ease-in-out;
+            }
+        }
+    }
+
     .price {
         display: flex;
         justify-content: center;
@@ -270,6 +310,71 @@
             margin-bottom: 6px;
             width: 100%;
             text-align: center;
+        }
+
+        .customer-price-edit {
+            margin-left: 15px;
+            font-size: 27px;
+        }
+
+        .customer-price-input {
+            color: #fff;
+            background: #4974db;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            transition: border-color 0.3s;
+            height: 75px;
+            width: 297px;
+            font-size: 56px;
+            text-align: center;
+            -moz-appearance: textfield;
+
+            &:focus {
+                border-color: #fff;
+            }
+
+            &::-webkit-inner-spin-button,
+            &::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+    }
+
+    .donation-suggestions {
+        width: 493px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px;
+
+        .suggested-amount {
+            width: 245px;
+            min-height: 46px;
+            display: flex;
+            align-items: center;
+            background: #4974db;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            padding: 0 15px;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 80%;
+            }
+
+            &.active {
+                background: #1a99ef;
+            }
+
+            .amount {
+                width: 80px;
+                border-right: 1px white solid;
+                margin-right: 15px;
+            }
+
+            .text {
+                width: 100%;
+            }
         }
     }
 
@@ -771,13 +876,26 @@
         }
     }
 
+    .goal-reached-message {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        backdrop-filter: blur(10px);
+        z-index: 3;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 50px;
+        font-size: 28px;
+    }
+
     .footer {
         margin-top: 20px;
         font-size: 14px;
         color: gray;
     }
 }
-
 
 ::ng-deep .description-html {
     border-top: 1px solid;

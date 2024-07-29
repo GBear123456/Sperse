@@ -53,7 +53,10 @@ import {
     ProductEventLocation,
     LanguageDto,
     TimingServiceProxy,
-    EmailTemplateType
+    EmailTemplateType,
+    ProductDonationDto,
+    ProductDonationSuggestedAmountDto,
+    TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -97,7 +100,8 @@ export class FilterAssignmentsPipe implements PipeTransform {
         ProductGroupServiceProxy,
         MemberServiceServiceProxy,
         DocumentTemplatesServiceProxy,
-        ProductResourceServiceProxy
+        ProductResourceServiceProxy,
+        TenantPaymentSettingsServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -177,6 +181,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     readonly addNewItemId = -1;
     isPublicProductsEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
+    showDowngrade = this.isHostTenant;
     productTypes: string[] = Object.keys(ProductType).filter(item => item == 'Subscription' ? this.isSubscriptionManagementEnabled : true);
     defaultProductType = this.isSubscriptionManagementEnabled ? ProductType.Subscription : ProductType.General;
     productType = ProductType;
@@ -226,6 +231,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         public dialogRef: MatDialogRef<CreateProductDialogComponent>,
         private productResourceProxy: ProductResourceServiceProxy,
         private documentProxy: DocumentTemplatesServiceProxy,
+        private tenantPaymentSettings: TenantPaymentSettingsServiceProxy,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         private setting: SettingService,
@@ -245,7 +251,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.isFreePriceType = !options[0].fee;
                 this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
             } else
-                this.isFreePriceType = !data.product.price;
+                this.isFreePriceType = !data.product.customerChoosesPrice && !data.product.price;
             if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
                 this.addUpgradeToProduct();
         } else {
@@ -257,6 +263,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.addUpgradeToProduct();
             }
             this.initEventProps();
+            this.initDonationProps();
         }
 
         if (this.product.publishDate)
@@ -276,6 +283,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.checkAddManageOption(this.services);
             this.detectChanges();
         });
+
+        if (!this.isHostTenant && this.isSubscriptionManagementEnabled) {
+            this.tenantPaymentSettings.getSubscriptionSettings().subscribe(result => {
+                this.showDowngrade = result.enableClientSubscriptionAutomaticCancel;
+                this.detectChanges();
+            });
+        }
 
         this.gracePeriodDefaultValue = this.setting.getInt('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount');
         this.initEventDataSources();
@@ -343,6 +357,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.product.productEvent.address = new AddressInfoDto();
     }
 
+    initDonationProps() {
+        if (this.product.productDonation)
+            return;
+
+        this.product.productDonation = new ProductDonationDto();
+        this.product.productDonation.productDonationSuggestedAmounts = [];
+    }
+
     initEventDataSources() {
         this.initLanguages();
         this.initTimezones();
@@ -395,7 +417,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.unit = undefined;
             this.product.price = undefined;
-
+            this.product.customerChoosesPrice = false;
         } else {
             this.product.productServices = undefined;
             this.product.productSubscriptionOptions = undefined;
@@ -461,6 +483,20 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     }
 
                     this.product.productEvent.durationMinutes = this.eventDuration ? this.eventDuration * this.eventDurationType : undefined;
+                }
+
+                if (this.product.type == ProductType.Donation) {
+                    this.product.commissionableAmount = null;
+                    this.product.maxCommissionRate = null;
+                    this.product.maxCommissionRateTier2 = null;
+                }
+                else {
+                    this.product.productDonation = null;
+                }
+
+                if (!this.product.customerChoosesPrice) {
+                    this.product.minCustomerPrice = null;
+                    this.product.maxCustomerPrice = null;
                 }
 
                 if (this.product instanceof UpdateProductInput) {
@@ -712,6 +748,22 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         };
     }
 
+    validateGeneralPrice() {
+        return (event) => {
+            if (this.product.customerChoosesPrice) {
+                if (event.value) {
+                    if (this.product.minCustomerPrice > 0 && event.value < this.product.minCustomerPrice)
+                        return false;
+                    if (this.product.maxCustomerPrice > 0 && event.value > this.product.maxCustomerPrice)
+                        return false;
+                }
+
+                return true;
+            }
+            return (this.isFreePriceType && !event.value) || event.value > 0;
+        }
+    }
+
     validateFee(option) {
         return (event) => {
             return option.frequency == RecurringPaymentFrequency.OneTime
@@ -908,6 +960,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     togglePriceType() {
         if (this.isFreePriceType = !this.isFreePriceType) {
             this.product.price = undefined;
+            if (!this.product.stripeXref)
+                this.product.customerChoosesPrice = false;
             let options = this.product.productSubscriptionOptions;
             if (options && options[0]) {
                 options[0].fee = undefined;
@@ -964,6 +1018,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             case ProductType.Event:
                 this.product.unit = ProductMeasurementUnit.Unit;
                 this.initEventProps();
+                break;
+            case ProductType.Donation:
+                this.product.unit = ProductMeasurementUnit.Unit;
+                if (this.isFreePriceType)
+                    this.togglePriceType();
+                this.initDonationProps();
                 break;
         }
 
@@ -1121,6 +1181,17 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
         let addr = this.product.productEvent.address;
         this.eventAddress = [addr.streetAddress, addr.city, addr.stateName, addr.countryName, addr.zip].filter(x => !!x).join(', ');
+    }
+
+    addNewSuggestedAmountFields() {
+        this.product.productDonation.productDonationSuggestedAmounts.push(
+            new ProductDonationSuggestedAmountDto()
+        );
+    }
+
+    removeSuggestedAmountFields(index) {
+        this.product.productDonation.productDonationSuggestedAmounts.splice(index, 1);
+        this.detectChanges();
     }
 
     copyTextToClipboard(text) {

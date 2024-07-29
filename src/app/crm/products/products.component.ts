@@ -118,6 +118,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         }
     ];
 
+    productType = ProductType
     currency: string = SettingsHelper.getCurrency();
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     totalCount: number;

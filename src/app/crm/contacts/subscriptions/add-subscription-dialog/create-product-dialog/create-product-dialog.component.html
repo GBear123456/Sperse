@@ -29,6 +29,11 @@
                             <h3>{{ls.l('Event Tickets')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <p>{{ls.l('Sell event tickets and highlight benefits to get event-goers interested to attend.')}}</p>
                         </div>
+                        <div class="block" [ngClass]="{selected: product.type == productType.Donation, disabled: product.type != productType.Donation && product.id }" (click)="onProductTypeChanged(productType.Donation)">
+                            <img class="head" src="assets/common/icons/donation.png">
+                            <h3>{{ls.l('Donate')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                            <p>{{ls.l('Set a goal and start receiving funds to achieve it straightforwardly.')}}</p>
+                        </div>
                     </div>
                     <div class="middle">
                         <div class="block">
@@ -109,7 +114,7 @@
                             <div class="options-header">
                                 <h3>
                                     {{ls.l('Price settings')}} <img class="info" src="assets/common/icons/info-circle.svg">
-                                    <div class="slider-wrapper">
+                                    <div *ngIf="product.type != productType.Donation" class="slider-wrapper">
                                         <div class="state-slider point">
                                             <div class="captions">
                                                 <div [ngClass]="{active: isFreePriceType}" (click)="togglePriceType()">{{ ls.l('Free') }}</div>
@@ -124,32 +129,68 @@
                                 <div *ngIf="!isReadOnly && !isOneTime && product.type == productType.Subscription" class="add-new-button" (click)="addNewPaymentPeriod()"><span>+</span></div>
                             </div>
                             <hr class="wide">
-                            <div class="general-product" *ngIf="product.type == productType.General || product.type == productType.Digital || product.type == productType.Event">
-                                <div [ngClass]="{disabled: isFreePriceType}">
-                                    <dx-number-box name="price"
-                                                   width="100%"
-                                                   height="65px"
-                                                   class="label"
-                                                   [placeholder]="ls.l('Price')"
-                                                   [format]="amountFormat"
-                                                   [(value)]="product.price"
-                                                   [disabled]="isReadOnly"
-                                                   (onValueChanged)="checkShowAmountChangeWarrning()">
-                                        <dx-validator>
-                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Price'))}}."></dxi-validation-rule>
-                                        </dx-validator>
-                                    </dx-number-box>
+                            <div class="general-product" *ngIf="product.type != productType.Subscription">
+                                <div class="customer-price">
+                                    <dx-switch switchedOffText=""
+                                               switchedOnText=""
+                                               [(value)]="product.customerChoosesPrice"
+                                               [disabled]="isReadOnly || isFreePriceType || (product.type != productType.Donation && product.stripeXref)">
+                                    </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
                                 </div>
-                                <div *ngIf="product.type == productType.General">
-                                    <dx-select-box [dataSource]="getProductUnits()"
-                                                   width="100%"
-                                                   [placeholder]="ls.l('Unit')"
-                                                   [(value)]="product.unit"
-                                                   [disabled]="isReadOnly">
-                                        <dx-validator>
-                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
-                                        </dx-validator>
-                                    </dx-select-box>
+                                <div class="general-product-price">
+                                    <div [ngClass]="{disabled: isFreePriceType}">
+                                        <dx-number-box name="price"
+                                                       width="100%"
+                                                       height="65px"
+                                                       class="label"
+                                                       [placeholder]="product.customerChoosesPrice ? ls.l('Preset Price') : ls.l('Price')"
+                                                       [format]="isFreePriceType ? amountFormat : amountNullableFormat"
+                                                       [(value)]="product.price"
+                                                       [disabled]="isReadOnly"
+                                                       (onValueChanged)="checkShowAmountChangeWarrning()">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="custom" [validationCallback]="validateGeneralPrice()" message="{{ls.l('InvalidField', ls.l('Price'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-number-box>
+                                    </div>
+                                    <div *ngIf="product.type == productType.General">
+                                        <dx-select-box [dataSource]="getProductUnits()"
+                                                       width="100%"
+                                                       [placeholder]="ls.l('Unit')"
+                                                       [(value)]="product.unit"
+                                                       [disabled]="isReadOnly">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-select-box>
+                                    </div>
+                                </div>
+                                <div class="general-product-price" *ngIf="product.customerChoosesPrice">
+                                    <div>
+                                        <dx-number-box name="minCustomerPrice"
+                                                       width="100%"
+                                                       height="65px"
+                                                       class="label"
+                                                       [placeholder]="ls.l('Min Customer Price')"
+                                                       [format]="amountNullableFormat"
+                                                       [min]="0"
+                                                       [max]="product.maxCustomerPrice ? product.maxCustomerPrice - 1 : null"
+                                                       [(value)]="product.minCustomerPrice"
+                                                       [disabled]="isReadOnly">
+                                        </dx-number-box>
+                                    </div>
+                                    <div>
+                                        <dx-number-box name="maxCustomerPrice"
+                                                       width="100%"
+                                                       height="65px"
+                                                       class="label"
+                                                       [placeholder]="ls.l('Max Customer Price')"
+                                                       [format]="amountNullableFormat"
+                                                       [min]="product.minCustomerPrice ? product.minCustomerPrice + 1 : 0"
+                                                       [(value)]="product.maxCustomerPrice"
+                                                       [disabled]="isReadOnly">
+                                        </dx-number-box>
+                                    </div>
                                 </div>
                             </div>
                             <ng-container *ngIf="product.type == productType.Subscription">
@@ -334,7 +375,62 @@
                                 </div>
                             </ng-container>
                         </div>
-                        <div class="block" *ngIf="isCommissionsEnabled">
+                        <div class="block donation-type" *ngIf="product.type == productType.Donation">
+                            <h3>{{ls.l('Donation options')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                            <hr>
+                            <div class="donation-options">
+                                <div>
+                                    <label>{{ls.l('Donation Goal Amount')}}</label>
+                                    <dx-number-box name="donationGoalAmount"
+                                                   width="100%"
+                                                   [format]="amountNullableFormat"
+                                                   [(value)]="product.productDonation.goalAmount"
+                                                   [disabled]="isReadOnly">
+                                    </dx-number-box>
+                                </div>
+                                <div>
+                                    <dx-switch switchedOffText=""
+                                               switchedOnText=""
+                                               [(value)]="product.productDonation.keepActiveIfGoalReached"
+                                               [disabled]="isReadOnly">
+                                    </dx-switch>
+                                    <span class="always-active-goal">{{ls.l('Keep active if the goal is reached')}}</span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="options-header">
+                                <h3>{{ls.l('Defined amounts')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                                <div *ngIf="!isReadOnly" class="add-new-button" (click)="addNewSuggestedAmountFields()"><span>+</span></div>
+                            </div>
+                            <div class="suggested-amounts options" *ngFor="let suggestedAmount of product.productDonation.productDonationSuggestedAmounts; let i = index">
+                                <div *ngIf="!isReadOnly" class="remove-button" (click)="removeSuggestedAmountFields(i)"><span>-</span></div>
+                                <div class="field-wrapper">
+                                    <div class="field-50">
+                                        <dx-number-box width="100%"
+                                                       [placeholder]="ls.l('Amount')"
+                                                       [format]="amountNullableFormat"
+                                                       [(value)]="suggestedAmount.amount"
+                                                       [disabled]="isReadOnly">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Amount'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-number-box>
+                                    </div>
+                                    <div class="field-50">
+                                        <dx-text-box width="100%"
+                                                     [maxLength]="256"
+                                                     [placeholder]="ls.l('Text')"
+                                                     [(value)]="suggestedAmount.text"
+                                                     [disabled]="isReadOnly">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Text'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="block" *ngIf="product.type != productType.Donation && isCommissionsEnabled">
                             <h3>{{ls.l('Commission Calculations')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <hr>
                             <div class="commissions" [ngClass]="{disabled: !enableCommissions}">
@@ -695,7 +791,7 @@
                             <h3>{{ls.l('Product Tags')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                         </div>
                         <div class="block" *ngIf="product.type == productType.Subscription">
-                            <ng-container *ngIf="isHostTenant">
+                            <ng-container *ngIf="showDowngrade">
                                 <h3>{{ls.l('Downgrade to Option')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                                 <div class="options">
                                     <div *ngIf="!isReadOnly" class="remove-button" (click)="product.downgradeProductId = undefined"><span>-</span></div>
