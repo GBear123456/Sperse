@@ -36,6 +36,7 @@ import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
 import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
 import { LandingPageComponent } from '@shared/common/tenant-settings-wizard/landing-page/landing-page.component';
+import { LandingPageListComponent } from '@shared/common/tenant-settings-wizard/landing-page/landing-page-list/landing-page-list.component';
 import { WordingListComponent } from '@shared/common/tenant-settings-wizard/landing-page/wording-list/wording-list.component';
 import { ContactsModule } from '@app/crm/contacts/contacts.module';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
@@ -91,6 +92,7 @@ import { StaticListModule } from '@app/shared/common/static-list/static-list.mod
         BankTransferComponent,
         OtherSettingsComponent,
         LandingPageComponent,
+        LandingPageListComponent,
         WordingListComponent
     ],
     entryComponents: [
