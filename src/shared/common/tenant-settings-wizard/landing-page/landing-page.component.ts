@@ -25,7 +25,8 @@ import {
     LandingPageOnlineStatus,
     LandingPageSettingsDomainDto,
     AddVercelDomainInput,
-    LandingPageColorScheme
+    LandingPageColorScheme,
+    LandingPageCheckoutFieldSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -35,6 +36,7 @@ import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { AppConsts } from '@shared/AppConsts';
 import { WordingListComponent } from './wording-list/wording-list.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { LandingPageListComponent } from './landing-page-list/landing-page-list.component';
 
 @Component({
     selector: 'landing-page',
@@ -52,6 +54,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     @ViewChild('coverLogoUploader') coverLogoUploader: UploaderComponent;
     @ViewChild('faq', { static: false }) faqComponent: WordingListComponent;
     @ViewChild('tabs', { static: false }) tabsComponent: WordingListComponent;
+    @ViewChild('checkoutFieldComponent', { static: false }) checkoutFieldsComponent: LandingPageListComponent;
 
     settings: GetLandingPageSettingsDto;
 
@@ -96,6 +99,23 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
         };
     });
 
+    checkoutFields = [
+        'FirstName', 'LastName', 'Email', 'MobilePhone', 'ShippingAddress', 'BillingAddress', 'DateOfBirth', 'CompanyName',
+        'CustomField1', 'CustomField2', 'CustomField3', 'CustomField4', 'CustomField5'
+    ].map(item => {
+        return {
+            id: item,
+            text: item,
+            disabled: false
+        }
+    });
+    defaultFieldsConfig: LandingPageCheckoutFieldSettingsDto[] = [
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'FirstName', displayName: null, isRequired: true }),
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'LastName', displayName: null, isRequired: true }),
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'Email', displayName: null, isRequired: true }),
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'MobilePhone', displayName: null, isRequired: false })
+    ]
+
     constructor(
         private landingPageProxy: ContactLandingPageServiceProxy,
         private contactsServiceProxy: ContactServiceProxy,
@@ -112,6 +132,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
                 if (settings.memberSince)
                     settings.memberSince = DateHelper.addTimezoneOffset(new Date(settings.memberSince), true);
                 this.settings = settings;
+                this.initCheckoutFields();
                 this.setMetaKeywords();
                 this.initialLogoId = settings.logoFileObjectId;
                 this.initialCoverLogoId = settings.coverLogoFileObjectId;
@@ -303,8 +324,21 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             });
     }
 
+    initCheckoutFields() {
+        if (!this.settings.checkoutFields.length)
+            this.settings.checkoutFields = this.defaultFieldsConfig;
+        this.settings.checkoutFields.forEach(v => this.checkoutFields.find(x => x.id == v.fieldName).disabled = true);
+    }
+
+    onCheckoutFieldChanged(event) {
+        if (event.previousValue) {
+            this.checkoutFields.find(x => x.id == event.previousValue).disabled = false;
+        }
+        this.checkoutFields.find(x => x.id == event.value).disabled = true;
+    }
+
     save(): Observable<any> {
-        if (this.isNewDomainAdding || !this.faqComponent.isValid() || !this.tabsComponent.isValid()) {
+        if (this.isNewDomainAdding || !this.faqComponent.isValid() || !this.tabsComponent.isValid() || !this.checkoutFieldsComponent.isValid()) {
             this.notify.warn('Please correct invalid values');
             return throwError('');
         }
