@@ -10,13 +10,14 @@ import {
     Output,
     ViewChild
 } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 
 /** Third party import */
 import capitalize from 'underscore.string/capitalize';
 import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
+import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import * as _ from 'underscore';
 import { BehaviorSubject, combineLatest, Observable, ReplaySubject, zip } from 'rxjs';
 import { filter, finalize, first, map, switchMap, takeUntil } from 'rxjs/operators';
@@ -82,6 +83,7 @@ import { PersonHistoryDialogComponent } from '../personal-details/personal-detai
 })
 export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
+    @ViewChild(DxTooltipComponent) addTooltipComponent: DxTooltipComponent;
     @HostBinding('class.modern') @Input() showModernLayout: boolean = 
         this.appService.layoutService.showModernLayout;
 
@@ -105,6 +107,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     private readonly ADD_OPTION_DEFAULT = ContextType.AddFiles;
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
+    contextType = ContextType;
     get isOrgUpdatable(): Boolean {
         return this.manageCompaniesAllowed && this.data && this.data['organizationContactInfo']
             && this.data['organizationContactInfo'].isUpdatable;
@@ -142,6 +145,10 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     private readonly allContactGroups = _.values(ContactGroup);
     private readonly allContactGroupsExceptUser = this.allContactGroups.filter(v => v != ContactGroup.Employee);
+
+    featureMaxMessageCount = this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
+    isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+    isSendSmsAndEmailAllowed;
 
     manageAllowed$: Observable<boolean> = this.contactInfo$.pipe(
         filter(Boolean),
@@ -187,7 +194,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         private permissionService: AppPermissionService,
         public contactsService: ContactsService,
         public ls: AppLocalizationService,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        public router: Router
     ) {}
 
     ngOnInit(): void {
@@ -205,6 +213,11 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             (contactInfo: ContactInfoDto) => {
                 this.contactId = contactInfo.id;
                 this.contactGroups = contactInfo.groups;
+                this.isSendSmsAndEmailAllowed = this.featureMaxMessageCount
+                    && this.permissionService.checkCGPermission(
+                        this.contactGroups, 
+                        'ViewCommunicationHistory.SendSMSAndEmail'
+                    );
             }
         );
         this.manageAllowed$.pipe(
@@ -568,16 +581,20 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         const option: ContextMenuItem = event.addedItems.pop() || event.removedItems.pop() ||
             this.getContextMenuItemByType(this.ADD_OPTION_DEFAULT);
         this.updateSaveOption(option);
+        this.closeContextTooltip();
         this.addEntity();
     }
 
     addEntity(event?) {
-        if (event && event.offsetX > event.target.offsetWidth - 32)
-            return this.addContextComponent.instance.option('visible', true);
+        if (event && event.offsetX > event.target.offsetWidth - 32)            
+            return this.showModernLayout 
+                ? this.addTooltipComponent.instance.option('visible', true)
+                : this.addContextComponent.instance.option('visible', true);
 
         const selectedMenuItem = this.addContextMenuItems.find((contextMenuItem: ContextMenuItem) => {
             return contextMenuItem.selected === true;
         });
+
         if (selectedMenuItem.type === ContextType.AddContact)
             setTimeout(() => {
                 const dialogData: CreateEntityDialogData = {
@@ -709,6 +726,19 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             });
     }
 
+    showEmailDialog() {
+        this.contactsService.showEmailDialog(
+            { contact: this.data }
+        ).subscribe();
+
+        this.closeContextTooltip();
+    }
+
+    showSMSDialog() {
+        this.contactsService.showSMSDialog({ contact: this.data });
+        this.closeContextTooltip();
+    }
+
     ngOnDestroy() {
         this.lifeCycleService.destroy.next();
     }
@@ -719,5 +749,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     trim(value: string): string {
         return (value || '').trim();
+    }
+
+    closeContextTooltip() {
+        this.addTooltipComponent.instance.option('visible', false);
     }
 }

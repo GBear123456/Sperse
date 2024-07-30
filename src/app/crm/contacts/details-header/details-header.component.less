@@ -543,6 +543,11 @@
             min-width: 187px;
             white-space: nowrap;
         }
+        
+        .menu img {
+            vertical-align: sub;
+            margin-right: 7px; 
+        }
 
         @media (max-width: 1280px) {
             .menu {
@@ -567,5 +572,17 @@
         -moz-animation: rotation .6s infinite linear;
         -o-animation: rotation .6s infinite linear;
         animation: rotation .6s infinite linear;
+    }
+}
+
+::ng-deep .context-tooltip {
+    display: flex;
+    width: 260px !important;
+    flex-wrap: wrap;
+    gap: 26px;
+    padding: 10px;
+    justify-content: space-around;
+    img {
+        cursor: pointer;
     }
 }

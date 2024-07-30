@@ -110,13 +110,29 @@
     </div>
     <div class="header_buttons">
         <button id="addEntity" *ngIf="manageAllowed && addContextMenuItems.length" class="button-layout button-primary menu" (click)="addEntity($event)">
-            + {{addButtonTitle}}
-        </button>
+            <img src="./assets/common/icons/contact/add.svg"> {{addButtonTitle}}
+        </button><b class="tooltip-target"></b>
 
         <div class="vertical-delimiter"></div>
         <button class="refresh-button" (click)="refresh()"></button>
     </div>
 </header>
+<dx-tooltip 
+    *ngIf="showModernLayout"
+    [target]="'.tooltip-target'"
+    [position]="{ my: 'top right', at: 'bottom right', collision: 'fit flip' }">
+    <div *dxTemplate="let data = data of 'content'" class="context-tooltip">
+        <img *ngIf="manageAllowed" (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddNotes]]})" src="./assets/common/icons/contact/notes.svg">
+        <img src="./assets/common/icons/contact/tasks.svg">
+        <img src="./assets/common/icons/contact/meetings.svg">
+        <img *ngIf="isSendSmsAndEmailAllowed" (click)="router.navigate(['user-inbox'], {relativeTo: this.activatedRoute})" src="./assets/common/icons/contact/calllog.svg">
+        <img *ngIf="isSendSmsAndEmailAllowed" (click)="showEmailDialog()" src="./assets/common/icons/contact/emails.svg">
+        <img *ngIf="isSendSmsAndEmailAllowed && !isSMSIntegrationDisabled" (click)="showSMSDialog()" src="./assets/common/icons/contact/sms.svg">
+        <img *ngIf="manageAllowed" (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddFiles]]})" src="./assets/common/icons/contact/files.svg">
+        <img *ngIf="addContextMenuItems[contextType.AddInvoice].visible" (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddInvoice]]})" src="./assets/common/icons/contact/invoices.svg">
+        <img *ngIf="!data?.parentId" (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddContact]]})" src="./assets/common/icons/contact/contacts.svg">
+    </div>
+</dx-tooltip>
 <dx-context-menu
     *ngIf="addContextMenuItems && addContextMenuItems.length"
     [selectByClick]="true"
