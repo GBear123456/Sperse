@@ -9,6 +9,20 @@
         color: rgba(8, 41, 91, 1);
     } 
 
+    ::ng-deep app-toolbar {
+        div[accesskey="open-settings-dialog"] {
+            margin: 0!important;
+            &, .dx-button-content {
+                min-width: 18px!important;
+            }
+            img {
+                max-width: 18px;
+                max-height: 18px;
+                margin-right: 0!important;
+            }
+        }
+    }
+
     .operations-widget {
       float: right;
       color: #c5c7ca;

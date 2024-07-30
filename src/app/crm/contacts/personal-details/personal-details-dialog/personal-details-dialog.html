@@ -1,4 +1,7 @@
-<span class="close" (click)="close()"></span>
+<span *ngIf="!showModernLayout" class="close" (click)="close()"></span>
+<div *ngIf="showModernLayout" class="expand-angle" (click)="close()">
+    <img src="./assets/common/icons/angle-left.svg">
+</div>
 <mat-dialog-content>
     <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onSelectedTabChange($event)">
         <mat-tab [label]="ls.l('PersonalSettings.General')">
@@ -7,7 +10,7 @@
                     <mat-accordion displayMode="flat" [multi]="true">
                         <mat-expansion-panel class="affiliate-info" [expanded]="true">
                             <mat-expansion-panel-header>
-                                <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
+                                <mat-panel-title>{{ showModernLayout ? ls.l('Affiliate Settings') : ls.l('AffiliateInfo') }}</mat-panel-title>
                                 <span class="dx-icon-clock history-icon" (click)="showAffiliateHistory($event)" [title]="ls.l('AffiliateHistory')"></span>
                             </mat-expansion-panel-header>
                             <div class="field affiliate-code {{contactInfo?.affiliateServiceStatus}}">
@@ -70,7 +73,7 @@
                         </mat-expansion-panel>
                         <mat-expansion-panel class="source-info" [expanded]="true">
                             <mat-expansion-panel-header>
-                                <mat-panel-title>{{ ls.l('SourceInfo') }}</mat-panel-title>
+                                <mat-panel-title>{{ showModernLayout ? ls.l('Referred By') : ls.l('SourceInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
                             <ng-container *ngIf="sourceContactInfo$ | async as sourceContactInfo">
                                 <div class="field">
@@ -187,6 +190,39 @@
                                     </div>
                                 </div>
                             </div>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel *ngIf="showModernLayout && !isUserProfile" [expanded]="true">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>{{ ls.l('Linked Contacts') + (contactInfo?.subContactsCount ? ' (' + contactInfo?.subContactsCount + ')' : '') }}</mat-panel-title>
+                            </mat-expansion-panel-header>
+
+                            <div class="short-contact">
+                                <div class="related-contacts">
+                                    <div *ngIf="contactInfo && contactInfo['organizationContactInfo']?.contactPersons?.length > 1; else addNew" class="contact-persons-info" (click)="showContactPersons($event, 600)">
+                                        <img src="./assets/common/icons/similar-contacts.svg" alt="Contact Persons">
+                                        <span class="similar-contacts-count">{{ contactInfo['organizationContactInfo']?.contactPersons.length - 1 }} related contact<span *ngIf="contactInfo['organizationContactInfo']?.contactPersons.length - 1 > 1">s</span></span>
+                                        <img src="./assets/common/icons/down-arrow-icon.svg" alt="Contact Persons">
+                                    </div>
+
+                                    <ng-template #addNew>
+                                        <div class="contact-persons-info" (click)="addNewContact($event)" *ngIf="contactInfo?.primaryOrganizationContactId && manageAllowed">
+                                            <img src="./assets/common/icons/similar-contacts.svg" alt="Contact Persons">
+                                            <a class="add-new-contact">{{ls.l('AddRelatedContact')}}</a>
+                                        </div>
+                                    </ng-template>
+                                    <div class="sub-contacts-info" (click)="addNewContact($event, true)" *ngIf="!contactInfo?.parentId; else backToParent">
+                                        <img src="./assets/common/icons/similar-contacts.svg" [alt]="ls.l('SubContact')">
+                                        <a *ngIf="manageAllowed" class="add-new-contact sub-contact">+ {{ls.l('AddSubContact')}}</a>
+                                    </div>
+                                    <ng-template #backToParent>
+                                        <div class="contact-persons-info" (click)="showParent()" [title]="ls.l('Parent Contact')">
+                                            <img src="./assets/common/icons/similar-contacts.svg">
+                                            <a class="add-new-contact">{{contactInfo?.parentName || ls.l('Parent')}}</a>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>
+
                         </mat-expansion-panel>
                         <mat-expansion-panel [expanded]="true">
                             <mat-expansion-panel-header>

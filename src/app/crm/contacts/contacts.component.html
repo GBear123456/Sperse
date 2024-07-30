@@ -111,6 +111,10 @@
         </operations-widget>
     </ng-container>
     <ng-container rightPanel>
-        <personal-details-dialog [isModal]="false"></personal-details-dialog>
+        <personal-details-dialog 
+            [isModal]="false" 
+            [showContactPersons]="showContactPersons" 
+            [addNewContact]="addNewContact">
+        </personal-details-dialog>
     </ng-container>
 </item-details-layout>

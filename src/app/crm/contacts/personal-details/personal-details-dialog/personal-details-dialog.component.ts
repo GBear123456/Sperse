@@ -50,6 +50,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { AffiliateHistoryDialogComponent } from './affiliate-history-dialog/affiliate-history-dialog.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { ContactPersonsDialogComponent } from '../../contact-persons-dialog/contact-persons-dialog.component';
 import { CrmService } from '@app/crm/crm.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { FeatureCheckerService } from 'abp-ng2-module';
@@ -66,11 +67,19 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
     ]
 })
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
-    @HostBinding('class.modern') showModernLayout = this.appService.layoutService.showModernLayout;
+    @HostBinding('class.modern') get showModernLayout(): boolean {
+        return this.appService.layoutService.showModernLayout;
+    }
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild('checklistScroll') checklistScroll: DxScrollViewComponent;
     @ViewChild(MatTabGroup) tabGroup: MatTabGroup;  
+    @Input() showContactPersons: Function;
+    @Input() addNewContact: Function;
     @Input() isModal = true;
+
+    get isUserProfile() {
+        return this.contactsService.contactGroupId.value === ContactGroup.Employee;
+    }
 
     showChecklistTab = !!this.appService.getFeatureCount(AppFeatures.CRMMaxChecklistPointCount);
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
@@ -339,6 +348,18 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             }
             (this.tabGroup?._tabHeader as MatTabHeader).updatePagination();
         });
+    }
+
+    closeEditDialogs() {
+        this.dialog.openDialogs.forEach((dialog: MatDialogRef<any>) => {
+            if (!dialog.disableClose) {
+                dialog.close();
+            }
+        });
+    }
+
+    showParent() {
+        this.contactsService.updateLocation(this.contactInfo.parentId);
     }
 
     getCheckStripeSettings(): Observable<boolean> {
@@ -685,7 +706,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     addEmptyAffiliateCode() {
-        this.contactInfo.affiliateCodes.push(new ContactAffiliateCodeDto());
+        let codes = this.contactInfo.affiliateCodes;
+        if (codes && codes[codes.length - 1].id)
+            this.contactInfo.affiliateCodes.push(new ContactAffiliateCodeDto());
     }
 
     updateAffiliateCode(value, i) {

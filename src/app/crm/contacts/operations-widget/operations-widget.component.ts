@@ -189,15 +189,10 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     ngAfterViewInit() {
-        this.contactService.settingsDialogOpened$.subscribe((opened: boolean) => {
-            const settingsButton = this.elementRef.nativeElement.querySelector('[accesskey="settings"]');
-            if (settingsButton) {
-                this.renderer.setAttribute(
-                    settingsButton,
-                    'button-pressed',
-                    opened.toString()
-                );
-            }
+        this.contactService.settingsDialogOpened$.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((opened: boolean) => {
+            this.initToolbarConfig(0);
         });
     }
 
@@ -517,7 +512,26 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 this.printButtonConfig,
                 this.getNavigationConfig(),
                 optionItem,
-                impersonationItem
+                impersonationItem,
+                ...(this.layoutService.showModernLayout ? [{
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [{
+                        widget: 'dxButton',
+                        action: () => {
+                            this.contactService.openSettingsDialog();
+                        },
+                        options: {
+                            width: '18px',
+                            height: '18px',
+                            accessKey: 'open-settings-dialog',                            
+                            icon: './assets/common/icons/angle-left.svg'
+                        },
+                        checkVisible: () => {
+                            return !this.contactService.settingsDialogOpened.value;
+                        }
+                    }]
+                }] : [])
             ] : [
                 impersonationItem,
                 this.printButtonConfig,

@@ -822,15 +822,18 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.toolbarComponent.updateActiveGroups();
     }
 
-    showContactPersons(event) {
+    showContactPersons = (event, posLeft = -182) => {
         this.closeEditDialogs();
         this.dialog.open(ContactPersonsDialogComponent, {
             data: this.contactInfo,
             hasBackdrop: false,
             minWidth: 420,
             closeOnNavigation: true,
-            position: this.getDialogPosition(event, -182, 89),
-            panelClass: ['related-contacts']
+            position: this.getDialogPosition(event, posLeft, 89),
+            panelClass: [
+                'related-contacts', 
+                ...(this.showModernLayout ? ['modern'] : [])
+            ]
         }).afterClosed().subscribe(result => {
             if (result == 'addContact')
                 this.addNewContact(event);
@@ -1020,7 +1023,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         return this.contactService;
     }
 
-    addNewContact(event, isSubContact = false) {
+    addNewContact = (event, isSubContact = false) => {
         if (this.isUserProfile || !this.manageAllowed)
             return;
 

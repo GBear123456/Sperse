@@ -379,9 +379,10 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 $('.dx-button[accesskey=' + i.name + ']').removeAttr('button-pressed');
             });
 
-        let checkPressed = item.options && item.options['checkPressed'];
-        if (checkPressed)
-            event.element.setAttribute('button-pressed', Boolean(checkPressed.call(this)));
+        if ((item.options && item.options['checkPressed']) || item['checkVisible']) {
+            this.initToolbarItems();
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     getImgURI(name: string) {
@@ -458,7 +459,9 @@ export class ToolBarComponent implements OnDestroy, OnInit {
     }
 
     checkItemVisible(item) {
-        return (!item.hasOwnProperty('visible') || item.visible) && (!item.options || !item.options.items || item.options.items.some(subitem => !subitem.hasOwnProperty('visible') || subitem.visible));
+        return (!item.hasOwnProperty('visible') || item.visible) && 
+            (!item.options || !item.options.items || item.options.items.some(subitem => !subitem.hasOwnProperty('visible') || subitem.visible)) &&
+            (!item.checkVisible || item.checkVisible());
     }
 
     initToolbarItems() {
