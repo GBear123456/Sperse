@@ -41,7 +41,6 @@ import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
-import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
 
 @Injectable()
 export class UserManagementService {

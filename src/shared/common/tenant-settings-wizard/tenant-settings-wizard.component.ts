@@ -56,7 +56,10 @@ import { LandingPageComponent } from './landing-page/landing-page.component';
 @Component({
     selector: 'tenant-settings-wizard',
     templateUrl: 'tenant-settings-wizard.component.html',
-    styleUrls: ['tenant-settings-wizard.component.less'],
+    styleUrls: [
+        'tenant-settings-wizard.component.less',
+        '../styles/close-button.less'
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantSettingsWizardComponent implements AfterViewInit {
@@ -162,6 +165,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
+        this.dialogRef.updateSize("1400px", "900px");
         this.steps = [
             {
                 name: 'general-settings',
@@ -277,7 +281,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     next() {
         const newIndex = this.stepper.selectedIndex + 1;
         if (newIndex > this.visibleSteps.length - 1) {
-            this.dialogRef.close();
+            this.close();
         } else {
             this.stepper.selectedIndex = newIndex;
         }
@@ -309,5 +313,9 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
 
     onOptionChanged(option: string) {
         this.changedReloadOption = option;
+    }
+
+    close() {
+        this.dialogRef.close();
     }
 }

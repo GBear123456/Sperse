@@ -223,7 +223,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             this.userEmailSettings.imapHost = this.selectedProvider.imap.host;
             this.userEmailSettings.imapPort = this.selectedProvider.imap.port;
             this.userEmailSettings.imapUseSsl = this.selectedProvider.imap.ssl;
-            this.userEmailSettings.isImapEnabled = !!this.selectedProvider.imap.host;
+            this.userEmailSettings.isImapEnabled = false;
         } else {
             this.userEmailSettings.smtp.host = undefined;
             this.userEmailSettings.smtp.port = undefined;

@@ -1,6 +1,6 @@
 {
   "name": "abp-zero-template",
-  "version": "8.4.1",
+  "version": "8.4.3",
   "license": "MIT",
   "angular-cli": {},
   "scripts": {
@@ -75,7 +75,7 @@
     "bootstrap-select": "1.12.4",
     "chart.js": "^2.9.2",
     "chartjs-plugin-labels": "^1.1.0",
-    "ckeditor4-angular": "^2.1.0",
+    "ckeditor4-angular": "4.0.1",
     "color": "^3.1.2",
     "concat": "^1.0.3",
     "core-js": "^2.4.1",
