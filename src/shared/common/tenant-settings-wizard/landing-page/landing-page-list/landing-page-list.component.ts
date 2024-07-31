@@ -32,6 +32,7 @@ export class LandingPageListComponent {
     @Input() list: any[];
     @Input() itemTemplate: TemplateRef<any>;
     @Output() beforeItemAdd: EventEmitter<any> = new EventEmitter();
+    @Output() beforeItemDelete: EventEmitter<any> = new EventEmitter();
 
     constructor(
         public changeDetectorRef: ChangeDetectorRef,
@@ -45,7 +46,8 @@ export class LandingPageListComponent {
         this.list.push(item);
     }
 
-    removeListItem(index: number): void {
+    removeListItem(index: number, item): void {
+        this.beforeItemDelete.emit(item);
         this.list.splice(index, 1);
     }
 

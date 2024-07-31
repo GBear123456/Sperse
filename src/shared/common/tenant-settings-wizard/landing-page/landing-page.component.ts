@@ -100,7 +100,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     });
 
     checkoutFields = [
-        'FirstName', 'LastName', 'Email', 'MobilePhone', 'ShippingAddress', 'BillingAddress', 'DateOfBirth', 'CompanyName',
+        'FirstName', 'LastName', 'Email', 'PhoneNumber', 'Shipping', 'Billing', 'DateOfBirth', 'Company',
         'CustomField1', 'CustomField2', 'CustomField3', 'CustomField4', 'CustomField5'
     ].map(item => {
         return {
@@ -109,11 +109,13 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             disabled: false
         }
     });
+    checkoutRequiredField = ['FirstName', 'LastName', 'Email', 'PhoneNumber'];
+
     defaultFieldsConfig: LandingPageCheckoutFieldSettingsDto[] = [
-        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'FirstName', displayName: null, isRequired: true }),
-        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'LastName', displayName: null, isRequired: true }),
-        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'Email', displayName: null, isRequired: true }),
-        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'MobilePhone', displayName: null, isRequired: false })
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'FirstName', displayName: this.ls.l('FirstName'), isRequired: true }),
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'LastName', displayName: this.ls.l('LastName'), isRequired: true }),
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'Email', displayName: this.ls.l('Email'), isRequired: true }),
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'PhoneNumber', displayName: this.ls.l('PhoneNumber'), isRequired: false })
     ]
 
     constructor(
@@ -327,14 +329,34 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     initCheckoutFields() {
         if (!this.settings.checkoutFields.length)
             this.settings.checkoutFields = this.defaultFieldsConfig;
-        this.settings.checkoutFields.forEach(v => this.checkoutFields.find(x => x.id == v.fieldName).disabled = true);
+        this.settings.checkoutFields.forEach(v => this.setCheckoutFieldDisabled(v.fieldName, true));
     }
 
-    onCheckoutFieldChanged(event) {
+    onCheckoutFieldChanged(event, data) {
         if (event.previousValue) {
-            this.checkoutFields.find(x => x.id == event.previousValue).disabled = false;
+            this.setCheckoutFieldDisabled(event.previousValue, false)
         }
-        this.checkoutFields.find(x => x.id == event.value).disabled = true;
+        if (event.value) {
+            this.setCheckoutFieldDisabled(event.value, true);
+            data.displayName = event.value.includes('CustomField') ? null : this.ls.l(event.value);
+        }
+    }
+
+    onCheckoutFieldDeleted(event: LandingPageCheckoutFieldSettingsDto) {
+        this.setCheckoutFieldDisabled(event.fieldName, false);
+    }
+
+    setCheckoutFieldDisabled(field, value) {
+        this.checkoutFields.find(x => x.id == field).disabled = value;
+    }
+
+    validateRequiredCheckoutFields(): boolean {
+        if (!this.settings.checkoutFields.some(v => this.checkoutRequiredField.includes(v.fieldName) && v.isRequired)) {
+            this.notify.warn(`One of Checkout Fields (${this.checkoutRequiredField.join(', ')}) should be added as required`);
+            return false;
+        }
+        
+        return true;
     }
 
     save(): Observable<any> {
@@ -342,6 +364,9 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             this.notify.warn('Please correct invalid values');
             return throwError('');
         }
+
+        if (!this.validateRequiredCheckoutFields())
+            return throwError('');
 
         let settings = LandingPageSettingsDto.fromJS(this.settings);
         settings.metaKeywords = this.getMetaKeywordsString();

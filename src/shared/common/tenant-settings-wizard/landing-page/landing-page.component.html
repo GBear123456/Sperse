@@ -198,7 +198,8 @@
                            [title]="ls.l('Checkout Fields')"
                            [list]="settings.checkoutFields"
                            [itemTemplate]="checkoutFieldsTmpl"
-                           (beforeItemAdd)="$event.isRequired = false">
+                           (beforeItemAdd)="$event.isRequired = false"
+                           (beforeItemDelete)="onCheckoutFieldDeleted($event)">
         </landing-page-list>
 
         <ng-template #checkoutFieldsTmpl let-data>
@@ -208,7 +209,7 @@
                                valueExpr="id"
                                placeholder="Select field..."
                                [(value)]="data.fieldName"
-                               (onValueChanged)="onCheckoutFieldChanged($event)">
+                               (onValueChanged)="onCheckoutFieldChanged($event, data)">
                     <dx-validator>
                         <dxi-validation-rule type="required"
                                              [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
@@ -217,6 +218,10 @@
                 <dx-text-box placeholder="Display Name"
                              [(value)]="data.displayName"
                              [maxLength]="128">
+                    <dx-validator>
+                        <dxi-validation-rule type="required"
+                                             [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
+                    </dx-validator>
                 </dx-text-box>
                 <dx-check-box [text]="ls.l('Required')"
                               [(value)]="data.isRequired">

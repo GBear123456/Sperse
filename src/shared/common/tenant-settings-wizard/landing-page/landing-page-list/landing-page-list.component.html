@@ -6,7 +6,7 @@
                 <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: item  }">
                 </ng-container>
             </div>
-            <i class="fa fa-times remove-list-item" (click)="removeListItem(i)"></i>
+            <i class="fa fa-times remove-list-item" (click)="removeListItem(i, item)"></i>
         </div>
     </dx-validation-group>
     <div class="add-list-item" (click)="addListItem()">{{ls.l('Add new +')}}</div>
