@@ -347,7 +347,9 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     }
 
     setCheckoutFieldDisabled(field, value) {
-        this.checkoutFields.find(x => x.id == field).disabled = value;
+        let checkoutField = this.checkoutFields.find(x => x.id == field);
+        if (checkoutField)
+            checkoutField.disabled = value;
     }
 
     validateRequiredCheckoutFields(): boolean {
@@ -355,7 +357,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             this.notify.warn(`One of Checkout Fields (${this.checkoutRequiredField.join(', ')}) should be added as required`);
             return false;
         }
-        
+
         return true;
     }
 
