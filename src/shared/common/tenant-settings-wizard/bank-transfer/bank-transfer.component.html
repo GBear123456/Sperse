@@ -9,17 +9,21 @@
         </div>
         <div class="form-group">
             <label class="caption">{{ls.l('BankRoutingNumber')}}</label>
-            <dx-number-box [placeholder]="ls.l('EditValuePlaceholder')"
-                           [inputAttr]="{maxlength:9}"
-                           [(value)]="settings.bankRoutingNumber">
-            </dx-number-box>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         maxLength="9"
+                         mask="999999999"
+                         maskChar=""
+                         [(value)]="settings.bankRoutingNumber">
+            </dx-text-box>
         </div>
         <div class="form-group">
             <label class="caption">{{ls.l('BankRoutingNumberForACHTransfers')}}:</label>
-            <dx-number-box [placeholder]="ls.l('EditValuePlaceholder')"
-                           [inputAttr]="{maxlength:9}"
-                           [(value)]="settings.bankRoutingNumberForACH">
-            </dx-number-box>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         maxLength="9"
+                         mask="999999999"
+                         maskChar=""
+                         [(value)]="settings.bankRoutingNumberForACH">
+            </dx-text-box>
         </div>
         <div class="form-group">
             <label class="caption">{{ls.l('SWIFT_Code')}}</label>
