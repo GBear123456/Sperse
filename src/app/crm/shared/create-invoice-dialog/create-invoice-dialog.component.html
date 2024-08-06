@@ -141,7 +141,8 @@
                     <label class="bold-label">{{ls.l('Invoice_BilledFrom')}}</label>
                     <div class="credentials">
                         <div class="address-container">
-                            <span>{{invoiceSettings?.legalName || ''}} {{invoiceSettings?.taxVatNo || ''}}</span>
+                            <div *ngIf="invoiceSettings?.legalName">{{invoiceSettings?.legalName}}</div>
+                            <div *ngIf="invoiceSettings?.taxVatNo">{{invoiceSettings?.taxVatNo}}</div>
                             <pre>{{invoiceSettings?.address || ''}}</pre>
                         </div>
                     </div>
