@@ -801,7 +801,7 @@
                                                        valueExpr="id"
                                                        displayExpr="name"
                                                        [showClearButton]="false"
-                                                       [dataSource]="products$ | async"
+                                                       [dataSource]="products$ | async | FilterAssignments:[]:productType.Subscription"
                                                        [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
                                                        [(value)]="product.downgradeProductId"
                                                        [disabled]="isReadOnly">
@@ -820,9 +820,32 @@
                                                    width="100%"
                                                    valueExpr="id"
                                                    displayExpr="name"
-                                                   [dataSource]="products$ | async | FilterAssignments: getAssignementIds(option)"
+                                                   [dataSource]="products$ | async | FilterAssignments: getAssignementIds(option):productType.Subscription"
                                                    [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
                                                    [(value)]="option.upgradeProductId"
+                                                   [disabled]="isReadOnly">
+                                        <dx-validator *ngIf="i">
+                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Product'))}}."></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-select-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="block">
+                            <div class="options-header">
+                                <h3>{{ls.l('Recommended Products')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                                <div *ngIf="!isReadOnly" class="add-new-button" (click)="addRecommendedProduct()"><span>+</span></div>
+                            </div>
+                            <div class="options" *ngFor="let option of product.recommendedProducts; let i = index">
+                                <div *ngIf="!isReadOnly" class="remove-button" (click)="removeRecommendedProduct(i, option)"><span>-</span></div>
+                                <div class="upgrade-field">
+                                    <dx-select-box name="name"
+                                                   width="100%"
+                                                   valueExpr="id"
+                                                   displayExpr="name"
+                                                   [dataSource]="products$ | async | FilterAssignments: getRecommendedIds(option):null:productType.Subscription"
+                                                   [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
+                                                   [(value)]="option.recommendedProductId"
                                                    [disabled]="isReadOnly">
                                         <dx-validator *ngIf="i">
                                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Product'))}}."></dxi-validation-rule>

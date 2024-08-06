@@ -21,6 +21,7 @@ import {
     ProfileServiceProxy,
     PublicCouponInfo,
     PublicProductInfo,
+    PublicProductInput,
     PublicProductServiceProxy,
     PublicProductSubscriptionOptionInfo,
     RecurringPaymentFrequency,
@@ -71,6 +72,7 @@ export class SingleProductComponent implements OnInit {
 
     productInfo: PublicProductInfo;
     requestInfo: SubmitProductRequestInput = new SubmitProductRequestInput();
+    productInput = new PublicProductInput();
     tenantRegistrationModel = new CompleteTenantRegistrationInput();
     passwordComplexitySetting: PasswordComplexitySetting;
 
@@ -124,7 +126,8 @@ export class SingleProductComponent implements OnInit {
         public ls: AppLocalizationService,
         public conditionsModalService: ConditionsModalService
     ) {
-        this.requestInfo.quantity = 1;
+        this.productInput.quantity = 1;
+        this.requestInfo.products = [this.productInput];
     }
 
     ngOnInit(): void {
@@ -315,7 +318,7 @@ export class SingleProductComponent implements OnInit {
         this.requestInfo.tenantId = this.tenantId;
         this.requestInfo.affiliateCode = this.ref;
         this.requestInfo.paymentGateway = paymentGateway;
-        this.requestInfo.productId = this.productInfo.id;
+        this.productInput.productId = this.productInfo.id;
         if (this.isFreeProductSelected || this.productInfo.customerChoosesPrice)
             this.requestInfo.couponCode = null;
 
@@ -324,14 +327,14 @@ export class SingleProductComponent implements OnInit {
             case ProductType.Digital:
             case ProductType.Event:
             case ProductType.Donation:
-                this.requestInfo.unit = this.productInfo.unit;
+                this.productInput.unit = this.productInfo.unit;
                 if (this.productInfo.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
-                    this.requestInfo.price = this.productInfo.price;
+                    this.productInput.price = this.productInfo.price;
 
                 break;
             case ProductType.Subscription:
-                this.requestInfo.optionId = this.selectedSubscriptionOption.id;
-                this.requestInfo.unit = PaymentService.getProductMeasurementUnit(this.selectedSubscriptionOption.frequency);
+                this.productInput.optionId = this.selectedSubscriptionOption.id;
+                this.productInput.unit = PaymentService.getProductMeasurementUnit(this.selectedSubscriptionOption.frequency);
                 break;
         }
 
@@ -516,7 +519,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     getGeneralPrice(includeCoupon: boolean): number {
-        let price = this.productInfo.price * this.requestInfo.quantity;
+        let price = this.productInfo.price * this.productInput.quantity;
         if (includeCoupon)
             price = this.applyCoupon(price);
         return price;
@@ -534,7 +537,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     changeQuantity(quantity: number) {
-        this.requestInfo.quantity = quantity;
+        this.productInput.quantity = quantity;
     }
 
     couponChange() {

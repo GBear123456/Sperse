@@ -8,13 +8,13 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { DxValidationGroupComponent } from 'devextreme-angular/ui/validation-group';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     LandingPageWordingSettingsDto
 } from '@shared/service-proxies/service-proxies';
+import { LandingPageListComponent } from '../landing-page-list/landing-page-list.component';
 
 @Component({
     selector: 'wording-list',
@@ -26,7 +26,7 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WordingListComponent {
-    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent
+    @ViewChild(LandingPageListComponent, { static: false }) landingPageList: LandingPageListComponent;
 
     @Input() title: string;
     @Input() wordings: LandingPageWordingSettingsDto[];
@@ -39,15 +39,7 @@ export class WordingListComponent {
     ) {
     }
 
-    addWording(): void {
-        this.wordings.push(new LandingPageWordingSettingsDto());
-    }
-
-    removeWording(index: number): void {
-        this.wordings.splice(index, 1);
-    }
-
     isValid(): boolean {
-        return this.validationGroup.instance.validate().isValid;
+        return this.landingPageList.isValid();
     }
 }
