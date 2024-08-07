@@ -105,6 +105,15 @@ export class StripeSettingsComponent extends SettingsComponentBase {
             })
     }
 
+    isValid(): boolean {
+        if (this.stripePaymentSettings.apiKey && !this.stripePaymentSettings.publishableKey) {
+            this.notify.warn(this.l('RequiredField', 'Publishable Key'));
+            return false;
+        }
+
+        return super.isValid();
+    }
+
     getSaveObs(): Observable<any> {
         return this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings);
     }

@@ -35,6 +35,10 @@
         <label for="StripeSecretKey">{{l("Secret key")}}</label>
         <input id="StripeSecretKey" type="text" name="StripeSecretKey" class="form-control" [(ngModel)]="stripePaymentSettings.apiKey">
     </div>
+    <div class="form-group">
+        <label for="StripePublishableKey">{{l("Publishable key")}}</label>
+        <input id="StripePublishableKey" type="text" name="StripePublishableKey" class="form-control" [(ngModel)]="stripePaymentSettings.publishableKey">
+    </div>
     <p>
         <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
     </p>
