@@ -55,7 +55,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     loadSettings() {
         this.startLoading();
         if (this.isPaymentsEnabled) {
-            this.tenantPaymentSettingsService.getStripeSettings(true)
+            this.tenantPaymentSettingsService.getStripeSettings(true, true)
                 .pipe(
                     finalize(() => this.finishLoading())
                 )
