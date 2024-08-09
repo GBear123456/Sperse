@@ -62,10 +62,10 @@
                     </dxo-selection>
                     <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                     <!--dxo-editing mode="popup"
-                                 [texts]="{ editRow: '' }"
-                                 [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
-                                 [allowUpdating]="!isReadOnly">
-                    </dxo-editing -->
+                 [texts]="{ editRow: '' }"
+                 [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                 [allowUpdating]="!isReadOnly">
+    </dxo-editing -->
                     <dxi-column [dataField]="productFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                     <dxi-column [dataField]="productFields.ThumbnailUrl"
                                 cellTemplate="imageTemplate"
@@ -91,9 +91,10 @@
                     <dxi-column [dataField]="productFields.CreateUser" [caption]="l('Create User')" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.AllowCoupon" [caption]="l('Allow Coupon')" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.PublishDate" [caption]="l('Publish Date')" [visible]="false" cellTemplate="dateCell"></dxi-column>
-                    <dxi-column dataField="LastSold" [caption]="l('Last Sold')" cellTemplate="dateagoTemplate" sortOrder="desc"  alignment="right" [visible]="false"></dxi-column>
+                    <dxi-column dataField="LastSold" [caption]="l('Last Sold')" cellTemplate="dateagoTemplate" sortOrder="desc" alignment="right" [visible]="false"></dxi-column>
                     <dxi-column dataField="UnitSold" [caption]="l('Units Sold')" cssClass="tabular" [visible]="false"></dxi-column>
                     <dxi-column dataField="GrossSales" [caption]="l('Gross Sales')" cellTemplate="currencyTemplate" cssClass="tabular" [visible]="false"></dxi-column>
+                    <dxi-column dataField="BarCode" [caption]="l('BarCode')" [visible]="false"></dxi-column>
                     <dxi-column caption="" cellTemplate="actionTemplate" [width]="60"></dxi-column>
 
                     <div *dxTemplate="let cellData of 'dateagoTemplate'">
