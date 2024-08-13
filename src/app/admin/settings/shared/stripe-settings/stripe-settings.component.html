@@ -19,8 +19,8 @@
     <div *ngIf="stripePaymentSettings.connectedAccountId">
         <h6>{{l("Connected account info")}}:</h6>
         <div><span class="small">Account Id: </span><b>{{stripePaymentSettings.connectedAccountId}}</b></div>
-        <div><span class="small">Account Name: </span><b>{{stripePaymentSettings.connectedAccountInfo.type}}</b></div>
-        <div><span class="small">Account Type: </span><b>{{stripePaymentSettings.connectedAccountInfo.name}}</b></div>
+        <div><span class="small">Account Type: </span><b>{{stripePaymentSettings.connectedAccountInfo.type}}</b></div>
+        <div><span class="small">Account Name: </span><b>{{stripePaymentSettings.connectedAccountInfo.name}}</b></div>
         <div><span class="small">Account Email: </span><b>{{stripePaymentSettings.connectedAccountInfo.email}}</b></div>
     </div>
     <div class="payment-methods" *ngIf="stripePaymentSettings.isConnectedAccountSetUpCompleted">
