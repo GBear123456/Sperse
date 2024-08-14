@@ -14,6 +14,7 @@ import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/per
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { OffersWizardModule } from '@shared/offers-wizard/offers-wizard.module';
+import { LayoutModule } from '@app/shared/layout/layout.module';
 
 @NgModule({
     declarations: [
@@ -26,6 +27,7 @@ import { OffersWizardModule } from '@shared/offers-wizard/offers-wizard.module';
         MatDialogModule,
         PersonalFinanceRoutingModule,
         OffersWizardModule,
+        LayoutModule,
         PersonalFinanceCommonModule.forRoot()
     ],
     providers: [

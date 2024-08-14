@@ -22,6 +22,7 @@ import { AnnouncementsComponent } from './dashboard/announcements/announcements.
 import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { LayoutModule } from '@app/shared/layout/layout.module';
 
 @NgModule({
     declarations: [
@@ -40,6 +41,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
         DxScrollViewModule,
         DxProgressBarModule,
         NgxPageScrollModule,
+        LayoutModule
     ],
     providers: [ MemberSubscriptionServiceProxy, LayoutService ]
 })
