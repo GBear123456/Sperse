@@ -16,6 +16,8 @@ import { Observable } from "rxjs";
 
 @Injectable()
 export class CurrencyCRMService {
+    dataLoaded = false;
+
     constructor(
         private store$: Store<RootStore.State>
     ) {
@@ -27,15 +29,13 @@ export class CurrencyCRMService {
         filter(x => x != null),
         tap(data => {
             data.forEach(c => c['displayName'] = `${c.name}, ${c.symbol}`);
+            this.dataLoaded = true;
             return data;
         })
     );
 
     getCurrencyFilter(initialCurrency): FilterModel {
-        let itemModel = new FilterItemModel(initialCurrency);
-        itemModel.isClearAllowed = false;
-
-        return new FilterModel({
+        var filter = new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: 'Currency',
             hidden: false,
@@ -50,5 +50,12 @@ export class CurrencyCRMService {
                 })
             }
         });
+
+        if (!this.dataLoaded)
+            setTimeout(() => filter.updateCaptions(), 1000);
+        else
+            filter.updateCaptions();
+
+        return filter;
     }
 }

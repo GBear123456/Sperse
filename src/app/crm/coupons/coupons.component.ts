@@ -20,8 +20,6 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
-import { FilterItemModel } from '@root/shared/filters/models/filter-item.model';
-import { FilterInputsComponent } from '@root/shared/filters/inputs/filter-inputs.component';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { AddCouponDialogComponent } from './add-coupon-dialog/add-coupon-dialog.component';
@@ -34,7 +32,9 @@ import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { DateHelper } from '../../../shared/helpers/DateHelper';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { CurrencyHelper } from '../shared/helpers/currency.helper';
+import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
+import { FilterModelBase } from '../../../shared/filters/models/filter-model-base';
+import { FilterItemModel } from '../../../shared/filters/models/filter-item.model';
 
 @Component({
     templateUrl: './coupons.component.html',
@@ -128,6 +128,7 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
     constructor(
         injector: Injector,
         private filtersService: FiltersService,
+        private currencyService: CurrencyCRMService,
         private couponProxy: CouponServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         public appService: AppService,
@@ -262,17 +263,19 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     getCurrencyFilter(): FilterModel {
-        let filter = CurrencyHelper.getCurrencyFilter(this.currency);
-        filter.filterMethod = () => this.getCurrencyFilterExpression();
+        let filter = this.currencyService.getCurrencyFilter(this.currency);
+        filter.filterMethod = (filter) => this.getCurrencyFilterExpression(filter);
         return filter;
     }
 
-    getCurrencyFilterExpression(): any {
+    getCurrencyFilterExpression(filter: FilterModelBase<FilterItemModel> = null): any {
+        let addPercentageFilter = !filter || filter.items.element.value.length;
+        let conditions = [filter ? FilterHelpers.filterBySetOfValues(filter) : FilterHelpers.filterByCurrencyId(this.currency)];
+        if (addPercentageFilter)
+            conditions.push({ 'Type': { eq: CouponDiscountType.Percentage } });
+
         return {
-            or: [
-                FilterHelpers.filterByCurrencyId(this.currency),
-                { 'Type': { eq: CouponDiscountType.Percentage } }
-            ]
+            or: conditions
         };
     }
 
