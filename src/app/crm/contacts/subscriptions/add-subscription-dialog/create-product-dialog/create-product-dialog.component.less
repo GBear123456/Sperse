@@ -329,6 +329,10 @@
                     border: 1px solid #dfdfdf !important;
                 }
 
+                &.hide-borders .dx-texteditor-input-container {
+                    border: none !important;
+                }
+
                 input, textarea {
                     font-family: Poppins;
                     font-size: 13px;
@@ -934,6 +938,49 @@
                 right: 46px;
             }
         }
+    }
+
+    ::ng-deep .flag-field {
+        background-color: #fff;
+        border: 1px solid #ebedf2;
+        padding: 0.65rem 1rem;
+        border-radius: 0.25rem;
+        height: 100%;
+        display: flex;
+        align-items: center;
+
+        span, b {
+            vertical-align: middle;
+        }
+
+        ::ng-deep dx-text-box {
+            display: inline-block !important;
+            height: 22px;
+
+            input {
+                border: none;
+                min-height: 20px;
+            }
+        }
+    }
+}
+
+::ng-deep .flag-row {
+    border-bottom: 1px solid #E5E8F3;
+    padding: 7px 0px !important;
+    margin: 0 10px;
+    display: flex;
+    width: calc(100% - 20px);
+
+    .flag-icon {
+        border-radius: 10px;
+        border: 1px solid #dedede;
+    }
+
+    div {
+        display: inline-block;
+        margin: auto 0 auto 10px;
+        white-space: pre-wrap;
     }
 }
 

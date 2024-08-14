@@ -131,13 +131,31 @@
                             <hr class="wide">
                             <div class="currency-block">
                                 <label>Currency</label>
-                                <dx-select-box [dataSource]="currencyService.currencies$ | async"
-                                               width="100%"
+                                <dx-select-box class="hide-placeholder"
+                                               valueExpr="id"
+                                               displayExpr="displayName"
+                                               [searchExpr]="['id', 'displayName']"
+                                               [searchEnabled]="true"
+                                               placeholder="Search"
+                                               fieldTemplate="field"
                                                [(value)]="product.currencyId"
                                                [disabled]="isReadOnly || product.hasIncompletedInvoices || product.hasExternalReference"
-                                               valueExpr="id"
-                                               displayExpr="text"
+                                               [dataSource]="currencyService.currencies$ | async"
                                                (onValueChanged)="onCurrencyChanged($event)">
+                                    <div *dxTemplate="let item of 'field'" class="flag-field">
+                                        <img [hidden]="!product?.currencyId" class="selected-flag-icon" src="assets/common/icons/flags/{{product?.currencyId?.toLowerCase()}}.svg" width="19px" height="auto">&nbsp;
+                                        <dx-text-box class="hide-borders" width="90%" [value]="item?.displayName"></dx-text-box>
+                                    </div>
+                                    <div *dxTemplate="let item of 'item'" class="flag-row">
+                                        <img class="flag-icon" src="assets/common/icons/flags/{{item?.id?.toLowerCase()}}.svg" width="52px" height="38px">
+                                        <div>
+                                            <span class="currency-name">{{item.displayName}}</span><br>
+                                            <b class="currency-id">{{item.id}}</b>
+                                        </div>
+                                    </div>
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Currency'))}}."></dxi-validation-rule>
+                                    </dx-validator>
                                 </dx-select-box>
                             </div>
                             <div class="general-product" *ngIf="product.type != productType.Subscription">

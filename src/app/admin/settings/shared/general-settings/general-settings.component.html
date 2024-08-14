@@ -27,7 +27,7 @@
                         [defaultTimezoneScope]="defaultTimezoneScope">
         </timezone-combo>
     </div>
-    <div class="form-group payment-settings">
+    <div class="form-group">
         <label for="Currency">{{l("Currency")}}</label>       
         <dx-select-box
             valueExpr="id"
@@ -43,7 +43,11 @@
                 <dx-text-box width="90%" [value]="item?.displayName"></dx-text-box>
             </div>
             <div *dxTemplate="let item of 'item'" class="flag-row">
-                <img class="flag-icon" src="assets/common/icons/flags/{{item?.id?.toLowerCase()}}.svg" width="52px" height="38px"><div><span class="currency-name">{{item.displayName}}</span><br><b class="currency-id">{{item.id}}</b></div>
+                <img class="flag-icon" src="assets/common/icons/flags/{{item?.id?.toLowerCase()}}.svg" width="52px" height="38px">
+                <div>
+                    <span class="currency-name">{{item.displayName}}</span><br>
+                    <b class="currency-id">{{item.id}}</b>
+                </div>
             </div>
         </dx-select-box>
     </div>
