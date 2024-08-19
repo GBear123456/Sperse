@@ -3,7 +3,6 @@ import { Injectable } from "@angular/core";
 /** Third party imports */
 
 import { FilterCheckBoxesComponent } from "@shared/filters/check-boxes/filter-check-boxes.component";
-import { FilterItemModel } from "@shared/filters/models/filter-item.model";
 import { FilterModel } from "@shared/filters/models/filter.model";
 import { FilterCheckBoxesModel } from "@shared/filters/check-boxes/filter-check-boxes.model";
 import { select, Store } from "@ngrx/store";
@@ -57,5 +56,14 @@ export class CurrencyCRMService {
             filter.updateCaptions();
 
         return filter;
+    }
+
+    isSingleCurrencyFilterSelected(currencyFilter: FilterModel) {
+        var values = currencyFilter.items.element.value;
+        return values && values.length == 1;
+    }
+
+    getSelectedCurrencies(currencyFilter: FilterModel) {
+        return currencyFilter.items.element.value;
     }
 }

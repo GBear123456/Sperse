@@ -52,7 +52,7 @@ import { InvoicesService } from '../contacts/invoices/invoices.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DateHelper } from '../../../shared/helpers/DateHelper';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { CurrencyHelper } from '../shared/helpers/currency.helper';
+import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -85,7 +85,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     startCase = startCase;
 
-    currency: string = SettingsHelper.getCurrency();
+    defaultCurrency: string = SettingsHelper.getCurrency();
     invoiceDueGraceDays = this.setting.getInt('Invoice:DueGracePeriod');
     searchClear = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
@@ -95,6 +95,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     filterZeroInvoices: boolean = true;
     readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;
     private filters: FilterModel[] = this.getFilters();
+    private currencyFilter: FilterModel;
     private prodcutsFilter: FilterModel;
     rowsViewHeight: number;
 
@@ -121,7 +122,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         deserializeDates: false,
         url: this.getODataUrl(
             this.dataSourceURI,
-            [FilterHelpers.filterByCurrencyId(this.currency), this.getOdataFilterByNonZeroTotal()]
+            [FilterHelpers.filterByCurrencyId(this.defaultCurrency), this.getOdataFilterByNonZeroTotal()]
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
@@ -165,7 +166,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             version: AppConsts.ODataVersion,
             url: this.getODataUrl(
                 this.dataSourceCountURI,
-                [FilterHelpers.filterByCurrencyId(this.currency)]
+                [FilterHelpers.filterByCurrencyId(this.defaultCurrency)]
             ),
             beforeSend: (request) => {
                 this.totalCount = this.totalSum = this.totalErrorMsg = undefined;
@@ -197,6 +198,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private changeDetectorRef: ChangeDetectorRef,
         private appService: AppService,
         private currencyPipe: CurrencyPipe,
+        private currencyService: CurrencyCRMService,
         public crmService: CrmService,
         public dialog: MatDialog
     ) {
@@ -218,8 +220,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     customizeTotal = () => this.totalCount !== undefined ? this.l('Count') + ': ' + this.totalCount : '';
-    customizeSum = () => this.totalSum !== undefined ?
-        this.l('Sum') + ': ' + this.currencyPipe.transform(this.totalSum, this.currency, 'symbol', '1.2-2') :
+    customizeSum = () => this.totalSum !== undefined && this.currencyService.isSingleCurrencyFilterSelected(this.currencyFilter) ?
+        this.l('Sum') + ': ' + this.currencyPipe.transform(this.totalSum, this.currencyService.getSelectedCurrencies(this.currencyFilter)[0], 'symbol', '1.2-2') :
         '';
 
     private handleDataGridUpdate() {
@@ -353,7 +355,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 field: this.invoiceFields.GrandTotal,
                 items: { from: new FilterItemModel(), to: new FilterItemModel() }
             }),
-            CurrencyHelper.getCurrencyFilter(this.currency),
+            this.currencyFilter = this.currencyService.getCurrencyFilter(this.defaultCurrency),
             new FilterModel({
                 component: FilterCalendarComponent,
                 operator: { from: 'ge', to: 'le' },
@@ -369,7 +371,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     products: new FilterServicesAndProductsModel(
                         {
                             dataSource$: this.productProxy.getProducts(
-                                undefined, this.currency, false
+                                undefined, undefined, false
                             ).pipe(
                                 map((products: ProductDto[]) => {
                                     let productsWithGroups = products.filter(x => x.group);
