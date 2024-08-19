@@ -843,7 +843,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (coupon) {
             let discountTotal = coupon.type == CouponDiscountType.Fixed ?
                 this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff :
-                this.subTotal * (coupon.percentOff / 100);
+                round(this.subTotal * (coupon.percentOff / 100), 4);
             this.discountTotal = round(discountTotal, 2);
         } else if (this.invoiceInfo && this.invoiceInfo.id && !this.invoiceInfo.couponId) {
             this.discountTotal = this.invoiceInfo.discountTotal || 0;
