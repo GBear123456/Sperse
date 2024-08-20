@@ -29,7 +29,7 @@
                     displayExpr="name"
                     [(value)]="selectedProvider"
                     fieldTemplate="field"
-                    (onValueChanged)="onProviderChanged()">
+                    (onValueChanged)="onProviderChanged($event)">
                     <div class="provider-select-item" *dxTemplate="let data of 'item'">
                         <div class="provider-icon" [ngStyle]="{'background-image': 'url(assets/common/icons/smtp/' + data?.icon + ')'}"></div>{{data?.name}}
                     </div>

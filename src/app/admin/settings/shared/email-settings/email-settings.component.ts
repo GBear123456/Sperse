@@ -50,21 +50,23 @@ export class EmailSettingsComponent extends SettingsComponentBase {
                 this.showCustomSmptSettings = this.isHost || !!this.emailSettings.smtpHost;
 
                 if (this.emailSettings.smtpHost)
-                    this.selectedProvider = this.supportedProviders.find(item => item.host == this.emailSettings.smtpHost);
-
-                if (!this.selectedProvider)
-                    this.onProviderChanged(this.supportedProviders[0]);                
+                    this.selectedProvider = this.supportedProviders.find(item => item.hosts.includes(this.emailSettings.smtpHost.toLowerCase())) || null;
+                else
+                    this.onProviderChanged(this.supportedProviders[0]);
 
                 this.changeDetection.detectChanges();
             });
     }
 
     onProviderChanged(provider) {
+        if (this.selectedProvider === provider)
+            return;
+
         this.selectedProvider = provider;
         this.smtpProviderErrorLink = undefined;
         if (this.selectedProvider) {
             this.showCustomSmptSettings = true;
-            this.emailSettings.smtpHost = this.selectedProvider.host;
+            this.emailSettings.smtpHost = this.selectedProvider.hosts[0];
             this.emailSettings.smtpPort = this.selectedProvider.port;
             this.emailSettings.smtpEnableSsl = this.selectedProvider.ssl;
             this.emailSettings.smtpDomain = this.selectedProvider.domain;
