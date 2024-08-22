@@ -87,6 +87,7 @@ import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/mode
 import { InvoiceSettingsDialogComponent } from '../../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -123,8 +124,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private readonly MAX_DESCRIPTION_LENGTH = 5000 + 255;
     defaultCountryCode = AppConsts.defaultCountryCode;
+
     currency = SettingsHelper.getCurrency();
-    currencySymbol = getCurrencySymbol(this.currency, 'narrow');
+    selectBoxCurrency = this.currency;
+    currencySymbol;
     saveButtonId = 'saveInvoiceOptions';
     newInvoiceInfo = new GetNewInvoiceInfoOutput();
     invoiceSettings: InvoiceSettingsDto = new InvoiceSettingsDto();
@@ -147,7 +150,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     description = '';
     notes = '';
-    lines = [{ isCrmProduct: !!this.featureMaxProductCount }];
+    lines: any[] = [{ isCrmProduct: !!this.featureMaxProductCount }];
 
     couponId: number;
     selectedCoupon: CouponDto;
@@ -276,6 +279,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private contactsService: ContactsService,
         private statesService: StatesService,
         private paymetService: PaymentServiceProxy,
+        private currencyService: CurrencyCRMService,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -360,7 +364,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
                         }
                     }
-                    this.disabledForUpdate = this.disabledForUpdate || invoiceInfo.currencyId != this.currency;
+                    this.currency = this.selectBoxCurrency = invoiceInfo.currencyId;
                     this.orderNumber = invoiceInfo.orderNumber;
                     this.customer = invoiceInfo.contactName;
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
@@ -399,8 +403,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
         } else
             this.resetNoteDefault();
 
+
         this.initNewInvoiceInfo();
         this.initContactInfo(this.data.contactInfo);
+        this.initCurrencyFields();
         this.changeDetectorRef.detectChanges();
     }
 
@@ -679,6 +685,53 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
+    onCurrencyChanged(event) {
+        if (!event.event)
+            return;
+
+        if (!event.value) {
+            setTimeout(() => {
+                this.selectBoxCurrency = this.currency;
+                this.changeDetectorRef.detectChanges();
+            });
+            return;
+        }
+
+        if (this.getFilteredLines(false).length || this.selectedCoupon || this.orderNumber) {
+            this.messageService.confirm('Changing currency will clear lines, coupon and order', '', (isConfirmed) => {
+                if (isConfirmed) {
+                    this.currency = event.value;
+                    this.couponId = null;
+                    this.orderId = undefined;
+                    this.orderNumber = undefined;
+                    this.lines = [{ isCrmProduct: !!this.featureMaxProductCount }];
+
+                    this.initCurrencyFields();
+                    this.calculateBalance();
+                    this.changeDetectorRef.detectChanges();
+                } else {
+                    this.selectBoxCurrency = event.previousValue;
+                    this.changeDetectorRef.detectChanges();
+                }
+            });
+        }
+        else {
+            this.currency = event.value;
+            this.initCurrencyFields();
+        }
+    }
+
+    initCurrencyFields() {
+        this.currencySymbol = getCurrencySymbol(this.currency, 'narrow');
+        this.lastProductPhrase = null;
+        this.products = [];
+        if (this.contactId)
+            this.orderDropdown.initOrderDataSource();
+
+        if (this.couponsDataSource.isLoaded() || this.couponsDataSource.isLoading())
+            this.couponsDataSource.reload();
+    }
+
     initContactAddresses(contactId: number) {
         if (contactId)
             this.invoiceProxy.getInvoiceAddresses(contactId).subscribe(res => {
@@ -748,9 +801,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10, this.currency).subscribe(res => {
                 if (!phrase || phrase == this.lastProductPhrase) {
                     this.products = res.map((item: any, itemIndex: number) => {
-                        item.details = item.description;                        
+                        item.details = item.description;
                         item.description = item.name + (
-                            res.some((prod, prodIndex) => 
+                            res.some((prod, prodIndex) =>
                                 item.name == prod.name && itemIndex != prodIndex
                             ) ? ' (' + item.code + ')' : ''
                         );
@@ -1247,9 +1300,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     initiatePaymentMethodsCheck(timeout = 1000) {
         if (this.invoiceId && this.invoiceInfo && [
-                InvoiceStatus.Paid, 
-                InvoiceStatus.Canceled
-            ].includes(this.invoiceInfo.status)
+            InvoiceStatus.Paid,
+            InvoiceStatus.Canceled
+        ].includes(this.invoiceInfo.status)
         ) return;
 
         if (this.paymentMethodsCheckLoading) {

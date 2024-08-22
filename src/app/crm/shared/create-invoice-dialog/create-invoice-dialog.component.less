@@ -42,7 +42,20 @@
                 color: #677380;
                 padding: 7px 15px;
                 align-self: center;
+            }
+
+            .settings-button {
+                width: 110px;
+                border: 1px solid #dedede;
+                margin-right: 10px;
+                text-align: center;
+                padding: 13px 0px;
+                color: #00aeef;
                 margin-left: auto;
+
+                i {
+                    padding-right: 5px;
+                }
             }
         }
 
@@ -144,22 +157,6 @@
             }
         }
 
-        .settings-button {
-            width: 110px;
-            height: 50px;
-            display: inline-block;
-            vertical-align: top;
-            border: 1px solid #dedede;
-            margin-right: 10px;
-            text-align: center;
-            padding: 13px 0px;
-            color: #00aeef;
-
-            i {
-                padding-right: 5px;
-            }
-        }
-
         .drop-down-box-wrapper {
             width: 130px;
             height: 34px;
@@ -191,6 +188,12 @@
         ::ng-deep .field-area {
             display: block;
             margin-bottom: 20px;
+
+            .currencies-dropdown {
+                vertical-align: top;
+                height: 50px;
+                padding-right: 10px;
+            }
 
             &.flex-space-between {
                 width: 840px;
@@ -575,8 +578,8 @@
 
             ::ng-deep dx-date-box {
                 .dx-icon.dx-icon-clear {
-                    margin-top: -14px!important;
-                    margin-left: 14px!important;
+                    margin-top: -14px !important;
+                    margin-left: 14px !important;
                 }
 
                 .dx-dropdowneditor-icon {
@@ -941,6 +944,30 @@
             pointer-events: none;
         }
     }
+
+    ::ng-deep .flag-field {
+        background-color: #fff;
+        border: 1px solid #ebedf2;
+        padding: 0.65rem 1rem;
+        border-radius: 0.25rem;
+        height: 100%;
+        display: flex;
+        align-items: center;
+
+        span, b {
+            vertical-align: middle;
+        }
+
+        ::ng-deep dx-text-box {
+            display: inline-block !important;
+            height: 22px;
+
+            input {
+                border: none;
+                min-height: 20px;
+            }
+        }
+    }
 }
 
 .address-item-text {
@@ -950,5 +977,24 @@
 ::ng-deep [accesskey="invoice-addresses"] {
     .dx-list-item-content {
         position: relative;
+    }
+}
+
+::ng-deep .flag-row {
+    border-bottom: 1px solid #E5E8F3;
+    padding: 7px 0px !important;
+    margin: 0 10px;
+    display: flex;
+    width: calc(100% - 20px);
+
+    .flag-icon {
+        border-radius: 10px;
+        border: 1px solid #dedede;
+    }
+
+    div {
+        display: inline-block;
+        margin: auto 0 auto 10px;
+        white-space: pre-wrap;
     }
 }
