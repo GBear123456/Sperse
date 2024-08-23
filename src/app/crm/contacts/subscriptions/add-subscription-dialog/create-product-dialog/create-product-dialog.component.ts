@@ -79,7 +79,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { LanguagesStoreSelectors, RootStore, LanguagesStoreActions } from '@root/store';
 import { EditAddressDialog } from '../../../edit-address-dialog/edit-address-dialog.component';
 import { EventDurationTypes, EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
-import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
@@ -240,7 +239,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         private feature: FeatureCheckerService,
         private cacheHelper: CacheHelper,
         private cacheService: CacheService,
-        private currencyService: CurrencyCRMService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef.addPanelClass('new-product');

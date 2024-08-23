@@ -87,7 +87,6 @@ import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/mode
 import { InvoiceSettingsDialogComponent } from '../../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
-import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -279,7 +278,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private contactsService: ContactsService,
         private statesService: StatesService,
         private paymetService: PaymentServiceProxy,
-        private currencyService: CurrencyCRMService,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,

@@ -46,6 +46,7 @@ import { BankTransferComponent } from './bank-transfer/bank-transfer.component';
 import { OtherSettingsComponent } from './other-settings/other-settings.component';
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
 import { StaticListModule } from '@app/shared/common/static-list/static-list.module'; 
+import { CurrencySelectorModule } from '../currency-selector/currency-selector.module';
 
 @NgModule({
     imports: [
@@ -74,7 +75,8 @@ import { StaticListModule } from '@app/shared/common/static-list/static-list.mod
         ContactsModule,
         CountryPhoneNumberModule,
         SourceContactListModule,
-        StaticListModule
+        StaticListModule,
+        CurrencySelectorModule
     ],
     exports: [TenantSettingsWizardComponent],
     declarations: [

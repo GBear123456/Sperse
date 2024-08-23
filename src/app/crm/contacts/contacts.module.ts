@@ -163,6 +163,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
 import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity-dialog/create-activity-dialog.component';
 import { PaymentsInfoService } from '@app/shared/common/payments-info/payments-info.service';
 import { ContactPaymentsInfoService } from './payment-information/payments-info.service';
+import { CurrencySelectorModule } from '../../../shared/common/currency-selector/currency-selector.module';
 
 @NgModule({
     declarations: [
@@ -300,7 +301,8 @@ import { ContactPaymentsInfoService } from './payment-information/payments-info.
         MatTooltipModule,
         MatSliderModule,
         FeaturesModule,
-        InvoiceGridMenuModule
+        InvoiceGridMenuModule,
+        CurrencySelectorModule
     ],
     entryComponents: [
         CreateActivityDialogComponent,

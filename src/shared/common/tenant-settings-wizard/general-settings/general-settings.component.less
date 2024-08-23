@@ -6,15 +6,19 @@
     .form-group {
         display: flex;
         height: 30px;
+
         &.zendesk {
             margin-top: 51px;
         }
     }
+
     .file-uploads {
         margin-top: 55px;
     }
+
     ::ng-deep timezone-combo {
         flex-grow: 1;
+
         .form-control {
             border: none;
             border-bottom: 1px solid #dfdfdf;
@@ -26,23 +30,29 @@
             font-weight: 500;
             letter-spacing: 0.3px;
             color: #424c56;
+
             &:focus {
                 border-color: #dfdfdf;
                 outline: none;
             }
         }
     }
+
     .flag-settings {
         display: flex;
+
         .selected-flag-icon {
             border-bottom: 1px solid #dfdfdf;
         }
+
         label {
             min-width: 190px;
         }
     }
+
     ::ng-deep dx-select-box {
-        border-bottom: 1px solid #dfdfdf!important;
+        border-bottom: 1px solid #dfdfdf !important;
+
         .dx-placeholder, input {
             font-size: 15px;
             font-family: var(--app-font-family);
@@ -50,12 +60,14 @@
             letter-spacing: 0.3px;
             color: #424c56;
         }
+
         input {
-            max-width: 84%!important;
-            text-overflow: ellipsis!important;
+            max-width: 84% !important;
+            text-overflow: ellipsis !important;
             overflow: hidden;
         }
     }
+
     ::ng-deep country-phone-number {
         width: 100%;
 
@@ -70,6 +82,19 @@
             input {
                 padding: 0;
             }
+        }
+    }
+
+    ::ng-deep currency-selector {
+        width: 100%;
+
+        .flag-field {
+            border: none;
+            padding: initial;
+        }
+
+        dx-text-box {
+            height: 29px !important;
         }
     }
 }

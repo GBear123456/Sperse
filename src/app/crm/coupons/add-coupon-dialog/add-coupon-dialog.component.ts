@@ -28,7 +28,6 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
-import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 
 @Component({
     selector: 'add-coupon-dialog',
@@ -59,7 +58,6 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
         private elementRef: ElementRef,
         private couponProxy: CouponServiceProxy,
         private notify: NotifyService,
-        private currencyService: CurrencyCRMService,
         private changeDetection: ChangeDetectorRef,
         public dialogRef: MatDialogRef<AddCouponDialogComponent>,
         public ls: AppLocalizationService,
