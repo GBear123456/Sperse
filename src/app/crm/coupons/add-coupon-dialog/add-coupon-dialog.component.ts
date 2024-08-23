@@ -109,6 +109,10 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
         this.amountNullableFormat = getCurrencySymbol(this.coupon.currencyId, 'narrow') + ' #,###.##'
     }
 
+    onCurrencyChanged(event) {
+        this.initCurrencyFields();
+    }
+
     saveCoupon() {
         if (this.validationGroup.instance.validate().isValid) {
             this.isReadOnly = true;
