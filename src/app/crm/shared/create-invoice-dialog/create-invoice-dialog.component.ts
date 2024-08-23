@@ -687,14 +687,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (!event.event)
             return;
 
-        if (!event.value) {
-            setTimeout(() => {
-                this.selectBoxCurrency = this.currency;
-                this.changeDetectorRef.detectChanges();
-            });
-            return;
-        }
-
         if (this.getFilteredLines(false).length || this.selectedCoupon || this.orderNumber) {
             this.messageService.confirm('Changing currency will clear lines, coupon and order', '', (isConfirmed) => {
                 if (isConfirmed) {

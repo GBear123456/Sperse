@@ -1,6 +1,6 @@
 /** Core imports */
 import {
-    Component, Input, EventEmitter, Output, ChangeDetectionStrategy
+    Component, Input, EventEmitter, Output, ChangeDetectionStrategy, ChangeDetectorRef
 } from '@angular/core';
 
 /** Third party imports */
@@ -14,7 +14,7 @@ import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service'
     selector: 'currency-selector',
     templateUrl: './currency-selector.component.html',
     styleUrls: ['./currency-selector.component.less'],
-    changeDetection: ChangeDetectionStrategy.Default,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: []
 })
 export class CurrencySelectorComponent {
@@ -23,13 +23,30 @@ export class CurrencySelectorComponent {
     @Output() currencyChange: EventEmitter<string> = new EventEmitter<string>();
     @Output() onCurrencyChanged: EventEmitter<any> = new EventEmitter<any>();
 
+    suspendCurrencyChanged: boolean = false;
+
     constructor(
         public ls: AppLocalizationService,
-        public currencyService: CurrencyCRMService
+        public currencyService: CurrencyCRMService,
+        private changeDetectorRef: ChangeDetectorRef
     ) { }
 
-    onValueChange(newValue: any) {
-        this.currency = newValue;
-        this.currencyChange.emit(newValue);
+    onValueChanged(event) {
+        if (this.suspendCurrencyChanged) {
+            this.suspendCurrencyChanged = false;
+            return;
+        }
+
+        if (event.value) {
+            this.currencyChange.emit(event.value);
+            this.onCurrencyChanged.emit(event);
+        }
+        else {
+            setTimeout(() => {
+                this.suspendCurrencyChanged = true;
+                this.currency = event.previousValue;
+                this.changeDetectorRef.detectChanges();
+            });
+        }
     }
 }

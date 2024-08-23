@@ -5,13 +5,12 @@
                [searchEnabled]="true"
                placeholder="Search"
                fieldTemplate="field"
-               [value]="currency"
-               (valueChange)="onValueChange($event)"
+               [(value)]="currency"
                [disabled]="disabled"
                [dataSource]="currencyService.currencies$ | async"
-               (onValueChanged)="onCurrencyChanged.emit($event)">
+               (onValueChanged)="onValueChanged($event)">
     <div *dxTemplate="let item of 'field'" class="flag-field">
-        <img [hidden]="!currency" class="selected-flag-icon" src="assets/common/icons/flags/{{currency?.toLowerCase()}}.svg" width="19px" height="auto">&nbsp;
+        <img *ngIf="currency" class="selected-flag-icon" src="assets/common/icons/flags/{{currency?.toLowerCase()}}.svg" width="19px" height="auto">&nbsp;
         <dx-text-box class="flag-field-textbox" width="90%" [value]="item?.displayName"></dx-text-box>
     </div>
     <div *dxTemplate="let item of 'item'" class="flag-row">
