@@ -12,6 +12,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
     recursive?: boolean;
     templateFunc?: (itemData) => string;
     selectedItems: any[];
+    singleSelection: boolean;
 
     public constructor(init?: Partial<FilterCheckBoxesModel>) {
         super(init, true);

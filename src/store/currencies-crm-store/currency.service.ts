@@ -33,7 +33,7 @@ export class CurrencyCRMService {
         })
     );
 
-    getCurrencyFilter(initialCurrency): FilterModel {
+    getCurrencyFilter(initialCurrency, isClearAllowed = true, singleSelection = false): FilterModel {
         var filter = new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: 'Currency',
@@ -44,8 +44,10 @@ export class CurrencyCRMService {
                 element: new FilterCheckBoxesModel({
                     value: [initialCurrency],
                     dataSource$: this.currencies$,
+                    isClearAllowed: isClearAllowed,
                     nameField: 'text',
-                    keyExpr: 'id'
+                    keyExpr: 'id',
+                    singleSelection: singleSelection
                 })
             }
         });
