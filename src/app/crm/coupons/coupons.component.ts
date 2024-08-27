@@ -30,7 +30,6 @@ import { CouponDto as OdataCouponDto } from './coupons-dto.interface';
 import { CouponFields } from './coupons-fields.enum';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { DateHelper } from '../../../shared/helpers/DateHelper';
-import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 import { FilterModelBase } from '../../../shared/filters/models/filter-model-base';
@@ -57,7 +56,6 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
     permissions = AppPermissions;
     couponTypes = CouponDiscountType;
     formatting = AppConsts.formatting;
-    currency = SettingsHelper.getCurrency();
     headerOptions = [this.l("Coupons"), this.l("Products")];
     activeHeaderOption = this.headerOptions[0];
     public headlineButtons: HeadlineButton[] = [];
@@ -97,8 +95,7 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
         key: this.couponFields.Id,
         deserializeDates: false,
         url: this.getODataUrl(
-            this.dataSourceURI,
-            this.getCurrencyFilterExpression()
+            this.dataSourceURI
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
@@ -263,14 +260,14 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     getCurrencyFilter(): FilterModel {
-        let filter = this.currencyService.getCurrencyFilter(this.currency);
+        let filter = this.currencyService.getCurrencyFilter(undefined);
         filter.filterMethod = (filter) => this.getCurrencyFilterExpression(filter);
         return filter;
     }
 
     getCurrencyFilterExpression(filter: FilterModelBase<FilterItemModel> = null): any {
-        let addPercentageFilter = !filter || filter.items.element.value.length;
-        let conditions = [filter ? FilterHelpers.filterBySetOfValues(filter) : FilterHelpers.filterByCurrencyId(this.currency)];
+        let addPercentageFilter = this.currencyService.getSelectedCurrencies(<FilterModel>filter).length;
+        let conditions = [FilterHelpers.filterBySetOfValues(filter)];
         if (addPercentageFilter)
             conditions.push({ 'Type': { eq: CouponDiscountType.Percentage } });
 

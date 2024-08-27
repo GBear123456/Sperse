@@ -42,7 +42,7 @@ export class CurrencyCRMService {
             filterMethod: (filter) => CrmFilterHelpers.filterBySetOfValues(filter),
             items: {
                 element: new FilterCheckBoxesModel({
-                    value: [initialCurrency],
+                    value: initialCurrency ? [initialCurrency] : [],
                     dataSource$: this.currencies$,
                     isClearAllowed: isClearAllowed,
                     nameField: 'text',
