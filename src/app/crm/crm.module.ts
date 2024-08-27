@@ -116,6 +116,7 @@ import { AddCouponDialogComponent } from './coupons/add-coupon-dialog/add-coupon
 import { TenantReportsComponent } from './tenant-reports/tenant-reports.component';
 import { CrmContactGroupGuard } from './crm-contact-group-guard';
 import { ZapierModule } from '@shared/common/zapier/zapier.module';
+import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 
 @NgModule({
     imports: [
@@ -229,6 +230,7 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         LeftMenuService,
         CalendarService,
         CrmContactGroupGuard,
+        CurrencyCRMService,
         { provide: 'leftMenuCollapsed', useValue: AppConsts.isMobile },
         { provide: 'showGlobalSearch', useValue: true }
     ],

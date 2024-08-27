@@ -104,7 +104,6 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
-import { CurrencyHelper } from '../shared/helpers/currency.helper'
 import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 
 @Component({
