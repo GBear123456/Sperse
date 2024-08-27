@@ -40,6 +40,12 @@ export class CountsAndTotalsComponent implements AfterViewInit, OnDestroy {
     ) {}
 
     ngAfterViewInit() {
+        this.dashboardService.currencyId$.pipe(
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe(currencyId => {
+            this.currency = currencyId;
+        });
+
         this.dashboardService.totalsData$.pipe(
             takeUntil(this.lifeCycleService.destroy$)
         ).subscribe((totalsData: GetTotalsOutput) => {

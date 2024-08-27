@@ -155,12 +155,13 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
             this.dashboardWidgetsService.contactId$,
             this.dashboardWidgetsService.contactGroupId$,
             this.dashboardWidgetsService.sourceOrgUnitIds$,
+            this.dashboardWidgetsService.currencyId$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-            switchMap(([period, isCumulative, contactId, contactGroupId, orgUnitIds, ]:
-                [PeriodModel, boolean, number, string, number[], null]) => {
+            switchMap(([period, isCumulative, contactId, contactGroupId, orgUnitIds, currencyId, ]:
+                [PeriodModel, boolean, number, string, number[], string, null]) => {
                 const totalsByPeriodModel = this.savePeriod(period);
                 return (this.lastIsCumulative != isCumulative ? of(isCumulative) : this.waitFor$).pipe(first(), switchMap(() =>
                     this.loadCustomersAndLeadsStats(
