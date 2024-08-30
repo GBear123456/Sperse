@@ -237,6 +237,9 @@
                                     [dataField]="clientFields.TotalRevenue"
                                     [caption]="l('Contact.TotalRevenue')"
                                     [visible]="false"
+                                    [allowGrouping]="false"
+                                    [allowSorting]="false"
+                                    [allowFiltering]="false"
                                     cellTemplate="amountTemplate">
                         </dxi-column>
 
@@ -280,7 +283,7 @@
                         <div *dxTemplate="let cellData of 'emailCell'" class="clipboard-holder">
                             <span style="font-family: var(--app-font-family) !important;">
                                 {{cellData.value}}
-                                <span *ngIf="!cellData.data.IsSubscribedToEmails" id="unsubscribedStatus{{cellData.data.Id}}" class="unsubscribed-status">
+                                <span *ngIf="!cellData.data.IsSubscribedToEmails && cellData.data.Email" id="unsubscribedStatus{{cellData.data.Id}}" class="unsubscribed-status">
                                     <dx-tooltip position="bottom"
                                                 target="#unsubscribedStatus{{cellData.data.Id}}"
                                                 showEvent="dxhoverstart"
@@ -294,7 +297,19 @@
                             {{cellData.value | phone}}
                         </div>
                         <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder" (click)="showClientOrderInvoices(cell.data)">
-                            <span> {{ (isNumber(cell.value) ? cell.value : 0) | currency:currency:'symbol':'1.2-2' }} </span>
+                            <span> {{ cell.data.DefaultCurrencyRevenue | currency:defaultCurrency:'symbol':'1.2-2' }} </span>
+                            <span *ngIf="cell.data.OtherCurrenciesRevenue.length" id="revenue{{cell.data.Id}}" class="fa fa-caret-down">
+                                <dx-tooltip position="bottom"
+                                            target="#revenue{{cell.data.Id}}"
+                                            showEvent="dxhoverstart"
+                                            hideEvent="dxhoverend">
+                                    <div>
+                                        <div *ngFor="let item of cell.data.OtherCurrenciesRevenue">
+                                            {{ item.Amount | currency:item.CurrencyId:'symbol':'1.2-2' }}
+                                        </div>
+                                    </div>
+                                </dx-tooltip>
+                            </span>
                         </div>
                         <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
                             {{cellData.data.Xrefs && cellData.data.Xrefs.join(', ')}}

@@ -183,7 +183,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     starsLookup = {};
     formatting = AppConsts.formatting;
-    currency: string = SettingsHelper.getCurrency();
+    defaultCurrency: string = SettingsHelper.getCurrency();
     isCfoLinkOrVerifyEnabled = this.appService.isCfoLinkOrVerifyEnabled;
     canSendVerificationRequest = this.appService.canSendVerificationRequest();
     isCFOClientAccessAllowed = this.appService.checkCFOClientAccessPermission();
@@ -655,7 +655,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     filterMode: 'All',
                     dataSource$: this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts) ?
                         this.productProxy.getProducts(
-                            ProductType.Subscription, SettingsHelper.getCurrency(), false
+                            ProductType.Subscription, undefined, false
                         ).pipe(
                             map((products: ProductDto[]) => {
                                 let productsWithGroups = products.filter(x => x.group);
@@ -770,6 +770,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 onLoaded: (records) => {
                     if (records instanceof Array) {
                         let userIds = this.getUserIds(records);
+                        this.setRevenueInfo(records);
                         this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
                         this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
                             this.crmService.getUsersWithInstances(userIds).subscribe(() => {
@@ -1092,6 +1093,21 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 );
             });
         }
+    }
+
+    setRevenueInfo(data: any[]) {
+        data.forEach(v => {
+            let defaultCurrencyRevenue = 0;
+            let otherCurrenciesRevenue = [];
+            if (v.TotalRevenue && v.TotalRevenue.length) {
+                let item = v.TotalRevenue.find(v => v.CurrencyId == this.defaultCurrency);
+                defaultCurrencyRevenue = item && item.Amount || 0;
+
+                otherCurrenciesRevenue = v.TotalRevenue.filter(v => v.CurrencyId != this.defaultCurrency);
+            }
+            v['DefaultCurrencyRevenue'] = defaultCurrencyRevenue;
+            v['OtherCurrenciesRevenue'] = otherCurrenciesRevenue;
+        });
     }
 
     showClientOrderInvoices(data: ContactDto) {
