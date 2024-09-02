@@ -33,7 +33,7 @@ export class EmailComponent implements ITenantSettingsStepComponent, AfterViewIn
         },
         ...this.emailSmtpSettingsService.supportedProviders,
         {
-            name: 'Other Mail Provdier', 
+            name: 'Other Mail Provider', 
             hosts: [''], 
             port: '', 
             ssl: false, 

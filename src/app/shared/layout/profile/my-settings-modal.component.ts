@@ -119,7 +119,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     supportedProviders = [
         ...this.emailSmtpSettingsService.supportedProviders,
         {
-            name: 'Other Mail Provdier',
+            name: 'Other Mail Provider',
             hosts: [''],
             port: '',
             ssl: false,
