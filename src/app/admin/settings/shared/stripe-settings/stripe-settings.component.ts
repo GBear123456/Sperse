@@ -55,7 +55,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     loadSettings() {
         this.startLoading();
         if (this.isPaymentsEnabled) {
-            this.tenantPaymentSettingsService.getStripeSettings(true)
+            this.tenantPaymentSettingsService.getStripeSettings(true, true)
                 .pipe(
                     finalize(() => this.finishLoading())
                 )
@@ -103,6 +103,15 @@ export class StripeSettingsComponent extends SettingsComponentBase {
                 this.notify.info(this.l('SuccessfullyGenerated'));
                 this.loadSettings();
             })
+    }
+
+    isValid(): boolean {
+        if (this.stripePaymentSettings.apiKey && !this.stripePaymentSettings.publishableKey) {
+            this.notify.warn(this.l('RequiredField', 'Publishable Key'));
+            return false;
+        }
+
+        return super.isValid();
     }
 
     getSaveObs(): Observable<any> {
