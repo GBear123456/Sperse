@@ -927,8 +927,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.startDate = undefined;
 
         if (this.hasReccuringSubscription) {
-            this.shippingTotal = 0;
-            this.taxTotal = 0;
+            if (!this.disabledForUpdate) {
+                this.shippingTotal = 0;
+                this.taxTotal = 0;
+            }
             if (calculateBalance)
                 this.calculateBalance();
         }
