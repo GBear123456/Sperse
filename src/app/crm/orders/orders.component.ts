@@ -185,8 +185,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private subscriptionStatusFilter = this.getSubscriptionsFilter();
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
     public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(
-        this._activatedRoute.snapshot.queryParams.contactGroup ||
-        (this._activatedRoute.snapshot.queryParams.contactGroup == '' ? undefined : ContactGroup.Client)
+        this._activatedRoute.snapshot.queryParams.contactGroup || undefined
     );
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
@@ -905,10 +904,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
             if (isSearchChanged) {
                 this.searchValue = params.search;
+                this.search.next(this.searchValue);
+                this.processFilterInternal();
+            }
+
+            if (isSearchChanged) {
+                this.initFilterConfig(true);
+                this.filtersService.clearAllFilters();
             }
             if (isOrderTypeChanged || isSearchChanged || isContactGroupChanged) {
                 this.searchClear = false;
-                this.filtersService.clearAllFilters();
                 this.selectedContactGroup.next(params.contactGroup || undefined);
                 this.selectedOrderType.next(+params.orderType || this.selectedOrderType.value);
             }

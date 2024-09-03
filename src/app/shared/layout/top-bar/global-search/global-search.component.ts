@@ -10,12 +10,12 @@ import {
     OnDestroy
 } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
-import { NavigationEnd, Params, Router } from '@angular/router';
+import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, ReplaySubject, Subject, of } from 'rxjs';
-import { finalize, first, filter, map, startWith, switchMap, 
+import { finalize, first, map, startWith, switchMap, 
     take, tap, catchError, takeUntil, debounceTime } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
@@ -43,8 +43,6 @@ import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { ContactGroup } from '@shared/AppEnums';
 import { LayoutService } from '@app/shared/layout/layout.service';
-import { FilterHelpers } from '../../../../crm/shared/helpers/filter.helper';
-import { SettingsHelper } from '../../../../../shared/common/settings/settings.helper';
 
 class CustomHttpParameterCodec implements HttpParameterCodec {
     encodeKey(key: string): string {
@@ -85,7 +83,6 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         return this.appService.getModule() == 'crm';
     }
 
-    currency = SettingsHelper.getCurrency();
     _search: ReplaySubject<string> = new ReplaySubject<string>(1);
     search$: Observable<string> = this._search.asObservable();
 
@@ -278,7 +275,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
 
     private getOrdersGroup(search: string): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
-            this.oDataService.getODataUrl('Order', FilterHelpers.filterByCurrencyId(this.currency)),
+            this.oDataService.getODataUrl('Order'),
             this.ls.l('Orders'),
             'app/crm/orders',
             search,
@@ -300,7 +297,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
 
     private getInvoicesGroup(search: string): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
-            this.oDataService.getODataUrl('Invoice', FilterHelpers.filterByCurrencyId(this.currency)),
+            this.oDataService.getODataUrl('Invoice'),
             this.ls.l('Invoices'),
             'app/crm/invoices',
             search,
@@ -317,7 +314,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
 
     private getSubscriptionsGroup(search): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
-            this.oDataService.getODataUrl('Subscription', FilterHelpers.filterByCurrencyId(this.currency)),
+            this.oDataService.getODataUrl('Subscription'),
             this.ls.l('Subscriptions'),
             'app/crm/orders',
             search,

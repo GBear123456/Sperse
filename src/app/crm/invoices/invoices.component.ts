@@ -571,7 +571,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     searchValueChange(e: object) {
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
-            this.processFilterInternal();
+            this.invalidate();
         }
     }
 
