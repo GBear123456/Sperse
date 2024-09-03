@@ -1115,14 +1115,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             return;
 
         this.searchClear = false;
-        this._router.navigate(
-            CrmService.getEntityDetailsLink(data.Id, 'invoices', null, data.OrganizationId),
-            {
-                queryParams: {
-                    referrer: 'app/crm/clients'
+        setTimeout(() => {
+            this._router.navigate(
+                CrmService.getEntityDetailsLink(data.Id, 'invoices', null, data.OrganizationId),
+                {
+                    queryParams: {
+                        referrer: 'app/crm/clients'
+                    }
                 }
-            }
-        );
+            );
+        });
     }
 
     initFilterConfig() {

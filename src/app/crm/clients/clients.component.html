@@ -287,7 +287,7 @@
                                     <dx-tooltip position="bottom"
                                                 target="#unsubscribedStatus{{cellData.data.Id}}"
                                                 showEvent="dxhoverstart"
-                                                hideEvent="dxhoverend">
+                                                hideEvent="dxclick dxhoverend">
                                         <div>{{ l('ContactIsUnsubscribedFromEmails') }}</div>
                                     </dx-tooltip>
                                 </span>
@@ -302,7 +302,7 @@
                                 <dx-tooltip position="bottom"
                                             target="#revenue{{cell.data.Id}}"
                                             showEvent="dxhoverstart"
-                                            hideEvent="dxhoverend">
+                                            hideEvent="dxclick dxhoverend">
                                     <div>
                                         <div *ngFor="let item of cell.data.OtherCurrenciesRevenue">
                                             {{ item.Amount | currency:item.CurrencyId:'symbol':'1.2-2' }}
