@@ -60,7 +60,7 @@ import {
     RecommendedProductInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from 'abp-ng2-module';
+import { MessageService, NotifyService } from 'abp-ng2-module';
 import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -174,17 +174,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     isHostTenant = !abp.session.tenantId;
     product: CreateProductInput | UpdateProductInput;
-    currency = SettingsHelper.getCurrency();
-    amountFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,##0.##';
-    amountNullableFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,###.##';
-    products$: Observable<ProductDto[]> = this.productProxy.getProducts(undefined, this.currency, false).pipe(
-        publishReplay(),
-        refCount(),
-        map((products: ProductDto[]) => {
-            return this.data.product && this.data.product.id ?
-                products.filter((product: ProductDto) => product.id != this.data.product.id) : products
-        })
-    );
+    amountFormat: string = '';
+    amountNullableFormat: string = '';
+    products$: Observable<ProductDto[]> = null;
+    suspendCurrencyChanged = false;
     readonly addNewItemId = -1;
     isPublicProductsEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
@@ -230,6 +223,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         private productProxy: ProductServiceProxy,
         productGroupProxy: ProductGroupServiceProxy,
         private notify: NotifyService,
+        private message: MessageService,
         private clipboard: Clipboard,
         private changeDetection: ChangeDetectorRef,
         memberServiceProxy: MemberServiceServiceProxy,
@@ -272,9 +266,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.addUpgradeToProduct();
                 this.addRecommendedProduct();
             }
+            if (!this.product.currencyId)
+                this.product.currencyId = SettingsHelper.getCurrency();
+
             this.initEventProps();
             this.initDonationProps();
         }
+        this.initCurrencyFields();
 
         if (this.product.publishDate)
             this.publishDate = DateHelper.addTimezoneOffset(new Date(this.product.publishDate), true);
@@ -282,7 +280,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.initProductResources();
         this.initProductEvent();
 
-        this.product.currencyId = this.currency;
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
             this.detectChanges();
@@ -314,6 +311,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.selectedOption = contextMenu.items[this.cacheService.get(contextMenu.cacheKey)];
         else
             this.selectedOption = contextMenu.items[contextMenu.defaultIndex];
+    }
+
+    initCurrencyFields() {
+        this.amountFormat = getCurrencySymbol(this.product.currencyId, 'narrow') + ' #,##0.##';
+        this.amountNullableFormat = getCurrencySymbol(this.product.currencyId, 'narrow') + ' #,###.##';
+        this.products$ = this.productProxy.getProducts(undefined, this.product.currencyId, false).pipe(
+            publishReplay(),
+            refCount(),
+            map((products: ProductDto[]) => {
+                return this.data.product && this.data.product.id ?
+                    products.filter((product: ProductDto) => product.id != this.data.product.id) : products
+            })
+        );
     }
 
     initProductResources() {
@@ -548,6 +558,34 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 }
             }
         });
+    }
+
+    onCurrencyChanged(event) {
+        if (this.suspendCurrencyChanged) {
+            this.suspendCurrencyChanged = false;
+            return;
+        }
+
+        if (this.product.downgradeProductId ||
+            this.product.recommendedProducts.some(v => !!v.recommendedProductId) ||
+            this.product.productUpgradeAssignments.some(v => !!v.upgradeProductId)) {
+            this.message.confirm('Changing currency will clear recommended, upgrade and downgrade products', '', (isConfirmed) => {
+                if (isConfirmed) {
+                    this.initCurrencyFields();
+                    this.product.downgradeProductId = null;
+                    this.product.recommendedProducts = [new RecommendedProductInfo()];
+                    this.product.productUpgradeAssignments = [new ProductUpgradeAssignmentInfo()];
+                    this.detectChanges();
+                } else {
+                    this.suspendCurrencyChanged = true;
+                    this.product.currencyId = event.previousValue;
+                    this.detectChanges();
+                }
+            });
+        }
+        else {
+            this.initCurrencyFields();
+        }
     }
 
     getUpdateProductImageObservable(productId: number) {

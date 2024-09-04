@@ -16,13 +16,13 @@ import {
     CountryDto
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
-import { AppTimezoneScope, Country } from '@shared/AppEnums';
+import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AbstractControlDirective } from '@angular/forms';
 import { AppFeatures } from '@shared/AppFeatures';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
-import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
+import { RootStore, CountriesStoreSelectors } from '@root/store';
 import { TimeZoneComboComponent } from '@app/shared/common/timing/timezone-combo.component';
 
 @Component({
@@ -49,14 +49,6 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     supportedCountries: CountryDto[];
-    currencies$: Observable<any[]> = this.store$.pipe(
-        select(CurrenciesCrmStoreSelectors.getCurrencies),
-        filter(x => x != null),
-        tap(data => {
-            data.forEach(c => c['displayName'] = `${c.name}, ${c.symbol}`);
-            return data;
-        })
-    );
 
     initialTimezone: string;
     initialCountry: string;
@@ -69,7 +61,6 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
         private countryPhoneService: CountryService
     ) {
         super(_injector);
-        this.store$.dispatch(new CurrenciesCrmStoreActions.LoadRequestAction());
     }
 
     ngOnInit(): void {

@@ -8,33 +8,36 @@
     <ng-container headerContent>
         <label>#</label>
         <dx-text-box #invoice
-            width="270px"
-            height="40px"
-            name="invoiceNo"
-            [disabled]="disabledForUpdate"
-            [placeholder]="'INV-XXXXXXXX-XXXX'"
-            [(value)]="invoiceNo"
-            [showClearButton]="false">
+                     width="270px"
+                     height="40px"
+                     name="invoiceNo"
+                     [disabled]="disabledForUpdate"
+                     [placeholder]="'INV-XXXXXXXX-XXXX'"
+                     [(value)]="invoiceNo"
+                     [showClearButton]="false">
         </dx-text-box>
+        <a (click)="openInvoiceSettings()" class="settings-button">
+            <i class="edit fa fa-pencil"></i>{{ls.l('Settings')}}
+        </a>
         <span>{{ startCase(status) | uppercase }}</span>
     </ng-container>
 
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
             <div class="field-area description">
-                <dx-text-box
-                    name="description"
-                    width="540px"
-                    height="50px"
-                    [placeholder]="ls.l('Invoice_AddDescription')"
-                    [disabled]="disabledForUpdate"
-                    [(value)]="description">
+                <dx-text-box name="description"
+                             width="391px"
+                             height="50px"
+                             [placeholder]="ls.l('Invoice_AddDescription')"
+                             [disabled]="disabledForUpdate"
+                             [(value)]="description">
                 </dx-text-box>
-                <a (click)="openInvoiceSettings()" class="settings-button">
-                    <i class="edit fa fa-pencil"></i>{{ls.l('Settings')}}
-                </a>
+                <currency-selector [(currency)]="selectBoxCurrency"
+                                   [disabled]="disabledForUpdate || invoiceId"
+                                   (onCurrencyChanged)="onCurrencyChanged($event)">
+                </currency-selector>
                 <div class="logo-container">
-                    <img [src]="appSession.tenant && appSession.tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId : './assets/common/images/sperse-logo.png'" alt="logo"/>
+                    <img [src]="appSession.tenant && appSession.tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId : './assets/common/images/sperse-logo.png'" alt="logo" />
                 </div>
             </div>
             <div class="field-area flex-space-between">
@@ -188,6 +191,7 @@
                 </div>
                 <order-dropdown [(orderId)]="orderId"
                                 [(orderNumber)]="orderNumber"
+                                [currency]="currency"
                                 [contactId]="contactId"
                                 [disabled]="data?.invoice">
                 </order-dropdown>

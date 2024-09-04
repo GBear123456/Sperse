@@ -104,7 +104,7 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
-import { CurrencyHelper } from '../shared/helpers/currency.helper'
+import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -147,7 +147,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
     currency: string = SettingsHelper.getCurrency();
-    currencyFilter: FilterModel = CurrencyHelper.getCurrencyFilter(this.currency);
+    currencyFilter: FilterModel = this.currencyService.getCurrencyFilter(this.currency);
     filterModelStages: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'orderStages',
@@ -185,8 +185,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private subscriptionStatusFilter = this.getSubscriptionsFilter();
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
     public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(
-        this._activatedRoute.snapshot.queryParams.contactGroup ||
-        (this._activatedRoute.snapshot.queryParams.contactGroup == '' ? undefined : ContactGroup.Client)
+        this._activatedRoute.snapshot.queryParams.contactGroup || undefined
     );
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
@@ -447,7 +446,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         requireTotalCount: true,
         store: new ODataStore({
             key: this.subscriptionFields.Id,
-            url: this.getODataUrl(this.subscriptionsDataSourceURI, ),
+            url: this.getODataUrl(this.subscriptionsDataSourceURI,),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: (request) => {
@@ -489,6 +488,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Subscription);
     private search: BehaviorSubject<string> = new BehaviorSubject<string>(this.searchValue);
     search$: Observable<string> = this.search.asObservable().pipe(distinctUntilChanged());
+    private pivotGridFeeField = null;
     private subscriptionsPivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -517,7 +517,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 name: 'count',
                 isMeasure: true
             },
-            {
+            this.pivotGridFeeField = {
                 dataType: 'number',
                 area: 'data',
                 summaryType: 'sum',
@@ -528,7 +528,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     precision: 2,
                     currency: this.currency
                 },
-                isMeasure: true
+                isMeasure: true,
+                visible: false
             },
             {
                 area: 'column',
@@ -644,31 +645,35 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ),
         switchMap(([oDataRequestValues, search]: [ODataRequestValues, string]) => {
             return (this.subscriptionsDataSource.isLoading() ? this.loadTotalsRequest$ : of(oDataRequestValues)).pipe(
-                first(), map(() => this.getODataUrl(
-                    this.subscriptionGroupDataSourceURI,
-                    oDataRequestValues.filter,
-                    null,
-                    [
-                        ...this.getSubscriptionsParams(),
-                        ...oDataRequestValues.params,
-                        {
-                            name: 'totalSummary',
-                            value: JSON.stringify([
-                                { 'summaryType': 'count' },
-                                { 'selector': 'OrderAmount', 'summaryType': 'sum' },
-                                { 'selector': 'Fee', 'summaryType': 'sum' }
-                            ])
-                        },
-                        {
-                            name: 'take',
-                            value: 1
-                        },
-                        {
-                            name: 'select',
-                            value: '["Id"]'
-                        }
-                    ]
-                ))
+                first(),
+                map(() => {
+                    let sliceSummaryValues: any[] = [{ 'summaryType': 'count' }];
+                    if (this.currencyService.isSingleCurrencyFilterSelected(this.currencyFilter)) {
+                        sliceSummaryValues.push({ 'selector': 'OrderAmount', 'summaryType': 'sum' });
+                        sliceSummaryValues.push({ 'selector': 'Fee', 'summaryType': 'sum' });
+                    }
+                    return this.getODataUrl(
+                        this.subscriptionGroupDataSourceURI,
+                        oDataRequestValues.filter,
+                        null,
+                        [
+                            ...this.getSubscriptionsParams(),
+                            ...oDataRequestValues.params,
+                            {
+                                name: 'totalSummary',
+                                value: JSON.stringify(sliceSummaryValues)
+                            },
+                            {
+                                name: 'take',
+                                value: 1
+                            },
+                            {
+                                name: 'select',
+                                value: '["Id"]'
+                            }
+                        ]
+                    )
+                })
             );
         }),
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
@@ -836,6 +841,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private store$: Store<CrmStore.State>,
         private sessionService: AppSessionService,
         private crmService: CrmService,
+        private currencyService: CurrencyCRMService,
         private currencyPipe: CurrencyPipe,
         private http: HttpClient,
         public appService: AppService,
@@ -866,6 +872,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             if (this.subscriptionsGrid)
                 this.subscriptionsGrid.instance.repaint();
         });
+        this.subscriptionsODataRequestValues$.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((values) => {
+            let isSingleCurrencySelected = this.currencyService.isSingleCurrencyFilterSelected(this.currencyFilter);
+            this.pivotGridFeeField.visible = isSingleCurrencySelected;
+            if (isSingleCurrencySelected) {
+                this.pivotGridFeeField.format.currency = this.currencyService.getSelectedCurrencies(this.currencyFilter)[0];
+            }
+        });
         this.selectedOrderType$.subscribe((selectedOrderType: OrderType) => {
             this.changeOrderType(selectedOrderType);
         });
@@ -889,10 +904,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
             if (isSearchChanged) {
                 this.searchValue = params.search;
+                this.search.next(this.searchValue);
+                this.processFilterInternal();
+            }
+
+            if (isSearchChanged) {
+                this.initFilterConfig(true);
+                this.filtersService.clearAllFilters();
             }
             if (isOrderTypeChanged || isSearchChanged || isContactGroupChanged) {
                 this.searchClear = false;
-                this.filtersService.clearAllFilters();
                 this.selectedContactGroup.next(params.contactGroup || undefined);
                 this.selectedOrderType.next(+params.orderType || this.selectedOrderType.value);
             }
@@ -1051,7 +1072,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 products: new FilterServicesAndProductsModel(
                     {
                         dataSource$: this.productProxy.getProducts(
-                            ProductType.Subscription, this.currency, false
+                            ProductType.Subscription, undefined, false
                         ).pipe(
                             map((products: ProductDto[]) => {
                                 let productsWithGroups = products.filter(x => x.group);
@@ -1448,11 +1469,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     customizeAmountCell = (cellInfo) => {
-        return this.currencyPipe.transform(isNaN(cellInfo.value) ? 0 : cellInfo.value, this.currency, 'symbol', '1.2-2');
+        return this.currencyService.isSingleCurrencyFilterSelected(this.currencyFilter) ?
+            this.currencyPipe.transform(isNaN(cellInfo.value) ? 0 : cellInfo.value, this.currencyService.getSelectedCurrencies(this.currencyFilter)[0], 'symbol', '1.2-2') : '';
     }
 
     customizeAmountSummary = (cellInfo) => {
-        return cellInfo.value !== undefined ? this.l('Sum') + ': ' + this.customizeAmountCell(cellInfo) : '';
+        return cellInfo.value !== undefined && this.currencyService.isSingleCurrencyFilterSelected(this.currencyFilter) ?
+            this.l('Sum') + ': ' + this.customizeAmountCell(cellInfo) : '';
     }
 
     toggleToolbar() {

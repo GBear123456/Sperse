@@ -26,6 +26,7 @@ export class OrderDropdownComponent {
     @Input() contactId: number;
     @Input() width = '250px';
     @Input() placeholder: string = this.ls.l('Invoice_PurchaseOrderNumber');
+    @Input() currency: string = SettingsHelper.getCurrency();
     @Output() orderIdChange: EventEmitter<number> = new EventEmitter<number>();
     @Output() orderNumberChange: EventEmitter<string> = new EventEmitter<string>();
     @Output() onValueChange: EventEmitter<any> = new EventEmitter<any>();
@@ -35,7 +36,6 @@ export class OrderDropdownComponent {
     ) {}
     ordersDataSource;
     orderFields: KeysEnum<OrderDto> = OrderFields;
-    currency = SettingsHelper.getCurrency();
 
     orderFocusIn(event) {
         if (event.event.target.tagName == 'INPUT')

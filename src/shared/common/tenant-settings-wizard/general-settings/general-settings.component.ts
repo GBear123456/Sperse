@@ -27,13 +27,13 @@ import {
     TenantSettingsServiceProxy,
     CountryDto
 } from '@shared/service-proxies/service-proxies';
-import { AppTimezoneScope, Country } from '@shared/AppEnums';
+import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
-import { RootStore, CountriesStoreSelectors, CurrenciesCrmStoreActions, CurrenciesCrmStoreSelectors } from '@root/store';
+import { RootStore, CountriesStoreSelectors } from '@root/store';
 import { TimeZoneComboComponent } from '@app/shared/common/timing/timezone-combo.component';
 
 @Component({
@@ -74,14 +74,6 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
 
     supportedCountries: CountryDto[];
-    currencies$: Observable<any[]> = this.store$.pipe(
-        select(CurrenciesCrmStoreSelectors.getCurrencies),
-        filter(x => x != null),
-        tap(data => {
-            data.forEach(c => c['displayName'] = `${c.name}, ${c.symbol}`);
-            return data;
-        })
-    );
     initialTimezone: string;
     initialCountry: string;
     initialCurrency: string;
@@ -96,7 +88,6 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         public ls: AppLocalizationService
     ) {
         this.initCountries();
-        this.store$.dispatch(new CurrenciesCrmStoreActions.LoadRequestAction());
     }
 
     private initCountries() {

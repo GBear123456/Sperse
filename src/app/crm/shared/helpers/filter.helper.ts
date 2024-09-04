@@ -7,6 +7,7 @@ import { PipelineDto } from '@shared/service-proxies/service-proxies';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
 import { ContactGroup } from '@shared/AppEnums';
+import { FilterModelBase } from '@shared/filters/models/filter-model-base';
 
 export class FilterHelpers {
     static ConvertPipelinesToTreeSource(data: PipelineDto[]): any[] {
@@ -69,7 +70,7 @@ export class FilterHelpers {
         return data;
     }
 
-    static filterBySetOfValues(filter: FilterModel) {
+    static filterBySetOfValues(filter: FilterModelBase<any>) {
         let data = {};
         let element = filter.items.element;
         if (element && element.value) {

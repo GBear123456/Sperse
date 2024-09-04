@@ -115,6 +115,7 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { TenantLandingPagesComponent } from './tenant-landing-pages/tenant-landing-pages.component';
 import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-landing-page-modal/tenant-landing-page-modal.component';
+import { CurrencySelectorModule } from '@shared/common/currency-selector/currency-selector.module';
 
 @NgModule({
     imports: [
@@ -175,7 +176,8 @@ import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-l
         ActionMenuModule,
         ModalDialogModule,
         FeaturesModule,
-        EditTenantModule
+        EditTenantModule,
+        CurrencySelectorModule
     ],
     declarations: [
         UsersComponent,

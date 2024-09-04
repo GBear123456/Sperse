@@ -22,11 +22,20 @@ export class FilterCheckBoxesComponent implements FilterComponent {
     }
 
     onSelectionChanged(event) {
-        setTimeout(() => {
-            if (this.activated) {
-                this.items.element.value = event.selectedRowKeys;
-                this.items.element.selectedItems = event.selectedRowsData;
-            }
-        });
+        let isSingleSelect = this.items.element.singleSelection;
+        if (isSingleSelect && event.selectedRowKeys.length == 0 && event.currentDeselectedRowKeys.length) {
+            event.component.selectRows(event.currentDeselectedRowKeys[0]);
+        }
+        else if (isSingleSelect && event.selectedRowKeys.length > 1) {
+            event.component.deselectRows(event.selectedRowKeys[0]);
+        }
+        else {
+            setTimeout(() => {
+                if (this.activated) {
+                    this.items.element.value = event.selectedRowKeys;
+                    this.items.element.selectedItems = event.selectedRowsData;
+                }
+            });
+        }
     }
 }

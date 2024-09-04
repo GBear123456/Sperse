@@ -37,6 +37,11 @@ export class NewItemsTotalsComponent implements OnDestroy, OnInit {
     }
 
     ngOnInit() {
+        this.dashboardService.currencyId$.pipe(
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe(currencyId => {
+            this.currency = currencyId;
+        });
         this.totalsDataLoading$.subscribe((loading: boolean) => {
             loading
                 ? this.loadingService.startLoading(this.elementRef.nativeElement)

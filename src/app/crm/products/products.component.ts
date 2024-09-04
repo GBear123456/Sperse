@@ -35,10 +35,8 @@ import { ProductServiceProxy, ProductType, RecurringPaymentFrequency } from '@sh
 import { ProductDto, ProductSubscriptionOption } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
-import { SettingsHelper } from '@shared/common/settings/settings.helper';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { CurrencyHelper } from '../shared/helpers/currency.helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { CurrencyCRMService } from '../../../store/currencies-crm-store/currency.service';
 
 @Component({
     templateUrl: './products.component.html',
@@ -118,8 +116,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         }
     ];
 
-    productType = ProductType
-    currency: string = SettingsHelper.getCurrency();
+    productType = ProductType;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
@@ -130,8 +127,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         key: this.productFields.Id,
         deserializeDates: false,
         url: this.getODataUrl(
-            this.dataSourceURI,
-            [FilterHelpers.filterByCurrencyId(this.currency)]
+            this.dataSourceURI
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
@@ -161,6 +157,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         private clipboardService: ClipboardService,
         private filtersService: FiltersService,
         private productProxy: ProductServiceProxy,
+        private currencyService: CurrencyCRMService,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         public appService: AppService,
         public dialog: MatDialog
@@ -351,7 +348,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                     })
                 }
             }),
-            CurrencyHelper.getCurrencyFilter(this.currency)
+            this.currencyService.getCurrencyFilter(undefined)
         ];
     }
 

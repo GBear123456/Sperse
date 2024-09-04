@@ -292,6 +292,10 @@
                 }
             }
 
+            .currency-block {
+                margin-bottom: 20px;
+            }
+
             .general-product {
                 .customer-price {
                     margin-bottom: 15px;
@@ -323,6 +327,10 @@
             ::ng-deep dx-text-box, ::ng-deep dx-number-box, ::ng-deep dx-select-box, ::ng-deep dx-text-area, ::ng-deep dx-date-box {
                 .dx-texteditor-input-container {
                     border: 1px solid #dfdfdf !important;
+                }
+
+                &.flag-field-textbox .dx-texteditor-input-container {
+                    border: none !important;
                 }
 
                 input, textarea {
@@ -388,7 +396,7 @@
                 }
             }
 
-            ::ng-deep dx-select-box:not(.hide-placeholder), ::ng-deep dx-number-box.label {
+            ::ng-deep dx-select-box:not(.hide-placeholder):not(.currencies-dropdown), ::ng-deep dx-number-box.label {
                 input {
                     height: 40px;
                     top: 20px;

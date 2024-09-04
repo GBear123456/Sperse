@@ -27,21 +27,9 @@
             </timezone-combo>
         </div>
         <div class="form-group flag-settings">
-                <label for="Currency">{{ls.l("Currency")}}</label>
-                <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings?.currency?.toLowerCase()}}.svg" width="19px" height="auto">
-                <dx-select-box
-                    width="100%"
-                    valueExpr="id"
-                    displayExpr="displayName"
-                    [searchExpr]="['id', 'displayName']"
-                    [searchEnabled]="true"
-                    [placeholder]="Search"
-                    [(value)]="settings.currency"
-                    [dataSource]="currencies$ | async">
-                    <div *dxTemplate="let item of 'item'" class="flag-row">
-                        <img class="flag-icon" src="assets/common/icons/flags/{{item?.id?.toLowerCase()}}.svg" width="52px" height="38px"><div><span class="currency-name">{{item.displayName}}</span><br><b class="currency-id">{{item.id}}</b></div>
-                    </div>
-                </dx-select-box>
+            <label for="Currency">{{ls.l("Currency")}}</label>
+            <currency-selector [(currency)]="settings.currency">
+            </currency-selector>
         </div>
         <ng-container *ngIf="tenant">
             <div class="form-group">

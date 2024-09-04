@@ -4,22 +4,19 @@ import { Injectable } from '@angular/core';
 /** Third party imports */
 import { BehaviorSubject, Observable, ReplaySubject, combineLatest, of } from 'rxjs';
 import { catchError, finalize, switchMap, map, tap, distinctUntilChanged, filter } from 'rxjs/operators';
-import * as moment from 'moment';
 
 /** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
-import { CacheService } from '@node_modules/ng2-cache-service';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { PeriodService } from '@app/shared/common/period/period.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactGroup } from '@shared/AppEnums';
+import { SettingsHelper } from '../../common/settings/settings.helper';
 
 @Injectable()
 export class DashboardWidgetsService  {
@@ -76,13 +73,12 @@ export class DashboardWidgetsService  {
         distinctUntilChanged());
     private _sourceOrgUnitIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
     sourceOrgUnitIds$: Observable<number[]> = this._sourceOrgUnitIds.asObservable();
+    private _currencyIdSubject: BehaviorSubject<string> = new BehaviorSubject<string>(SettingsHelper.getCurrency());
+    currencyId$: Observable<string> = this._currencyIdSubject.asObservable();
 
     constructor(
         private permissionService: AppPermissionService,
         private dashboardServiceProxy: DashboardServiceProxy,
-        private cacheService: CacheService,
-        private ls: AppLocalizationService,
-        private periodService: PeriodService,
         private layoutService: LayoutService,
         private calendarService: CalendarService
     ) {
@@ -91,11 +87,13 @@ export class DashboardWidgetsService  {
             this.contactId$,
             this.contactGroupId$,
             this.sourceOrgUnitIds$,
+            this.currencyId$,
             this.refresh$
         ).pipe(
             tap(() => this.totalsDataLoading.next(true)),
-            switchMap(([period, contactId, groupId, orgUnitIds, ]: [PeriodModel, number, ContactGroup, number[], null]) =>
+            switchMap(([period, contactId, groupId, orgUnitIds, currencyId, ]: [PeriodModel, number, ContactGroup, number[], string, null]) =>
                 this.dashboardServiceProxy.getTotals(
+                    currencyId,
                     period && period.from,
                     period && period.to,
                     String(groupId),
@@ -125,6 +123,10 @@ export class DashboardWidgetsService  {
 
     setOrgUnitIdsForTotals(orgUnitIds?: number[]) {
         this._sourceOrgUnitIds.next(orgUnitIds);
+    }
+
+    setCurrencyIdForTotals(currency: string) {
+        this._currencyIdSubject.next(currency);
     }
 
     getPercentage(value, total) {

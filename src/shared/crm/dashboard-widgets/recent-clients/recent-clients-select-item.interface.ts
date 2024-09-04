@@ -7,7 +7,7 @@ export class IRecentClientsSelectItem {
     message: string;
     dataLink: string;
     allRecordsLink: string;
-    dataSource: (contactId: number, orgUnitIds: number[]) => Observable<GetRecentlyCreatedCustomersOutput[] | GetRecentlySalesOutput[]>;
+    dataSource: (contactId: number, orgUnitIds: number[], currencyId: string) => Observable<GetRecentlyCreatedCustomersOutput[] | GetRecentlySalesOutput[]>;
     linkParams?: Params;
     visible?: boolean;
 }

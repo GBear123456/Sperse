@@ -135,10 +135,11 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                     format: undefined
                 }
             ].concat(
-                this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ? [{
+                this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ? <any>[{
                     key: 'productSales',
                     label: this.ls.l('TotalsByProductCountDistribution'),
                     method: this.dashboardServiceProxy.getProductSalesCountByType,
+                    hasCurrencyFilter: true,
                     argumentField: 'key',
                     valueField: 'count',
                     format: undefined
@@ -146,11 +147,12 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                     key: 'productSalesAmount',
                     label: this.ls.l('TotalsBySalesDistribution'),
                     method: this.dashboardServiceProxy.getProductSalesByType,
+                    hasCurrencyFilter: true,
                     argumentField: 'key',
                     valueField: 'count',
                     format: 'currency'
                 }] : []
-            ) : [{
+            ) : <any>[{
                 key: 'star',
                 label: this.ls.l('TotalsByStar/CreditRating'),
                 method: this.dashboardServiceProxy.getContactsByStar,
@@ -195,6 +197,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             this.dashboardWidgetsService.contactGroupId$,
             this.dashboardWidgetsService.contactId$,
             this.dashboardWidgetsService.sourceOrgUnitIds$,
+            this.dashboardWidgetsService.currencyId$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.lifeCycleService.destroy$),
@@ -204,12 +207,16 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                 this.rangeCount = this.totalCount = undefined;
                 this.loadingService.startLoading(this.elementRef.nativeElement);
             }),
-            switchMap(([selectedTotal, period, groupId, contactId, orgUnitIds,]: [ITotalOption, PeriodModel, string, number, number[], null]) => {
+            switchMap(([selectedTotal, period, groupId, contactId, orgUnitIds, currencyId,]: [ITotalOption, PeriodModel, string, number, number[], string, null]) => {
                 this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.selectedContactGroupId = groupId).subscribe();
-                return (this.lastSelectedTotal != selectedTotal ? of(selectedTotal) : this.waitFor$).pipe(first(), switchMap(() =>
-                    selectedTotal.method.call(
-                        this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'),
-                        period && period.to || new Date(), groupId, contactId, orgUnitIds
+                this.currency = currencyId;
+                return (this.lastSelectedTotal != selectedTotal ? of(selectedTotal) : this.waitFor$).pipe(first(), switchMap(() => {
+                    let args = [period && period.from || new Date('2000-01-01'), period && period.to || new Date(), groupId, contactId, orgUnitIds];
+                    if (selectedTotal.hasCurrencyFilter)
+                        args.unshift(currencyId);
+
+                    return selectedTotal.method.call(
+                        this.dashboardServiceProxy, ...args
                     ).pipe(
                         catchError(() => of([])),
                         finalize(() => {
@@ -217,8 +224,8 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                             this.lastSelectedTotal = selectedTotal;
                             this.loadingService.finishLoading(this.elementRef.nativeElement);
                         })
-                    )
-                ));
+                    );
+                }));
             }),
             map((data: any[]) => {
                 this.rawData = data;

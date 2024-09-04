@@ -27,7 +27,6 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@root/shared/common/auth/permission.service';
-import { SettingsHelper } from '@shared/common/settings/settings.helper';
 
 @Component({
     selector: 'recent-clients',
@@ -43,8 +42,6 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     @Input() viewAllText: string = this.ls.l('CRMDashboard_SeeAllRecords');
     @Output() loadComplete: EventEmitter<any> = new EventEmitter();
 
-    currency = SettingsHelper.getCurrency();
-
     recordsCount = 10;
     formatting = AppConsts.formatting;
     recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[] | GetRecentlySalesOutput[]>;
@@ -55,8 +52,8 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             dataLink: 'app/crm/contact/{contactId}/invoices',
             allRecordsLink: '/app/crm/invoices',
             visible: this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices),
-            dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlySalesOutput[]> =>
-                this.dashboardServiceProxy.getRecentlySales(this.currency, this.recordsCount, undefined, contactId, orgUnitIds)
+            dataSource: (contactId: number, orgUnitIds: number[], currencyId: string): Observable<GetRecentlySalesOutput[]> =>
+                this.dashboardServiceProxy.getRecentlySales(currencyId, this.recordsCount, undefined, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Client')),
@@ -166,12 +163,13 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
                 this.selectedItem$,
                 this.dashboardWidgetsService.contactId$,
                 this.dashboardWidgetsService.sourceOrgUnitIds$,
+                this.dashboardWidgetsService.currencyId$,
                 this.dashboardWidgetsService.refresh$
             ).pipe(
                 tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-                switchMap(([selectedItem, contactId, orgUnitIds, ]) => 
+                switchMap(([selectedItem, contactId, orgUnitIds, currencyId, ]) => 
                     (this.lastSelectedItem != selectedItem ? of(selectedItem) : this.waitFor$).pipe(first(), switchMap(() =>
-                        selectedItem.dataSource(contactId, orgUnitIds).pipe(
+                        selectedItem.dataSource(contactId, orgUnitIds, currencyId).pipe(
                             catchError(() => of([])),
                             finalize(() => {
                                 this.loadComplete.next();

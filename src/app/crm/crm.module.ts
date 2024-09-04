@@ -81,6 +81,7 @@ import { DataSourceService } from '@app/shared/common/data-source/data-source.se
 import { PipelinesStoreActions } from '@app/crm/store';
 import { AppStore } from '@app/store';
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
+import { CurrencySelectorModule } from '@shared/common/currency-selector/currency-selector.module';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
@@ -161,6 +162,7 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';
         MatSelectModule,
         MatStepperModule,
         SourceContactListModule,
+        CurrencySelectorModule,
         CRMDashboardWidgetsModule,
         ContactsModule,
         FileUploadModule,

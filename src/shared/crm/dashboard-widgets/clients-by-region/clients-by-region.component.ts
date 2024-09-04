@@ -57,12 +57,13 @@ export class ClientsByRegionComponent implements OnDestroy {
         this.dashboardWidgetsService.period$,
         this.dashboardWidgetsService.contactId$,
         this.dashboardWidgetsService.contactGroupId$,
-        this.dashboardWidgetsService.sourceOrgUnitIds$,            
+        this.dashboardWidgetsService.sourceOrgUnitIds$,
+        this.dashboardWidgetsService.currencyId$,
         this.dashboardWidgetsService.refresh$
     ).pipe(
         takeUntil(this.lifeCycleService.destroy$),
         tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-        switchMap(([period, contactId, groupId, orgUnitIds, ]: [PeriodModel, number, ContactGroup, number[], null]) => {
+        switchMap(([period, contactId, groupId, orgUnitIds, currencyId, ]: [PeriodModel, number, ContactGroup, number[], string, null]) => {
             return this.waitFor$.pipe(first(), switchMap(() =>
                 this.dashboardServiceProxy.getContactsByRegion(
                     period && period.from,

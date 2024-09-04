@@ -129,6 +129,13 @@
                                 <div *ngIf="!isReadOnly && !isOneTime && product.type == productType.Subscription" class="add-new-button" (click)="addNewPaymentPeriod()"><span>+</span></div>
                             </div>
                             <hr class="wide">
+                            <div class="currency-block">
+                                <label>Currency</label>
+                                <currency-selector [(currency)]="product.currencyId"
+                                                   [disabled]="isReadOnly || product.hasIncompletedInvoices || product.hasExternalReference"
+                                                   (onCurrencyChanged)="onCurrencyChanged($event)">
+                                </currency-selector>
+                            </div>
                             <div class="general-product" *ngIf="product.type != productType.Subscription">
                                 <div class="customer-price">
                                     <dx-switch switchedOffText=""
