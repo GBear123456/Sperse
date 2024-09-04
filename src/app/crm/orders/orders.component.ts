@@ -197,7 +197,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         })
     );
     selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable().pipe(
-        filter(() => this.componentIsActivated),
+        //filter(() => this.componentIsActivated),
         takeUntil(this.destroy$)
     );
     selectedContactGroup$: Observable<ContactGroup> = this.selectedContactGroup.asObservable();
