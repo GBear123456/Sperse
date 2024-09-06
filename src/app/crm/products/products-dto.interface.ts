@@ -13,6 +13,7 @@ export interface ProductDto {
     ThumbnailUrl: string;
     PublicName: string;
     CreateUser: boolean;
+    SinglePurchaseAllowed: boolean;
     IsPublished: boolean;
     AllowCoupon: boolean;
     PublishDate: string;

@@ -14,6 +14,7 @@ export const ProductFields: KeysEnum<ProductDto> = {
     ThumbnailUrl: 'ThumbnailUrl',
     PublicName: 'PublicName',
     CreateUser: 'CreateUser',
+    SinglePurchaseAllowed: 'SinglePurchaseAllowed',
     AllowCoupon: 'AllowCoupon',
     IsPublished: 'IsPublished',
     PublishDate: 'PublishDate',
