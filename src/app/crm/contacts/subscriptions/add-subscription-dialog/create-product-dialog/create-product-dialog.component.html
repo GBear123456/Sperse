@@ -37,7 +37,10 @@
                     </div>
                     <div class="middle">
                         <div class="block">
-                            <h3>{{ls.l('Product')}}</h3>
+                            <div class="product-title-block">
+                                <h3>{{ls.l('Product')}}</h3>
+                                <span *ngIf="product && product.id">Product Id: <b>{{product.id}}</b> <i class="save-to-clipboard" (click)="copyTextToClipboard(product.id)"></i></span>
+                            </div>
                             <hr>
                             <div class="product-ident">
                                 <div>
