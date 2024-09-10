@@ -1319,6 +1319,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
         });
         let input = new GetApplicablePaymentMethodsInput({
+            invoiceId: this.invoiceId,
             contactId: this.contactId,
             subscriptionStartOn: this.getDate(this.startDate, true, ''),
             couponId: this.selectedCoupon ? this.selectedCoupon.id : null,
