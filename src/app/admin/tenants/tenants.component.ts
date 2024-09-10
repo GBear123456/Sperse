@@ -89,8 +89,8 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     tenantName: string = this.route.snapshot.queryParams.name;
     searchValue: string = this.tenantName;
     productId = '-1';
-    creationDateStart: moment;
-    creationDateEnd: moment;
+    registrationDateStart: moment;
+    registrationDateEnd: moment;
     public actionRecord: any;
     public headlineButtons: HeadlineButton[] = [
         {
@@ -135,8 +135,8 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                         ? loadOptions.sort : [loadOptions.sort];
                 return this.tenantService.getTenants(
                     this.searchValue || this.tenantName || undefined,
-                    this.creationDateStart || undefined,
-                    this.creationDateEnd || undefined,
+                    this.registrationDateStart || undefined,
+                    this.registrationDateEnd || undefined,
                     this.productId ? parseInt(this.productId) : undefined,
                     !this.productId || parseInt(this.productId) >= 0,
                     sortOption.map(item => {
@@ -267,7 +267,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                     component: FilterCalendarComponent,
                     operator: { from: '>=', to: '<=' },
                     caption: 'creation',
-                    field: 'creationTime',
+                    field: 'registrationDate',
                     items: {
                         from: new FilterItemModel(),
                         to: new FilterItemModel()
@@ -286,9 +286,9 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             filters && filters.forEach((filter: FilterModel) => {
                 if (filter.field == 'name')
                     this.tenantName = filter.items.name.value;
-                else if (filter.field == 'creationTime') {
-                    this.creationDateStart = filter.items.from.value;
-                    this.creationDateEnd = filter.items.to.value;
+                else if (filter.field == 'registrationDate') {
+                    this.registrationDateStart = filter.items.from.value;
+                    this.registrationDateEnd = filter.items.to.value;
                 } else if (filter.field == 'productId')
                     this.productId = filter.items.element.value;
             });

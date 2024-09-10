@@ -32,6 +32,7 @@ import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group'
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { FileUploadModule } from 'ng2-file-upload';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { PopoverModule } from 'ngx-bootstrap/popover';
@@ -153,6 +154,7 @@ import { CurrencySelectorModule } from '@shared/common/currency-selector/currenc
         DxColorBoxModule,
         DxTreeViewModule,
         DxSwitchModule,
+        DxDateBoxModule,
 
         MatTabsModule,
         MatInputModule,
