@@ -303,7 +303,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         const dialogData = {
             fullHeigth: true,
             product: product,
-            isReadOnly: this.isReadOnly
+            isReadOnly: this.isReadOnly || (product && product.isArchived)
         };
         this.dialog.open(CreateProductDialogComponent, {
             panelClass: 'slider',

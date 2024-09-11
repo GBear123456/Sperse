@@ -336,7 +336,8 @@
                                                                switchedOffText=""
                                                                switchedOnText=""
                                                                [(value)]="option.trialEnabled"
-                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount">
+                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount"
+                                                               [disabled]="isReadOnly">
                                                     </dx-switch>&nbsp;<span (click)="option.trialEnabled = !option.trialEnabled">{{ls.l('Add Trial Period')}}</span>
                                                 </label>
                                                 <dx-number-box name="count"
@@ -355,7 +356,8 @@
                                                     <dx-switch switchedOffText=""
                                                                switchedOnText=""
                                                                [(value)]="option.gracePeriodEnabled"
-                                                               (onInitialized)="option.gracePeriodEnabled = !!option.gracePeriodDayCount">
+                                                               (onInitialized)="option.gracePeriodEnabled = !!option.gracePeriodDayCount"
+                                                               [disabled]="isReadOnly">
                                                     </dx-switch>&nbsp;<span (click)="option.gracePeriodEnabled = !option.gracePeriodEnabled">{{ls.l('Custom Grace Period')}}</span>
                                                 </label>
                                                 <dx-number-box name="gracePeriodDayCount"
@@ -443,7 +445,7 @@
                         <div class="block" *ngIf="product.type != productType.Donation && isCommissionsEnabled">
                             <h3>{{ls.l('Commission Calculations')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <hr>
-                            <div class="commissions" [ngClass]="{disabled: !enableCommissions}">
+                            <div class="commissions" [ngClass]="{disabled: !enableCommissions || isReadOnly}">
                                 <div *ngIf="product.type == productType.General || product.type == productType.Digital || product.type == productType.Event">
                                     <label>{{ls.l('CommissionableAmount')}}</label>
                                     <dx-number-box name="commissionableAmount"
@@ -475,8 +477,9 @@
                             <hr>
                             <dx-switch switchedOffText=""
                                        switchedOnText=""
-                                       [(value)]="enableCommissions">
-                            </dx-switch><span class="enable-commissions" (click)="enableCommissions = !enableCommissions">{{ls.l(enableCommissions ? 'Disable': 'Enable')}} {{ls.l('Commissions')}}</span>
+                                       [(value)]="enableCommissions"
+                                       [disabled]="isReadOnly">
+                            </dx-switch><span class="enable-commissions" (click)="!isReadOnly && enableCommissions = !enableCommissions">{{ls.l(enableCommissions ? 'Disable': 'Enable')}} {{ls.l('Commissions')}}</span>
                             <p class="enable-commissions-info">{{ls.l('This product will be included in the commissions calculations for your affiliates, resellers and partners')}}</p>
                         </div>
                         <div class="block" *ngIf="product.type == productType.Subscription">
@@ -540,7 +543,7 @@
                                             <img class="upload" src="assets/common/icons/upload.svg">
                                             <h3>{{ls.l('Drag & Drop Upload Content')}}</h3>
                                             <div class="buttons">
-                                                <button class="btn btn-layout" (click)="openFileSelector()">{{ls.l('Browse on your computer')}}</button> or <button class="button-layout button-default" (click)="showDocumentsDialog()">{{ls.l('Select from uploaded')}}</button>
+                                                <button [disabled]="isReadOnly" class="btn btn-layout" (click)="openFileSelector()">{{ls.l('Browse on your computer')}}</button> or <button [disabled]="isReadOnly" class="button-layout button-default" (click)="showDocumentsDialog()">{{ls.l('Select from uploaded')}}</button>
                                             </div>
                                             <span>{{ls.l('Upload up to 25 files, each with a maximum size of 100MB or less.')}}<br>{{ls.l('Supported file types: JPG, PNG, MP3, MP4, MOV, DOCX, PDF, ZIP, CSV, TXT, and others.')}}</span>
 
@@ -567,7 +570,8 @@
                                     <dx-text-box #resourceLinkNameCmp
                                                  width="30%"
                                                  [(value)]="resourceLinkName"
-                                                 [placeholder]="ls.l('Link Name')">
+                                                 [placeholder]="ls.l('Link Name')"
+                                                 [disabled]="isReadOnly">
                                         <dx-validator>
                                             <dxi-validation-rule type="pattern"
                                                                  [pattern]="nameRegexPattern"
@@ -579,7 +583,8 @@
                                                  width="60%"
                                                  valueChangeEvent="keyup"
                                                  [(value)]="resourceLinkUrl"
-                                                 [placeholder]="ls.l('Link URL')">
+                                                 [placeholder]="ls.l('Link URL')"
+                                                 [disabled]="isReadOnly">
                                         <dx-validator>
                                             <dxi-validation-rule type="pattern"
                                                                  [pattern]="urlRegexPattern"
@@ -587,13 +592,13 @@
                                             </dxi-validation-rule>
                                         </dx-validator>
                                     </dx-text-box>
-                                    <div class="add-new-button">
+                                    <div *ngIf="!isReadOnly" class="add-new-button">
                                         <span (click)="addLink(resourceLinkNameCmp, resourceLinkCmp)">+</span>
                                     </div>
                                 </div>
 
                                 <div *ngFor="let link of productLinks; let i = index" class="link">
-                                    <a target="_blank" [href]="link.url" [title]="link.url">{{link.name || link.url}}</a>&nbsp;<i (click)="removeLink(i)" aria-hidden="true" class="delete fa fa-times"></i>
+                                    <a target="_blank" [href]="link.url" [title]="link.url">{{link.name || link.url}}</a>&nbsp;<i *ngIf="!isReadOnly" (click)="removeLink(i)" aria-hidden="true" class="delete fa fa-times"></i>
                                 </div>
 
                             </div>
@@ -605,24 +610,27 @@
                             <div>
                                 <button class="btn btn-outline-dark"
                                         [class.active]="product.productEvent.location == eventLocation.Online"
-                                        (click)="product.productEvent.location = eventLocation.Online">
+                                        (click)="product.productEvent.location = eventLocation.Online"
+                                        [disabled]="isReadOnly">
                                     <i class="fa fa-laptop"></i> Online
                                 </button>
                                 <button class="btn btn-outline-dark"
                                         [class.active]="product.productEvent.location == eventLocation.InPerson"
-                                        (click)="product.productEvent.location = eventLocation.InPerson">
+                                        (click)="product.productEvent.location = eventLocation.InPerson"
+                                        [disabled]="isReadOnly">
                                     <i class="fa fa-map-marker"></i> In-Person
                                 </button>
                                 <button class="btn btn-outline-dark"
                                         [class.active]="product.productEvent.location == eventLocation.ToBeAnnounced"
-                                        (click)="product.productEvent.location = eventLocation.ToBeAnnounced">
+                                        (click)="product.productEvent.location = eventLocation.ToBeAnnounced"
+                                        [disabled]="isReadOnly">
                                     <i class="fa fa-bullhorn"></i> To be announced
                                 </button>
                             </div>
                             <p>Venue location</p>
                             <div class="edit-address" [class.placeholder]="!eventAddress" (click)="editAddress()">
                                 {{ eventAddress ? eventAddress : ls.l('Search for venue location or address')}}
-                                <i *ngIf="eventAddress" (click)="clearAddress($event)" class="fa fa-times"></i>
+                                <i *ngIf="!isReadOnly && eventAddress" (click)="clearAddress($event)" class="fa fa-times"></i>
                             </div>
                             <dx-text-box [(value)]="product.productEvent.link"
                                          height="65px"
@@ -713,17 +721,19 @@
                                 <dx-switch switchedOffText=""
                                            switchedOnText=""
                                            [(value)]="product.isPublished"
-                                           (valueChange)="onIsPublishedChanged()">
+                                           (valueChange)="onIsPublishedChanged()"
+                                           [disabled]="isReadOnly">
                                 </dx-switch>
                             </p>
                             <p>
-                                <img class="info" src="assets/common/icons/calendar3.svg"> {{ls.l('Published on')}}: <span *ngIf="publishDate">{{publishDate | date:'MMM d, y, h:mm a'}} <img class="delete" (click)="publishDate=undefined" src="assets/common/icons/delete-icon.svg"></span> <a href="javascript:void(0)" (click)="publishDateComponent.instance.open()">Edit</a>
+                                <img class="info" src="assets/common/icons/calendar3.svg"> {{ls.l('Published on')}}: <span *ngIf="publishDate">{{publishDate | date:'MMM d, y, h:mm a'}} <img *ngIf="!isReadOnly" class="delete" (click)="publishDate=undefined" src="assets/common/icons/delete-icon.svg"></span> <a *ngIf="!isReadOnly" href="javascript:void(0)" (click)="publishDateComponent.instance.open()">Edit</a>
                                 <dx-date-box #publishDateComponent
                                              type="datetime"
                                              width="0px"
                                              height="0px"
                                              [(value)]="publishDate"
-                                             (onOpened)="onPublishDateOpened()">
+                                             (onOpened)="onPublishDateOpened()"
+                                             [disabled]="isReadOnly">
                                 </dx-date-box>
                             </p>
                             <hr>
@@ -731,21 +741,24 @@
                                 Require user creation <img class="info" src="assets/common/icons/info-circle.svg">
                                 <dx-switch switchedOffText=""
                                            switchedOnText=""
-                                           [(value)]="product.createUser">
+                                           [(value)]="product.createUser"
+                                           [disabled]="isReadOnly">
                                 </dx-switch>
                             </p>
                             <p>
                                 Single Purchase <img class="info" src="assets/common/icons/info-circle.svg">
                                 <dx-switch switchedOffText=""
                                            switchedOnText=""
-                                           [(value)]="product.singlePurchaseAllowed">
+                                           [(value)]="product.singlePurchaseAllowed"
+                                           [disabled]="isReadOnly">
                                 </dx-switch>
                             </p>
                             <p>
                                 Allow coupons <img class="info" src="assets/common/icons/info-circle.svg">
                                 <dx-switch switchedOffText=""
                                            switchedOnText=""
-                                           [(value)]="product.publicAllowCoupon">
+                                           [(value)]="product.publicAllowCoupon"
+                                           [disabled]="isReadOnly">
                                 </dx-switch>
                             </p>
                             <hr>
@@ -764,7 +777,10 @@
                             <ng-template #upload>
                                 <div class="upload-logo">
                                     <div class="browse-file">
-                                        <ngx-file-drop [showBrowseBtn]="true" [browseBtnLabel]="ls.l('Browse on your device')" (onFileDrop)="fileDropped($event)">
+                                        <ngx-file-drop [showBrowseBtn]="true"
+                                                       [browseBtnLabel]="ls.l('Browse on your device')"
+                                                       (onFileDrop)="fileDropped($event)"
+                                                       [disabled]="isReadOnly">
                                         </ngx-file-drop>
                                     </div>
                                     <span>{{ls.l('or')}}</span>
@@ -895,7 +911,8 @@
                                     <email-template-selector [(templateId)]="product.paidEmailTemplateId"
                                                              [templateType]="EmailTemplateType.ProductPaid"
                                                              [showSystemDefault]="false"
-                                                             [title]="ls.l('TemplateName')">
+                                                             [title]="ls.l('TemplateName')"
+                                                             [disabled]="isReadOnly">
                                     </email-template-selector>
                                 </div>
                             </div>

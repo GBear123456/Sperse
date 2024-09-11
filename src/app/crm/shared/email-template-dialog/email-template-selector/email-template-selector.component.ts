@@ -29,6 +29,7 @@ export class EmailTemplateSelectorComponent {
     @Input() templateType: EmailTemplateType;
     @Input() showSystemDefault: boolean = true;
     @Input() showCloneButton: boolean = false;
+    @Input() disabled: boolean = false;
     @Input()
     get templateId(): number {
         return this.internalTemplateId == this.systemDefaultId ? null : this.internalTemplateId;
