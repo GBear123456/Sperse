@@ -266,7 +266,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                 new FilterModel({
                     component: FilterCalendarComponent,
                     operator: { from: '>=', to: '<=' },
-                    caption: 'creation',
+                    caption: 'registration',
                     field: 'registrationDate',
                     items: {
                         from: new FilterItemModel(),

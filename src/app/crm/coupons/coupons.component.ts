@@ -101,7 +101,7 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.params.$select = DataGridService.getSelectFields(
-                this.dataGrid, [this.couponFields.Id],
+                this.dataGrid, [this.couponFields.Id, this.couponFields.IsArchived],
                 {
                     Value: [this.couponFields.CurrencyId]
                 }
@@ -453,6 +453,7 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
             return;
 
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
+            ActionMenuService.prepareActionMenuItems(this.actionMenuGroups, event.data);
             this.actionEvent = actionRecord;
         });
     }
