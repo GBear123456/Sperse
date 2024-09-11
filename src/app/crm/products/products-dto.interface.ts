@@ -17,6 +17,7 @@ export interface ProductDto {
     IsPublished: boolean;
     AllowCoupon: boolean;
     PublishDate: string;
+    IsArchived: boolean;
     ProductSubscriptionOptions: ProductSubscriptionOption[];
 }
 

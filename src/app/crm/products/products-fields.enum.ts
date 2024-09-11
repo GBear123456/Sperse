@@ -18,5 +18,6 @@ export const ProductFields: KeysEnum<ProductDto> = {
     AllowCoupon: 'AllowCoupon',
     IsPublished: 'IsPublished',
     PublishDate: 'PublishDate',
+    IsArchived: 'IsArchived',
     ProductSubscriptionOptions: 'ProductSubscriptionOptions'
 };
