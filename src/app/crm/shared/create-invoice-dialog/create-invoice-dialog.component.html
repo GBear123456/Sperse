@@ -193,7 +193,7 @@
                                 [(orderNumber)]="orderNumber"
                                 [currency]="currency"
                                 [contactId]="contactId"
-                                [disabled]="data?.invoice">
+                                [disabled]="disabledForUpdate || data?.invoice">
                 </order-dropdown>
             </div>
             <div class="field-area lines">
@@ -203,7 +203,6 @@
                         height="auto"
                         class="alone"
                         [renderAsync]="true"
-                        [disabled]="disabledForUpdate"
                         [(dataSource)]="lines"
                         [allowColumnReordering]="false"
                         [columnAutoWidth]="true"
@@ -212,7 +211,7 @@
                         [masterDetail]="{ enabled: true, template: 'detail'}"
                         [scrolling]="{showScrollbar: 'never'}"
                         [allowColumnResizing]="false"
-                        [loadPanel]="{enabled: false}"                        
+                        [loadPanel]="{enabled: false}"
                         (onRowCollapsed)="changeDetectorRef.detectChanges()"
                         (onRowExpanded)="changeDetectorRef.detectChanges()">
 
@@ -244,7 +243,8 @@
                                 (onFocusIn)="onFieldFocusIn($event, cellData)"
                                 (onCustomItemCreating)="onCustomDescriptionCreating($event)"
                                 (onInput)="productLookupItems($event, cellData, !cellData.data.isCrmProduct)"
-                                (onSelectionChanged)="selectProduct($event, cellData)">
+                                (onSelectionChanged)="selectProduct($event, cellData)"
+                                [disabled]="disabledForUpdate">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
@@ -253,7 +253,7 @@
                                 </div>
                             </dx-select-box>
 
-                            <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="cellData.data == lines[lines.length - 1] && !productLines.instance.isRowExpanded(cellData.data)">
+                            <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="!disabledForUpdate && cellData.data == lines[lines.length - 1] && !productLines.instance.isRowExpanded(cellData.data)">
                                 <span *ngIf="featureMaxProductCount" [class.disabled]="lines.length != getFilteredLines().length && cellData.data.isCrmProduct" class="add-new add-product-line" (click)="addNewLine(productLines, true)">+ {{ls.l('AddProductLine')}}</span>
                                 <span *ngIf="featureMaxProductCount" class="separator">|</span>
                                 <span [class.disabled]="lines.length != getFilteredLines().length && !cellData.data.isCrmProduct" class="add-new add-custom-line" (click)="addNewLine(productLines)">+ {{ls.l('AddCustomLine')}}</span>
@@ -267,7 +267,8 @@
                                 [placeholder]="ls.lr('Value')"
                                 [showClearButton]="false"
                                 [(value)]="cellData.data.quantity"
-                                (onValueChanged)="calculateLineTotal(cellData.data)">
+                                (onValueChanged)="calculateLineTotal(cellData.data)"
+                                [disabled]="disabledForUpdate">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
@@ -283,7 +284,8 @@
                                 [showClearButton]="false"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"
                                 [value]="cellData.data.rate | currency: currency: 'symbol'"
-                                (onValueChanged)="onRateChanged($event, cellData)">
+                                (onValueChanged)="onRateChanged($event, cellData)"
+                                [disabled]="disabledForUpdate">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
@@ -303,7 +305,8 @@
                                 [dataSource]="cellData.data.units || invoiceUnits"
                                 [dropDownOptions]="{ width: 220 }"
                                 (onValueChanged)="onUnitChanged($event, cellData)"
-                                (onOpened)="onUnitOpened($event, cellData)">
+                                (onOpened)="onUnitOpened($event, cellData)"
+                                [disabled]="disabledForUpdate">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
@@ -316,11 +319,12 @@
                                 [placeholder]="currencySymbol"
                                 dataType="number"
                                 [readOnly]="true"
-                                [value]="cellData.data.total | currency: currency: 'symbol'">
+                                [value]="cellData.data.total | currency: currency: 'symbol'"
+                                [disabled]="disabledForUpdate">
                             </dx-text-box>
                         </div>
                         <div *dxTemplate="let cellData of 'actions'" class="row-actions">
-                            <i (click)="deleteLine(cellData, productLines)" class="delete-icon"></i>
+                            <i *ngIf="!disabledForUpdate" (click)="deleteLine(cellData, productLines)" class="delete-icon"></i>
                         </div>
                         <div *dxTemplate="let detail of 'detail'" style="position: relative;">
                             <dx-text-area 
@@ -329,13 +333,14 @@
                                 valueChangeEvent="keyup"
                                 [(value)]="detail.data.details"
                                 [maxLength]="getDetailsMaxLength(detail)"
-                                [placeholder]="ls.l('Enter') + ' ' + ls.l('AdditionalDetails') + '...'">
+                                [placeholder]="disabledForUpdate ? '' : ls.l('Enter') + ' ' + ls.l('AdditionalDetails') + '...'"
+                                [disabled]="disabledForUpdate">
                             </dx-text-area>
-                            <div class="footer-wrapper">
+                            <div class="footer-wrapper" *ngIf="!disabledForUpdate">
                                 <div class="number-of-symbols">{{ (getDetailsMaxLength(detail) - (detail?.data?.details?.length || 0)) + ' ' + ls.l('CharactersLeft') }}</div>
                             </div>
 
-                            <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="detail.data == lines[lines.length - 1] && productLines.instance.isRowExpanded(detail.data)">
+                            <div [ngStyle]="{left: featureMaxProductCount ? -50 : 0}" class="row-actions add-new" [hidden]="hideAddNew" *ngIf="!disabledForUpdate && detail.data == lines[lines.length - 1] && productLines.instance.isRowExpanded(detail.data)">
                                 <span *ngIf="featureMaxProductCount" [class.disabled]="lines.length != getFilteredLines().length && detail.data.isCrmProduct" class="add-new add-product-line" (click)="addNewLine(productLines, true)">+ {{ls.l('AddProductLine')}}</span>
                                 <span *ngIf="featureMaxProductCount" class="separator">|</span>
                                 <span [class.disabled]="lines.length != getFilteredLines().length && !detail.data.isCrmProduct" class="add-new add-custom-line" (click)="addNewLine(productLines)">+ {{ls.l('AddCustomLine')}}</span>
