@@ -45,6 +45,12 @@
             .product-xref {
                 span {
                     float: right;
+
+                    /*Overrides `.block.status p a` float and padding*/
+                    a {
+                      float: none;
+                      padding: initial;
+                    }
                 }
 
                 .save-to-clipboard {

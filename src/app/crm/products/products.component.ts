@@ -226,11 +226,13 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 if (product.publicName)
                     product.publicName += '2';
                 product.stripeXref = undefined;
+                product.stripeXrefUrl = undefined;
                 product.paypalXref = undefined;
                 if (product.productSubscriptionOptions)
                     product.productSubscriptionOptions =
                         product.productSubscriptionOptions.map(sub => {
                             sub.stripeXref = undefined;
+                            sub.stripeXrefUrl = undefined;
                             sub.paypalXref = undefined;
                             return sub;
                         });

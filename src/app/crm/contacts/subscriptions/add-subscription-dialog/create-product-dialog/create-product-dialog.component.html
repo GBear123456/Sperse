@@ -369,11 +369,17 @@
                                             <hr>
                                             <div class="option-row width-50">
                                                 <div *ngIf="option.stripeXref">
-                                                    <label>Stripe xref</label>
-                                                    <div class="clipboard-holder">{{option.stripeXref}} <i class="save-to-clipboard" (click)="copyTextToClipboard(option.stripeXref)"></i></div>
+                                                    <label>Stripe Xref</label>
+                                                    <div class="clipboard-holder">
+                                                      <ng-container *ngIf="option.stripeXrefUrl; else plainOptionStripeXref">
+                                                        <a [href]="option.stripeXrefUrl" target="_blank">{{option.stripeXref}}</a>
+                                                      </ng-container>
+                                                      <ng-template #plainOptionStripeXref>{{option.stripeXref}}</ng-template>
+                                                      <i class="save-to-clipboard" (click)="copyTextToClipboard(option.stripeXref)"></i>
+                                                </div>
                                                 </div>
                                                 <div *ngIf="option.paypalXref">
-                                                    <label>Paypal xref</label>
+                                                    <label>Paypal Xref</label>
                                                     <div class="clipboard-holder">{{option.paypalXref}} <i class="save-to-clipboard" (click)="copyTextToClipboard(option.paypalXref)"></i></div>
                                                 </div>
                                             </div>
@@ -740,7 +746,12 @@
                             </p>
                             <hr>
                             <p *ngIf="product.stripeXref" class="product-xref clipboard-holder">
-                                Stripe Xref <span>{{product.stripeXref}}<i class="save-to-clipboard" (click)="copyTextToClipboard(product.stripeXref)"></i></span>
+                                Stripe Xref <span>
+                                  <ng-container *ngIf="product.stripeXrefUrl; else plainProductStripeXref">
+                                    <a [href]="product.stripeXrefUrl" target="_blank">{{product.stripeXref}}</a>
+                                  </ng-container>
+                                  <ng-template #plainProductStripeXref>{{product.stripeXref}}</ng-template>
+                                <i class="save-to-clipboard" (click)="copyTextToClipboard(product.stripeXref)"></i></span>
                             </p>
                             <p *ngIf="product.paypalXref" class="product-xref clipboard-holder">
                                 Paypal Xref <span>{{product.paypalXref}}<i class="save-to-clipboard" (click)="copyTextToClipboard(product.paypalXref)"></i></span>
