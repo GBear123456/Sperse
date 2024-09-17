@@ -13,6 +13,7 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -36,6 +37,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from 'abp-ng2-module';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 //!!VP should be reimplemnted to use Dx text box instead of inputs
 @Component({
@@ -143,6 +145,13 @@ export class CreateTenantModalComponent implements OnInit {
                 this.dialogRef.close(true);
                 this.modalSave.emit(null);
             });
+    }
+
+    onRegistrationDateOpened() {
+        if (!this.tenant.tenantRegistrationDate) {
+            this.tenant.tenantRegistrationDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     onProductChanged(event) {

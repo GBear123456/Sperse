@@ -1032,11 +1032,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     addExternalLogo() {
-        if (this.uploadFileUrl)
+        if (!this.isReadOnly && this.uploadFileUrl)
             this.openImageSelector();
     }
 
     togglePriceType() {
+        if (this.isReadOnly)
+            return;
+
         if (this.isFreePriceType = !this.isFreePriceType) {
             this.product.price = undefined;
             if (!this.product.stripeXref)
@@ -1057,6 +1060,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     showDocumentsDialog() {
+        if (this.isReadOnly)
+            return;
+
         if (this.productFiles.length + this.productTemplates.length >= this.maxFilesCount) {
             this.notify.warn(`Exceeded ${this.maxFilesCount} file limit`);
             return;
@@ -1213,7 +1219,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             showNeighborhood: false,
             editDialogTitle: 'Update address',
             formattedAddress: '',
-            isEditAllowed: true,
+            isEditAllowed: !this.isReadOnly,
             disableDragging: true,
             hideComment: true,
             hideCheckboxes: true

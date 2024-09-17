@@ -70,7 +70,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             text: this.l('Add Bookmark'),
             class: 'bookmark',
             disabled: true,
-            action: () => {}
+            action: () => { }
         },
         {
             text: this.l('View'),
@@ -83,7 +83,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             text: this.l('Test'),
             class: 'status',
             disabled: true,
-            action: () => {}
+            action: () => { }
         },
         {
             text: this.l('Edit'),
@@ -96,8 +96,16 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             text: this.l('Duplicate'),
             class: 'copy',
             action: () => {
-                this.editProduct(this.actionEvent.Id, true);                
+                this.editProduct(this.actionEvent.Id, true);
             }
+        },
+        {
+            text: this.l('Archive'),
+            class: 'archive',
+            action: () => {
+                this.archiveProduct(this.actionEvent.Id);
+            },
+            checkVisible: (itemData: ProductDto) => !itemData.IsArchived
         },
         {
             text: this.l('SyncSubscriptionsWithProduct'),
@@ -134,11 +142,12 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.params.$select = DataGridService.getSelectFields(
                 this.dataGrid, [
-                    this.productFields.Id, 
+                    this.productFields.Id,
                     this.productFields.PublicName,
                     this.productFields.CreateUser,
                     this.productFields.AllowCoupon,
-                    this.productFields.PublishDate
+                    this.productFields.PublishDate,
+                    this.productFields.IsArchived
                 ],
                 {
                     Price: [this.productFields.CurrencyId, this.productFields.ProductSubscriptionOptions],
@@ -165,7 +174,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
         this.isReadOnly = !this.permission.isGranted(this.permissions.CRMProductsManage);
         this.headlineButtons.push({
-            enabled: !this.isReadOnly && 
+            enabled: !this.isReadOnly &&
                 !!appService.getFeatureCount(AppFeatures.CRMMaxProductCount),
             action: () => this.showProductDialog(),
             label: this.l('AddProduct')
@@ -238,7 +247,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                         });
                 product.imageUrl = undefined;
                 if (product.productResources)
-                    product.productResources = 
+                    product.productResources =
                         product.productResources.filter(res => {
                             res.id = undefined;
                             return !res.fileId;
@@ -249,6 +258,22 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
             this.showProductDialog(product);
         });
+    }
+
+    archiveProduct(id: number) {
+        this.message.confirm('',
+            this.l('ArchiveConfiramtion'),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.startLoading();
+                    this.productProxy.archiveProduct(id).pipe(
+                        finalize(() => this.finishLoading())
+                    ).subscribe(() => {
+                        this.invalidate();
+                    });
+                }
+            }
+        );
     }
 
     syncSubscriptionsWithProduct(id: number) {
@@ -280,7 +305,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         const dialogData = {
             fullHeigth: true,
             product: product,
-            isReadOnly: this.isReadOnly
+            isReadOnly: this.isReadOnly || (product && product.isArchived)
         };
         this.dialog.open(CreateProductDialogComponent, {
             panelClass: 'slider',
@@ -518,9 +543,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     onCellClick(event) {
         if (event.rowType == 'data' && event.data) {
             if (event.column.cellTemplate == 'actionTemplate')
-                this.toggleActionsMenu(event);            
+                this.toggleActionsMenu(event);
             else if (event.column.cellTemplate == 'shareTemplate')
-                return ;
+                return;
             else
                 this.editProduct(event.data.Id);
         }
@@ -531,6 +556,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             return;
 
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
+            ActionMenuService.prepareActionMenuItems(this.actionMenuGroups, event.data);
             this.actionEvent = actionRecord;
         });
     }
