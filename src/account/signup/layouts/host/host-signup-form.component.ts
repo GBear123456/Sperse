@@ -112,7 +112,7 @@ export class HostSignupFormComponent {
                 this.loginReferer = '';
         });
 
-        this.productProxy.getSubscriptionProductsByGroupName('Main', false).subscribe(products => {
+        this.productProxy.getSubscriptionProductsByGroupName('Main', true, false).subscribe(products => {
             this.signUpProduct = products.sort((prev, next) => {
                 let prevOption = this.getProductMonthlyOrFirstOption(prev),
                     nextOption = this.getProductMonthlyOrFirstOption(next);
