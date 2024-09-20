@@ -249,7 +249,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             let options = data.product.productSubscriptionOptions;
             this.defaultProductUri = this.product.publicName;
             if (options && options[0]) {
-                this.isFreePriceType = !options[0].fee;
+                this.isFreePriceType = !options[0].fee && !options[0].customerChoosesPrice;
                 this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
             } else
                 this.isFreePriceType = !data.product.customerChoosesPrice && !data.product.price;
@@ -826,6 +826,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         return false;
                     if (this.product.maxCustomerPrice > 0 && event.value > this.product.maxCustomerPrice)
                         return false;
+
+                    return event.value > 0;
                 }
 
                 return true;
@@ -836,6 +838,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     validateFee(option) {
         return (event) => {
+            if (option.customerChoosesPrice) {
+                if (event.value) {
+                    if (option.minCustomerPrice > 0 && event.value < option.minCustomerPrice)
+                        return false;
+                    if (option.maxCustomerPrice > 0 && event.value > option.maxCustomerPrice)
+                        return false;
+
+                    return event.value > 0;
+                }
+
+                return true;
+            }
+
             return option.frequency == RecurringPaymentFrequency.OneTime
                 || option.frequency == RecurringPaymentFrequency.LifeTime
                 || event.value && event.value > 0;
@@ -1047,6 +1062,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             let options = this.product.productSubscriptionOptions;
             if (options && options[0]) {
                 options[0].fee = undefined;
+                options[0].customerChoosesPrice = false;
+                options[0].minCustomerPrice = undefined;
+                options[0].maxCustomerPrice = undefined;
                 options[0].commissionableFeeAmount = undefined;
                 options[0].trialDayCount = undefined;
                 options[0].signupFee = undefined;

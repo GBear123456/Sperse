@@ -209,17 +209,24 @@
                                     <div *ngIf="!isReadOnly && i" class="remove-button" (click)="removePaymentPeriod(i)"><span>-</span></div>
 
                                     <div class="option">
+                                        <div class="customer-price">
+                                            <dx-switch switchedOffText=""
+                                                       switchedOnText=""
+                                                       [(value)]="option.customerChoosesPrice"
+                                                       [disabled]="isReadOnly || isFreePriceType || option.stripeXref || option.paypalXref">
+                                            </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
+                                        </div>
                                         <div class="option-row width-50">
                                             <div [ngClass]="{disabled: !i && isFreePriceType}">
                                                 <label class="wide">{{ls.l('Subscription fee')}}</label>
                                                 <dx-number-box name="price"
                                                                width="100%"
-                                                               [format]="amountFormat"
+                                                               [format]="option.customerChoosesPrice ? amountNullableFormat : amountFormat"
                                                                [(value)]="option.fee"
                                                                [disabled]="isReadOnly"
                                                                (onValueChanged)="checkShowAmountChangeWarrning()">
                                                     <dx-validator>
-                                                        <dxi-validation-rule type="custom" [validationCallback]="validateFee(option)" message="{{ls.l('RequiredField', ls.l('Fee'))}}."></dxi-validation-rule>
+                                                        <dxi-validation-rule type="custom" [validationCallback]="validateFee(option)" message="{{ls.l('InvalidField', ls.l('Fee'))}}."></dxi-validation-rule>
                                                     </dx-validator>
                                                 </dx-number-box>
                                             </div>
@@ -229,6 +236,31 @@
                                                                width="100%"
                                                                [format]="amountNullableFormat"
                                                                [(value)]="option.commissionableFeeAmount"
+                                                               [disabled]="isReadOnly">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="option-row width-50" *ngIf="option.customerChoosesPrice">
+                                            <div>
+                                                <dx-number-box width="100%"
+                                                               height="65px"
+                                                               class="label"
+                                                               [placeholder]="ls.l('Min Price')"
+                                                               [format]="amountNullableFormat"
+                                                               [min]="0"
+                                                               [max]="option.maxCustomerPrice ? option.maxCustomerPrice - 1 : null"
+                                                               [(value)]="option.minCustomerPrice"
+                                                               [disabled]="isReadOnly">
+                                                </dx-number-box>
+                                            </div>
+                                            <div>
+                                                <dx-number-box width="100%"
+                                                               height="65px"
+                                                               class="label"
+                                                               [placeholder]="ls.l('Max Price')"
+                                                               [format]="amountNullableFormat"
+                                                               [min]="option.minCustomerPrice ? option.minCustomerPrice + 1 : 0"
+                                                               [(value)]="option.maxCustomerPrice"
                                                                [disabled]="isReadOnly">
                                                 </dx-number-box>
                                             </div>
