@@ -45,7 +45,7 @@ export class AppSessionService {
     }
 
     get isPublicPage(): boolean {
-        return !location.pathname.startsWith('/app');
+        return location.pathname.startsWith('/invoicing/') || location.pathname.startsWith('/receipt/') || location.pathname.startsWith('/p/');
     }
 
     get isLendspaceDemoUser() {  //!!VP should be added corresponding permissions for such case (temp solution)
