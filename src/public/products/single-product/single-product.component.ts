@@ -106,10 +106,7 @@ export class SingleProductComponent implements OnInit {
 
     customerPriceEditMode = false;
     customerPriceRegexp = /^\d+(.\d{1,2})?$/;
-    customerPriceInputErrorDefs: any[] = [
-        { required: this.ls.l('Invalid Price') },
-        { pattern: this.ls.l('Invalid Price') }
-    ]
+    customerPriceInputErrorDefs: any[] = [];
 
     isDonationGoalReached = false;
 
@@ -221,8 +218,8 @@ export class SingleProductComponent implements OnInit {
                         if (result.data.hasTenantService)
                             this.initializePasswordComplexity();
                         this.initConditions();
-                        this.initCustomerPrice();
                         this.initSubscriptionProduct();
+                        this.initCustomerPrice();
                         this.initializePayPal();
                         this.checkIsFree();
                     }
@@ -307,7 +304,13 @@ export class SingleProductComponent implements OnInit {
     }
 
     getSubmitRequest(paymentGateway: string): Observable<SubmitProductRequestOutput> {
-        if (!this.isFormValid() || (this.productInfo.customerChoosesPrice && (!this.productInfo.price || this.customerPriceEditMode))) {
+        if ((this.productInfo.customerChoosesPrice && (!this.productInfo.price || this.customerPriceEditMode)) ||
+            (this.selectedSubscriptionOption && this.selectedSubscriptionOption.customerChoosesPrice && (!this.selectedSubscriptionOption.fee || this.customerPriceEditMode))) {
+            abp.notify.error(this.ls.l('Invalid Price'));
+            return of();
+        }
+
+        if (!this.isFormValid()) {
             abp.notify.error(this.ls.l('SaleProductValidationError'));
             return of();
         }
@@ -319,7 +322,7 @@ export class SingleProductComponent implements OnInit {
         this.requestInfo.affiliateCode = this.ref;
         this.requestInfo.paymentGateway = paymentGateway;
         this.productInput.productId = this.productInfo.id;
-        if (this.isFreeProductSelected || this.productInfo.customerChoosesPrice)
+        if (this.isFreeProductSelected || this.productInfo.customerChoosesPrice || (this.selectedSubscriptionOption && this.selectedSubscriptionOption.customerChoosesPrice))
             this.requestInfo.couponCode = null;
 
         switch (this.productInfo.type) {
@@ -335,6 +338,8 @@ export class SingleProductComponent implements OnInit {
             case ProductType.Subscription:
                 this.productInput.optionId = this.selectedSubscriptionOption.id;
                 this.productInput.unit = PaymentService.getProductMeasurementUnit(this.selectedSubscriptionOption.frequency);
+                if (this.selectedSubscriptionOption.customerChoosesPrice)
+                    this.productInput.price = this.selectedSubscriptionOption.fee;
                 break;
         }
 
@@ -362,7 +367,13 @@ export class SingleProductComponent implements OnInit {
         if (this.productInfo.type != ProductType.Subscription)
             return;
 
-        let periods: RecurringPaymentFrequency[] = this.productInfo.productSubscriptionOptions.map(v => v.frequency);
+        let periods: RecurringPaymentFrequency[] = [];
+        this.productInfo.productSubscriptionOptions.forEach(v => {
+            periods.push(v.frequency);
+
+            if (v.customerChoosesPrice)
+                v['initialFee'] = v.fee;
+        });
 
         let billingPeriods = periods.map(v => PaymentService.getBillingPeriodByPaymentFrequency(v));
         this.availablePeriods = [];
@@ -389,7 +400,7 @@ export class SingleProductComponent implements OnInit {
                 this.isFreeProductSelected = this.productInfo.price == 0 && !this.productInfo.customerChoosesPrice;
                 break;
             case ProductType.Subscription:
-                this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0;
+                this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0 && !this.selectedSubscriptionOption.customerChoosesPrice;
                 break;
         }
     }
@@ -465,6 +476,7 @@ export class SingleProductComponent implements OnInit {
 
     updateSelectedSubscriptionOption() {
         this.selectedSubscriptionOption = this.productInfo.productSubscriptionOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
+        this.initCustomerPrice();
     }
 
     updateSubscriptionOptionPaypalButton() {
@@ -610,18 +622,48 @@ export class SingleProductComponent implements OnInit {
     }
 
     initCustomerPrice() {
-        if (!this.productInfo.customerChoosesPrice)
-            return;
-
-        if (!this.productInfo.price) {
-            this.customerPriceEditMode = true;
-            this.focusCustomerPriceInput();
+        let customerChoosesPrice, price, min, max;
+        if (this.productInfo.type == ProductType.Subscription) {
+            customerChoosesPrice = this.selectedSubscriptionOption.customerChoosesPrice;
+            if (customerChoosesPrice) {
+                this.selectedSubscriptionOption.fee = this.selectedSubscriptionOption.fee || this.selectedSubscriptionOption['initialFee'];
+                this.clearCoupon();
+            }
+            price = this.selectedSubscriptionOption.fee;
+            min = this.selectedSubscriptionOption.minCustomerPrice;
+            max = this.selectedSubscriptionOption.maxCustomerPrice;
+        } else {
+            customerChoosesPrice = this.productInfo.customerChoosesPrice;
+            price = this.productInfo.price;
+            min = this.productInfo.minCustomerPrice;
+            max = this.productInfo.maxCustomerPrice;
         }
 
-        if (this.productInfo.minCustomerPrice)
-            this.customerPriceInputErrorDefs.push({ min: `${this.ls.l('The minimum amount is ')}${this.currencySymbol}${this.productInfo.minCustomerPrice}` });
-        if (this.productInfo.maxCustomerPrice)
-            this.customerPriceInputErrorDefs.push({ max: `${this.ls.l('The maximum amount is ')}${this.currencySymbol}${this.productInfo.maxCustomerPrice}` });
+        if (!customerChoosesPrice) {
+            this.customerPriceEditMode = false;
+            return;
+        }
+
+        if (!price) {
+            this.customerPriceEditMode = true;
+            this.focusCustomerPriceInput();
+        } else {
+            this.customerPriceEditMode = false;
+        }
+
+        this.initCustomerPriceInputErrorDefs(min, max);
+    }
+
+    initCustomerPriceInputErrorDefs(min, max) {
+        this.customerPriceInputErrorDefs = [
+            { required: this.ls.l('Invalid Price') },
+            { pattern: this.ls.l('Invalid Price') }
+        ];
+
+        if (min)
+            this.customerPriceInputErrorDefs.push({ min: `${this.ls.l('The minimum amount is ')}${this.currencySymbol}${min}` });
+        if (max)
+            this.customerPriceInputErrorDefs.push({ max: `${this.ls.l('The maximum amount is ')}${this.currencySymbol}${max}` });
     }
 
     showCustomerPriceInput() {
@@ -632,7 +674,6 @@ export class SingleProductComponent implements OnInit {
     customerPriceFocusOut(event, input) {
         if (!input.valid) {
             event.preventDefault();
-            this.focusCustomerPriceInput();
         }
         else {
             this.customerPriceEditMode = false;

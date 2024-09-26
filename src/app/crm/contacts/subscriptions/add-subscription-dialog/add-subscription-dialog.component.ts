@@ -82,6 +82,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 amount: this.data.amount
             })
         ],
+        statusId: undefined,
         productId: undefined,
         paymentPeriodType: undefined,
         products: undefined,

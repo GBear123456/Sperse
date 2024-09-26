@@ -48,7 +48,7 @@ export class PaymentService {
 
     getPackagesConfig(group: string): Observable<ProductInfo[]> {
         return this.productServiceProxy.getSubscriptionProductsByGroupName(
-            group, true
+            group, true, true
         ).pipe(
             publishReplay(),
             refCount()

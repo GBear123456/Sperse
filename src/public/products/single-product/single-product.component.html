@@ -59,16 +59,34 @@
                             </ng-template>
                         </div>
                         <div class="amountPerMonth">
-                            <ng-container *ngIf="!isFreeProductSelected else freeOption">
-                                <span class="currency-symbol">{{ currencySymbol }}</span>
-                                <span class="number">
-                                    {{ getSubscriptionPrice(true) | customNumber: '1.0-0' | currency: productInfo.data.currency : '' : '1.0-0' }}
-                                </span>
-                                <div class="number-info">
-                                    <span class="decimal">{{ getSubscriptionPrice(true) | customNumber: '0.2-2' }}</span>
-                                    <span>/{{ getPriceDescription() }}</span>
+                            <ng-container *ngIf="customerPriceEditMode else plainOptionFee">
+                                <div>
+                                    <input class="customer-price-input" #customerPriceInput="ngModel" #customerPriceElement type="number" [(ngModel)]="selectedSubscriptionOption.fee"
+                                           (focusout)="customerPriceFocusOut($event, customerPriceInput)" [ngModelOptions]="{updateOn: 'blur'}"
+                                           [pattern]="customerPriceRegexp" [min]="selectedSubscriptionOption.minCustomerPrice" [max]="selectedSubscriptionOption.maxCustomerPrice" required>
+                                    <validation-messages [formCtrl]="customerPriceInput"
+                                                         [errorDefs]="customerPriceInputErrorDefs">
+                                    </validation-messages>
                                 </div>
                             </ng-container>
+                            <ng-template #plainOptionFee>
+                                <ng-container *ngIf="!isFreeProductSelected else freeOption">
+                                    <span class="currency-symbol">{{ currencySymbol }}</span>
+                                    <span class="number">
+                                        <ng-container *ngIf="selectedSubscriptionOption.fee else noOptionFee">
+                                            {{ getSubscriptionPrice(true) | customNumber: '1.0-0' | currency: productInfo.data.currency : '' : '1.0-0' }}
+                                        </ng-container>
+                                        <ng-template #noOptionFee>
+                                            <i>Enter Fee</i>
+                                        </ng-template>
+                                    </span>
+                                    <div class="number-info" *ngIf="selectedSubscriptionOption.fee">
+                                        <span class="decimal">{{ getSubscriptionPrice(true) | customNumber: '0.2-2' }}</span>
+                                        <span>/{{ getPriceDescription() }}</span>
+                                    </div>
+                                    <i *ngIf="selectedSubscriptionOption.customerChoosesPrice" class="fa fa-pencil customer-price-edit" (click)="showCustomerPriceInput()"></i>
+                                </ng-container>
+                            </ng-template>
                             <ng-template #freeOption>
                                 <span class="number">{{ls.l('Free')}}</span>
                             </ng-template>
@@ -244,7 +262,7 @@
                         </ng-container>
                     </div>
                 </div>
-                <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected && !productInfo.customerChoosesPrice">
+                <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected && !productInfo.customerChoosesPrice && (!selectedSubscriptionOption || !selectedSubscriptionOption.customerChoosesPrice)">
                     <label class="coupon">
                         Coupon
                     </label>
