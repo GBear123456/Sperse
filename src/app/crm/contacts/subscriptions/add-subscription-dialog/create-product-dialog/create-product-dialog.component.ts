@@ -26,6 +26,7 @@ import * as moment from 'moment';
 import { map, switchMap, finalize, first, filter, publishReplay, refCount, tap } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 import { findIana } from 'windows-iana';
+import * as QRCodeStyling from 'qr-code-styling-new';
 
 /** Application imports */
 import {
@@ -113,6 +114,7 @@ export class FilterAssignmentsPipe implements PipeTransform {
 export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(DxTextAreaComponent) descriptionHtmlComponent: DxTextAreaComponent;
+    @ViewChild("canvas", { static: true }) canvas: ElementRef;
 
     isFreePriceType = false;
     baseUrl = AppConsts.remoteServiceBaseUrl;
@@ -134,6 +136,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     uploadFileUrl: string;
     tenantId = abp.session.tenantId || 0;
     defaultProductUri = '';
+
+    qrCode;
 
     enableCommissions: boolean = true;
     isReadOnly = !!this.data.isReadOnly;
@@ -311,6 +315,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.selectedOption = contextMenu.items[this.cacheService.get(contextMenu.cacheKey)];
         else
             this.selectedOption = contextMenu.items[contextMenu.defaultIndex];
+
+        this.generateQr();
     }
 
     initCurrencyFields() {
@@ -939,9 +945,57 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.saveProduct();
     }
 
+    getQrCodeStyling(width?: number, height?: number, margin?: number) {
+        return new QRCodeStyling.default({
+            width: width,
+            height: height,
+            margin: margin,
+            data: this.baseUrl + '/p/' + this.tenantId + '/' + (this.product.publicName || ''),
+            //image: './assets/common/icons/publishedProfile/SperserLogoForQr.png',
+            dotsOptions: {
+                //gradient: {
+                //    colorStops: [{ offset: 0, color: '#7631ab' }, { offset: 1, color: 'black' }],
+                //    rotation: 90,
+                //    type: 'linear'
+                //},
+                type: 'square'
+            },
+            cornersDotOptions: {
+                type: 'square'
+            },
+            imageOptions: {
+                hideBackgroundDots: false,
+                crossOrigin: 'anonymous',
+                margin: 1
+            }
+        });
+    }
+
+    generateQr() {
+        while (this.canvas.nativeElement.firstChild) {
+            this.canvas.nativeElement.removeChild(this.canvas.nativeElement.lastChild);
+        }
+
+        if (!QRCodeStyling || !this.product.publicName) {
+            return;
+        }
+
+        this.qrCode = this.getQrCodeStyling(75, 75, 0);
+        this.qrCode.append(this.canvas.nativeElement);
+    }
+
+    downloadQr() {
+        if (this.qrCode) {
+            let qr = this.getQrCodeStyling(300, 300, 5);
+            qr.download({ name: 'qr-' + this.product.publicName, extension: 'png' });
+        }
+    }
+
     updateProductUrl(value) {
-        if (this.isPublicProductsEnabled)
+        if (this.isPublicProductsEnabled) {
             this.defaultProductUri = this.product.publicName = value;
+            this.generateQr();
+        }
     }
 
     disabledValidationCallback() {
@@ -949,8 +1003,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     onProductCodeChanged(event) {
-        if (this.isPublicProductsEnabled && !this.defaultProductUri && (!this.data.product || !this.data.product.id))
+        if (this.isPublicProductsEnabled && !this.defaultProductUri && (!this.data.product || !this.data.product.id)) {
             this.product.publicName = event.value.replace(/[^a-zA-Z0-9-._~]+/gim, '');
+            this.generateQr();
+        }
     }
 
     fileSelected($event) {

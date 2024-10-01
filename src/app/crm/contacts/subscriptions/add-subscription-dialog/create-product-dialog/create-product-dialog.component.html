@@ -42,20 +42,21 @@
                                 <span *ngIf="product && product.id">Product Id: <b>{{product.id}}</b> <i class="save-to-clipboard" (click)="copyTextToClipboard(product.id)"></i></span>
                             </div>
                             <hr>
+                            <div>
+                                <label>{{ls.l('Product name')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
+                                <dx-text-box name="name"
+                                             width="100%"
+                                             [maxLength]="255"
+                                             [inputAttr]="{ id: 'name' }"
+                                             [(value)]="product.name"
+                                             [disabled]="isReadOnly">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                            </div>
                             <div class="product-ident">
-                                <div>
-                                    <label>{{ls.l('Product name')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
-                                    <dx-text-box name="name"
-                                                 width="100%"
-                                                 [maxLength]="255"
-                                                 [inputAttr]="{ id: 'name' }"
-                                                 [(value)]="product.name"
-                                                 [disabled]="isReadOnly">
-                                        <dx-validator>
-                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
-                                        </dx-validator>
-                                    </dx-text-box>
-                                </div>
+
                                 <div>
                                     <label>{{ls.l('Product SKU or unique code')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
                                     <dx-text-box name="code"
@@ -71,21 +72,38 @@
                                         </dx-validator>
                                     </dx-text-box>
                                 </div>
+                                <div>
+                                    <label>{{ls.l('Product Barcode')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
+                                    <dx-text-box name="barCode"
+                                                 width="100%"
+                                                 [maxLength]="50"
+                                                 [inputAttr]="{ id: 'barCode' }"
+                                                 [(value)]="product.barCode">
+                                    </dx-text-box>
+                                </div>
                             </div>
-                            <inplace-edit *ngIf="isPublicProductsEnabled"
-                                          [id]="'product-url'"
-                                          [value]="product.publicName"
-                                          [showInlineEditButton]="true"
-                                          [displayValue]="baseUrl + '/p/' + tenantId + '/' + (product.publicName || '')"
-                                          [maxLength]="255"
-                                          [validationRules]="publicNameValidationRules"
-                                          [isReadOnlyField]="isReadOnly"
-                                          lEntityName="Product Url"
-                                          [editPlaceholder]="ls.l('ProductUrl')"
-                                          [isEditDialogEnabled]="false"
-                                          [isHistoryEnabled]="false"
-                                          (valueChanged)="updateProductUrl($event)">
-                            </inplace-edit>
+                            <div class="product-url">
+                                <div class="edit">
+                                    <inplace-edit *ngIf="isPublicProductsEnabled"
+                                                  [id]="'product-url'"
+                                                  [value]="product.publicName"
+                                                  [showInlineEditButton]="true"
+                                                  [displayValue]="baseUrl + '/p/' + tenantId + '/' + (product.publicName || '')"
+                                                  [maxLength]="255"
+                                                  [validationRules]="publicNameValidationRules"
+                                                  [isReadOnlyField]="isReadOnly"
+                                                  lEntityName="Product Url"
+                                                  [editPlaceholder]="ls.l('ProductUrl')"
+                                                  [isEditDialogEnabled]="false"
+                                                  [isHistoryEnabled]="false"
+                                                  (valueChanged)="updateProductUrl($event)"
+                                                  width="80%">
+                                    </inplace-edit>
+                                </div>
+                                <div class="qr-code" (click)="downloadQr()">
+                                    <div #canvas></div>
+                                </div>
+                            </div>
                             <div>
                                 <label for="name">{{ls.l('Description')}}</label>
                                 <dx-text-area name="description"
