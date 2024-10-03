@@ -252,6 +252,12 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                             res.id = undefined;
                             return !res.fileId;
                         });
+                if (product.productDonation && product.productDonation.productDonationSuggestedAmounts)
+                    product.productDonation.productDonationSuggestedAmounts =
+                        product.productDonation.productDonationSuggestedAmounts.map(amount => {
+                            amount.id = undefined;
+                            return amount;
+                        });
                 if (product.isPublished)
                     product.publishDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());
             }
