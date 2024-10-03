@@ -159,7 +159,7 @@ export class ShortcutsComponent implements OnInit {
         public dialog: MatDialog
     ) {
         if (this.isZendeskEnabled)
-            this.ngxZendeskWebwidgetService.initZendesk();            
+            this.ngxZendeskWebwidgetService.initZendesk();
     }
 
     ngOnInit() {
@@ -352,7 +352,7 @@ export class ShortcutsComponent implements OnInit {
         this.ui.overflowHidden(true);
         this.appService.isClientSearchDisabled = true;
         this.appService.toolbarIsHidden.next(true);
-        if (this.isZendeskEnabled)
+        if (this.isZendeskEnabled && this.ngxZendeskWebwidgetService.isInitialized)
             this.ngxZendeskWebwidgetService.zE('messenger', 'show');
         this.changeDetectorRef.markForCheck()
     }
@@ -361,7 +361,7 @@ export class ShortcutsComponent implements OnInit {
         this.ui.overflowHidden();        
         this.appService.toolbarIsHidden.next(false);
         this.lifeCycleSubject.deactivate.next();
-        if (this.isZendeskEnabled)
+        if (this.isZendeskEnabled && this.ngxZendeskWebwidgetService.isInitialized)
             this.ngxZendeskWebwidgetService.zE('messenger', 'hide');
         this.dialog.closeAll();
     }
