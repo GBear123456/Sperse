@@ -70,7 +70,8 @@
     <div class="form-group">
         <dx-check-box id="Settings_SmsVerificationEnabled"
                       [text]="l('SmsVerificationEnabled')"
-                      [(value)]="hostSettings.smsVerificationEnabled">
+                      [(value)]="hostSettings.smsVerificationEnabled"
+                      [disabled]="true">
         </dx-check-box>
     </div>
     <div class="form-group">
@@ -84,12 +85,6 @@
                                  [(customTemplates)]="hostSettings.customWelcomeEmailTemplates"
                                  [templateType]="EmailTemplateType.WelcomeEmail">
         </contact-group-templates>
-    </div>
-    <div class="form-group">
-        <dx-check-box id="Settings_SmsVerificationEnabled"
-                      [text]="l('SmsVerificationEnabled')"
-                      [(value)]="hostSettings.smsVerificationEnabled">
-        </dx-check-box>
     </div>
     <h5>{{l("Password")}}</h5>
     <div class="form-group">
