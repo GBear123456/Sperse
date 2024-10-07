@@ -257,7 +257,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         },
         load: (loadOptions) => {
             return loadOptions.hasOwnProperty('searchValue') ?
-                this.couponProxy.getCouponsByPhrase(this.currency, loadOptions.searchValue || '', loadOptions.take).toPromise() :
+                this.couponProxy.getCouponsByPhrase(this.currency, loadOptions.searchValue || '', loadOptions.take, loadOptions.skip).toPromise() :
                 Promise.resolve([]);
         }
     });
