@@ -194,6 +194,13 @@
                       [(wordings)]="settings.tabs"
                       [title]="ls.l('Tabs')">
         </wording-list>
+        <div class="form-group">
+            <label>{{ls.l('CheckoutTheme')}}</label>
+            <dx-select-box [items]="checkoutThemes"
+                           placeholder=""
+                           [(value)]="settings.checkoutTheme">
+            </dx-select-box>
+        </div>
         <landing-page-list #checkoutFieldComponent
                            [title]="ls.l('Checkout Fields')"
                            [list]="settings.checkoutFields"
