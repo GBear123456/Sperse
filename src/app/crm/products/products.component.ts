@@ -237,6 +237,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 product.stripeXref = undefined;
                 product.stripeXrefUrl = undefined;
                 product.paypalXref = undefined;
+                product.hasExternalReference = false;
+                product.hasIncompletedInvoices = false;
+                product.isArchived = false;
                 if (product.productSubscriptionOptions)
                     product.productSubscriptionOptions =
                         product.productSubscriptionOptions.map(sub => {
