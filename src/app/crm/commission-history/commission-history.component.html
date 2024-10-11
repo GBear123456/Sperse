@@ -236,7 +236,7 @@
                         <dxi-column [dataField]="commissionFields.InvoiceStatus"
                                     [caption]="l('InvoiceStatus')"
                                     [visible]="false"
-                                    cssClass="clipboard-holder padding-right">
+                                    cellTemplate="invoiceStatusCell">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.TransactionGatewayName"
                                     [caption]="l('TransactionGatewayName')"
@@ -255,6 +255,9 @@
                         </div>
                         <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
                             <span> {{ cell.value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
+                        </div>
+                        <div *dxTemplate="let cellData of 'invoiceStatusCell'" class="clipboard-holder padding-right">
+                            <ng-container *ngIf="cellData.value">{{ startCase(cellData.value) }}</ng-container>
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>

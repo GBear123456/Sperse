@@ -27,10 +27,12 @@
         .dx-data-row {
             .fullname-cell {
                 cursor: pointer;
+
                 &:hover {
                     text-decoration: underline;
                 }
             }
+
             .description-column {
                 max-width: 300px;
             }
@@ -85,10 +87,6 @@
                     background: #1fb430;
                 }
 
-                &.pending:before {
-                    background: #f1a72d;
-                }
-
                 &.sent:before {
                     background: #fff939;
                 }
@@ -102,6 +100,14 @@
 
                     &:before {
                         background: #248392;
+                    }
+                }
+
+                &.partiallyrefunded {
+                    width: 152px;
+
+                    &:before {
+                        background: #f1a72d;
                     }
                 }
 

@@ -13,8 +13,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { filter, first, map } from 'rxjs/operators';
-import startCase from 'lodash/startCase';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -42,7 +41,6 @@ import { FieldDependencies } from '@app/shared/common/data-grid.service/field-de
 import { AppFeatures } from '@shared/AppFeatures';
 import { InvoiceGridMenuComponent } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.component';
 import { InvoiceGridMenuDto } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.interface';
-import { SettingsHelper } from '@shared/common/settings/settings.helper';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
@@ -63,7 +61,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     formatting = AppConsts.formatting;
     invoiceStatus = InvoiceStatus;
-    startCase = startCase;
 
     addPaymentDisabled = true;
     markAsDraftDisabled = false;
@@ -254,6 +251,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         }
+    }
+
+    getStatusDescription(invoiceStatus: InvoiceStatus): string {
+        return this.invoicesService.getStatusDescription(invoiceStatus);
     }
 
     private editInvoiceDialog(invoiceData) {
