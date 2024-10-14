@@ -154,7 +154,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
                 v['DueStatus'] = invoiceDueInfo.status;
                 v['DueStatusMessage'] = invoiceDueInfo.message;
-            });           
+            });
         },
         errorHandler: (error) => {
             setTimeout(() => this.isDataLoaded = true);
@@ -648,6 +648,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         ]
                     }
                 ];
+            case InvoiceStatusQuickFitler.Refund:
+                return {
+                    [this.invoiceFields.Status]: {
+                        in: [InvoiceStatus.PartiallyRefunded, InvoiceStatus.Refunded]
+                    }
+                };;
             default:
                 return {};
         }
@@ -724,6 +730,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.gatewayTooltip.instance.show();
     }
 
+    getStatusDescription(invoiceStatus: InvoiceStatus): string {
+        return this.invoicesService.getStatusDescription(invoiceStatus);
+    }
+
     updateOrderStage(event) {
         if (!this.hasOrdersManage)
             return;
@@ -777,7 +787,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             );
             event.preventDefault();
-            event.stopPropagation();            
+            event.stopPropagation();
         }
     }
 

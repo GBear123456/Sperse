@@ -127,6 +127,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }
     ];
 
+    startCase = startCase;
     currency = SettingsHelper.getCurrency();
     currencyFormat: DevExpress.ui.Format = {
         type: 'currency',

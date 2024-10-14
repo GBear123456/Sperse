@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 /** Third party imports */
 import { Observable, ReplaySubject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import {
@@ -66,5 +67,11 @@ export class InvoicesService {
         ).pipe(
             finalize(() => this.loadingService.finishLoading())
         );
+    }
+
+    getStatusDescription(invoiceStatus: InvoiceStatus): string {
+        if (invoiceStatus == InvoiceStatus.PartiallyRefunded)
+            return 'Partial Refund';
+        return startCase(invoiceStatus)
     }
 }
