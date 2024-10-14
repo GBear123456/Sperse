@@ -55,7 +55,9 @@
                     {{cellData.value | currency:cellData.data.currency:'symbol':'1.2-2'}}
                 </div>
                 <div *dxTemplate="let cellData of 'paidByTemplate'">
-                    <img width="41px" src="./assets/common/images/payments/card-logo/{{getIconNameByType(cellData.value)}}.svg" [title]="ls.l(cellData.value || 'Unknown')">
+                    <img width="41px" src="./assets/common/images/payments/card-logo/{{getIconNameByType(cellData.value)}}.svg"
+                         onError="this.src='./assets/common/images/payments/card-logo/cash-icon.svg';"
+                         [title]="ls.l(cellData.value || 'Unknown')">
                 </div>
                 <div *dxTemplate="let cellData of 'dateTemplate'" class="date">
                     {{cellData.value | datetime: formatting.dateTimeMoment}}

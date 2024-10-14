@@ -211,17 +211,19 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     }
 
     getIconNameByType(type: string | null) {
-        if (type == 'BankCard')
-            return 'bank-card';
+        if (!type)
+            return 'cash-icon';
 
-        if (type == 'PayPal')
-            return 'pay-pal';
-
-
-        if (type == 'ACH')
-            return 'stripe';
-
-        return 'cash-icon';
+        switch (type) {
+            case 'BankCard':
+                return 'bank-card';
+            case 'PayPal':
+                return 'pay-pal';
+            case 'ACH':
+                return 'stripe';
+            default:
+                return type.toLowerCase();
+        }
     }
 
     onSelectionChanged($event) {        

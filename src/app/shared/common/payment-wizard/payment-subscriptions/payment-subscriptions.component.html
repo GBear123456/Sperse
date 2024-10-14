@@ -82,6 +82,12 @@
                         </div>
                     </div>
                 </ng-container>
+                <ng-container *ngSwitchDefault>
+                    <div *ngIf="subscriptionLastPaymentInfos[cellData.data.id].type" class="paymentMethodIcon">
+                        <img [src]="'./assets/common/images/payments/card-logo/' + subscriptionLastPaymentInfos[cellData.data.id].type.toLowerCase() + '.svg'"
+                             onError="this.src='./assets/common/images/payments/card-logo/credit-card.svg'">
+                    </div>
+                </ng-container>
             </div>
         </div>
     </div>
