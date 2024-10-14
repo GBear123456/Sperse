@@ -36,6 +36,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { GmailSettingsService } from '@shared/common/settings/gmail-settings.service';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
@@ -49,6 +50,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @ViewChild(MatTabGroup) tabs: MatTabGroup;
+    @ViewChild(CountryPhoneNumberComponent, { static: false }) phoneComponent: CountryPhoneNumberComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     ckConfig: any = {
@@ -291,6 +293,8 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             }));
         }
         else if (this.currentTab == this.ls.l('Profile')) {
+            if (this.phoneComponent && this.phoneComponent.isEmpty())
+                this.user.phoneNumber = undefined;
             saveObs = this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user));
         }
         else if (this.currentTab == this.ls.l('Gmail')) {

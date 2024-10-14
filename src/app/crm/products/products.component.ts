@@ -237,6 +237,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 product.stripeXref = undefined;
                 product.stripeXrefUrl = undefined;
                 product.paypalXref = undefined;
+                product.hasExternalReference = false;
+                product.hasIncompletedInvoices = false;
+                product.isArchived = false;
                 if (product.productSubscriptionOptions)
                     product.productSubscriptionOptions =
                         product.productSubscriptionOptions.map(sub => {
@@ -251,6 +254,12 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                         product.productResources.filter(res => {
                             res.id = undefined;
                             return !res.fileId;
+                        });
+                if (product.productDonation && product.productDonation.productDonationSuggestedAmounts)
+                    product.productDonation.productDonationSuggestedAmounts =
+                        product.productDonation.productDonationSuggestedAmounts.map(amount => {
+                            amount.id = undefined;
+                            return amount;
                         });
                 if (product.isPublished)
                     product.publishDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());

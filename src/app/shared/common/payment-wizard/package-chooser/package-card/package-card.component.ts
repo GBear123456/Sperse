@@ -164,7 +164,9 @@ export class PackageCardComponent implements OnChanges {
                     this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[productFrequencyInfo.customPeriodType]));
             return '';
         } else {
-            return this.ls.l('price' + BillingPeriod[this.billingPeriod]);
+            return this.billingPeriod == BillingPeriod.Yearly ?
+                this.ls.l('moBilledYearly') :
+                this.ls.l('price' + BillingPeriod[this.billingPeriod]);
         }
     }
 

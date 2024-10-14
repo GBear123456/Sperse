@@ -185,6 +185,7 @@
         line-height: 35px;
         letter-spacing: 0.7px;
         color: #677380;
+        margin-right: 5px;
     }
 
     .section {
@@ -201,7 +202,12 @@
         }
 
         inplace-edit {
-            width: calc(~"100% - 50px");
+            width: calc(~"100% - 55px");
+        }
+
+        .no-phone {
+            color: #adadad;
+            font-style: italic;
         }
 
         ul {
@@ -210,7 +216,7 @@
             li {
                 white-space: nowrap;
 
-                .edit-phone {
+                .edit-phone, .delete-phone {
                     color: #00aeef;
                     display: none;
                     font-size: 18px;
@@ -223,12 +229,14 @@
                     cursor: pointer;
                 }
 
-                &:hover {
-                    .edit-phone {
-                        display: inline-block;
-                    }
+                .delete-phone {
+                    color: red;
+                    font-size: 21px;
+                    padding: 4px;
+                }
 
-                    .save-to-clipboard {
+                &:hover {
+                    .edit-phone, .save-to-clipboard, .delete-phone {
                         display: inline-block;
                     }
                 }
