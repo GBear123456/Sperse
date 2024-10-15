@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppConsts } from '@root/shared/AppConsts';
 
 @Component({
     selector: 'api-welcome',
@@ -8,6 +9,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class ApiWelcomeComponent {
     @Input() small: false;
+
+    defaultTenantName = AppConsts.defaultTenantName;
+
     constructor(
         public ls: AppLocalizationService
     ) {}

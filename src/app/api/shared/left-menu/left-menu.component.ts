@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LeftMenuItem } from '../../../shared/common/left-menu/left-menu-item.interface';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { AppConsts } from '@root/shared/AppConsts';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -28,7 +29,7 @@ export class LeftMenuComponent {
             iconSrc: './assets/common/icons/document.svg'
         },
         {
-            caption: this.ls.l('API_Tenant'),
+            caption: this.ls.l('API_Tenant', AppConsts.defaultTenantName),
             iconSrc: './assets/common/icons/person.svg'
         }
     ];
