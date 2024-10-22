@@ -58,7 +58,9 @@ import {
     ProductDonationDto,
     ProductDonationSuggestedAmountDto,
     TenantPaymentSettingsServiceProxy,
-    RecommendedProductInfo
+    RecommendedProductInfo,
+    ProductInventoryInfo,
+    AddInventoryTopupInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService, NotifyService } from 'abp-ng2-module';
@@ -220,6 +222,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     eventDate: Date;
     eventTime: Date;
 
+    enableInventory: boolean = false;
+    initialQuantity: number;
+    canSellOutOfStock: boolean = true;
+
+    storedEnableInventory: boolean = false;
+    storedCurrentQuantity: number;
+    topupQuantity: number;
+
     constructor(
         private elementRef: ElementRef,
         private store$: Store<RootStore.State>,
@@ -261,6 +271,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.addUpgradeToProduct();
             if (!this.product.recommendedProducts || !this.product.recommendedProducts.length)
                 this.addRecommendedProduct();
+            this.updateProductInventory(data.product);
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -426,6 +437,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
     }
 
+    updateProductInventory(product) {
+        if (product.productInventory) {
+            this.storedEnableInventory = this.enableInventory = product.productInventory.isActive;
+            this.storedCurrentQuantity = this.initialQuantity = product.productInventory.currentQuantity;
+            this.canSellOutOfStock = product.productInventory.canSellOutOfStock;
+        }
+        else {
+            this.storedEnableInventory = this.enableInventory = false;
+            this.storedCurrentQuantity = this.initialQuantity = null;
+            this.canSellOutOfStock = false;
+        }
+    }
+
     ngAfterViewInit() {
         setTimeout(() => this.descriptionHtmlComponent.instance.repaint());
     }
@@ -529,6 +553,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     this.product.maxCustomerPrice = null;
                 }
 
+                if (!this.product.productInventory)
+                    this.product.productInventory = new ProductInventoryInfo();
+                this.product.productInventory.isActive = this.enableInventory;
+                this.product.productInventory.initialQuantity = this.initialQuantity;
+                this.product.productInventory.canSellOutOfStock = this.canSellOutOfStock;
+
                 if (this.product instanceof UpdateProductInput) {
                     this.productProxy.updateProduct(this.product).pipe(
                         switchMap(() => this.getUpdateProductImageObservable((<any>this.product).id))
@@ -536,6 +566,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         this.notify.info(this.ls.l('SavedSuccessfully'));
                         if (this.selectedOption.data.close)
                             this.dialogRef.close();
+                        else
+                            this.productProxy.getProductInfo((<any>this.product).id).subscribe((product: any) => {
+                                this.product = new UpdateProductInput({ id: (<any>this.product).id, ...product });
+                                this.updateProductInventory(product);
+                                this.initProductResources();
+                                this.detectChanges();
+                            });
                     });
                 }
                 else {
@@ -557,6 +594,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         else
                             this.productProxy.getProductInfo(res.productId).subscribe((product: any) => {
                                 this.product = new UpdateProductInput({ id: res.productId, ...product });
+                                this.updateProductInventory(product);
                                 this.initProductResources();
                                 this.detectChanges();
                             });
@@ -1351,6 +1389,21 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     removeSuggestedAmountFields(index) {
         this.product.productDonation.productDonationSuggestedAmounts.splice(index, 1);
         this.detectChanges();
+    }
+
+    addInventoryTopup() {
+        if (this.topupQuantity && this.product instanceof UpdateProductInput) {
+            let productId = (<any>this.product).id;
+            this.productProxy.addInventoryTopup(new AddInventoryTopupInput({ productId: productId, quantity: this.topupQuantity }))
+                .subscribe(() => {
+                    this.notify.info(this.ls.l('SavedSuccessfully'));
+                    this.topupQuantity = undefined;
+                    this.productProxy.getProductInfo(productId).subscribe((product: any) => {
+                        this.storedCurrentQuantity = product.productInventory.currentQuantity;
+                        this.detectChanges();
+                    });
+                });
+        }
     }
 
     copyTextToClipboard(text) {
