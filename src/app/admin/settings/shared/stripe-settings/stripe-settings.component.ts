@@ -117,6 +117,13 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         let array = isConnected ? this.connectedSettings : this.apiKeySettings;
         let index = array.indexOf(setting);
         array.splice(index, 1);
+
+        if (isConnected && setting == this.selectedConnectedSettings)
+            this.selectedConnectedSettings = null;
+
+        if (!isConnected && setting == this.selectedApiKeySettings)
+            this.selectedApiKeySettings = null;
+
         this.changeDetection.detectChanges();
     }
 
