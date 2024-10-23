@@ -543,16 +543,16 @@
                             <hr>
                             <dx-switch switchedOffText=""
                                        switchedOnText=""
-                                       [(value)]="enableInventory"
+                                       [(value)]="product.productInventory.isActive"
                                        [disabled]="isReadOnly">
                             </dx-switch><span class="enable-inventory"> {{ls.l('Track quantity')}}</span>
-                            <div *ngIf="enableInventory">
+                            <div *ngIf="product.productInventory.isActive">
                                 <br />
                                 <label>{{ls.l('Quantity')}}</label>
                                 <div *ngIf="storedCurrentQuantity == null">
                                     <dx-number-box name="initialQuantity"
-                                                   [(value)]="initialQuantity"
-                                                   [disabled]="isReadOnly || storedEnableInventory">
+                                                   [(value)]="product.productInventory.initialQuantity"
+                                                   [disabled]="isReadOnly">
                                         <dx-validator>
                                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Quantity'))}}."></dxi-validation-rule>
                                         </dx-validator>
@@ -577,7 +577,7 @@
                                 <br />
                                 <dx-switch switchedOffText=""
                                            switchedOnText=""
-                                           [(value)]="canSellOutOfStock"
+                                           [(value)]="product.productInventory.canSellOutOfStock"
                                            [disabled]="isReadOnly">
                                 </dx-switch><span class="enable-inventory"> {{ls.l('Can sell out of stock')}}</span>
                             </div>

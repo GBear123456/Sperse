@@ -222,12 +222,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     eventDate: Date;
     eventTime: Date;
 
-    enableInventory: boolean = false;
-    initialQuantity: number;
-    canSellOutOfStock: boolean = true;
-
-    storedEnableInventory: boolean = false;
-    storedCurrentQuantity: number;
+    storedCurrentQuantity: number = null;
     topupQuantity: number;
 
     constructor(
@@ -287,6 +282,24 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.initEventProps();
             this.initDonationProps();
         }
+
+        if (data.product.productInventory) {
+            this.storedCurrentQuantity = data.product.productInventory.currentQuantity;
+            this.product.productInventory = new ProductInventoryInfo(
+                {
+                    isActive: data.product.productInventory.isActive,
+                    canSellOutOfStock: data.product.productInventory.canSellOutOfStock,
+                    initialQuantity: null
+                });
+        } else {
+            this.product.productInventory = new ProductInventoryInfo(
+                {
+                    isActive: false,
+                    canSellOutOfStock: false,
+                    initialQuantity: null
+                });
+        }
+
         this.initCurrencyFields();
 
         if (this.product.publishDate)
@@ -439,14 +452,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     updateProductInventory(product) {
         if (product.productInventory) {
-            this.storedEnableInventory = this.enableInventory = product.productInventory.isActive;
-            this.storedCurrentQuantity = this.initialQuantity = product.productInventory.currentQuantity;
-            this.canSellOutOfStock = product.productInventory.canSellOutOfStock;
-        }
-        else {
-            this.storedEnableInventory = this.enableInventory = false;
-            this.storedCurrentQuantity = this.initialQuantity = null;
-            this.canSellOutOfStock = false;
+            this.storedCurrentQuantity = product.productInventory.currentQuantity;
         }
     }
 
@@ -552,12 +558,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     this.product.minCustomerPrice = null;
                     this.product.maxCustomerPrice = null;
                 }
-
-                if (!this.product.productInventory)
-                    this.product.productInventory = new ProductInventoryInfo();
-                this.product.productInventory.isActive = this.enableInventory;
-                this.product.productInventory.initialQuantity = this.initialQuantity;
-                this.product.productInventory.canSellOutOfStock = this.canSellOutOfStock;
 
                 if (this.product instanceof UpdateProductInput) {
                     this.productProxy.updateProduct(this.product).pipe(
