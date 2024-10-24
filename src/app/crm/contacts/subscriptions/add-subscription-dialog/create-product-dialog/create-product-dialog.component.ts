@@ -283,7 +283,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.initDonationProps();
         }
 
-        if (data.product.productInventory) {
+        if (data && data.product && data.product.productInventory) {
             this.storedCurrentQuantity = data.product.productInventory.currentQuantity;
             this.product.productInventory = new ProductInventoryInfo(
                 {
