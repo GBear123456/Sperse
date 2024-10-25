@@ -538,7 +538,7 @@
                             </dx-switch><span class="enable-commissions" (click)="!isReadOnly && enableCommissions = !enableCommissions">{{ls.l(enableCommissions ? 'Disable': 'Enable')}} {{ls.l('Commissions')}}</span>
                             <p class="enable-commissions-info">{{ls.l('This product will be included in the commissions calculations for your affiliates, resellers and partners')}}</p>
                         </div>
-                        <div class="block">
+                        <div class="block"  *ngIf="product.type != productType.Donation">
                             <h3>{{ls.l('Inventory')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <hr>
                             <dx-switch switchedOffText=""

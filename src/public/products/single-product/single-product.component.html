@@ -121,7 +121,9 @@
                                 <div class="quantity-title">Quantity</div>
                                 <div class="quantity-controls">
                                     <span [style.visibility]="productInput.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(productInput.quantity - 1)">-</span>
-                                    <span class="value">{{productInput.quantity}}</span>
+                                    <span class="value" [ngClass]="(productInfo.stock != null && productInfo.stock - productInput.quantity < 0) ? 'invalid' : ''">
+                                        {{productInput.quantity}}
+                                    </span>
                                     <span (click)="changeQuantity(productInput.quantity + 1)">+</span>
                                 </div>
                             </div>
@@ -139,6 +141,9 @@
                     </ng-template>
                 </div>
             </ng-template>
+            <div class="invalid" *ngIf="!isInStock || (productInfo.stock != null && productInfo.stock - productInput.quantity < 0)">
+                <p>The selected quantity {{productInput.quantity}} is unavailable. Please reduce the amount or check back later.</p>
+            </div>
             <div *ngIf="productInfo.productDonation && productInfo.productDonation.productDonationSuggestedAmounts" class="donation-suggestions">
                 <div *ngFor="let suggestedAmount of productInfo.productDonation.productDonationSuggestedAmounts"
                      class="suggested-amount"
@@ -329,6 +334,9 @@
         <div *ngIf="isDonationGoalReached && !productInfo.productDonation.keepActiveIfGoalReached" class="goal-reached-message">
             <p>Thank you for your interest in supporting our cause.</p>
             <p>We wanted to inform you that our donation campaign has now closed as we have successfully reached our goal.<br /> We deeply appreciate your willingness to contribute and make a difference.</p>
+        </div>
+        <div *ngIf="!isInStock" class="goal-reached-message">
+            <p>The item is currently out of stock. Please check back later or contact customer support for further assistance.</p>
         </div>
     </div>
     <div class="footer">
