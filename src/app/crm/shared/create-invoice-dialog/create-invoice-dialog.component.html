@@ -249,7 +249,7 @@
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
                                 <div *dxTemplate="let cell of 'item'">
-                                    <span title="{{cell.description}}">{{cell.description}}</span>
+                                    <span title="{{cell.description}}">{{cell.description}}{{cell.isInStock ? '' : ' (Out of stock)' }}</span>
                                 </div>
                             </dx-select-box>
 
@@ -260,17 +260,17 @@
                             </div>
                         </div>
                         <div *dxTemplate="let cellData of 'quantity'">
-                            <dx-number-box
-                                width="80px"
-                                height="32px"
-                                (onFocusIn)="onFieldFocusIn($event)"
-                                [placeholder]="ls.lr('Value')"
-                                [showClearButton]="false"
-                                [(value)]="cellData.data.quantity"
-                                (onValueChanged)="calculateLineTotal(cellData.data)"
-                                [disabled]="disabledForUpdate">
+                            <dx-number-box width="80px"
+                                           height="32px"
+                                           (onFocusIn)="onFieldFocusIn($event)"
+                                           [placeholder]="ls.lr('Value')"
+                                           [showClearButton]="false"
+                                           [(value)]="cellData.data.quantity"
+                                           (onValueChanged)="calculateLineTotal(cellData.data)"
+                                           [disabled]="disabledForUpdate">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
+                                    <dxi-validation-rule *ngIf="cellData.data.maxQuantity > 0" type="range" max="{{cellData.data.maxQuantity}}" message="Stock {{cellData.data.maxQuantity}}"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-number-box>
                         </div>
