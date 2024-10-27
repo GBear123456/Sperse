@@ -373,6 +373,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         return {
                             isCrmProduct: !!res.productCode,
                             Quantity: res.quantity,
+                            maxQuantity: res.stock,
                             Rate: res.rate,
                             Description: description,
                             details: lineDescription.split('\n').slice(1).join('\n'),
