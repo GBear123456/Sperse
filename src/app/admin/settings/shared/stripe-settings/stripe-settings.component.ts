@@ -10,7 +10,7 @@ import {
     GetStripeSettingsDto,
     ImportStripeDataInput,
     InvoicePaymentMethod,
-    StripeEntityType,
+    StripeImportType,
     StripeSettingsDto, TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@root/shared/AppConsts';
@@ -36,8 +36,8 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     connectedSettings: StripeSettingsDto[];
     selectedConnectedSettings: StripeSettingsDto;
 
-    StripeEntityType = StripeEntityType;
-    importTypes: any[] = Object.values(StripeEntityType).filter(x => typeof x === "number");
+    StripeImportType = StripeImportType;
+    importTypes: any[] = Object.values(StripeImportType).filter(x => typeof x === "number");
 
     constructor(
         _injector: Injector,
@@ -92,39 +92,6 @@ export class StripeSettingsComponent extends SettingsComponentBase {
                 this.changeDetection.detectChanges();
             }
         });
-    }
-
-    deleteSetting(setting: StripeSettingsDto, isConnected: boolean) {
-        let confirmMessage = setting.isActive ? 'Deleting the active setting will disable the ability to pay via Stripe.' : '';
-        this.message.confirm(confirmMessage, `Are you sure you want to delete '${setting.displayName}'?`, (isConfirmed) => {
-            if (isConfirmed) {
-                if (!setting.id) {
-                    this.removeSetting(setting, isConnected);
-                    return;
-                }
-
-                this.startLoading();
-                this.tenantPaymentSettingsService.deleteStripeSetting(setting.id).pipe(
-                    finalize(() => this.finishLoading())
-                ).subscribe(() => {
-                    this.removeSetting(setting, isConnected);
-                });
-            }
-        });
-    }
-
-    removeSetting(setting: StripeSettingsDto, isConnected: boolean) {
-        let array = isConnected ? this.connectedSettings : this.apiKeySettings;
-        let index = array.indexOf(setting);
-        array.splice(index, 1);
-
-        if (isConnected && setting == this.selectedConnectedSettings)
-            this.selectedConnectedSettings = null;
-
-        if (!isConnected && setting == this.selectedApiKeySettings)
-            this.selectedApiKeySettings = null;
-
-        this.changeDetection.detectChanges();
     }
 
     createConnectedAccount(setting: StripeSettingsDto) {
@@ -193,23 +160,23 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         return AppConsts.remoteServiceBaseUrl + `/stripeConnectAccount/oauth`;
     }
 
-    showImportType(importType: StripeEntityType) { //TODO: calculate all on the beginning
-        if (importType == StripeEntityType.Payment)
+    showImportType(importType: StripeImportType) { //TODO: calculate all on the beginning
+        if (importType == StripeImportType.Payment)
             return this.feature.isEnabled(AppFeatures.CRMInvoicesManagement) && this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage);
-        if (importType == StripeEntityType.Subscription)
+        if (importType == StripeImportType.Subscription)
             return this.feature.isEnabled(AppFeatures.CRMInvoicesManagement) && this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage) &&
                 this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && this.permission.isGranted(AppPermissions.CRMOrdersManage);
         return true;
     }
 
-    getImportTypeValue(settingDto, importType: StripeEntityType): boolean {
+    getImportTypeValue(settingDto, importType: StripeImportType): boolean {
         return (settingDto.selectedImportType & importType) != 0;
     }
 
-    getImportTypeDisabled(settingDto, importType: StripeEntityType) {
-        if (settingDto.selectedImportType >= StripeEntityType.Payment && importType < StripeEntityType.Payment)
+    getImportTypeDisabled(settingDto, importType: StripeImportType) {
+        if (settingDto.selectedImportType >= StripeImportType.Payment && importType < StripeImportType.Payment)
             return true;
-        if (settingDto.selectedImportType >= StripeEntityType.Subscription && importType < StripeEntityType.Subscription)
+        if (settingDto.selectedImportType >= StripeImportType.Subscription && importType < StripeImportType.Subscription)
             return true;
 
         return false;
@@ -257,19 +224,19 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         });
     }
 
-    onImportTypeChanged(event, settingDto, importType: StripeEntityType) {
+    onImportTypeChanged(event, settingDto, importType: StripeImportType) {
         if (event.value) {
             settingDto.selectedImportType |= importType;
         }
         else {
             settingDto.selectedImportType &= ~importType;
         }
-        let baseTypes = StripeEntityType.Product | StripeEntityType.Coupon | StripeEntityType.Customer;
-        if (importType == StripeEntityType.Payment) {
+        let baseTypes = StripeImportType.Product | StripeImportType.Coupon | StripeImportType.Customer;
+        if (importType == StripeImportType.Payment) {
             settingDto.selectedImportType |= baseTypes;
         }
-        if (importType == StripeEntityType.Subscription) {
-            settingDto.selectedImportType |= (baseTypes | StripeEntityType.Payment);
+        if (importType == StripeImportType.Subscription) {
+            settingDto.selectedImportType |= (baseTypes | StripeImportType.Payment);
         }
         this.changeDetection.detectChanges();
     }

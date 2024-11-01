@@ -23,7 +23,6 @@
                         </div>
                         <div class="actions">
                             <i *ngIf="!data.isActive" class="fa fa-check" title="Set this setting as active" (click)="setIsActive(data)"></i>
-                            <i class="fa fa-times" title="Delete setting" (click)="deleteSetting(data, true)"></i>
                         </div>
                     </div>
                 </div>
@@ -87,7 +86,6 @@
                         </div>
                         <div class="actions">
                             <i *ngIf="!data.isActive" class="fa fa-check" title="Set this setting as active" (click)="setIsActive(data)"></i>
-                            <i class="fa fa-times" title="Delete setting" (click)="deleteSetting(data, false)"></i>
                         </div>
                     </div>
                 </div>
@@ -169,7 +167,7 @@
         <div class="dx-fieldset">
             <ng-container *ngFor="let importType of importTypes">
                 <div class="dx-field" *ngIf="showImportType(settingData, importType)">
-                    <div class="dx-field-label">{{l(StripeEntityType[importType])}}</div>
+                    <div class="dx-field-label">{{l(StripeImportType[importType])}}</div>
                     <dx-check-box class="dx-field-value"
                                   [value]="getImportTypeValue(settingData, importType)"
                                   [disabled]="settingData.hasRunningImport || getImportTypeDisabled(settingData, importType)"
