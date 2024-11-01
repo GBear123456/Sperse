@@ -348,7 +348,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
 
     getStripeXrefOptionsConfig() {
         let targetValue = {
-            text: this.ls.l('Take Main'),
+            text: this.ls.l('Prefer Main in Conflicts'),
             selected: true
         };
         return {
@@ -356,7 +356,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
             hidden: this.isSameContact || !this.data.mergeInfo.contactInfo.hasStripeCustomerIds || !this.data.mergeInfo.targetContactInfo.hasStripeCustomerIds,
             source: {
                 values: [{
-                    text: this.ls.l('Take Duplicate'),
+                    text: this.ls.l('Prefer Duplicate in Conflicts'),
                     selected: false
                 }]
             },
