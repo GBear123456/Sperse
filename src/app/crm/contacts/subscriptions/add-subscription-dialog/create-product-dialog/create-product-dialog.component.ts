@@ -82,6 +82,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { LanguagesStoreSelectors, RootStore, LanguagesStoreActions } from '@root/store';
 import { EditAddressDialog } from '../../../edit-address-dialog/edit-address-dialog.component';
 import { EventDurationTypes, EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
+import { round } from 'lodash';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
@@ -558,6 +559,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     this.product.minCustomerPrice = null;
                     this.product.maxCustomerPrice = null;
                 }
+
+                this.product.productInventory.initialQuantity = round(this.product.productInventory.initialQuantity, 0);
 
                 if (this.product instanceof UpdateProductInput) {
                     this.productProxy.updateProduct(this.product).pipe(

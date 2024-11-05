@@ -538,7 +538,7 @@
                             </dx-switch><span class="enable-commissions" (click)="!isReadOnly && enableCommissions = !enableCommissions">{{ls.l(enableCommissions ? 'Disable': 'Enable')}} {{ls.l('Commissions')}}</span>
                             <p class="enable-commissions-info">{{ls.l('This product will be included in the commissions calculations for your affiliates, resellers and partners')}}</p>
                         </div>
-                        <div class="block"  *ngIf="product.type != productType.Donation">
+                        <div class="block options" *ngIf="product.type != productType.Donation">
                             <h3>{{ls.l('Inventory')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             <hr>
                             <dx-switch switchedOffText=""
@@ -546,40 +546,49 @@
                                        [(value)]="product.productInventory.isActive"
                                        [disabled]="isReadOnly">
                             </dx-switch><span class="enable-inventory"> {{ls.l('Track quantity')}}</span>
-                            <div *ngIf="product.productInventory.isActive">
+                            <div class="option" *ngIf="product.productInventory.isActive">
                                 <br />
-                                <label>{{ls.l('Quantity')}}</label>
-                                <div *ngIf="storedCurrentQuantity == null">
-                                    <dx-number-box name="initialQuantity"
-                                                   [(value)]="product.productInventory.initialQuantity"
+                                <div class="option-row width-50">
+                                    <div>
+                                        <label class="wide">{{ls.l('Actual Quantity')}}</label>
+                                        <div *ngIf="storedCurrentQuantity == null">
+                                            <dx-number-box name="initialQuantity"
+                                                           [(value)]="product.productInventory.initialQuantity"
+                                                           [format]="product.type == productType.General ? '#,###.##' : '#,###'"
+                                                           [disabled]="isReadOnly">
+                                                <dx-validator>
+                                                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Quantity'))}}."></dxi-validation-rule>
+                                                </dx-validator>
+                                            </dx-number-box>
+                                        </div>
+                                        <div *ngIf="storedCurrentQuantity != null">
+                                            <dx-number-box name="storedCurrentQuantity"
+                                                           [(value)]="storedCurrentQuantity"
+                                                           [format]="product.type == productType.General ? '#,###.##' : '#,###'"
+                                                           [disabled]="true">
+                                            </dx-number-box>
+                                        </div>
+                                    </div>
+                                    <div class="option-cell">
+                                        <dx-switch switchedOffText=""
+                                                   switchedOnText=""
+                                                   [(value)]="product.productInventory.canSellOutOfStock"
                                                    [disabled]="isReadOnly">
-                                        <dx-validator>
-                                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Quantity'))}}."></dxi-validation-rule>
-                                        </dx-validator>
-                                    </dx-number-box>
+                                        </dx-switch><span class="enable-inventory"> {{ls.l('Can sell out of stock')}}</span>
+                                    </div>
                                 </div>
                                 <div *ngIf="storedCurrentQuantity != null">
-                                    <dx-number-box name="storedCurrentQuantity"
-                                                   [(value)]="storedCurrentQuantity"
-                                                   [disabled]="true">
-                                    </dx-number-box>
-                                    <br />
                                     <div class="inventory-topup">
                                         <dx-number-box name="topupQuantity"
                                                        width="80%"
                                                        [placeholder]="ls.l('Topup')"
                                                        [(value)]="topupQuantity"
+                                                       [format]="product.type == productType.General ? '#,###.##' : '#,###'"
                                                        [disabled]="isReadOnly">
                                         </dx-number-box>
                                         <div class="add-button" (click)="addInventoryTopup()">{{ls.l('Add')}}</div>
                                     </div>
                                 </div>
-                                <br />
-                                <dx-switch switchedOffText=""
-                                           switchedOnText=""
-                                           [(value)]="product.productInventory.canSellOutOfStock"
-                                           [disabled]="isReadOnly">
-                                </dx-switch><span class="enable-inventory"> {{ls.l('Can sell out of stock')}}</span>
                             </div>
                         </div>
                         <div class="block" *ngIf="product.type == productType.Subscription">
