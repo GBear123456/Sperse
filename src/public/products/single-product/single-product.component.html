@@ -142,7 +142,7 @@
                 </div>
             </ng-template>
             <div class="invalid" *ngIf="!isInStock || (productInfo.stock != null && productInfo.stock - productInput.quantity < 0)">
-                <p>The selected quantity {{productInput.quantity}} is unavailable. Please reduce the amount or check back later.</p>
+                <p>Unfortunately, the quantity that you selected is out-of-stock.</p>
             </div>
             <div *ngIf="productInfo.productDonation && productInfo.productDonation.productDonationSuggestedAmounts" class="donation-suggestions">
                 <div *ngFor="let suggestedAmount of productInfo.productDonation.productDonationSuggestedAmounts"
@@ -336,7 +336,7 @@
             <p>We wanted to inform you that our donation campaign has now closed as we have successfully reached our goal.<br /> We deeply appreciate your willingness to contribute and make a difference.</p>
         </div>
         <div *ngIf="!isInStock" class="goal-reached-message">
-            <p>The item is currently out of stock. Please check back later or contact customer support for further assistance.</p>
+            <p>The product is currently out of stock. Please check back later or contact customer support for further assistance.</p>
         </div>
     </div>
     <div class="footer">
