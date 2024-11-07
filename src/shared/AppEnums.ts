@@ -183,3 +183,8 @@ export enum Country {
     USA = 'US', 
     Canada = 'CA'
 }
+
+export enum PortalType {
+    Vercel,
+    Angular
+}
