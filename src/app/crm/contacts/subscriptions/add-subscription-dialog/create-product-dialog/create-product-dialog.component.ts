@@ -550,9 +550,15 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     this.product.commissionableAmount = null;
                     this.product.maxCommissionRate = null;
                     this.product.maxCommissionRateTier2 = null;
+
+                    this.product.productInventory.isActive = false;
+                    this.product.productInventory.initialQuantity = null;
                 }
                 else {
                     this.product.productDonation = null;
+
+                    if (this.product.type != ProductType.General)
+                        this.product.productInventory.initialQuantity = round(this.product.productInventory.initialQuantity, 0);
                 }
 
                 if (!this.product.customerChoosesPrice) {
@@ -560,7 +566,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     this.product.maxCustomerPrice = null;
                 }
 
-                this.product.productInventory.initialQuantity = round(this.product.productInventory.initialQuantity, 0);
 
                 if (this.product instanceof UpdateProductInput) {
                     this.productProxy.updateProduct(this.product).pipe(

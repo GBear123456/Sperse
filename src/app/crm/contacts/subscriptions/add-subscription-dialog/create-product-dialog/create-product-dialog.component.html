@@ -548,13 +548,13 @@
                             </dx-switch><span class="enable-inventory"> {{ls.l('Track quantity')}}</span>
                             <div class="option" *ngIf="product.productInventory.isActive">
                                 <br />
+                                <label class="wide">{{ls.l('Actual Quantity')}}</label>
                                 <div class="option-row width-50">
                                     <div>
-                                        <label class="wide">{{ls.l('Actual Quantity')}}</label>
                                         <div *ngIf="storedCurrentQuantity == null">
                                             <dx-number-box name="initialQuantity"
                                                            [(value)]="product.productInventory.initialQuantity"
-                                                           [format]="product.type == productType.General ? '#,###.##' : '#,###'"
+                                                           [format]="product.type == productType.General ? '#,##0.##' : '#,##0'"
                                                            [disabled]="isReadOnly">
                                                 <dx-validator>
                                                     <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Quantity'))}}."></dxi-validation-rule>
@@ -564,7 +564,7 @@
                                         <div *ngIf="storedCurrentQuantity != null">
                                             <dx-number-box name="storedCurrentQuantity"
                                                            [(value)]="storedCurrentQuantity"
-                                                           [format]="product.type == productType.General ? '#,###.##' : '#,###'"
+                                                           [format]="product.type == productType.General ? '#,##0.##' : '#,##0'"
                                                            [disabled]="true">
                                             </dx-number-box>
                                         </div>
