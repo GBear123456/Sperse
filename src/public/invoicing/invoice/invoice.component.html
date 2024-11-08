@@ -34,6 +34,9 @@
         </div>
     </div>
     <div class="content content-center">
+        <div *ngIf="!invoiceInfo.isQuantityAvailable" class="out-of-stock-message">
+            <p>The product is currently out of stock. Please contact customer support for further assistance.</p>
+        </div>
         <div *ngIf="showSubsScheduledMessage" class="future-subs-scheduled">
             <span class="timezone-hover-line" title="Your Computer {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a'}}">Subscription is scheduled. Waiting for payment on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a' : 'UTC' }} UTC.</span>
         </div>
