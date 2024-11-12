@@ -114,8 +114,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     private slider: any;
     private readonly ident = 'PersonalDetailsDialog';
-    private stripeCustomerId: ReplaySubject<string> = new ReplaySubject(1);
-    stripeCustomerId$: Observable<string> = this.stripeCustomerId.asObservable();
     private isAdvisor: ReplaySubject<boolean> = new ReplaySubject(null);
     isAdvisor$: Observable<boolean> = this.isAdvisor.asObservable();
     affiliateValidationRules = [
@@ -240,11 +238,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     contactInfo.affiliateCodes.sort((a, b) => a.id == contactInfo.primaryAffiliateCodeId ? -1 : b.id == contactInfo.primaryAffiliateCodeId ? 1 : 0);
                 if (!contactInfo.personContactInfo.xrefs.length)
                     contactInfo.personContactInfo.xrefs = [''];
-                if (contactInfo.personContactInfo.stripeCustomerId)
-                    this.getCheckStripeSettings().subscribe((isEnabled: boolean) => {
-                        if (isEnabled)
-                            this.stripeCustomerId.next(contactInfo.personContactInfo.stripeCustomerId);
-                    });
                 this.contactProxy.getContactLastModificationInfo(
                     contactInfo.id
                 ).subscribe((lastModificationInfo: ContactLastModificationInfoDto) => {
@@ -318,27 +311,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             }, 100);
             (this.tabGroup?._tabHeader as MatTabHeader).updatePagination();
         });
-    }
-
-    getCheckStripeSettings(): Observable<boolean> {
-        let storageKey = 'stripeIsConnected' + this.appSession.tenantId,
-            isConnected = sessionStorage.getItem(storageKey);
-        if (isConnected != null)
-            return of(!!isConnected);
-        else if (
-            abp.features.isEnabled(AppFeatures.CRMPayments) && (
-                this.permissionCheckerService.isGranted(AppPermissions.CRMSettingsConfigure) ||
-                this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings) ||
-                this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings)
-            )
-        )
-            return this.tenantPaymentSettingsService.getStripeSettings(false, false).pipe(map(res => {
-                isConnected = (res.apiKey || res.isConnectedAccountSetUpCompleted ? 'true' : '');
-                sessionStorage.setItem(storageKey, isConnected);
-                return !!isConnected;
-            }));
-        else
-            return of(false);
     }
 
     updateAffiliateRate(value: number, valueProp, valueInitialProp, tier) {

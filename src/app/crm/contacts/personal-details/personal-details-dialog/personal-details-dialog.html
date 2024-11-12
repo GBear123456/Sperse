@@ -229,9 +229,12 @@
                                 </div>
                             </div>
                             <hr/>
-                            <div class="field stripe" *ngIf="(stripeCustomerId$ | async) as stripeId" [title]="ls.l('StripeCustomerID')">
+                            <div class="field stripe" *ngIf="contactInfo?.personContactInfo.stripeCustomerId" [title]="ls.l('StripeCustomerID')">
                                 <label>{{ ls.l('StripeID') }}:</label>
-                                <span>{{stripeId}}<i class="save-to-clipboard" (click)="saveToClipboard($event, stripeId)"></i></span>
+                                <span>
+                                    {{contactInfo.personContactInfo.stripeCustomerId}}
+                                    <i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo.personContactInfo.stripeCustomerId)"></i>
+                                </span>
                             </div>
                             <hr/>
                             <ng-container *ngFor="let n of [1,2,3,4,5]">

@@ -59,7 +59,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
     public readonly CONTACT_XREFS_FIELD       = 'xrefs';
     public readonly CONTACT_AFFILIATECODES_FIELD = 'contactAffiliateCodes';
     public readonly CONTACT_BANK_CODE         = 'bankCode';
-    public readonly CONTACT_STRIPECUSTOMERID  = 'stripeCustomerId';
+    public readonly CONTACT_STRIPECUSTOMERID  = 'stripeXrefOptions';
     public readonly LEAD_STAGE_FIELD          = 'stage';
     public readonly LEAD_OWNER_FIELD          = 'sourceOrganizationUnitName';
     public readonly LEAD_REQUEST_DATE_FIELD   = 'leadDate';
@@ -136,10 +136,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
             getText: x => x,
             hidden: this.isSameContact
         },
-        [this.CONTACT_STRIPECUSTOMERID]: {
-            caption: this.ls.l('StripeCustomerID'),
-            hidden: this.isSameContact
-        },
+        [this.CONTACT_STRIPECUSTOMERID]: this.getStripeXrefOptionsConfig(),
         [this.MERGE_OPTIONS_FIELD]: {
             name: this.MERGE_OPTIONS_FIELD,
             caption: this.ls.l('LeadSourceInformation'),
@@ -349,6 +346,29 @@ export class MergeContactDialogComponent implements AfterViewInit {
         });
     }
 
+    getStripeXrefOptionsConfig() {
+        let targetValue = {
+            text: this.ls.l('Prefer Main in Conflicts'),
+            selected: true
+        };
+        return {
+            caption: this.ls.l('StripeCustomerID'),
+            hidden: this.isSameContact || !this.data.mergeInfo.contactInfo.hasStripeCustomerIds || !this.data.mergeInfo.targetContactInfo.hasStripeCustomerIds,
+            source: {
+                values: [{
+                    text: this.ls.l('Prefer Duplicate in Conflicts'),
+                    selected: false
+                }]
+            },
+            target: {
+                values: [targetValue]
+            },
+            result: {
+                values: [targetValue]
+            }
+        };
+    }
+
     checkSingleField(field, targetValues) {
         if (field == this.ASSIGNED_USER_EMAIL)
             return targetValues.length;
@@ -470,6 +490,14 @@ export class MergeContactDialogComponent implements AfterViewInit {
                 else
                     field.result.values.push(value);
             } else {
+                //let target = field.target.values[0];
+                //if (target == value)
+                //    target = field.source.values[0];
+                //if (target) {
+                //    target.selected = false;
+                //}
+
+                //field.result.values = [value];
                 let result = field.result.values.pop();
                 if (result) result.selected = false;
                 field.result.values.push(value);
