@@ -2,19 +2,16 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    ViewChild,
     OnInit,
     ChangeDetectorRef
 } from '@angular/core';
-import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { NgxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, Subject, ReplaySubject, combineLatest } from 'rxjs';
-import { finalize, filter, first, takeUntil, map, delay } from 'rxjs/operators';
+import { finalize, filter, first, takeUntil } from 'rxjs/operators';
 import { FeatureCheckerService, MessageService } from 'abp-ng2-module';
 
 /** Application imports */
@@ -243,7 +240,7 @@ export class WelcomeComponent implements OnInit {
     loadSettings() {
         if (this.isPaymentsEnabled) {
             this.loadingService.startLoading();
-            this.tenantPaymentSettingsService.getStripeSettings(false, false)
+            this.tenantPaymentSettingsService.getStripeSettings()
                 .pipe(
                     finalize(() => this.loadingService.finishLoading())
                 )
@@ -261,7 +258,7 @@ export class WelcomeComponent implements OnInit {
             if (isConfirmed) {
                 this.loadingService.startLoading();
                 let method = this.stripePaymentSettings.connectedAccountId ?
-                    this.tenantPaymentSettingsService.connectStripeAccount() :
+                    this.tenantPaymentSettingsService.connectStripeAccount(this.stripePaymentSettings.id) :
                     this.tenantPaymentSettingsService.getConnectOAuthAuthorizeUrl();
                 method.pipe(
                     finalize(() => this.loadingService.finishLoading())

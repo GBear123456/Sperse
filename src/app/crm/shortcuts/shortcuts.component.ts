@@ -6,23 +6,21 @@ import {
     OnInit,
     ChangeDetectorRef
 } from '@angular/core';
-import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import ODataStore from 'devextreme/data/odata/store';
 import { DataSource } from 'devextreme/data/data_source/data_source';
 import { NgxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, Subject, ReplaySubject, combineLatest, of } from 'rxjs';
-import { finalize, filter, first, takeUntil, map, delay } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { finalize, filter, first, takeUntil } from 'rxjs/operators';
 import { FeatureCheckerService, MessageService } from 'abp-ng2-module';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 /** Application imports */
-import { AppStore } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
 import { ContactGroup } from '@shared/AppEnums';
@@ -32,7 +30,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { ModuleType, LayoutType, StripeSettingsDto, TenantPaymentSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { LayoutType, StripeSettingsDto, TenantPaymentSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -282,7 +280,7 @@ export class ShortcutsComponent implements OnInit {
     loadSettings() {
         if (this.isPaymentsEnabled) {
             this.loadingService.startLoading();
-            this.tenantPaymentSettingsService.getStripeSettings(false, false)
+            this.tenantPaymentSettingsService.getStripeSettings()
                 .pipe(
                     finalize(() => this.loadingService.finishLoading())
                 )
@@ -300,7 +298,7 @@ export class ShortcutsComponent implements OnInit {
             if (isConfirmed) {
                 this.loadingService.startLoading();
                 let method = this.stripePaymentSettings.connectedAccountId ?
-                    this.tenantPaymentSettingsService.connectStripeAccount() :
+                    this.tenantPaymentSettingsService.connectStripeAccount(this.stripePaymentSettings.id) :
                     this.tenantPaymentSettingsService.getConnectOAuthAuthorizeUrl();
                 method.pipe(
                     finalize(() => this.loadingService.finishLoading())

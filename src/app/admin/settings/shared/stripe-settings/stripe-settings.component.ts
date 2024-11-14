@@ -7,9 +7,10 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
+    GetStripeSettingsDto,
     ImportStripeDataInput,
     InvoicePaymentMethod,
-    StripeEntityType,
+    StripeImportType,
     StripeSettingsDto, TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@root/shared/AppConsts';
@@ -26,19 +27,17 @@ import { AppPermissions } from '../../../../../shared/AppPermissions';
 })
 export class StripeSettingsComponent extends SettingsComponentBase {
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
-    stripePaymentSettings: StripeSettingsDto = new StripeSettingsDto();
+    stripePaymentSettings: GetStripeSettingsDto = new GetStripeSettingsDto();
 
-    showAdvancedSettings = this.isHost;
     tenantName = this.isHost ? AppConsts.defaultTenantName : this.appSession.tenantName;
 
-    availablePaymentMethods: string;
-    paymentMethodUpdateInProgress = false;
+    apiKeySettings: StripeSettingsDto[];
+    selectedApiKeySettings: StripeSettingsDto;
+    connectedSettings: StripeSettingsDto[];
+    selectedConnectedSettings: StripeSettingsDto;
 
-    showImportSection = false;
-    importInProgress = false;
-    selectedImportType: StripeEntityType = 0;
-    StripeEntityType = StripeEntityType;
-    importTypes: any[] = Object.values(StripeEntityType).filter(x => typeof x === "number");
+    StripeImportType = StripeImportType;
+    importTypes: any[] = Object.values(StripeImportType).filter(x => typeof x === "number");
 
     constructor(
         _injector: Injector,
@@ -55,30 +54,55 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     loadSettings() {
         this.startLoading();
         if (this.isPaymentsEnabled) {
-            this.tenantPaymentSettingsService.getStripeSettings(true, true)
+            this.tenantPaymentSettingsService.getAllStripeSettings()
                 .pipe(
                     finalize(() => this.finishLoading())
                 )
                 .subscribe(res => {
                     this.stripePaymentSettings = res;
-                    this.showAdvancedSettings = this.isHost || !!this.stripePaymentSettings.apiKey;
-                    this.importInProgress = res.hasRunningImport;
-                    this.setPaymentMethods();
+                    this.stripePaymentSettings.stripeAccountSettings.forEach(v => this.setPaymentMethods(v));
+
+                    this.apiKeySettings = res.stripeAccountSettings.filter(v => !!v.apiKey && !v.connectedAccountId);
+                    this.selectedApiKeySettings = this.apiKeySettings.length ? this.apiKeySettings.find(v => v.isActive) || this.apiKeySettings[0] : undefined;
+                    this.connectedSettings = res.stripeAccountSettings.filter(v => !!v.connectedAccountId);
+                    this.selectedConnectedSettings = this.connectedSettings.length ? this.connectedSettings.find(v => v.isActive) || this.connectedSettings[0] : undefined;
+
                     this.updateShowImportSection();
                     this.changeDetection.detectChanges();
                 })
         }
     }
 
-    createConnectedAccount() {
-        if (this.isHost || !this.stripePaymentSettings.isHostAccountEnabled || this.stripePaymentSettings.isConnectedAccountSetUpCompleted)
+    addApiKeySettings() {
+        let newItem = new StripeSettingsDto();
+        newItem.ignoreExternalConnectedAccounts = false;
+        newItem.ignoreExternalWebhooks = false;
+        newItem.displayName = 'New API Key';
+        this.apiKeySettings.push(newItem);
+        this.selectedApiKeySettings = newItem;
+
+        this.changeDetection.detectChanges();
+    }
+
+    setIsActive(setting: StripeSettingsDto) {
+        this.message.confirm(`'${setting.displayName}' will be set as active and affect all future payments, which will use the new configuration.`, null, (isConfirmed) => {
+            if (isConfirmed) {
+                this.apiKeySettings.concat(this.connectedSettings).forEach(v => v.isActive = false);
+                setting.isActive = true;
+                this.changeDetection.detectChanges();
+            }
+        });
+    }
+
+    createConnectedAccount(setting: StripeSettingsDto) {
+        if (this.isHost || !this.stripePaymentSettings.isHostAccountEnabled || (setting && setting.isConnectedAccountSetUpCompleted))
             return;
 
         this.message.confirm('', this.l('Do you want to connect Stripe account ?'), (isConfirmed) => {
             if (isConfirmed) {
                 this.startLoading();
-                let method = this.stripePaymentSettings.connectedAccountId ?
-                    this.tenantPaymentSettingsService.connectStripeAccount() :
+                let method = setting ?
+                    this.tenantPaymentSettingsService.connectStripeAccount(setting.id) :
                     this.tenantPaymentSettingsService.getConnectOAuthAuthorizeUrl();
                 method.pipe(
                     finalize(() => this.finishLoading())
@@ -89,13 +113,14 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         });
     }
 
-    disconnedConnectedAccount() {
-        alert('disconnectConnectedAccount');
-    }
+    createWebhook(setting: StripeSettingsDto, isConnected) {
+        if (!setting.id) {
+            this.message.info('Please save the settings before creating webhooks.');
+            return;
+        }
 
-    createWebhook(isConnected) {
         this.startLoading();
-        this.tenantPaymentSettingsService.createStripeWebhook(isConnected)
+        this.tenantPaymentSettingsService.createStripeWebhook(setting.id, isConnected)
             .pipe(
                 finalize(() => this.finishLoading())
             )
@@ -106,7 +131,15 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     }
 
     isValid(): boolean {
-        if (this.stripePaymentSettings.apiKey && !this.stripePaymentSettings.publishableKey) {
+        if (this.apiKeySettings.concat(this.connectedSettings).some(v => !v.displayName)) {
+            this.notify.warn(this.l('RequiredField', 'Display Name'));
+            return false;
+        }
+        if (this.apiKeySettings.some(v => !v.apiKey)) {
+            this.notify.warn(this.l('RequiredField', 'Secret Key'));
+            return false;
+        }
+        if (this.apiKeySettings.some(v => !v.publishableKey)) {
             this.notify.warn(this.l('RequiredField', 'Publishable Key'));
             return false;
         }
@@ -115,129 +148,125 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     }
 
     getSaveObs(): Observable<any> {
-        return this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings);
+        return this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings.isEnabled, this.apiKeySettings.concat(this.connectedSettings));
     }
 
     afterSave() {
-        this.updateShowImportSection();
+        this.loadSettings();
         this.changeDetection.detectChanges();
-    }
-
-    getStripeWebhookUrl(): string {
-        let tenantParam = this.appSession.tenantId ? `?tenantId=${this.appSession.tenantId}` : '';
-        return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook${tenantParam}`;
-    }
-
-    getStripeConnectWebhookUrl(): string {
-        let tenantParam = this.appSession.tenantId ? `?tenantId=${this.appSession.tenantId}` : '';
-        return AppConsts.remoteServiceBaseUrl + `/api/stripe/processConnectWebhook${tenantParam}`;
     }
 
     getStripeOAuthConnectRedirectUrl(): string {
         return AppConsts.remoteServiceBaseUrl + `/stripeConnectAccount/oauth`;
     }
 
-    showImportType(importType: StripeEntityType) {
-        if (importType == StripeEntityType.Payment)
+    showImportType(importType: StripeImportType) { //TODO: calculate all on the beginning
+        if (importType == StripeImportType.Payment)
             return this.feature.isEnabled(AppFeatures.CRMInvoicesManagement) && this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage);
-        if (importType == StripeEntityType.Subscription)
+        if (importType == StripeImportType.Subscription)
             return this.feature.isEnabled(AppFeatures.CRMInvoicesManagement) && this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage) &&
                 this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && this.permission.isGranted(AppPermissions.CRMOrdersManage);
         return true;
     }
 
-    getImportTypeValue(importType: StripeEntityType): boolean {
-        return (this.selectedImportType & importType) != 0;
+    getImportTypeValue(settingDto, importType: StripeImportType): boolean {
+        return (settingDto.selectedImportType & importType) != 0;
     }
 
-    getImportTypeDisabled(importType: StripeEntityType) {
-        if (this.selectedImportType >= StripeEntityType.Payment && importType < StripeEntityType.Payment)
+    getImportTypeDisabled(settingDto, importType: StripeImportType) {
+        if (settingDto.selectedImportType >= StripeImportType.Payment && importType < StripeImportType.Payment)
             return true;
-        if (this.selectedImportType >= StripeEntityType.Subscription && importType < StripeEntityType.Subscription)
+        if (settingDto.selectedImportType >= StripeImportType.Subscription && importType < StripeImportType.Subscription)
             return true;
 
         return false;
     }
 
-    setPaymentMethods() {
+    setPaymentMethods(settingsDto: StripeSettingsDto) {
         let availablePaymentMethods = '';
 
         let separator = '';
-        if ((this.stripePaymentSettings.unsupportedPaymentMethods & InvoicePaymentMethod.BankCard) != InvoicePaymentMethod.BankCard) {
+        if ((settingsDto.unsupportedPaymentMethods & InvoicePaymentMethod.BankCard) != InvoicePaymentMethod.BankCard) {
             availablePaymentMethods += 'Bank Card';
             separator = ', ';
         }
-        if ((this.stripePaymentSettings.unsupportedPaymentMethods & InvoicePaymentMethod.ACH) != InvoicePaymentMethod.ACH) {
+        if ((settingsDto.unsupportedPaymentMethods & InvoicePaymentMethod.ACH) != InvoicePaymentMethod.ACH) {
             availablePaymentMethods += separator + 'ACH';
         }
 
-        this.availablePaymentMethods = availablePaymentMethods;
+        settingsDto['availablePaymentMethods'] = availablePaymentMethods;
     }
 
-    updatePaymentMethods() {
-        if (this.paymentMethodUpdateInProgress)
+    updatePaymentMethods(settingDto: StripeSettingsDto) {
+        if (settingDto['paymentMethodUpdateInProgress'])
             return;
 
-        this.paymentMethodUpdateInProgress = true;
-        this.tenantPaymentSettingsService.updateConnectedAccountPaymentMethods()
+        settingDto['paymentMethodUpdateInProgress'] = true;
+        this.changeDetection.detectChanges();
+        this.tenantPaymentSettingsService.updateConnectedAccountPaymentMethods(settingDto.id)
             .pipe(
                 finalize(() => {
-                    this.paymentMethodUpdateInProgress = false;
+                    settingDto['paymentMethodUpdateInProgress'] = false;
                     this.changeDetection.detectChanges();
                 })
             )
             .subscribe(result => {
-                this.stripePaymentSettings.unsupportedPaymentMethods = result;
-                this.setPaymentMethods();
+                settingDto.unsupportedPaymentMethods = result;
+                this.setPaymentMethods(settingDto);
                 this.notify.info(this.l('Payment methods have been refreshed.'));
             })
     }
 
     updateShowImportSection() {
-        this.showImportSection = this.stripePaymentSettings.isEnabled &&
-            (this.stripePaymentSettings.isConnectedAccountSetUpCompleted || !!this.stripePaymentSettings.apiKey);
+        this.apiKeySettings.concat(this.connectedSettings).forEach(v => {
+            v['showImportSection'] = this.stripePaymentSettings.isEnabled && (v.isConnectedAccountSetUpCompleted || !!v.apiKey);
+            v['selectedImportType'] = 0;
+        });
     }
 
-    onImportTypeChanged(event, importType: StripeEntityType) {
+    onImportTypeChanged(event, settingDto, importType: StripeImportType) {
         if (event.value) {
-            this.selectedImportType |= importType;
+            settingDto.selectedImportType |= importType;
         }
         else {
-            this.selectedImportType &= ~importType;
+            settingDto.selectedImportType &= ~importType;
         }
-        let baseTypes = StripeEntityType.Product | StripeEntityType.Coupon | StripeEntityType.Customer;
-        if (importType == StripeEntityType.Payment) {
-            this.selectedImportType |= baseTypes;
+        let baseTypes = StripeImportType.Product | StripeImportType.Coupon | StripeImportType.Customer;
+        if (importType == StripeImportType.Payment) {
+            settingDto.selectedImportType |= baseTypes;
         }
-        if (importType == StripeEntityType.Subscription) {
-            this.selectedImportType |= (baseTypes | StripeEntityType.Payment);
+        if (importType == StripeImportType.Subscription) {
+            settingDto.selectedImportType |= (baseTypes | StripeImportType.Payment);
         }
         this.changeDetection.detectChanges();
     }
 
-    import() {
-        if (this.importInProgress)
+    import(settingDto: StripeSettingsDto) {
+        if (settingDto.hasRunningImport || !settingDto['selectedImportType'])
             return;
 
-        this.importInProgress = true;
+        settingDto.hasRunningImport = true;
         this.startLoading();
-        this.tenantPaymentSettingsService.importStripeData(new ImportStripeDataInput({ type: this.selectedImportType }))
-            .pipe(
-                finalize(() => this.finishLoading())
-            )
-            .subscribe(() => {
-                this.notify.info(this.l('Stripe Import Started'));
-                this.changeDetection.detectChanges();
-            }, (e) => {
-                this.onImportFinished();
-            });
+        this.tenantPaymentSettingsService.importStripeData(new ImportStripeDataInput({
+            settingsId: settingDto.id,
+            type: settingDto['selectedImportType']
+        })).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
+            this.notify.info(this.l('Stripe Import Started'));
+            this.changeDetection.detectChanges();
+        }, (e) => {
+            this.onImportFinished();
+        });
     }
 
     onImportFinished(userNotification = null) {
         if (userNotification != null && userNotification.notification.notificationName != 'CRM.StripeImportFinished')
             return;
 
-        this.importInProgress = false;
+        let settingDto = this.apiKeySettings.concat(this.connectedSettings).find(v => v.id == userNotification.notification.entityId);
+        if (settingDto)
+            settingDto.hasRunningImport = false;
         this.changeDetection.detectChanges();
     }
 }

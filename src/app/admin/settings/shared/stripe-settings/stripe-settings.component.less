@@ -1,8 +1,43 @@
 :host {
     display: block;
 
-    .stripe-button-container {
-        margin-bottom: 20px;
+    ::ng-deep .mat-tab-body-content {
+        display: flex;
+        gap: 10px;
+        padding: 10px 0;
+
+        .left-side {
+            width: 250px;
+            min-width: 100px;
+
+            ::ng-deep .dx-list {
+                height: auto;
+
+                .list-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .fa-check {
+                        color: green;
+                    }
+
+                    &:hover .actions {
+                        visibility: visible;
+                    }
+
+                    .actions {
+                        visibility: hidden;
+                        font-size: 16px;
+
+                        .fa-check {
+                            color: #00aeef;
+                            margin-right: 5px;
+                        }
+                    }
+                }
+            }
+        }
 
         .stripe-button {
             background-color: #635fcc;
@@ -15,12 +50,10 @@
                 margin-right: 5px;
             }
         }
+    }
 
-        .disconnect {
-            margin-left: 10px;
-            color: red;
-            cursor: pointer;
-        }
+    .stripe-button-container {
+        margin-bottom: 20px;
     }
 
     .payment-methods {
