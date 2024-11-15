@@ -21,7 +21,8 @@
             (onItemClick)="initActiveMessage($event.itemData)">
                 <div *dxTemplate="let item of 'group'" class="group-item" [ngClass]="{selected: item.id == activeMessage?.id, 'has-children': item.hasChildren, expanded: item.expanded}" (click)="expandGroup(item)">
                     <div class="email" [title]="item.date | datetime: formatting.fieldDateTime">
-                        <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(item?.fromUserContactPhotoPublicId) + ')'}" class="img-circle"></div>
+                        <div *ngIf="item?.fromUserContactPhotoPublicId" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(item?.fromUserContactPhotoPublicId) + ')'}" class="img-circle"></div>
+                        <div *ngIf="!item?.fromUserContactPhotoPublicId" class="logo img-circle">{{getUserNameFirstLatters(item.fromUserName)}}</div>
                         <div class="details">
                             <span class="from">{{item.fromUserName}}</span>
                             <span class="subject">{{item.subject}}</span>
@@ -35,7 +36,8 @@
                 </div>
                 <div *dxTemplate="let item of 'item'" class="sub-item" [ngClass]="{selected: item.id == activeMessage?.id}">
                     <div class="email" [title]="item.date | datetime: formatting.fieldDateTime">
-                        <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(item?.fromUserContactPhotoPublicId) + ')'}" class="img-circle"></div>
+                        <div *ngIf="item?.fromUserContactPhotoPublicId" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(item?.fromUserContactPhotoPublicId) + ')'}" class="img-circle"></div>
+                        <div *ngIf="!item?.fromUserContactPhotoPublicId" class="logo img-circle">{{getUserNameFirstLatters(item.fromUserName)}}</div>
                         <div class="details">
                             <span class="from">{{item.fromUserName}}</span>
                             <span class="subject">{{item.subject}}</span>
@@ -75,7 +77,8 @@
             <ng-container [ngSwitch]="activeMessage.deliveryType">
                 <ng-container *ngSwitchCase="'SMS'">
                     <div class="header sms">
-                        <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar"></div>  
+                        <div *ngIf="item?.fromUserContactPhotoPublicId" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar"></div>
+                        <div *ngIf="!item?.fromUserContactPhotoPublicId" class="logo img-circle">{{getUserNameFirstLatters(item.fromUserName)}}</div>
                         <div class="details">
                             <span class="from">{{activeMessage?.fromUserName}}</span>
                             <span class="to" *ngIf="(activeMessage?.isInbound ? activeMessage?.from : activeMessage?.to) as contact">{{ls.l(activeMessage?.isInbound ? 'from' : 'to')}} {{contact}}</span>
@@ -86,7 +89,8 @@
                 </ng-container>
                 <ng-container *ngSwitchCase="'Email'">
                     <div class="header">
-                        <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar"></div>
+                        <div *ngIf="activeMessage?.fromUserContactPhotoPublicId" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar"></div>
+                        <div *ngIf="!activeMessage?.fromUserContactPhotoPublicId" class="logo img-circle">{{getUserNameFirstLatters(activeMessage.fromUserName)}}</div>
                         <div class="details">
                             <span class="from">{{activeMessage?.fromUserName}}&nbsp;<small *ngIf="activeMessage?.from">&lt;{{activeMessage?.from}}&gt;</small></span>
                             <span class="subject">{{activeMessage?.subject}}</span>
@@ -106,12 +110,14 @@
                 <iframe [hidden]="!isActiveEmailType" #emailContent frameborder="0" width="100%"></iframe>
                 <dx-scroll-view *ngIf="!isActiveEmailType" showScrollbar="onHover">
                     <div class="message-wrapper">
-                        <div [ngClass]="{to: activeMessage.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>                        
+                        <div *ngIf="activeMessage?.fromUserContactPhotoPublicId" [ngClass]="{to: activeMessage.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
+                        <div *ngIf="!activeMessage?.fromUserContactPhotoPublicId" [ngClass]="{to: activeMessage.isInbound}" class="logo img-circle avatar small">{{getUserNameFirstLatters(activeMessage.fromUserName)}}</div>
                         <div [ngClass]="{from: !activeMessage.isInbound, to: activeMessage.isInbound}" class="body date" [innerHtml]="activeMessage?.body" [attr.date]="activeMessage?.creationTime | datetime: formatting.fieldDateTime"></div>
                     </div>
                     <div class="children-wrapper">
                         <div *ngFor="let child of activeMessage?.items; let i = index" class="message-wrapper">
-                            <div *ngIf="!activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound" [ngClass]="{to: child.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(child?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
+                            <div *ngIf="activeMessage?.fromUserContactPhotoPublicId && (!activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound)" [ngClass]="{to: child.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(child?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
+                            <div *ngIf="!activeMessage?.fromUserContactPhotoPublicId && (!activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound)" [ngClass]="{to: child.isInbound}" class="logo img-circle avatar small">{{getUserNameFirstLatters(activeMessage.fromUserName)}}</div>
                             <div class="body" [ngClass]="{from: !child.isInbound, to: child.isInbound, date: !activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound}" [attr.date]="child.creationTime | datetime: formatting.fieldDateTime">
                                 <div [innerHtml]="child.body || child.subject"></div>
                                 <div class="body-attachments">
