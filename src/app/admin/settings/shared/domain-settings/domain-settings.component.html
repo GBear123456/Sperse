@@ -6,7 +6,7 @@
         </ng-template>
 
         <div id="CustomDomainsTable" class="tab-body">
-            <dx-scroll-view height="100%">
+            <dx-scroll-view [height]="scrollableAreaHeight">
                 <div class="box-top">
                     <div class="group">
                         <div class="overlap-group">
@@ -108,7 +108,7 @@
           <div class="title">Your CRM App</div>
         </ng-template>
 
-        <dx-scroll-view height="calc(100vh - 200px)" showScrollbar="onHover">
+        <dx-scroll-view [height]="scrollableAreaHeight" showScrollbar="onHover">
             <div class="content">
                 <div class="box1">
                     <div class="element">
@@ -298,7 +298,7 @@
           <div class="title">Your Client Portal</div>
         </ng-template>
 
-        <dx-scroll-view height="calc(100vh - 200px)" showScrollbar="onHover">
+        <dx-scroll-view [height]="scrollableAreaHeight" showScrollbar="onHover">
             <div class="content">
                 <div class="box3" *ngIf="portalTypes.length > 1">
                     <div class="group">
@@ -560,8 +560,8 @@
                                                           (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                                                 <dxi-column dataField="name" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
                                                 <dxi-column [width]="260" dataField="organizationUnitId" [caption]="l('OrganizationUnit')" cellTemplate="organizationCell"></dxi-column>
-                                                <dxi-column dataField="isValid" [caption]="l('Valid')" cellTemplate="validTemplate"></dxi-column>
-                                                <dxi-column [width]="200" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                                                <dxi-column [width]="80" dataField="isValid" [caption]="l('Valid')" cellTemplate="validTemplate"></dxi-column>
+                                                <dxi-column [width]="190" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
                                                 <div *dxTemplate="let data of 'organizationCell'" class="clipboard-holder {{data.value ? '' : 'default'}}">
                                                     {{ getOrgUnitName(data.value) }}
                                                 </div>
@@ -609,7 +609,7 @@
           <div class="title">Your Landing Pages</div>
         </ng-template>
 
-        <dx-scroll-view height="calc(100vh - 200px)" showScrollbar="onHover">
+        <dx-scroll-view [height]="scrollableAreaHeight" showScrollbar="onHover">
             <div class="domains">
                 <div class="box1">
                   <div class="element">
@@ -689,8 +689,8 @@
                                     [allowColumnResizing]="true"
                                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                                 <dxi-column dataField="name" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
-                                <dxi-column dataField="isValid" [caption]="l('Valid')" cellTemplate="validTemplate"></dxi-column>
-                                <dxi-column [width]="200" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                                <dxi-column [width]="80" dataField="isValid" [caption]="l('Valid')" cellTemplate="validTemplate"></dxi-column>
+                                <dxi-column [width]="190" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
                                 <div *dxTemplate="let data of 'validTemplate'">
                                     <i class="fa fa-{{data.data.isValid ? 'check' : 'times'}}"></i>
                                 </div>
@@ -733,32 +733,34 @@
           <div class="title">{{l('SSLConfiguration')}}</div>
         </ng-template>
 
-        <div class="header">
-            <h3>{{l('SSLConfiguration')}}</h3>
-            <button *ngIf="isTenantHostCreateGranted" class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{l("UploadCertificate")}}</button>
-        </div>
-        <div id="SSLTable" class="tab-body">
-            <dx-data-grid class="grid-compact-view main-component-view"
-                          accessKey="sslGrid"
-                          #sslGrid
-                          [dataSource]="sslGridDataSource"
-                          [allowColumnReordering]="true"
-                          [columnAutoWidth]="true"
-                          [allowColumnResizing]="true"
-                          (onRowRemoving)="deleteCertificate($event)"
-                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                <dxi-column dataField="id" [caption]="l('Id')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="hostNames" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="expiration" [caption]="l('ExpirationDate')" cellTemplate="dateCell"></dxi-column>
-                <dxi-column dataField="thumbprint" [caption]="l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
-                <div *dxTemplate="let data of 'editDeleteTemplate'">
-                    <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deleteCertificate(data)">{{l('Delete')}}</a>
-                </div>
-                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                    {{cellData.value | datetime: formatting.dateTimeMoment}}
-                </div>
-            </dx-data-grid>
-        </div>
+        <dx-scroll-view [height]="scrollableAreaHeight">
+            <div class="header">
+                <h3>{{l('SSLConfiguration')}}</h3>
+                <button *ngIf="isTenantHostCreateGranted" class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{l("UploadCertificate")}}</button>
+            </div>
+            <div id="SSLTable" class="tab-body">
+                <dx-data-grid class="grid-compact-view main-component-view"
+                              accessKey="sslGrid"
+                              #sslGrid
+                              [dataSource]="sslGridDataSource"
+                              [allowColumnReordering]="true"
+                              [columnAutoWidth]="true"
+                              [allowColumnResizing]="true"
+                              (onRowRemoving)="deleteCertificate($event)"
+                              (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                    <dxi-column dataField="id" [caption]="l('Id')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="hostNames" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="expiration" [caption]="l('ExpirationDate')" cellTemplate="dateCell"></dxi-column>
+                    <dxi-column dataField="thumbprint" [caption]="l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                    <div *dxTemplate="let data of 'editDeleteTemplate'">
+                        <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deleteCertificate(data)">{{l('Delete')}}</a>
+                    </div>
+                    <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                        {{cellData.value | datetime: formatting.dateTimeMoment}}
+                    </div>
+                </dx-data-grid>
+            </div>
+        </dx-scroll-view>
     </mat-tab>
 </mat-tab-group>

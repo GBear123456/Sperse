@@ -92,6 +92,8 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     readonly LANDING_DOMAIN_TAB = 3;
     readonly SSL_CONFIG_TAB = 4;
 
+    scrollableAreaHeight = `calc(100vh - ${this.layoutService.showTopBar ? 275 : 200}px`;
+
     constructor(
         _injector: Injector,
         private landingPageProxy: ContactLandingPageServiceProxy,
@@ -430,7 +432,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         ).subscribe(res => {
             this.refreshSSLBindingGrid();
             inputComponent.value = '';
-            this.domainIsValid = false;
+            this.initBindingModal(this.selectedTabIndex);
             this.changeDetection.detectChanges();
             this.notify.info(this.l('SavedSuccessfully'));
         });
