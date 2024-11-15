@@ -108,7 +108,7 @@
           <div class="title">Your CRM App</div>
         </ng-template>
 
-        <dx-scroll-view height="calc(100vh - 170px)" showScrollbar="onHover">
+        <dx-scroll-view height="calc(100vh - 200px)" showScrollbar="onHover">
             <div class="content">
                 <div class="box1">
                     <div class="element">
@@ -258,7 +258,23 @@
                                     </dx-select-box>
                                 </div>
                             </div>
-                            <div class="rectangle-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box3">
+                    <div class="group">
+                        <div class="overlap">
+                            <div class="rectangle"></div>
+                            <div class="vector-wrapper" [ngClass]="{valid: true}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                            <img (click)="block4.classList.toggle('hidden')" [ngClass]="{closed: block4.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
+                            <div class="div"></div>
+                            <p class="text-wrapper">Select Organization Unit</p>
+                            <div class="ellipse"></div>
+                            <div class="ellipse-2 purple"></div>
+                            <div class="text-wrapper-2">4</div>
+                        </div>
+                        <div class="overlap-group" [ngClass]="{hidden: !model?.id && !isDomainMappingValid}" #block4>
                             <div class="group-3">
                                 <div class="overlap-2" *ngIf="model">
                                     <dx-select-box [(value)]="model.organizationUnitId"
@@ -282,9 +298,9 @@
           <div class="title">Your Client Portal</div>
         </ng-template>
 
-        <dx-scroll-view height="calc(100vh - 170px)" showScrollbar="onHover">
+        <dx-scroll-view height="calc(100vh - 200px)" showScrollbar="onHover">
             <div class="content">
-                <div class="box3">
+                <div class="box3" *ngIf="portalTypes.length > 1">
                     <div class="group">
                         <div class="overlap">
                             <div class="rectangle"></div>
@@ -293,8 +309,8 @@
                             <div class="div"></div>
                             <p class="text-wrapper">Choose portal type</p>
                             <div class="ellipse"></div>
-                            <div class="ellipse-2"></div>
-                            <div class="text-wrapper-2">1</div>
+                            <div class="ellipse-2 purple"></div>
+                            <div class="text-wrapper-2">0</div>
                         </div>
                         <div class="overlap-group" #block0>
                             <div class="group-3">
@@ -318,10 +334,10 @@
                             <div class="vector-wrapper valid"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
                             <img (click)="block3.classList.toggle('hidden')" [ngClass]="{closed: block3.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
                             <div class="div"></div>
-                            <p class="text-wrapper">Activate the Secure Socket Layer (SSL) for their domain</p>
+                            <p class="text-wrapper">Select Organization Unit</p>
                             <div class="ellipse"></div>
                             <div class="ellipse-2"></div>
-                            <div class="text-wrapper-2">2</div>
+                            <div class="text-wrapper-2">1</div>
                         </div>
                         <div class="overlap-group" [ngClass]="{hidden: !model?.id && !isDomainMappingValid}" #block3>
                             <div class="group-3">
@@ -348,7 +364,7 @@
                                     <div class="overlap-group-wrapper">
                                         <div class="overlap-group-2">
                                             <div class="ellipse"></div>
-                                            <div class="text-wrapper-2">3</div>
+                                            <div class="text-wrapper-2">2</div>
                                         </div>
                                     </div>
                                     <div class="text-wrapper-3">Enter your custom domain</div>
@@ -407,7 +423,7 @@
                                     <div class="overlap-group-wrapper">
                                         <div class="overlap-group-2">
                                             <div class="ellipse"></div>
-                                            <div class="text-wrapper-10">4</div>
+                                            <div class="text-wrapper-10">3</div>
                                         </div>
                                     </div>
                                     <p class="text-wrapper-11">Add the required entries to your domain DNS</p>
@@ -457,7 +473,7 @@
                                         <div class="overlap-group-wrapper">
                                             <div class="overlap-group-2">
                                                 <div class="ellipse"></div>
-                                                <div class="text-wrapper-2">3</div>
+                                                <div class="text-wrapper-2">2</div>
                                             </div>
                                         </div>
                                         <div class="text-wrapper-3">Enter your custom domain</div>
@@ -521,7 +537,7 @@
                                         <div class="overlap-group-wrapper">
                                             <div class="overlap-group-2">
                                                 <div class="ellipse"></div>
-                                                <div class="text-wrapper-10">4</div>
+                                                <div class="text-wrapper-10">3</div>
                                             </div>
                                         </div>
                                         <p class="text-wrapper-11">Verify/Add the required entries to your DNS provider</p>
@@ -593,7 +609,7 @@
           <div class="title">Your Landing Pages</div>
         </ng-template>
 
-        <dx-scroll-view height="calc(100vh - 170px)" showScrollbar="onHover">
+        <dx-scroll-view height="calc(100vh - 200px)" showScrollbar="onHover">
             <div class="domains">
                 <div class="box1">
                   <div class="element">

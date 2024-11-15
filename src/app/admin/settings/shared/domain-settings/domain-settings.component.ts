@@ -201,6 +201,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                 this.model.tenantHostType = this.selectedTabIndex == this.APP_DOMAIN_TAB
                     ? TenantHostType.PlatformApp : TenantHostType.MemberPortal;
                 this.model.sslCertificateId = -1;
+                this.selectedPortalType = this.portalTypes[0].id;
                 this.isDomainMappingValid = this.model.tenantHostType == TenantHostType.MemberPortal && this.selectedPortalType == PortalType.Vercel ? true : undefined;
                 this.domainIsValid = false;
                 this.rowData = undefined;
