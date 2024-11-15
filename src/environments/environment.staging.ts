@@ -14,7 +14,7 @@ export const environment = {
     asuid: '8066AB9A3B4ED23B324AF524414E469D880D77FCBB2A34A7AB6591A5DA7305BB',
     portalCdn: 'sperseportaltestuicdn.azureedge.net',
     showNextJSPortal: true,
-    showAngularPortal: true,
+    showAngularPortal: false,
 
     /* Custom tenant domains */
     LENDSPACE_DOMAIN: 'https://testweb.lendspace.com',
