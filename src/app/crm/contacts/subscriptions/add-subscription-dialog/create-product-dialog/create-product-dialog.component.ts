@@ -1117,7 +1117,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.product.customerChoosesPrice = false;
             let options = this.product.productSubscriptionOptions;
             if (options && options[0]) {
-                options[0].fee = undefined;
+                options[0].fee = 0;
                 options[0].customerChoosesPrice = false;
                 options[0].minCustomerPrice = undefined;
                 options[0].maxCustomerPrice = undefined;
