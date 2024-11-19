@@ -372,7 +372,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     }
 
     onSelectedPortalTypeChanged(event) {
-        this.isDomainMappingValid = this.selectedPortalType == PortalType.Vercel;
+        this.isDomainMappingValid = this.selectedPortalType == PortalType.Vercel ? true : undefined;
         setTimeout(() => this.changeDetection.detectChanges());
     }
 
