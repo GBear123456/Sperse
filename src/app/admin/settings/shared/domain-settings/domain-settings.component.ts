@@ -337,12 +337,12 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
         this.startLoading();
         return new Promise((approve, reject) => {
-            (data.value && this.model.tenantHostType == TenantHostType.PlatformApp ?
+            (data.value ?
                 this.tenantHostService.checkHostNameDnsMapping(
                     new CheckHostNameDnsMappingInput({
-                        tenantHostType: TenantHostType.PlatformApp,
+                        tenantHostType: this.model.tenantHostType,
                         hostName: data.value,
-                        hostingProvider: undefined
+                        hostingProvider: HostingType.Azure
                     })
                 ).pipe(map(res => res.hostNameDnsMapped)) : of(true)
             ).pipe(
@@ -408,7 +408,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                     ? null : this.model.organizationUnitId,
                 sslCertificateId: this.model.sslCertificateId == -1
                     ? null : this.model.sslCertificateId,
-                hostingProvider: this.model.tenantHostType == TenantHostType.MemberPortal && this.selectedPortalType == PortalType.Vercel ? HostingType.Vercel : undefined
+                hostingProvider: this.model.tenantHostType == TenantHostType.MemberPortal && this.selectedPortalType == PortalType.Vercel ? HostingType.Vercel : HostingType.Azure
             }));
     }
 
