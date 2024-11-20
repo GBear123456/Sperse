@@ -601,7 +601,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     }
 
     toogleMasterDatails(cell, dataGrid) {
-        if (cell.data['configRecords']) {
+        if (cell.data['configRecords'] && cell.data['configRecords'].length) {
             let instance = dataGrid.instance,
                 isExpanded = instance.isRowExpanded(cell.key);
             if (!isExpanded)

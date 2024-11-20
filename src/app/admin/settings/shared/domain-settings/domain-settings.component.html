@@ -40,7 +40,7 @@
                                   [allowColumnResizing]="true">
                         <dxi-column dataField="id" [caption]="l('Id')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="sslCertificateId" [caption]="l('SslCertificateId')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="hostName" [caption]="l('HostName')" cssClass="host-name clipboard-holder"></dxi-column>
+                        <dxi-column dataField="hostName" [caption]="l('HostName')" cellTemplate="hostNameCell"></dxi-column>
                         <dxi-column [width]="260" dataField="organizationUnitId" [caption]="l('OrganizationUnit')" cellTemplate="organizationCell"></dxi-column>
                         <dxi-column [width]="180" dataField="hostType" [caption]="l('Type')" cssClass="host-type clipboard-holder">
                             <dxo-lookup [dataSource]="hostTypes" valueExpr="id" displayExpr="name"></dxo-lookup>
@@ -51,6 +51,9 @@
                         <dxi-column [width]="195" dataField="sslCertificateExpiration" [caption]="l('ExpirationDate')" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="sslCertificateThumbprint" [caption]="l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [width]="170" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate" [visible]="isTenantHostEditGranted || isTenantHostDeleteGranted"></dxi-column>
+                        <div *dxTemplate="let data of 'hostNameCell'" class="host-name clipboard-holder">
+                            <a href="https://{{data.value}}" target="_blank">{{data.value}}</a>
+                        </div>
                         <div *dxTemplate="let data of 'organizationCell'" class="clipboard-holder {{data.value ? '' : 'default'}}">
                             {{ getOrgUnitName(data.value) }}
                         </div>
@@ -558,10 +561,16 @@
                                                           [columnAutoWidth]="true"
                                                           [allowColumnResizing]="true"
                                                           (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                                                <dxi-column dataField="name" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
+                                                <dxi-column dataField="name" [caption]="l('HostName')" cellTemplate="hostNameCell"></dxi-column>
                                                 <dxi-column [width]="260" dataField="organizationUnitId" [caption]="l('OrganizationUnit')" cellTemplate="organizationCell"></dxi-column>
                                                 <dxi-column [width]="80" dataField="isValid" [caption]="l('Valid')" cellTemplate="validTemplate"></dxi-column>
                                                 <dxi-column [width]="190" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                                                <div *dxTemplate="let data of 'hostNameCell'" class="clipboard-holder">
+                                                    {{data.value}}
+                                                    <a href="https://{{data.value}}" target="_blank">
+                                                        <img class="host-name-share-img" src="assets/common/icons/share-black.svg" />
+                                                    </a>
+                                                </div>
                                                 <div *dxTemplate="let data of 'organizationCell'" class="clipboard-holder {{data.value ? '' : 'default'}}">
                                                     {{ getOrgUnitName(data.value) }}
                                                 </div>
@@ -679,18 +688,24 @@
                       <div class="overlap-group">
                         <div class="group">
                             <dx-data-grid *ngIf="landingSettings?.landingPageDomains && landingSettings.landingPageDomains.length"
-                                    #landingDomainsGrid
-                                    class="grid-compact-view main-component-view"
-                                    accessKey="landingDomainsGrid"
-                                    [masterDetail]="{template: 'detailsTemplate'}"
-                                    [dataSource]="landingSettings.landingPageDomains"
-                                    [allowColumnReordering]="false"
-                                    [columnAutoWidth]="true"
-                                    [allowColumnResizing]="true"
-                                    (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                                <dxi-column dataField="name" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
+                                          #landingDomainsGrid
+                                          class="grid-compact-view main-component-view"
+                                          accessKey="landingDomainsGrid"
+                                          [masterDetail]="{template: 'detailsTemplate'}"
+                                          [dataSource]="landingSettings.landingPageDomains"
+                                          [allowColumnReordering]="false"
+                                          [columnAutoWidth]="true"
+                                          [allowColumnResizing]="true"
+                                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                                <dxi-column dataField="name" [caption]="l('HostName')" cellTemplate="hostNameCell"></dxi-column>
                                 <dxi-column [width]="80" dataField="isValid" [caption]="l('Valid')" cellTemplate="validTemplate"></dxi-column>
                                 <dxi-column [width]="190" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                                <div *dxTemplate="let data of 'hostNameCell'" class="clipboard-holder">
+                                    {{data.value}}
+                                    <a href="https://{{data.value}}" target="_blank">
+                                        <img class="host-name-share-img" src="assets/common/icons/share-black.svg" />
+                                    </a>
+                                </div>
                                 <div *dxTemplate="let data of 'validTemplate'">
                                     <i class="fa fa-{{data.data.isValid ? 'check' : 'times'}}"></i>
                                 </div>
