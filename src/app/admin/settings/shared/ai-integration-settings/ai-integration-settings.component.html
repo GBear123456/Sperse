@@ -1,0 +1,14 @@
+<h2>{{l('AIIntegration')}} {{l('Settings')}}</h2>
+<div *ngIf="aiIntegrationSettings">
+    <div class="form-group m-form__group">
+        <dx-check-box id="AIIntegrationIsEnabled"
+                      [text]="l('Enabled')"
+                      [(value)]="aiIntegrationSettings.isEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <label for="OpenAIApiKey">{{l("Open AI Api Key")}}</label>
+        <input id="OpenAIApiKey" type="text" name="OpenAIApiKey" class="form-control" [(ngModel)]="aiIntegrationSettings.openAIApiKey" maxlength="256">
+    </div>
+    <div *ngIf="!isHost">{{l('UseGlobalSettingsIfNotSet')}}</div>
+</div>

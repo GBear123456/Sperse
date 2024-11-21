@@ -96,6 +96,11 @@
                         <stripe-settings></stripe-settings>
                     </ng-container>
                 </mat-step>
+                <mat-step *ngIf="isAIIntegrationEnabled" #aiIntegrationStep>
+                    <ng-container *ngIf="stepper.selected === aiIntegrationStep">
+                        <ai-integration-settings></ai-integration-settings>
+                    </ng-container>
+                </mat-step>
                 <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #epcvipLinkStep>
                     <ng-container *ngIf="stepper.selected === epcvipLinkStep">
                         <epcvip-link-settings></epcvip-link-settings>

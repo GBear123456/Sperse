@@ -40,6 +40,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
     isInboundOutboundSMSEnabled: boolean = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
+    isAIIntegrationEnabled: boolean = abp.features.isEnabled(AppFeatures.AIIntegration);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
     isRapidTenantLayout: boolean = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.Rapid;
     isSalesTalkEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMSalesTalk) && this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
@@ -111,6 +112,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
             { key: 'Bugsnag', visible: this.appService.isHostTenant },
             { key: 'PayPal', visible: this.isPaymentsEnabled },
             { key: 'Stripe', visible: this.isPaymentsEnabled },
+            { key: 'AIIntegration', visible: this.isAIIntegrationEnabled },
             //{ key: 'IDCS Link', visible: this.isCreditReportFeatureEnabled },
             { key: 'EPCVIPLink', visible: !this.appService.isHostTenant && this.isPFMApplicationsFeatureEnabled },
             { key: 'EPCVIPEmail', visible: !this.appService.isHostTenant && this.isPFMApplicationsFeatureEnabled },

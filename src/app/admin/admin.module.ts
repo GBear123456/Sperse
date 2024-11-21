@@ -103,6 +103,7 @@ import { IAgeSettingsComponent } from './settings/shared/iage-settings/iage-sett
 import { OngageSettingsComponent } from './settings/shared/ongage-settings/ongage-settings.component';
 import { RapidSettingsComponent } from './settings/shared/rapid-settings/rapid-settings.component';
 import { SalesTalkSettingsComponent } from './settings/shared/sales-talk-settings/sales-talk-settings.component';
+import { AIIntegrationSettingsComponent } from './settings/shared/ai-integration-settings/ai-integration-settings.component';
 import { UploadSSLCertificateModalComponent } from './settings/shared/domain-settings/modals/upload-ssl-cert-modal.component';
 import { AddOrEditSSLBindingModalComponent } from './settings/shared/domain-settings/modals/add-or-edit-ssl-binding-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
@@ -225,6 +226,7 @@ import { CurrencySelectorModule } from '@shared/common/currency-selector/currenc
         OngageSettingsComponent,
         RapidSettingsComponent,
         SalesTalkSettingsComponent,
+        AIIntegrationSettingsComponent,
         UploadSSLCertificateModalComponent,
         AddOrEditSSLBindingModalComponent,
         UiCustomizationComponent,

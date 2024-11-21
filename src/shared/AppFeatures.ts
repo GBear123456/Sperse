@@ -3,6 +3,7 @@ export enum AppFeatures {
     AdminAdvanced = 'Admin.Advanced',
     AdminCustomizations = 'Admin.Customizations',
     AdvancedProfiles = 'AdvancedProfiles',
+    AIIntegration = 'AIIntegration',
     API = 'API',
     AppChatFeature = 'App.ChatFeature',
     AppChatFeatureTenantToHost = 'App.ChatFeature.TenantToHost',
