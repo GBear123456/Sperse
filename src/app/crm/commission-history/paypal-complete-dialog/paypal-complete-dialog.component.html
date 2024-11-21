@@ -1,5 +1,6 @@
 <h2 mat-dialog-title>
-    <div>{{ls.l('ConfirmPayPalWithdrawals')}}</div>
+    <div *ngIf="data && data.paymentType == 'PayPal'">{{ls.l('PayWithPayPal')}}</div>
+    <div *ngIf="data && data.paymentType == 'Stripe'">{{ls.l('PayWithStripe')}}</div>
 </h2>
 <mat-dialog-content>
     <dx-scroll-view showScrollbar="onHover">
