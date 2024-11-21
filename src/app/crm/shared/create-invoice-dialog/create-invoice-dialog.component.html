@@ -42,7 +42,8 @@
             </div>
             <div class="field-area flex-space-between">
                 <div class="bill-to">
-                    <label class="bold-label">{{ls.l('Invoice_BillTo')}}
+                    <label class="bold-label">
+                        {{ls.l('Invoice_BillTo')}}
                         <img *ngIf="disabledForUpdate; else billingEditButtons"
                              class="preview"
                              src='./assets/common/icons/preview.svg'
@@ -65,17 +66,17 @@
                     </button>
 
                     <dx-select-box #billingAddress
-                        name="billingAddress"
-                        width="220px"
-                        height="40px"
-                        displayExpr="display"
-                        [visible]="contactId && !selectedBillingAddress"
-                        itemTemplate="addressTemplate"
-                        [disabled]="disabledForUpdate"
-                        [placeholder]="ls.l('Select Address')"
-                        [(value)]="selectedBillingAddress"
-                        [dataSource]="billingAddresses"
-                        (onValueChanged)="onAddressChanged($event, 'selectedBillingAddress')">
+                                   name="billingAddress"
+                                   width="220px"
+                                   height="40px"
+                                   displayExpr="display"
+                                   [visible]="contactId && !selectedBillingAddress"
+                                   itemTemplate="addressTemplate"
+                                   [disabled]="disabledForUpdate"
+                                   [placeholder]="ls.l('Select Address')"
+                                   [(value)]="selectedBillingAddress"
+                                   [dataSource]="billingAddresses"
+                                   (onValueChanged)="onAddressChanged($event, 'selectedBillingAddress')">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
                             <i class="address-icons type-{{cellData.usageTypeId || 'B'}}"></i>
                             <span class="address-item-text">{{ cellData.display }}</span>
@@ -97,7 +98,8 @@
                     </div>
                 </div>
                 <div class="ship-to" [hidden]="!invoiceSettings.showShippingAddress">
-                    <label class="bold-label">{{ls.l('Invoice_ShipTo')}}
+                    <label class="bold-label">
+                        {{ls.l('Invoice_ShipTo')}}
                         <img *ngIf="disabledForUpdate; else shippingEditButtons"
                              class="preview"
                              src='./assets/common/icons/preview.svg'
@@ -111,17 +113,17 @@
                         {{selectedContact?.name || selectedContact?.email}}
                     </span>
                     <dx-select-box #shippingAddress
-                        name="shippingAddress"
-                        width="220px"
-                        height="40px"
-                        displayExpr="display"
-                        itemTemplate="addressTemplate"
-                        [disabled]="disabledForUpdate"
-                        [visible]="contactId && !selectedShippingAddress"
-                        [placeholder]="ls.l('Select Address')"
-                        [(value)]="selectedShippingAddress"
-                        [dataSource]="shippingAddresses"
-                        (onValueChanged)="onAddressChanged($event, 'selectedShippingAddress')">
+                                   name="shippingAddress"
+                                   width="220px"
+                                   height="40px"
+                                   displayExpr="display"
+                                   itemTemplate="addressTemplate"
+                                   [disabled]="disabledForUpdate"
+                                   [visible]="contactId && !selectedShippingAddress"
+                                   [placeholder]="ls.l('Select Address')"
+                                   [(value)]="selectedShippingAddress"
+                                   [dataSource]="shippingAddresses"
+                                   (onValueChanged)="onAddressChanged($event, 'selectedShippingAddress')">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
                             <i class="address-icons type-{{cellData.usageTypeId || 'S'}}"></i>
                             <span class="address-item-text">{{ cellData.display }}</span>
@@ -154,39 +156,39 @@
             <div class="field-area flex-space-between date-row">
                 <div class="date-fields-area">
                     <dx-date-box #dateComponent
-                        width="160px"
-                        height="41px"
-                        type="date"
-                        [(value)]="date"
-                        [placeholder]="ls.lr('Date')"
-                        [disabled]="disabledForUpdate"
-                        (onContentReady)="onDateContentReady($event)">
+                                 width="160px"
+                                 height="41px"
+                                 type="date"
+                                 [(value)]="date"
+                                 [placeholder]="ls.lr('Date')"
+                                 [disabled]="disabledForUpdate"
+                                 (onContentReady)="onDateContentReady($event)">
                         <dx-validator>
                             <dxi-validation-rule type="required" [message]="ls.l('RequiredField', 'Date')"></dxi-validation-rule>
                         </dx-validator>
                     </dx-date-box>
                     <dx-date-box #dueDateComponent
-                        [placeholder]="ls.l('Invoice_DueOnReceipt')"
-                        [disabled]="disabledForUpdate || !date"
-                        (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                        width="160px"
-                        height="41px"
-                        [min]="date"
-                        [(value)]="dueDate"
-                        (onContentReady)="onDateContentReady($event)">
+                                 [placeholder]="ls.l('Invoice_DueOnReceipt')"
+                                 [disabled]="disabledForUpdate || !date"
+                                 (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                                 width="160px"
+                                 height="41px"
+                                 [min]="date"
+                                 [(value)]="dueDate"
+                                 (onContentReady)="onDateContentReady($event)">
                     </dx-date-box>
                     <dx-date-box #startDateComponent
-                        [placeholder]="ls.l('Subscription Start')"
-                        [disabled]="disabledForUpdate || !hasSubscription"
-                        (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                        [showClearButton]="true"
-                        type="datetime"
-                        width="200px"
-                        height="41px"
-                        [min]="disabledForUpdate ? undefined : tomorrowDate"
-                        [(value)]="startDate"
-                        (onOpened)="onStartDateOpened($event)"
-                        (onValueChanged)="this.initiatePaymentMethodsCheck()">
+                                 [placeholder]="ls.l('Subscription Start')"
+                                 [disabled]="disabledForUpdate || !hasSubscription"
+                                 (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                                 [showClearButton]="true"
+                                 type="datetime"
+                                 width="200px"
+                                 height="41px"
+                                 [min]="disabledForUpdate ? undefined : tomorrowDate"
+                                 [(value)]="startDate"
+                                 (onOpened)="onStartDateOpened($event)"
+                                 (onValueChanged)="this.initiatePaymentMethodsCheck()">
                     </dx-date-box>
                 </div>
                 <order-dropdown [(orderId)]="orderId"
@@ -199,21 +201,21 @@
             <div class="field-area lines">
                 <dx-validation-group>
                     <dx-data-grid #productLines
-                        width="810px"
-                        height="auto"
-                        class="alone"
-                        [renderAsync]="true"
-                        [(dataSource)]="lines"
-                        [allowColumnReordering]="false"
-                        [columnAutoWidth]="true"
-                        [focusStateEnabled]="true"
-                        [showColumnLines]="false"
-                        [masterDetail]="{ enabled: true, template: 'detail'}"
-                        [scrolling]="{showScrollbar: 'never'}"
-                        [allowColumnResizing]="false"
-                        [loadPanel]="{enabled: false}"
-                        (onRowCollapsed)="changeDetectorRef.detectChanges()"
-                        (onRowExpanded)="changeDetectorRef.detectChanges()">
+                                  width="810px"
+                                  height="auto"
+                                  class="alone"
+                                  [renderAsync]="true"
+                                  [(dataSource)]="lines"
+                                  [allowColumnReordering]="false"
+                                  [columnAutoWidth]="true"
+                                  [focusStateEnabled]="true"
+                                  [showColumnLines]="false"
+                                  [masterDetail]="{ enabled: true, template: 'detail'}"
+                                  [scrolling]="{showScrollbar: 'never'}"
+                                  [allowColumnResizing]="false"
+                                  [loadPanel]="{enabled: false}"
+                                  (onRowCollapsed)="changeDetectorRef.detectChanges()"
+                                  (onRowExpanded)="changeDetectorRef.detectChanges()">
 
                         <dxo-editing [texts]="{confirmDeleteMessage: ''}"></dxo-editing>
 
@@ -225,31 +227,30 @@
                         <dxi-column width="30px" caption="" [allowSorting]="false" [allowEditing]="false" cellTemplate="actions"></dxi-column>
 
                         <div *dxTemplate="let cellData of 'description'">
-                            <dx-select-box
-                                name="customer"
-                                width="350px"
-                                height="32px"
-                                displayExpr="caption"
-                                valueExpr="description"                                
-                                [showClearButton]="true"
-                                valueChangeEvent="keyup"
-                                [placeholder]="ls.lr('Invoice_EnterDescription')"
-                                [acceptCustomValue]="true"
-                                [(value)]="cellData.data.description"
-                                [dataSource]="products"
-                                [searchEnabled]="true"
-                                [searchTimeout]="0"
-                                [maxLength]="255"
-                                (onFocusIn)="onFieldFocusIn($event, cellData)"
-                                (onCustomItemCreating)="onCustomDescriptionCreating($event)"
-                                (onInput)="productLookupItems($event, cellData, !cellData.data.isCrmProduct)"
-                                (onSelectionChanged)="selectProduct($event, cellData)"
-                                [disabled]="disabledForUpdate">
+                            <dx-select-box name="customer"
+                                           width="350px"
+                                           height="32px"
+                                           displayExpr="caption"
+                                           valueExpr="description"
+                                           [showClearButton]="true"
+                                           valueChangeEvent="keyup"
+                                           [placeholder]="ls.lr('Invoice_EnterDescription')"
+                                           [acceptCustomValue]="true"
+                                           [(value)]="cellData.data.description"
+                                           [dataSource]="products"
+                                           [searchEnabled]="true"
+                                           [searchTimeout]="0"
+                                           [maxLength]="255"
+                                           (onFocusIn)="onFieldFocusIn($event, cellData)"
+                                           (onCustomItemCreating)="onCustomDescriptionCreating($event)"
+                                           (onInput)="productLookupItems($event, cellData, !cellData.data.isCrmProduct)"
+                                           (onSelectionChanged)="selectProduct($event, cellData)"
+                                           [disabled]="disabledForUpdate">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
                                 <div *dxTemplate="let cell of 'item'">
-                                    <span title="{{cell.description}}">{{cell.description}}</span>
+                                    <span title="{{cell.description}}">{{cell.description}}{{cell.isInStock ? '' : ' (Out of stock)' }}</span>
                                 </div>
                             </dx-select-box>
 
@@ -260,17 +261,17 @@
                             </div>
                         </div>
                         <div *dxTemplate="let cellData of 'quantity'">
-                            <dx-number-box
-                                width="80px"
-                                height="32px"
-                                (onFocusIn)="onFieldFocusIn($event)"
-                                [placeholder]="ls.lr('Value')"
-                                [showClearButton]="false"
-                                [(value)]="cellData.data.quantity"
-                                (onValueChanged)="calculateLineTotal(cellData.data)"
-                                [disabled]="disabledForUpdate">
+                            <dx-number-box width="80px"
+                                           height="32px"
+                                           (onFocusIn)="onFieldFocusIn($event)"
+                                           [placeholder]="ls.lr('Value')"
+                                           [showClearButton]="false"
+                                           [(value)]="cellData.data.quantity"
+                                           (onValueChanged)="calculateLineTotal(cellData.data)"
+                                           [disabled]="disabledForUpdate">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
+                                    <dxi-validation-rule *ngIf="cellData.data.maxQuantity > 0" type="range" max="{{cellData.data.maxQuantity}}" message="Stock {{cellData.data.maxQuantity}}"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-number-box>
                         </div>
@@ -351,12 +352,11 @@
                 <div class="payment-methods" *ngIf="showPaymentMethods && invoiceSettings?.configuredPaymentMethods">
                     <span>{{ls.l('Invoice_PaymentMethods')}}</span>
                     <ng-container *ngFor="let item of paymentMethods">
-                        <dx-check-box
-                            [value]="item.disabled ? undefined : item.checked"
-                            [text]="item.name"
-                            [disabled]="item.disabled || (disabledForUpdate && !showUpdatePaymentMethodButton)"
-                            [visible]="item.visible"
-                            (onValueChanged)="paymentMethodChanged($event, item.value)">
+                        <dx-check-box [value]="item.disabled ? undefined : item.checked"
+                                      [text]="item.name"
+                                      [disabled]="item.disabled || (disabledForUpdate && !showUpdatePaymentMethodButton)"
+                                      [visible]="item.visible"
+                                      (onValueChanged)="paymentMethodChanged($event, item.value)">
                         </dx-check-box>
                     </ng-container>
                     <i [ngClass]="{ 'fa fa-spinner fa-spin': paymentMethodsCheckLoading }"></i>
@@ -403,54 +403,53 @@
                 </div>
                 <div class="field-area notes">
                     <label class="notes-label">{{ls.l('InvoiceNote')}} <a (click)="resetNoteDefault()">({{ls.l('default')}} {{ls.l('note')}})</a></label>
-                    <dx-text-area
-                        name="comment"
-                        class="bottom-container-text"
-                        [disabled]="disabledForUpdate"
-                        [width]="'380px'"
-                        [height]="'100px'"
-                        [(value)]="notes">
+                    <dx-text-area name="comment"
+                                  class="bottom-container-text"
+                                  [disabled]="disabledForUpdate"
+                                  [width]="'380px'"
+                                  [height]="'100px'"
+                                  [(value)]="notes">
                     </dx-text-area>
                 </div>
             </div>
             <div class="col-sm-6 conclusion bottom-container-text">
                 <div class="sub-total"><span>{{ls.l('SubTotal')}}</span><span>{{subTotal | currency: currency: 'symbol'}}</span></div>
-                <div class="user-total"><span>{{ls.l('DiscountTotal')}}</span>
+                <div class="user-total">
+                    <span>{{ls.l('DiscountTotal')}}</span>
                     <span>
-                        <dx-number-box 
-                            [min]="0" 
-                            [height]="33"
-                            [placeholder]="ls.l('Discount')" 
-                            [format]="{ style: 'currency', currency: currency, useGrouping: true }"
-                            (onValueChanged)="calculateBalance()"
-                            [(value)]="discountTotal"
-                            [disabled]="true">
+                        <dx-number-box [min]="0"
+                                       [height]="33"
+                                       [placeholder]="ls.l('Discount')"
+                                       [format]="{ style: 'currency', currency: currency, useGrouping: true }"
+                                       (onValueChanged)="calculateBalance()"
+                                       [(value)]="discountTotal"
+                                       [disabled]="true">
                         </dx-number-box>
                     </span>
                 </div>
-                <div class="user-total"><span>{{ls.l('ShippingTotal')}}</span>
+                <div class="user-total">
+                    <span>{{ls.l('ShippingTotal')}}</span>
                     <span>
-                        <dx-number-box 
-                            [min]="0" 
-                            [height]="33"
-                            [placeholder]="ls.l('Shipping')" 
-                            [format]="{ style: 'currency', currency: currency, useGrouping: true }"
-                            (onValueChanged)="calculateBalance()"
-                            [(value)]="shippingTotal"
-                            [disabled]="hasReccuringSubscription || disabledForUpdate">
+                        <dx-number-box [min]="0"
+                                       [height]="33"
+                                       [placeholder]="ls.l('Shipping')"
+                                       [format]="{ style: 'currency', currency: currency, useGrouping: true }"
+                                       (onValueChanged)="calculateBalance()"
+                                       [(value)]="shippingTotal"
+                                       [disabled]="hasReccuringSubscription || disabledForUpdate">
                         </dx-number-box>
                     </span>
                 </div>
-                <div class="user-total"><span>{{ls.l('TaxTotal')}}</span>
+                <div class="user-total">
+                    <span>{{ls.l('TaxTotal')}}</span>
                     <span>
-                        <dx-number-box 
-                            [min]="0" 
-                            [height]="33"
-                            [placeholder]="ls.l('Tax')" 
-                            [format]="{ style: 'currency', currency: currency, useGrouping: true }"
-                            (onValueChanged)="calculateBalance()"
-                            [(value)]="taxTotal"
-                            [disabled]="hasReccuringSubscription || disabledForUpdate">
+                        <dx-number-box [min]="0"
+                                       [height]="33"
+                                       [placeholder]="ls.l('Tax')"
+                                       [format]="{ style: 'currency', currency: currency, useGrouping: true }"
+                                       (onValueChanged)="calculateBalance()"
+                                       [(value)]="taxTotal"
+                                       [disabled]="hasReccuringSubscription || disabledForUpdate">
                         </dx-number-box>
                     </span>
                 </div>

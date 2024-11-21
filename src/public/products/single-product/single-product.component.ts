@@ -109,6 +109,7 @@ export class SingleProductComponent implements OnInit {
     customerPriceInputErrorDefs: any[] = [];
 
     isDonationGoalReached = false;
+    isInStock = true;
 
     constructor(
         private route: ActivatedRoute,
@@ -206,10 +207,11 @@ export class SingleProductComponent implements OnInit {
                 if (result.id) {
                     this.productInfo = result;
 
+                    this.isInStock = this.productInfo.stock == null || this.productInfo.stock > 0;
                     this.isDonationGoalReached = this.productInfo.type == ProductType.Donation && this.productInfo.productDonation.goalAmount &&
                         this.productInfo.productDonation.raisedAmount >= this.productInfo.productDonation.goalAmount;
 
-                    if (!this.isDonationGoalReached || this.productInfo.productDonation.keepActiveIfGoalReached) {
+                    if (this.isInStock && (!this.isDonationGoalReached || this.productInfo.productDonation.keepActiveIfGoalReached)) {
                         this.currencySymbol = getCurrencySymbol(result.currencyId, 'narrow');
                         this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
                         this.titleService.setTitle(this.productInfo.name);
@@ -299,7 +301,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        let isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid());
+        let isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid()) && this.isInStock;
         return !!isValidObj;
     }
 
@@ -307,6 +309,11 @@ export class SingleProductComponent implements OnInit {
         if ((this.productInfo.customerChoosesPrice && (!this.productInfo.price || this.customerPriceEditMode)) ||
             (this.selectedSubscriptionOption && this.selectedSubscriptionOption.customerChoosesPrice && (!this.selectedSubscriptionOption.fee || this.customerPriceEditMode))) {
             abp.notify.error(this.ls.l('Invalid Price'));
+            return of();
+        }
+
+        if (!this.isInStock || (this.productInfo.stock != null && this.productInfo.stock - this.productInput.quantity < 0)) {
+            abp.notify.error(this.ls.l('Invalid Quantity'));
             return of();
         }
 

@@ -56,11 +56,10 @@
             .product-xref {
                 span {
                     float: right;
-
                     /*Overrides `.block.status p a` float and padding*/
                     a {
-                      float: none;
-                      padding: initial;
+                        float: none;
+                        padding: initial;
                     }
                 }
 
@@ -438,6 +437,40 @@
                 }
             }
 
+            span.enable-inventory {
+                font-family: Poppins;
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 21px;
+                letter-spacing: 0em;
+                text-align: left;
+                padding-left: 10px;
+            }
+
+            .inventory-topup {
+                text-align: center;
+
+                dx-number-box {
+                    display: inline-block;
+                }
+
+                .add-button {
+                    display: inline-block;
+                    border: 1px solid #dedede;
+                    border-left: none;
+                    width: 20%;
+                    height: 46.48px;
+                    vertical-align: bottom;
+                    padding: 11px;
+                    font-family: Poppins;
+                    font-size: 13px;
+                    font-weight: 400;
+                    line-height: 24px;
+                    letter-spacing: 0em;
+                    color: #000;
+                }
+            }
+
             .add-new-button, .remove-button {
                 position: absolute;
                 top: -4px;
@@ -769,6 +802,10 @@
             span {
                 cursor: pointer;
             }
+
+            .option-cell {
+                align-content: center;
+            }
         }
 
         .field-wrapper {
@@ -966,6 +1003,7 @@
         .edit {
             width: 100%;
         }
+
         .qr-code {
             width: auto;
         }

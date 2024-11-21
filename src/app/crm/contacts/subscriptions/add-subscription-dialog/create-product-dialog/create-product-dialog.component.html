@@ -426,12 +426,12 @@
                                                 <div *ngIf="option.stripeXref">
                                                     <label>Stripe Xref</label>
                                                     <div class="clipboard-holder">
-                                                      <ng-container *ngIf="option.stripeXrefUrl; else plainOptionStripeXref">
-                                                        <a [href]="option.stripeXrefUrl" target="_blank">{{option.stripeXref}}</a>
-                                                      </ng-container>
-                                                      <ng-template #plainOptionStripeXref>{{option.stripeXref}}</ng-template>
-                                                      <i class="save-to-clipboard" (click)="copyTextToClipboard(option.stripeXref)"></i>
-                                                </div>
+                                                        <ng-container *ngIf="option.stripeXrefUrl; else plainOptionStripeXref">
+                                                            <a [href]="option.stripeXrefUrl" target="_blank">{{option.stripeXref}}</a>
+                                                        </ng-container>
+                                                        <ng-template #plainOptionStripeXref>{{option.stripeXref}}</ng-template>
+                                                        <i class="save-to-clipboard" (click)="copyTextToClipboard(option.stripeXref)"></i>
+                                                    </div>
                                                 </div>
                                                 <div *ngIf="option.paypalXref">
                                                     <label>Paypal Xref</label>
@@ -537,6 +537,59 @@
                                        [disabled]="isReadOnly">
                             </dx-switch><span class="enable-commissions" (click)="!isReadOnly && enableCommissions = !enableCommissions">{{ls.l(enableCommissions ? 'Disable': 'Enable')}} {{ls.l('Commissions')}}</span>
                             <p class="enable-commissions-info">{{ls.l('This product will be included in the commissions calculations for your affiliates, resellers and partners')}}</p>
+                        </div>
+                        <div class="block options" *ngIf="product.type != productType.Donation">
+                            <h3>{{ls.l('Inventory')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                            <hr>
+                            <dx-switch switchedOffText=""
+                                       switchedOnText=""
+                                       [(value)]="product.productInventory.isActive"
+                                       [disabled]="isReadOnly">
+                            </dx-switch><span class="enable-inventory"> {{ls.l('Track quantity')}}</span>
+                            <div class="option" *ngIf="product.productInventory.isActive">
+                                <br />
+                                <label class="wide">{{ls.l('Actual Quantity')}}</label>
+                                <div class="option-row width-50">
+                                    <div>
+                                        <div *ngIf="storedCurrentQuantity == null">
+                                            <dx-number-box name="initialQuantity"
+                                                           [(value)]="product.productInventory.initialQuantity"
+                                                           [format]="product.type == productType.General ? '#,##0.##' : '#,##0'"
+                                                           [disabled]="isReadOnly">
+                                                <dx-validator>
+                                                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Quantity'))}}."></dxi-validation-rule>
+                                                </dx-validator>
+                                            </dx-number-box>
+                                        </div>
+                                        <div *ngIf="storedCurrentQuantity != null">
+                                            <dx-number-box name="storedCurrentQuantity"
+                                                           [(value)]="storedCurrentQuantity"
+                                                           [format]="product.type == productType.General ? '#,##0.##' : '#,##0'"
+                                                           [disabled]="true">
+                                            </dx-number-box>
+                                        </div>
+                                    </div>
+                                    <div class="option-cell">
+                                        <dx-switch switchedOffText=""
+                                                   switchedOnText=""
+                                                   [(value)]="product.productInventory.canSellOutOfStock"
+                                                   [disabled]="isReadOnly">
+                                        </dx-switch><span class="enable-inventory"> {{ls.l('Can sell out of stock')}}</span>
+                                    </div>
+                                </div>
+                                <div *ngIf="storedCurrentQuantity != null">
+                                    <div class="inventory-topup">
+                                        <dx-number-box name="topupQuantity"
+                                                       width="80%"
+                                                       [placeholder]="ls.l('Topup')"
+                                                       [(value)]="topupQuantity"
+                                                       [format]="product.type == productType.General ? '#,###.##' : '#,###'"
+                                                       [disabled]="isReadOnly">
+                                        </dx-number-box>
+                                        <div class="add-button" (click)="addInventoryTopup()">{{ls.l('Add')}}</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="block" *ngIf="product.type == productType.Subscription">
                             <div class="options-header">
@@ -820,11 +873,12 @@
                             <hr>
                             <p *ngIf="product.stripeXref" class="product-xref clipboard-holder">
                                 Stripe Xref <span>
-                                  <ng-container *ngIf="product.stripeXrefUrl; else plainProductStripeXref">
-                                    <a [href]="product.stripeXrefUrl" target="_blank">{{product.stripeXref}}</a>
-                                  </ng-container>
-                                  <ng-template #plainProductStripeXref>{{product.stripeXref}}</ng-template>
-                                <i class="save-to-clipboard" (click)="copyTextToClipboard(product.stripeXref)"></i></span>
+                                    <ng-container *ngIf="product.stripeXrefUrl; else plainProductStripeXref">
+                                        <a [href]="product.stripeXrefUrl" target="_blank">{{product.stripeXref}}</a>
+                                    </ng-container>
+                                    <ng-template #plainProductStripeXref>{{product.stripeXref}}</ng-template>
+                                    <i class="save-to-clipboard" (click)="copyTextToClipboard(product.stripeXref)"></i>
+                                </span>
                             </p>
                             <p *ngIf="product.paypalXref" class="product-xref clipboard-holder">
                                 Paypal Xref <span>{{product.paypalXref}}<i class="save-to-clipboard" (click)="copyTextToClipboard(product.paypalXref)"></i></span>

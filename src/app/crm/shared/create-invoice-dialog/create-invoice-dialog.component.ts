@@ -373,6 +373,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         return {
                             isCrmProduct: !!res.productCode,
                             Quantity: res.quantity,
+                            maxQuantity: res.stock,
                             Rate: res.rate,
                             Description: description,
                             details: lineDescription.split('\n').slice(1).join('\n'),
@@ -925,6 +926,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             cellData.data.unitId = item.paymentOptions[0].unitId;
             cellData.data.rate = item.paymentOptions[0].price;
             cellData.data.quantity = 1;
+            cellData.data.maxQuantity = item.stock;
             cellData.data.productType = item.type;
             cellData.data.details = item.details;
             this.updateDisabledProducts();
@@ -936,7 +938,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     updateDisabledProducts() {
         this.products.forEach((product: any) => {
-            product.disabled = false;
+            product.isInStock = product.stock == null || product.stock > 0;
+            product.disabled = !product.isInStock;
             this.lines.some((item: any) => {
                 if (item.productCode && product.code == item.productCode)
                     return product.disabled = true;

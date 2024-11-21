@@ -95,6 +95,7 @@
                     <dxi-column dataField="LastSold" [caption]="l('Last Sold')" cellTemplate="dateagoTemplate" sortOrder="desc" alignment="right" [visible]="false"></dxi-column>
                     <dxi-column dataField="UnitSold" [caption]="l('Units Sold')" cssClass="tabular" [visible]="false"></dxi-column>
                     <dxi-column dataField="GrossSales" [caption]="l('Gross Sales')" cellTemplate="currencyTemplate" cssClass="tabular" [visible]="false"></dxi-column>
+                    <dxi-column dataField="InventoryCurrentQuantity" [caption]="l('Stock')" cssClass="tabular" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.IsArchived" [caption]="l('Archived')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column dataField="BarCode" [caption]="l('BarCode')" [visible]="false"></dxi-column>
                     <dxi-column caption="" cellTemplate="actionTemplate" [width]="60"></dxi-column>
