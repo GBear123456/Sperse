@@ -22,7 +22,7 @@ import { AppConsts } from '@shared/AppConsts';
 import {
     TenantHostServiceProxy, AddSslBindingInput, TenantSslCertificateServiceProxy,
     TenantSslCertificateInfo, UpdateSslBindingInput,
-    CheckHostNameDnsMappingInput, TenantHostType
+    CheckHostNameDnsMappingInput, TenantHostType, HostingType
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
@@ -188,7 +188,8 @@ export class AddOrEditSSLBindingModalComponent {
                 this.tenantHostService.checkHostNameDnsMapping(
                     new CheckHostNameDnsMappingInput({
                         tenantHostType: TenantHostType.PlatformApp,
-                        hostName: data.value
+                        hostName: data.value,
+                        hostingProvider: HostingType.Azure
                     })
                 ).pipe(map(res => res.hostNameDnsMapped)) : of(true)
             ).pipe(tap(isValid => {

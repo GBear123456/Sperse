@@ -4,9 +4,11 @@
 
     ::ng-deep mat-tab-group {
         height: 100%;
+
         .mat-tab-header {
-            border-bottom: none!important;
+            border-bottom: none !important;
         }
+
         .mat-tab-labels, .mat-tab-label {
             height: 84px;
         }
@@ -29,8 +31,9 @@
                 text-transform: uppercase;
             }
         }
+
         .mat-ink-bar {
-            background: rgba(0, 202, 106, 1)!important;
+            background: rgba(0, 202, 106, 1) !important;
             height: 3px;
             top: 0;
         }
@@ -41,12 +44,9 @@
     }
 
     .tab-body {
-        height: calc(100vh - 210px);
-
         &#SSLTable {
             width: 100%;
             position: relative;
-            height: calc(100vh - 235px);
             background-color: rgba(231, 239, 246, 0.4);
             border-radius: 10px;
             padding: 25px;
@@ -94,22 +94,24 @@
             color: red;
         }
 
-        .dx-checkbox.dx-checkbox-checked {
+        .dx-checkbox {
             .dx-checkbox-icon {
-                background-color: rgba(0, 186, 0, 1) !important;
-                border-color: rgba(0, 186, 0, 1) !important;
                 border-radius: 10px;
+            }
+
+            &.dx-checkbox-checked {
+                .dx-checkbox-icon {
+                    background-color: rgba(0, 186, 0, 1) !important;
+                    border-color: rgba(0, 186, 0, 1) !important;
+                    border-radius: 10px;
+                }
             }
         }
 
-        .host-name {
+        .host-name a {
             font-family: Plus Jakarta Sans;
-            font-size: 12px;
-            font-weight: 500;
-            line-height: 27px;
             letter-spacing: -0.01em;
-            text-align: left;
-            color: #000;
+            color: #424c56;
         }
 
         .host-type {
@@ -135,6 +137,7 @@
             letter-spacing: -0.01em;
             text-align: center;
             margin: 0 5px;
+
             &.manage {
                 color: rgba(0, 168, 237, 1);
             }
@@ -142,7 +145,7 @@
 
         .dx-gridbase-container {
             border-radius: 8px;
-            border: 1px solid rgba(233, 238, 241, 1);                
+            border: 1px solid rgba(233, 238, 241, 1);
         }
     }
 
@@ -271,7 +274,7 @@
             height: 70px;
             top: 0;
             left: 74px;
-        }    
+        }
     }
 
     .box-middle {
@@ -421,12 +424,16 @@
 
     .content {
         padding: 30px;
+
+        .domains {
+            padding: 0;
+        }
     }
 
     .box1, .box2, .box3 {
         width: 872px;
         position: relative;
-        margin-bottom: 15px;        
+        margin-bottom: 15px;
     }
 
     .box1 {
@@ -510,6 +517,7 @@
             letter-spacing: -0.18px;
             line-height: 27px;
             white-space: nowrap;
+
             ::ng-deep dx-text-box {
                 input {
                     border: none !important;
@@ -665,7 +673,7 @@
             left: 820px;
             background-color: #e3eaed;
         }
-    } 
+    }
 
     .box2 {
         height: auto;
@@ -748,6 +756,7 @@
             text-align: left;
             color: rgba(16, 33, 58, 1);
             margin-bottom: 20px;
+
             a {
                 font-family: Plus Jakarta Sans;
                 font-size: 14px;
@@ -1028,23 +1037,17 @@
     }
 
     .box3 {
-        height: 231px;
+        height: auto;
 
         .group {
-            position: absolute;
             width: 876px;
-            height: 231px;
-            top: 0;
-            left: 0;
         }
 
         .overlap {
             width: 872px;
             height: 68px;
-            top: 0;
             border-radius: 10px 10px 0px 0px;
-            position: absolute;
-            left: 0;
+            margin-bottom: 5px;
         }
 
         .rectangle {
@@ -1130,6 +1133,10 @@
             left: 16px;
             background-color: #dbf5f8;
             border-radius: 18px;
+
+            &.purple {
+                background-color: #e6aee6;
+            }
         }
 
         .text-wrapper-2 {
@@ -1149,7 +1156,6 @@
         .overlap-group {
             width: 872px;
             height: auto;
-            top: 74px;
             padding: 15px 0;
             border-radius: 0px 0px 10px 10px;
             position: relative;
@@ -1275,7 +1281,7 @@
                 padding: 0 10px;
                 margin: auto;
             }
-            
+
             .generate-domain {
                 font-weight: 600;
                 color: green;
@@ -1287,13 +1293,19 @@
             .no-found {
                 text-align: center;
             }
+
             .group {
                 left: 0;
                 width: 100%;
             }
+
             .vector-wrapper:not(.valid) {
                 background-color: #d6dde1;
             }
+        }
+
+        .host-name-share-img {
+            margin-bottom: 3px;
         }
 
         .domain {
@@ -1352,6 +1364,7 @@
                         font-weight: bold;
                         background-color: lightgray;
                     }
+
                     .row {
                         white-space: break-spaces;
                     }

@@ -10,13 +10,12 @@ import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import {
-    GetLandingPageSettingsDto, CheckHostNameDnsMappingInput, TenantSslCertificateServiceProxy, 
-    TenantHostServiceProxy, TenantHostType, TenantSslBindingInfo, DictionaryServiceProxy, 
+    GetLandingPageSettingsDto, CheckHostNameDnsMappingInput, TenantSslCertificateServiceProxy,
+    TenantHostServiceProxy, TenantHostType, TenantSslBindingInfo, DictionaryServiceProxy,
     TenantSslCertificateInfo, AddSslBindingInput, UpdateSslBindingInput, LandingPageSettingsDomainDto,
-    ContactLandingPageServiceProxy, LandingPageSettingsDto, AddVercelDomainInput
+    ContactLandingPageServiceProxy, LandingPageSettingsDto, AddVercelDomainInput, HostingType, DomainConfigDto,
 } from '@shared/service-proxies/service-proxies';
 import { environment } from '@root/environments/environment';
-import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -24,6 +23,7 @@ import { AddOrEditSSLBindingModalComponent } from './modals/add-or-edit-ssl-bind
 import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-modal.component';
 import { SettingsComponentBase } from './../settings-base.component';
 import { AppConsts } from '@shared/AppConsts';
+import { PortalType } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 
 @Component({
@@ -38,6 +38,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     @ViewChild('sslGrid') sslGrid: DxDataGridComponent;
     public sslGridDataSource: TenantSslCertificateInfo[];
     public sslBindingsDataSource: TenantSslBindingInfo[];
+    public portalVercelDataSource: TenantSslBindingInfo[] = [];
 
     public readonly HostType_PlatformApp = TenantHostType.PlatformApp;
     public readonly HostType_LandingPage = TenantHostType.LandingPage;
@@ -52,6 +53,11 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         id: -1,
         displayName: this.l('AllOrganizationUnits')
     }];
+
+    portalTypes: { id: PortalType, displayName: string }[] = [];
+    selectedPortalType: PortalType;
+    PortalType = PortalType;
+    isNewPortalVercelDomainAdding = false;
 
     isDomainMappingValid;
     regexPatterns = AppConsts.regexPatterns;
@@ -80,11 +86,13 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     prevTabIndex = 0;
     rowData: any;
 
-    readonly INTRO_TAB          = 0;
-    readonly APP_DOMAIN_TAB     = 1;
-    readonly PORTAL_DOMAIN_TAB  = 2;
+    readonly INTRO_TAB = 0;
+    readonly APP_DOMAIN_TAB = 1;
+    readonly PORTAL_DOMAIN_TAB = 2;
     readonly LANDING_DOMAIN_TAB = 3;
-    readonly SSL_CONFIG_TAB     = 4;
+    readonly SSL_CONFIG_TAB = 4;
+
+    scrollableAreaHeight = `calc(100vh - ${this.layoutService.showTopBar ? 275 : 200}px`;
 
     constructor(
         _injector: Injector,
@@ -99,9 +107,9 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     ) {
         super(_injector);
 
-        if ((this.isTenantHostCreateGranted || this.isTenantHostEditGranted) && 
+        if ((this.isTenantHostCreateGranted || this.isTenantHostEditGranted) &&
             (
-                this.permission.isGranted(AppPermissions.CRM) 
+                this.permission.isGranted(AppPermissions.CRM)
                 ||
                 this.permission.isGranted(AppPermissions.AdministrationUsers)
             )
@@ -110,6 +118,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                 undefined, undefined, true
             ).subscribe(res => this.orgUnits = this.orgUnits.concat(res));
 
+        this.initPortalTypes();
         if (this.lendingPageEnabled)
             this.landingPageProxy.getLandingPageSettings().subscribe(
                 (settings) => {
@@ -137,12 +146,14 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     getSaveObs(): Observable<any> {
         if (this.isAppOrPortalTab(this.selectedTabIndex)) {
             if (this.isDomainMappingValid) {
-                return this.saveHostNameDnsMapping(); 
+                if (this.selectedTabIndex == this.PORTAL_DOMAIN_TAB && this.selectedPortalType == PortalType.Vercel && !this.editing)
+                    return of(null);
+                return this.saveHostNameDnsMapping();
             } else {
                 this.notify.error(this.l('HostName_NotMapped'));
             }
         }
-        return this.isAppOrPortalTab(this.selectedTabIndex)  ? throwError(this.l('HostName_NotMapped')) : of(null);
+        return this.isAppOrPortalTab(this.selectedTabIndex) ? throwError(this.l('HostName_NotMapped')) : of(null);
     }
 
     afterSave() {
@@ -150,6 +161,14 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
             this.initBindingModal(this.INTRO_TAB);
             this.refreshSSLBindingGrid();
         }
+    }
+
+    initPortalTypes() {
+        if (this.envHost.showNextJSPortal)
+            this.portalTypes.push({ id: PortalType.Vercel, displayName: 'NextJS' });
+        if (this.envHost.showAngularPortal)
+            this.portalTypes.push({ id: PortalType.Angular, displayName: 'Angular' });
+        this.selectedPortalType = this.portalTypes[0].id;
     }
 
     initBindingModal(index, data?) {
@@ -163,6 +182,9 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
         setTimeout(() => {
             if (data && data.id) {
+                if (data.hostType == TenantHostType.MemberPortal)
+                    this.selectedPortalType = data.hostingProvider == HostingType.Vercel ? PortalType.Vercel : PortalType.Angular;
+
                 this.model = new UpdateSslBindingInput({
                     id: data.id,
                     organizationUnitId: data.organizationUnitId || -1,
@@ -173,15 +195,16 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                 this.model.domainName = data.hostName;
                 this.model.sslCertificateId = data.sslCertificateId || -1;
                 this.isDomainMappingValid = true;
-                this.domainIsValid = true;            
+                this.domainIsValid = true;
                 this.rowData = data;
             } else {
                 this.model = new AddSslBindingInput();
                 this.model.organizationUnitId = -1;
-                this.model.tenantHostType = this.selectedTabIndex == this.APP_DOMAIN_TAB 
+                this.model.tenantHostType = this.selectedTabIndex == this.APP_DOMAIN_TAB
                     ? TenantHostType.PlatformApp : TenantHostType.MemberPortal;
                 this.model.sslCertificateId = -1;
-                this.isDomainMappingValid = undefined;
+                this.selectedPortalType = this.portalTypes[0].id;
+                this.isDomainMappingValid = this.model.tenantHostType == TenantHostType.MemberPortal && this.selectedPortalType == PortalType.Vercel ? true : undefined;
                 this.domainIsValid = false;
                 this.rowData = undefined;
             }
@@ -192,13 +215,13 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     isModelDataChanged() {
         if (this.model) {
             return !this.model.id && (
-                this.model.organizationUnitId != -1 || 
+                this.model.organizationUnitId != -1 ||
                 this.model.tenantHostType != (this.prevTabIndex == this.APP_DOMAIN_TAB ? TenantHostType.PlatformApp : TenantHostType.MemberPortal) ||
                 this.model.sslCertificateId != -1 ||
                 this.model.domainName
             ) || this.rowData && (
                 this.model.organizationUnitId != (this.rowData.organizationUnitId || -1) ||
-                this.model.tenantHostType != this.rowData.hostType || 
+                this.model.tenantHostType != this.rowData.hostType ||
                 this.model.sslCertificateId != (this.rowData.sslCertificateId || -1) ||
                 this.model.domainName != this.rowData.hostName
             )
@@ -250,9 +273,13 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     refreshSSLBindingGrid() {
         this.tenantHostService.getSslBindings()
             .subscribe((result: TenantSslBindingInfo[]) => {
-                this.sslBindingsDataSource = result.filter(item => 
+                this.sslBindingsDataSource = result.filter(item =>
                     this.lendingPageEnabled || item.hostType != TenantHostType.LandingPage
                 );
+                this.portalVercelDataSource = result.filter(item =>
+                    item.hostType == TenantHostType.MemberPortal && item.hostingProvider == HostingType.Vercel
+                );
+                this.portalVercelDataSource.forEach(item => item['name'] = item.hostName);
                 this.customDomainsGrid.instance.refresh();
                 this.changeDetection.detectChanges();
             });
@@ -310,11 +337,12 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
 
         this.startLoading();
         return new Promise((approve, reject) => {
-            (data.value && this.model.tenantHostType == TenantHostType.PlatformApp ?
+            (data.value ?
                 this.tenantHostService.checkHostNameDnsMapping(
                     new CheckHostNameDnsMappingInput({
-                        tenantHostType: TenantHostType.PlatformApp,
-                        hostName: data.value
+                        tenantHostType: this.model.tenantHostType,
+                        hostName: data.value,
+                        hostingProvider: HostingType.Azure
                     })
                 ).pipe(map(res => res.hostNameDnsMapped)) : of(true)
             ).pipe(
@@ -332,15 +360,20 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     }
 
     onValueChanged(event) {
-        this.domainIsValid = this.model && this.model.domainName && 
+        this.domainIsValid = this.model && this.model.domainName &&
             event.component.option('isValid');
 
         if (this.domainIsValid && (this.model.domainName.includes('http') || this.model.domainName.includes('/')))
             this.model.domainName = this.model.domainName.replace(
                 /^([Hh][Tt][Tt][Pp][Ss]?:\/\/)?/g, ''
             ).split('/')[0].trim();
-            
+
         this.changeDetection.detectChanges();
+    }
+
+    onSelectedPortalTypeChanged(event) {
+        this.isDomainMappingValid = this.selectedPortalType == PortalType.Vercel ? true : undefined;
+        setTimeout(() => this.changeDetection.detectChanges());
     }
 
     getTenantSslCertificates() {
@@ -374,8 +407,51 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                 organizationUnitId: this.model.organizationUnitId == -1
                     ? null : this.model.organizationUnitId,
                 sslCertificateId: this.model.sslCertificateId == -1
-                    ? null : this.model.sslCertificateId
+                    ? null : this.model.sslCertificateId,
+                hostingProvider: this.model.tenantHostType == TenantHostType.MemberPortal && this.selectedPortalType == PortalType.Vercel ? HostingType.Vercel : HostingType.Azure
             }));
+    }
+
+    addPortalVercelDomain(inputComponent) {
+        if (!this.model.domainName)
+            return;
+
+        if (this.portalVercelDataSource.find(v => v.hostName.toLowerCase() == this.model.domainName.toLowerCase())) {
+            this.message.warn(`${this.model.domainName} is already added`);
+            return;
+        }
+
+        this.isNewPortalVercelDomainAdding = true;
+        inputComponent.disabled = true;
+        this.saveHostNameDnsMapping().pipe(
+            finalize(() => {
+                this.isNewPortalVercelDomainAdding = false;
+                inputComponent.disabled = false;
+                this.changeDetection.detectChanges();
+            })
+        ).subscribe(res => {
+            this.refreshSSLBindingGrid();
+            inputComponent.value = '';
+            this.initBindingModal(this.selectedTabIndex);
+            this.changeDetection.detectChanges();
+            this.notify.info(this.l('SavedSuccessfully'));
+        });
+    }
+
+    deletePortalVercelDomain(domain: TenantSslBindingInfo) {
+        if (domain['isDeleting'])
+            return;
+
+        domain['isDeleting'] = true;
+        this.tenantHostService.deleteSslBinding(domain.id)
+            .pipe(finalize(() => {
+                domain['isDeleting'] = false;
+                this.changeDetection.detectChanges();
+            }))
+            .subscribe(() => {
+                this.refreshSSLBindingGrid();
+                this.notify.info(this.l('SuccessfullyDeleted'));
+            });
     }
 
     getTabIndexByType(data) {
@@ -390,7 +466,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     onTabChange() {
         if (this.isTenantHostCreateGranted || this.isTenantHostEditGranted) {
             if (!this.isAppOrPortalTab(this.prevTabIndex)) {
-                return this.initBindingModal(this.selectedTabIndex);            
+                return this.initBindingModal(this.selectedTabIndex);
             }
 
             if (this.selectedTabIndex != this.prevTabIndex) {
@@ -400,7 +476,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                         this.l('AreYouSure'),
                         confirmed => {
                             if (confirmed) {
-                                this.initBindingModal(this.selectedTabIndex); 
+                                this.initBindingModal(this.selectedTabIndex);
                             } else {
                                 this.selectedTabIndex = this.prevTabIndex;
                                 this.changeDetection.detectChanges();
@@ -470,17 +546,25 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         });
     }
 
-    verifyDomain(cell, grid) {
+    verifyDomain(cell, grid, isVercelClientPortal) {
         let domain = cell.data;
         if (domain.isValid || domain['isValidating'] || domain['isDeleting'])
             return;
 
         domain['isValidating'] = true;
-        this.landingPageProxy.validateDomain(domain.name)
-            .pipe(finalize(() => {
-                domain['isValidating'] = false;
-                this.changeDetection.detectChanges();
-            }))
+
+        let obs = isVercelClientPortal ? this.tenantHostService.checkHostNameDnsMapping(new CheckHostNameDnsMappingInput({
+            tenantHostType: TenantHostType.MemberPortal,
+            hostName: domain.name,
+            hostingProvider: HostingType.Vercel
+        })).pipe(map(v => {
+            return new DomainConfigDto({ isValid: v.hostNameDnsMapped, configRecords: v.configRecords });
+        })) : this.landingPageProxy.validateDomain(domain.name);
+
+        obs.pipe(finalize(() => {
+            domain['isValidating'] = false;
+            this.changeDetection.detectChanges();
+        }))
             .subscribe(configInfo => {
                 domain.isValid = configInfo.isValid;
                 domain['configRecords'] = configInfo.configRecords;
@@ -517,10 +601,10 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     }
 
     toogleMasterDatails(cell, dataGrid) {
-        if (cell.data['configRecords']) {
+        if (cell.data['configRecords'] && cell.data['configRecords'].length) {
             let instance = dataGrid.instance,
                 isExpanded = instance.isRowExpanded(cell.key);
-            if (!isExpanded)                
+            if (!isExpanded)
                 instance.expandRow(cell.key);
             setTimeout(() => {
                 let row = instance.getRowElement(cell.rowIndex)[0];
