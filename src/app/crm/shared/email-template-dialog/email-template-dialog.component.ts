@@ -67,6 +67,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     @ViewChild('scrollView') scrollView: DxScrollViewComponent;
     @ViewChild('tagsButton') tagsButton: ElementRef;
+    @ViewChild('aiButton') aiButton: ElementRef;
 
     ckEditor: any;
     templateLoaded: boolean;
@@ -75,6 +76,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     showBCC = false;
     tagLastValue: string;
     tagsTooltipVisible = false;
+    aiTooltipVisible = false;
 
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
@@ -145,6 +147,13 @@ export class EmailTemplateDialogComponent implements OnInit {
     ];
     lastSelectedTemplateId: number;
     customItem: any;
+
+    aiList = [
+        { id: 1, name: 'Fix Formatting Issues' },
+        { id: 2, name: 'Summarize Text' },
+        { id: 3, name: 'Paraphrase Text' },
+        { id: 4, name: 'Grammar and Spell Check' }
+    ];
 
     constructor(
         private phonePipe: PhoneFormatPipe,
@@ -626,10 +635,12 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCKReady(event) {
         this.ckEditor = event.editor;
-        setTimeout(() => {
+        setTimeout(() => { 
             this.ckEditor.container.find('.cke_toolbox').$[0].append(
                 this.tagsButton.nativeElement);
-            this.tagsButton.nativeElement.style.display = 'inline';
+            this.tagsButton.nativeElement.style.display = 'inline'; 
+            // Append the aiButton right after the tagsButton
+            this.tagsButton.nativeElement.after(this.aiButton.nativeElement); 
             this.invalidate();
         });
     }
@@ -886,4 +897,24 @@ export class EmailTemplateDialogComponent implements OnInit {
     close() {
         this.modalDialog.close();
     }
+
+    //Ai- Button related code changes
+    getAiItemText(data: any): string {
+        return data.name;
+    }
+    onAiItemClick(event: any): void {
+        const selectedOption = event.itemData;
+        console.log('Selected AI Option:', selectedOption);
+
+        switch (selectedOption.name) {
+            case 'Fix Formatting Issues': 
+                break;
+            case 'Summarize Text': 
+                break; 
+            default:
+                console.log('implemented yet!');
+        } 
+        this.aiTooltipVisible = false;
+    }
+
 }
