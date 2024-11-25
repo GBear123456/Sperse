@@ -41,7 +41,7 @@ import {
     EmailSettingsSource,
     EmailTemplateType,
     FileInfo,
-    Attachment
+    Attachment, AIServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -149,11 +149,12 @@ export class EmailTemplateDialogComponent implements OnInit {
     customItem: any;
 
     aiList = [
-        { id: 1, name: 'Fix Formatting Issues' },
-        { id: 2, name: 'Summarize Text' },
-        { id: 3, name: 'Paraphrase Text' },
-        { id: 4, name: 'Grammar and Spell Check' }
+        { id: 1, name: 'Fix Formatting Issues', disabled: false },
+        { id: 2, name: 'Summarize Text', disabled: true },
+        { id: 3, name: 'Paraphrase Text', disabled: true },
+        { id: 4, name: 'Grammar and Spell Check', disabled: true }
     ];
+
 
     constructor(
         private phonePipe: PhoneFormatPipe,
@@ -173,6 +174,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         public appService: AppService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
+        private _aigService: AIServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {
         if (!data.suggestionEmails)
@@ -635,12 +637,12 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCKReady(event) {
         this.ckEditor = event.editor;
-        setTimeout(() => { 
+        setTimeout(() => {
             this.ckEditor.container.find('.cke_toolbox').$[0].append(
                 this.tagsButton.nativeElement);
-            this.tagsButton.nativeElement.style.display = 'inline'; 
+            this.tagsButton.nativeElement.style.display = 'inline';
             // Append the aiButton right after the tagsButton
-            this.tagsButton.nativeElement.after(this.aiButton.nativeElement); 
+            this.tagsButton.nativeElement.after(this.aiButton.nativeElement);
             this.invalidate();
         });
     }
@@ -903,17 +905,21 @@ export class EmailTemplateDialogComponent implements OnInit {
         return data.name;
     }
     onAiItemClick(event: any): void {
-        const selectedOption = event.itemData;
-        console.log('Selected AI Option:', selectedOption);
+      //  const selectedOption = event.itemData; 
+        this._aigService.getAIResponse(this.data.body).subscribe((result) => {
+            this.data.body = result;
+            this.updateDataLength();
+            this.changeDetectorRef.markForCheck();
+        });
 
-        switch (selectedOption.name) {
-            case 'Fix Formatting Issues': 
-                break;
-            case 'Summarize Text': 
-                break; 
-            default:
-                console.log('implemented yet!');
-        } 
+        // switch (selectedOption.name) {
+        //     case 'Fix Formatting Issues': 
+        //         break;
+        //     case 'Summarize Text': 
+        //         break; 
+        //     default:
+        //         console.log('implemented yet!');
+        // } 
         this.aiTooltipVisible = false;
     }
 

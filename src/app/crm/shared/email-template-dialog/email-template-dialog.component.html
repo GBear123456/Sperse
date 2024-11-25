@@ -220,10 +220,14 @@
                             <a (click)="tagsTooltipVisible = true">Tags</a>
                         </span>
                         <dx-tooltip [width]="250" position="bottom" [(visible)]="aiTooltipVisible" [target]="'.tags-button.id' + uniqId">
-                            <div *dxTemplate="let data of 'content'" class="tags-container"> 
-                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="aiList"
-                                    [itemTemplate]="'aiItemTemplate'" (onItemClick)="onAiItemClick($event)">
-                                    <div *dxTemplate="let data of 'aiItemTemplate'" class="tags-list-item">
+                            <div *dxTemplate="let data of 'content'" class="tags-container">
+                                <dx-list
+                                    height="calc(100% - 40px)"
+                                    [selectionMode]="'single'"
+                                    [dataSource]="aiList"
+                                    [itemTemplate]="'aiItemTemplate'"
+                                    (onItemClick)="onAiItemClick($event)">
+                                    <div *dxTemplate="let data of 'aiItemTemplate'" class="tags-list-item" [class.disabled]="data.disabled">
                                         {{ getAiItemText(data) }}
                                     </div>
                                 </dx-list>

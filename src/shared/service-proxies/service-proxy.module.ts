@@ -43,7 +43,8 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.TenantHostServiceProxy,
         ApiServiceProxies.EmailSettingsTestServiceProxy,
         ApiServiceProxies.GoogleServiceProxy,
-        ApiServiceProxies.EmailTemplateServiceProxy
+        ApiServiceProxies.EmailTemplateServiceProxy,
+        ApiServiceProxies.AIServiceProxy
     ]
 })
 export class ServiceProxyModule { }
