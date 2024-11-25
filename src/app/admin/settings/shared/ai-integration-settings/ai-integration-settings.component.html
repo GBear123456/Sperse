@@ -17,4 +17,13 @@
         <input id="OpenAIApiKey" type="text" name="OpenAIApiKey" class="form-control" [(ngModel)]="aiIntegrationSettings.openAIApiKey" maxlength="256">
     </div>
     <div *ngIf="!isHost && aiIntegrationSettings.hostShareKeysToTenants">{{l('UseGlobalSettingsIfNotSet')}}</div>
+    <div *ngIf="showOpenAIModels" class="form-group">
+        <label>Open AI Model</label>
+        <dx-select-box [(value)]="aiIntegrationSettings.openAIModel"
+                       [dataSource]="openAIModels"
+                       [searchEnabled]="true"
+                       [showClearButton]="true"
+                       width="300">
+        </dx-select-box>
+    </div>
 </div>
