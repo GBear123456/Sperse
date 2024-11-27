@@ -17,8 +17,7 @@ import { tap } from 'rxjs/operators';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     TenantLoginInfoDto,
-    TenantCustomizationServiceProxy,
-    TenantCustomizationInfoDto,
+    TenantCustomizationServiceProxy,
     CustomCssType,
     LayoutType,
     NavPosition,
@@ -119,8 +118,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                         fontName: this.settingService.get('App.Appearance.FontName'),
                         borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
                         welcomePageAppearance: this.welcomePageUri == AppConsts.defaultWelcomePageUri ? null : this.welcomePageUri,
-                        tabularFont: undefined,
-                        leftsideMenuColor: undefined
+                        tabularFont: this.settingService.get('App.Appearance.TabularFont'),
+                        leftsideMenuColor: this.settingService.get('App.Appearance.LeftsideMenuColor'),
+                        portalSettings: null
                     })
                 ).pipe(tap(() => {
                     this.onOptionChanged.emit(isWelcomePageChanged ? 'appearance' : 'navPosition');
@@ -139,8 +139,8 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         }
     }
 
-    clearLogo(): void {
-        this.tenantCustomizationService.clearLogo().subscribe(() => {
+    clearLogo(portalLogo = false): void {
+        this.tenantCustomizationService.clearLogo(portalLogo).subscribe(() => {
             this.tenant.logoFileType = null;
             this.tenant.logoId = null;
             this.notify.info(this.ls.l('ClearedSuccessfully'));
@@ -148,8 +148,8 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         });
     }
 
-    clearFavicons(): void {
-        this.tenantCustomizationService.clearFavicons().subscribe(() => {
+    clearFavicons(portalFavicons = false): void {
+        this.tenantCustomizationService.clearFavicons(portalFavicons).subscribe(() => {
             this.faviconsService.resetFavicons();
             this.tenant.tenantCustomizations.favicons = [];
             this.notify.info(this.ls.l('ClearedSuccessfully'));

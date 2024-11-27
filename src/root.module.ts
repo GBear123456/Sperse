@@ -116,7 +116,7 @@ function updateMetadata(tenant, ui) {
     createMetatag('og:url', location.origin);
     createMetatag('og:image', !tenant || !tenant.logoId ?
         window.location.origin + '/assets/common/images/app-logo-on-' + ui.getAsideSkin() + '.png' :
-        AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
+        AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId);
 }
 
 function getDocumentOrigin() {

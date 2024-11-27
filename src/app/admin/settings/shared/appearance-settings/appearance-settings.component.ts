@@ -15,7 +15,9 @@ import {
     TenantCustomizationServiceProxy,
     TenantLoginInfoDto,
     TenantSettingsServiceProxy,
-    AppearanceSettingsEditDto
+    AppearanceSettingsEditDto,
+    AppearanceBaseSettingsDto,
+    TenantCustomizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
@@ -24,6 +26,7 @@ import { FontService } from '@shared/common/font-service/font.service';
 import { SettingService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 import { DomHelper } from '@shared/helpers/DomHelper';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'appearance-settings',
@@ -36,9 +39,15 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     @ViewChild('logoUploader') logoUploader: UploaderComponent;
     @ViewChild('cssUploader') cssUploader: UploaderComponent;
     @ViewChild('loginCssUploader') loginCssUploader: UploaderComponent;
+    @ViewChild('portalLogoUploader') portalLogoUploader: UploaderComponent;
+    @ViewChild('portalFaviconsUploader') portalFaviconsUploader: UploaderComponent;
+    @ViewChild('portalLoginCssUploader') portalLoginCssUploader: UploaderComponent;
     @ViewChild('portalCssUploader') portalCssUploader: UploaderComponent;
     @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
     @ViewChild('signUpCssUploader') signUpCssUploader: UploaderComponent;
+
+    hasPortalFeature = this.feature.isEnabled(AppFeatures.Portal);
+    isPortalSelected = false;
 
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
@@ -61,6 +70,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     defaultBorderRadius: string = this.layoutService.defaultBorderRadius;
 
     appearance: AppearanceSettingsEditDto = new AppearanceSettingsEditDto();
+    colorSettings: AppearanceBaseSettingsDto = new AppearanceBaseSettingsDto();
 
     navPosition = this.getNavPosition();
     navPositionOptions = Object.keys(NavPosition).map(item => {
@@ -77,41 +87,21 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         private faviconsService: FaviconService,
         private settingsProxy: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
-        private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         private fontService: FontService,
-        private settingService: SettingService,
-        private http: HttpClient
+        private settingService: SettingService
     ) {
         super(_injector);
 
         this.settingsProxy.getAppearanceSettings().subscribe(
             (res: AppearanceSettingsEditDto) => {
                 this.appearance = res;
-                if (!this.appearance.navBackground)
-                    this.appearance.navBackground = this.defaultHeaderColor;
-                if (!this.appearance.navTextColor)
-                    this.appearance.navTextColor = this.defaultTextColor;
-                if (!this.appearance.buttonColor)
-                    this.appearance.buttonColor = this.defaultButtonColor;
-                if (!this.appearance.buttonTextColor)
-                    this.appearance.buttonTextColor = this.defaultButtonTextColor;
-                if (!this.appearance.buttonHighlightedColor)
-                    this.appearance.buttonHighlightedColor = this.defaultButtonHighlightedColor;
-                if (!this.appearance.leftsideMenuColor)
-                    this.appearance.leftsideMenuColor = this.defaultLeftSideMenuColor;
-                if (!this.appearance.fontName)
-                    this.appearance.fontName = this.defaultFontName;
-                if (!this.appearance.tabularFont)
-                    this.appearance.tabularFont = this.defaultTabularFontName;
+                this.colorSettings = res;
 
-                if (!this.appearance.borderRadius)
-                    this.appearance.borderRadius = this.defaultBorderRadius;
-
+                this.initDefaultValues();
                 this.changeDetection.detectChanges();
             }
         );
 
-        let root = this.getRootComponent();
         DomHelper.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
             + this.fontService.supportedGoogleFonts.concat(this.fontService.supportedTabularGoogleFonts).join('|')
         );
@@ -120,85 +110,151 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         );
     }
 
+    initDefaultValues() {
+        this.applyOrClearAppearanceDefaults(this.appearance, false);
+        if (this.hasPortalFeature) {
+            this.applyOrClearAppearanceDefaults(this.appearance.portalSettings, false);
+        }
+    }
+
+    applyOrClearAppearanceDefaults(settings: AppearanceBaseSettingsDto, isClear: boolean) {
+        const method = isClear ? this.clearDefault : this.setDefault;
+
+        method(settings.navBackground, settings, 'navBackground', this.defaultHeaderColor);
+        method(settings.navTextColor, settings, 'navTextColor', this.defaultTextColor);
+        method(settings.buttonColor, settings, 'buttonColor', this.defaultButtonColor);
+        method(settings.buttonTextColor, settings, 'buttonTextColor', this.defaultButtonTextColor);
+        method(settings.buttonHighlightedColor, settings, 'buttonHighlightedColor', this.defaultButtonHighlightedColor);
+        method(settings.leftsideMenuColor, settings, 'leftsideMenuColor', this.defaultLeftSideMenuColor);
+        method(settings.fontName, settings, 'fontName', this.defaultFontName);
+        method(settings.tabularFont, settings, 'tabularFont', this.defaultTabularFontName);
+        method(settings.borderRadius, settings, 'borderRadius', this.defaultBorderRadius);
+    }
+
+    setDefault(property, target, key, defaultValue) {
+        if (!property) {
+            target[key] = defaultValue;
+        }
+    }
+
+    clearDefault(property, target, key, defaultValue) {
+        if (property == defaultValue) {
+            target[key] = null;
+        }
+    }
+
+    toggleColorSetting(isPortalSelected) {
+        this.isPortalSelected = isPortalSelected;
+        this.colorSettings = this.isPortalSelected ? this.appearance.portalSettings : this.appearance;
+        this.changeDetection.detectChanges();
+    }
+
     getSaveObs(): Observable<any> {
-        if (this.appearance.navBackground == this.defaultHeaderColor)
-            this.appearance.navBackground = null;
-        if (this.appearance.navTextColor == this.defaultTextColor)
-            this.appearance.navTextColor = null;
-        if (this.appearance.buttonColor == this.defaultButtonColor)
-            this.appearance.buttonColor = null;
-        if (this.appearance.buttonTextColor == this.defaultButtonTextColor)
-            this.appearance.buttonTextColor = null;
-        if (this.appearance.buttonHighlightedColor == this.defaultButtonHighlightedColor)
-            this.appearance.buttonHighlightedColor = null;
-        if (this.appearance.leftsideMenuColor == this.defaultLeftSideMenuColor)
-            this.appearance.leftsideMenuColor = null;
-        if (this.appearance.fontName == this.defaultFontName)
-            this.appearance.fontName = null;
-        if (this.appearance.tabularFont == this.defaultTabularFontName)
-            this.appearance.tabularFont = null;
-        if (this.appearance.borderRadius == this.defaultBorderRadius)
-            this.appearance.borderRadius = null;
+        this.applyOrClearAppearanceDefaults(this.appearance, true);
+        if (this.hasPortalFeature) {
+            this.applyOrClearAppearanceDefaults(this.appearance.portalSettings, true);
+        } else {
+            this.appearance.portalSettings = null;
+        }
 
         if (this.getNavPosition() != this.navPosition)
             this.appearance.navPosition = this.navPosition;
 
         return forkJoin(
-            this.someColorChanged ?
-                this.settingsProxy.updateAppearanceSettings(this.appearance) : of(null),
+            this.settingsProxy.updateAppearanceSettings(this.appearance),
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
-                    this.tenant.logoId = res.result && res.result.id;
+                    this.tenant.logoId = res.result.id;
                     this.changeDetection.detectChanges();
                 }
             })),
             this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
             this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
-            this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))),
-            this.signUpPagesEnabled ?
-                this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
-            this.faviconsUploader.uploadFile().pipe(tap((res) => {
-                if (res && res.result && res.result.faviconBaseUrl && res.result.favicons && res.result.favicons.length) {
-                    this.tenant.tenantCustomizations = <any>{ ...this.tenant.tenantCustomizations, ...res.result };
-                    this.faviconsService.updateFavicons(this.tenant.tenantCustomizations.favicons, this.tenant.tenantCustomizations.faviconBaseUrl);
+            this.hasPortalFeature ? this.portalLogoUploader.uploadFile().pipe(tap((res: any) => {
+                if (res.result && res.result.id) {
+                    this.tenant.portalLogoId = res.result.id;
                     this.changeDetection.detectChanges();
                 }
-            }))
+            })) : of(false),
+            this.hasPortalFeature ? this.portalFaviconsUploader.uploadFile().pipe(tap((res: any) => this.handleFaviconsUpload(true, res))) : of(false),
+            this.hasPortalFeature ? this.portalLoginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.PortalLogin, res))) : of(false),
+            this.hasPortalFeature ? this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))) : of(false),
+            this.signUpPagesEnabled ?
+                this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
+            this.faviconsUploader.uploadFile().pipe(tap((res) => this.handleFaviconsUpload(false, res)))
         );
     }
 
     afterSave() {
         if (this.someCssChanged || this.someColorChanged)
             this.message.info(this.l('ReloadPageStylesMessage')).then(() => window.location.reload());
-
-        if (this.getNavPosition() != this.navPosition) {
+        else if (this.getNavPosition() != this.navPosition) {
             this.message.info(this.l('SettingsChangedRefreshPageNotification', this.l('NavigationMenuPosition'))).done(function () {
                 window.location.reload();
             });
+        }
+        else {
+            this.initDefaultValues();
+            this.changeDetection.detectChanges();
         }
     }
 
     handleCssUpload(cssType: CustomCssType, res: any) {
         if (res.result && res.result.id) {
-            this.someCssChanged = true;
+            this.someCssChanged = cssType != CustomCssType.PortalLogin && cssType != CustomCssType.Portal;
             this.setCustomCssTenantProperty(cssType, res.result.id);
             this.changeDetection.detectChanges();
         }
     }
 
-    clearLogo(): void {
-        this.tenantCustomizationService.clearLogo().subscribe(() => {
-            this.tenant.logoFileType = null;
-            this.tenant.logoId = null;
+    handleFaviconsUpload(portalFavicons: boolean, res: any) {
+        if (!res || !res.result)
+            return;
+
+        let result: TenantCustomizationInfoDto = res.result;
+        let updateUI = (portalFavicons && result.portalFaviconBaseUrl && result.portalFavicons && result.portalFavicons.length) ||
+            (!portalFavicons && result.faviconBaseUrl && result.favicons && result.favicons.length);
+
+        if (!updateUI)
+            return;
+
+        if (portalFavicons) {
+            this.tenant.tenantCustomizations.portalFaviconBaseUrl = result.portalFaviconBaseUrl;
+            this.tenant.tenantCustomizations.portalFavicons = result.portalFavicons;
+        } else {
+            this.tenant.tenantCustomizations.faviconBaseUrl = result.faviconBaseUrl;
+            this.tenant.tenantCustomizations.favicons = result.favicons;
+            this.faviconsService.updateFavicons(this.tenant.tenantCustomizations.favicons, this.tenant.tenantCustomizations.faviconBaseUrl);
+        }
+        
+        this.changeDetection.detectChanges();
+
+    }
+
+    clearLogo(portalLogo = false): void {
+        this.tenantCustomizationService.clearLogo(portalLogo).subscribe(() => {
+            if (portalLogo) {
+                this.tenant.portalLogoFileType = null;
+                this.tenant.portalLogoId = null;
+            } else {
+                this.tenant.logoFileType = null;
+                this.tenant.logoId = null;
+            }
             this.notify.info(this.l('ClearedSuccessfully'));
             this.changeDetection.detectChanges();
         });
     }
 
-    clearFavicons(): void {
-        this.tenantCustomizationService.clearFavicons().subscribe(() => {
-            this.faviconsService.resetFavicons();
-            this.tenant.tenantCustomizations.favicons = [];
+    clearFavicons(portalFavicons = false): void {
+        this.tenantCustomizationService.clearFavicons(portalFavicons).subscribe(() => {
+            if (portalFavicons) {
+                this.tenant.tenantCustomizations.portalFavicons = [];
+            }
+            else {
+                this.faviconsService.resetFavicons();
+                this.tenant.tenantCustomizations.favicons = [];
+            }
+
             this.notify.info(this.l('ClearedSuccessfully'));
             this.changeDetection.detectChanges();
         });
@@ -219,6 +275,9 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                 break;
             case CustomCssType.Login:
                 this.tenant.loginCustomCssId = value;
+                break;
+            case CustomCssType.PortalLogin:
+                this.tenant.portalLoginCustomCssId = value;
                 break;
             case CustomCssType.Portal:
                 this.tenant.portalCustomCssId = value;
@@ -243,12 +302,12 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     onCustomRadiusChange(event) {
-        this.appearance.borderRadius = '' + event.component.option('value');
+        this.colorSettings.borderRadius = '' + event.component.option('value');
         this.changeDetection.detectChanges();
     }
 
     onColorValueChanged(event, defaultColor) {
-        this.someColorChanged = true;
+        this.someColorChanged = event.value != defaultColor && !this.isPortalSelected;
         if (!event.value)
             event.component.option('value', defaultColor);
     }
