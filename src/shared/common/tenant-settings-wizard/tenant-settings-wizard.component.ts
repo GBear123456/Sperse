@@ -176,7 +176,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             },
             {
                 name: 'appearance',
-                text: this.ls.l('Appearance'),
+                text: this.ls.l('Platform') + ' ' + this.ls.l('Appearance'),
                 getComponent: () => this.appearanceComponent,
                 saved: false,
                 visible: !this.appService.isHostTenant && this.hasCustomizationsFeture

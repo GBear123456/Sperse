@@ -45,7 +45,6 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     @ViewChild('logoUploader') logoUploader: UploaderComponent;
     @ViewChild('cssUploader') cssUploader: UploaderComponent;
     @ViewChild('loginCssUploader') loginCssUploader: UploaderComponent;
-    @ViewChild('portalCssUploader') portalCssUploader: UploaderComponent;
     @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
     @ViewChild('signUpCssUploader') signUpCssUploader: UploaderComponent;
 
@@ -91,7 +90,6 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             })),
             this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
             this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
-            this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))),
             this.signUpPagesEnabled ?
                 this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
             this.faviconsUploader.uploadFile().pipe(tap((res) => {
@@ -139,8 +137,8 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         }
     }
 
-    clearLogo(portalLogo = false): void {
-        this.tenantCustomizationService.clearLogo(portalLogo).subscribe(() => {
+    clearLogo(): void {
+        this.tenantCustomizationService.clearLogo(false).subscribe(() => {
             this.tenant.logoFileType = null;
             this.tenant.logoId = null;
             this.notify.info(this.ls.l('ClearedSuccessfully'));
@@ -148,8 +146,8 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         });
     }
 
-    clearFavicons(portalFavicons = false): void {
-        this.tenantCustomizationService.clearFavicons(portalFavicons).subscribe(() => {
+    clearFavicons(): void {
+        this.tenantCustomizationService.clearFavicons(false).subscribe(() => {
             this.faviconsService.resetFavicons();
             this.tenant.tenantCustomizations.favicons = [];
             this.notify.info(this.ls.l('ClearedSuccessfully'));
@@ -172,9 +170,6 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                 break;
             case CustomCssType.Login:
                 this.tenant.loginCustomCssId = value;
-                break;
-            case CustomCssType.Portal:
-                this.tenant.portalCustomCssId = value;
                 break;
             case CustomCssType.SignUp:
                 this.tenant.signUpCustomCssId = value;
