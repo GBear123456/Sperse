@@ -52,6 +52,7 @@ import { EmailTags } from '@app/crm/contacts/contacts.const';
 import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { SafeHtml } from '@angular/platform-browser';
 
 @Component({
     selector: 'email-template-dialog',
@@ -156,6 +157,12 @@ export class EmailTemplateDialogComponent implements OnInit {
     ];
 
 
+    filteredItems: any[] = [];
+    aiModels: any[] = [];
+    dataRecord = { modelId: null };
+
+    selectedItemId: string | null = null;
+
     constructor(
         private phonePipe: PhoneFormatPipe,
         private domSanitizer: DomSanitizer,
@@ -214,7 +221,79 @@ export class EmailTemplateDialogComponent implements OnInit {
             (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 544 : 498) + 'px';
 
         this.initDialogButtons();
+        this.aiModels = [
+            {
+              id: '1',
+              name: 'GPT-4o',
+              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
+              enabled: true,
+            },
+            {
+              id: '2',
+              name: 'GPT-4 Mini',
+              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
+              enabled: true,
+            },
+            {
+              id: '3',
+              name: 'GPT-4 Turbo',
+              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+              enabled: true,
+            },
+            {
+              id: '5',
+              name: 'GPT-4',
+              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
+              enabled: true,
+            },
+            {
+              id: '6',
+              name: 'Claude 3.5 Sonnet',
+              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+              enabled: false,
+            },
+            {
+              id: '7',
+              name: 'Claude 3 Opus',
+              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+              enabled: false,
+            },
+            {
+              id: '8',
+              name: 'Claude 3 Haiku',
+              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+              enabled: false,
+            },
+            {
+              id: '9',
+              name: 'Gemini 1.5 Pro',
+              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+              enabled: false,
+            },
+            {
+              id: '10',
+              name: 'Gemini 1.5 Flash',
+              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+              enabled: false,
+            },
+          ];
+          
+        this.filteredItems = [...this.aiModels];
         this.changeDetectorRef.detectChanges();
+    }
+
+    getSanitizedIcon(icon: string) {
+        return this.domSanitizer.bypassSecurityTrustHtml(icon);
+    }
+
+    filterItems(event: Event): void {
+        const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+        this.filteredItems = this.aiModels.filter((item) => item.name.toLowerCase().includes(searchTerm));
+    }
+
+    selectItem(item: any): void {
+        this.selectedItemId = item.id;
+        this.dataRecord.modelId = item.id;
     }
 
     initFromField() {
@@ -904,8 +983,9 @@ export class EmailTemplateDialogComponent implements OnInit {
     getAiItemText(data: any): string {
         return data.name;
     }
+
     onAiItemClick(event: any): void {
-      //  const selectedOption = event.itemData; 
+        //  const selectedOption = event.itemData; 
         this._aigService.getAIResponse(this.data.body).subscribe((result) => {
             this.data.body = result;
             this.updateDataLength();
@@ -923,4 +1003,109 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.aiTooltipVisible = false;
     }
 
+    //Ai Option 
+    showAIOption = false;
+    processing = false;
+    editorContent: string = `<p>Consectetur adipiscing elit, <strong>sed do eiusmod</strong> tempor incididunt ut labore et dolore.</p>
+<ul class="styled-list">
+    <li>
+        <strong>Customer Name and Business:</strong>
+        <div class="list-content">John Doe, <br> ABC Enterprises Inc.</div>
+    </li>
+    <li>
+        <strong>Purpose of the email:</strong>
+        <div class="list-content">Request for a product quotation and availability confirmation for upcoming projects.</div>
+    </li>
+    <li>
+        <strong>Prior communications:</strong>
+        <div class="list-content">Follow-up on the meeting held on October 5th regarding the new partnership opportunities.</div>
+    </li>
+    <li>
+        <strong>Tone of the email:</strong>
+        <div class="list-content">Professional, courteous, and concise with an emphasis on collaboration.</div>
+    </li>
+    <li>
+        <strong>Styling Preferences:</strong>
+        <div class="list-content">Use a formal business format with a clean, minimal design, and company branding colors.</div>
+    </li>
+    <li>
+        <strong>Specific details to include:</strong>
+        <div class="list-content">Deadline for the response, contact person details, and required specifications of the product.</div>
+    </li>
+</ul>
+<div class="email-instructions">
+    <span><strong>The email must include:</strong></span>
+    <ol>
+        <li class="list-content pb-2">A clear subject line indicating the purpose of the email</li>
+        <li class="list-content pb-2">A brief introduction and context for the communication</li>
+        <li class="list-content pb-2">A call to action with a specific deadline for the response</li>
+    </ol>
+    </div>`;
+
+    openAIOptionDiv() {
+        this.showAIOption = true;
+    }
+
+    closeAIOptionDiv() {
+        this.showAIOption = false;
+    }
+
+    onContentChange(event: any) {
+        debugger;
+        this.editorContent = event.target.innerHTML;
+        this.changeDetectorRef.detectChanges();
+        console.log(this.editorContent);
+    }
+
+    onPaste(event: ClipboardEvent): void {
+        event.preventDefault();
+        const pasteContent = event.clipboardData?.getData('text/plain');
+        document.execCommand('insertText', false, pasteContent);
+        this.editorContent = (event.target as HTMLElement).innerText;
+        this.changeDetectorRef.markForCheck();
+        console.log('Editor content after paste:', this.editorContent);
+    }
+
+    getChatGptResponse() {
+        this.processing = true;
+        const content = this.editorContent;
+        const apiKey = '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';
+        const headers = new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+        });
+
+        const body = JSON.stringify({
+            model: 'gpt-3.5-turbo',
+            messages: [
+                { role: 'system', content: 'You are an expert email marketer. Your task is to create compelling email content based on user input.' },
+                { role: 'user', content: content }
+            ],
+            max_tokens: 4096,
+            temperature: 0.5,  
+            top_p: 1   
+        });
+        const url = 'https://api.openai.com/v1/chat/completions';
+        fetch(url, { method: 'POST', headers: headers, body: body })
+            .then(response => response.json())
+            .then(data => {
+                console.log('ChatGPT Response:', data);
+                const gptResponse = data.choices[0].message.content;
+                var formatedHtml = this.formatEmailContent(gptResponse) as unknown as string;
+                this.data.body = formatedHtml;
+                this.changeDetectorRef.markForCheck();
+                this.processing = false;
+                console.log('Formatted Email:', this.data.body);
+            })
+            .catch(error => {
+                this.processing = false;
+                console.error('Error calling ChatGPT API:', error);
+            });
+    }
+
+    formatEmailContent(response: string): string {        
+        const formattedResponse = response.replace(/\n/g, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');  
+        const updateHtmlRes = formattedResponse.replace(/^```html/, '').replace(/^```/, '').replace(/```$/, '');   
+        return updateHtmlRes.toString().replace('SafeValue must use [property]=binding', '').replace(/<div[^>]*>(\s|&nbsp;)*<\/div>/g, ''); 
+      }
 }
