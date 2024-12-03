@@ -111,6 +111,43 @@
             min-height: calc(100vh - 120px);
             border-right: 3px solid #E5E8F3;
             padding-right: 20px;
+
+            ::ng-deep .portal-menu-items-list {
+                max-width: 600px;
+
+                .portal-menu-item {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+
+                    &:before {
+                        content: none;
+                    }
+
+                    .menu-item-code {
+                        width: 150px;
+                        font-weight: bold;
+                    }
+
+                    .custom-display-name {
+                        .dx-placeholder {
+                            font-style: italic;
+                            color: lightgray;
+                            font-size: 15px;
+                            font-weight: 500;
+                            letter-spacing: 0.3px;
+                        }
+                    }
+
+                    .menu-item-hide {
+                        margin-left: auto;
+                    }
+                }
+
+                .dx-sortable-dragging:after {
+                    content: none;
+                }
+            }
         }
 
         .right {

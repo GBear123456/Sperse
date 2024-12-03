@@ -93,15 +93,15 @@
             </uploader>
 
             <uploader #portalFaviconsUploader
-                  [showPlusSign]="false"
-                  [title]="l('Custom Portal favicons')"
-                  [documentId]="tenant.tenantCustomizations.portalFavicons?.length"
-                  [documentLink]="tenant.tenantCustomizations.portalFavicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?portalIcons=true' : undefined"
-                  [uploadInfoText]="l('UploadFavicons_Info')"
-                  [uploadButtonText]="l('FileUpload')"
-                  [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?portalIcons=true'"
-                  acceptFileExt=".zip"
-                  (onDocumentClear)="clearFavicons(true)">
+                      [showPlusSign]="false"
+                      [title]="l('Custom Portal favicons')"
+                      [documentId]="tenant.tenantCustomizations.portalFavicons?.length"
+                      [documentLink]="tenant.tenantCustomizations.portalFavicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?portalIcons=true' : undefined"
+                      [uploadInfoText]="l('UploadFavicons_Info')"
+                      [uploadButtonText]="l('FileUpload')"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?portalIcons=true'"
+                      acceptFileExt=".zip"
+                      (onDocumentClear)="clearFavicons(true)">
             </uploader>
 
             <uploader #portalLoginCssUploader
@@ -129,6 +129,31 @@
                       [maxFileSize]="maxCssFileSize"
                       (onDocumentClear)="clearCustomCss(CustomCssType.Portal)">
             </uploader>
+            <h2>{{l('Left Menu Panel Customization')}}</h2>
+            <dx-list class="portal-menu-items-list"
+                     keyExpr="item"
+                     [activeStateEnabled]="false"
+                     [focusStateEnabled]="false"
+                     [hoverStateEnabled]="false"
+                     [dataSource]="portalMenuItems"
+                     (onItemReordered)="onPortalMenuReordered($event)">
+                <div *dxTemplate="let item of 'item'" class="portal-menu-item">
+                    <div class="menu-item-code">{{item.code}}</div>
+                    <dx-text-box class="custom-display-name"
+                                 placeholder="Custom display name"
+                                 [(value)]="item.customTitle">
+                    </dx-text-box>
+                    <dx-check-box *ngIf="portalStaticItems.indexOf(item.code) < 0"
+                                  class="menu-item-hide"
+                                  [text]="l('Hide')"
+                                  [(value)]="item.hide">
+                    </dx-check-box>
+                </div>
+                <dxo-item-dragging group="tasks"
+                                   [data]="portalMenuItems"
+                                   [allowReordering]="true">
+                </dxo-item-dragging>
+            </dx-list>
         </div>
     </div>
     <div class="right">

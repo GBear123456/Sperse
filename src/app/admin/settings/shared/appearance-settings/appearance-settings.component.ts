@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
@@ -16,8 +15,8 @@ import {
     TenantLoginInfoDto,
     TenantSettingsServiceProxy,
     AppearanceSettingsEditDto,
-    AppearanceBaseSettingsDto,
-    TenantCustomizationInfoDto
+    TenantCustomizationInfoDto,
+    PortalAppearanceSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
@@ -27,6 +26,8 @@ import { SettingService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 import { DomHelper } from '@shared/helpers/DomHelper';
 import { AppFeatures } from '@shared/AppFeatures';
+import { PortalMenuItemConfig } from './portal/portal-menu-item';
+import { PortalMenuItemEnum } from './portal/portal-menu-item.enum';
 
 @Component({
     selector: 'appearance-settings',
@@ -70,7 +71,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     defaultBorderRadius: string = this.layoutService.defaultBorderRadius;
 
     appearance: AppearanceSettingsEditDto = new AppearanceSettingsEditDto();
-    colorSettings: AppearanceBaseSettingsDto = new AppearanceBaseSettingsDto();
+    colorSettings: AppearanceSettingsEditDto | PortalAppearanceSettingsEditDto = new AppearanceSettingsEditDto();
 
     navPosition = this.getNavPosition();
     navPositionOptions = Object.keys(NavPosition).map(item => {
@@ -81,6 +82,15 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     });
     fontFamilyList: string[] = this.fontService.getSupportedFontsList();
     tabularFontFamilyList: string[] = this.fontService.supportedTabularGoogleFonts;
+    portalMenuItems: PortalMenuItemConfig[] = [];
+    portalMenuFeatures = {
+        [PortalMenuItemEnum.Dashboard]: AppFeatures.PortalDashboard,
+        [PortalMenuItemEnum.ReferredLeads]: AppFeatures.PortalLeads,
+        [PortalMenuItemEnum.MyInvoices]: AppFeatures.PortalInvoices,
+        [PortalMenuItemEnum.MyReferralPortal]: AppFeatures.PortalReseller,
+        [PortalMenuItemEnum.CRMLogin]: AppFeatures.CRM
+    };
+    portalStaticItems = [PortalMenuItemEnum.MySubscriptions, PortalMenuItemEnum.CRMLogin];
 
     constructor(
         _injector: Injector,
@@ -98,6 +108,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                 this.colorSettings = res;
 
                 this.initDefaultValues();
+                this.initPortalMenuItems();
                 this.changeDetection.detectChanges();
             }
         );
@@ -117,7 +128,47 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         }
     }
 
-    applyOrClearAppearanceDefaults(settings: AppearanceBaseSettingsDto, isClear: boolean) {
+    initPortalMenuItems() {
+        if (!this.hasPortalFeature)
+            return;
+
+        let portalConfig: PortalMenuItemConfig[] = [];
+        let tenantConfigJson = this.appearance.portalSettings.menuCustomization;
+        if (tenantConfigJson)
+            portalConfig = JSON.parse(tenantConfigJson);
+
+        Object.keys(PortalMenuItemEnum).forEach(menuItem => {
+            let menuItemEnum = PortalMenuItemEnum[menuItem];
+            let currentItemIndex = portalConfig.findIndex(v => v.code == menuItemEnum);
+            let currentItemConfigured = currentItemIndex >= 0;
+
+            let requiredFeature = this.portalMenuFeatures[menuItem];
+            if (requiredFeature && !this.feature.isEnabled(requiredFeature)) {
+                if (currentItemConfigured)
+                    portalConfig.splice(currentItemIndex, 1);
+                return;
+            }
+
+            if (currentItemConfigured)
+                return;
+
+            portalConfig.push({
+                code: menuItemEnum,
+                customTitle: null,
+                hide: false
+            });
+        });
+
+        this.portalMenuItems = portalConfig;
+    }
+
+    isValid(): boolean {
+        console.log(this.portalMenuItems);
+        console.log(JSON.stringify(this.portalMenuItems));
+        return true;
+    }
+
+    applyOrClearAppearanceDefaults(settings: AppearanceSettingsEditDto | PortalAppearanceSettingsEditDto, isClear: boolean) {
         const method = isClear ? this.clearDefault : this.setDefault;
 
         method(settings.navBackground, settings, 'navBackground', this.defaultHeaderColor);
@@ -153,6 +204,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         this.applyOrClearAppearanceDefaults(this.appearance, true);
         if (this.hasPortalFeature) {
             this.applyOrClearAppearanceDefaults(this.appearance.portalSettings, true);
+            this.appearance.portalSettings.menuCustomization = JSON.stringify(this.portalMenuItems);
         } else {
             this.appearance.portalSettings = null;
         }
@@ -226,7 +278,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.tenant.tenantCustomizations.favicons = result.favicons;
             this.faviconsService.updateFavicons(this.tenant.tenantCustomizations.favicons, this.tenant.tenantCustomizations.faviconBaseUrl);
         }
-        
+
         this.changeDetection.detectChanges();
 
     }
@@ -310,5 +362,10 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         this.someColorChanged = event.value != defaultColor && !this.isPortalSelected;
         if (!event.value)
             event.component.option('value', defaultColor);
+    }
+
+    onPortalMenuReordered(event) {
+        this.portalMenuItems.splice(event.fromIndex, 1);
+        this.portalMenuItems.splice(event.toIndex, 0, event.itemData);
     }
 }
