@@ -162,12 +162,6 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         this.portalMenuItems = portalConfig;
     }
 
-    isValid(): boolean {
-        console.log(this.portalMenuItems);
-        console.log(JSON.stringify(this.portalMenuItems));
-        return true;
-    }
-
     applyOrClearAppearanceDefaults(settings: AppearanceSettingsEditDto | PortalAppearanceSettingsEditDto, isClear: boolean) {
         const method = isClear ? this.clearDefault : this.setDefault;
 
