@@ -41,7 +41,7 @@ import {
     EmailSettingsSource,
     EmailTemplateType,
     FileInfo,
-    Attachment, AIServiceProxy
+    Attachment
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -52,8 +52,7 @@ import { EmailTags } from '@app/crm/contacts/contacts.const';
 import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { SafeHtml } from '@angular/platform-browser';
-
+ 
 @Component({
     selector: 'email-template-dialog',
     templateUrl: 'email-template-dialog.component.html',
@@ -96,7 +95,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.permission.isGranted(AppPermissions.AdministrationHostSettings) :
             this.permission.isGranted(AppPermissions.AdministrationTenantSettings)
         );
-
+    
     buttons: IDialogButton[];
     _refresh: Subject<null> = new Subject<null>();
     refresh$: Observable<null> = this._refresh.asObservable();
@@ -162,7 +161,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     dataRecord = { modelId: null };
 
     selectedItemId: string | null = null;
-
+    bankCodeEnabled = this.features.isEnabled(AppFeatures.CRMBANKCode);
     constructor(
         private phonePipe: PhoneFormatPipe,
         private domSanitizer: DomSanitizer,
@@ -180,8 +179,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         public changeDetectorRef: ChangeDetectorRef,
         public appService: AppService,
         public dialog: MatDialog,
-        public ls: AppLocalizationService,
-        private _aigService: AIServiceProxy,
+        public ls: AppLocalizationService, 
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {
         if (!data.suggestionEmails)
@@ -223,61 +221,61 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.initDialogButtons();
         this.aiModels = [
             {
-              id: '1',
-              name: 'GPT-4o',
-              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
-              enabled: true,
+                id: '1',
+                name: 'GPT-4o',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
+                enabled: true,
             },
             {
-              id: '2',
-              name: 'GPT-4 Mini',
-              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
-              enabled: true,
+                id: '2',
+                name: 'GPT-4 Mini',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
+                enabled: true,
             },
             {
-              id: '3',
-              name: 'GPT-4 Turbo',
-              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
-              enabled: true,
+                id: '3',
+                name: 'GPT-4 Turbo',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                enabled: true,
             },
             {
-              id: '5',
-              name: 'GPT-4',
-              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
-              enabled: true,
+                id: '5',
+                name: 'GPT-4',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
+                enabled: true,
             },
             {
-              id: '6',
-              name: 'Claude 3.5 Sonnet',
-              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
-              enabled: false,
+                id: '6',
+                name: 'Claude 3.5 Sonnet',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                enabled: false,
             },
             {
-              id: '7',
-              name: 'Claude 3 Opus',
-              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
-              enabled: false,
+                id: '7',
+                name: 'Claude 3 Opus',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                enabled: false,
             },
             {
-              id: '8',
-              name: 'Claude 3 Haiku',
-              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
-              enabled: false,
+                id: '8',
+                name: 'Claude 3 Haiku',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                enabled: false,
             },
             {
-              id: '9',
-              name: 'Gemini 1.5 Pro',
-              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
-              enabled: false,
+                id: '9',
+                name: 'Gemini 1.5 Pro',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                enabled: false,
             },
             {
-              id: '10',
-              name: 'Gemini 1.5 Flash',
-              icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
-              enabled: false,
+                id: '10',
+                name: 'Gemini 1.5 Flash',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                enabled: false,
             },
-          ];
-          
+        ];
+
         this.filteredItems = [...this.aiModels];
         this.changeDetectorRef.detectChanges();
     }
@@ -985,21 +983,10 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onAiItemClick(event: any): void {
-        //  const selectedOption = event.itemData; 
-        this._aigService.getAIResponse(this.data.body).subscribe((result) => {
-            this.data.body = result;
-            this.updateDataLength();
-            this.changeDetectorRef.markForCheck();
-        });
-
-        // switch (selectedOption.name) {
-        //     case 'Fix Formatting Issues': 
-        //         break;
-        //     case 'Summarize Text': 
-        //         break; 
-        //     default:
-        //         console.log('implemented yet!');
-        // } 
+        // this._aigService.getAIResponse(this.data.body).subscribe((result) => {
+        //     this.data.body = result;
+        //     this.invalidate();
+        // });
         this.aiTooltipVisible = false;
     }
 
@@ -1051,10 +1038,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onContentChange(event: any) {
-        debugger;
         this.editorContent = event.target.innerHTML;
-        this.changeDetectorRef.detectChanges();
-        console.log(this.editorContent);
+        this.invalidate();
     }
 
     onPaste(event: ClipboardEvent): void {
@@ -1062,8 +1047,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         const pasteContent = event.clipboardData?.getData('text/plain');
         document.execCommand('insertText', false, pasteContent);
         this.editorContent = (event.target as HTMLElement).innerText;
-        this.changeDetectorRef.markForCheck();
-        console.log('Editor content after paste:', this.editorContent);
+        this.invalidate();
     }
 
     getChatGptResponse() {
@@ -1082,8 +1066,8 @@ export class EmailTemplateDialogComponent implements OnInit {
                 { role: 'user', content: content }
             ],
             max_tokens: 4096,
-            temperature: 0.5,  
-            top_p: 1   
+            temperature: 0.5,
+            top_p: 1
         });
         const url = 'https://api.openai.com/v1/chat/completions';
         fetch(url, { method: 'POST', headers: headers, body: body })
@@ -1093,9 +1077,8 @@ export class EmailTemplateDialogComponent implements OnInit {
                 const gptResponse = data.choices[0].message.content;
                 var formatedHtml = this.formatEmailContent(gptResponse) as unknown as string;
                 this.data.body = formatedHtml;
-                this.changeDetectorRef.markForCheck();
+                this.invalidate();
                 this.processing = false;
-                console.log('Formatted Email:', this.data.body);
             })
             .catch(error => {
                 this.processing = false;
@@ -1103,9 +1086,9 @@ export class EmailTemplateDialogComponent implements OnInit {
             });
     }
 
-    formatEmailContent(response: string): string {        
-        const formattedResponse = response.replace(/\n/g, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');  
-        const updateHtmlRes = formattedResponse.replace(/^```html/, '').replace(/^```/, '').replace(/```$/, '');   
-        return updateHtmlRes.toString().replace('SafeValue must use [property]=binding', '').replace(/<div[^>]*>(\s|&nbsp;)*<\/div>/g, ''); 
-      }
+    formatEmailContent(response: string): string {
+        const formattedResponse = response.replace(/\n/g, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        const updateHtmlRes = formattedResponse.replace(/^```html/, '').replace(/^```/, '').replace(/```$/, '');
+        return updateHtmlRes.toString().replace('SafeValue must use [property]=binding', '').replace(/<div[^>]*>(\s|&nbsp;)*<\/div>/g, '');
+    }
 }
