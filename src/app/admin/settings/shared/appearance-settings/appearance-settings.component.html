@@ -143,8 +143,7 @@
                                  placeholder="Custom display name"
                                  [(value)]="item.customTitle">
                     </dx-text-box>
-                    <dx-check-box *ngIf="portalStaticItems.indexOf(item.code) < 0"
-                                  class="menu-item-hide"
+                    <dx-check-box class="menu-item-hide"
                                   [text]="l('Hide')"
                                   [(value)]="item.hide">
                     </dx-check-box>

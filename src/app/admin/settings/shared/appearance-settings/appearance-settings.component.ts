@@ -90,7 +90,6 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         [PortalMenuItemEnum.MyReferralPortal]: AppFeatures.PortalReseller,
         [PortalMenuItemEnum.CRMLogin]: AppFeatures.CRM
     };
-    portalStaticItems = [PortalMenuItemEnum.MySubscriptions, PortalMenuItemEnum.CRMLogin];
 
     constructor(
         _injector: Injector,
