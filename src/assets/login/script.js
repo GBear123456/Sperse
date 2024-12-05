@@ -315,7 +315,7 @@
         createMetatag("og:url", location.origin);
         createMetatag("og:image", !tenant || !tenant.logoId ?
             window.location.origin + '/assets/common/images/app-logo-on-light.png' :
-            remoteServiceUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
+            remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId);
     }
 
     function checkSetLogoLink(logoImage) {

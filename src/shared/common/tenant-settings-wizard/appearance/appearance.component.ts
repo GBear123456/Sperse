@@ -17,8 +17,7 @@ import { tap } from 'rxjs/operators';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     TenantLoginInfoDto,
-    TenantCustomizationServiceProxy,
-    TenantCustomizationInfoDto,
+    TenantCustomizationServiceProxy,
     CustomCssType,
     LayoutType,
     NavPosition,
@@ -46,7 +45,6 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     @ViewChild('logoUploader') logoUploader: UploaderComponent;
     @ViewChild('cssUploader') cssUploader: UploaderComponent;
     @ViewChild('loginCssUploader') loginCssUploader: UploaderComponent;
-    @ViewChild('portalCssUploader') portalCssUploader: UploaderComponent;
     @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
     @ViewChild('signUpCssUploader') signUpCssUploader: UploaderComponent;
 
@@ -92,7 +90,6 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             })),
             this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
             this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
-            this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))),
             this.signUpPagesEnabled ?
                 this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
             this.faviconsUploader.uploadFile().pipe(tap((res) => {
@@ -119,8 +116,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                         fontName: this.settingService.get('App.Appearance.FontName'),
                         borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
                         welcomePageAppearance: this.welcomePageUri == AppConsts.defaultWelcomePageUri ? null : this.welcomePageUri,
-                        tabularFont: undefined,
-                        leftsideMenuColor: undefined
+                        tabularFont: this.settingService.get('App.Appearance.TabularFont'),
+                        leftsideMenuColor: this.settingService.get('App.Appearance.LeftsideMenuColor'),
+                        portalSettings: null
                     })
                 ).pipe(tap(() => {
                     this.onOptionChanged.emit(isWelcomePageChanged ? 'appearance' : 'navPosition');
@@ -140,7 +138,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     }
 
     clearLogo(): void {
-        this.tenantCustomizationService.clearLogo().subscribe(() => {
+        this.tenantCustomizationService.clearLogo(false).subscribe(() => {
             this.tenant.logoFileType = null;
             this.tenant.logoId = null;
             this.notify.info(this.ls.l('ClearedSuccessfully'));
@@ -149,7 +147,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     }
 
     clearFavicons(): void {
-        this.tenantCustomizationService.clearFavicons().subscribe(() => {
+        this.tenantCustomizationService.clearFavicons(false).subscribe(() => {
             this.faviconsService.resetFavicons();
             this.tenant.tenantCustomizations.favicons = [];
             this.notify.info(this.ls.l('ClearedSuccessfully'));
@@ -172,9 +170,6 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                 break;
             case CustomCssType.Login:
                 this.tenant.loginCustomCssId = value;
-                break;
-            case CustomCssType.Portal:
-                this.tenant.portalCustomCssId = value;
                 break;
             case CustomCssType.SignUp:
                 this.tenant.signUpCustomCssId = value;
