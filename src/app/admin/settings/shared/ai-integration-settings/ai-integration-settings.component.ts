@@ -61,7 +61,7 @@ export class AIIntegrationSettingsComponent extends SettingsComponentBase {
     }
 
     getOpenAIModels() {
-        this.aiService.getOpenAIModels()
+        this.aiService.getOpenAIModels(undefined)
             .subscribe(res => {
                 this.openAIModels = res;
                 this.changeDetection.detectChanges();
