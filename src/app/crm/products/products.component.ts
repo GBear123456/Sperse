@@ -327,9 +327,11 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     showShareDialog(event, product) {
+        let productLink = this.getProductPublicLink(product);
         const dialogData = {
             title: this.l('Product share link options'),
-            linkUrl: this.getProductPublicLink(product)
+            linkUrl: this.getProductPublicLink(product),
+            embedLinkUrl: productLink + '?embeddedCheckout=true'
         };
         this.dialog.open(ShareDialogComponent, {
             panelClass: '',

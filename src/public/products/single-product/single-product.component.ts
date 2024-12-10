@@ -41,6 +41,9 @@ import { PayPalComponent } from '@shared/common/paypal/paypal.component';
 import { ButtonType } from '@shared/common/paypal/button-type.enum';
 import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { getCurrencySymbol } from '@angular/common';
+import { DomHelper } from '../../../shared/helpers/DomHelper';
+
+declare const Stripe: any
 
 @Component({
     selector: 'single-product',
@@ -69,6 +72,9 @@ export class SingleProductComponent implements OnInit {
     tenantId: number;
     productPublicName: string;
     ref: string;
+    embeddedCheckout = false;
+    showCheckout = false;
+    stripeCheckoutObj;
 
     productInfo: PublicProductInfo;
     requestInfo: SubmitProductRequestInput = new SubmitProductRequestInput();
@@ -137,6 +143,7 @@ export class SingleProductComponent implements OnInit {
         if (!this.ref)
             this.ref = this.route.snapshot.queryParamMap.get('referralCode');
         this.optionId = Number(this.route.snapshot.queryParamMap.get('optionId'));
+        this.embeddedCheckout = Boolean(this.route.snapshot.queryParamMap.get('embeddedCheckout'));
 
         this.getProductInfo();
     }
@@ -246,8 +253,36 @@ export class SingleProductComponent implements OnInit {
                 finalize(() => abp.ui.clearBusy())
             )
             .subscribe(res => {
-                location.href = res.paymentData;
+                if (this.embeddedCheckout) {
+                    if (!window['Stripe']) {
+                        DomHelper.addScriptLink("https://js.stripe.com/v3/", 'text/javascript', () => {
+                            this.showStripeCheckout(res.paymentData);
+                        });
+                    } else {
+                        this.showStripeCheckout(res.paymentData);
+                    }
+                } else {
+                    location.href = res.paymentData;
+                }
             });
+    }
+
+    showStripeCheckout(clientSecret) {
+        let stripe = Stripe(this.productInfo.data.stripePublishableKey);
+        const fetchClientSecret = () => Promise.resolve(clientSecret);
+        stripe.initEmbeddedCheckout({
+            fetchClientSecret
+        }).then(checkout => {
+            this.stripeCheckoutObj = checkout;
+            checkout.mount('#stripe-checkout');
+            this.showCheckout = true;
+            this.changeDetector.detectChanges();
+        });
+    }
+
+    returnFromStripeCheckout() {
+        this.stripeCheckoutObj.destroy();
+        this.showCheckout = false;
     }
 
     submitFreeRequest() {
@@ -350,8 +385,13 @@ export class SingleProductComponent implements OnInit {
                 break;
         }
 
-        this.requestInfo.successUrl = `${AppConsts.appBaseUrl}/receipt/${this.tenantId}/{initialInvoiceXref}`;
-        this.requestInfo.cancelUrl = location.href;
+        if (this.embeddedCheckout) {
+            this.requestInfo.embeddedPayment = this.embeddedCheckout;
+            this.requestInfo.returnUrl = `${AppConsts.appBaseUrl}/receipt/${this.tenantId}/{initialInvoiceXref}`;
+        } else {
+            this.requestInfo.successUrl = `${AppConsts.appBaseUrl}/receipt/${this.tenantId}/{initialInvoiceXref}`;
+            this.requestInfo.cancelUrl = location.href;
+        }
 
         return this.publicProductService.submitProductRequest(this.requestInfo).pipe(
             tap(v => { this.initialInvoiceXref = v.initialInvoicePublicId })

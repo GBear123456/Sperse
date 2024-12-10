@@ -35,7 +35,7 @@ export class ShareDialogComponent {
     }
 
     getFrame() {
-        return '<iframe src="' + this.data.linkUrl + '" scrolling="yes" frameborder="0" marginheight="0" marginwidth="0" style="width: 100%; height: 100%;"></iframe>';
+        return '<iframe src="' + (this.data.embedLinkUrl || this.data.linkUrl) + '" scrolling="yes" frameborder="0" marginheight="0" marginwidth="0" style="width: 100%; height: 100%;"></iframe>';
     }
 
     getButton() {
