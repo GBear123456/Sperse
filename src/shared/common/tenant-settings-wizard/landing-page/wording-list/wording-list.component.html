@@ -21,7 +21,7 @@
         <dx-text-area height="155px"
                       [placeholder]="ls.l('EditValuePlaceholder')"
                       [(value)]="data.text"
-                      [maxLength]="4096">
+                      [maxLength]="50000">
             <dx-validator>
                 <dxi-validation-rule type="required"
                                      [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
