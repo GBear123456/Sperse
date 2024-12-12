@@ -363,12 +363,25 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         this.domainIsValid = this.model && this.model.domainName &&
             event.component.option('isValid');
 
-        if (this.domainIsValid && (this.model.domainName.includes('http') || this.model.domainName.includes('/')))
-            this.model.domainName = this.model.domainName.replace(
-                /^([Hh][Tt][Tt][Pp][Ss]?:\/\/)?/g, ''
-            ).split('/')[0].trim();
+        if (this.domainIsValid && (this.model.domainName.includes('http') || this.model.domainName.includes('/'))) {
+            setTimeout(() => {
+                this.model.domainName = this.model.domainName.replace(
+                    /^([Hh][Tt][Tt][Pp][Ss]?:\/\/)?/g, ''
+                ).split('/')[0].trim();
+                this.changeDetection.detectChanges();
+            });
+        }
+    }
 
-        this.changeDetection.detectChanges();
+    onLaningPageDomainChanged(event) {
+        if (event.component.option('isValid') && (event.value.includes('http') || event.value.includes('/'))) {
+            setTimeout(() => {
+                event.component.option('value', event.value.replace(
+                    /^([Hh][Tt][Tt][Pp][Ss]?:\/\/)?/g, ''
+                ).split('/')[0].trim());
+                this.changeDetection.detectChanges();
+            });
+        }
     }
 
     onSelectedPortalTypeChanged(event) {
