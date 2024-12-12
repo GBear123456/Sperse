@@ -94,6 +94,20 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         });
     }
 
+    delete(setting: StripeSettingsDto) {
+        this.message.confirm(`'${setting.displayName}' will be deleted.`, null, (isConfirmed) => {
+            if (isConfirmed) {
+                this.startLoading();
+                this.tenantPaymentSettingsService.deleteStripeAccount(setting.id).pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe(() => {
+                    this.notify.info(this.l('SuccessfullyDeleted'));
+                    this.loadSettings();
+                });
+            }
+        });
+    }
+
     createConnectedAccount(setting: StripeSettingsDto) {
         if (this.isHost || !this.stripePaymentSettings.isHostAccountEnabled || (setting && setting.isConnectedAccountSetUpCompleted))
             return;

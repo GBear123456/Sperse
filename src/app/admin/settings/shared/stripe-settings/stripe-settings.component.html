@@ -23,6 +23,7 @@
                         </div>
                         <div class="actions">
                             <i *ngIf="!data.isActive" class="fa fa-check" title="Set this setting as active" (click)="setIsActive(data)"></i>
+                            <i class="fa fa-times" title="Delete connected account" (click)="delete(data)"></i>
                         </div>
                     </div>
                 </div>
