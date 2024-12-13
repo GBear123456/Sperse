@@ -7,7 +7,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    TenantSettingsServiceProxy, TrackingToolsSettingsEditDto
+    TenantSettingsServiceProxy, TrackingToolsSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 
@@ -19,7 +19,7 @@ import { SettingsComponentBase } from './../settings-base.component';
     providers: [TenantSettingsServiceProxy]
 })
 export class TrackingToolsSettingsComponent extends SettingsComponentBase {
-    trackingToolsSettings: TrackingToolsSettingsEditDto = new TrackingToolsSettingsEditDto();
+    trackingToolsSettings: TrackingToolsSettingsDto = new TrackingToolsSettingsDto();
 
     scrollableAreaHeight = `calc(100vh - ${this.layoutService.showTopBar ? 260 : 185}px`;
 
