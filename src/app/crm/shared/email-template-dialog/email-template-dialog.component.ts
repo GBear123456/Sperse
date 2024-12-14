@@ -52,7 +52,7 @@ import { EmailTags } from '@app/crm/contacts/contacts.const';
 import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
- 
+
 @Component({
     selector: 'email-template-dialog',
     templateUrl: 'email-template-dialog.component.html',
@@ -66,7 +66,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
     @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     @ViewChild('scrollView') scrollView: DxScrollViewComponent;
-    @ViewChild('tagsButton') tagsButton: ElementRef;
+    //@ViewChild('tagsButton') tagsButton: ElementRef;
     @ViewChild('aiButton') aiButton: ElementRef;
 
     ckEditor: any;
@@ -95,7 +95,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.permission.isGranted(AppPermissions.AdministrationHostSettings) :
             this.permission.isGranted(AppPermissions.AdministrationTenantSettings)
         );
-    
+
     buttons: IDialogButton[];
     _refresh: Subject<null> = new Subject<null>();
     refresh$: Observable<null> = this._refresh.asObservable();
@@ -110,10 +110,11 @@ export class EmailTemplateDialogComponent implements OnInit {
     emailRegEx = AppConsts.regexPatterns.email;
 
     storeAttachmentsToDocumentsCacheKey = 'StoreAttachmentsToDocuments';
-
+ 
     ckConfig: any = {
-        enterMode: 3, /*CKEDITOR.ENTER_DIV*/
+        enterMode: 3, /* CKEDITOR.ENTER_DIV */
         pasteFilter: null,
+        toolbarLocation: 'bottom',
         allowedContent: true,
         toolbarCanCollapse: true,
         startupShowBorders: false,
@@ -121,15 +122,14 @@ export class EmailTemplateDialogComponent implements OnInit {
         stylesSet: [],
         contentsCss: [],
         toolbar: [
-            { name: 'document', items: ['Source', '-', 'Preview', 'Templates', '-', 'ExportPdf', 'Print'] },
+            { name: 'document', items: ['Templates', '-', 'ExportPdf', 'Print'] }, // Removed 'Preview'
             { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo'] },
             { name: 'editing', items: ['Find', 'Replace', '-', 'Scayt'] },
-            { name: 'forms', items: ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'] },
             '/',
             { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strikethrough', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat'] },
-            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language'] },
-            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'Mathjax'] },
+            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
             '/',
+            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'Mathjax'] },
             { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
             { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
             { name: 'colors', items: ['TextColor', 'BGColor'] },
@@ -137,8 +137,9 @@ export class EmailTemplateDialogComponent implements OnInit {
         ],
         removePlugins: 'elementspath',
         extraPlugins: 'preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting',
-        skin: 'moono-lisa' //kama,moono,moono-lisa
+        skin: 'moono-lisa' // kama, moono, moono-lisa
     };
+    
 
     saveButtonOptions = [
         { text: this.ls.l('Save'), selected: false },
@@ -162,6 +163,12 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     selectedItemId: string | null = null;
     bankCodeEnabled = this.features.isEnabled(AppFeatures.CRMBANKCode);
+
+    showNewEmailTab = true;
+    showHtmlEditor = false;
+    showTemplate = false;
+    selectedTab: string = 'new-email';
+
     constructor(
         private phonePipe: PhoneFormatPipe,
         private domSanitizer: DomSanitizer,
@@ -179,26 +186,23 @@ export class EmailTemplateDialogComponent implements OnInit {
         public changeDetectorRef: ChangeDetectorRef,
         public appService: AppService,
         public dialog: MatDialog,
-        public ls: AppLocalizationService, 
+        public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
-    ) {
+    ) { 
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
         data.saveAttachmentsToDocuments = this.getAttachmentsToDocumentsCache();
     }
-
-    ngOnInit() {
+  
+    ngOnInit() {      
         if (this.templateEditMode && this.data.templateId)
             this.loadTemplateById(this.data.templateId);
         else {
             if (!this.data.tags && (this.data.contactId || this.data.contact)) {
                 this.startLoading();
-                this.communicationProxy.getEmailData(
-                    undefined, this.data.contactId || this.data.contact.id
-                ).pipe(
-                    finalize(() => this.finishLoading())
-                ).subscribe((res: GetEmailDataOutput) => {
+                this.communicationProxy.getEmailData(undefined, this.data.contactId || this.data.contact.id)
+                .pipe(finalize(() => this.finishLoading())).subscribe((res: GetEmailDataOutput) => {
                     this.data.tags = res.tags;
                     this.initFromField();
                 });
@@ -215,63 +219,64 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.showCC = Boolean(this.data.cc && this.data.cc.length);
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
 
+       
         this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
-            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 544 : 498) + 'px';
+            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 544 : 400) + 'px';
 
         this.initDialogButtons();
         this.aiModels = [
             {
                 id: '1',
                 name: 'GPT-4o',
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
+                icon: `openai.png`,
                 enabled: true,
             },
             {
                 id: '2',
                 name: 'GPT-4 Mini',
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
+                icon: `openai.png`,
                 enabled: true,
             },
             {
                 id: '3',
                 name: 'GPT-4 Turbo',
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                icon: `openai.png`,
                 enabled: true,
             },
             {
                 id: '5',
                 name: 'GPT-4',
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
+                icon: `openai.png`,
                 enabled: true,
             },
             {
                 id: '6',
                 name: 'Claude 3.5 Sonnet',
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                icon: `claude.png`,
                 enabled: false,
             },
             {
                 id: '7',
                 name: 'Claude 3 Opus',
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                icon: `claude.png`,
                 enabled: false,
             },
             {
                 id: '8',
                 name: 'Claude 3 Haiku',
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                icon: `claude.png`,
                 enabled: false,
             },
             {
                 id: '9',
                 name: 'Gemini 1.5 Pro',
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                icon: `gemini.png`,
                 enabled: false,
             },
             {
                 id: '10',
                 name: 'Gemini 1.5 Flash',
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 8-3.59 8-8 8z"/></svg>`,
+                icon: `gemini.png`,
                 enabled: false,
             },
         ];
@@ -351,26 +356,37 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     initDialogButtons() {
         this.buttons = [
+            // {
+            //     id: 'cancelTemplateOptions',
+            //     title: this.ls.l('Cancel'),
+            //     class: 'default',
+            //     action: () => this.close()
+            // },
             {
-                id: 'cancelTemplateOptions',
-                title: this.ls.l('Cancel'),
-                class: 'default',
-                action: () => this.close()
+                id: 'genrateAIOptions',
+                title: this.ls.l('Generate'),
+                class: 'ai-genrate-btn',
+              //  action: () => this.close()
             },
             {
                 id: 'saveTemplateOptions',
-                title: this.data.saveTitle,
+                title: "Send Email Message",// this.data.saveTitle,
                 disabled: this.templateEditMode && this.isManageUnallowed,
                 class: 'primary',
                 action: this.save.bind(this),
                 contextMenu: {
                     hidden: this.data.hideContextMenu,
                     items: this.saveButtonOptions,
-                    cacheKey: this.cacheHelper.getCacheKey(
-                        'save_option_active_index', 'EmailTemplateDialog'),
+                    cacheKey: this.cacheHelper.getCacheKey('save_option_active_index', 'EmailTemplateDialog'),
                     defaultIndex: 0
                 },
-            }
+            },
+            // {
+            //     id: 'refreshOptions',
+            //     title: '',
+            //     class: 'refresh-button',
+            //     action: () => this.close()
+            // },
         ];
     }
 
@@ -715,12 +731,12 @@ export class EmailTemplateDialogComponent implements OnInit {
     onCKReady(event) {
         this.ckEditor = event.editor;
         setTimeout(() => {
-            this.ckEditor.container.find('.cke_toolbox').$[0].append(
-                this.tagsButton.nativeElement);
-            this.tagsButton.nativeElement.style.display = 'inline';
+            // this.ckEditor.container.find('.cke_toolbox').$[0].append(
+            //     this.tagsButton.nativeElement);
+            // this.tagsButton.nativeElement.style.display = 'inline';
             // Append the aiButton right after the tagsButton
-            this.tagsButton.nativeElement.after(this.aiButton.nativeElement);
-            this.invalidate();
+            //this.tagsButton.nativeElement.after(this.aiButton.nativeElement);
+           // this.invalidate();
         });
     }
 
@@ -1091,4 +1107,24 @@ export class EmailTemplateDialogComponent implements OnInit {
         const updateHtmlRes = formattedResponse.replace(/^```html/, '').replace(/^```/, '').replace(/```$/, '');
         return updateHtmlRes.toString().replace('SafeValue must use [property]=binding', '').replace(/<div[^>]*>(\s|&nbsp;)*<\/div>/g, '');
     }
+
+    showTabs(tabName: string) {
+        this.selectedTab = tabName;
+        this.showNewEmailTab = false;
+        this.showHtmlEditor = false;
+        this.showTemplate = false;
+        if (tabName == 'new-email') {
+            this.showNewEmailTab = true;
+        }
+        else if (tabName == 'html-editor') {
+            this.showHtmlEditor = true;
+        }
+        else if (tabName == 'template') {
+            this.showTemplate = true;
+        }
+    }
+    updateEditor(): void {
+        // Triggered when textarea content changes
+    }
+
 }
