@@ -41,7 +41,7 @@
 
         #saveTemplateOptions {
             width: 180px;
-            //  height: 44px;
+            height: 44px;
             border-radius: 10px;
             background: #00CA6A;
             margin-right: 5%;
@@ -67,7 +67,7 @@
         }
 
         #genrateAIOptions {
-            //   height: 44px !important;
+            height: 44px !important;
             width: 122px !important;
             display: inline-block;
             border: 2px solid;
@@ -78,39 +78,46 @@
             text-align: center;
             transition: all 0.3s ease;
             font-family: Plus Jakarta Sans;
-            font-size: 13px;
+           // font-size: 13px;
             font-weight: 600;
             line-height: 27px;
-            text-align: left;
+           // text-align: left;
             text-underline-position: from-font;
             text-decoration-skip-ink: none;
+            border: linear-gradient(93.5deg, #118EFF -16.25%, #8F7DF3 40.92%, #EA3A8A 106.71%);
+            padding-top: 5px;
 
             span {
-                text-decoration: none;
-                background: linear-gradient(90deg, #ff7eb3, #8b62ff);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
+                text-decoration: none; 
                 font-weight: bold;
                 font-size: 13px;
                 align-items: center;
                 gap: 5px;
-                line-height: 0 !important;
-
+                line-height: normal;  
+                color: #E83C8E;
+                display: inline-flex; 
+                align-items: center;  
+            
                 &::before {
-                    content: '✨';
-                    font-size: 10px;
+                    content: '';
+                    display: inline-block;
+                    width: 15.27px;
+                    height: 18.37px;
+                    margin-right: 5px;
+                    background: url("../../../../assets/common/icons/AI.png") no-repeat center; 
+                    vertical-align: middle;  
                 }
             }
 
-            &:hover {
-                background: linear-gradient(90deg, #ff7eb3, #8b62ff);
-                border-color: transparent;
-                color: #fff;
+            // &:hover {
+            //     background: linear-gradient(90deg, #ff7eb3, #8b62ff);
+            //     border-color: transparent;
+            //     color: #fff;
 
-                span {
-                    -webkit-text-fill-color: #fff;
-                }
-            }
+            //     span {
+            //         -webkit-text-fill-color: #fff;
+            //     }
+            // }
         }
 
         #refreshOptions {
@@ -176,14 +183,15 @@
     } 
 
     .tags-button {
-
         a {
-            display: inline-block;
+            //display: inline-block;
             font-size: 12px;
-            padding: 7px 10px 3px 5px;
-            border-radius: 2px;
-            line-height: 12px;
-            background: #e6e6e6;
+            padding: 6px 12px 6px 8px;
+            border-radius: 8px;
+            line-height: 12px; 
+            opacity: 50%;
+            background: #DCE4ED;
+            color: #08295B;
 
             &:hover {
                 background: #e6e6e6;
@@ -201,6 +209,7 @@
                 border-left: 3px solid transparent;
                 border-right: 3px solid transparent;
                 border-top: 3px solid #484848;
+                color: #08295B;
             }
         }
     }
@@ -683,12 +692,12 @@
 
         ::ng-deep .attachment-div {
             border: 1px solid #E5EAF0;
-            // margin: 15px;
             background: #FFFFFF;
             border-radius: 15px;
             display: flex;
             width: 100%;
-            height: 48px;
+            //height: 48px;
+            margin-top: 5px;
 
             .attachment-field-area {
                 display: flex;
@@ -697,7 +706,7 @@
                 height: 50px;
                 padding: 5px 10px;
                 border-radius: 5px;
-                background-color: #f9f9f9;
+                //background-color: #f9f9f9;
                 width: 33.3%;
 
                 &:nth-child(2) {
@@ -1025,8 +1034,7 @@
 
         .tab {
             padding: 4px 15px;
-            font-size: 14px;
-            border: 1.3px solid #08295B;
+            font-size: 13px;         
             border: 1px solid #ECF3FA;
             cursor: pointer;
             text-align: center;
@@ -1037,6 +1045,7 @@
             border-bottom: none !important;
             height: 42px;
             border-radius: 10px 10px 0px 0px;
+            color: #08295B;
         }
 
         .tab svg {
@@ -1050,7 +1059,7 @@
         }
 
         .tab:hover {
-            background-color: #f0f0f0;
+            background-color: #ECF3FA;
         }
 
         .selected-tab {

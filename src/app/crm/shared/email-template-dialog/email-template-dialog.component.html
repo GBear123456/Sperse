@@ -21,7 +21,26 @@
                 </div>
             </div>
             <div class="right">
-                <div class="actions">
+                <div class="actions"> 
+                    <div style="display: flex; align-items: center;">  
+                        <span #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length">
+                            <a (click)="tagsTooltipVisible = true">Add a Tag</a>
+                        </span>
+                        <dx-tooltip [width]="250" 
+                                position="bottom" [(visible)]="tagsTooltipVisible"
+                            [target]="'.tags-button.id' + uniqId">
+                            <div *dxTemplate="let data of 'content'" class="tags-container">
+                                <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                    [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                    <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                        [ngClass]="{disabled: !templateEditMode && !getTagValue(data)}">
+                                        {{ getTagText(data) }}
+                                    </div>
+                                </dx-list>
+                            </div>
+                        </dx-tooltip>
+                    </div> 
                     <span class="tab new-email" (click)="showTabs('new-email')"
                         [class.selected-tab]="selectedTab === 'new-email'">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -269,7 +288,7 @@
 
                         </div>
 
-                        <div class="attachment-div" style="margin-top: 5px;">
+                        <div class="attachment-div">
                             <div class="attachment-field-area">
                                 <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)">
                                     <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
@@ -493,23 +512,4 @@
         </div> 
     </div>
 </modal-dialog>
-
- <!-- <div style="display: flex; align-items: center;"> -->
-        <!-- <span #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length"
-                        style="padding-left: 15px;">
-                        <a (click)="tagsTooltipVisible = true">Tags</a>
-                    </span>
-                    <dx-tooltip [width]="250" position="bottom" [(visible)]="tagsTooltipVisible"
-                        [target]="'.tags-button.id' + uniqId">
-                        <div *dxTemplate="let data of 'content'" class="tags-container">
-                            <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
-                            <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
-                                [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
-                                <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
-                                    [ngClass]="{disabled: !templateEditMode && !getTagValue(data)}">
-                                    {{ getTagText(data) }}
-                                </div>
-                            </dx-list>
-                        </div>
-                    </dx-tooltip> -->
-        <!-- </div> -->
+ 
