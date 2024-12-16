@@ -9,6 +9,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { NgxFileDropModule } from 'ngx-file-drop';
 
 /** Application imports */
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
@@ -38,7 +39,7 @@ import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.m
 import { DateTimeModule } from '@shared/common/pipes/datetime/datetime.module';
 import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
 import { UploaderComponent } from './uploader/uploader.component';
-import { NgxFileDropModule } from 'ngx-file-drop';
+import { TrackingScriptsComponent } from './tracking-scripts/tracking-scripts.component'
 
 @NgModule({
     declarations: [
@@ -55,7 +56,8 @@ import { NgxFileDropModule } from 'ngx-file-drop';
         ConditionsModalComponent,
         BulkProgressDialogComponent,
         DxDataGridDirective,
-        UploaderComponent
+        UploaderComponent,
+        TrackingScriptsComponent
     ],
     exports: [
         CalendarComponent,
@@ -73,7 +75,8 @@ import { NgxFileDropModule } from 'ngx-file-drop';
         NoDataModule,
         GhostListModule,
         DateTimePipe,
-        CountryPhoneNumberModule
+        CountryPhoneNumberModule,
+        TrackingScriptsComponent
     ],
     imports: [
         ngCommon.CommonModule,

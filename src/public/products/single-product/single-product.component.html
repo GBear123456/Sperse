@@ -346,3 +346,6 @@
         {{currentYear}} &copy; {{hostName}} Platform
     </div>
 </div>
+<app-tracking-scripts *ngIf="productInfo && productInfo.data"
+                      [config]="productInfo.data.trackingTools">
+</app-tracking-scripts>

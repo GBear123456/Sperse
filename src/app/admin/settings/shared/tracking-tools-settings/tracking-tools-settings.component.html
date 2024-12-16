@@ -1,0 +1,97 @@
+<h2>{{l('Tracking Tools')}} {{l('Settings')}}</h2>
+<dx-scroll-view [height]="scrollableAreaHeight">
+    <div class="container">
+        <div class="tracking-grid">
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/google-analytics-icon.svg"
+                                   logoAlt="Google Analytics 4 logo"
+                                   title="Activate Google Analytics 4"
+                                   placeholder="Paste in your GA4 Measurement ID"
+                                   [(trackingValue)]="trackingToolsSettings.googleAnalytics"
+                                   helpText="If you don't have a GA4 Measurement ID, you can create one in your"
+                                   helpLink="https://analytics.google.com"
+                                   helpLinkText="Google Analytics account"
+                                   description="The latest version of Google's web analytics platform, providing insights into user interactions across websites and apps.">
+            </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/google-tag-manager-icon.svg"
+                                   logoAlt="Google Tag Manager logo"
+                                   title="Activate Google Tag Manager"
+                                   placeholder="Paste in your GTM Container ID"
+                                   [(trackingValue)]="trackingToolsSettings.googleTagManager"
+                                   helpText="If you don't have a GTM Container ID, you can create one in your"
+                                   helpLink="https://tagmanager.google.com"
+                                   helpLinkText="Google Tag Manager account"
+                                   description="A tag management system that allows users to update measurement codes and related code fragments on their website or mobile app from a web-based user interface.">
+            </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/meta-icon.svg"
+                                   logoAlt="Meta logo"
+                                   title="Activate Meta Ads Pixel"
+                                   placeholder="Paste in your Meta Pixel ID"
+                                   [(trackingValue)]="trackingToolsSettings.metaPixelId"
+                                   helpText="If you don't have a Meta Pixel ID, you can create one in your"
+                                   helpLink="https://www.facebook.com/business/tools/meta-pixel"
+                                   helpLinkText="Meta Business Manager"
+                                   description="Meta Ads Manager is the platform for managing and analyzing Facebook and Instagram ad campaigns. The Meta Pixel is a piece of code that tracks visitor actions on a website, aiding in measuring ad effectiveness and audience retargeting.">
+            </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/tiktok-icon.svg"
+                                   logoAlt="TikTok logo"
+                                   title="Activate TikTok Pixel"
+                                   placeholder="Paste in your TikTok Pixel ID"
+                                   [(trackingValue)]="trackingToolsSettings.tikTokPixelId"
+                                   helpText="If you don't have a TikTok Pixel ID, you can create one in your"
+                                   helpLink="https://ads.tiktok.com"
+                                   helpLinkText="TikTok Ads Manager"
+                                   description="TikTok Analytics provides data on video performance and audience engagement. The TikTok Pixel is a code snippet that tracks user interactions from TikTok ads to a website, assisting in campaign performance measurement.">
+            </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/linkedin-icon.svg"
+                                   logoAlt="LinkedIn logo"
+                                   title="Activate LinkedIn Insight Tag"
+                                   placeholder="Paste in your LinkedIn Partner ID"
+                                   [(trackingValue)]="trackingToolsSettings.linkedInPartnerId"
+                                   helpText="If you don't have a LinkedIn Partner ID, you can create one in your"
+                                   helpLink="https://www.linkedin.com/campaignmanager"
+                                   helpLinkText="LinkedIn Campaign Manager"
+                                   description="A JavaScript code snippet that enables conversion tracking, retargeting, and analytics for LinkedIn ad campaigns.">
+            </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/x-icon.svg?height=40&width=40"
+                                   logoAlt="X (Twitter) logo"
+                                   title="Activate X (Twitter) Pixel"
+                                   placeholder="Paste in your X (Twitter) Pixel ID"
+                                   [(trackingValue)]="trackingToolsSettings.twitterPixelId"
+                                   helpText="If you don't have an X Pixel ID, you can create one in your"
+                                   helpLink="https://ads.twitter.com"
+                                   helpLinkText="X Ads Manager"
+                                   description="A tracking code that allows advertisers to monitor user actions after interacting with ads on X (formerly Twitter), facilitating conversion tracking and campaign optimization.">
+            </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/hubspot-icon.svg"
+                                   logoAlt="HubSpot logo"
+                                   title="Activate HubSpot Marketing"
+                                   placeholder="Paste in your HubSpot Tracking Code"
+                                   [(trackingValue)]="trackingToolsSettings.hubSpotTrackingCode"
+                                   helpText="If you don't have a HubSpot Tracking Code, you can find it in your"
+                                   helpLink="https://knowledge.hubspot.com"
+                                   helpLinkText="HubSpot account settings"
+                                   description="A comprehensive platform offering tools for lead generation, marketing automation, and analytics to enhance marketing performance.">
+            </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/mixpanel-icon.svg?height=40&width=40"
+                                   logoAlt="Mixpanel logo"
+                                   title="Activate Mixpanel"
+                                   placeholder="Paste in your Mixpanel Project Token"
+                                   [(trackingValue)]="trackingToolsSettings.mixpanelProjectToken"
+                                   helpText="If you don't have a Mixpanel Project Token, you can find it in your"
+                                   helpLink="https://mixpanel.com"
+                                   helpLinkText="Mixpanel project settings"
+                                   description="A user analytics platform focused on tracking user interactions with web and mobile applications to inform product and marketing decisions.">
+            </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/amplitude-icon.svg?height=40&width=40"
+                                   logoAlt="Amplitude logo"
+                                   title="Activate Amplitude"
+                                   placeholder="Paste in your Amplitude API Key"
+                                   [(trackingValue)]="trackingToolsSettings.amplitudeAPIKey"
+                                   helpText="If you don't have an Amplitude API Key, you can find it in your"
+                                   helpLink="https://amplitude.com"
+                                   helpLinkText="Amplitude project settings"
+                                   description="A product analytics tool that helps teams understand user behavior and optimize product experiences.">
+            </tracking-tool-section>
+        </div>
+    </div>
+</dx-scroll-view>
