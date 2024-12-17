@@ -16,14 +16,15 @@
     }
 
     ::ng-deep .mat-dialog-actions {
-        width: 30%;
+        width: 30%; 
 
         .mat-dialog-buttons {
             height: 44px !important;
             display: flex;
-            justify-content: space-between;
             width: 100%;
             margin-left: 3.7%;
+            display: flex;
+            justify-content: flex-end;
 
             .button-ai-generate-btn {
                 margin-left: 0;
@@ -34,17 +35,12 @@
             }
         }
 
-        #saveTemplateOptions,
-        #cancelTemplateOptions {
-            width: 140px;
-        }
-
         #saveTemplateOptions {
             width: 180px;
             height: 44px;
             border-radius: 10px;
             background: #00CA6A;
-            margin-right: 5%;
+            margin-right: 6.5%; 
         }
 
         #saveTemplateOptions span {
@@ -65,72 +61,8 @@
             height: 17px;
             background: url("../../../../assets/common/icons/send.svg") no-repeat center;
         }
-
-        #genrateAIOptions {
-            height: 44px !important;
-            width: 122px !important;
-            display: inline-block;
-            border: 2px solid;
-            border-image-slice: 1;
-            border-radius: 10px;
-            background-color: #fff;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-            font-family: Plus Jakarta Sans;
-           // font-size: 13px;
-            font-weight: 600;
-            line-height: 27px;
-           // text-align: left;
-            text-underline-position: from-font;
-            text-decoration-skip-ink: none;
-            border: linear-gradient(93.5deg, #118EFF -16.25%, #8F7DF3 40.92%, #EA3A8A 106.71%);
-            padding-top: 5px;
-
-            span {
-                text-decoration: none; 
-                font-weight: bold;
-                font-size: 13px;
-                align-items: center;
-                gap: 5px;
-                line-height: normal;  
-                color: #E83C8E;
-                display: inline-flex; 
-                align-items: center;  
-            
-                &::before {
-                    content: '';
-                    display: inline-block;
-                    width: 15.27px;
-                    height: 18.37px;
-                    margin-right: 5px;
-                    background: url("../../../../assets/common/icons/AI.png") no-repeat center; 
-                    vertical-align: middle;  
-                }
-            }
-
-            // &:hover {
-            //     background: linear-gradient(90deg, #ff7eb3, #8b62ff);
-            //     border-color: transparent;
-            //     color: #fff;
-
-            //     span {
-            //         -webkit-text-fill-color: #fff;
-            //     }
-            // }
-        }
-
-        #refreshOptions {
-            width: 44px;
-            height: 44px;
-            margin: 5px;
-            outline: none;
-            border: none;
-            cursor: pointer;
-            vertical-align: bottom;
-            background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
-        }
     }
+
 
     @media (max-width: 768px) {
         ::ng-deep .mat-dialog-actions {
@@ -180,7 +112,7 @@
                 width: 100%;
             }
         }
-    } 
+    }
 
     .tags-button {
         a {
@@ -188,10 +120,11 @@
             font-size: 12px;
             padding: 6px 12px 6px 8px;
             border-radius: 8px;
-            line-height: 12px; 
+            line-height: 12px;
             opacity: 50%;
             background: #DCE4ED;
             color: #08295B;
+            cursor: pointer;
 
             &:hover {
                 background: #e6e6e6;
@@ -218,7 +151,7 @@
         position: absolute;
         // bottom: -5px;
         right: 24px;
-    } 
+    }
 
     ::ng-deep ckeditor {
         border-bottom: none !important;
@@ -260,7 +193,7 @@
             margin-left: 25px !important;
             margin-right: 25px !important;
             margin-top: 30px !important;
-        } 
+        }
 
         .bank-decode-wrapper {
             min-width: 820px;
@@ -282,15 +215,13 @@
             display: block;
             position: relative;
             white-space: nowrap;
-            //  border-bottom: 1px solid #dfdfdf;
-
+           
             &.to {
                 padding: 5px 83px 5px 0;
             }
 
             &.to,
-            &.from //,&.subject
-
+            &.from  ,&.subject, &.preview-text 
                 {
                 border-bottom: 1px solid #DEE6EF;
 
@@ -316,11 +247,7 @@
                 dx-text-box input {
                     border: none;
                 }
-            }
-
-            &.preview-text {
-                border: none;
-            }
+            } 
 
             &.attachments {
                 border-bottom: none;
@@ -413,14 +340,7 @@
                 }
             }
 
-            label {
-                // line-height: 33px;
-                // vertical-align: top;
-                // padding-top: 1px;
-                // color: #8a969b;
-                // padding-right: 10px;
-                // margin-bottom: 0;
-
+            label { 
 
                 color: #7C8C95;
                 font-family: Manrope;
@@ -515,33 +435,16 @@
                     padding: 0;
                 }
             }
+
+            ::ng-deep  .dx-tag-content {
+                padding : 8px 25px 7px 9px !important;
+                border-radius :8px !important;
+            }
         }
 
         .model-item {
             display: flex;
-            align-items: center;
-            //padding: 5px; 
-
-            .model-icon {
-                width: 21px;
-                height: 21px;
-                top: 242px;
-                left: 1257px;
-                gap: 0px;
-
-            }
-
-            .llm-text {
-                font-family: Plus Jakarta Sans;
-                font-size: 14px;
-                font-weight: 500;
-                line-height: 27px;
-                letter-spacing: -0.01em;
-                text-align: left;
-                text-underline-position: from-font;
-                text-decoration-skip-ink: none;
-                margin-left: 12px;
-            }
+            align-items: center; 
         }
 
         .pt-2 {
@@ -614,7 +517,7 @@
         }
 
         .search-field-wrapper {
-            display: flex; 
+            display: flex;
             height: 39px;
             border-bottom: 1px solid #97A3A9;
             font-family: Manrope;
@@ -655,27 +558,12 @@
             .list-item {
                 cursor: pointer;
                 display: flex;
-                // align-items: center;
-                // margin-bottom: 5px;
-                // border-radius: 4px;
-                // transition: background-color 0.3s;
-
-                // font-family: Plus Jakarta Sans;
-                // font-size: 14px;
-                // font-weight: 500;
-                // line-height: 27px;
-                // letter-spacing: -0.01em;
-                // text-align: left;
-                // text-underline-position: from-font;
-                // text-decoration-skip-ink: none;
- 
                 height: 39px;
                 top: 233px;
                 margin-left: 12.50px;
                 gap: 0px;
                 border-radius: 8px 0px 0px 0px;
                 padding: 15px;
-                
 
                 &.selected {
                     background: #ECF3FA;
@@ -774,7 +662,6 @@
         .d-flex {
             display: flex !important;
         }
- 
 
         .w-48 {
             width: 48%;
@@ -800,33 +687,22 @@
         @media (max-width: 1200px) {
             .w-71 {
                 width: 80%;
-                /* Shrink width for medium screens */
             }
         }
 
         @media (max-width: 768px) {
             .w-71 {
                 width: 95%;
-                /* Almost full width for small screens */
             }
 
             .row {
                 flex-direction: column;
-                /* Stack items vertically */
             }
 
             .source-editor {
                 width: 100%;
-                /* Make textarea full width */
             }
-        }
-
-        @media (max-width: 576px) {
-            .settings-icon {
-                display: none;
-                /* Hide the settings icon on very small screens */
-            }
-        }
+        } 
 
         ::ng-deep .dx-texteditor-input,
         input.form-control {
@@ -848,30 +724,14 @@
         color: #cfcfcf;
         white-space: pre-wrap;
         overflow: auto;
-    }
-
-    .settings-icon {
-        background-image: url(../../../../assets/common/icons/edit-icon.svg);
-        background-repeat: no-repeat;
-        background-position: center;
-        width: 39px;
-        height: 33px;
-        top: 116px;
-        margin-left: 25px;
-        gap: 0px;
-        border-radius: 6px 0px 0px 0px;
-        border: 1px solid #E0E8ED;
-        margin: 30px 0px 30px 25px;
-        display: inline-block;
-        box-sizing: border-box;
-    }
+    } 
 
     .container {
         display: flex;
         flex-direction: column;
         align-items: center;
         width: 430px;
-      //    height: 900px;
+        //    height: 900px;
         display: flex;
         align-items: center;
         background: #ECF3FA;
@@ -909,7 +769,8 @@
         line-height: 27px;
         text-align: left;
         text-underline-position: from-font;
-        text-decoration-skip-ink: none; 
+        text-decoration-skip-ink: none;
+        cursor: pointer;
     }
 
     .content-container {
@@ -921,21 +782,194 @@
         //height: 751px;
         padding: 10px;
         //margin-bottom: 18px;
-        border-radius: 8px; 
+        border-radius: 8px;
     }
 
-    .ai-content-container{
-        height:  520px;
-        margin-bottom: 17px;;
-    } 
-    .action-buttons {
+    .ai-content-container {
+        height: 520px;
+        margin-bottom: 17px;
+        ;
+    }
+
+    .left-buttons {
+        width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: 6px 0px 13px 0px;
+
+        .ai-genrate-btn {
+            position: relative;
+            height: 44px;
+            width: 122px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            /* No direct border */
+            border-radius: 10px;
+            background-color: #fff;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+            z-index: 1;
+            /* Ensure the button is above the pseudo-element */
+            overflow: hidden;
+            /* Prevent pseudo-element overflow */
+            margin-top: 10px;
+            /* Add top padding as margin */
+            margin-left: 0;
+            /* Align to the left */
+
+            /* Gradient Border */
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                border-radius: 10px;
+                padding: 2px;
+                /* Thickness of the border */
+                background: linear-gradient(93.5deg, #118EFF -16.25%, #8F7DF3 40.92%, #EA3A8A 106.71%);
+                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: destination-out;
+                mask-composite: exclude;
+                z-index: -1;
+                /* Place it behind the button */
+            }
+
+            span {
+                display: flex;
+                /* Align icon and text */
+                align-items: center;
+                gap: 5px;
+                /* Space between icon and text */
+                font-size: 13px;
+                color: #E83C8E;
+
+                &::before {
+                    content: '';
+                    display: inline-block;
+                    width: 15.27px;
+                    /* Icon width */
+                    height: 18.37px;
+                    /* Icon height */
+                    background: url("../../../../assets/common/icons/AI.png") no-repeat center;
+                    background-size: contain;
+                    /* Scale the icon properly */
+                }
+            }
+
+            /* Hover Effect */
+            &:hover {
+                background-color: #E83C8E;
+                color: #fff;
+
+                span {
+                    color: #fff;
+                    /* Change text color on hover */
+                }
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ai-genrate-btn {
+                height: 40px;
+                width: 100px;
+                font-size: 12px;
+            }
+        }
     }
+
     .remove-b-b {
         border-bottom: none !important;
     }
+
+    .prompt-liabrary-button {
+        a {
+             padding: 6px 12px 6px 8px;
+            border-radius: 8px;
+              opacity: 50%;
+            background: #DCE4ED;
+            color: #08295B;
+
+            font-family: Plus Jakarta Sans;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 27px;
+            letter-spacing: -0.01em;
+            text-align: left;
+            text-underline-position: from-font;
+            text-decoration-skip-ink: none;
+            margin-left: 12px;
+            cursor: pointer;
+
+            &:hover {
+                background: #e6e6e6;
+            }
+
+            &:after {
+                content: "";
+                position: relative;
+                left: 4px;
+                bottom: 2px;
+                cursor: default;
+                height: 0;
+                width: 0;
+                font-size: 0;
+                border-left: 3px solid transparent;
+                border-right: 3px solid transparent;
+                border-top: 3px solid #484848;
+                color: #08295B;
+            }
+        }  
+    } 
+   
+    .ai-model-button {
+        a {
+            padding: 6px 12px 6px 8px;
+            border-radius: 8px;
+            opacity: 50%;
+            background: #DCE4ED;
+            color: #08295B;
+
+            font-family: Plus Jakarta Sans;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 27px;
+            letter-spacing: -0.01em;
+            text-align: left;
+            text-underline-position: from-font;
+            text-decoration-skip-ink: none;
+            margin-left: 12px;
+            cursor: pointer;
+
+            &:hover {
+                background: #e6e6e6;
+            }
+
+            &:after {
+                content: "";
+                position: relative;
+                left: 4px;
+                bottom: 2px;
+                cursor: default;
+                height: 0;
+                width: 0;
+                font-size: 0;
+                border-left: 3px solid transparent;
+                border-right: 3px solid transparent;
+                border-top: 3px solid #484848;
+                color: #08295B;
+            }
+        }  
+    } 
+   
 }
 
 ::ng-deep .tags-container {
@@ -1034,7 +1068,7 @@
 
         .tab {
             padding: 4px 15px;
-            font-size: 13px;         
+            font-size: 13px;
             border: 1px solid #ECF3FA;
             cursor: pointer;
             text-align: center;
@@ -1088,3 +1122,7 @@
     }
 }
 
+::ng-deep  .ai-model-icon {
+    width: 21px !important;
+    height: 21px !important;  
+}

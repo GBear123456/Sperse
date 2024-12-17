@@ -8,11 +8,7 @@
             <div class="header-div">
                 <div class="email-container">
                     <span class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="blue" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z" />
-                        </svg>
+                        <img src="assets/common/icons/group.png">
                     </span>
                     <span class="email-sub-txt"> New Email</span>
                 </div>
@@ -21,13 +17,13 @@
                 </div>
             </div>
             <div class="right">
-                <div class="actions"> 
-                    <div style="display: flex; align-items: center;">  
+                <div class="actions">
+                    <div style="display: flex; align-items: center;">
                         <span #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length">
                             <a (click)="tagsTooltipVisible = true">Add a Tag</a>
                         </span>
-                        <dx-tooltip [width]="250" 
-                                position="bottom" [(visible)]="tagsTooltipVisible"
+                        <dx-tooltip [width]="250"
+                                    position="bottom" [(visible)]="tagsTooltipVisible"
                             [target]="'.tags-button.id' + uniqId">
                             <div *dxTemplate="let data of 'content'" class="tags-container">
                                 <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
@@ -40,7 +36,7 @@
                                 </dx-list>
                             </div>
                         </dx-tooltip>
-                    </div> 
+                    </div>
                     <span class="tab new-email" (click)="showTabs('new-email')"
                         [class.selected-tab]="selectedTab === 'new-email'">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -120,27 +116,27 @@
                                     height="40px"
                                     placeholder=""
                                     [(value)]="data.emailSettingsSource"
-                                    valueExpr="emailSettingsSource" 
+                                    valueExpr="emailSettingsSource"
                                     displayExpr="emailAddress"
-                                    [dataSource]="fromDataSource" 
-                                    itemTemplate="itemTemplate"
-                                    fieldTemplate="fieldTemplate" 
-                                    [disabled]="templateEditMode"
+                                    [dataSource]="fromDataSource"
+                                               itemTemplate="itemTemplate"
+                                    fieldTemplate="fieldTemplate"
+                                               [disabled]="templateEditMode"
                                     (onValueChanged)="onFromChanged($event)">
                                     <div *dxTemplate="let item of 'itemTemplate'" class="from-item-select-box" [title]="item?.emailAddress">
                                         {{ item?.emailAddress }}
                                     </div>
                                     <div *dxTemplate="let item of 'fieldTemplate'" class="from-field-select-box">
-                                        <dx-text-box 
-                                            height="40px" 
-                                            [readOnly]="true" 
-                                            [value]="item?.emailAddress"
+                                        <dx-text-box
+                                                     height="40px"
+                                                     [readOnly]="true"
+                                                     [value]="item?.emailAddress"
                                             [hint]="item?.emailAddress">
                                         </dx-text-box>
                                     </div>
                                     <dx-validator>
-                                        <dxi-validation-rule 
-                                            type="required"
+                                        <dxi-validation-rule
+                                                             type="required"
                                             [message]="ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))">
                                         </dxi-validation-rule>
                                     </dx-validator>
@@ -154,15 +150,15 @@
                             </div>
                             <div class="w-48">
                                 <label class="caption disabled">{{ls.l('ReplyTo')}}:</label>
-                                <dx-tag-box #ReplyToElement 
-                                    name="replyTo" 
-                                    noDataText="" 
-                                    placeholder=""
-                                    [multiline]="false" 
-                                    [acceptCustomValue]="true" 
-                                    [(value)]="data.replyTo"
-                                    [disabled]="true" 
-                                    (onKeyUp)="onKeyUp($event)"
+                                <dx-tag-box #ReplyToElement
+                                            name="replyTo"
+                                            noDataText=""
+                                            placeholder=""
+                                            [multiline]="false"
+                                            [acceptCustomValue]="true"
+                                            [(value)]="data.replyTo"
+                                    [disabled]="true"
+                                            (onKeyUp)="onKeyUp($event)"
                                     (onInitialized)="onTagBoxInitialized($event)"
                                     (onFocusOut)="emailInputFocusOut($event)"
                                     (onCustomItemCreating)="onCustomItemCreating($event)">
@@ -178,23 +174,23 @@
 
                         <div class="field-area">
                             <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('To')}}:</label>
-                            <dx-tag-box #ToElement 
-                                name="to" 
-                                width="calc(100% - 31px)" 
-                                noDataText="" 
-                                placeholder=""
-                                [dataSource]="data.suggestionEmails" 
-                                [multiline]="false" 
-                                [acceptCustomValue]="true"
-                                [(value)]="data.to" 
-                                [disabled]="templateEditMode" 
-                                (onKeyUp)="onKeyUp($event)"
-                                (onInitialized)="onTagBoxInitialized($event)" 
-                                (onFocusOut)="emailInputFocusOut($event)"
+                            <dx-tag-box #ToElement
+                                        name="to"
+                                        width="calc(100% - 31px)"
+                                        noDataText=""
+                                        placeholder=""
+                                        [dataSource]="data.suggestionEmails"
+                                        [multiline]="false"
+                                        [acceptCustomValue]="true"
+                                        [(value)]="data.to"
+                                        [disabled]="templateEditMode"
+                                        (onKeyUp)="onKeyUp($event)"
+                                        (onInitialized)="onTagBoxInitialized($event)"
+                                        (onFocusOut)="emailInputFocusOut($event)"
                                 (onCustomItemCreating)="onCustomItemCreating($event)">
                                 <dx-validator>
-                                    <dxi-validation-rule type="custom" 
-                                        [message]="ls.l('InvalidField', ls.l('To'))" 
+                                    <dxi-validation-rule type="custom"
+                                        [message]="ls.l('InvalidField', ls.l('To'))"
                                         [validationCallback]="validateEmailList(ToElement)">
                                     </dxi-validation-rule>
                                     <dxi-validation-rule type="required"
@@ -210,21 +206,21 @@
                         <div class="field-area from row--subdiv">
                             <div class="w-48" [hidden]="!showCC">
                                 <label class="caption">{{ls.l('CC')}}:</label>
-                                <dx-tag-box #CCElement 
-                                    name="cc" 
-                                    width="calc(100% - 35px)" 
-                                    placeholder="" 
-                                    noDataText=""
-                                    [multiline]="false" 
-                                    [acceptCustomValue]="true" 
-                                    [(value)]="data.cc"
-                                    (onKeyUp)="onKeyUp($event)" 
-                                    (onInitialized)="onTagBoxInitialized($event)"
+                                <dx-tag-box #CCElement
+                                            name="cc"
+                                            width="calc(100% - 35px)"
+                                            placeholder=""
+                                            noDataText=""
+                                            [multiline]="false"
+                                            [acceptCustomValue]="true"
+                                            [(value)]="data.cc"
+                                            (onKeyUp)="onKeyUp($event)"
+                                            (onInitialized)="onTagBoxInitialized($event)"
                                     (onFocusOut)="emailInputFocusOut($event, true)"
                                     (onCustomItemCreating)="onCustomItemCreating($event)">
                                     <dx-validator>
-                                        <dxi-validation-rule type="custom" 
-                                            [message]="ls.l('InvalidField', ls.l('CC'))"
+                                        <dxi-validation-rule type="custom"
+                                                             [message]="ls.l('InvalidField', ls.l('CC'))"
                                             [validationCallback]="validateEmailList(CCElement)">
                                         </dxi-validation-rule>
                                     </dx-validator>
@@ -233,21 +229,21 @@
 
                             <div class="w-48" [hidden]="!showBCC">
                                 <label class="caption">{{ls.l('BCC')}}:</label>
-                                <dx-tag-box #BCCElement 
-                                    name="bcc" 
-                                    width="calc(100% - 46px)" 
-                                    noDataText=""
-                                    placeholder="" 
-                                    [multiline]="false" 
-                                    [acceptCustomValue]="true" 
-                                    [(value)]="data.bcc"
-                                    (onKeyUp)="onKeyUp($event)" 
-                                    (onInitialized)="onTagBoxInitialized($event)"
+                                <dx-tag-box #BCCElement
+                                            name="bcc"
+                                            width="calc(100% - 46px)"
+                                            noDataText=""
+                                            placeholder=""
+                                            [multiline]="false"
+                                            [acceptCustomValue]="true"
+                                            [(value)]="data.bcc"
+                                    (onKeyUp)="onKeyUp($event)"
+                                            (onInitialized)="onTagBoxInitialized($event)"
                                     (onFocusOut)="emailInputFocusOut($event, true)"
                                     (onCustomItemCreating)="onCustomItemCreating($event)">
                                     <dx-validator>
-                                        <dxi-validation-rule type="custom" 
-                                            [message]="ls.l('InvalidField', ls.l('BCC'))"
+                                        <dxi-validation-rule type="custom"
+                                                             [message]="ls.l('InvalidField', ls.l('BCC'))"
                                             [validationCallback]="validateEmailList(BCCElement)">
                                         </dxi-validation-rule>
                                     </dx-validator>
@@ -255,31 +251,34 @@
                             </div>
                         </div>
 
-                        <div class="field-area from row--subdiv">
-                            <div class="w-48  preview-text">
-                                <label class="caption">{{ls.l('Subject')}}:</label>
-                                <dx-text-box 
-                                    name="subject" 
-                                    width="calc(100% - 69px)" 
-                                    height="40px" 
-                                    placeholder=""
-                                    [(value)]="data.subject">
-                                    <dx-validator>
-                                        <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('Subject'))"></dxi-validation-rule>
-                                    </dx-validator>
-                                </dx-text-box>
+                        <div class="field-area subject">
+                            <label class="caption">{{ls.l('Subject')}}:</label>
+                            <dx-text-box
+                                         name="subject"
+                                         width="calc(100% - 31px)"
+                                         placeholder=""
+                                (onFocusOut)="previewInputFocusOut($event)"
+                                         [(value)]="data.subject">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"
+                                        [message]="ls.l('RequiredField', ls.l('Subject'))"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                            <div class="bcc-links">
+                                <span (click)="showInputField(PreviewTextElement, 'showPreview')"
+                                    [ngClass]="{disabled: showPreview}">Preview</span>
                             </div>
+                        </div>
 
-                            <div class="w-48 preview-text">
-                                <label class="caption">{{ls.l('PreviewText')}}:</label>
-                                <dx-text-box 
-                                    name="previewText" 
-                                    width="calc(100% - 102px)" 
-                                    height="40px" 
-                                    placeholder=""
-                                    [(value)]="data.previewText">
-                                </dx-text-box>
-                            </div>
+                        <div class="field-area preview-text" [hidden]="!showPreview">
+                            <label class="caption">{{ls.l('PreviewText')}}:</label>
+                            <dx-text-box #PreviewTextElement
+                                         name="previewText"
+                                         width="calc(100% - 102px)"
+                                         height="40px"
+                                placeholder=""
+                                         [(value)]="data.previewText">
+                            </dx-text-box>
                         </div>
 
                         <div class="field-area ckeditor bt-none">
@@ -304,7 +303,7 @@
                             </div>
                             <div class="attachment-field-area bottom-text-ste">Insert Widget</div>
                             <div class="attachment-field-area bottom-text-ste">
-                                {{ charCount }}
+                                {{ charCount ? charCount :0  }} chars
                             </div>
                         </div>
 
@@ -322,25 +321,66 @@
                         </div>
 
                         <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
-                    </div>
+                    </div>\
+
                     <div class="row w-71" *ngIf="showHtmlEditor">
-                        <span class="settings-icon"></span>
+
                         <textarea class="source-editor" [(ngModel)]="data.body" (input)="updateEditor()"></textarea>
                     </div>
                     <div class="row w-71" *ngIf="showTemplate">
                     </div>
                 </dx-validation-group>
             </dx-scroll-view>
-            <dx-scroll-view showScrollbar="onHover" #scrollAIView>
-                <div class="container">
-                    <div class="prompt-header d-flex justify-content-between align-items-center"
-                        style="margin-bottom: 20px;">
-                        <h5 class="your-prompt-title">Prompt</h5>
-                        <h5 class="your-prompt-title prompt-library-title "> Prompt Library
+
+            <div class="container">
+                <div class="prompt-header d-flex justify-content-between align-items-center"
+                    style="margin-bottom: 20px;">
+                    <h5 class="your-prompt-title">Prompt</h5>
+                    <div style="display: flex; align-items: center;">
+                        <h5 class="your-prompt-title prompt-library-title" id="aiModelToggle"
+                            (click)="aiTooltipVisible = true" [class]="'ai-model-button id' + uniqId">
+                         Select AI Model
                             <img class="img" src="./assets/common/icons/down-arrow.png" />
                         </h5>
+                        <dx-tooltip [width]="250" [position]="'bottom'" [(visible)]="aiTooltipVisible"
+                            [target]="'.ai-model-button.id' + uniqId">
+                            <div *dxTemplate="let data of 'content'" class="tags-container">
+                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="aiModels"
+                                    [itemTemplate]="'aiTemplate'" (onItemClick)="selectedAIItem($event)">
+                                    <div *dxTemplate="let data of 'aiTemplate'" class="tags-list-item">
+                                        <img [src]="'./assets/common/icons/' + data.icon" alt="icon"
+                                            class="ai-model-icon" />
+                                        {{ data.name }}
+                                    </div>
+                                </dx-list>
+                            </div>
+                        </dx-tooltip>
                     </div>
-                    <div class="content-container mb-19" *ngIf="!showAIOption">
+
+                    <div style="display: flex; align-items: center;">
+                        <h5 class="your-prompt-title prompt-library-title" id="promptLibraryToggle"
+                            (click)="propmtTooltipVisible = true" [class]="'prompt-liabrary-button id' + uniqId">
+                            Prompt Library
+                            <img class="img" src="./assets/common/icons/down-arrow.png" />
+                        </h5>
+
+                        <dx-tooltip [width]="250" [position]="'bottom'" [(visible)]="propmtTooltipVisible"
+                            [target]="'.prompt-liabrary-button.id' + uniqId">
+                            <div *dxTemplate="let data of 'content'" class="tags-container">
+                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="promptLibrary"
+                                    [itemTemplate]="'prompTemplate'" (onItemClick)="selectedPromptItem($event)">
+                                    <div *dxTemplate="let data of 'prompTemplate'" class="tags-list-item"> 
+                                        {{ data.name }}
+                                    </div>
+                                </dx-list>
+                            </div>
+                        </dx-tooltip>
+                    </div>
+
+                </div>
+
+                <dx-scroll-view showScrollbar="onHover" #scrollAIView>
+                    <div class="content-container  " *ngIf="!showAIOption">
                         <div contenteditable="true" dir="ltr" lang="en" autocomplete="off" autocorrect="off"
                             autocapitalize="off" spellcheck="false" (input)="onContentChange($event)"
                             (paste)="onPaste($event)" #contentEditableDiv>
@@ -401,115 +441,43 @@
                                 <div>3. Ut enim ad minima veniam, quis nostrum.</div>
                             </div>
                         </div>
-                        <div class="action-buttons d-flex  ">
-                            <div class="left-buttons">
-                                <button class="post-btn btn-primary button-layout button-primary ng-star-inserted"
-                                    (click)="getChatGptResponse(contentEditableDiv)">
-                                    {{processing ? 'Posting..' :'Post'}}
-                                </button>
-                                <button class="cancel-btn btn-secondary button-layout button-default ng-star-inserted">
-                                    Cancel
-                                </button>
-                            </div>
-                            <div class="right-buttons ml-auto">
-                                <button
-                                    class="select-model-btn btn-secondary button-layout button-default ng-star-inserted"
-                                    (click)="openAIOptionDiv()">
-                                    Select AI Model
-                                </button>
+                    </div>
+                </dx-scroll-view>
+
+                <div class="left-buttons">
+                    <div class="ai-genrate-btn" (click)="getChatGptResponse(contentEditableDiv)">
+                        <span>
+                            {{processing ? 'Generating..' :'Generate'}}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="content-container ai-content-container" *ngIf="showAIOption">
+                    <div class="search-field-wrapper">
+                        <div class="search-icon-wrapper">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </div>
+                        <input type="text" placeholder="Search Models" class="search-box"
+                            (input)="filterItems($event)" />
+                    </div>
+                    <div class="list-container">
+                        <div *ngFor="let item of filteredItems" class="list-item"
+                            [class.selected]="item.id === selectedItemId" [class.disabled]="!item.enabled"
+                            (click)="selectItem(item)">
+                            <div class="model-item">
+                                <img class="img" src="./assets/common/icons/{{item.icon}}" class="model-icon" />
+                                <span class="llm-text"><strong>{{ item.name }}</strong></span>
                             </div>
                         </div>
                     </div>
-                    <div class="content-container ai-content-container" *ngIf="showAIOption">
-                        <div class="search-field-wrapper">
-                            <div class="search-icon-wrapper">
-                                <i class="fa fa-search" aria-hidden="true"></i>
-                            </div>
-                            <input type="text" placeholder="Search Models" class="search-box"
-                                (input)="filterItems($event)" />
-                        </div>
-                        <div class="list-container">
-                            <div *ngFor="let item of filteredItems" class="list-item"
-                                [class.selected]="item.id === selectedItemId" [class.disabled]="!item.enabled"
-                                (click)="selectItem(item)">
-                                <div class="model-item">  
-                                    <img class="img" src="./assets/common/icons/{{item.icon}}" class="model-icon" /> 
-                                    <span class="llm-text"><strong>{{ item.name }}</strong></span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- <div class="temperature-slider pt-2">
-                            <label for="temperature" class="temperature-label">Temperature</label>
-                            <input type="range" id="temperature" class="temperature-range" min="0" max="1" step="0.1">
-                            <div class="temperature-labels">
-                                <span class="temperature-label-left">Reserved</span>
-                                <span class="temperature-label-right">Creative</span>
-                            </div>
-                        </div> 
-                        <div class="action-buttons d-flex">
-                            <div class="left-buttons">
-                                <button class="post-btn btn-primary button-layout button-primary ng-star-inserted">
-                                    Save
-                                </button>
-                            </div>
-                            <div class="right-buttons ml-auto">
-                                <button class="cancel-btn btn-secondary button-layout button-default ng-star-inserted"
-                                    (click)="closeAIOptionDiv()">
-                                    Cancel
-                                </button>
-                            </div>
-                        </div> -->
-                    </div>
-                </div> 
-                <!-- <div class="content-container" *ngIf="showAIOption">
-                        <div>
-                            <div class="search-field-wrapper">
-                                <div class="search-icon-wrapper">
-                                    <i class="fa fa-search" aria-hidden="true"></i>
-                                </div>
-                                <input type="text" placeholder="Search Models..." class="search-box"
-                                    (input)="filterItems($event)" />
-                            </div>
 
-                            <div class="list-container">
-                                <div *ngFor="let item of filteredItems" class="list-item"
-                                    [class.selected]="item.id === selectedItemId" [class.disabled]="!item.enabled"
-                                    (click)="selectItem(item)">
-                                    <div class="model-item">
-                                        <span [innerHTML]="getSanitizedIcon(item.icon)" class="model-icon"></span>
-                                        <span><strong>{{ item.name }}</strong></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+            </div>
 
-                        <div class="temperature-slider pt-2">
-                            <label for="temperature" class="temperature-label">Temperature</label>
-                            <input type="range" id="temperature" class="temperature-range" min="0" max="1" step="0.1">
-                            <div class="temperature-labels">
-                                <span class="temperature-label-left">Reserved</span>
-                                <span class="temperature-label-right">Creative</span>
-                            </div>
-                        </div>
-
-                        <div class="action-buttons d-flex pt-2">
-                            <button class="post-btn btn-primary button-layout button-primary ng-star-inserted">
-                                Save
-                            </button>
-                            <button class="cancel-btn btn-secondary button-layout button-default ng-star-inserted"
-                                (click)="closeAIOptionDiv()">
-                                Cancel
-                            </button>
-                        </div>
-
-                    </div> -->
-                <!-- </div> -->
-            </dx-scroll-view> 
-        </div> 
+        </div>
         <div class="bank-decode-wrapper" *ngIf="!templateEditMode && bankCodeEnabled">
             <bank-code-decode [content]="data.body" [source]="'CRMEmail'" (onDecodeStart)="startLoading()"
                 (onDecodeFinish)="finishLoading()"></bank-code-decode>
-        </div> 
+        </div>
     </div>
 </modal-dialog>
- 

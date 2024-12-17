@@ -77,6 +77,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     tagLastValue: string;
     tagsTooltipVisible = false;
     aiTooltipVisible = false;
+    showPreview = false;
+    propmtTooltipVisible = false;
 
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
@@ -110,7 +112,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     emailRegEx = AppConsts.regexPatterns.email;
 
     storeAttachmentsToDocumentsCacheKey = 'StoreAttachmentsToDocuments';
- 
+
     ckConfig: any = {
         enterMode: 3, /* CKEDITOR.ENTER_DIV */
         pasteFilter: null,
@@ -139,7 +141,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         extraPlugins: 'preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting',
         skin: 'moono-lisa' // kama, moono, moono-lisa
     };
-    
+
 
     saveButtonOptions = [
         { text: this.ls.l('Save'), selected: false },
@@ -160,6 +162,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     filteredItems: any[] = [];
     aiModels: any[] = [];
     dataRecord = { modelId: null };
+    promptLibrary: any[] = [];
 
     selectedItemId: string | null = null;
     bankCodeEnabled = this.features.isEnabled(AppFeatures.CRMBANKCode);
@@ -188,24 +191,24 @@ export class EmailTemplateDialogComponent implements OnInit {
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
-    ) { 
+    ) {
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
         data.saveAttachmentsToDocuments = this.getAttachmentsToDocumentsCache();
     }
-  
-    ngOnInit() {      
+
+    ngOnInit() {
         if (this.templateEditMode && this.data.templateId)
             this.loadTemplateById(this.data.templateId);
         else {
             if (!this.data.tags && (this.data.contactId || this.data.contact)) {
                 this.startLoading();
                 this.communicationProxy.getEmailData(undefined, this.data.contactId || this.data.contact.id)
-                .pipe(finalize(() => this.finishLoading())).subscribe((res: GetEmailDataOutput) => {
-                    this.data.tags = res.tags;
-                    this.initFromField();
-                });
+                    .pipe(finalize(() => this.finishLoading())).subscribe((res: GetEmailDataOutput) => {
+                        this.data.tags = res.tags;
+                        this.initFromField();
+                    });
             } else
                 this.initFromField();
             this.templateLoaded = true;
@@ -219,9 +222,9 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.showCC = Boolean(this.data.cc && this.data.cc.length);
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
 
-       
+
         this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
-            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 544 : 400) + 'px';
+            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 544 : 395) + 'px';
 
         this.initDialogButtons();
         this.aiModels = [
@@ -281,6 +284,55 @@ export class EmailTemplateDialogComponent implements OnInit {
             },
         ];
 
+        this.promptLibrary = [
+            {
+                id: '1',
+                name: 'AI Chatbots',
+                enabled: true,
+            },
+            {
+                id: '2',
+                name: 'Customer Support agent',
+                enabled: true,
+            },
+            {
+                id: '3',
+                name: 'Sales Agent',
+                enabled: true,
+            },
+            {
+                id: '4',
+                name: 'Language Tutorial',
+                enabled: true,
+            },
+            {
+                id: '5',
+                name: 'Coding Expert',
+                enabled: true,
+            },
+            {
+                id: '6',
+                name: 'Life Coach',
+                enabled: true,
+            },
+            {
+                id: '7',
+                name: 'Fix Formating Issues',
+                enabled: true,
+            },
+            {
+                id: '8',
+                name: 'Summarize Text',
+                enabled: true,
+            },
+            {
+                id: '9',
+                name: 'Paraphase Text',
+                enabled: true,
+            },
+
+        ]
+
         this.filteredItems = [...this.aiModels];
         this.changeDetectorRef.detectChanges();
     }
@@ -294,9 +346,16 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.filteredItems = this.aiModels.filter((item) => item.name.toLowerCase().includes(searchTerm));
     }
 
-    selectItem(item: any): void {
+    selectedAIItem(item: any): void {
         this.selectedItemId = item.id;
         this.dataRecord.modelId = item.id;
+        this.aiTooltipVisible = false;
+    }
+
+    selectedPromptItem(item: any): void {
+        this.selectedItemId = item.id;
+        //  this.dataRecord.modelId = item.id;
+        this.propmtTooltipVisible = false;
     }
 
     initFromField() {
@@ -362,12 +421,11 @@ export class EmailTemplateDialogComponent implements OnInit {
             //     class: 'default',
             //     action: () => this.close()
             // },
-            {
-                id: 'genrateAIOptions',
-                title: this.ls.l('Generate'),
-                class: 'ai-genrate-btn',
-              //  action: () => this.close()
-            },
+            // {
+            //     id: 'genrateAIOptions',
+            //     title: this.ls.l('Generate'),
+            //     class: 'ai-genrate-btn', 
+            // },
             {
                 id: 'saveTemplateOptions',
                 title: "Send Email Message",// this.data.saveTitle,
@@ -559,6 +617,16 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
+    previewInputFocusOut(event, checkDisplay?) {
+        event.text = this.tagLastValue || event.event.target.value;
+        this.tagLastValue = '';
+        let isComboListEmpty = !event.text.length;
+        if (checkDisplay && isComboListEmpty && !event.component.field().value) {
+            this.showPreview = false;
+            this.changeDetectorRef.detectChanges();
+        }
+    }
+
     startLoading() {
         this.modalDialog && this.modalDialog.startLoading();
     }
@@ -736,12 +804,12 @@ export class EmailTemplateDialogComponent implements OnInit {
             // this.tagsButton.nativeElement.style.display = 'inline';
             // Append the aiButton right after the tagsButton
             //this.tagsButton.nativeElement.after(this.aiButton.nativeElement);
-           // this.invalidate();
+            // this.invalidate();
         });
     }
 
     updateDataLength() {
-        this.charCount = Math.max(this.data.body.replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0);
+        this.charCount = Math.max(this.data.body.replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0) ?? 0;
         this.changeDetectorRef.markForCheck();
     }
 
@@ -765,6 +833,8 @@ export class EmailTemplateDialogComponent implements OnInit {
                 }
             }
         }
+
+        this.invalidate();
         this.tagsTooltipVisible = false;
     }
 
@@ -796,11 +866,19 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     insertText(text: string) {
-        this.ckEditor.insertText(text);
+        if (this.selectedTab === 'html-editor') {
+            this.data.body += '<div>' + text + '</div>';
+        } else {
+            this.ckEditor.insertText(text);
+        }
     }
 
     addTextTag(tag: string) {
-        this.insertText('#' + tag + '#');
+        if (this.selectedTab === 'html-editor') {
+            this.data.body += '<div>' + tag + '</div>';
+        } else {
+            this.insertText('#' + tag + '#');
+        }
     }
 
     addLinkTag(tag: string, link: string) {
@@ -1103,7 +1181,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     formatEmailContent(response: string): string {
-        const formattedResponse = response.replace(/\n/g, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        const formattedResponse = response.replace(/\n/g, '</br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         const updateHtmlRes = formattedResponse.replace(/^```html/, '').replace(/^```/, '').replace(/```$/, '');
         return updateHtmlRes.toString().replace('SafeValue must use [property]=binding', '').replace(/<div[^>]*>(\s|&nbsp;)*<\/div>/g, '');
     }
@@ -1126,5 +1204,6 @@ export class EmailTemplateDialogComponent implements OnInit {
     updateEditor(): void {
         // Triggered when textarea content changes
     }
+
 
 }
