@@ -97,6 +97,11 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     delete(setting: StripeSettingsDto) {
         this.message.confirm(`'${setting.displayName}' will be deleted.`, null, (isConfirmed) => {
             if (isConfirmed) {
+                if (!setting.id) {
+                    this.loadSettings();
+                    return;
+                }
+
                 this.startLoading();
                 this.tenantPaymentSettingsService.deleteStripeAccount(setting.id).pipe(
                     finalize(() => this.finishLoading())
