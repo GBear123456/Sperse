@@ -276,10 +276,8 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         .pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
-            let setting = this.apiKeySettings.concat(this.connectedSettings).find(v => v.id == settingDto.id);
-            if (setting)
-                setting.isTaxationEnabled = !setting.isTaxationEnabled;
-            this.notify.info(this.l('Stripe Taxation ') + setting.isTaxationEnabled ? 'Enabled' : 'Disabled');
+            settingDto.isTaxationEnabled = !settingDto.isTaxationEnabled;
+            this.notify.info(this.l('Stripe Taxation ') + settingDto.isTaxationEnabled ? 'Enabled' : 'Disabled');
             this.changeDetection.detectChanges();
         });
     }

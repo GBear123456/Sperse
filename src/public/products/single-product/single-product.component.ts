@@ -139,6 +139,8 @@ export class SingleProductComponent implements OnInit {
 
     taxCalculation: TaxCalculationResultDto;
 
+    private calculationTaxTimeout;
+
     constructor(
         private sessionService: AppSessionService,
         private route: ActivatedRoute,
@@ -257,7 +259,6 @@ export class SingleProductComponent implements OnInit {
                         this.initCustomerPrice();
                         this.initializePayPal();
                         this.checkIsFree();
-                        this.calculateTax();
                     }
                 } else {
                     this.showNotFound = true;
@@ -781,7 +782,6 @@ export class SingleProductComponent implements OnInit {
                 }),
                 first()
             ).subscribe((stateCode: string) => {
-                console.log('stateChanged');
                 this.billingAddress.stateId = stateCode;
                 this.calculateTax();
             });
@@ -789,7 +789,6 @@ export class SingleProductComponent implements OnInit {
     }
 
     onCustomStateCreate(e) {
-        console.log('onCustomStateCreate');
         this.billingAddress.stateId = null;
         this.billingAddress.stateName = e.text;
         this.statesService.updateState(this.address.countryCode, null, e.text);
@@ -828,12 +827,16 @@ export class SingleProductComponent implements OnInit {
             return;
 
         this.taxCalculation = null;
-        if (this.googleAutoComplete) {
-            this.billingAddress.streetAddress = [
-                this.address['streetNumber'],
-                this.address['street']
-            ].filter(val => val).join(' ');
-        }
+
+        clearTimeout(this.calculationTaxTimeout);
+        this.calculationTaxTimeout = setTimeout(() => {
+            this.calculateTaxFunc();
+        }, 500);
+        
+    }
+
+    calculateTaxFunc() {
+       
         this.billingAddress.countryId = this.getCountryCode(this.address.countryName);
         this.billingAddress.stateId = this.statesService.getAdjustedStateCode(
             this.billingAddress.stateId,
@@ -846,7 +849,9 @@ export class SingleProductComponent implements OnInit {
 
         this.taxCalcInfo.tenantId = this.tenantId;
         this.taxCalcInfo.paymentGateway = 'Stripe';
-        this.taxCalcInfo.billingAddress = this.billingAddress;
+        this.taxCalcInfo.stateId = this.billingAddress.stateId;
+        this.taxCalcInfo.zip = this.billingAddress.zip;
+        this.taxCalcInfo.countryId = this.billingAddress.countryId;
 
         this.productInput.productId = this.productInfo.id;
         this.productInput.price = this.getGeneralPrice(true);
@@ -858,19 +863,18 @@ export class SingleProductComponent implements OnInit {
             case ProductType.Donation:
                 if (this.productInfo.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
                     this.productInput.price = this.productInfo.price;
-
                 break;
             case ProductType.Subscription:
                 if (this.selectedSubscriptionOption.customerChoosesPrice)
                     this.productInput.price = this.selectedSubscriptionOption.fee;
                 break;
         }
-
+        this.appHttpConfiguration.avoidErrorHandling = true;
         this.publicProductService
             .getTaxCalculation(this.taxCalcInfo)
             .pipe(
                 finalize(() => {
-                    this.appHttpConfiguration.avoidErrorHandling = true;
+                    this.appHttpConfiguration.avoidErrorHandling = false;
                 })
             )
             .subscribe(result => {

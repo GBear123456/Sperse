@@ -342,8 +342,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
         this.gracePeriodDefaultValue = this.setting.getInt('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount');
         this.initEventDataSources();
-        if (this.productTaxCodeDataSource.isLoaded() || this.productTaxCodeDataSource.isLoading())
-            this.productTaxCodeDataSource.reload();
     }
 
     ngOnInit() {
