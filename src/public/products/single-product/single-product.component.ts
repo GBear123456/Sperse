@@ -347,6 +347,11 @@ export class SingleProductComponent implements OnInit {
                 this.address['street']
             ].filter(val => val).join(' ');
         }
+        this.billingAddress.countryId = this.getCountryCode(this.address.countryName);
+        this.billingAddress.stateId = this.statesService.getAdjustedStateCode(
+            this.billingAddress.stateId,
+            this.billingAddress.stateName
+        );
 
         if ((this.productInfo.customerChoosesPrice && (!this.productInfo.price || this.customerPriceEditMode)) ||
             (this.selectedSubscriptionOption && this.selectedSubscriptionOption.customerChoosesPrice && (!this.selectedSubscriptionOption.fee || this.customerPriceEditMode))) {
@@ -373,6 +378,7 @@ export class SingleProductComponent implements OnInit {
         this.productInput.productId = this.productInfo.id;
         if (this.isFreeProductSelected || this.productInfo.customerChoosesPrice || (this.selectedSubscriptionOption && this.selectedSubscriptionOption.customerChoosesPrice))
             this.requestInfo.couponCode = null;
+        this.requestInfo.billingAddress = this.billingAddress;
 
         switch (this.productInfo.type) {
             case ProductType.General:
@@ -836,7 +842,6 @@ export class SingleProductComponent implements OnInit {
     }
 
     calculateTaxFunc() {
-       
         this.billingAddress.countryId = this.getCountryCode(this.address.countryName);
         this.billingAddress.stateId = this.statesService.getAdjustedStateCode(
             this.billingAddress.stateId,
