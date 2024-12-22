@@ -2,8 +2,8 @@
               [titleClearButton]="false"
               [buttons]="buttons"
               [editTitle]="false"
-              (onContextItemChanged)="save()">
-    <ng-container headerContent>        
+    (onContextItemChanged)="save()">   
+    <ng-container headerContent>
         <div class="header">
             <div class="header-div">
                 <div class="email-container">
@@ -98,9 +98,15 @@
         </dx-select-box> -->
         <div class="buttons" *ngIf="!data.addMode && !isManageUnallowed && data.contact && onTemplateCreate.observers.length">
             <i class="create-template" [title]="ls.l('CreateTemplate')" (click)="createTemplate()"></i>
-            <i *ngIf="data.templateId" [title]="ls.l('EditTemplate')" class="edit-template fa fa-pencil" (click)="editTemplate(data)"></i>
-        </div>
-    </ng-container>
+            <i *ngIf="data.templateId" [title]="ls.l('EditTemplate')" class="edit-template fa fa-pencil"
+                (click)="editTemplate(data)"></i>
+        </div> 
+
+        <dx-context-menu *ngIf="addSendEmailMenuItems && addSendEmailMenuItems.length" [selectByClick]="true"
+            selectionMode="single" [dataSource]="addSendEmailMenuItems"
+            [position]="{ my: 'top right', at: 'bottom right' }" target="#saveTemplateOptions">
+        </dx-context-menu>
+    </ng-container>   
     <div class="form-content">
         <div class="d-flex">
             <dx-scroll-view showScrollbar="onHover" #scrollView>
@@ -114,10 +120,10 @@
                                 <dx-select-box *ngIf="fromDataSource?.length || templateEditMode; else configure"
                                     name="from"
                                     height="40px"
-                                    placeholder=""
-                                    [(value)]="data.emailSettingsSource"
+                                               placeholder=""
+                                               [(value)]="data.emailSettingsSource"
                                     valueExpr="emailSettingsSource"
-                                    displayExpr="emailAddress"
+                                               displayExpr="emailAddress"
                                     [dataSource]="fromDataSource"
                                                itemTemplate="itemTemplate"
                                     fieldTemplate="fieldTemplate"
@@ -154,7 +160,7 @@
                                             name="replyTo"
                                             noDataText=""
                                             placeholder=""
-                                            [multiline]="false"
+                                    [multiline]="false"
                                             [acceptCustomValue]="true"
                                             [(value)]="data.replyTo"
                                     [disabled]="true"
@@ -179,18 +185,18 @@
                                         width="calc(100% - 31px)"
                                         noDataText=""
                                         placeholder=""
-                                        [dataSource]="data.suggestionEmails"
+                                [dataSource]="data.suggestionEmails"
                                         [multiline]="false"
                                         [acceptCustomValue]="true"
-                                        [(value)]="data.to"
+                                [(value)]="data.to"
                                         [disabled]="templateEditMode"
                                         (onKeyUp)="onKeyUp($event)"
-                                        (onInitialized)="onTagBoxInitialized($event)"
+                                (onInitialized)="onTagBoxInitialized($event)"
                                         (onFocusOut)="emailInputFocusOut($event)"
                                 (onCustomItemCreating)="onCustomItemCreating($event)">
                                 <dx-validator>
                                     <dxi-validation-rule type="custom"
-                                        [message]="ls.l('InvalidField', ls.l('To'))"
+                                                         [message]="ls.l('InvalidField', ls.l('To'))"
                                         [validationCallback]="validateEmailList(ToElement)">
                                     </dxi-validation-rule>
                                     <dxi-validation-rule type="required"
@@ -211,10 +217,10 @@
                                             width="calc(100% - 35px)"
                                             placeholder=""
                                             noDataText=""
-                                            [multiline]="false"
+                                    [multiline]="false"
                                             [acceptCustomValue]="true"
                                             [(value)]="data.cc"
-                                            (onKeyUp)="onKeyUp($event)"
+                                    (onKeyUp)="onKeyUp($event)"
                                             (onInitialized)="onTagBoxInitialized($event)"
                                     (onFocusOut)="emailInputFocusOut($event, true)"
                                     (onCustomItemCreating)="onCustomItemCreating($event)">
@@ -233,7 +239,7 @@
                                             name="bcc"
                                             width="calc(100% - 46px)"
                                             noDataText=""
-                                            placeholder=""
+                                    placeholder=""
                                             [multiline]="false"
                                             [acceptCustomValue]="true"
                                             [(value)]="data.bcc"
@@ -321,9 +327,9 @@
                         </div>
 
                         <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
-                    </div> 
+                    </div>
 
-                    <div class="row w-71" *ngIf="showHtmlEditor"> 
+                    <div class="row w-71" *ngIf="showHtmlEditor">
                         <textarea class="source-editor" [(ngModel)]="data.body" (input)="updateEditor()"></textarea>
                     </div>
                     <div class="row w-71" *ngIf="showTemplate">
@@ -338,7 +344,7 @@
                     <div style="display: flex; align-items: center;">
                         <h5 class="your-prompt-title prompt-library-title" id="aiModelToggle"
                             (click)="aiTooltipVisible = true" [class]="'ai-model-button id' + uniqId">
-                         Select AI Model
+                            Select AI Model
                             <img class="img" src="./assets/common/icons/down-arrow.png" />
                         </h5>
                         <dx-tooltip [width]="250" [position]="'bottom'" [(visible)]="aiTooltipVisible"
@@ -367,8 +373,8 @@
                             [target]="'.prompt-liabrary-button.id' + uniqId">
                             <div *dxTemplate="let data of 'content'" class="tags-container">
                                 <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="promptLibrary"
-                                    [itemTemplate]="'prompTemplate'" (onItemClick)="selectedPromptItem($event)">
-                                    <div *dxTemplate="let data of 'prompTemplate'" class="tags-list-item"> 
+                                         [itemTemplate]="'prompTemplate'" (onItemClick)="selectedPromptItem($event)">
+                                    <div *dxTemplate="let data of 'prompTemplate'" class="tags-list-item">
                                         {{ data.name }}
                                     </div>
                                 </dx-list>
@@ -379,8 +385,8 @@
                 </div>
 
                 <dx-scroll-view showScrollbar="onHover" #scrollAIView>
-                    <div class="content-container  " *ngIf="!showAIOption">
-                        <div contenteditable="true" dir="ltr" lang="en" autocomplete="off" autocorrect="off"
+                    <div class="content-container" *ngIf="!showAIOption">
+                        <div class="html-container-div" contenteditable="true" dir="ltr" lang="en" autocomplete="off" autocorrect="off"
                             autocapitalize="off" spellcheck="false" (input)="onContentChange($event)"
                             (paste)="onPaste($event)" #contentEditableDiv>
                             <p>
@@ -449,34 +455,13 @@
                             {{processing ? 'Generating..' :'Generate'}}
                         </span>
                     </div>
-                </div>
+                </div> 
 
-                <div class="content-container ai-content-container" *ngIf="showAIOption">
-                    <div class="search-field-wrapper">
-                        <div class="search-icon-wrapper">
-                            <i class="fa fa-search" aria-hidden="true"></i>
-                        </div>
-                        <input type="text" placeholder="Search Models" class="search-box"
-                            (input)="filterItems($event)" />
-                    </div>
-                    <div class="list-container">
-                        <div *ngFor="let item of filteredItems" class="list-item"
-                            [class.selected]="item.id === selectedItemId" [class.disabled]="!item.enabled"
-                            (click)="selectItem(item)">
-                            <div class="model-item">
-                                <img class="img" src="./assets/common/icons/{{item.icon}}" class="model-icon" />
-                                <span class="llm-text"><strong>{{ item.name }}</strong></span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
+            </div> 
         </div>
         <div class="bank-decode-wrapper" *ngIf="!templateEditMode && bankCodeEnabled">
             <bank-code-decode [content]="data.body" [source]="'CRMEmail'" (onDecodeStart)="startLoading()"
                 (onDecodeFinish)="finishLoading()"></bank-code-decode>
         </div>
-    </div>
+    </div>  
 </modal-dialog>

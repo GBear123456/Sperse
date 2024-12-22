@@ -52,6 +52,7 @@ import { EmailTags } from '@app/crm/contacts/contacts.const';
 import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 
 @Component({
     selector: 'email-template-dialog',
@@ -65,6 +66,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
     @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
+    @ViewChild(DxContextMenuComponent) addEmailComponent: DxContextMenuComponent;
     @ViewChild('scrollView') scrollView: DxScrollViewComponent;
     //@ViewChild('tagsButton') tagsButton: ElementRef;
     @ViewChild('aiButton') aiButton: ElementRef;
@@ -114,6 +116,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     storeAttachmentsToDocumentsCacheKey = 'StoreAttachmentsToDocuments';
 
     ckConfig: any = {
+        versionCheck: false,
         enterMode: 3, /* CKEDITOR.ENTER_DIV */
         pasteFilter: null,
         toolbarLocation: 'bottom',
@@ -199,6 +202,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.ckConfig.versionCheck = false;
         if (this.templateEditMode && this.data.templateId)
             this.loadTemplateById(this.data.templateId);
         else {
@@ -214,6 +218,8 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.templateLoaded = true;
         }
 
+        //(window as any).CKEDITOR.disableVersionWarning = true;
+
         delete this.data.attachments;
         this.dialogRef.afterClosed().subscribe(() => {
             if (this.attachments.length && !this.data.attachments)
@@ -222,9 +228,13 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.showCC = Boolean(this.data.cc && this.data.cc.length);
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
 
+        var defaultHeight = 395;
+        if (innerHeight > 1110) {
+            defaultHeight = 450;
+        }
 
         this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
-            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 544 : 395) + 'px';
+            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 544 : defaultHeight) + 'px';
 
         this.initDialogButtons();
         this.aiModels = [
@@ -448,9 +458,13 @@ export class EmailTemplateDialogComponent implements OnInit {
         ];
     }
 
-    save() {
+    save(event?) {
         if (this.ckEditor.mode == 'source')
             this.ckEditor.execCommand('source');
+
+        if (event && event.offsetX > event.target.offsetWidth - 32)
+            return this.addEmailComponent.instance.option('visible', true);
+
 
         setTimeout(() => {
             if (this.validateData()) {
@@ -797,6 +811,9 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onCKReady(event) {
+        if (window['CKEDITOR'] && window['CKEDITOR'].warn) {
+            window['CKEDITOR'].warn = function () { };
+        }
         this.ckEditor = event.editor;
         setTimeout(() => {
             // this.ckEditor.container.find('.cke_toolbox').$[0].append(
@@ -1167,12 +1184,14 @@ export class EmailTemplateDialogComponent implements OnInit {
         fetch(url, { method: 'POST', headers: headers, body: body })
             .then(response => response.json())
             .then(data => {
-                console.log('ChatGPT Response:', data);
-                const gptResponse = data.choices[0].message.content;
-                var formatedHtml = this.formatEmailContent(gptResponse) as unknown as string;
-                this.data.body = formatedHtml;
+                console.log('ChatGPT Response:', data);                
                 this.invalidate();
                 this.processing = false;
+                const gptResponse = data.choices[0].message.content;               
+                var responseData=this.extractContent(gptResponse);
+                this.data.subject=responseData.subject; 
+                var formatedHtml = this.formatEmailContent(responseData.body) as unknown as string;
+                this.data.body = formatedHtml;
             })
             .catch(error => {
                 this.processing = false;
@@ -1180,6 +1199,13 @@ export class EmailTemplateDialogComponent implements OnInit {
             });
     }
 
+    extractContent(content: any): { subject: string, body: string } { 
+        const subjectMatch = content.match(/^Subject: (.*?)(?:\n\n|$)/);
+        const subject = subjectMatch ? subjectMatch[1] : ''; 
+        const body = content.replace(/^Subject: .*?\n\n/, '');  
+        return { subject, body };
+    }
+    
     formatEmailContent(response: string): string {
         const formattedResponse = response.replace(/\n/g, '</br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         const updateHtmlRes = formattedResponse.replace(/^```html/, '').replace(/^```/, '').replace(/```$/, '');
@@ -1201,9 +1227,33 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.showTemplate = true;
         }
     }
+
     updateEditor(): void {
         // Triggered when textarea content changes
     }
+
+    sendEmailMenuInit$: Observable<any>;
+    addSendEmailMenuItems: any[] =
+        [
+            {
+                text: 'Schedule',
+                selected: false,
+                icon: 'clock',
+                visible: true,
+            },
+            {
+                text: 'Send',
+                selected: false,
+                icon: 'message',
+                visible: true,
+            },
+            {
+                text: 'Save as Draft',
+                selected: false,
+                icon: 'save',
+                visible: true
+            }
+        ];
 
 
 }
