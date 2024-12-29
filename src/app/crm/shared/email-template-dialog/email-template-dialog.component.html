@@ -329,8 +329,16 @@
                         <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
                     </div>
 
-                    <div class="row w-71" *ngIf="showHtmlEditor">
-                        <textarea class="source-editor" [(ngModel)]="data.body" (input)="updateEditor()"></textarea>
+                    <div class="row w-71" *ngIf="showHtmlEditor"> 
+                        <div class="editor-container">
+                            <div class="line-numbers">
+                                <div *ngFor="let number of lineNumbers" class="line-number">
+                                    {{ number }}
+                                </div>
+                            </div>
+                            <textarea [(ngModel)]="data.body" class="code-editor" (input)="updateLineNumbers()"></textarea>
+                        </div>
+
                     </div>
                     <div class="row w-71" *ngIf="showTemplate">
                     </div>

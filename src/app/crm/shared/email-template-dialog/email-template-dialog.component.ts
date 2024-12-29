@@ -175,6 +175,34 @@ export class EmailTemplateDialogComponent implements OnInit {
     showTemplate = false;
     selectedTab: string = 'new-email';
 
+
+    sendEmailMenuInit$: Observable<any>;
+    addSendEmailMenuItems: any[] =
+        [
+            {
+                text: 'Schedule',
+                selected: false,
+                icon: 'clock',
+                visible: true,
+            },
+            {
+                text: 'Send',
+                selected: false,
+                icon: 'message',
+                visible: true,
+            },
+            {
+                text: 'Save as Draft',
+                selected: false,
+                icon: 'save',
+                visible: true
+            }
+    ];
+
+    get lineNumbers(): number[] {
+        return Array.from({ length: this.data.body.split('\n').length }, (_, i) => i + 1);
+    }
+
     constructor(
         private phonePipe: PhoneFormatPipe,
         private domSanitizer: DomSanitizer,
@@ -1184,12 +1212,12 @@ export class EmailTemplateDialogComponent implements OnInit {
         fetch(url, { method: 'POST', headers: headers, body: body })
             .then(response => response.json())
             .then(data => {
-                console.log('ChatGPT Response:', data);                
+                console.log('ChatGPT Response:', data);
                 this.invalidate();
                 this.processing = false;
-                const gptResponse = data.choices[0].message.content;               
-                var responseData=this.extractContent(gptResponse);
-                this.data.subject=responseData.subject; 
+                const gptResponse = data.choices[0].message.content;
+                var responseData = this.extractContent(gptResponse);
+                this.data.subject = responseData.subject;
                 var formatedHtml = this.formatEmailContent(responseData.body) as unknown as string;
                 this.data.body = formatedHtml;
             })
@@ -1199,13 +1227,13 @@ export class EmailTemplateDialogComponent implements OnInit {
             });
     }
 
-    extractContent(content: any): { subject: string, body: string } { 
+    extractContent(content: any): { subject: string, body: string } {
         const subjectMatch = content.match(/^Subject: (.*?)(?:\n\n|$)/);
-        const subject = subjectMatch ? subjectMatch[1] : ''; 
-        const body = content.replace(/^Subject: .*?\n\n/, '');  
+        const subject = subjectMatch ? subjectMatch[1] : '';
+        const body = content.replace(/^Subject: .*?\n\n/, '');
         return { subject, body };
     }
-    
+
     formatEmailContent(response: string): string {
         const formattedResponse = response.replace(/\n/g, '</br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         const updateHtmlRes = formattedResponse.replace(/^```html/, '').replace(/^```/, '').replace(/```$/, '');
@@ -1231,29 +1259,6 @@ export class EmailTemplateDialogComponent implements OnInit {
     updateEditor(): void {
         // Triggered when textarea content changes
     }
-
-    sendEmailMenuInit$: Observable<any>;
-    addSendEmailMenuItems: any[] =
-        [
-            {
-                text: 'Schedule',
-                selected: false,
-                icon: 'clock',
-                visible: true,
-            },
-            {
-                text: 'Send',
-                selected: false,
-                icon: 'message',
-                visible: true,
-            },
-            {
-                text: 'Save as Draft',
-                selected: false,
-                icon: 'save',
-                visible: true
-            }
-        ];
 
 
 }
