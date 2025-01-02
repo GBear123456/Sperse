@@ -92,6 +92,36 @@
                                    helpLinkText="Amplitude project settings"
                                    description="A product analytics tool that helps teams understand user behavior and optimize product experiences.">
             </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/pinterest-icon.svg"
+                                   logoAlt="Pinterest logo"
+                                   title="Activate Pinterest Pixel"
+                                   placeholder="Paste in your Pinterest Pixel ID"
+                                   [(trackingValue)]="trackingToolsSettings.pinterestPixelId"
+                                   helpText="If you don't have an Pinterest Pixel ID, you can find it in your"
+                                   helpLink="https://ads.pinterest.com"
+                                   helpLinkText="Pinterest Ads Manager"
+                                   description="A tracking code that helps you measure the effectiveness of your Pinterest advertising by understanding actions people take on your website after viewing your Pinterest ads.">
+            </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/reddit-icon.svg"
+                                   logoAlt="Reddit logo"
+                                   title="Activate Reddit Pixel"
+                                   placeholder="Paste in your Reddit Pixel ID"
+                                   [(trackingValue)]="trackingToolsSettings.redditPixelId"
+                                   helpText="If you don't have a Reddit Pixel ID, you can create one in your"
+                                   helpLink="https://ads.reddit.com"
+                                   helpLinkText="Reddit Ads Manager"
+                                   description="A tracking tool that helps you measure conversions, optimize ads, and build targeted audiences from your Reddit ad campaigns.">
+            </tracking-tool-section>
+            <tracking-tool-section logoSrc="./assets/common/icons/tracking-tools/hyros-icon.svg"
+                                   logoAlt="Hyros logo"
+                                   title="Activate Hyros"
+                                   placeholder="Paste in your Hyros Pixel ID"
+                                   [(trackingValue)]="trackingToolsSettings.hyrosPixelId"
+                                   helpText="If you don't have Hyros credentials, you can find them in your"
+                                   helpLink="https://app.hyros.com"
+                                   helpLinkText="Hyros Dashboard"
+                                   description="An advanced tracking and attribution platform that helps businesses accurately track sales and optimize their marketing campaigns across multiple channels.">
+            </tracking-tool-section>
         </div>
     </div>
 </dx-scroll-view>
