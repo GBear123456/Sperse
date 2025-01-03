@@ -23,6 +23,7 @@
                         </div>
                         <div class="actions">
                             <i *ngIf="!data.isActive" class="fa fa-check" title="Set this setting as active" (click)="setIsActive(data)"></i>
+                            <i class="fa fa-times" title="Delete connected account" (click)="delete(data)"></i>
                         </div>
                     </div>
                 </div>
@@ -86,6 +87,7 @@
                         </div>
                         <div class="actions">
                             <i *ngIf="!data.isActive" class="fa fa-check" title="Set this setting as active" (click)="setIsActive(data)"></i>
+                            <i *ngIf="!isHost" class="fa fa-times" title="Delete connected account" (click)="delete(data)"></i>
                         </div>
                     </div>
                 </div>
@@ -106,7 +108,7 @@
                 </div>
                 <div class="form-group">
                     <label for="StripePublishableKey">{{l("Publishable key")}}</label>
-                    <input id="StripePublishableKey" [disabled]="selectedApiKeySettings.id" type="text" name="StripePublishableKey" class="form-control" [(ngModel)]="selectedApiKeySettings.publishableKey">
+                    <input id="StripePublishableKey" type="text" name="StripePublishableKey" class="form-control" [(ngModel)]="selectedApiKeySettings.publishableKey">
                 </div>
                 <p>
                     <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
@@ -123,7 +125,7 @@
                 </p>
                 <p>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</p>
                 <div class="form-group">
-                    <button [disabled]="selectedApiKeySettings.webhookSingingSecret" [title]="selectedApiKeySettings.webhookSingingSecret" class="btn btn-layout webhook-button" (click)="createWebhook(selectedApiKeySettings, false)">
+                    <button [disabled]="selectedApiKeySettings.webhookSingingSecret" [title]="selectedApiKeySettings.webhookSingingSecret || ''" class="btn btn-layout webhook-button" (click)="createWebhook(selectedApiKeySettings, false)">
                         {{ selectedApiKeySettings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
                     </button>
                     <img *ngIf="selectedApiKeySettings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
@@ -141,7 +143,7 @@
                 </ng-container>
                 <p>Use button below to create <b>Connect</b> webhook and recieve Connect events from Stripe</p>
                 <div class="form-group">
-                    <button [disabled]="selectedApiKeySettings.connectWebhookSingingSecret" [title]="selectedApiKeySettings.connectWebhookSingingSecret" class="btn btn-layout webhook-button" (click)="createWebhook(selectedApiKeySettings, true)">
+                    <button [disabled]="selectedApiKeySettings.connectWebhookSingingSecret" [title]="selectedApiKeySettings.connectWebhookSingingSecret || ''" class="btn btn-layout webhook-button" (click)="createWebhook(selectedApiKeySettings, true)">
                         {{ selectedApiKeySettings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
                     </button>
                     <img *ngIf="selectedApiKeySettings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
