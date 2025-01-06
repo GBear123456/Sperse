@@ -22,6 +22,7 @@ import {
     PasswordComplexitySetting,
     PaymentPeriodType,
     ProductDonationSuggestedAmountInfo,
+    ProductTaxInput,
     ProductType,
     ProfileServiceProxy,
     PublicCouponInfo,
@@ -89,6 +90,7 @@ export class SingleProductComponent implements OnInit {
     productInfo: PublicProductInfo;
     requestInfo: SubmitProductRequestInput = new SubmitProductRequestInput();
     taxCalcInfo: GetTaxCalculationInput = new GetTaxCalculationInput();
+    productTaxInput: ProductTaxInput = new ProductTaxInput();
     billingAddress: AddressInfoDto = new AddressInfoDto();
     productInput = new PublicProductInput();
     tenantRegistrationModel = new CompleteTenantRegistrationInput();
@@ -159,7 +161,7 @@ export class SingleProductComponent implements OnInit {
     ) {
         this.productInput.quantity = 1;
         this.requestInfo.products = [this.productInput];
-        this.taxCalcInfo.products = [this.productInput];
+        this.taxCalcInfo.products = [this.productTaxInput];
     }
 
     ngOnInit(): void {
@@ -642,6 +644,7 @@ export class SingleProductComponent implements OnInit {
                 }
                 this.couponInfo = info;
                 this.couponInfoCache[this.requestInfo.couponCode] = info;
+                this.calculateTax();
             });
     }
 
@@ -857,21 +860,27 @@ export class SingleProductComponent implements OnInit {
         this.taxCalcInfo.stateId = this.billingAddress.stateId;
         this.taxCalcInfo.zip = this.billingAddress.zip;
         this.taxCalcInfo.countryId = this.billingAddress.countryId;
+        this.taxCalcInfo.currency = this.productInfo.currencyId;
 
-        this.productInput.productId = this.productInfo.id;
-        this.productInput.price = this.getGeneralPrice(true);
-
+        this.productTaxInput.productId = this.productInfo.id;
+        this.productTaxInput.stripeTaxProcuctCode = this.productInfo.stripeTaxProcuctCode;
+        this.productTaxInput.price = this.getGeneralPrice(true);
+        this.productTaxInput.quantity = 1;
+        
         switch (this.productInfo.type) {
             case ProductType.General:
             case ProductType.Digital:
             case ProductType.Event:
             case ProductType.Donation:
                 if (this.productInfo.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
-                    this.productInput.price = this.productInfo.price;
+                    this.productTaxInput.price = this.productInfo.price;
                 break;
             case ProductType.Subscription:
                 if (this.selectedSubscriptionOption.customerChoosesPrice)
-                    this.productInput.price = this.selectedSubscriptionOption.fee;
+                    this.productTaxInput.price = this.selectedSubscriptionOption.fee;
+                else
+                    this.productTaxInput.price = this.getSubscriptionPrice(true);
+                this.productTaxInput.price = this.productTaxInput.price + this.getSignUpFee(true);
                 break;
         }
         this.appHttpConfiguration.avoidErrorHandling = true;
