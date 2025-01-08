@@ -49,6 +49,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { AffiliateHistoryDialogComponent } from './affiliate-history-dialog/affiliate-history-dialog.component';
+import { CreditsChangeDialogComponent } from './credits-change-dialog/credits-change-dialog.component';
 import { CrmService } from '@app/crm/crm.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { FeatureCheckerService } from 'abp-ng2-module';
@@ -887,6 +888,23 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     removeSourceContact(event) {
         event.stopPropagation();
         this.onSourceContactChanged();
+    }
+
+    showCreditsUpdateDialog(isTopUp: boolean) {
+        this.dialog.open(CreditsChangeDialogComponent, {
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.contactInfo.id,
+                isTopUp: isTopUp
+            }
+        }).afterClosed().subscribe((data) => {
+            if (data && data.amount && this.contactInfo.id == data.contactId) {
+                if (!isTopUp)
+                    data.amount = -data.amount;
+                this.contactInfo.creditsBalance += data.amount;
+            }
+        });
     }
 
     showAffiliateHistory(event) {
