@@ -55,6 +55,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { CreditBalanceHistoryDialogComponent } from './credit-balance-history-dialog/credit-balance-history-dialog.component';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -904,6 +905,19 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     data.amount = -data.amount;
                 this.contactInfo.creditsBalance += data.amount;
             }
+        });
+    }
+
+    showCreditBalanceHistory(event) {
+        event.stopPropagation();
+        this.dialog.open(CreditBalanceHistoryDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.contactInfo.id
+            }
+        }).afterClosed().subscribe(() => {
         });
     }
 

@@ -8,7 +8,7 @@
                         <mat-expansion-panel class="credit-balance" [expanded]="true">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('ContactCredit') }} {{ ls.l('Balance') }}</mat-panel-title>
-                                <span class="dx-icon-clock history-icon" [title]="ls.l('ContactCredits') + ' ' + ls.l('BalanceHistory')"></span>
+                                <span class="dx-icon-clock history-icon" (click)="showCreditBalanceHistory($event)" [title]="ls.l('ContactCredits') + ' ' + ls.l('BalanceHistory')"></span>
                             </mat-expansion-panel-header>
                             <div class="field">
                                 <label>{{ ls.l('AvailableBalance') }}:</label>
