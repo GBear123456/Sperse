@@ -21,6 +21,7 @@ export enum AppFeatures {
     CRMBANKCode = 'CRM.BANKCode',
     CRMChromeExtension = 'CRM.ChromeExtension',
     CRMCommissions = 'CRM.Commissions',
+    CRMContactCredits = 'CRM.ContactCredits',
     CRMInvoicesManagement = 'CRM.InvoicesManagement',
     CRMMaxActiveContactCount = 'CRM.MaxActiveContactCount',
     CRMMaxActivePartnerCount = 'CRM.MaxActivePartnerCount',

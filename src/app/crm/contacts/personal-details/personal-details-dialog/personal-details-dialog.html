@@ -5,7 +5,7 @@
             <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight()">
                 <div class="general-tab">
                     <mat-accordion displayMode="flat" [multi]="true">
-                        <mat-expansion-panel class="credit-balance" [expanded]="true">
+                        <mat-expansion-panel *ngIf="hasCreditsFeature && hasCreditsViewPermission" class="credit-balance" [expanded]="true">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('ContactCredit') }} {{ ls.l('Balance') }}</mat-panel-title>
                                 <span class="dx-icon-clock history-icon" (click)="showCreditBalanceHistory($event)" [title]="ls.l('ContactCredits') + ' ' + ls.l('BalanceHistory')"></span>
@@ -20,7 +20,7 @@
                                 <span>{{contactInfo?.creditsTier}}<i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo?.creditsTier)"></i></span>
                             </div>
                             <hr />
-                            <div class="field credit-balance-actions">
+                            <div *ngIf="hasCreditsManagePermission" class="field credit-balance-actions">
                                 <span (click)="showCreditsUpdateDialog(true)">{{ ls.l('TopUp') }} +</span>
                                 <span (click)="showCreditsUpdateDialog(false)">{{ ls.l('Deduct') }} -</span>
                             </div>

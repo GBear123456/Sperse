@@ -168,6 +168,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     affiliateRate2Initil;
     affiliateRate2;
     CommissionTier = CommissionTier;
+    hasCreditsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMContactCredits);
+    hasCreditsViewPermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMContactCredits);
+    hasCreditsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMContactCreditsManage);
+    
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
