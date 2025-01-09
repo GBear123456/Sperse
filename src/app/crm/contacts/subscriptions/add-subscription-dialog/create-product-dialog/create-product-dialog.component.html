@@ -559,7 +559,8 @@
                                                [(value)]="product.stripeTaxProcuctCode"
                                                [dataSource]="productTaxCodeDataSource"
                                                [searchEnabled]="true"
-                                               [searchTimeout]="500">
+                                               [searchTimeout]="500"
+                                               (onValueChanged)="checkShowAmountChangeWarrning()">
                                     <div *dxTemplate="let cell of 'item'">
                                         <span [title]="cell.name">{{cell.name }}</span>
                                     </div>
