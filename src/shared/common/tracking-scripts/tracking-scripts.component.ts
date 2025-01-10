@@ -162,6 +162,33 @@ export class TrackingScriptsComponent implements OnInit {
                 `
             );
         }
+
+        if (this.config.pinterestPixelId) {
+            this.addInlineScript(`
+                function(e){
+                    if(!window.pintrk){
+                        window.pintrk=function(){
+                            window.pintrk.queue.push(Array.prototype.slice.call(arguments))
+                        };
+                        var n=window.pintrk;
+                        n.queue=[],n.version="3.0";
+                        var t=document.createElement("script");
+                        t.async=!0,t.src=e;
+                        var r=document.getElementsByTagName("script")[0];
+                        r.parentNode.insertBefore(t,r)
+                    }
+                }("https://s.pinimg.com/ct/core.js");
+                pintrk('load', '${this.config.pinterestPixelId}');
+                pintrk('page');
+            `);
+        }
+
+        if (this.config.redditPixelId) {
+            this.addInlineScript(`
+                !function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);
+                rdt('init','${this.config.redditPixelId}');rdt('track', 'PageVisit');
+            `);
+        }
     }
 
     private loadScript(id: string, src: string, inlineScript: string): void {
@@ -175,10 +202,14 @@ export class TrackingScriptsComponent implements OnInit {
         this.renderer.appendChild(document.body, script);
 
         if (inlineScript) {
-            const inline = this.renderer.createElement('script');
-            inline.type = 'text/javascript';
-            inline.text = inlineScript;
-            this.renderer.appendChild(document.body, inline);
+            this.addInlineScript(inlineScript);
         }
+    }
+
+    private addInlineScript(script: string) {
+        const inline = this.renderer.createElement('script');
+        inline.type = 'text/javascript';
+        inline.text = script;
+        this.renderer.appendChild(document.body, inline);
     }
 }
