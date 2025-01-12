@@ -57,6 +57,11 @@
                 "glob": "locale.properties",
                 "input": "node_modules/ngx-extended-pdf-viewer/assets/locale",
                 "output": "./assets/locale"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/monaco-editor/min/vs",
+                "output": "./assets/monaco-editor/min/vs"
               }
             ],
             "styles": [
@@ -690,7 +695,7 @@
       "prefix": "app"
     }
   },
-  "cli": {
+  "cli":  { 
     "defaultCollection": "@ngrx/schematics"
   }
 }

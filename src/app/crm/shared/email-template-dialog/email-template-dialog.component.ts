@@ -53,6 +53,8 @@ import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/templat
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import * as monaco from 'monaco-editor';
 
 @Component({
     selector: 'email-template-dialog',
@@ -145,7 +147,6 @@ export class EmailTemplateDialogComponent implements OnInit {
         skin: 'moono-lisa' // kama, moono, moono-lisa
     };
 
-
     saveButtonOptions = [
         { text: this.ls.l('Save'), selected: false },
         { text: this.ls.l('SaveAsNew'), selected: false },
@@ -197,7 +198,18 @@ export class EmailTemplateDialogComponent implements OnInit {
                 icon: 'save',
                 visible: true
             }
-    ];
+        ];
+    @ViewChild('editor', { static: false }) editor: any;
+    templateForm: FormGroup;
+    editorOptions = {
+        theme: 'vs-dark',
+        language: 'html',
+        automaticLayout: true,
+        fontSize: 14,
+        minimap: {
+            enabled: false
+        }
+    };
 
     get lineNumbers(): number[] {
         return Array.from({ length: this.data.body.split('\n').length }, (_, i) => i + 1);
@@ -220,16 +232,28 @@ export class EmailTemplateDialogComponent implements OnInit {
         public changeDetectorRef: ChangeDetectorRef,
         public appService: AppService,
         public dialog: MatDialog,
-        public ls: AppLocalizationService,
+        public ls: AppLocalizationService, private fb: FormBuilder,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
+        this.templateForm = this.fb.group({
+            emailContentBodyTemplate: [this.data.body]
+        });
+
         data.saveAttachmentsToDocuments = this.getAttachmentsToDocumentsCache();
     }
 
     ngOnInit() {
+        this.templateForm.get('emailContentBodyTemplate')?.valueChanges.subscribe(value => {
+            this.data.body = value;
+            //console.log('Editor value changed:', value);
+        });
+
+        setTimeout(() => {
+            this.editor?.layout();
+        }, 0);
         this.ckConfig.versionCheck = false;
         if (this.templateEditMode && this.data.templateId)
             this.loadTemplateById(this.data.templateId);
@@ -854,6 +878,9 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     updateDataLength() {
+        this.templateForm = this.fb.group({
+            emailContentBodyTemplate: [this.data.body]
+        });
         this.charCount = Math.max(this.data.body.replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0) ?? 0;
         this.changeDetectorRef.markForCheck();
     }
@@ -1133,33 +1160,33 @@ export class EmailTemplateDialogComponent implements OnInit {
     showAIOption = false;
     processing = false;
     editorContent: string = `<p>Consectetur adipiscing elit, <strong>sed do eiusmod</strong> tempor incididunt ut labore et dolore.</p>
-<ul class="styled-list">
-    <li>
-        <strong>Customer Name and Business:</strong>
-        <div class="list-content">John Doe, <br> ABC Enterprises Inc.</div>
-    </li>
-    <li>
-        <strong>Purpose of the email:</strong>
-        <div class="list-content">Request for a product quotation and availability confirmation for upcoming projects.</div>
-    </li>
-    <li>
-        <strong>Prior communications:</strong>
-        <div class="list-content">Follow-up on the meeting held on October 5th regarding the new partnership opportunities.</div>
-    </li>
-    <li>
-        <strong>Tone of the email:</strong>
-        <div class="list-content">Professional, courteous, and concise with an emphasis on collaboration.</div>
-    </li>
-    <li>
-        <strong>Styling Preferences:</strong>
-        <div class="list-content">Use a formal business format with a clean, minimal design, and company branding colors.</div>
-    </li>
-    <li>
-        <strong>Specific details to include:</strong>
-        <div class="list-content">Deadline for the response, contact person details, and required specifications of the product.</div>
-    </li>
-</ul>
-<div class="email-instructions">
+    <ul class="styled-list">
+        <li>
+            <strong>Customer Name and Business:</strong>
+            <div class="list-content">John Doe, <br> ABC Enterprises Inc.</div>
+        </li>
+        <li>
+            <strong>Purpose of the email:</strong>
+            <div class="list-content">Request for a product quotation and availability confirmation for upcoming projects.</div>
+        </li>
+        <li>
+            <strong>Prior communications:</strong>
+            <div class="list-content">Follow-up on the meeting held on October 5th regarding the new partnership opportunities.</div>
+        </li>
+        <li>
+            <strong>Tone of the email:</strong>
+            <div class="list-content">Professional, courteous, and concise with an emphasis on collaboration.</div>
+        </li>
+        <li>
+            <strong>Styling Preferences:</strong>
+            <div class="list-content">Use a formal business format with a clean, minimal design, and company branding colors.</div>
+        </li>
+        <li>
+            <strong>Specific details to include:</strong>
+            <div class="list-content">Deadline for the response, contact person details, and required specifications of the product.</div>
+        </li>
+    </ul>
+    <div class="email-instructions">
     <span><strong>The email must include:</strong></span>
     <ol>
         <li class="list-content pb-2">A clear subject line indicating the purpose of the email</li>
@@ -1259,6 +1286,5 @@ export class EmailTemplateDialogComponent implements OnInit {
     updateEditor(): void {
         // Triggered when textarea content changes
     }
-
 
 }

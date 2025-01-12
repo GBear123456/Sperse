@@ -329,17 +329,15 @@
                         <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
                     </div>
 
-                    <div class="row w-71" *ngIf="showHtmlEditor"> 
-                        <div class="editor-container">
-                            <div class="line-numbers">
-                                <div *ngFor="let number of lineNumbers" class="line-number">
-                                    {{ number }}
-                                </div>
-                            </div>
-                            <textarea [(ngModel)]="data.body" class="code-editor" (input)="updateLineNumbers()"></textarea>
-                        </div>
-
-                    </div>
+                    <div class="w-71 editor-color" *ngIf="showHtmlEditor" >   
+                        <form [formGroup]="templateForm" class="editor-form">
+                            <ngx-monaco-editor
+                            #editor
+                            [options]="editorOptions"
+                            formControlName="emailContentBodyTemplate" class="editor-container">
+                            </ngx-monaco-editor>
+                        </form>                       
+                    </div>   
                     <div class="row w-71" *ngIf="showTemplate">
                     </div>
                 </dx-validation-group>

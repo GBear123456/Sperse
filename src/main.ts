@@ -18,6 +18,12 @@ const bootstrap = () => {
 /* "Hot Module Replacement" is enabled as described on
  * https://medium.com/@beeman/tutorial-enable-hrm-in-angular-cli-apps-1b0d13b80130#.sa87zkloh
  */
+(window as any).MonacoEnvironment = {
+    getWorkerUrl: function (moduleId: string, label: string) {
+        const baseUrl = window.location.origin + '/assets/monaco-editor/min/vs';
+        return `${baseUrl}/base/worker/workerMain.js`;
+    }
+};
 
 if (environment.hmr) {
     if (module['hot']) {

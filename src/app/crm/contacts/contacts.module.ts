@@ -164,6 +164,8 @@ import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity
 import { PaymentsInfoService } from '@app/shared/common/payments-info/payments-info.service';
 import { ContactPaymentsInfoService } from './payment-information/payments-info.service';
 import { CurrencySelectorModule } from '../../../shared/common/currency-selector/currency-selector.module';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -239,6 +241,8 @@ import { CurrencySelectorModule } from '../../../shared/common/currency-selector
     imports: [
         FormsModule,
         CommonModule,
+        ReactiveFormsModule,     
+        MonacoEditorModule.forRoot(),
         ngCommon.CommonModule,
         CrmStoreModule,
         AppCommonModule,

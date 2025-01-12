@@ -47,6 +47,8 @@ import { CommonModule } from '@shared/common/common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { ModalDialogModule } from '../../../shared/common/dialogs/modal/modal-dialog.module';
 import { CountryPhoneNumberModule } from '../../../shared/common/phone-numbers/country-phone-number.module';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { ReactiveFormsModule } from '@angular/forms';
 
 let COMPONENTS = [
     HeaderNotificationsComponent,
@@ -67,7 +69,9 @@ let COMPONENTS = [
     imports: [
         ngCommon.CommonModule,
         FormsModule,
-        RouterModule,
+        RouterModule,   
+        ReactiveFormsModule,     
+        MonacoEditorModule.forRoot(),
         AppCommonModule,
         ModalModule.forRoot(),
         TooltipModule.forRoot(),
