@@ -190,7 +190,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     isPublicProductsEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
     showDowngrade = this.isHostTenant;
-    showCreditsTopUpProduct = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCreditsManage);
+    hasViewCredits = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCredits);
+    hasManageCredits = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCreditsManage);
     productTypes: string[] = Object.keys(ProductType).filter(item => item == 'Subscription' ? this.isSubscriptionManagementEnabled : true);
     defaultProductType = this.isSubscriptionManagementEnabled ? ProductType.Subscription : ProductType.General;
     productType = ProductType;
@@ -478,6 +479,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.product.unit = undefined;
             this.product.price = undefined;
             this.product.customerChoosesPrice = false;
+            this.product.credits = undefined;
         } else {
             this.product.productServices = undefined;
             this.product.productSubscriptionOptions = undefined;
@@ -554,6 +556,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     this.product.commissionableAmount = null;
                     this.product.maxCommissionRate = null;
                     this.product.maxCommissionRateTier2 = null;
+                    this.product.credits = null;
 
                     this.product.productInventory.isActive = false;
                     this.product.productInventory.initialQuantity = null;
@@ -755,6 +758,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             option.commissionableSignupFeeAmount = undefined;
             option.trialDayCount = undefined;
             option.signupFee = undefined;
+            option.signUpCredits = undefined;
             option.customPeriodType = CustomPeriodType.Days;
         } else if (customPeriodValidator) {
             if (event.value == RecurringPaymentFrequency.Custom) {
@@ -1175,6 +1179,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 options[0].commissionableFeeAmount = undefined;
                 options[0].trialDayCount = undefined;
                 options[0].signupFee = undefined;
+                options[0].signUpCredits = undefined;
                 options[0].commissionableSignupFeeAmount = undefined;
             }
         }

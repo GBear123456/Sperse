@@ -162,6 +162,7 @@
                                     <dx-switch switchedOffText=""
                                                switchedOnText=""
                                                [(value)]="product.customerChoosesPrice"
+                                               (onValueChanged)="product.credits = null"
                                                [disabled]="isReadOnly || isFreePriceType || (product.type != productType.Donation && product.stripeXref)">
                                     </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
                                 </div>
@@ -191,6 +192,17 @@
                                                 <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-select-box>
+                                    </div>
+                                    <div *ngIf="hasViewCredits && product.type != productType.Donation">
+                                        <dx-number-box width="100%"
+                                                       [placeholder]="ls.l('Credits')"
+                                                       min="0"
+                                                       format="#"
+                                                       height="65px"
+                                                       class="label"
+                                                       [(value)]="product.credits"
+                                                       [disabled]="isReadOnly || !hasManageCredits || product.customerChoosesPrice">
+                                        </dx-number-box>
                                     </div>
                                 </div>
                                 <div class="general-product-price" *ngIf="product.customerChoosesPrice">
@@ -231,6 +243,7 @@
                                             <dx-switch switchedOffText=""
                                                        switchedOnText=""
                                                        [(value)]="option.customerChoosesPrice"
+                                                       (onValueChanged)="option.credits = option.signUpCredits = null"
                                                        [disabled]="isReadOnly || isFreePriceType || option.stripeXref || option.paypalXref">
                                             </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
                                         </div>
@@ -255,6 +268,15 @@
                                                                [format]="amountNullableFormat"
                                                                [(value)]="option.commissionableFeeAmount"
                                                                [disabled]="isReadOnly">
+                                                </dx-number-box>
+                                            </div>
+                                            <div *ngIf="hasViewCredits">
+                                                <label class="wide">{{ls.l('Credits')}}</label>
+                                                <dx-number-box width="100%"
+                                                               min="0"
+                                                               format="#"
+                                                               [(value)]="option.credits"
+                                                               [disabled]="isReadOnly || !hasManageCredits || option.customerChoosesPrice">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -376,6 +398,15 @@
                                                                [format]="amountNullableFormat"
                                                                [(value)]="option.commissionableSignupFeeAmount"
                                                                [disabled]="isReadOnly">
+                                                </dx-number-box>
+                                            </div>
+                                            <div *ngIf="hasViewCredits" [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime}">
+                                                <label class="wide">{{ls.l('Sign Up Credits')}}</label>
+                                                <dx-number-box width="100%"
+                                                               min="0"
+                                                               format="#"
+                                                               [(value)]="option.signUpCredits"
+                                                               [disabled]="isReadOnly || !hasManageCredits || option.customerChoosesPrice">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -978,10 +1009,10 @@
                                     </dx-select-box>
                                 </div>
                             </div>
-                            <ng-container *ngIf="showCreditsTopUpProduct">
+                            <ng-container *ngIf="hasViewCredits">
                                 <h3>{{ls.l('Credit Top Up Product')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                                 <div class="options">
-                                    <div *ngIf="!isReadOnly" class="remove-button" (click)="product.creditsTopUpProductId = undefined"><span>-</span></div>
+                                    <div *ngIf="!isReadOnly && hasManageCredits" class="remove-button" (click)="product.creditsTopUpProductId = undefined"><span>-</span></div>
                                     <div class="upgrade-field">
                                         <dx-select-box width="100%"
                                                        valueExpr="id"
@@ -990,7 +1021,7 @@
                                                        [dataSource]="products$ | async | FilterAssignments:[]:productType.General"
                                                        [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
                                                        [(value)]="product.creditsTopUpProductId"
-                                                       [disabled]="isReadOnly">
+                                                       [disabled]="isReadOnly || !hasManageCredits">
                                         </dx-select-box>
                                     </div>
                                 </div>
