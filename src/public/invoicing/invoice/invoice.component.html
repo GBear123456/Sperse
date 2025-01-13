@@ -6,10 +6,12 @@
             </h3>
             <div class="header-right-side">
                 <ng-container *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent && invoiceInfo.isPaymentsEnabled && invoiceInfo.isQuantityAvailable">
-                    <pay-pal [height]="38" (onApprove)="onPayPalApprove()">
-                    </pay-pal>
+                    <ng-container *ngIf="!invoiceInfo.invoiceData.isAutomaticTaxationEnabled">
+                        <pay-pal [height]="38" (onApprove)="onPayPalApprove()">
+                        </pay-pal>
+                    </ng-container>
                     <a *ngIf="invoiceInfo.stripePayUrl" role="button" class="btn btn-primary stripe-button" href="{{invoiceInfo.stripePayUrl}}">
-                        Pay with <img src="assets/common/images/stripe.svg"/>
+                        Pay with <img src="assets/common/images/stripe.svg" />
                     </a>
                 </ng-container>
                 <button class="btn btn-secondary actions-button" [matMenuTriggerFor]="actions">
@@ -125,7 +127,11 @@
                 <tr class="footer-row">
                     <td></td>
                     <td colspan="2"><b>Tax Total {{invoiceInfo.invoiceData.currencyId}}</b></td>
-                    <td><b>{{invoiceInfo.invoiceData.taxTotal | number: '1.2-2'}}</b></td>
+                    <td *ngIf="!invoiceInfo.invoiceData.isAutomaticTaxationEnabled"><b>{{invoiceInfo.invoiceData.taxTotal | number: '1.2-2'}}</b></td>
+                    <td *ngIf="invoiceInfo.invoiceData.isAutomaticTaxationEnabled" class="auto-taxation">
+                        <b *ngIf="invoiceInfo.invoiceData.autoCalculatedTaxTotal != null">{{invoiceInfo.invoiceData.autoCalculatedTaxTotal | number: '1.2-2'}}</b>
+                        <i class="fa fa-question-circle" title="Sales Tax is determined by billing information"></i>
+                    </td>
                 </tr>
                 <tr class="footer-row">
                     <td></td>
