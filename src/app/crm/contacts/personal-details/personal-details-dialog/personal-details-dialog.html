@@ -20,7 +20,7 @@
                                 <span>{{contactInfo?.creditsTier}}<i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo?.creditsTier)"></i></span>
                             </div>
                             <hr />
-                            <div *ngIf="hasCreditsManagePermission" class="field credit-balance-actions">
+                            <div *ngIf="hasCreditsManagePermission && manageAllowed" class="field credit-balance-actions">
                                 <span (click)="showCreditsUpdateDialog(true)">{{ ls.l('TopUp') }} +</span>
                                 <span (click)="showCreditsUpdateDialog(false)">{{ ls.l('Deduct') }} -</span>
                             </div>
