@@ -13,7 +13,7 @@
                     <span class="email-sub-txt"> New Email</span>
                 </div>
                 <div class="header-content">
-                    Spring Sale - 20% Off, All Customers
+                    {{data.subject}}
                 </div>
             </div>
             <div class="right">
@@ -109,8 +109,10 @@
     </ng-container>   
     <div class="form-content">
         <div class="d-flex">
+            
             <dx-scroll-view showScrollbar="onHover" #scrollView>
                 <dx-validation-group>
+
                     <div class="row row-body-space" *ngIf="showNewEmailTab">
 
                         <div class="field-area from row--subdiv">
@@ -338,8 +340,10 @@
                             </ngx-monaco-editor>
                         </form>                       
                     </div>   
+
                     <div class="row w-71" *ngIf="showTemplate">
                     </div>
+
                 </dx-validation-group>
             </dx-scroll-view>
 
