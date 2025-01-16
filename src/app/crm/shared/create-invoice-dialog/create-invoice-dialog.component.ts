@@ -394,8 +394,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             }] : undefined,
                             ...res,
                             description: description,
-                            isStripeTaxationEnabled: true,
-                            stripeTaxProcuctCode : null
+                            isStripeTaxationEnabled: res.isStripeTaxationEnabled,
+                            stripeTaxProcuctCode: res.stripeTaxProcuctCode
                         };
                     });
                     this.showUpdatePaymentMethodButton = this.disabledForUpdate && [InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid].indexOf(this.status) >= 0;
@@ -912,6 +912,22 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
+    getLineItemTotalWithDiscount(rate) : number {
+        let coupon = this.selectedCoupon;
+        if (coupon) {
+            if (coupon.type == CouponDiscountType.Percentage) {
+                let itemDiscount = round((rate) * (coupon.percentOff / 100), 4);
+                return round(rate - itemDiscount, 2);
+            } else {
+                let percentOff = (rate * 100 / this.subTotal);
+                let itemDiscount = round((this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff) * (percentOff / 100), 4);
+                return round(rate - itemDiscount, 2);
+            }
+        } else {
+            return rate;
+        }
+    }
+
     selectInvoiceProduct(event, cellData) {
         let item = event.selectedItem;
         if (item && item.hasOwnProperty('rate')) {
@@ -1409,13 +1425,22 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         this.taxCalcInfo.products = this.lines.map((line: any, itemIndex: number) => {
             if (line.rate && line.quantity) {
-                if (itemIndex == 0 && this.lines.length == 1 && this.discountTotal) {
-                    return new ProductTaxInput({
-                        productId: line.productId ?? itemIndex + 1000000000,
-                        stripeTaxProcuctCode: line.stripeTaxProcuctCode,
-                        price: line.rate * line.quantity - this.discountTotal,
-                        quantity: 1
-                    });
+                if (this.discountTotal) {
+                    if (itemIndex == 0 && this.lines.length == 1) {
+                        return new ProductTaxInput({
+                            productId: line.productId ?? itemIndex + 1000000000,
+                            stripeTaxProcuctCode: line.stripeTaxProcuctCode,
+                            price: line.rate * line.quantity - this.discountTotal,
+                            quantity: 1
+                        });
+                    } else {
+                        return new ProductTaxInput({
+                            productId: line.productId ?? itemIndex + 1000000000,
+                            stripeTaxProcuctCode: line.stripeTaxProcuctCode,
+                            price: this.getLineItemTotalWithDiscount(line.rate * line.quantity),
+                            quantity: 1
+                        });
+                    }
                 }
                 
                 return new ProductTaxInput({
