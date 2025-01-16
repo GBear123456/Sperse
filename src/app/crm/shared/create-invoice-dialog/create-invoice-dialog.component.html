@@ -251,6 +251,7 @@
                                 </dx-validator>
                                 <div *dxTemplate="let cell of 'item'">
                                     <span title="{{cell.description}}">{{cell.description}}{{cell.isInStock ? '' : ' (Out of stock)' }}</span>
+                                    <span class="tax-product" *ngIf="isTaxationEnabled && cell.isStripeTaxationEnabled">(AutoTax)</span>
                                 </div>
                             </dx-select-box>
 
@@ -440,7 +441,7 @@
                         </dx-number-box>
                     </span>
                 </div>
-                <div class="user-total">
+                <div class="user-total" *ngIf="allowedProducts != 'T'">
                     <span>{{ls.l('TaxTotal')}}</span>
                     <span>
                         <dx-number-box [min]="0"
@@ -450,6 +451,18 @@
                                        (onValueChanged)="calculateBalance()"
                                        [(value)]="taxTotal"
                                        [disabled]="hasReccuringSubscription || disabledForUpdate">
+                        </dx-number-box>
+                    </span>
+                </div>
+                <div class="user-total" *ngIf="allowedProducts == 'T'">
+                    <span>{{ls.l('Calculated Tax Total')}}</span>
+                    <span  *ngIf="calculatedTax || calculatedTax == 0">
+                        <dx-number-box [min]="0"
+                                       [height]="33"
+                                       [placeholder]="ls.l('Tax')"
+                                       [format]="{ style: 'currency', currency: currency, useGrouping: true }"
+                                       [(value)]="calculatedTax"
+                                       [disabled]="true">
                         </dx-number-box>
                     </span>
                 </div>
