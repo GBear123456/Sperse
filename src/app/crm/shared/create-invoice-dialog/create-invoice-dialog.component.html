@@ -441,28 +441,16 @@
                         </dx-number-box>
                     </span>
                 </div>
-                <div class="user-total" *ngIf="allowedProducts != 'T'">
-                    <span>{{ls.l('TaxTotal')}}</span>
+                <div class="user-total">
+                    <span *ngIf="allowedProducts != 'T'">{{ls.l('TaxTotal')}}</span>
+                    <span *ngIf="allowedProducts == 'T'">{{ls.l('Calculated Tax Total')}}</span>
                     <span>
                         <dx-number-box [min]="0"
                                        [height]="33"
-                                       [placeholder]="ls.l('Tax')"
                                        [format]="{ style: 'currency', currency: currency, useGrouping: true }"
-                                       (onValueChanged)="calculateBalance()"
+                                       (onValueChanged)="taxChanged()"
                                        [(value)]="taxTotal"
-                                       [disabled]="hasReccuringSubscription || disabledForUpdate">
-                        </dx-number-box>
-                    </span>
-                </div>
-                <div class="user-total" *ngIf="allowedProducts == 'T'">
-                    <span>{{ls.l('Calculated Tax Total')}}</span>
-                    <span  *ngIf="calculatedTax || calculatedTax == 0">
-                        <dx-number-box [min]="0"
-                                       [height]="33"
-                                       [placeholder]="ls.l('Tax')"
-                                       [format]="{ style: 'currency', currency: currency, useGrouping: true }"
-                                       [(value)]="calculatedTax"
-                                       [disabled]="true">
+                                       [disabled]="hasReccuringSubscription || disabledForUpdate || allowedProducts == 'T'">
                         </dx-number-box>
                     </span>
                 </div>

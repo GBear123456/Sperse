@@ -256,7 +256,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     hideAddNew = false;
 
     allowedProducts = 'ALL';
-    calculatedTax;
+
     taxCalcInfo: GetTaxCalculationInput = new GetTaxCalculationInput();
     private calculationTaxTimeout;
 
@@ -358,6 +358,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.balance = invoiceInfo.grandTotal || 0;
                     this.discountTotal = invoiceInfo.discountTotal || 0;
                     this.shippingTotal = invoiceInfo.shippingTotal || 0;
+                    debugger;
                     this.taxTotal = invoiceInfo.taxTotal || 0;
                     this.couponId = invoiceInfo.couponId;
                     this.description = invoiceInfo.description;
@@ -526,10 +527,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.setRequestCommonFields(data);
             data.id = this.invoiceId;
             data.couponCode = this.selectedCoupon ? this.selectedCoupon.code : null;
-            data.grandTotal = this.balance - this.calculatedTax;;
+            data.grandTotal = this.balance;
             data.discountTotal = this.discountTotal;
             data.shippingTotal = this.shippingTotal;
             data.taxTotal = this.taxTotal;
+            data.isAutoCalculatedTax = this.allowedProducts == 'T';
             if (this.status == InvoiceStatus.Sent &&
                 this.invoiceInfo.status != this.status
             )
@@ -560,10 +562,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
             }
             data.orderId = this.orderId;
             data.couponCode = this.selectedCoupon ? this.selectedCoupon.code : null;
-            data.grandTotal = this.balance - this.calculatedTax;;
+            data.grandTotal = this.balance;
             data.discountTotal = this.discountTotal;
             data.shippingTotal = this.shippingTotal;
             data.taxTotal = this.taxTotal;
+            data.isAutoCalculatedTax = this.allowedProducts == 'T';
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 let description = row['description'] ? row['description'].split('\n').shift() : '';
@@ -985,7 +988,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 product.disabled = true;
         });
 
-        if (this.allowedProducts == 'T')
+        if (this.allowedProducts == 'T' && !this.disabledForUpdate)
             this.taxTotal = 0;
     }
 
@@ -1017,6 +1020,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (this.hasReccuringSubscription) {
             if (!this.disabledForUpdate) {
                 this.shippingTotal = 0;
+                debugger;
                 this.taxTotal = 0;
             }
             if (calculateBalance)
@@ -1396,11 +1400,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.startDate = this.hasSubscription ? this.tomorrowDate : undefined;
     }
 
-    calculateTax() {
+    taxChanged() {
         if (this.allowedProducts != 'T')
+            this.calculateBalance();
+    }
+
+    calculateTax() {
+        debugger;
+        if (this.allowedProducts != 'T' || this.disabledForUpdate)
             return;
 
-        this.calculatedTax = null;
+        this.taxTotal = null;
+        this.balance = null;
 
         clearTimeout(this.calculationTaxTimeout);
         this.calculationTaxTimeout = setTimeout(() => {
@@ -1424,7 +1435,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.taxCalcInfo.shippingCost = this.shippingTotal;
 
         this.taxCalcInfo.products = this.lines.map((line: any, itemIndex: number) => {
-            if (line.rate && line.quantity) {
+            if (line.rate && line.quantity && line.quantity > 0) {
                 if (this.discountTotal) {
                     if (itemIndex == 0 && this.lines.length == 1) {
                         return new ProductTaxInput({
@@ -1455,8 +1466,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.publicProductProxy
                 .getTaxCalculation(this.taxCalcInfo)
                 .subscribe(result => {
-                    this.calculatedTax = result.taxAmountExclusive;
-                    this.balance += this.calculatedTax;
+                    this.taxTotal = result.taxAmountExclusive;
+                    this.balance = this.subTotal - this.discountTotal + this.shippingTotal + this.taxTotal;
                     this.changeDetectorRef.detectChanges();
                 });
         }

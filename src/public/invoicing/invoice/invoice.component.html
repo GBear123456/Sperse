@@ -127,10 +127,9 @@
                 <tr class="footer-row">
                     <td></td>
                     <td colspan="2"><b>Tax Total {{invoiceInfo.invoiceData.currencyId}}</b></td>
-                    <td *ngIf="!invoiceInfo.invoiceData.isAutomaticTaxationEnabled"><b>{{invoiceInfo.invoiceData.taxTotal | number: '1.2-2'}}</b></td>
-                    <td *ngIf="invoiceInfo.invoiceData.isAutomaticTaxationEnabled" class="auto-taxation">
-                        <b *ngIf="invoiceInfo.invoiceData.autoCalculatedTaxTotal != null">{{invoiceInfo.invoiceData.autoCalculatedTaxTotal | number: '1.2-2'}}</b>
-                        <i class="fa fa-question-circle" title="Sales Tax is determined by billing information"></i>
+                    <td>
+                        <b>{{invoiceInfo.invoiceData.taxTotal | number: '1.2-2'}}</b>
+                        <i *ngIf="invoiceInfo.invoiceData.IsAutoCalculatedTax" class="fa fa-question-circle" title="Sales Tax is determined by billing information"></i>
                     </td>
                 </tr>
                 <tr class="footer-row">
