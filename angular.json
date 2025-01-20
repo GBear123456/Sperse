@@ -59,9 +59,9 @@
                 "output": "./assets/locale"
               },
               {
-                "glob": "**/*",
+                "glob": "**.*",
                 "input": "node_modules/monaco-editor/min/vs",
-                "output": "./assets/monaco-editor/min/vs"
+                "output": "./assets/monaco/vs"
               }
             ],
             "styles": [
@@ -695,7 +695,8 @@
       "prefix": "app"
     }
   },
-  "cli":  { 
+  "cli": {
+    "analytics": false,
     "defaultCollection": "@ngrx/schematics"
   }
 }
