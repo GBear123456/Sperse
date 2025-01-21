@@ -12,6 +12,7 @@
     "build-staging": "ng build --configuration staging && npm run build:widgets:staging",
     "build-beta": "ng build --configuration beta && npm run build:widgets:beta",
     "build-prod": "ng build --configuration prod && npm run build:widgets:prod",
+    "build-prodai": "ng build --configuration prodai && npm run build:widgets:prodai",
     "build:widgets": "ng build package-chooser-widget --configuration=dev --extract-css false && node widgets-build.js",
     "build:bank-code": "ng build bank-code --configuration prod",
     "build:widgets:devstaging": "ng build package-chooser-widget --configuration devstaging --extract-css false && node widgets-build.js",
