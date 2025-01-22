@@ -63,7 +63,7 @@ import {
     AddInventoryTopupInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { MessageService, NotifyService } from 'abp-ng2-module';
+import { MessageService, NotifyService, PermissionCheckerService } from 'abp-ng2-module';
 import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -83,6 +83,7 @@ import { LanguagesStoreSelectors, RootStore, LanguagesStoreActions } from '@root
 import { EditAddressDialog } from '../../../edit-address-dialog/edit-address-dialog.component';
 import { EventDurationTypes, EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
 import { round } from 'lodash';
+import { AppPermissions } from '../../../../../../shared/AppPermissions';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
@@ -189,6 +190,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     isPublicProductsEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
     showDowngrade = this.isHostTenant;
+    showCreditsTopUpProduct = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCreditsManage);
     productTypes: string[] = Object.keys(ProductType).filter(item => item == 'Subscription' ? this.isSubscriptionManagementEnabled : true);
     defaultProductType = this.isSubscriptionManagementEnabled ? ProductType.Subscription : ProductType.General;
     productType = ProductType;
@@ -247,6 +249,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         public dialog: MatDialog,
         private setting: SettingService,
         private feature: FeatureCheckerService,
+        private permission: PermissionCheckerService,
         private cacheHelper: CacheHelper,
         private cacheService: CacheService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -480,6 +483,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.product.productSubscriptionOptions = undefined;
             this.product.productUpgradeAssignments = undefined;
             this.product.downgradeProductId = undefined;
+            this.product.creditsTopUpProductId = undefined;
 
             if (this.isFreePriceType) {
                 this.product.price = 0;
@@ -618,13 +622,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             return;
         }
 
-        if (this.product.downgradeProductId ||
+        if (this.product.downgradeProductId || this.product.creditsTopUpProductId ||
             this.product.recommendedProducts.some(v => !!v.recommendedProductId) ||
             this.product.productUpgradeAssignments.some(v => !!v.upgradeProductId)) {
-            this.message.confirm('Changing currency will clear recommended, upgrade and downgrade products', '', (isConfirmed) => {
+            this.message.confirm('Changing currency will clear recommended, upgrade, downgrade, topup products', '', (isConfirmed) => {
                 if (isConfirmed) {
                     this.initCurrencyFields();
                     this.product.downgradeProductId = null;
+                    this.product.creditsTopUpProductId = null;
                     this.product.recommendedProducts = [new RecommendedProductInfo()];
                     this.product.productUpgradeAssignments = [new ProductUpgradeAssignmentInfo()];
                     this.detectChanges();

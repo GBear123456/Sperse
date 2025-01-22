@@ -1,0 +1,49 @@
+<modal-dialog [title]="ls.l('ContactCredits') + ' ' + ls.l('BalanceHistory')"
+              [editTitle]="false"
+              [titleClearButton]="false">
+    <dx-scroll-view showScrollbar="onHover">
+        <div class="content">
+            <div *ngFor="let history of creditBalanceHistory">
+                <div class="m-alert m-alert--icon m-alert--icon-solid m-alert--outline alert alert-info" role="alert">
+                    <div id="code-color" class="m-alert__icon">
+                        <img [src]="profileService.getContactPhotoUrl(history.userPhotoPublicId, false)"
+                             [title]="history.userName || ''" 
+                             class="m--img-rounded m--marginless m--img-centered" 
+                             width="50" height="50">
+                        <p [title]="history.userName || ''">{{history.userName || ''}}</p>
+                    </div>
+                    <div class="m-alert__text">
+                        <div class="row left-side">
+                            <label class="control-label col-sm-2">{{ls.l('Amount')}}:</label>
+                            <p class="form-control-static" [ngClass]="history.amount > 0 ? 'up' : 'down'">
+                                {{history.amount}}
+                                <i class="fa" [ngClass]="history.amount > 0 ? 'fa-angle-double-up' : 'fa-angle-double-down'"></i>
+                            </p>
+                        </div>
+                        <div class="row left-side">
+                            <label class="control-label col-sm-2">{{ls.l('Remaining')}}:</label>
+                            <p class="form-control-static">
+                                {{history.remaining}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="m-alert__text">
+                        <div class="row">
+                            <label class="control-label col-sm-2">{{ls.l('Time')}}:</label>
+                            <p class="form-control-static login-attempt-date" [title]="getTime(history)">
+                                {{getTime(history)}}
+                            </p>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-2">{{ls.l('Description')}}:</label>
+                            <p class="form-control-static">
+                                {{history.description}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!creditBalanceHistory.length" class="no-data">{{ls.l('NoData')}}</div>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>

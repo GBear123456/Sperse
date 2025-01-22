@@ -1,0 +1,82 @@
+:host {
+    .content {
+        padding-left: 20px;
+        padding-right: 15px;
+        padding-top: 10px;
+
+        .alert-info {
+            width: 100%;
+            color: #000;
+            border-color: #dadee1;
+
+            #code-color {
+                width: 105px;
+                padding: 20px 5px 0px 5px;
+                background: #dadee1;
+
+                p {
+                    max-width: 95px;
+                    height: 18px;
+                    white-space: nowrap;
+                    padding-top: 10px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
+        .m-alert__text {
+            padding: 5px 15px;
+        }
+
+        .control-label {
+            display: inline-table;
+            font-weight: 600;
+            white-space: nowrap;
+            line-height: 20px;
+        }
+
+        .left-side {
+            label {
+                min-width: 170px;
+                text-align: left !important;
+            }
+
+            p {
+                min-width: 80px;
+                text-align: right;
+            }
+
+            .up {
+                color: green;
+            }
+
+            .down {
+                color: red;
+            }
+        }
+
+        .form-control-static {
+            max-width: 250px;
+            line-height: 20px;
+            margin: 0;
+
+            img {
+                vertical-align: top;
+                position: relative;
+            }
+
+            &.login-attempt-date {
+                min-width: 280px;
+            }
+        }
+
+        .no-data {
+            text-align: center;
+            margin-top: 18px;
+            font-style: italic;
+            font-size: 20px;
+            color: gray;
+        }
+    }
+}

@@ -157,7 +157,9 @@ import { CreateProductDialogComponent, FilterAssignmentsPipe } from './subscript
 import { AddMemberServiceDialogComponent } from './subscriptions/add-subscription-dialog/add-member-service-dialog/add-member-service-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { AffiliateHistoryDialogComponent } from './personal-details/personal-details-dialog/affiliate-history-dialog/affiliate-history-dialog.component';
+import { CreditBalanceHistoryDialogComponent } from './personal-details/personal-details-dialog/credit-balance-history-dialog/credit-balance-history-dialog.component';
 import { PersonHistoryDialogComponent } from './personal-details/personal-details-dialog/person-history-dialog/person-history-dialog.component';
+import { CreditsChangeDialogComponent } from './personal-details/personal-details-dialog/credits-change-dialog/credits-change-dialog.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 import { PropertyInformationComponent } from '@app/crm/contacts/property-information/property-information.component';
 import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity-dialog/create-activity-dialog.component';
@@ -230,7 +232,9 @@ import { CurrencySelectorModule } from '../../../shared/common/currency-selector
         AddMemberServiceDialogComponent,
         TemplateDocumentsDialogComponent,
         AffiliateHistoryDialogComponent,
+        CreditBalanceHistoryDialogComponent,
         PersonHistoryDialogComponent,
+        CreditsChangeDialogComponent,
         CustomerListDialogComponent,
         PropertyInformationComponent,
         ResellerActivityComponent,
