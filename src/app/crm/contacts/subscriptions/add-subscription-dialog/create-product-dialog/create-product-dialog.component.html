@@ -356,8 +356,7 @@
                                                                displayExpr="displayValue"
                                                                [(value)]="option.billingCyclesEnabled"
                                                                [disabled]="isReadOnly"
-                                                               (onValueChanged)="option.cycles = option.billingCyclesEnabled ? option.cycles : undefined"
-                                                               (onInitialized)="option.billingCyclesEnabled = (option.frequency && !!option.cycles) || false">
+                                                               (onValueChanged)="option.cycles = option.billingCyclesEnabled ? option.cycles : undefined">
                                                 </dx-select-box>
                                             </div>
                                             <div [ngClass]="{disabled: !option.billingCyclesEnabled}">
@@ -417,7 +416,6 @@
                                                                switchedOffText=""
                                                                switchedOnText=""
                                                                [(value)]="option.trialEnabled"
-                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount"
                                                                [disabled]="isReadOnly">
                                                     </dx-switch>&nbsp;<span (click)="option.trialEnabled = !option.trialEnabled">{{ls.l('Add Trial Period')}}</span>
                                                 </label>
@@ -437,7 +435,6 @@
                                                     <dx-switch switchedOffText=""
                                                                switchedOnText=""
                                                                [(value)]="option.gracePeriodEnabled"
-                                                               (onInitialized)="option.gracePeriodEnabled = !!option.gracePeriodDayCount"
                                                                [disabled]="isReadOnly">
                                                     </dx-switch>&nbsp;<span (click)="option.gracePeriodEnabled = !option.gracePeriodEnabled">{{ls.l('Custom Grace Period')}}</span>
                                                 </label>
@@ -582,7 +579,7 @@
                                 <label class="wide">{{ls.l('Actual Quantity')}}</label>
                                 <div class="option-row width-50">
                                     <div>
-                                        <div *ngIf="storedCurrentQuantity == null">
+                                        <div *ngIf="storedCurrentQuantity == undefined">
                                             <dx-number-box name="initialQuantity"
                                                            [(value)]="product.productInventory.initialQuantity"
                                                            [format]="product.type == productType.General ? '#,##0.##' : '#,##0'"
@@ -592,7 +589,7 @@
                                                 </dx-validator>
                                             </dx-number-box>
                                         </div>
-                                        <div *ngIf="storedCurrentQuantity != null">
+                                        <div *ngIf="storedCurrentQuantity != undefined">
                                             <dx-number-box name="storedCurrentQuantity"
                                                            [(value)]="storedCurrentQuantity"
                                                            [format]="product.type == productType.General ? '#,##0.##' : '#,##0'"
@@ -608,7 +605,7 @@
                                         </dx-switch><span class="enable-inventory"> {{ls.l('Can sell out of stock')}}</span>
                                     </div>
                                 </div>
-                                <div *ngIf="storedCurrentQuantity != null">
+                                <div *ngIf="storedCurrentQuantity != undefined">
                                     <div class="inventory-topup">
                                         <dx-number-box name="topupQuantity"
                                                        width="80%"
