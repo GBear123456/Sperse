@@ -43,7 +43,7 @@ export class CreditBalanceHistoryDialogComponent implements OnInit {
         this.creditBalanceProxy.getContactBalanceHistory(this.data.contactId)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe((result: CreditBalanceHistoryInfo[]) => {
-                this.creditBalanceHistory = result.reverse();
+                this.creditBalanceHistory = result;
                 this.changeDetectorRef.detectChanges();
             });
     }
