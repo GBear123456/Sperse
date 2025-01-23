@@ -26,7 +26,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import {
     NavPosition,
     TenantSettingsServiceProxy,
-    AppearanceSettingsEditDto
+    AppearanceSettingsEditDto,
+    AppearanceSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { AppService } from '@app/app.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
@@ -223,19 +224,24 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     }
 
     switchNavBar() {
-        this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({
-            navPosition: this.settingService.get('App.Appearance.NavPosition') == 'Horizontal' ? NavPosition.Vertical : NavPosition.Horizontal,
-            navTextColor: this.settingService.get('App.Appearance.NavTextColor'),
-            navBackground: this.settingService.get('App.Appearance.NavBackground'),
-            buttonColor: this.settingService.get('App.Appearance.ButtonColor'),
-            buttonTextColor: this.settingService.get('App.Appearance.ButtonTextColor'),
-            buttonHighlightedColor: this.settingService.get('App.Appearance.ButtonHighlightedColor'),
-            fontName: this.settingService.get('App.Appearance.FontName'),
-            borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
-            tabularFont: this.settingService.get('App.Appearance.TabularFont'),
-            leftsideMenuColor: this.settingService.get('App.Appearance.LeftsideMenuColor'),
-            welcomePageAppearance: this.settingService.get('App.Appearance.WelcomePageAppearance'),
-            portalSettings: null
+        this.settingsProxy.updateAppearanceSettings(
+            new AppearanceSettingsEditDto({
+                organizationUnitId: null,
+                appearanceSettings:
+                    new AppearanceSettingsDto({
+                        navPosition: this.settingService.get('App.Appearance.NavPosition') == 'Horizontal' ? NavPosition.Vertical : NavPosition.Horizontal,
+                        navTextColor: this.settingService.get('App.Appearance.NavTextColor'),
+                        navBackground: this.settingService.get('App.Appearance.NavBackground'),
+                        buttonColor: this.settingService.get('App.Appearance.ButtonColor'),
+                        buttonTextColor: this.settingService.get('App.Appearance.ButtonTextColor'),
+                        buttonHighlightedColor: this.settingService.get('App.Appearance.ButtonHighlightedColor'),
+                        fontName: this.settingService.get('App.Appearance.FontName'),
+                        borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
+                        tabularFont: this.settingService.get('App.Appearance.TabularFont'),
+                        leftsideMenuColor: this.settingService.get('App.Appearance.LeftsideMenuColor'),
+                        welcomePageAppearance: this.settingService.get('App.Appearance.WelcomePageAppearance'),
+                        portalSettings: null
+                    })
         })).subscribe(() => {
             abp.message.info(
                 this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'))

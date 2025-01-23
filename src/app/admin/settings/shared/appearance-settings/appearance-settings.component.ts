@@ -16,7 +16,8 @@ import {
     TenantSettingsServiceProxy,
     AppearanceSettingsEditDto,
     TenantCustomizationInfoDto,
-    PortalAppearanceSettingsEditDto
+    AppearanceSettingsDto,
+    PortalAppearanceSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
@@ -70,8 +71,8 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     defaultTabularFontName: string = this.layoutService.defaultTabularFontName;
     defaultBorderRadius: string = this.layoutService.defaultBorderRadius;
 
-    appearance: AppearanceSettingsEditDto = new AppearanceSettingsEditDto();
-    colorSettings: AppearanceSettingsEditDto | PortalAppearanceSettingsEditDto = new AppearanceSettingsEditDto();
+    appearance: AppearanceSettingsDto = new AppearanceSettingsDto();
+    colorSettings: AppearanceSettingsDto | PortalAppearanceSettingsDto = new AppearanceSettingsDto();
 
     navPosition = this.getNavPosition();
     navPositionOptions = Object.keys(NavPosition).map(item => {
@@ -103,8 +104,8 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
         this.settingsProxy.getAppearanceSettings().subscribe(
             (res: AppearanceSettingsEditDto) => {
-                this.appearance = res;
-                this.colorSettings = res;
+                this.appearance = res.appearanceSettings;
+                this.colorSettings = res.appearanceSettings;
 
                 this.initDefaultValues();
                 this.initPortalMenuItems();
@@ -161,7 +162,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         this.portalMenuItems = portalConfig;
     }
 
-    applyOrClearAppearanceDefaults(settings: AppearanceSettingsEditDto | PortalAppearanceSettingsEditDto, isClear: boolean) {
+    applyOrClearAppearanceDefaults(settings: AppearanceSettingsDto | PortalAppearanceSettingsDto, isClear: boolean) {
         const method = isClear ? this.clearDefault : this.setDefault;
 
         method(settings.navBackground, settings, 'navBackground', this.defaultHeaderColor);
@@ -206,7 +207,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.appearance.navPosition = this.navPosition;
 
         return forkJoin(
-            this.settingsProxy.updateAppearanceSettings(this.appearance),
+            this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({ appearanceSettings: this.appearance, organizationUnitId: null })),
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
                     this.tenant.logoId = res.result.id;

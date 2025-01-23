@@ -22,7 +22,8 @@ import {
     LayoutType,
     NavPosition,
     TenantSettingsServiceProxy,
-    AppearanceSettingsEditDto
+    AppearanceSettingsEditDto,
+    AppearanceSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -107,18 +108,22 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             saveObs.push(
                 this.tenantSettingsServiceProxy.updateAppearanceSettings(
                     new AppearanceSettingsEditDto({
-                        navPosition: this.navPosition,
-                        navBackground: this.settingService.get('App.Appearance.NavBackground'),
-                        navTextColor: this.settingService.get('App.Appearance.NavTextColor'),
-                        buttonColor: this.settingService.get('App.Appearance.ButtonColor'),
-                        buttonTextColor: this.settingService.get('App.Appearance.ButtonTextColor'),
-                        buttonHighlightedColor: this.settingService.get('App.Appearance.ButtonHighlightedColor'),
-                        fontName: this.settingService.get('App.Appearance.FontName'),
-                        borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
-                        welcomePageAppearance: this.welcomePageUri == AppConsts.defaultWelcomePageUri ? null : this.welcomePageUri,
-                        tabularFont: this.settingService.get('App.Appearance.TabularFont'),
-                        leftsideMenuColor: this.settingService.get('App.Appearance.LeftsideMenuColor'),
-                        portalSettings: null
+                        organizationUnitId: null,
+                        appearanceSettings:
+                            new AppearanceSettingsDto({
+                                navPosition: this.navPosition,
+                                navBackground: this.settingService.get('App.Appearance.NavBackground'),
+                                navTextColor: this.settingService.get('App.Appearance.NavTextColor'),
+                                buttonColor: this.settingService.get('App.Appearance.ButtonColor'),
+                                buttonTextColor: this.settingService.get('App.Appearance.ButtonTextColor'),
+                                buttonHighlightedColor: this.settingService.get('App.Appearance.ButtonHighlightedColor'),
+                                fontName: this.settingService.get('App.Appearance.FontName'),
+                                borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
+                                welcomePageAppearance: this.welcomePageUri == AppConsts.defaultWelcomePageUri ? null : this.welcomePageUri,
+                                tabularFont: this.settingService.get('App.Appearance.TabularFont'),
+                                leftsideMenuColor: this.settingService.get('App.Appearance.LeftsideMenuColor'),
+                                portalSettings: null
+                            })
                     })
                 ).pipe(tap(() => {
                     this.onOptionChanged.emit(isWelcomePageChanged ? 'appearance' : 'navPosition');
