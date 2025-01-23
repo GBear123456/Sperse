@@ -17,7 +17,8 @@ import {
     AppearanceSettingsEditDto,
     TenantCustomizationInfoDto,
     AppearanceSettingsDto,
-    PortalAppearanceSettingsDto
+    PortalAppearanceSettingsDto,
+    DictionaryServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
@@ -92,17 +93,42 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         [PortalMenuItemEnum.CRMLogin]: AppFeatures.CRM
     };
 
+    orgUnits: any[] = [{
+        id: null,
+        displayName: this.l('AllOrganizationUnits')
+    }];
+    selectedOrgUnitId = null;
+
     constructor(
         _injector: Injector,
         private faviconsService: FaviconService,
         private settingsProxy: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private fontService: FontService,
-        private settingService: SettingService
+        private settingService: SettingService,
+        private dictionaryProxy: DictionaryServiceProxy
     ) {
         super(_injector);
 
-        this.settingsProxy.getAppearanceSettings().subscribe(
+        this.dictionaryProxy.getOrganizationUnits(
+            undefined, undefined, true
+        ).subscribe(res => {
+            this.orgUnits = this.orgUnits.concat(res);
+            this.changeDetection.detectChanges();
+        });
+
+        this.organizationUnitChanged();
+
+        DomHelper.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
+            + this.fontService.supportedGoogleFonts.concat(this.fontService.supportedTabularGoogleFonts).join('|')
+        );
+        this.fontService.supportedCustomFonts.map(font =>
+            DomHelper.addStyleSheet('custom-font', './assets/fonts/fonts-' + font.toLowerCase() + '.css')
+        );
+    }
+
+    organizationUnitChanged() {
+        this.settingsProxy.getAppearanceSettings(this.selectedOrgUnitId || undefined).subscribe(
             (res: AppearanceSettingsEditDto) => {
                 this.appearance = res.appearanceSettings;
                 this.colorSettings = res.appearanceSettings;
@@ -111,13 +137,6 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                 this.initPortalMenuItems();
                 this.changeDetection.detectChanges();
             }
-        );
-
-        DomHelper.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
-            + this.fontService.supportedGoogleFonts.concat(this.fontService.supportedTabularGoogleFonts).join('|')
-        );
-        this.fontService.supportedCustomFonts.map(font =>
-            DomHelper.addStyleSheet('custom-font', './assets/fonts/fonts-' + font.toLowerCase() + '.css')
         );
     }
 
@@ -207,7 +226,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.appearance.navPosition = this.navPosition;
 
         return forkJoin(
-            this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({ appearanceSettings: this.appearance, organizationUnitId: null })),
+            this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({ appearanceSettings: this.appearance, organizationUnitId: this.selectedOrgUnitId })),
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
                     this.tenant.logoId = res.result.id;

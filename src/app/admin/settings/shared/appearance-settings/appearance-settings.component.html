@@ -2,6 +2,17 @@
     <div class="left">
         <div class="header">
             <span>{{l('Appearance')}} {{l('Settings')}}</span>
+            <div class="org-unit">
+                <dx-select-box height="46px"
+                               [(value)]="selectedOrgUnitId"
+                               [dataSource]="orgUnits"
+                               [placeholder]="l('OrganizationUnit')"
+                               valueExpr="id"
+                               displayExpr="displayName"
+                               [showClearButton]="true"
+                               (onValueChanged)="organizationUnitChanged()">
+                </dx-select-box>
+            </div>
             <div *ngIf="hasPortalFeature" class="toggle-button">
                 <input type="checkbox" (click)="toggleColorSetting(!isPortalSelected)" id="toggle" class="toggleCheckbox" />
                 <label for="toggle" class="toggleContainer">
