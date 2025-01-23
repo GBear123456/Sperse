@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angula
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
@@ -62,18 +62,22 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     someCssChanged: boolean;
     someColorChanged: boolean;
 
-    defaultLeftSideMenuColor: string = this.layoutService.defaultLeftSideMenuColor;
-    defaultHeaderColor: string = this.layoutService.defaultHeaderBgColor;
-    defaultTextColor: string = this.layoutService.defaultHeaderTextColor;
-    defaultButtonColor: string = this.layoutService.defaultButtonColor;
-    defaultButtonTextColor: string = this.layoutService.defaultButtonTextColor;
-    defaultButtonHighlightedColor: string = this.layoutService.defaultButtonHighlightedColor;
-    defaultFontName: string = this.layoutService.defaultFontName;
-    defaultTabularFontName: string = this.layoutService.defaultTabularFontName;
-    defaultBorderRadius: string = this.layoutService.defaultBorderRadius;
+    systemColorsAppearance = AppearanceSettingsDto.fromJS({
+        navBackground: this.layoutService.defaultHeaderBgColor,
+        navTextColor: this.layoutService.defaultHeaderTextColor,
+        buttonColor: this.layoutService.defaultButtonColor,
+        buttonTextColor: this.layoutService.defaultButtonTextColor,
+        buttonHighlightedColor: this.layoutService.defaultButtonHighlightedColor,
+        leftsideMenuColor: this.layoutService.defaultLeftSideMenuColor,
+        fontName: this.layoutService.defaultFontName,
+        tabularFont: this.layoutService.defaultTabularFontName,
+        borderRadius: this.layoutService.defaultBorderRadius
+    });
+    tenantDefaultSettings: AppearanceSettingsDto;
 
     appearance: AppearanceSettingsDto = new AppearanceSettingsDto();
     colorSettings: AppearanceSettingsDto | PortalAppearanceSettingsDto = new AppearanceSettingsDto();
+    currentDefaultSettings: AppearanceSettingsDto | PortalAppearanceSettingsDto = this.systemColorsAppearance;
 
     navPosition = this.getNavPosition();
     navPositionOptions = Object.keys(NavPosition).map(item => {
@@ -94,10 +98,10 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     };
 
     orgUnits: any[] = [{
-        id: null,
+        id: 0,
         displayName: this.l('AllOrganizationUnits')
     }];
-    selectedOrgUnitId = null;
+    selectedOrgUnitId = 0;
 
     constructor(
         _injector: Injector,
@@ -128,16 +132,24 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     organizationUnitChanged() {
-        this.settingsProxy.getAppearanceSettings(this.selectedOrgUnitId || undefined).subscribe(
-            (res: AppearanceSettingsEditDto) => {
-                this.appearance = res.appearanceSettings;
-                this.colorSettings = res.appearanceSettings;
+        this.startLoading();
+        this.settingsProxy.getAppearanceSettings(this.selectedOrgUnitId || undefined)
+            .pipe(finalize(() => this.finishLoading()))
+            .subscribe(
+                (res: AppearanceSettingsEditDto) => {
+                    this.appearance = res.appearanceSettings;
+                    this.someColorChanged = false;
 
-                this.initDefaultValues();
-                this.initPortalMenuItems();
-                this.changeDetection.detectChanges();
-            }
-        );
+                    this.initDefaultValues();
+                    this.initPortalMenuItems();
+
+                    if (!this.selectedOrgUnitId)
+                        this.tenantDefaultSettings = AppearanceSettingsDto.fromJS(res.appearanceSettings);
+
+                    this.toggleColorSetting(this.isPortalSelected);
+                    this.changeDetection.detectChanges();
+                }
+            );
     }
 
     initDefaultValues() {
@@ -184,25 +196,27 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     applyOrClearAppearanceDefaults(settings: AppearanceSettingsDto | PortalAppearanceSettingsDto, isClear: boolean) {
         const method = isClear ? this.clearDefault : this.setDefault;
 
-        method(settings.navBackground, settings, 'navBackground', this.defaultHeaderColor);
-        method(settings.navTextColor, settings, 'navTextColor', this.defaultTextColor);
-        method(settings.buttonColor, settings, 'buttonColor', this.defaultButtonColor);
-        method(settings.buttonTextColor, settings, 'buttonTextColor', this.defaultButtonTextColor);
-        method(settings.buttonHighlightedColor, settings, 'buttonHighlightedColor', this.defaultButtonHighlightedColor);
-        method(settings.leftsideMenuColor, settings, 'leftsideMenuColor', this.defaultLeftSideMenuColor);
-        method(settings.fontName, settings, 'fontName', this.defaultFontName);
-        method(settings.tabularFont, settings, 'tabularFont', this.defaultTabularFontName);
-        method(settings.borderRadius, settings, 'borderRadius', this.defaultBorderRadius);
+        let defaultValuesObj = this.getDefaultColorSettings(settings instanceof PortalAppearanceSettingsDto)
+
+        method(settings.navBackground, settings, 'navBackground', defaultValuesObj);
+        method(settings.navTextColor, settings, 'navTextColor', defaultValuesObj);
+        method(settings.buttonColor, settings, 'buttonColor', defaultValuesObj);
+        method(settings.buttonTextColor, settings, 'buttonTextColor', defaultValuesObj);
+        method(settings.buttonHighlightedColor, settings, 'buttonHighlightedColor', defaultValuesObj);
+        method(settings.leftsideMenuColor, settings, 'leftsideMenuColor', defaultValuesObj);
+        method(settings.fontName, settings, 'fontName', defaultValuesObj);
+        method(settings.tabularFont, settings, 'tabularFont', defaultValuesObj);
+        method(settings.borderRadius, settings, 'borderRadius', defaultValuesObj);
     }
 
-    setDefault(property, target, key, defaultValue) {
+    setDefault(property, target, key, defaultSettings) {
         if (!property) {
-            target[key] = defaultValue;
+            target[key] = defaultSettings[key];
         }
     }
 
-    clearDefault(property, target, key, defaultValue) {
-        if (property == defaultValue) {
+    clearDefault(property, target, key, defaultSettings) {
+        if (property == defaultSettings[key]) {
             target[key] = null;
         }
     }
@@ -210,7 +224,15 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     toggleColorSetting(isPortalSelected) {
         this.isPortalSelected = isPortalSelected;
         this.colorSettings = this.isPortalSelected ? this.appearance.portalSettings : this.appearance;
+
+        this.currentDefaultSettings = this.getDefaultColorSettings(isPortalSelected);
         this.changeDetection.detectChanges();
+    }
+
+    getDefaultColorSettings(portal: boolean): AppearanceSettingsDto | PortalAppearanceSettingsDto {
+        return this.selectedOrgUnitId ?
+            portal ? this.tenantDefaultSettings.portalSettings : this.tenantDefaultSettings :
+            this.systemColorsAppearance;
     }
 
     getSaveObs(): Observable<any> {
@@ -226,7 +248,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.appearance.navPosition = this.navPosition;
 
         return forkJoin(
-            this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({ appearanceSettings: this.appearance, organizationUnitId: this.selectedOrgUnitId })),
+            this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({ appearanceSettings: this.appearance, organizationUnitId: this.selectedOrgUnitId || undefined })),
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
                     this.tenant.logoId = res.result.id;
@@ -260,6 +282,8 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         }
         else {
             this.initDefaultValues();
+            if (!this.selectedOrgUnitId)
+                this.tenantDefaultSettings = AppearanceSettingsDto.fromJS(this.appearance);
             this.changeDetection.detectChanges();
         }
     }
@@ -372,7 +396,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     onColorValueChanged(event, defaultColor) {
-        this.someColorChanged = event.value != defaultColor && !this.isPortalSelected;
+        this.someColorChanged = this.someColorChanged || (event.value != defaultColor && !this.isPortalSelected);
         if (!event.value)
             event.component.option('value', defaultColor);
     }

@@ -16,6 +16,7 @@
 
         .header {
             display: flex;
+            justify-content: space-between;
             border-bottom: 3px solid #E5E8F3;
 
             span {
@@ -23,8 +24,12 @@
                 height: 57px;
             }
 
+            .org-unit {
+                width: 300px;
+            }
+
             .toggle-button {
-                margin: auto;
+                margin: auto 0;
             }
         }
 
@@ -296,13 +301,6 @@
             letter-spacing: 0em;
             color: #10213A;
         }
-    }
-
-    .org-unit {
-        max-width: 50%;
-        flex-grow: 1;
-        text-align: center;
-        margin-left: 10px;
     }
 
     ::ng-deep uploader .m-form__help {

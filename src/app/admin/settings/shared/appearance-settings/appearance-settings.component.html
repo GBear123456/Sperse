@@ -9,7 +9,6 @@
                                [placeholder]="l('OrganizationUnit')"
                                valueExpr="id"
                                displayExpr="displayName"
-                               [showClearButton]="true"
                                (onValueChanged)="organizationUnitChanged()">
                 </dx-select-box>
             </div>
@@ -183,7 +182,7 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Header Background Color"
-                (onValueChanged)="onColorValueChanged($event, defaultHeaderColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.navBackground)"
             ></dx-color-box>
         </div>
 
@@ -197,7 +196,7 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Header Text Color"
-                (onValueChanged)="onColorValueChanged($event, defaultTextColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.navTextColor)"
             ></dx-color-box>
         </div>
 
@@ -211,7 +210,7 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Left Bar Color"
-                (onValueChanged)="onColorValueChanged($event, defaultLeftSideMenuColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.leftsideMenuColor)"
             ></dx-color-box>
         </div>
 
@@ -259,7 +258,7 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Main Button Color"
-                (onValueChanged)="onColorValueChanged($event, defaultButtonColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonColor)"
             ></dx-color-box>
         </div>
 
@@ -273,7 +272,7 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Text Button Color"
-                (onValueChanged)="onColorValueChanged($event, defaultButtonTextColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonTextColor)"
             ></dx-color-box>
         </div>
 
@@ -287,11 +286,11 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Highlight Button Color"
-                (onValueChanged)="onColorValueChanged($event, defaultButtonHighlightedColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonHighlightedColor)"
             ></dx-color-box>
         </div>
 
-        <div class="app-button-round" style="--button-color: {{colorSettings.buttonColor || defaultButtonColor}}; --button-radius: {{(colorSettings.borderRadius || defaultBorderRadius) + 'px'}}; --button-text-color: {{colorSettings.buttonTextColor || defaultButtonTextColor}}; --button-hover-color: {{colorSettings.buttonHighlightedColor || defaultButtonHighlightedColor}}; ">
+        <div class="app-button-round" style="--button-color: {{colorSettings.buttonColor || currentDefaultSettings.buttonColor}}; --button-radius: {{(colorSettings.borderRadius || currentDefaultSettings.borderRadius) + 'px'}}; --button-text-color: {{colorSettings.buttonTextColor || currentDefaultSettings.buttonTextColor}}; --button-hover-color: {{colorSettings.buttonHighlightedColor || currentDefaultSettings.buttonHighlightedColor}}; ">
             <div [ngClass]="{selected: colorSettings.borderRadius == '0'}" (click)="colorSettings.borderRadius = '0'">
                 <label>Sharp Corners<br><br>Radius 0</label>
                 <div class="example predefined0">Select</div>
