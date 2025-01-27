@@ -108,7 +108,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             saveObs.push(
                 this.tenantSettingsServiceProxy.updateAppearanceSettings(
                     new AppearanceSettingsEditDto({
-                        organizationUnitId: null,
+                        organizationUnitId: this.appSession.tenant ? this.appSession.tenant.orgUnitId : undefined,
                         appearanceSettings:
                             new AppearanceSettingsDto({
                                 navPosition: this.navPosition,

@@ -138,6 +138,9 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             .subscribe(
                 (res: AppearanceSettingsEditDto) => {
                     this.appearance = res.appearanceSettings;
+                    if (this.hasPortalFeature && !this.appearance.portalSettings)
+                        this.appearance.portalSettings = new PortalAppearanceSettingsDto();
+
                     this.someColorChanged = false;
 
                     this.initDefaultValues();

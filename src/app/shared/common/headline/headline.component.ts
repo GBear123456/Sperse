@@ -226,7 +226,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     switchNavBar() {
         this.settingsProxy.updateAppearanceSettings(
             new AppearanceSettingsEditDto({
-                organizationUnitId: null,
+                organizationUnitId: this.appService.appSession.tenant ? this.appService.appSession.tenant.orgUnitId : undefined,
                 appearanceSettings:
                     new AppearanceSettingsDto({
                         navPosition: this.settingService.get('App.Appearance.NavPosition') == 'Horizontal' ? NavPosition.Vertical : NavPosition.Horizontal,
