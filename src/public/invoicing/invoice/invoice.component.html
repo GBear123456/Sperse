@@ -6,7 +6,7 @@
             </h3>
             <div class="header-right-side">
                 <ng-container *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent && invoiceInfo.isPaymentsEnabled && invoiceInfo.isQuantityAvailable">
-                    <ng-container *ngIf="!invoiceInfo.invoiceData.IsAutoCalculatedTax">
+                    <ng-container *ngIf="!invoiceInfo.invoiceData.isAutoCalculatedTax">
                         <pay-pal [height]="38" (onApprove)="onPayPalApprove()">
                         </pay-pal>
                     </ng-container>
