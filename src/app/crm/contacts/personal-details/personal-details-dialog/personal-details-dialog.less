@@ -152,6 +152,12 @@
             .add-xref {
                 cursor: pointer;
             }
+
+            &.credit-balance-actions {
+                span {
+                    cursor: pointer;
+                }
+            }
         }
 
         .affiliate-field {
@@ -195,12 +201,6 @@
                         }
                     }
                 }
-            }
-
-            .history-icon {
-                font-size: 18px;
-                float: right;
-                padding: 0;
             }
 
             .mat-expansion-panel-body {
@@ -369,6 +369,11 @@
     ::ng-deep mat-accordion {
         .mat-expansion-panel {
             box-shadow: initial;
+
+            .history-icon {
+                font-size: 18px;
+                padding: 0 !important;
+            }
         }
 
         .mat-expansion-indicator {

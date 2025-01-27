@@ -1,0 +1,19 @@
+<div class="tracking-section" [class.has-value]="trackingValue?.trim()">
+    <div class="logo-title-wrapper">
+        <img [src]="logoSrc" [alt]="logoAlt" class="platform-logo">
+        <h2>{{ title }}</h2>
+    </div>
+    <input type="text"
+           class="input-field"
+           [class.has-value]="trackingValue?.trim()"
+           [placeholder]="placeholder"
+           [(ngModel)]="trackingValue"
+           (ngModelChange)="trackingValueChange.emit($event)">
+    <p class="help-text" *ngIf="helpText && helpLink">
+        {{ helpText }}
+        <a [href]="helpLink" target="_blank">{{ helpLinkText }}</a>.
+    </p>
+    <div class="description" *ngIf="description">
+        {{ description }}
+    </div>
+</div>

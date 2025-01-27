@@ -162,6 +162,7 @@
                                     <dx-switch switchedOffText=""
                                                switchedOnText=""
                                                [(value)]="product.customerChoosesPrice"
+                                               (onValueChanged)="product.credits = null"
                                                [disabled]="isReadOnly || isFreePriceType || (product.type != productType.Donation && product.stripeXref)">
                                     </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
                                 </div>
@@ -191,6 +192,17 @@
                                                 <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-select-box>
+                                    </div>
+                                    <div *ngIf="hasViewCredits && product.type != productType.Donation">
+                                        <dx-number-box width="100%"
+                                                       [placeholder]="ls.l('Credits')"
+                                                       min="0"
+                                                       format="#"
+                                                       height="65px"
+                                                       class="label"
+                                                       [(value)]="product.credits"
+                                                       [disabled]="isReadOnly || !hasManageCredits || product.customerChoosesPrice">
+                                        </dx-number-box>
                                     </div>
                                 </div>
                                 <div class="general-product-price" *ngIf="product.customerChoosesPrice">
@@ -231,6 +243,7 @@
                                             <dx-switch switchedOffText=""
                                                        switchedOnText=""
                                                        [(value)]="option.customerChoosesPrice"
+                                                       (onValueChanged)="option.credits = option.signUpCredits = null"
                                                        [disabled]="isReadOnly || isFreePriceType || option.stripeXref || option.paypalXref">
                                             </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
                                         </div>
@@ -255,6 +268,15 @@
                                                                [format]="amountNullableFormat"
                                                                [(value)]="option.commissionableFeeAmount"
                                                                [disabled]="isReadOnly">
+                                                </dx-number-box>
+                                            </div>
+                                            <div *ngIf="hasViewCredits">
+                                                <label class="wide">{{ls.l('Credits')}}</label>
+                                                <dx-number-box width="100%"
+                                                               min="0"
+                                                               format="#"
+                                                               [(value)]="option.credits"
+                                                               [disabled]="isReadOnly || !hasManageCredits || option.customerChoosesPrice">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -334,8 +356,7 @@
                                                                displayExpr="displayValue"
                                                                [(value)]="option.billingCyclesEnabled"
                                                                [disabled]="isReadOnly"
-                                                               (onValueChanged)="option.cycles = option.billingCyclesEnabled ? option.cycles : undefined"
-                                                               (onInitialized)="option.billingCyclesEnabled = (option.frequency && !!option.cycles) || false">
+                                                               (onValueChanged)="option.cycles = option.billingCyclesEnabled ? option.cycles : undefined">
                                                 </dx-select-box>
                                             </div>
                                             <div [ngClass]="{disabled: !option.billingCyclesEnabled}">
@@ -378,6 +399,15 @@
                                                                [disabled]="isReadOnly">
                                                 </dx-number-box>
                                             </div>
+                                            <div *ngIf="hasViewCredits" [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime}">
+                                                <label class="wide">{{ls.l('Sign Up Credits')}}</label>
+                                                <dx-number-box width="100%"
+                                                               min="0"
+                                                               format="#"
+                                                               [(value)]="option.signUpCredits"
+                                                               [disabled]="isReadOnly || !hasManageCredits || option.customerChoosesPrice">
+                                                </dx-number-box>
+                                            </div>
                                         </div>
                                         <div class="option-row width-50">
                                             <div [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime}">
@@ -386,7 +416,6 @@
                                                                switchedOffText=""
                                                                switchedOnText=""
                                                                [(value)]="option.trialEnabled"
-                                                               (onInitialized)="option.trialEnabled = !!option.trialDayCount"
                                                                [disabled]="isReadOnly">
                                                     </dx-switch>&nbsp;<span (click)="option.trialEnabled = !option.trialEnabled">{{ls.l('Add Trial Period')}}</span>
                                                 </label>
@@ -406,7 +435,6 @@
                                                     <dx-switch switchedOffText=""
                                                                switchedOnText=""
                                                                [(value)]="option.gracePeriodEnabled"
-                                                               (onInitialized)="option.gracePeriodEnabled = !!option.gracePeriodDayCount"
                                                                [disabled]="isReadOnly">
                                                     </dx-switch>&nbsp;<span (click)="option.gracePeriodEnabled = !option.gracePeriodEnabled">{{ls.l('Custom Grace Period')}}</span>
                                                 </label>
@@ -580,7 +608,7 @@
                                 <label class="wide">{{ls.l('Actual Quantity')}}</label>
                                 <div class="option-row width-50">
                                     <div>
-                                        <div *ngIf="storedCurrentQuantity == null">
+                                        <div *ngIf="storedCurrentQuantity == undefined">
                                             <dx-number-box name="initialQuantity"
                                                            [(value)]="product.productInventory.initialQuantity"
                                                            [format]="product.type == productType.General ? '#,##0.##' : '#,##0'"
@@ -590,7 +618,7 @@
                                                 </dx-validator>
                                             </dx-number-box>
                                         </div>
-                                        <div *ngIf="storedCurrentQuantity != null">
+                                        <div *ngIf="storedCurrentQuantity != undefined">
                                             <dx-number-box name="storedCurrentQuantity"
                                                            [(value)]="storedCurrentQuantity"
                                                            [format]="product.type == productType.General ? '#,##0.##' : '#,##0'"
@@ -606,7 +634,7 @@
                                         </dx-switch><span class="enable-inventory"> {{ls.l('Can sell out of stock')}}</span>
                                     </div>
                                 </div>
-                                <div *ngIf="storedCurrentQuantity != null">
+                                <div *ngIf="storedCurrentQuantity != undefined">
                                     <div class="inventory-topup">
                                         <dx-number-box name="topupQuantity"
                                                        width="80%"
@@ -1007,6 +1035,23 @@
                                     </dx-select-box>
                                 </div>
                             </div>
+                            <ng-container *ngIf="hasViewCredits">
+                                <h3>{{ls.l('Credit Top Up Product')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                                <div class="options">
+                                    <div *ngIf="!isReadOnly && hasManageCredits" class="remove-button" (click)="product.creditsTopUpProductId = undefined"><span>-</span></div>
+                                    <div class="upgrade-field">
+                                        <dx-select-box width="100%"
+                                                       valueExpr="id"
+                                                       displayExpr="name"
+                                                       [showClearButton]="false"
+                                                       [dataSource]="products$ | async | FilterAssignments:[]:productType.General"
+                                                       [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
+                                                       [(value)]="product.creditsTopUpProductId"
+                                                       [disabled]="isReadOnly || !hasManageCredits">
+                                        </dx-select-box>
+                                    </div>
+                                </div>
+                            </ng-container>
                         </div>
                         <div class="block">
                             <div class="options-header">

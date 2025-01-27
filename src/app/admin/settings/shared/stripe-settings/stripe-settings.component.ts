@@ -32,9 +32,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     tenantName = this.isHost ? AppConsts.defaultTenantName : this.appSession.tenantName;
 
     apiKeySettings: StripeSettingsDto[];
-    selectedApiKeySettings: StripeSettingsDto;
     connectedSettings: StripeSettingsDto[];
-    selectedConnectedSettings: StripeSettingsDto;
 
     StripeImportType = StripeImportType;
     importTypes: any[] = Object.values(StripeImportType).filter(x => typeof x === "number");
@@ -62,10 +60,8 @@ export class StripeSettingsComponent extends SettingsComponentBase {
                     this.stripePaymentSettings = res;
                     this.stripePaymentSettings.stripeAccountSettings.forEach(v => this.setPaymentMethods(v));
 
-                    this.apiKeySettings = res.stripeAccountSettings.filter(v => !!v.apiKey && !v.connectedAccountId);
-                    this.selectedApiKeySettings = this.apiKeySettings.length ? this.apiKeySettings.find(v => v.isActive) || this.apiKeySettings[0] : undefined;
-                    this.connectedSettings = res.stripeAccountSettings.filter(v => !!v.connectedAccountId);
-                    this.selectedConnectedSettings = this.connectedSettings.length ? this.connectedSettings.find(v => v.isActive) || this.connectedSettings[0] : undefined;
+                    this.apiKeySettings = res.stripeAccountSettings.filter(v => !!v.apiKey && !v.connectedAccountId).sort((a, b) => a.isActive || a.id > b.id ? -1 : 1);
+                    this.connectedSettings = res.stripeAccountSettings.filter(v => !!v.connectedAccountId).sort((a, b) => a.isActive || a.id > b.id ? -1 : 1);
 
                     this.updateShowImportSection();
                     this.changeDetection.detectChanges();
@@ -79,7 +75,6 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         newItem.ignoreExternalWebhooks = false;
         newItem.displayName = 'New API Key';
         this.apiKeySettings.push(newItem);
-        this.selectedApiKeySettings = newItem;
 
         this.changeDetection.detectChanges();
     }
@@ -90,6 +85,25 @@ export class StripeSettingsComponent extends SettingsComponentBase {
                 this.apiKeySettings.concat(this.connectedSettings).forEach(v => v.isActive = false);
                 setting.isActive = true;
                 this.changeDetection.detectChanges();
+            }
+        });
+    }
+
+    delete(setting: StripeSettingsDto) {
+        this.message.confirm(`'${setting.displayName}' will be deleted.`, null, (isConfirmed) => {
+            if (isConfirmed) {
+                if (!setting.id) {
+                    this.loadSettings();
+                    return;
+                }
+
+                this.startLoading();
+                this.tenantPaymentSettingsService.deleteStripeAccount(setting.id).pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe(() => {
+                    this.notify.info(this.l('SuccessfullyDeleted'));
+                    this.loadSettings();
+                });
             }
         });
     }

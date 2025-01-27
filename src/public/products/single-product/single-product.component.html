@@ -1,7 +1,10 @@
 <div *ngIf="showNotFound" class="not-found-block">
     Product link is not valid
 </div>
-<div *ngIf="productInfo" class="box">
+<div id="stripe-checkout" class="stripe-checkout" [class.visible]="showCheckout">
+    <i *ngIf="showCheckout" class="back-icon" (click)="returnFromStripeCheckout()">←</i>
+</div>
+<div *ngIf="productInfo && !showCheckout" class="box">
     <div class="title">
         <h1 class="title title--h1"> {{productInfo.name}}</h1>
     </div>
@@ -433,3 +436,6 @@
         {{currentYear}} &copy; {{hostName}} Platform
     </div>
 </div>
+<app-tracking-scripts *ngIf="productInfo && productInfo.data"
+                      [config]="productInfo.data.trackingTools">
+</app-tracking-scripts>

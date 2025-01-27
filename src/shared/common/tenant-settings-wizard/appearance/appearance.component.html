@@ -1,4 +1,4 @@
-<h2>{{ ls.l('Appearance') }}</h2>
+<h2>{{ ls.l('Platform') + ' ' + ls.l('Appearance') }}</h2>
 <dx-scroll-view height="90%" showScrollbar="onHover">
     <div class="row">
         <div class="col">
@@ -81,20 +81,6 @@
                           acceptFileExt=".css"
                           [maxFileSize]="maxCssFileSize"
                           (onDocumentClear)="clearCustomCss(CustomCssType.Login)">
-                </uploader>
-            </div>
-            <div class="col-md-6">
-                <uploader #portalCssUploader
-                          [title]="ls.l('CustomPortalCSS')"
-                          [documentId]="tenant.portalCustomCssId"
-                          [documentLink]="tenant.portalCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.portalCustomCssId + '/' + tenant.id : undefined"
-                          documentTemplateLink="assets/common/styles/custom/portal-custom-style.css"
-                          [uploadInfoText]="ls.l('UploadCSS_Info')"
-                          [uploadButtonText]="ls.l('FileUpload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Portal'"
-                          acceptFileExt=".css"
-                          [maxFileSize]="maxCssFileSize"
-                          (onDocumentClear)="clearCustomCss(CustomCssType.Portal)">
                 </uploader>
             </div>
         </div>

@@ -137,6 +137,8 @@ export enum AppPermissions {
     CRMOthersViewCommunicationHistorySendSMSAndEmail = 'Pages.CRM.Others.ViewCommunicationHistory.SendSMSAndEmail',
     CRMManageLearningResources = 'Pages.CRM.ManageLearningResources',
     CRMManageAffiliateLinks = 'Pages.CRM.ManageAffiliateLinks',
+    CRMContactCredits = 'Pages.CRM.ContactCredits',
+    CRMContactCreditsManage = 'Pages.CRM.ContactCredits.Manage',
     PFM = 'Pages.PFM',
     PFMApplications = 'Pages.PFM.Applications',
     PFMApplicationsViewSubmissions = 'Pages.PFM.Applications.ViewSubmissions',

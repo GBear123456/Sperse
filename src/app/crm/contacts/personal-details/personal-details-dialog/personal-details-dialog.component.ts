@@ -49,11 +49,13 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { AffiliateHistoryDialogComponent } from './affiliate-history-dialog/affiliate-history-dialog.component';
+import { CreditsChangeDialogComponent } from './credits-change-dialog/credits-change-dialog.component';
 import { CrmService } from '@app/crm/crm.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { CreditBalanceHistoryDialogComponent } from './credit-balance-history-dialog/credit-balance-history-dialog.component';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -166,6 +168,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     affiliateRate2Initil;
     affiliateRate2;
     CommissionTier = CommissionTier;
+    hasCreditsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMContactCredits);
+    hasCreditsViewPermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMContactCredits);
+    hasCreditsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMContactCreditsManage);
+    
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
@@ -887,6 +893,36 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     removeSourceContact(event) {
         event.stopPropagation();
         this.onSourceContactChanged();
+    }
+
+    showCreditsUpdateDialog(isTopUp: boolean) {
+        this.dialog.open(CreditsChangeDialogComponent, {
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.contactInfo.id,
+                isTopUp: isTopUp
+            }
+        }).afterClosed().subscribe((data) => {
+            if (data && data.amount && this.contactInfo.id == data.contactId) {
+                if (!isTopUp)
+                    data.amount = -data.amount;
+                this.contactInfo.creditsBalance += data.amount;
+            }
+        });
+    }
+
+    showCreditBalanceHistory(event) {
+        event.stopPropagation();
+        this.dialog.open(CreditBalanceHistoryDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.contactInfo.id
+            }
+        }).afterClosed().subscribe(() => {
+        });
     }
 
     showAffiliateHistory(event) {

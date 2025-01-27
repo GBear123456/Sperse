@@ -87,6 +87,8 @@ import { DiscordSettingsComponent } from './settings/shared/discord-settings/dis
 import { MailchimpSettingsComponent } from './settings/shared/mailchimp-settings/mailchimp-settings.component';
 import { ExternalAuthInfoComponent } from './settings/shared/helpers/external-auth-info/external-auth-info.component';
 import { YTelSettingsComponent } from './settings/shared/ytel-settings/ytel-settings.component';
+import { TrackingToolsSettingsComponent } from './settings/shared/tracking-tools-settings/tracking-tools-settings.component';
+import { TrackingToolSectionComponent } from './settings/shared/tracking-tools-settings/tracking-tool-section/tracking-tool-section.component';
 import { BugsnagSettingsComponent } from './settings/shared/bugsnag-settings/bugsnag-settings.component';
 import { SecuritySettingsComponent } from './settings/shared/security-settings/security-settings.component';
 import { EmailSettingsComponent } from './settings/shared/email-settings/email-settings.component';
@@ -209,6 +211,8 @@ import { CurrencySelectorModule } from '@shared/common/currency-selector/currenc
         MailchimpSettingsComponent,
         ExternalAuthInfoComponent,
         YTelSettingsComponent,
+        TrackingToolsSettingsComponent,
+        TrackingToolSectionComponent,
         BugsnagSettingsComponent,
         SecuritySettingsComponent,
         EmailSettingsComponent,
