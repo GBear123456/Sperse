@@ -109,6 +109,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                 this.tenantSettingsServiceProxy.updateAppearanceSettings(
                     new AppearanceSettingsEditDto({
                         organizationUnitId: this.appSession.tenant ? this.appSession.tenant.orgUnitId : undefined,
+                        filesSettings: null,
                         appearanceSettings:
                             new AppearanceSettingsDto({
                                 navPosition: this.navPosition,
@@ -143,7 +144,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     }
 
     clearLogo(): void {
-        this.tenantCustomizationService.clearLogo(false).subscribe(() => {
+        this.tenantCustomizationService.clearLogo(null, false).subscribe(() => {
             this.tenant.logoFileType = null;
             this.tenant.logoId = null;
             this.notify.info(this.ls.l('ClearedSuccessfully'));
@@ -161,7 +162,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     }
 
     clearCustomCss(cssType: CustomCssType): void {
-        this.tenantCustomizationService.clearCustomCss(cssType).subscribe(() => {
+        this.tenantCustomizationService.clearCustomCss(null, cssType).subscribe(() => {
             this.setCustomCssTenantProperty(cssType, null);
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();

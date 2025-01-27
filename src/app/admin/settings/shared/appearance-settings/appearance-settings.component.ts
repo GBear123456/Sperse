@@ -18,7 +18,8 @@ import {
     TenantCustomizationInfoDto,
     AppearanceSettingsDto,
     PortalAppearanceSettingsDto,
-    DictionaryServiceProxy
+    DictionaryServiceProxy,
+    AppearanceFilesSettings
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
@@ -52,11 +53,12 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     hasPortalFeature = this.feature.isEnabled(AppFeatures.Portal);
     isPortalSelected = false;
 
-    tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
     maxLogoFileSize = 1024 * 30 /* 30KB */;
     CustomCssType = CustomCssType;
+
+    tenantId = this.appSession.tenantId;
 
     signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
     someCssChanged: boolean;
@@ -76,6 +78,8 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     tenantDefaultSettings: AppearanceSettingsDto;
 
     appearance: AppearanceSettingsDto = new AppearanceSettingsDto();
+    filesSettings: AppearanceFilesSettings = new AppearanceFilesSettings();
+
     colorSettings: AppearanceSettingsDto | PortalAppearanceSettingsDto = new AppearanceSettingsDto();
     currentDefaultSettings: AppearanceSettingsDto | PortalAppearanceSettingsDto = this.systemColorsAppearance;
 
@@ -138,6 +142,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             .subscribe(
                 (res: AppearanceSettingsEditDto) => {
                     this.appearance = res.appearanceSettings;
+                    this.filesSettings = res.filesSettings || new AppearanceFilesSettings();
                     if (this.hasPortalFeature && !this.appearance.portalSettings)
                         this.appearance.portalSettings = new PortalAppearanceSettingsDto();
 
@@ -251,10 +256,10 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.appearance.navPosition = this.navPosition;
 
         return forkJoin(
-            this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({ appearanceSettings: this.appearance, organizationUnitId: this.selectedOrgUnitId || undefined })),
+            this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({ appearanceSettings: this.appearance, organizationUnitId: this.selectedOrgUnitId || undefined, filesSettings: undefined})),
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
-                    this.tenant.logoId = res.result.id;
+                    this.filesSettings.lightLogoId = res.result.id;
                     this.changeDetection.detectChanges();
                 }
             })),
@@ -262,16 +267,16 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
             this.hasPortalFeature ? this.portalLogoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
-                    this.tenant.portalLogoId = res.result.id;
+                    this.filesSettings.portalLogoId = res.result.id;
                     this.changeDetection.detectChanges();
                 }
             })) : of(false),
-            this.hasPortalFeature ? this.portalFaviconsUploader.uploadFile().pipe(tap((res: any) => this.handleFaviconsUpload(true, res))) : of(false),
+           // this.hasPortalFeature ? this.portalFaviconsUploader.uploadFile().pipe(tap((res: any) => this.handleFaviconsUpload(true, res))) : of(false),
             this.hasPortalFeature ? this.portalLoginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.PortalLogin, res))) : of(false),
             this.hasPortalFeature ? this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))) : of(false),
             this.signUpPagesEnabled ?
                 this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
-            this.faviconsUploader.uploadFile().pipe(tap((res) => this.handleFaviconsUpload(false, res)))
+            //this.faviconsUploader.uploadFile().pipe(tap((res) => this.handleFaviconsUpload(false, res)))
         );
     }
 
@@ -310,27 +315,27 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         if (!updateUI)
             return;
 
-        if (portalFavicons) {
-            this.tenant.tenantCustomizations.portalFaviconBaseUrl = result.portalFaviconBaseUrl;
-            this.tenant.tenantCustomizations.portalFavicons = result.portalFavicons;
-        } else {
-            this.tenant.tenantCustomizations.faviconBaseUrl = result.faviconBaseUrl;
-            this.tenant.tenantCustomizations.favicons = result.favicons;
-            this.faviconsService.updateFavicons(this.tenant.tenantCustomizations.favicons, this.tenant.tenantCustomizations.faviconBaseUrl);
-        }
+        //if (portalFavicons) {
+        //    this.tenant.tenantCustomizations.portalFaviconBaseUrl = result.portalFaviconBaseUrl;
+        //    this.tenant.tenantCustomizations.portalFavicons = result.portalFavicons;
+        //} else {
+        //    this.tenant.tenantCustomizations.faviconBaseUrl = result.faviconBaseUrl;
+        //    this.tenant.tenantCustomizations.favicons = result.favicons;
+        //    this.faviconsService.updateFavicons(this.tenant.tenantCustomizations.favicons, this.tenant.tenantCustomizations.faviconBaseUrl);
+        //}
 
         this.changeDetection.detectChanges();
 
     }
 
     clearLogo(portalLogo = false): void {
-        this.tenantCustomizationService.clearLogo(portalLogo).subscribe(() => {
+        this.tenantCustomizationService.clearLogo(this.selectedOrgUnitId || undefined, portalLogo).subscribe(() => {
             if (portalLogo) {
-                this.tenant.portalLogoFileType = null;
-                this.tenant.portalLogoId = null;
+                this.filesSettings.portalLogoFileType = null;
+                this.filesSettings.portalLogoId = null;
             } else {
-                this.tenant.logoFileType = null;
-                this.tenant.logoId = null;
+                this.filesSettings.lightLogoFileType = null;
+                this.filesSettings.lightLogoId = null;
             }
             this.notify.info(this.l('ClearedSuccessfully'));
             this.changeDetection.detectChanges();
@@ -339,13 +344,13 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
     clearFavicons(portalFavicons = false): void {
         this.tenantCustomizationService.clearFavicons(portalFavicons).subscribe(() => {
-            if (portalFavicons) {
-                this.tenant.tenantCustomizations.portalFavicons = [];
-            }
-            else {
-                this.faviconsService.resetFavicons();
-                this.tenant.tenantCustomizations.favicons = [];
-            }
+            //if (portalFavicons) {
+            //    this.tenant.tenantCustomizations.portalFavicons = [];
+            //}
+            //else {
+            //    this.faviconsService.resetFavicons();
+            //    this.tenant.tenantCustomizations.favicons = [];
+            //}
 
             this.notify.info(this.l('ClearedSuccessfully'));
             this.changeDetection.detectChanges();
@@ -353,7 +358,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     clearCustomCss(cssType: CustomCssType): void {
-        this.tenantCustomizationService.clearCustomCss(cssType).subscribe(() => {
+        this.tenantCustomizationService.clearCustomCss(this.selectedOrgUnitId || undefined, cssType).subscribe(() => {
             this.setCustomCssTenantProperty(cssType, null);
             this.notify.info(this.l('ClearedSuccessfully'));
             this.changeDetection.detectChanges();
@@ -363,19 +368,19 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     setCustomCssTenantProperty(cssType: CustomCssType, value: string) {
         switch (cssType) {
             case CustomCssType.Platform:
-                this.tenant.customCssId = value;
+                this.filesSettings.customCssId = value;
                 break;
             case CustomCssType.Login:
-                this.tenant.loginCustomCssId = value;
+                this.filesSettings.loginCustomCssId = value;
                 break;
             case CustomCssType.PortalLogin:
-                this.tenant.portalLoginCustomCssId = value;
+                this.filesSettings.portalLoginCustomCssId = value;
                 break;
             case CustomCssType.Portal:
-                this.tenant.portalCustomCssId = value;
+                this.filesSettings.portalCustomCssId = value;
                 break;
             case CustomCssType.SignUp:
-                this.tenant.signUpCustomCssId = value;
+                this.filesSettings.signUpCustomCssId = value;
                 break;
         }
     }
