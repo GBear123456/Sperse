@@ -29,7 +29,7 @@ import { AppService } from '@app/app.service';
 @Component({
     selector: 'domain-settings',
     templateUrl: './domain-settings.component.html',
-    styleUrls: ['../../../../shared/common/styles/checkbox-radio.less', './domain-settings.component.less'],
+    styleUrls: ['../../../../shared/common/styles/checkbox-radio.less', './domain-settings.component.less', './../settings-base.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy, ContactLandingPageServiceProxy]
 })
