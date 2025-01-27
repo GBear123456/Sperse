@@ -48,6 +48,10 @@
                                       [text]="ls.l('InvoiceEmail_AttachPDF')"
                                       [(value)]="settings.attachPDF">
                         </dx-check-box>
+                        <dx-check-box [readOnly]="isManageUnallowed"
+                                      [text]="ls.l('InvoiceEmail_AttachXMLToPdf')"
+                                      [(value)]="settings.attachXMLToPdf">
+                        </dx-check-box>
                         <dx-number-box [min]="1"
                                        mode="number"
                                        [readOnly]="isManageUnallowed"
