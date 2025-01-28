@@ -84,6 +84,10 @@ export class AppSessionService {
         return this.tenant ? this.tenant.id : null;
     }
 
+    get orgUnitId(): number {
+        return this.tenant ? this.tenant.orgUnitId : null;
+    }
+
     get layoutType(): string {
         return this.tenant && this.tenant.customLayoutType ? this.tenant.customLayoutType : LayoutType.Default;
     }

@@ -226,7 +226,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     switchNavBar() {
         this.settingsProxy.updateAppearanceSettings(
             new AppearanceSettingsEditDto({
-                organizationUnitId: this.appService.appSession.tenant ? this.appService.appSession.tenant.orgUnitId : undefined,
+                organizationUnitId: this.appService.appSession.orgUnitId,
                 filesSettings: null,
                 appearanceSettings:
                     new AppearanceSettingsDto({

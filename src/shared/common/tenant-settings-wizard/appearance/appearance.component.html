@@ -45,10 +45,10 @@
                 <uploader #faviconsUploader
                           [title]="ls.l('CustomFavicons')"
                           [documentId]="tenant.tenantCustomizations.favicons?.length"
-                          [documentLink]="tenant.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons' : undefined"
+                          [documentLink]="tenant.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?organizationUnitId=' + (orgUnitId || '') : undefined"
                           [uploadInfoText]="ls.l('UploadFavicons_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons'"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?organizationUnitId=' + (orgUnitId || '')"
                           acceptFileExt=".zip"
                           (onDocumentClear)="clearFavicons()">
                 </uploader>

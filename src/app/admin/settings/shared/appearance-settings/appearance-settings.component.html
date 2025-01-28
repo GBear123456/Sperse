@@ -34,17 +34,17 @@
                       (onDocumentClear)="clearLogo()">
             </uploader>
 
-            <!--<uploader #faviconsUploader
+            <uploader #faviconsUploader
                       [showPlusSign]="false"
                       [title]="l('CustomFavicons')"
-                      [documentId]="tenant.tenantCustomizations.favicons?.length"
-                      [documentLink]="tenant.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons' : undefined"
+                      [documentId]="filesSettings.hasFavicons"
+                      [documentLink]="filesSettings.hasFavicons ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?organizationUnitId=' + (selectedOrgUnitId || '') : undefined"
                       [uploadInfoText]="l('UploadFavicons_Info')"
                       [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons'"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?organizationUnitId=' + (selectedOrgUnitId || '')"
                       acceptFileExt=".zip"
                       (onDocumentClear)="clearFavicons()">
-            </uploader>-->
+            </uploader>
 
             <uploader #cssUploader
                       [showPlusSign]="false"
@@ -104,17 +104,17 @@
                       (onDocumentClear)="clearLogo(true)">
             </uploader>
 
-            <!--<uploader #portalFaviconsUploader
+            <uploader #portalFaviconsUploader
                       [showPlusSign]="false"
                       [title]="l('Custom Portal favicons')"
-                      [documentId]="tenant.tenantCustomizations.portalFavicons?.length"
-                      [documentLink]="tenant.tenantCustomizations.portalFavicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?portalIcons=true' : undefined"
+                      [documentId]="filesSettings.hasPortalFavicons"
+                      [documentLink]="filesSettings.hasPortalFavicons ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?portalIcons=true&organizationUnitId=' + (selectedOrgUnitId || '') : undefined"
                       [uploadInfoText]="l('UploadFavicons_Info')"
                       [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?portalIcons=true'"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?portalIcons=true&organizationUnitId=' + (selectedOrgUnitId || '')"
                       acceptFileExt=".zip"
                       (onDocumentClear)="clearFavicons(true)">
-            </uploader>-->
+            </uploader>
 
             <uploader #portalLoginCssUploader
                       [showPlusSign]="false"

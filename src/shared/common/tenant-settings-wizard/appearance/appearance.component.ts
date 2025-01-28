@@ -52,6 +52,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
 
     tenant: TenantLoginInfoDto = this.appSession.tenant;
+    orgUnitId = this.appSession.orgUnitId;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
     maxLogoFileSize = 1024 * 30 /* 30KB */;
@@ -108,7 +109,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             saveObs.push(
                 this.tenantSettingsServiceProxy.updateAppearanceSettings(
                     new AppearanceSettingsEditDto({
-                        organizationUnitId: this.appSession.tenant ? this.appSession.tenant.orgUnitId : undefined,
+                        organizationUnitId: this.orgUnitId,
                         filesSettings: null,
                         appearanceSettings:
                             new AppearanceSettingsDto({
@@ -153,7 +154,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     }
 
     clearFavicons(): void {
-        this.tenantCustomizationService.clearFavicons(false).subscribe(() => {
+        this.tenantCustomizationService.clearFavicons(false, this.orgUnitId).subscribe(() => {
             this.faviconsService.resetFavicons();
             this.tenant.tenantCustomizations.favicons = [];
             this.notify.info(this.ls.l('ClearedSuccessfully'));

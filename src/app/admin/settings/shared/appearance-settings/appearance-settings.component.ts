@@ -271,12 +271,12 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                     this.changeDetection.detectChanges();
                 }
             })) : of(false),
-           // this.hasPortalFeature ? this.portalFaviconsUploader.uploadFile().pipe(tap((res: any) => this.handleFaviconsUpload(true, res))) : of(false),
+            this.hasPortalFeature ? this.portalFaviconsUploader.uploadFile().pipe(tap((res: any) => this.handleFaviconsUpload(true, res))) : of(false),
             this.hasPortalFeature ? this.portalLoginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.PortalLogin, res))) : of(false),
             this.hasPortalFeature ? this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))) : of(false),
             this.signUpPagesEnabled ?
                 this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
-            //this.faviconsUploader.uploadFile().pipe(tap((res) => this.handleFaviconsUpload(false, res)))
+            this.faviconsUploader.uploadFile().pipe(tap((res) => this.handleFaviconsUpload(false, res)))
         );
     }
 
@@ -315,14 +315,20 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         if (!updateUI)
             return;
 
-        //if (portalFavicons) {
-        //    this.tenant.tenantCustomizations.portalFaviconBaseUrl = result.portalFaviconBaseUrl;
-        //    this.tenant.tenantCustomizations.portalFavicons = result.portalFavicons;
-        //} else {
-        //    this.tenant.tenantCustomizations.faviconBaseUrl = result.faviconBaseUrl;
-        //    this.tenant.tenantCustomizations.favicons = result.favicons;
-        //    this.faviconsService.updateFavicons(this.tenant.tenantCustomizations.favicons, this.tenant.tenantCustomizations.faviconBaseUrl);
-        //}
+        if (portalFavicons) {
+            this.filesSettings.hasPortalFavicons = true;
+        } else {
+            this.filesSettings.hasFavicons = true;
+
+            if (this.appSession.orgUnitId == (this.selectedOrgUnitId || null)) {
+                let tenant = this.appSession.tenant;
+                if (tenant) {
+                    tenant.tenantCustomizations.faviconBaseUrl = result.faviconBaseUrl;
+                    tenant.tenantCustomizations.favicons = result.favicons;
+                    this.faviconsService.updateFavicons(tenant.tenantCustomizations.favicons, tenant.tenantCustomizations.faviconBaseUrl);
+                }
+            }
+        }
 
         this.changeDetection.detectChanges();
 
@@ -343,14 +349,15 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     clearFavicons(portalFavicons = false): void {
-        this.tenantCustomizationService.clearFavicons(portalFavicons).subscribe(() => {
-            //if (portalFavicons) {
-            //    this.tenant.tenantCustomizations.portalFavicons = [];
-            //}
-            //else {
-            //    this.faviconsService.resetFavicons();
-            //    this.tenant.tenantCustomizations.favicons = [];
-            //}
+        this.tenantCustomizationService.clearFavicons(portalFavicons, this.selectedOrgUnitId || undefined).subscribe(() => {
+            if (portalFavicons) {
+                this.filesSettings.hasPortalFavicons = false;
+            }
+            else {
+                if (this.appSession.orgUnitId == (this.selectedOrgUnitId || null))
+                    this.faviconsService.resetFavicons();
+                this.filesSettings.hasFavicons = false;
+            }
 
             this.notify.info(this.l('ClearedSuccessfully'));
             this.changeDetection.detectChanges();
