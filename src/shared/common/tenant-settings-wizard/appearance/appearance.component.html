@@ -26,16 +26,16 @@
             </div>
         </div>
     </div>
-    <ng-container *ngIf="tenant">
+    <ng-container *ngIf="appearanceSetting">
         <div class="row m-form file-uploads">
             <div class="col-md-6 app-logo-upload">
                 <uploader #logoUploader
                           [title]="ls.l('ApplicationLogo')"
-                          [documentId]="tenant.logoId"
-                          [documentLink]="tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId : undefined"
+                          [documentId]="appearanceSetting.logoId"
+                          [documentLink]="appearanceSetting.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appearanceSetting.logoId + '&organizationUnitId=' + (orgUnitId || '') : undefined"
                           [uploadInfoText]="ls.l('UploadLogo_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo'"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo?organizationUnitId=' + (orgUnitId || '')"
                           acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
                           [maxFileSize]="maxLogoFileSize"
                           (onDocumentClear)="clearLogo()">
@@ -44,8 +44,8 @@
             <div class="col-md-6">
                 <uploader #faviconsUploader
                           [title]="ls.l('CustomFavicons')"
-                          [documentId]="tenant.tenantCustomizations.favicons?.length"
-                          [documentLink]="tenant.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?organizationUnitId=' + (orgUnitId || '') : undefined"
+                          [documentId]="appearanceSetting.tenantCustomizations.favicons?.length"
+                          [documentLink]="appearanceSetting.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?organizationUnitId=' + (orgUnitId || '') : undefined"
                           [uploadInfoText]="ls.l('UploadFavicons_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
                           [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?organizationUnitId=' + (orgUnitId || '')"
@@ -58,12 +58,12 @@
             <div class="col-md-6">
                 <uploader #cssUploader
                           [title]="ls.l('CustomCSS')"
-                          [documentId]="tenant.customCssId"
-                          [documentLink]="tenant.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id : undefined"
+                          [documentId]="appearanceSetting.customCssId"
+                          [documentLink]="appearanceSetting.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appearanceSetting.customCssId + '/' + tenantId : undefined"
                           [documentTemplateLink]="getCustomPlatformStylePath()"
                           [uploadInfoText]="ls.l('UploadCSS_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform'"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform&organizationUnitId=' + (orgUnitId || '')"
                           acceptFileExt=".css"
                           [maxFileSize]="maxCssFileSize"
                           (onDocumentClear)="clearCustomCss(CustomCssType.Platform)">
@@ -72,12 +72,12 @@
             <div class="col-md-6">
                 <uploader #loginCssUploader
                           [title]="ls.l('CustomLoginCSS')"
-                          [documentId]="tenant.loginCustomCssId"
-                          [documentLink]="tenant.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.loginCustomCssId + '/' + tenant.id : undefined"
+                          [documentId]="appearanceSetting.loginCustomCssId"
+                          [documentLink]="appearanceSetting.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appearanceSetting.loginCustomCssId + '/' + tenantId : undefined"
                           documentTemplateLink="assets/common/styles/custom/login-custom-style.css"
                           [uploadInfoText]="ls.l('UploadCSS_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Login'"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Login&organizationUnitId=' + (orgUnitId || '')"
                           acceptFileExt=".css"
                           [maxFileSize]="maxCssFileSize"
                           (onDocumentClear)="clearCustomCss(CustomCssType.Login)">
@@ -88,12 +88,12 @@
             <div class="col-md-6">
                 <uploader #signUpCssUploader
                           [title]="ls.l('CustomSignUpCSS')"
-                          [documentId]="tenant.signUpCustomCssId"
-                          [documentLink]="tenant.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.signUpCustomCssId + '/' + tenant.id : undefined"
+                          [documentId]="appearanceSetting.signUpCustomCssId"
+                          [documentLink]="appearanceSetting.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appearanceSetting.signUpCustomCssId + '/' + tenantId : undefined"
                           documentTemplateLink="assets/common/styles/custom/signup-custom-style.css"
                           [uploadInfoText]="ls.l('UploadCSS_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=SignUp'"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=SignUp&organizationUnitId=' + (orgUnitId || '')"
                           acceptFileExt=".css"
                           [maxFileSize]="maxCssFileSize"
                           (onDocumentClear)="clearCustomCss(CustomCssType.SignUp)">

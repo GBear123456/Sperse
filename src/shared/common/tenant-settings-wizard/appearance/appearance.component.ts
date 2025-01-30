@@ -51,8 +51,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
 
     @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
 
-    tenant: TenantLoginInfoDto = this.appSession.tenant;
-    orgUnitId = this.appSession.orgUnitId;
+    tenantId = this.appSession.tenantId;
+    appearanceSetting = this.appSession.appearanceConfig;
+    orgUnitId = this.appSession.orgUnitId || undefined;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
     maxLogoFileSize = 1024 * 30 /* 30KB */;
@@ -86,7 +87,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         let saveObs = [
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
-                    this.tenant.logoId = res.result && res.result.id;
+                    this.appearanceSetting.logoId = res.result && res.result.id;
                     this.changeDetectorRef.detectChanges();
                 }
             })),
@@ -96,8 +97,8 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                 this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
             this.faviconsUploader.uploadFile().pipe(tap((res) => {
                 if (res && res.result && res.result.faviconBaseUrl && res.result.favicons && res.result.favicons.length) {
-                    this.tenant.tenantCustomizations = <any>{ ...this.tenant.tenantCustomizations, ...res.result };
-                    this.faviconsService.updateFavicons(this.tenant.tenantCustomizations.favicons, this.tenant.tenantCustomizations.faviconBaseUrl);
+                    this.appearanceSetting.tenantCustomizations = <any>{ ...this.appearanceSetting.tenantCustomizations, ...res.result };
+                    this.faviconsService.updateFavicons(this.appearanceSetting.tenantCustomizations.favicons, this.appearanceSetting.tenantCustomizations.faviconBaseUrl);
                     this.changeDetectorRef.detectChanges();
                 }
             }))
@@ -145,9 +146,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     }
 
     clearLogo(): void {
-        this.tenantCustomizationService.clearLogo(null, false).subscribe(() => {
-            this.tenant.logoFileType = null;
-            this.tenant.logoId = null;
+        this.tenantCustomizationService.clearLogo(this.orgUnitId, false).subscribe(() => {
+            this.appearanceSetting.logoFileType = null;
+            this.appearanceSetting.logoId = null;
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();
         });
@@ -156,14 +157,14 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     clearFavicons(): void {
         this.tenantCustomizationService.clearFavicons(false, this.orgUnitId).subscribe(() => {
             this.faviconsService.resetFavicons();
-            this.tenant.tenantCustomizations.favicons = [];
+            this.appearanceSetting.tenantCustomizations.favicons = [];
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();
         });
     }
 
     clearCustomCss(cssType: CustomCssType): void {
-        this.tenantCustomizationService.clearCustomCss(null, cssType).subscribe(() => {
+        this.tenantCustomizationService.clearCustomCss(this.orgUnitId, cssType).subscribe(() => {
             this.setCustomCssTenantProperty(cssType, null);
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();
@@ -173,13 +174,13 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     setCustomCssTenantProperty(cssType: CustomCssType, value: string) {
         switch (cssType) {
             case CustomCssType.Platform:
-                this.tenant.customCssId = value;
+                this.appearanceSetting.customCssId = value;
                 break;
             case CustomCssType.Login:
-                this.tenant.loginCustomCssId = value;
+                this.appearanceSetting.loginCustomCssId = value;
                 break;
             case CustomCssType.SignUp:
-                this.tenant.signUpCustomCssId = value;
+                this.appearanceSetting.signUpCustomCssId = value;
                 break;
         }
     }
