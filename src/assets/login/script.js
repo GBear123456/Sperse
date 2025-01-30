@@ -129,7 +129,7 @@
 
     function handleGetCurrentLoginInformations(response) {
         var loginInformations = window.loginInfo = response;
-        tenant = loginInformations && loginInformations.tenant;
+        tenant = loginInformations && (loginInformations.tenant || loginInformations.host);
         if (tenant && tenant.customLayoutType != 'Default') {
             window.loginPageHandler = undefined;
             appBootstrap && appBootstrap.call(appContext);
@@ -145,8 +145,7 @@
                 }
             );
 
-            let host = loginInformations && loginInformations.host;
-            let customizations = (tenant && tenant.tenantCustomizations) || (host && host.tenantCustomizations);
+            let customizations = tenant && tenant.tenantCustomizations;
             if (customizations && customizations.favicons && customizations.favicons.length)
                 updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
             else
