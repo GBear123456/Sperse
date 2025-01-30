@@ -26,7 +26,7 @@
                         <tenant-management-settings></tenant-management-settings>
                     </ng-container>
                 </mat-step>
-                <mat-step *ngIf="!appService.isHostTenant && isAdminCustomizations" #appearanceStep>
+                <mat-step *ngIf="isAdminCustomizations" #appearanceStep>
                     <ng-container *ngIf="stepper.selected === appearanceStep">
                         <appearance-settings></appearance-settings>
                     </ng-container>

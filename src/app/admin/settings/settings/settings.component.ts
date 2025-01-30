@@ -97,7 +97,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
         this.settingsConfig = [
             { key: 'General', visible: true },
             { key: 'TenantManagement', visible: this.appService.isHostTenant && this.hasHostPermission },
-            { key: 'Appearance', visible: !this.appService.isHostTenant && this.isAdminCustomizations },
+            { key: 'Appearance', visible: this.isAdminCustomizations },
             { key: 'TrackingTools', visible: true },
             { key: 'UserRegistration', visible: true },
             { key: 'Security', visible: true },

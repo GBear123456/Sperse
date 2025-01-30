@@ -12,7 +12,6 @@ import {
     LayoutType,
     NavPosition,
     TenantCustomizationServiceProxy,
-    TenantLoginInfoDto,
     TenantSettingsServiceProxy,
     AppearanceSettingsEditDto,
     TenantCustomizationInfoDto,
@@ -50,6 +49,8 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
     @ViewChild('signUpCssUploader') signUpCssUploader: UploaderComponent;
 
+    tenantId = this.appSession.tenantId;
+
     hasPortalFeature = this.feature.isEnabled(AppFeatures.Portal);
     isPortalSelected = false;
 
@@ -57,8 +58,6 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     maxCssFileSize = 1024 * 1024 /* 1MB */;
     maxLogoFileSize = 1024 * 30 /* 30KB */;
     CustomCssType = CustomCssType;
-
-    tenantId = this.appSession.tenantId;
 
     signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
     someCssChanged: boolean;
@@ -119,7 +118,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         super(_injector);
 
         this.dictionaryProxy.getOrganizationUnits(
-            undefined, undefined, true
+            undefined, undefined, false
         ).subscribe(res => {
             this.orgUnits = this.orgUnits.concat(res);
             this.changeDetection.detectChanges();
@@ -146,8 +145,6 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                     if (this.hasPortalFeature && !this.appearance.portalSettings)
                         this.appearance.portalSettings = new PortalAppearanceSettingsDto();
 
-                    this.someColorChanged = false;
-
                     this.initDefaultValues();
                     this.initPortalMenuItems();
 
@@ -156,6 +153,8 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
 
                     this.toggleColorSetting(this.isPortalSelected);
                     this.changeDetection.detectChanges();
+
+                    this.someColorChanged = false;
                 }
             );
     }
@@ -325,8 +324,8 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                 if (tenant) {
                     tenant.tenantCustomizations.faviconBaseUrl = result.faviconBaseUrl;
                     tenant.tenantCustomizations.favicons = result.favicons;
-                    this.faviconsService.updateFavicons(tenant.tenantCustomizations.favicons, tenant.tenantCustomizations.faviconBaseUrl);
                 }
+                this.faviconsService.updateFavicons(result.favicons, result.faviconBaseUrl);
             }
         }
 
