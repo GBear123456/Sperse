@@ -11,7 +11,7 @@ import {
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
 import kebabCase from 'lodash/kebabCase';
-import { tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -107,7 +107,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         let isNavPosChanged = this.getNavPosition() != this.navPosition,
             isWelcomePageChanged = this.welcomePageUri != this.settingService.get('App.Appearance.WelcomePageAppearance');            
         if (isNavPosChanged || isWelcomePageChanged) {
-            saveObs.push(
+            saveObs.unshift(
                 this.tenantSettingsServiceProxy.updateAppearanceSettings(
                     new AppearanceSettingsEditDto({
                         organizationUnitId: this.orgUnitId,
@@ -134,7 +134,11 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             );
         }
 
-        return forkJoin(saveObs);
+        const first$ = saveObs[0];
+        const remaining$ = forkJoin(saveObs.slice(1));
+        return first$.pipe(
+            switchMap(() => remaining$)
+        );
     }
 
     handleCssUpload(cssType: CustomCssType, res: any) {

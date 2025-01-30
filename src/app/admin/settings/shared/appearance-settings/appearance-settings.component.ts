@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angula
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize, switchMap, tap } from 'rxjs/operators';
 import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
@@ -254,29 +254,33 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         if (this.getNavPosition() != this.navPosition)
             this.appearance.navPosition = this.navPosition;
 
-        return forkJoin(
-            this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({ appearanceSettings: this.appearance, organizationUnitId: this.selectedOrgUnitId || undefined, filesSettings: undefined})),
-            this.logoUploader.uploadFile().pipe(tap((res: any) => {
-                if (res.result && res.result.id) {
-                    this.filesSettings.lightLogoId = res.result.id;
-                    this.changeDetection.detectChanges();
-                }
-            })),
-            this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
-            this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
-            this.hasPortalFeature ? this.portalLogoUploader.uploadFile().pipe(tap((res: any) => {
-                if (res.result && res.result.id) {
-                    this.filesSettings.portalLogoId = res.result.id;
-                    this.changeDetection.detectChanges();
-                }
-            })) : of(false),
-            this.hasPortalFeature ? this.portalFaviconsUploader.uploadFile().pipe(tap((res: any) => this.handleFaviconsUpload(true, res))) : of(false),
-            this.hasPortalFeature ? this.portalLoginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.PortalLogin, res))) : of(false),
-            this.hasPortalFeature ? this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))) : of(false),
-            this.signUpPagesEnabled ?
-                this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
-            this.faviconsUploader.uploadFile().pipe(tap((res) => this.handleFaviconsUpload(false, res)))
-        );
+        return this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({ appearanceSettings: this.appearance, organizationUnitId: this.selectedOrgUnitId || undefined, filesSettings: undefined }))
+            .pipe(
+                switchMap(() =>
+                    forkJoin([
+                        this.logoUploader.uploadFile().pipe(tap((res: any) => {
+                            if (res.result && res.result.id) {
+                                this.filesSettings.lightLogoId = res.result.id;
+                                this.changeDetection.detectChanges();
+                            }
+                        })),
+                        this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
+                        this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
+                        this.hasPortalFeature ? this.portalLogoUploader.uploadFile().pipe(tap((res: any) => {
+                            if (res.result && res.result.id) {
+                                this.filesSettings.portalLogoId = res.result.id;
+                                this.changeDetection.detectChanges();
+                            }
+                        })) : of(false),
+                        this.hasPortalFeature ? this.portalFaviconsUploader.uploadFile().pipe(tap((res: any) => this.handleFaviconsUpload(true, res))) : of(false),
+                        this.hasPortalFeature ? this.portalLoginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.PortalLogin, res))) : of(false),
+                        this.hasPortalFeature ? this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))) : of(false),
+                        this.signUpPagesEnabled ?
+                            this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
+                        this.faviconsUploader.uploadFile().pipe(tap((res) => this.handleFaviconsUpload(false, res)))
+                    ])
+                )
+            );
     }
 
     afterSave() {
