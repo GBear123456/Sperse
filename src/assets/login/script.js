@@ -145,7 +145,8 @@
                 }
             );
 
-            let customizations = tenant && tenant.tenantCustomizations;
+            let host = loginInformations && loginInformations.host;
+            let customizations = (tenant && tenant.tenantCustomizations) || (host && host.tenantCustomizations);
             if (customizations && customizations.favicons && customizations.favicons.length)
                 updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
             else

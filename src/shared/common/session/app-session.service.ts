@@ -26,6 +26,7 @@ import { FeatureCheckerService } from 'abp-ng2-module';
 @Injectable()
 export class AppSessionService {
     private _user: UserLoginInfoDto;
+    private _host: TenantLoginInfoDto;
     private _tenant: TenantLoginInfoDto;
     private _application: ApplicationInfoDto;
     private _theme: UiCustomizationSettingsDto;
@@ -66,6 +67,14 @@ export class AppSessionService {
 
     get userId(): number {
         return this.user ? this.user.id : null;
+    }
+
+    get appearanceConfig(): TenantLoginInfoDto {
+        return this._host || this._tenant;
+    }
+
+    get host(): TenantLoginInfoDto {
+        return this._host;
     }
 
     get tenant(): TenantLoginInfoDto {
@@ -132,6 +141,7 @@ export class AppSessionService {
             let updateLoginInfo = (result) => {
                 this._application = result.application;
                 this._user = result.user;
+                this._host = result.host;
                 this._tenant = result.tenant;
                 this._theme = result.theme;
                 if (!this.isPublicPage && this.featureService.isEnabled(AppFeatures.AdminCustomizations))
