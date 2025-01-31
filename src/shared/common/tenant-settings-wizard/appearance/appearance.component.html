@@ -31,8 +31,8 @@
             <div class="col-md-6 app-logo-upload">
                 <uploader #logoUploader
                           [title]="ls.l('ApplicationLogo')"
-                          [documentId]="appearanceSetting.logoId"
-                          [documentLink]="appearanceSetting.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appearanceSetting.logoId + '&organizationUnitId=' + (orgUnitId || '') : undefined"
+                          [documentId]="filesSettings.lightLogoId"
+                          [documentLink]="filesSettings.lightLogoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + filesSettings.lightLogoId + '&organizationUnitId=' + (orgUnitId || '') : undefined"
                           [uploadInfoText]="ls.l('UploadLogo_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
                           [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo?organizationUnitId=' + (orgUnitId || '')"
@@ -58,8 +58,8 @@
             <div class="col-md-6">
                 <uploader #cssUploader
                           [title]="ls.l('CustomCSS')"
-                          [documentId]="appearanceSetting.customCssId"
-                          [documentLink]="appearanceSetting.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appearanceSetting.customCssId + '/' + tenantId : undefined"
+                          [documentId]="filesSettings.customCssId"
+                          [documentLink]="filesSettings.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.customCssId + '/' + tenantId : undefined"
                           [documentTemplateLink]="getCustomPlatformStylePath()"
                           [uploadInfoText]="ls.l('UploadCSS_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
@@ -72,8 +72,8 @@
             <div class="col-md-6">
                 <uploader #loginCssUploader
                           [title]="ls.l('CustomLoginCSS')"
-                          [documentId]="appearanceSetting.loginCustomCssId"
-                          [documentLink]="appearanceSetting.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appearanceSetting.loginCustomCssId + '/' + tenantId : undefined"
+                          [documentId]="filesSettings.loginCustomCssId"
+                          [documentLink]="filesSettings.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.loginCustomCssId + '/' + tenantId : undefined"
                           documentTemplateLink="assets/common/styles/custom/login-custom-style.css"
                           [uploadInfoText]="ls.l('UploadCSS_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
@@ -88,8 +88,8 @@
             <div class="col-md-6">
                 <uploader #signUpCssUploader
                           [title]="ls.l('CustomSignUpCSS')"
-                          [documentId]="appearanceSetting.signUpCustomCssId"
-                          [documentLink]="appearanceSetting.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appearanceSetting.signUpCustomCssId + '/' + tenantId : undefined"
+                          [documentId]="filesSettings.signUpCustomCssId"
+                          [documentLink]="filesSettings.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.signUpCustomCssId + '/' + tenantId : undefined"
                           documentTemplateLink="assets/common/styles/custom/signup-custom-style.css"
                           [uploadInfoText]="ls.l('UploadCSS_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"

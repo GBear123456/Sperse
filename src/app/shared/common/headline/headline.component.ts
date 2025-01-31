@@ -38,12 +38,13 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingService } from 'abp-ng2-module';
+import { AppSessionService } from '../../../../shared/common/session/app-session.service';
 
 @Component({
     selector: 'app-headline',
     templateUrl: './headline.component.html',
     styleUrls: ['./headline.component.less'],
-    providers: [ LifecycleSubjectsService ],
+    providers: [LifecycleSubjectsService],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeadLineComponent implements OnInit, OnDestroy {
@@ -51,7 +52,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Input() names: string[];
     @Input() icon: string;
     @Input() iconSrc: string;
-    @Input() text: string;       
+    @Input() text: string;
     @Input() totalCount: number;
     @Input() totalErrorMsg: string = '';
     @Input() showTotalCount: Boolean;
@@ -105,10 +106,13 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     showRefreshButtonSeparately: boolean;
     showHeadlineMenuToggleButton: boolean;
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
+    orgUnitId = this.appSession.orgUnitId || undefined;
+    appearance: AppearanceSettingsDto = new AppearanceSettingsDto();
 
     constructor(
         injector: Injector,
         private appService: AppService,
+        private appSession: AppSessionService,
         private filtersService: FiltersService,
         private fullScreenService: FullScreenService,
         private lifecycleService: LifecycleSubjectsService,
@@ -121,6 +125,14 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         @Inject('toggleButtonPosition') @Optional() toggleButtonPosition: 'left' | 'right',
         @Inject('showToggleLeftMenuButton') @Optional() showToggleLeftMenuButton: boolean
     ) {
+        this.settingsProxy.getAppearanceSettings(this.orgUnitId)
+            .subscribe(
+                (res: AppearanceSettingsEditDto) => {
+                    this.appearance = res.appearanceSettings;
+
+                    this.changeDetectorRef.detectChanges();
+                }
+            );
         if (toggleButtonPosition) {
             this.toggleButtonPosition = toggleButtonPosition;
         }
@@ -224,30 +236,17 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     }
 
     switchNavBar() {
+        this.appearance.navPosition = this.appearance.navPosition == NavPosition.Vertical ? NavPosition.Horizontal : NavPosition.Vertical;
         this.settingsProxy.updateAppearanceSettings(
             new AppearanceSettingsEditDto({
                 organizationUnitId: this.appService.appSession.orgUnitId,
                 filesSettings: null,
-                appearanceSettings:
-                    new AppearanceSettingsDto({
-                        navPosition: this.settingService.get('App.Appearance.NavPosition') == 'Horizontal' ? NavPosition.Vertical : NavPosition.Horizontal,
-                        navTextColor: this.settingService.get('App.Appearance.NavTextColor'),
-                        navBackground: this.settingService.get('App.Appearance.NavBackground'),
-                        buttonColor: this.settingService.get('App.Appearance.ButtonColor'),
-                        buttonTextColor: this.settingService.get('App.Appearance.ButtonTextColor'),
-                        buttonHighlightedColor: this.settingService.get('App.Appearance.ButtonHighlightedColor'),
-                        fontName: this.settingService.get('App.Appearance.FontName'),
-                        borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
-                        tabularFont: this.settingService.get('App.Appearance.TabularFont'),
-                        leftsideMenuColor: this.settingService.get('App.Appearance.LeftsideMenuColor'),
-                        welcomePageAppearance: this.settingService.get('App.Appearance.WelcomePageAppearance'),
-                        portalSettings: null
-                    })
-        })).subscribe(() => {
-            abp.message.info(
-                this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'))
-            ).done(() => window.location.reload());
-        });
+                appearanceSettings: this.appearance
+            })).subscribe(() => {
+                abp.message.info(
+                    this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'))
+                ).done(() => window.location.reload());
+            });
     }
 
     ngOnDestroy() {
