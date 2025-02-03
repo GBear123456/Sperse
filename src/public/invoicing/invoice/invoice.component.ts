@@ -44,7 +44,7 @@ export class InvoiceComponent implements OnInit {
     showPaymentAdvice = false;
     hostName = AppConsts.defaultTenantName;
     currentYear: number = new Date().getFullYear();
-    hasToSOrPolicy: boolean = AppConsts.isSperseHost;
+    hasToSOrPolicy: boolean;
     conditions = ConditionsType;
     invoiceStatuses = InvoiceStatus;
 
@@ -95,6 +95,8 @@ export class InvoiceComponent implements OnInit {
             invoiceInfo.paymentSettings.bankRoutingNumberForACH ||
             invoiceInfo.paymentSettings.bankRoutingNumber));
         this.showSubsScheduledMessage = this.invoiceInfo.invoiceData.status != InvoiceStatus.Paid && this.invoiceInfo.futureSubscriptionIsSetUp;
+
+        this.hasToSOrPolicy = this.invoiceInfo.tenantHasTerms || this.invoiceInfo.tenantHasPrivacyPolicy;
     }
 
     setDueInfo(invoiceInfo: GetPublicInvoiceInfoOutput) {
@@ -161,7 +163,8 @@ export class InvoiceComponent implements OnInit {
             panelClass: ['slider', 'footer-slider'],
             data: {
                 type: type,
-                onlyHost: true
+                tenantId: this.tenantId,
+                hasOwnDocument: type == ConditionsType.Terms ? this.invoiceInfo.tenantHasTerms : this.invoiceInfo.tenantHasPrivacyPolicy
             }
         });
     }

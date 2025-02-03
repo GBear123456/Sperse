@@ -4,16 +4,15 @@
         <div class="form-group flag-settings">
             <label for="DefaultCountry">{{ls.l("Country")}}</label>
             <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings?.defaultCountryCode?.toLowerCase()}}.svg" width="19px" height="auto">
-            <dx-select-box
-                width="100%"
-                valueExpr="code"
-                displayExpr="name"
-                [searchExpr]="['code', 'name']"
-                [searchEnabled]="true"
-                [placeholder]="Search"
-                [(value)]="settings.defaultCountryCode"
-                [dataSource]="supportedCountries"
-                (onValueChanged)="onCountryChanged($event)">
+            <dx-select-box width="100%"
+                           valueExpr="code"
+                           displayExpr="name"
+                           [searchExpr]="['code', 'name']"
+                           [searchEnabled]="true"
+                           [placeholder]="Search"
+                           [(value)]="settings.defaultCountryCode"
+                           [dataSource]="supportedCountries"
+                           (onValueChanged)="onCountryChanged($event)">
                 <div *dxTemplate="let item of 'item'" class="flag-row">
                     <img class="flag-icon" src="assets/common/icons/flags/{{item?.code?.toLowerCase()}}.svg" width="auto" height="38px"><div><span class="currency-name">{{item.name}}</span><br><b class="currency-id">{{item.code}}</b></div>
                 </div>
@@ -22,8 +21,8 @@
         <div class="form-group" *ngIf="showTimezoneSelection">
             <label for="Timezone">{{ls.l("Timezone")}}</label>
             <timezone-combo id="Timezone"
-                [(selectedTimeZone)]="settings.timezone"
-                [defaultTimezoneScope]="defaultTimezoneScope">
+                            [(selectedTimeZone)]="settings.timezone"
+                            [defaultTimezoneScope]="defaultTimezoneScope">
             </timezone-combo>
         </div>
         <div class="form-group flag-settings">
@@ -67,26 +66,28 @@
                        [(ngModel)]="settings.zendeskAccountUrl"
                        maxlength="128">
             </div>
-            <div class="row m-form file-uploads" *ngIf="tenant && isAdminCustomizations">
-                <div class="col-md-6">
-                    <uploader #privacyPolicyUploader
-                              [title]="ls.l('PrivacyPolicy')"
-                              [documentId]="tenant.customPrivacyPolicyDocumentId"
-                              [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + tenant.id"
-                              [uploadButtonText]="ls.l('UploadPrivacyPolicy')"
-                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomPrivacyPolicyDocument'">
-                    </uploader>
-                </div>
-                <div class="col-md-6">
-                    <uploader #tosUploader
-                              [title]="ls.l('TermsOfService')"
-                              [documentId]="tenant.customToSDocumentId"
-                              [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + tenant.id"
-                              [uploadButtonText]="ls.l('UploadTermsOfService')"
-                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomToSDocument'">
-                    </uploader>
-                </div>
-            </div>
         </ng-container>
+        <div class="row m-form file-uploads" *ngIf="isAdminCustomizations">
+            <div class="col-md-6">
+                <uploader #privacyPolicyUploader
+                          [title]="ls.l('PrivacyPolicy')"
+                          [documentId]="appearanceConfig.customPrivacyPolicyDocumentId"
+                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + (appearanceConfig.id || '')"
+                          [uploadButtonText]="ls.l('UploadPrivacyPolicy')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomPrivacyPolicyDocument'"
+                          (onDocumentClear)="clearConditions(conditions.Policies)">
+                </uploader>
+            </div>
+            <div class="col-md-6">
+                <uploader #tosUploader
+                          [title]="ls.l('TermsOfService')"
+                          [documentId]="appearanceConfig.customToSDocumentId"
+                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + (appearanceConfig.id || '')"
+                          [uploadButtonText]="ls.l('UploadTermsOfService')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomToSDocument'"
+                          (onDocumentClear)="clearConditions(conditions.Terms)">
+                </uploader>
+            </div>
+        </div>
     </dx-scroll-view>
 </ng-container>
