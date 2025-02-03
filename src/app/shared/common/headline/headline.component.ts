@@ -17,7 +17,7 @@ import {
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { HeadLineConfigModel } from './headline.model';
@@ -26,8 +26,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import {
     NavPosition,
     TenantSettingsServiceProxy,
-    AppearanceSettingsEditDto,
-    AppearanceSettingsDto
+    AppearanceSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { AppService } from '@app/app.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
@@ -38,7 +37,8 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingService } from 'abp-ng2-module';
-import { AppSessionService } from '../../../../shared/common/session/app-session.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'app-headline',
@@ -105,19 +105,18 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     showTotals = !AppConsts.isMobile;
     showRefreshButtonSeparately: boolean;
     showHeadlineMenuToggleButton: boolean;
-    isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
-    orgUnitId = this.appSession.orgUnitId || undefined;
-    appearance: AppearanceSettingsDto = new AppearanceSettingsDto();
+    hasCustomizationsSettings: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations) &&
+        (this.permission.isGranted(AppPermissions.AdministrationTenantSettings) || this.permission.isGranted(AppPermissions.AdministrationHostSettings));
 
     constructor(
         injector: Injector,
         private appService: AppService,
-        private appSession: AppSessionService,
         private filtersService: FiltersService,
         private fullScreenService: FullScreenService,
         private lifecycleService: LifecycleSubjectsService,
         private leftMenuService: LeftMenuService,
         private settingsProxy: TenantSettingsServiceProxy,
+        private permission: AppPermissionService,
         public layoutService: LayoutService,
         public ls: AppLocalizationService,
         private settingService: SettingService,
@@ -125,14 +124,6 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         @Inject('toggleButtonPosition') @Optional() toggleButtonPosition: 'left' | 'right',
         @Inject('showToggleLeftMenuButton') @Optional() showToggleLeftMenuButton: boolean
     ) {
-        this.settingsProxy.getAppearanceSettings(this.orgUnitId)
-            .subscribe(
-                (res: AppearanceSettingsEditDto) => {
-                    this.appearance = res.appearanceSettings;
-
-                    this.changeDetectorRef.detectChanges();
-                }
-            );
         if (toggleButtonPosition) {
             this.toggleButtonPosition = toggleButtonPosition;
         }
@@ -236,13 +227,18 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     }
 
     switchNavBar() {
-        this.appearance.navPosition = this.appearance.navPosition == NavPosition.Vertical ? NavPosition.Horizontal : NavPosition.Vertical;
-        this.settingsProxy.updateAppearanceSettings(
-            new AppearanceSettingsEditDto({
-                organizationUnitId: this.appService.appSession.orgUnitId,
-                filesSettings: null,
-                appearanceSettings: this.appearance
-            })).subscribe(() => {
+        let orgUnitId = this.appService.appSession.orgUnitId || undefined;
+        this.settingsProxy.getAppearanceSettings(orgUnitId)
+            .pipe(switchMap(settings => {
+                settings.appearanceSettings.navPosition = settings.appearanceSettings.navPosition == NavPosition.Vertical ? NavPosition.Horizontal : NavPosition.Vertical;
+                return this.settingsProxy.updateAppearanceSettings(
+                    new AppearanceSettingsEditDto({
+                        organizationUnitId: orgUnitId,
+                        filesSettings: null,
+                        appearanceSettings: settings.appearanceSettings
+                    }))
+            }))
+            .subscribe(() => {
                 abp.message.info(
                     this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('NavigationMenuPosition'))
                 ).done(() => window.location.reload());
