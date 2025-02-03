@@ -80,7 +80,7 @@
                           [title]="l('CustomSignUpCSS')"
                           [documentId]="filesSettings.signUpCustomCssId"
                           [documentLink]="filesSettings.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.signUpCustomCssId + '/' + tenantId : undefined"
-                          documentTemplateLink="assets/common/styles/custom/signup-custom-style.css"
+                          [documentTemplateLink]="tenantId ? 'assets/common/styles/custom/signup-custom-style.css' : null"
                           [uploadInfoText]="l('UploadCSS_Info')"
                           [uploadButtonText]="l('FileUpload')"
                           [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=SignUp&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
