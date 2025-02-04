@@ -3,7 +3,7 @@
         <div class="logo">
             <a [href]="originUrl">
                 <img *ngIf="appSession.appearanceConfig && appSession.appearanceConfig.logoId"
-                     [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo' + appSession.appearanceConfig.logoId"
+                     [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.appearanceConfig.logoId"
                      alt="logo" width="auto"
                      height="60"/>
             </a>
