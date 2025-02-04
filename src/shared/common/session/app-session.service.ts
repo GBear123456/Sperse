@@ -82,7 +82,7 @@ export class AppSessionService {
     }
 
     get tenantName(): string {
-        return this._tenant ? this.tenant.name : '';
+        return this.appearanceConfig ? this.appearanceConfig.name : '';
     }
 
     get tenancyName(): string {

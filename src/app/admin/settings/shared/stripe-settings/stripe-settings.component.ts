@@ -29,7 +29,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
     stripePaymentSettings: GetStripeSettingsDto = new GetStripeSettingsDto();
 
-    tenantName = this.isHost ? AppConsts.defaultTenantName : this.appSession.tenantName;
+    tenantName = this.appSession.tenantName || AppConsts.defaultTenantName;
 
     apiKeySettings: StripeSettingsDto[];
     selectedApiKeySettings: StripeSettingsDto;

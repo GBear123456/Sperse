@@ -18,7 +18,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class GHostLayoutComponent implements OnInit {
     currentYear: number = moment().year();
-    tenantName = AppConsts.defaultTenantName;
+    tenantName = this.appSession.tenantName || AppConsts.defaultTenantName;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     originUrl = location.origin;
 
@@ -28,8 +28,5 @@ export class GHostLayoutComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        let tenant = this.appSession.tenant;
-        if (tenant)
-            this.tenantName = tenant.name || tenant.tenancyName;
     }
 }
