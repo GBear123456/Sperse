@@ -102,7 +102,15 @@
                             <label class="check_wrap">
                                 <input class="check_wrap__input" type="checkbox" [(ngModel)]="agreedTermsAndServices" [ngModelOptions]="{standalone: true}">
                                 <span class="check_wrap__style"></span>
-                                    <div>By using this extension, you agree to <a href="https://www.linkedin.com/legal/user-agreement" target="_blank">LinkedIn's Terms</a> of Use and to <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">{{hostName}} Terms of Service</a> and <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
+                                <div>
+                                    By using this extension, you agree to <a href="https://www.linkedin.com/legal/user-agreement" target="_blank">LinkedIn's Terms</a> of Use
+                                    <ng-container *ngIf="conditionsModalService.hasTermsOrPolicy()">
+                                        and to
+                                        <ng-container *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)">
+                                            <a (click)="openConditionsDialog(conditions.Terms)">{{hostName}} Terms of Service</a><span *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"> and </span>
+                                        </ng-container>
+                                        <a *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
+                                    </ng-container>
                                 </div>
                             </label>
                         </div>

@@ -18,7 +18,7 @@
             <p *ngIf="conditionsModalService.hasTermsOrPolicy()" class="agree-rights">
                 By continuing I agree to
                 <ng-container *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)">
-                    <a (click)="openConditionsDialog(conditions.Terms)">Terms</a><span *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"> & </span>
+                    <a (click)="openConditionsDialog(conditions.Terms)">Terms</a><span *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"> and </span>
                 </ng-container>
                 <a *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)" (click)="openConditionsDialog(conditions.Policies)">Policies</a>
             </p>
