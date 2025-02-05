@@ -13,7 +13,8 @@ import {
     SettingScopes,
     TenantLoginInfoDto,
     TenantSettingsServiceProxy,
-    CountryDto
+    CountryDto,
+    RenameTenantDto
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { AppTimezoneScope } from '@shared/AppEnums';
@@ -24,6 +25,7 @@ import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { RootStore, CountriesStoreSelectors } from '@root/store';
 import { TimeZoneComboComponent } from '@app/shared/common/timing/timezone-combo.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'general-settings',
@@ -38,6 +40,7 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
     @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;
     @ViewChild('publicSiteUrl', { static: false }) publicSiteUrl: AbstractControlDirective;
     @ViewChild('publicPhoneNumber', { static: false }) publicPhoneNumber;
+    @ViewChild('tenantNameModel', { static: false }) tenantNameMadel: AbstractControlDirective;
 
     generalSettings: GeneralSettingsEditDto;
 
@@ -52,6 +55,12 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
 
     initialTimezone: string;
     initialCountry: string;
+
+    isRenameTenantEnabled: boolean = this.isGranted(
+        AppPermissions.AdministrationTenantSettings
+    );
+    tenantName = this.tenant.name;
+    tenantNameRegexPattern = /^[a-zA-Z0-9\s-]+$/;
 
     constructor(
         _injector: Injector,
@@ -111,7 +120,8 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
     isValid(): boolean {
         if (!this.isHost) {
             return (!this.publicSiteUrl || this.publicSiteUrl.valid) &&
-                (!this.publicPhoneNumber || this.publicPhoneNumber.isValid())
+                (!this.publicPhoneNumber || this.publicPhoneNumber.isValid() &&
+                    (!this.tenant || !this.isRenameTenantEnabled || this.tenantNameMadel.valid));
         }
 
         return super.isValid();
@@ -133,7 +143,8 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
                 sessionStorage.removeItem('SupportedFrom' + this.appSession.userId);
             })),
             this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),
-            this.tosUploader ? this.tosUploader.uploadFile() : of(null)
+            this.tosUploader ? this.tosUploader.uploadFile() : of(null),
+            this.tenantName != this.appSession.tenant.name ? this.tenantSettingsService.renameTenant(new RenameTenantDto({ name: this.tenantName })) : of(null)
         );
     }
 
@@ -147,6 +158,12 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
         if (abp.clock.provider.supportsMultipleTimezone && this.initialTimezone !== this.generalSettings.timezone
         ) {
             this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(function () {
+                window.location.reload();
+            });
+        }
+
+        if (this.tenantName != this.appSession.tenant.name) {
+            this.message.info(this.l('SettingsChangedRefreshPageNotification', this.l('Tenant name'))).done(function () {
                 window.location.reload();
             });
         }
