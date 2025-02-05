@@ -115,7 +115,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
             )
         )
             this.dictionaryProxy.getOrganizationUnits(
-                undefined, undefined, true
+                undefined, undefined, false
             ).subscribe(res => this.orgUnits = this.orgUnits.concat(res));
 
         this.initPortalTypes();

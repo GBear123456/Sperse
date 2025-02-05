@@ -6,5 +6,6 @@ export class ContditionsModalData {
     bodyUrl?: string;
     downloadDisabled?: boolean;
     downloadLink?: string;
-    onlyHost?: boolean;
+    tenantId?: number;
+    hasOwnDocument?: boolean;
 }

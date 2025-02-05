@@ -51,6 +51,13 @@
                         <span>Login To Your {{hostName}} Account</span>
                     </button>
                 </div>
+                <p *ngIf="conditionsModalService.hasTermsOrPolicy()" class="agree-rights">
+                    By continuing I agree to
+                    <ng-container *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)">
+                        <a (click)="openConditionsDialog(conditions.Terms)">Terms</a><span *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"> and </span>
+                    </ng-container>
+                    <a *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)" (click)="openConditionsDialog(conditions.Policies)">Policies</a>
+                </p>
                 <span class="no-account">Don't have a {{hostName}} account? <a routerLink="/account/signup" [queryParams]="{extlogin: isExtLogin}">Sign up</a></span>
             </ng-template>
         </div>

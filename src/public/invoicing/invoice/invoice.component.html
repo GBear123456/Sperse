@@ -236,8 +236,8 @@
             {{currentYear}} &copy; {{hostName}} Platform
         </div>
         <div *ngIf="hasToSOrPolicy" class="links">
-            <a (click)="openConditionsDialog(conditions.Terms)">Terms</a>
-            <a (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
+            <a *ngIf="invoiceInfo.tenantHasTerms" (click)="openConditionsDialog(conditions.Terms)">Terms</a>
+            <a *ngIf="invoiceInfo.tenantHasPrivacyPolicy" (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
         </div>
     </div>
 </div>

@@ -453,13 +453,8 @@ export class SingleProductComponent implements OnInit {
     }
 
     initConditions() {
-        if (!this.tenantId) {
-            this.hasToSOrPolicy = AppConsts.isSperseHost;
-            this.agreedTermsAndServices = !AppConsts.isSperseHost;
-        } else {
-            this.hasToSOrPolicy = this.productInfo.data.tenantHasTerms || this.productInfo.data.tenantHasPrivacyPolicy;
-            this.agreedTermsAndServices = !this.hasToSOrPolicy;
-        }
+        this.hasToSOrPolicy = this.productInfo.data.tenantHasTerms || this.productInfo.data.tenantHasPrivacyPolicy;
+        this.agreedTermsAndServices = !this.hasToSOrPolicy;
     }
 
     showStripeButton() {

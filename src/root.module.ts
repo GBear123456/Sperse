@@ -69,9 +69,9 @@ export function appInitializerFactory(
                     (result) => {
                         //set og meta tags
                         sessionCallback && sessionCallback();
-                        updateMetadata(appSessionService.tenant, injector.get(AppUiCustomizationService));
+                        updateMetadata(appSessionService.appearanceConfig, injector.get(AppUiCustomizationService));
                         bugsnagService.updateBugsnagWithUserInfo(appSessionService);
-                        let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
+                        let customizations = appSessionService.appearanceConfig && appSessionService.appearanceConfig.tenantCustomizations;
                         if (customizations && customizations.favicons && customizations.favicons.length)
                             faviconService.updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
                         else

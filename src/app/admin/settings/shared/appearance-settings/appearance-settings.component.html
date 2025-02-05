@@ -2,6 +2,16 @@
     <div class="left">
         <div class="header">
             <span>{{l('Appearance')}} {{l('Settings')}}</span>
+            <div class="org-unit">
+                <dx-select-box height="46px"
+                               [(value)]="selectedOrgUnitId"
+                               [dataSource]="orgUnits"
+                               [placeholder]="l('OrganizationUnit')"
+                               valueExpr="id"
+                               displayExpr="displayName"
+                               (onValueChanged)="organizationUnitChanged()">
+                </dx-select-box>
+            </div>
             <div *ngIf="hasPortalFeature" class="toggle-button">
                 <input type="checkbox" (click)="toggleColorSetting(!isPortalSelected)" id="toggle" class="toggleCheckbox" />
                 <label for="toggle" class="toggleContainer">
@@ -14,11 +24,11 @@
             <uploader #logoUploader
                       [showPlusSign]="false"
                       [title]="l('ApplicationLogo')"
-                      [documentId]="tenant.logoId"
-                      [documentLink]="tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId : undefined"
+                      [documentId]="filesSettings.lightLogoId"
+                      [documentLink]="filesSettings.lightLogoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + filesSettings.lightLogoId + (selectedOrgUnitId ? ('&organizationUnitId=' + selectedOrgUnitId) : '') : undefined"
                       [uploadInfoText]="l('UploadLogo_Info')"
                       [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo'"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo' + (selectedOrgUnitId ? ('?organizationUnitId=' + selectedOrgUnitId) : '') "
                       acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
                       [maxFileSize]="maxLogoFileSize"
                       (onDocumentClear)="clearLogo()">
@@ -27,11 +37,11 @@
             <uploader #faviconsUploader
                       [showPlusSign]="false"
                       [title]="l('CustomFavicons')"
-                      [documentId]="tenant.tenantCustomizations.favicons?.length"
-                      [documentLink]="tenant.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons' : undefined"
+                      [documentId]="filesSettings.hasFavicons"
+                      [documentLink]="filesSettings.hasFavicons ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?organizationUnitId=' + (selectedOrgUnitId || '') : undefined"
                       [uploadInfoText]="l('UploadFavicons_Info')"
                       [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons'"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?organizationUnitId=' + (selectedOrgUnitId || '')"
                       acceptFileExt=".zip"
                       (onDocumentClear)="clearFavicons()">
             </uploader>
@@ -39,12 +49,12 @@
             <uploader #cssUploader
                       [showPlusSign]="false"
                       [title]="l('CustomCSS')"
-                      [documentId]="tenant.customCssId"
-                      [documentLink]="tenant.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id : undefined"
+                      [documentId]="filesSettings.customCssId"
+                      [documentLink]="filesSettings.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.customCssId + '/' + tenantId : undefined"
                       [documentTemplateLink]="getCustomPlatformStylePath()"
                       [uploadInfoText]="l('UploadCSS_Info')"
                       [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform'"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
                       acceptFileExt=".css"
                       [maxFileSize]="maxCssFileSize"
                       (onDocumentClear)="clearCustomCss(CustomCssType.Platform)">
@@ -53,40 +63,42 @@
             <uploader #loginCssUploader
                       [showPlusSign]="false"
                       [title]="l('CustomLoginCSS')"
-                      [documentId]="tenant.loginCustomCssId"
-                      [documentLink]="tenant.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.loginCustomCssId + '/' + tenant.id : undefined"
+                      [documentId]="filesSettings.loginCustomCssId"
+                      [documentLink]="filesSettings.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.loginCustomCssId + '/' + tenantId : undefined"
                       documentTemplateLink="assets/common/styles/custom/login-custom-style.css"
                       [uploadInfoText]="l('UploadCSS_Info')"
                       [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Login'"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Login&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
                       acceptFileExt=".css"
                       [maxFileSize]="maxCssFileSize"
                       (onDocumentClear)="clearCustomCss(CustomCssType.Login)">
             </uploader>
 
-            <uploader #signUpCssUploader
-                      [showPlusSign]="false"
-                      [title]="l('CustomSignUpCSS')"
-                      [documentId]="tenant.signUpCustomCssId"
-                      [documentLink]="tenant.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.signUpCustomCssId + '/' + tenant.id : undefined"
-                      documentTemplateLink="assets/common/styles/custom/signup-custom-style.css"
-                      [uploadInfoText]="l('UploadCSS_Info')"
-                      [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=SignUp'"
-                      acceptFileExt=".css"
-                      [maxFileSize]="maxCssFileSize"
-                      (onDocumentClear)="clearCustomCss(CustomCssType.SignUp)">
-            </uploader>
+            <div *ngIf="signUpPagesEnabled">
+                <uploader #signUpCssUploader
+                          [showPlusSign]="false"
+                          [title]="l('CustomSignUpCSS')"
+                          [documentId]="filesSettings.signUpCustomCssId"
+                          [documentLink]="filesSettings.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.signUpCustomCssId + '/' + tenantId : undefined"
+                          [documentTemplateLink]="tenantId ? 'assets/common/styles/custom/signup-custom-style.css' : null"
+                          [uploadInfoText]="l('UploadCSS_Info')"
+                          [uploadButtonText]="l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=SignUp&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
+                          acceptFileExt=".css"
+                          [maxFileSize]="maxCssFileSize"
+                          (onDocumentClear)="clearCustomCss(CustomCssType.SignUp)">
+                </uploader>
+            </div>
         </div>
         <div *ngIf="hasPortalFeature" [class.collapse]="!isPortalSelected">
             <uploader #portalLogoUploader
                       [showPlusSign]="false"
                       [title]="l('Portal Logo')"
-                      [documentId]="tenant.portalLogoId"
-                      [documentLink]="tenant.portalLogoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?portalLogo=true&logoId=' + tenant.portalLogoId : undefined"
+                      [documentId]="filesSettings.portalLogoId"
+                      [documentLink]="filesSettings.portalLogoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + filesSettings.portalLogoId +'&portalLogo=true' + (selectedOrgUnitId ? ('&organizationUnitId=' + selectedOrgUnitId) : '') : undefined"
                       [uploadInfoText]="l('UploadLogo_Info')"
                       [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo?portalLogo=true'"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo?portalLogo=true&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
                       acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
                       [maxFileSize]="maxLogoFileSize"
                       (onDocumentClear)="clearLogo(true)">
@@ -95,11 +107,11 @@
             <uploader #portalFaviconsUploader
                       [showPlusSign]="false"
                       [title]="l('Custom Portal favicons')"
-                      [documentId]="tenant.tenantCustomizations.portalFavicons?.length"
-                      [documentLink]="tenant.tenantCustomizations.portalFavicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?portalIcons=true' : undefined"
+                      [documentId]="filesSettings.hasPortalFavicons"
+                      [documentLink]="filesSettings.hasPortalFavicons ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?portalIcons=true&organizationUnitId=' + (selectedOrgUnitId || '') : undefined"
                       [uploadInfoText]="l('UploadFavicons_Info')"
                       [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?portalIcons=true'"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?portalIcons=true&organizationUnitId=' + (selectedOrgUnitId || '')"
                       acceptFileExt=".zip"
                       (onDocumentClear)="clearFavicons(true)">
             </uploader>
@@ -107,11 +119,11 @@
             <uploader #portalLoginCssUploader
                       [showPlusSign]="false"
                       [title]="l('Custom Portal Login CSS')"
-                      [documentId]="tenant.portalLoginCustomCssId"
-                      [documentLink]="tenant.portalLoginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.portalLoginCustomCssId + '/' + tenant.id : undefined"
+                      [documentId]="filesSettings.portalLoginCustomCssId"
+                      [documentLink]="filesSettings.portalLoginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.portalLoginCustomCssId + '/' + tenantId : undefined"
                       [uploadInfoText]="l('UploadCSS_Info')"
                       [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=PortalLogin'"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=PortalLogin&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
                       acceptFileExt=".css"
                       [maxFileSize]="maxCssFileSize"
                       (onDocumentClear)="clearCustomCss(CustomCssType.PortalLogin)">
@@ -119,12 +131,12 @@
             <uploader #portalCssUploader
                       [showPlusSign]="false"
                       [title]="l('CustomPortalCSS')"
-                      [documentId]="tenant.portalCustomCssId"
-                      [documentLink]="tenant.portalCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.portalCustomCssId + '/' + tenant.id : undefined"
+                      [documentId]="filesSettings.portalCustomCssId"
+                      [documentLink]="filesSettings.portalCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.portalCustomCssId + '/' + tenantId : undefined"
                       documentTemplateLink="assets/common/styles/custom/portal-custom-style.css"
                       [uploadInfoText]="l('UploadCSS_Info')"
                       [uploadButtonText]="l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Portal'"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Portal&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
                       acceptFileExt=".css"
                       [maxFileSize]="maxCssFileSize"
                       (onDocumentClear)="clearCustomCss(CustomCssType.Portal)">
@@ -172,7 +184,7 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Header Background Color"
-                (onValueChanged)="onColorValueChanged($event, defaultHeaderColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.navBackground)"
             ></dx-color-box>
         </div>
 
@@ -186,7 +198,7 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Header Text Color"
-                (onValueChanged)="onColorValueChanged($event, defaultTextColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.navTextColor)"
             ></dx-color-box>
         </div>
 
@@ -200,7 +212,7 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Left Bar Color"
-                (onValueChanged)="onColorValueChanged($event, defaultLeftSideMenuColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.leftsideMenuColor)"
             ></dx-color-box>
         </div>
 
@@ -248,7 +260,7 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Main Button Color"
-                (onValueChanged)="onColorValueChanged($event, defaultButtonColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonColor)"
             ></dx-color-box>
         </div>
 
@@ -262,7 +274,7 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Text Button Color"
-                (onValueChanged)="onColorValueChanged($event, defaultButtonTextColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonTextColor)"
             ></dx-color-box>
         </div>
 
@@ -276,11 +288,11 @@
                 [openOnFieldClick]="true"
                 labelMode="hidden"
                 placeholder="Highlight Button Color"
-                (onValueChanged)="onColorValueChanged($event, defaultButtonHighlightedColor)"
+                (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonHighlightedColor)"
             ></dx-color-box>
         </div>
 
-        <div class="app-button-round" style="--button-color: {{colorSettings.buttonColor || defaultButtonColor}}; --button-radius: {{(colorSettings.borderRadius || defaultBorderRadius) + 'px'}}; --button-text-color: {{colorSettings.buttonTextColor || defaultButtonTextColor}}; --button-hover-color: {{colorSettings.buttonHighlightedColor || defaultButtonHighlightedColor}}; ">
+        <div class="app-button-round" style="--button-color: {{colorSettings.buttonColor || currentDefaultSettings.buttonColor}}; --button-radius: {{(colorSettings.borderRadius || currentDefaultSettings.borderRadius) + 'px'}}; --button-text-color: {{colorSettings.buttonTextColor || currentDefaultSettings.buttonTextColor}}; --button-hover-color: {{colorSettings.buttonHighlightedColor || currentDefaultSettings.buttonHighlightedColor}}; ">
             <div [ngClass]="{selected: colorSettings.borderRadius == '0'}" (click)="colorSettings.borderRadius = '0'">
                 <label>Sharp Corners<br><br>Radius 0</label>
                 <div class="example predefined0">Select</div>

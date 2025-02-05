@@ -21,7 +21,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 })
 export class BankCodeLayoutComponent implements OnInit {
     currentYear: number = moment().year();
-    tenantName = AppConsts.defaultTenantName;
+    tenantName = this.appSession.tenantName || AppConsts.defaultTenantName;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     originUrl = location.origin;
     isExtPage$: Observable<boolean> = this.activatedRoute.queryParamMap.pipe(
@@ -36,9 +36,6 @@ export class BankCodeLayoutComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        let tenant = this.appSession.tenant;
-        if (tenant)
-            this.tenantName = tenant.name || tenant.tenancyName;
     }
 
     crackMyCode() {
