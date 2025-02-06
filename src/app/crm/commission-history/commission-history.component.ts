@@ -388,7 +388,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.productProxy.getProducts(undefined, this.currency, false),
+                                dataSource$: this.productProxy.getProducts(undefined, this.currency, false, undefined),
                                 nameField: 'name',
                                 keyExpr: 'code'
                             })

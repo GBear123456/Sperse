@@ -78,7 +78,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     currency = SettingsHelper.getCurrency();
     amountFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,##0.##';
     amountNullableFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,###.##';
-    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription, this.currency, false).pipe(
+    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription, this.currency, false, undefined).pipe(
         map((products: ProductDto[]) => {
             return this.data.product && this.data.product.id ?
                 products.filter((product: ProductDto) => product.id != this.data.product.id) : products

@@ -332,7 +332,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     initCurrencyFields() {
         this.amountFormat = getCurrencySymbol(this.product.currencyId, 'narrow') + ' #,##0.##';
         this.amountNullableFormat = getCurrencySymbol(this.product.currencyId, 'narrow') + ' #,###.##';
-        this.products$ = this.productProxy.getProducts(undefined, this.product.currencyId, false).pipe(
+        this.products$ = this.productProxy.getProducts(undefined, this.product.currencyId, false, undefined).pipe(
             publishReplay(),
             refCount(),
             map((products: ProductDto[]) => {

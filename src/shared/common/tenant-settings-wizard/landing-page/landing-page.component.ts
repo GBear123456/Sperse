@@ -72,7 +72,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
 
     metaKeywords: string[] = [];
 
-    products$: Observable<DataSource<ProductDto, number>> = this.productProxy.getProducts(undefined, undefined, false)
+    products$: Observable<DataSource<ProductDto, number>> = this.productProxy.getProducts(undefined, undefined, false, undefined)
         .pipe(
             map(v => {
                 let data = v.filter(p => p.isPublished == true).map(x => {
