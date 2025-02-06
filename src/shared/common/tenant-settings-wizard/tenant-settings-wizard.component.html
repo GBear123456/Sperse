@@ -75,6 +75,11 @@
                 <bank-transfer></bank-transfer>
             </ng-container>
         </mat-step>
+        <mat-step *ngIf="showCreditsSettings" #creditsStep>
+            <ng-container *ngIf="stepper.selected === creditsStep">
+                <credits-settings></credits-settings>
+            </ng-container>
+        </mat-step>
         <mat-step *ngIf="showOtherSettings" #otherStep>
             <ng-container *ngIf="stepper.selected === otherStep">
                 <other-settings></other-settings>

@@ -1,0 +1,18 @@
+<h2>{{ ls.l('ContactCreditsBalance') }} {{ ls.l('Management') }}</h2>
+<div class="" *ngIf="creditSettings">
+    <div class="form-group">
+        <dx-check-box [text]="ls.l('EnableTopUpBySubscription')"
+                      [(value)]="creditSettings.enableTopUpBySubscription">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <label>{{ls.l('DefaultTopUpProduct')}}</label>
+        <dx-select-box [dataSource]="products$ | async"
+                    displayExpr="name"
+                    valueExpr="id"
+                    [searchEnabled]="true"
+                    [showClearButton]="true"
+                    [(value)]="creditSettings.defaultTopUpProductId">
+        </dx-select-box>
+    </div>
+</div>
