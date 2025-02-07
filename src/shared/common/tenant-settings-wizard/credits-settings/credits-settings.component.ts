@@ -7,6 +7,7 @@ import {
 
 /** Third party imports */
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -32,7 +33,10 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
 export class CreditsSettingsComponent implements ITenantSettingsStepComponent {
     creditSettings: CreditSettings;
 
-    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.General, undefined, false, true);
+    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.General, undefined, false, true)
+        .pipe(map(values => {
+            return values.filter(v => v.isPublished);
+        }));
 
     constructor(
         private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
