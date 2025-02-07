@@ -41,7 +41,6 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
     @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;
     @ViewChild('publicSiteUrl', { static: false }) publicSiteUrl: AbstractControlDirective;
     @ViewChild('publicPhoneNumber', { static: false }) publicPhoneNumber;
-    @ViewChild('tenantNameModel', { static: false }) tenantNameMadel: AbstractControlDirective;
 
     generalSettings: GeneralSettingsEditDto;
 
@@ -58,11 +57,10 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
     initialTimezone: string;
     initialCountry: string;
 
-    isRenameTenantEnabled: boolean = this.isGranted(
+    isRenameTenantEnabled: boolean = !!this.appSession.tenant && !this.appSession.orgUnitId && this.isGranted(
         AppPermissions.AdministrationTenantSettings
     );
-    tenantName = this.tenant.name;
-    tenantNameRegexPattern = /^[a-zA-Z0-9\s-]+$/;
+    tenantName = this.appSession.tenant?.name;
 
     constructor(
         _injector: Injector,
@@ -123,8 +121,7 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
     isValid(): boolean {
         if (!this.isHost) {
             return (!this.publicSiteUrl || this.publicSiteUrl.valid) &&
-                (!this.publicPhoneNumber || this.publicPhoneNumber.isValid() &&
-                    (!this.tenant || !this.isRenameTenantEnabled || this.tenantNameMadel.valid));
+                (!this.publicPhoneNumber || this.publicPhoneNumber.isValid());
         }
 
         return super.isValid();
@@ -147,7 +144,7 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
             })),
             this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile().pipe(tap((res: any) => this.handleConditionsUpload(ConditionsType.Policies, res))) : of(null),
             this.tosUploader ? this.tosUploader.uploadFile().pipe(tap((res: any) => this.handleConditionsUpload(ConditionsType.Terms, res))) : of(null),
-            this.tenantName != this.appSession.tenant.name ? this.tenantSettingsService.renameTenant(new RenameTenantDto({ name: this.tenantName })) : of(null)
+            this.isRenameTenantEnabled && this.tenantName != this.appSession.tenant.name ? this.tenantSettingsService.renameTenant(new RenameTenantDto({ name: this.tenantName })) : of(null)
         );
     }
 

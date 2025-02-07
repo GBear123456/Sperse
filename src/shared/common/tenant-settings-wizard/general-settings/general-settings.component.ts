@@ -56,7 +56,6 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;
     @ViewChild('publicSiteUrl', { static: false }) publicSiteUrl: AbstractControlDirective;
     @ViewChild('publicPhoneNumber', { static: false }) publicPhoneNumber;
-    @ViewChild('tenantNameModel', { static: false }) tenantNameMadel: AbstractControlDirective;
 
     @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
     @Input() set settings(value: GeneralSettingsEditDto) {
@@ -76,7 +75,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
     siteUrlRegexPattern = AppConsts.regexPatterns.url;
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
-    isRenameTenantEnabled: boolean = this.permissionChecker.isGranted(
+    isRenameTenantEnabled: boolean = !!this.appSession.tenant && !this.appSession.orgUnitId && this.permissionChecker.isGranted(
         AppPermissions.AdministrationTenantSettings
     );
     tenant: TenantLoginInfoDto = this.appSession.tenant;
@@ -84,7 +83,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     conditions = ConditionsType;
 
-    tenantName = this.tenant.name;
+    tenantName = this.tenant?.name;
 
     supportedCountries: CountryDto[];
     initialTimezone: string;
@@ -147,8 +146,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
 
     save(): Observable<any> {
         if ((!this.publicSiteUrl || this.publicSiteUrl.valid) &&
-            (!this.publicPhoneNumber || this.publicPhoneNumber.isValid()) &&
-            (!this.tenant || !this.isRenameTenantEnabled || this.tenantNameMadel.valid)
+            (!this.publicPhoneNumber || this.publicPhoneNumber.isValid())
         ) {
             return forkJoin(
                 this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings).pipe(tap(() => {
@@ -166,6 +164,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
                     this.tenantSettingsServiceProxy.renameTenant(new RenameTenantDto({ name: this.tenantName }))
                         .pipe(tap(() => {
                             this.onOptionChanged.emit('tenantName');
+                            this.appSession.tenant.name = this.tenantName;
                         }))
                     : of(null)
             );

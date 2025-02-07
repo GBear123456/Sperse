@@ -1,6 +1,6 @@
 <h2>{{l('General')}} {{l('Settings')}}</h2>
 <div *ngIf="generalSettings">
-    <ng-container *ngIf="tenant && isRenameTenantEnabled">
+    <ng-container *ngIf="isRenameTenantEnabled">
         <div class="form-group">
             <label for="TenantName">{{l("Tenant Name")}}</label>
             <input #tenantNameModel="ngModel"
@@ -9,14 +9,7 @@
                    name="TenantName"
                    class="form-control"
                    [(ngModel)]="tenantName"
-                   maxlength="128"
-                   [pattern]="tenantNameRegexPattern.source">
-        </div>
-        <div>
-            <span class="help-block text-danger"
-                  *ngIf="tenantNameModel.invalid && tenantNameModel.dirty">
-                {{l("Only letters, numbers, spaces, and hyphens are allowed.")}}
-            </span>
+                   maxlength="128">
         </div>
     </ng-container>
     <div class="form-group">
