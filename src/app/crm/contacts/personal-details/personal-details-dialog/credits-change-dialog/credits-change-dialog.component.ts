@@ -45,7 +45,9 @@ export class CreditsChangeDialogComponent extends ConfirmDialogComponent {
         let input = new ChangeCreditInput({
             contactId: this.contactId,
             amount: this.amount,
-            description: this.description
+            description: this.description,
+            userId: undefined,
+            contactXref: undefined
         });
         let method = this.isTopUp ?
             this.creditBalanceService.topUp(input) :
