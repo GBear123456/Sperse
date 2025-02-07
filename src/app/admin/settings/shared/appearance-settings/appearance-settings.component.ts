@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angula
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { finalize, switchMap, tap } from 'rxjs/operators';
 import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
@@ -12,11 +12,13 @@ import {
     LayoutType,
     NavPosition,
     TenantCustomizationServiceProxy,
-    TenantLoginInfoDto,
     TenantSettingsServiceProxy,
     AppearanceSettingsEditDto,
     TenantCustomizationInfoDto,
-    PortalAppearanceSettingsEditDto
+    AppearanceSettingsDto,
+    PortalAppearanceSettingsDto,
+    DictionaryServiceProxy,
+    AppearanceFilesSettings
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
@@ -47,10 +49,11 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
     @ViewChild('signUpCssUploader') signUpCssUploader: UploaderComponent;
 
+    tenantId = this.appSession.tenantId;
+
     hasPortalFeature = this.feature.isEnabled(AppFeatures.Portal);
     isPortalSelected = false;
 
-    tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
     maxLogoFileSize = 1024 * 30 /* 30KB */;
@@ -60,18 +63,24 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     someCssChanged: boolean;
     someColorChanged: boolean;
 
-    defaultLeftSideMenuColor: string = this.layoutService.defaultLeftSideMenuColor;
-    defaultHeaderColor: string = this.layoutService.defaultHeaderBgColor;
-    defaultTextColor: string = this.layoutService.defaultHeaderTextColor;
-    defaultButtonColor: string = this.layoutService.defaultButtonColor;
-    defaultButtonTextColor: string = this.layoutService.defaultButtonTextColor;
-    defaultButtonHighlightedColor: string = this.layoutService.defaultButtonHighlightedColor;
-    defaultFontName: string = this.layoutService.defaultFontName;
-    defaultTabularFontName: string = this.layoutService.defaultTabularFontName;
-    defaultBorderRadius: string = this.layoutService.defaultBorderRadius;
+    systemColorsAppearance = AppearanceSettingsDto.fromJS({
+        navBackground: this.layoutService.defaultHeaderBgColor,
+        navTextColor: this.layoutService.defaultHeaderTextColor,
+        buttonColor: this.layoutService.defaultButtonColor,
+        buttonTextColor: this.layoutService.defaultButtonTextColor,
+        buttonHighlightedColor: this.layoutService.defaultButtonHighlightedColor,
+        leftsideMenuColor: this.layoutService.defaultLeftSideMenuColor,
+        fontName: this.layoutService.defaultFontName,
+        tabularFont: this.layoutService.defaultTabularFontName,
+        borderRadius: this.layoutService.defaultBorderRadius
+    });
+    tenantDefaultSettings: AppearanceSettingsDto;
 
-    appearance: AppearanceSettingsEditDto = new AppearanceSettingsEditDto();
-    colorSettings: AppearanceSettingsEditDto | PortalAppearanceSettingsEditDto = new AppearanceSettingsEditDto();
+    appearance: AppearanceSettingsDto = new AppearanceSettingsDto();
+    filesSettings: AppearanceFilesSettings = new AppearanceFilesSettings();
+
+    colorSettings: AppearanceSettingsDto | PortalAppearanceSettingsDto = new AppearanceSettingsDto();
+    currentDefaultSettings: AppearanceSettingsDto | PortalAppearanceSettingsDto = this.systemColorsAppearance;
 
     navPosition = this.getNavPosition();
     navPositionOptions = Object.keys(NavPosition).map(item => {
@@ -91,26 +100,31 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         [PortalMenuItemEnum.CRMLogin]: AppFeatures.CRM
     };
 
+    orgUnits: any[] = [{
+        id: 0,
+        displayName: this.l('AllOrganizationUnits')
+    }];
+    selectedOrgUnitId = 0;
+
     constructor(
         _injector: Injector,
         private faviconsService: FaviconService,
         private settingsProxy: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private fontService: FontService,
-        private settingService: SettingService
+        private settingService: SettingService,
+        private dictionaryProxy: DictionaryServiceProxy
     ) {
         super(_injector);
 
-        this.settingsProxy.getAppearanceSettings().subscribe(
-            (res: AppearanceSettingsEditDto) => {
-                this.appearance = res;
-                this.colorSettings = res;
+        this.dictionaryProxy.getOrganizationUnits(
+            undefined, undefined, false
+        ).subscribe(res => {
+            this.orgUnits = this.orgUnits.concat(res);
+            this.changeDetection.detectChanges();
+        });
 
-                this.initDefaultValues();
-                this.initPortalMenuItems();
-                this.changeDetection.detectChanges();
-            }
-        );
+        this.organizationUnitChanged();
 
         DomHelper.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
             + this.fontService.supportedGoogleFonts.concat(this.fontService.supportedTabularGoogleFonts).join('|')
@@ -118,6 +132,31 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         this.fontService.supportedCustomFonts.map(font =>
             DomHelper.addStyleSheet('custom-font', './assets/fonts/fonts-' + font.toLowerCase() + '.css')
         );
+    }
+
+    organizationUnitChanged() {
+        this.startLoading();
+        this.settingsProxy.getAppearanceSettings(this.selectedOrgUnitId || undefined)
+            .pipe(finalize(() => this.finishLoading()))
+            .subscribe(
+                (res: AppearanceSettingsEditDto) => {
+                    this.appearance = res.appearanceSettings;
+                    this.filesSettings = res.filesSettings || new AppearanceFilesSettings();
+                    if (this.hasPortalFeature && !this.appearance.portalSettings)
+                        this.appearance.portalSettings = new PortalAppearanceSettingsDto();
+
+                    this.initDefaultValues();
+                    this.initPortalMenuItems();
+
+                    if (!this.selectedOrgUnitId)
+                        this.tenantDefaultSettings = AppearanceSettingsDto.fromJS(res.appearanceSettings);
+
+                    this.toggleColorSetting(this.isPortalSelected);
+                    this.changeDetection.detectChanges();
+
+                    this.someColorChanged = false;
+                }
+            );
     }
 
     initDefaultValues() {
@@ -161,28 +200,30 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         this.portalMenuItems = portalConfig;
     }
 
-    applyOrClearAppearanceDefaults(settings: AppearanceSettingsEditDto | PortalAppearanceSettingsEditDto, isClear: boolean) {
+    applyOrClearAppearanceDefaults(settings: AppearanceSettingsDto | PortalAppearanceSettingsDto, isClear: boolean) {
         const method = isClear ? this.clearDefault : this.setDefault;
 
-        method(settings.navBackground, settings, 'navBackground', this.defaultHeaderColor);
-        method(settings.navTextColor, settings, 'navTextColor', this.defaultTextColor);
-        method(settings.buttonColor, settings, 'buttonColor', this.defaultButtonColor);
-        method(settings.buttonTextColor, settings, 'buttonTextColor', this.defaultButtonTextColor);
-        method(settings.buttonHighlightedColor, settings, 'buttonHighlightedColor', this.defaultButtonHighlightedColor);
-        method(settings.leftsideMenuColor, settings, 'leftsideMenuColor', this.defaultLeftSideMenuColor);
-        method(settings.fontName, settings, 'fontName', this.defaultFontName);
-        method(settings.tabularFont, settings, 'tabularFont', this.defaultTabularFontName);
-        method(settings.borderRadius, settings, 'borderRadius', this.defaultBorderRadius);
+        let defaultValuesObj = this.getDefaultColorSettings(settings instanceof PortalAppearanceSettingsDto)
+
+        method(settings.navBackground, settings, 'navBackground', defaultValuesObj);
+        method(settings.navTextColor, settings, 'navTextColor', defaultValuesObj);
+        method(settings.buttonColor, settings, 'buttonColor', defaultValuesObj);
+        method(settings.buttonTextColor, settings, 'buttonTextColor', defaultValuesObj);
+        method(settings.buttonHighlightedColor, settings, 'buttonHighlightedColor', defaultValuesObj);
+        method(settings.leftsideMenuColor, settings, 'leftsideMenuColor', defaultValuesObj);
+        method(settings.fontName, settings, 'fontName', defaultValuesObj);
+        method(settings.tabularFont, settings, 'tabularFont', defaultValuesObj);
+        method(settings.borderRadius, settings, 'borderRadius', defaultValuesObj);
     }
 
-    setDefault(property, target, key, defaultValue) {
+    setDefault(property, target, key, defaultSettings) {
         if (!property) {
-            target[key] = defaultValue;
+            target[key] = defaultSettings[key];
         }
     }
 
-    clearDefault(property, target, key, defaultValue) {
-        if (property == defaultValue) {
+    clearDefault(property, target, key, defaultSettings) {
+        if (property == defaultSettings[key]) {
             target[key] = null;
         }
     }
@@ -190,7 +231,15 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     toggleColorSetting(isPortalSelected) {
         this.isPortalSelected = isPortalSelected;
         this.colorSettings = this.isPortalSelected ? this.appearance.portalSettings : this.appearance;
+
+        this.currentDefaultSettings = this.getDefaultColorSettings(isPortalSelected);
         this.changeDetection.detectChanges();
+    }
+
+    getDefaultColorSettings(portal: boolean): AppearanceSettingsDto | PortalAppearanceSettingsDto {
+        return this.selectedOrgUnitId ?
+            portal ? this.tenantDefaultSettings.portalSettings : this.tenantDefaultSettings :
+            this.systemColorsAppearance;
     }
 
     getSaveObs(): Observable<any> {
@@ -205,29 +254,33 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         if (this.getNavPosition() != this.navPosition)
             this.appearance.navPosition = this.navPosition;
 
-        return forkJoin(
-            this.settingsProxy.updateAppearanceSettings(this.appearance),
-            this.logoUploader.uploadFile().pipe(tap((res: any) => {
-                if (res.result && res.result.id) {
-                    this.tenant.logoId = res.result.id;
-                    this.changeDetection.detectChanges();
-                }
-            })),
-            this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
-            this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
-            this.hasPortalFeature ? this.portalLogoUploader.uploadFile().pipe(tap((res: any) => {
-                if (res.result && res.result.id) {
-                    this.tenant.portalLogoId = res.result.id;
-                    this.changeDetection.detectChanges();
-                }
-            })) : of(false),
-            this.hasPortalFeature ? this.portalFaviconsUploader.uploadFile().pipe(tap((res: any) => this.handleFaviconsUpload(true, res))) : of(false),
-            this.hasPortalFeature ? this.portalLoginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.PortalLogin, res))) : of(false),
-            this.hasPortalFeature ? this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))) : of(false),
-            this.signUpPagesEnabled ?
-                this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
-            this.faviconsUploader.uploadFile().pipe(tap((res) => this.handleFaviconsUpload(false, res)))
-        );
+        return this.settingsProxy.updateAppearanceSettings(new AppearanceSettingsEditDto({ appearanceSettings: this.appearance, organizationUnitId: this.selectedOrgUnitId || undefined, filesSettings: undefined }))
+            .pipe(
+                switchMap(() =>
+                    forkJoin([
+                        this.logoUploader.uploadFile().pipe(tap((res: any) => {
+                            if (res.result && res.result.id) {
+                                this.filesSettings.lightLogoId = res.result.id;
+                                this.changeDetection.detectChanges();
+                            }
+                        })),
+                        this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
+                        this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
+                        this.hasPortalFeature ? this.portalLogoUploader.uploadFile().pipe(tap((res: any) => {
+                            if (res.result && res.result.id) {
+                                this.filesSettings.portalLogoId = res.result.id;
+                                this.changeDetection.detectChanges();
+                            }
+                        })) : of(false),
+                        this.hasPortalFeature ? this.portalFaviconsUploader.uploadFile().pipe(tap((res: any) => this.handleFaviconsUpload(true, res))) : of(false),
+                        this.hasPortalFeature ? this.portalLoginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.PortalLogin, res))) : of(false),
+                        this.hasPortalFeature ? this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))) : of(false),
+                        this.signUpPagesEnabled ?
+                            this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
+                        this.faviconsUploader.uploadFile().pipe(tap((res) => this.handleFaviconsUpload(false, res)))
+                    ])
+                )
+            );
     }
 
     afterSave() {
@@ -240,6 +293,8 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         }
         else {
             this.initDefaultValues();
+            if (!this.selectedOrgUnitId)
+                this.tenantDefaultSettings = AppearanceSettingsDto.fromJS(this.appearance);
             this.changeDetection.detectChanges();
         }
     }
@@ -264,12 +319,18 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             return;
 
         if (portalFavicons) {
-            this.tenant.tenantCustomizations.portalFaviconBaseUrl = result.portalFaviconBaseUrl;
-            this.tenant.tenantCustomizations.portalFavicons = result.portalFavicons;
+            this.filesSettings.hasPortalFavicons = true;
         } else {
-            this.tenant.tenantCustomizations.faviconBaseUrl = result.faviconBaseUrl;
-            this.tenant.tenantCustomizations.favicons = result.favicons;
-            this.faviconsService.updateFavicons(this.tenant.tenantCustomizations.favicons, this.tenant.tenantCustomizations.faviconBaseUrl);
+            this.filesSettings.hasFavicons = true;
+
+            if (this.appSession.orgUnitId == (this.selectedOrgUnitId || null)) {
+                let tenant = this.appSession.tenant;
+                if (tenant) {
+                    tenant.tenantCustomizations.faviconBaseUrl = result.faviconBaseUrl;
+                    tenant.tenantCustomizations.favicons = result.favicons;
+                }
+                this.faviconsService.updateFavicons(result.favicons, result.faviconBaseUrl);
+            }
         }
 
         this.changeDetection.detectChanges();
@@ -277,13 +338,13 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     clearLogo(portalLogo = false): void {
-        this.tenantCustomizationService.clearLogo(portalLogo).subscribe(() => {
+        this.tenantCustomizationService.clearLogo(this.selectedOrgUnitId || undefined, portalLogo).subscribe(() => {
             if (portalLogo) {
-                this.tenant.portalLogoFileType = null;
-                this.tenant.portalLogoId = null;
+                this.filesSettings.portalLogoFileType = null;
+                this.filesSettings.portalLogoId = null;
             } else {
-                this.tenant.logoFileType = null;
-                this.tenant.logoId = null;
+                this.filesSettings.lightLogoFileType = null;
+                this.filesSettings.lightLogoId = null;
             }
             this.notify.info(this.l('ClearedSuccessfully'));
             this.changeDetection.detectChanges();
@@ -291,13 +352,14 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     clearFavicons(portalFavicons = false): void {
-        this.tenantCustomizationService.clearFavicons(portalFavicons).subscribe(() => {
+        this.tenantCustomizationService.clearFavicons(portalFavicons, this.selectedOrgUnitId || undefined).subscribe(() => {
             if (portalFavicons) {
-                this.tenant.tenantCustomizations.portalFavicons = [];
+                this.filesSettings.hasPortalFavicons = false;
             }
             else {
-                this.faviconsService.resetFavicons();
-                this.tenant.tenantCustomizations.favicons = [];
+                if (this.appSession.orgUnitId == (this.selectedOrgUnitId || null))
+                    this.faviconsService.resetFavicons();
+                this.filesSettings.hasFavicons = false;
             }
 
             this.notify.info(this.l('ClearedSuccessfully'));
@@ -306,7 +368,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     clearCustomCss(cssType: CustomCssType): void {
-        this.tenantCustomizationService.clearCustomCss(cssType).subscribe(() => {
+        this.tenantCustomizationService.clearCustomCss(this.selectedOrgUnitId || undefined, cssType).subscribe(() => {
             this.setCustomCssTenantProperty(cssType, null);
             this.notify.info(this.l('ClearedSuccessfully'));
             this.changeDetection.detectChanges();
@@ -316,19 +378,19 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     setCustomCssTenantProperty(cssType: CustomCssType, value: string) {
         switch (cssType) {
             case CustomCssType.Platform:
-                this.tenant.customCssId = value;
+                this.filesSettings.customCssId = value;
                 break;
             case CustomCssType.Login:
-                this.tenant.loginCustomCssId = value;
+                this.filesSettings.loginCustomCssId = value;
                 break;
             case CustomCssType.PortalLogin:
-                this.tenant.portalLoginCustomCssId = value;
+                this.filesSettings.portalLoginCustomCssId = value;
                 break;
             case CustomCssType.Portal:
-                this.tenant.portalCustomCssId = value;
+                this.filesSettings.portalCustomCssId = value;
                 break;
             case CustomCssType.SignUp:
-                this.tenant.signUpCustomCssId = value;
+                this.filesSettings.signUpCustomCssId = value;
                 break;
         }
     }
@@ -352,7 +414,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     onColorValueChanged(event, defaultColor) {
-        this.someColorChanged = event.value != defaultColor && !this.isPortalSelected;
+        this.someColorChanged = this.someColorChanged || (event.value != defaultColor && !this.isPortalSelected);
         if (!event.value)
             event.component.option('value', defaultColor);
     }

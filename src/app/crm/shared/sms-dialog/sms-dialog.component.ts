@@ -73,7 +73,7 @@ export class SMSDialogComponent {
             .map((item: ContactPhoneDto) => item.phoneNumber);
         this.smsText = data.body;
         this.phoneNumber = data.phoneNumber || primary && primary.phoneNumber || this.phones && this.phones.length && this.phones[0];
-        this.tags[Tags.LegalName] = appSession.tenant ? appSession.tenant.name : AppConsts.defaultTenantName;
+        this.tags[Tags.LegalName] = appSession.tenantName || AppConsts.defaultTenantName;
         this.tags[Tags.ClientFirstName] = data.firstName || (person && person.person && person.person.firstName);
         this.tags[Tags.ClientLastName] = data.lastName || (person && person.person && person.person.lastName);
     }

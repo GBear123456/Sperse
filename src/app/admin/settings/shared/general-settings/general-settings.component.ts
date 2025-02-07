@@ -14,10 +14,11 @@ import {
     TenantLoginInfoDto,
     TenantSettingsServiceProxy,
     CountryDto,
+    TenantCustomizationServiceProxy,
     RenameTenantDto
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, ConditionsType } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AbstractControlDirective } from '@angular/forms';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -47,7 +48,8 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
     siteUrlRegexPattern = AppConsts.regexPatterns.url;
-    tenant: TenantLoginInfoDto = this.appSession.tenant;
+    appearanceConfig: TenantLoginInfoDto = this.appSession.appearanceConfig;
+    conditions = ConditionsType;
 
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
@@ -67,6 +69,7 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
         private store$: Store<RootStore.State>,
         private phoneNumberService: PhoneNumberService,
         private tenantSettingsService: TenantSettingsServiceProxy,
+        private tenantCustomizationService: TenantCustomizationServiceProxy,
         private countryPhoneService: CountryService
     ) {
         super(_injector);
@@ -142,8 +145,8 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
                 this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.generalSettings.defaultCountryCode);
                 sessionStorage.removeItem('SupportedFrom' + this.appSession.userId);
             })),
-            this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),
-            this.tosUploader ? this.tosUploader.uploadFile() : of(null),
+            this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile().pipe(tap((res: any) => this.handleConditionsUpload(ConditionsType.Policies, res))) : of(null),
+            this.tosUploader ? this.tosUploader.uploadFile().pipe(tap((res: any) => this.handleConditionsUpload(ConditionsType.Terms, res))) : of(null),
             this.tenantName != this.appSession.tenant.name ? this.tenantSettingsService.renameTenant(new RenameTenantDto({ name: this.tenantName })) : of(null)
         );
     }
@@ -167,5 +170,31 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
                 window.location.reload();
             });
         }
+    }
+
+    handleConditionsUpload(type: ConditionsType, res) {
+        if (res.result && res.result.id) {
+            if (type == ConditionsType.Policies)
+                this.appearanceConfig.customPrivacyPolicyDocumentId = res.result.id;
+            else
+                this.appearanceConfig.customToSDocumentId = res.result.id;
+            this.changeDetection.detectChanges();
+        }
+    }
+
+    clearConditions(type: ConditionsType) {
+        let method$ = type == ConditionsType.Policies ?
+            this.tenantCustomizationService.clearCustomPrivacyPolicyDocument() :
+            this.tenantCustomizationService.clearCustomToSDocument();
+
+        method$.subscribe(() => {
+            if (type == ConditionsType.Policies)
+                this.appearanceConfig.customPrivacyPolicyDocumentId = null;
+            else
+                this.appearanceConfig.customToSDocumentId = null;
+
+            this.notify.info(this.l('ClearedSuccessfully'));
+            this.changeDetection.detectChanges();
+        });
     }
 }

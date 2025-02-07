@@ -37,7 +37,7 @@
                                    (onCurrencyChanged)="onCurrencyChanged($event)">
                 </currency-selector>
                 <div class="logo-container">
-                    <img [src]="appSession.tenant && appSession.tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId : './assets/common/images/sperse-logo.png'" alt="logo" />
+                    <img [src]="appSession.appearanceConfig && appSession.appearanceConfig.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.appearanceConfig.logoId : './assets/common/images/sperse-logo.png'" alt="logo" />
                 </div>
             </div>
             <div class="field-area flex-space-between">

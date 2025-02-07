@@ -11,7 +11,7 @@ import {
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
 import kebabCase from 'lodash/kebabCase';
-import { tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -22,7 +22,9 @@ import {
     LayoutType,
     NavPosition,
     TenantSettingsServiceProxy,
-    AppearanceSettingsEditDto
+    AppearanceSettingsEditDto,
+    AppearanceSettingsDto,
+    AppearanceFilesSettings
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -50,14 +52,17 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
 
     @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
 
-    tenant: TenantLoginInfoDto = this.appSession.tenant;
+    tenantId = this.appSession.tenantId;
+    appearanceSetting = this.appSession.appearanceConfig;
+    orgUnitId = this.appSession.orgUnitId || undefined;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
     maxLogoFileSize = 1024 * 30 /* 30KB */;
     CustomCssType = CustomCssType;
 
     signUpPagesEnabled: boolean = this.settingService.getBoolean('App.UserManagement.IsSignUpPageEnabled');
-    welcomePageOptions = [{name: 'Default', uri: 'welcome'}, {name: 'Modern', uri: 'start'}];
+    welcomePageOptions = [{ name: 'Default', uri: 'welcome' }, { name: 'Modern', uri: 'start' }];
+    welcomePageUriSetValue = this.settingService.get('App.Appearance.WelcomePageAppearance');
     welcomePageUri: string = this.settingService.get('App.Appearance.WelcomePageAppearance') 
         || AppConsts.defaultWelcomePageUri;
 
@@ -69,6 +74,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         };
     });
 
+    appearance: AppearanceSettingsDto = new AppearanceSettingsDto();
+    filesSettings: AppearanceFilesSettings = new AppearanceFilesSettings();
+
     constructor(
         private notify: NotifyService,
         private appSession: AppSessionService,
@@ -78,13 +86,26 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        this.tenantSettingsServiceProxy.getAppearanceSettings(this.orgUnitId)
+            .subscribe(
+                (res: AppearanceSettingsEditDto) => {
+                    this.appearance = res.appearanceSettings;
+                    this.filesSettings = res.filesSettings || new AppearanceFilesSettings();
+
+                    this.welcomePageUri = this.appearance.welcomePageAppearance || this.welcomePageUri;
+                    this.navPosition = this.appearance.navPosition;
+
+                    this.changeDetectorRef.detectChanges();
+                }
+            );
+    }
 
     save(): Observable<any> {
         let saveObs = [
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
                 if (res.result && res.result.id) {
-                    this.tenant.logoId = res.result && res.result.id;
+                    this.filesSettings.lightLogoId = res.result && res.result.id;
                     this.changeDetectorRef.detectChanges();
                 }
             })),
@@ -94,31 +115,24 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                 this.signUpCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.SignUp, res))) : of(false),
             this.faviconsUploader.uploadFile().pipe(tap((res) => {
                 if (res && res.result && res.result.faviconBaseUrl && res.result.favicons && res.result.favicons.length) {
-                    this.tenant.tenantCustomizations = <any>{ ...this.tenant.tenantCustomizations, ...res.result };
-                    this.faviconsService.updateFavicons(this.tenant.tenantCustomizations.favicons, this.tenant.tenantCustomizations.faviconBaseUrl);
+                    this.appearanceSetting.tenantCustomizations = <any>{ ...this.appearanceSetting.tenantCustomizations, ...res.result };
+                    this.faviconsService.updateFavicons(this.appearanceSetting.tenantCustomizations.favicons, this.appearanceSetting.tenantCustomizations.faviconBaseUrl);
                     this.changeDetectorRef.detectChanges();
                 }
             }))
         ];
-
-        let isNavPosChanged = this.getNavPosition() != this.navPosition,
-            isWelcomePageChanged = this.welcomePageUri != this.settingService.get('App.Appearance.WelcomePageAppearance');            
+        let welcomePageForStore = this.welcomePageUri == AppConsts.defaultWelcomePageUri || this.welcomePageUri == this.welcomePageUriSetValue ? null : this.welcomePageUri;
+        let isNavPosChanged = this.appearance.navPosition != this.navPosition,
+            isWelcomePageChanged = welcomePageForStore != this.appearance.welcomePageAppearance;            
         if (isNavPosChanged || isWelcomePageChanged) {
-            saveObs.push(
+            this.appearance.welcomePageAppearance = welcomePageForStore;
+            this.appearance.navPosition = this.navPosition;
+            saveObs.unshift(
                 this.tenantSettingsServiceProxy.updateAppearanceSettings(
                     new AppearanceSettingsEditDto({
-                        navPosition: this.navPosition,
-                        navBackground: this.settingService.get('App.Appearance.NavBackground'),
-                        navTextColor: this.settingService.get('App.Appearance.NavTextColor'),
-                        buttonColor: this.settingService.get('App.Appearance.ButtonColor'),
-                        buttonTextColor: this.settingService.get('App.Appearance.ButtonTextColor'),
-                        buttonHighlightedColor: this.settingService.get('App.Appearance.ButtonHighlightedColor'),
-                        fontName: this.settingService.get('App.Appearance.FontName'),
-                        borderRadius: this.settingService.get('App.Appearance.BorderRadius'),
-                        welcomePageAppearance: this.welcomePageUri == AppConsts.defaultWelcomePageUri ? null : this.welcomePageUri,
-                        tabularFont: this.settingService.get('App.Appearance.TabularFont'),
-                        leftsideMenuColor: this.settingService.get('App.Appearance.LeftsideMenuColor'),
-                        portalSettings: null
+                        organizationUnitId: this.orgUnitId,
+                        filesSettings: null,
+                        appearanceSettings: this.appearance
                     })
                 ).pipe(tap(() => {
                     this.onOptionChanged.emit(isWelcomePageChanged ? 'appearance' : 'navPosition');
@@ -126,7 +140,11 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             );
         }
 
-        return forkJoin(saveObs);
+        const first$ = saveObs[0];
+        const remaining$ = forkJoin(saveObs.slice(1));
+        return first$.pipe(
+            switchMap(() => remaining$)
+        );
     }
 
     handleCssUpload(cssType: CustomCssType, res: any) {
@@ -138,25 +156,25 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     }
 
     clearLogo(): void {
-        this.tenantCustomizationService.clearLogo(false).subscribe(() => {
-            this.tenant.logoFileType = null;
-            this.tenant.logoId = null;
+        this.tenantCustomizationService.clearLogo(this.orgUnitId, false).subscribe(() => {
+            this.filesSettings.lightLogoFileType = null;
+            this.filesSettings.lightLogoId = null;
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();
         });
     }
 
     clearFavicons(): void {
-        this.tenantCustomizationService.clearFavicons(false).subscribe(() => {
+        this.tenantCustomizationService.clearFavicons(false, this.orgUnitId).subscribe(() => {
             this.faviconsService.resetFavicons();
-            this.tenant.tenantCustomizations.favicons = [];
+            this.appearanceSetting.tenantCustomizations.favicons = [];
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();
         });
     }
 
     clearCustomCss(cssType: CustomCssType): void {
-        this.tenantCustomizationService.clearCustomCss(cssType).subscribe(() => {
+        this.tenantCustomizationService.clearCustomCss(this.orgUnitId, cssType).subscribe(() => {
             this.setCustomCssTenantProperty(cssType, null);
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();
@@ -166,13 +184,13 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     setCustomCssTenantProperty(cssType: CustomCssType, value: string) {
         switch (cssType) {
             case CustomCssType.Platform:
-                this.tenant.customCssId = value;
+                this.filesSettings.customCssId = value;
                 break;
             case CustomCssType.Login:
-                this.tenant.loginCustomCssId = value;
+                this.filesSettings.loginCustomCssId = value;
                 break;
             case CustomCssType.SignUp:
-                this.tenant.signUpCustomCssId = value;
+                this.filesSettings.signUpCustomCssId = value;
                 break;
         }
     }

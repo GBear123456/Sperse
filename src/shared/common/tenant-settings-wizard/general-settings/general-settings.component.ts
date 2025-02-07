@@ -16,6 +16,7 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { tap, filter, first, map } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
+import { NotifyService } from 'abp-ng2-module';
 
 /** Application imports */
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
@@ -26,9 +27,10 @@ import {
     TenantLoginInfoDto,
     TenantSettingsServiceProxy,
     CountryDto,
+    TenantCustomizationServiceProxy,
     RenameTenantDto
 } from '@shared/service-proxies/service-proxies';
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, ConditionsType } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -78,7 +80,9 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         AppPermissions.AdministrationTenantSettings
     );
     tenant: TenantLoginInfoDto = this.appSession.tenant;
+    appearanceConfig: TenantLoginInfoDto = this.appSession.appearanceConfig;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
+    conditions = ConditionsType;
 
     tenantName = this.tenant.name;
 
@@ -91,6 +95,8 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         private appSession: AppSessionService,
         private phoneNumberService: PhoneNumberService,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
+        private tenantCustomizationService: TenantCustomizationServiceProxy,
+        private notify: NotifyService,
         private store$: Store<RootStore.State>,
         private countryPhoneService: CountryService,
         public changeDetectorRef: ChangeDetectorRef,
@@ -132,15 +138,15 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
 
     onUrlPaste(event) {
         setTimeout(() => {
-            this.settings.publicSiteUrl = 
-            event.target.value = event.target.value.trim();
+            this.settings.publicSiteUrl =
+                event.target.value = event.target.value.trim();
             this.changeDetectorRef.detectChanges();
             event.target.blur();
         }, 100);
     }
 
     save(): Observable<any> {
-        if ((!this.publicSiteUrl || this.publicSiteUrl.valid) && 
+        if ((!this.publicSiteUrl || this.publicSiteUrl.valid) &&
             (!this.publicPhoneNumber || this.publicPhoneNumber.isValid()) &&
             (!this.tenant || !this.isRenameTenantEnabled || this.tenantNameMadel.valid)
         ) {
@@ -154,8 +160,8 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
                         this.onOptionChanged.emit('currency');
                     this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.settings.defaultCountryCode);
                 })),
-                this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),
-                this.tosUploader ? this.tosUploader.uploadFile() : of(null),
+                this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile().pipe(tap((res: any) => this.handleConditionsUpload(ConditionsType.Policies, res))) : of(null),
+                this.tosUploader ? this.tosUploader.uploadFile().pipe(tap((res: any) => this.handleConditionsUpload(ConditionsType.Terms, res))) : of(null),
                 this.isRenameTenantEnabled && this.tenantName != this.appSession.tenant.name ?
                     this.tenantSettingsServiceProxy.renameTenant(new RenameTenantDto({ name: this.tenantName }))
                         .pipe(tap(() => {
@@ -165,5 +171,31 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
             );
         }
         return forkJoin(of(null));
+    }
+
+    handleConditionsUpload(type: ConditionsType, res) {
+        if (res.result && res.result.id) {
+            if (type == ConditionsType.Policies)
+                this.appearanceConfig.customPrivacyPolicyDocumentId = res.result.id;
+            else
+                this.appearanceConfig.customToSDocumentId = res.result.id;
+            this.changeDetectorRef.detectChanges();
+        }
+    }
+
+    clearConditions(type: ConditionsType) {
+        let method$ = type == ConditionsType.Policies ?
+            this.tenantCustomizationService.clearCustomPrivacyPolicyDocument() :
+            this.tenantCustomizationService.clearCustomToSDocument();
+
+        method$.subscribe(() => {
+            if (type == ConditionsType.Policies)
+                this.appearanceConfig.customPrivacyPolicyDocumentId = null;
+            else
+                this.appearanceConfig.customToSDocumentId = null;
+
+            this.notify.info(this.ls.l('ClearedSuccessfully'));
+            this.changeDetectorRef.detectChanges();
+        });
     }
 }

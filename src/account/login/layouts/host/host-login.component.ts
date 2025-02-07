@@ -29,7 +29,7 @@ export class HostLoginComponent implements OnInit {
     currentYear: number = moment().year();
     width = innerWidth;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
-    tenantName = AppConsts.defaultTenantName;
+    tenantName = this.appSession.tenantName || AppConsts.defaultTenantName;
     conditions = ConditionsType;
     loginInProgress = false;
     showPassword = false;
@@ -75,8 +75,6 @@ export class HostLoginComponent implements OnInit {
 
     ngOnInit(): void {
         let tenant = this.appSession.tenant;
-        if (tenant)
-            this.tenantName = tenant.name || tenant.tenancyName;
         this.showExternalLogin = environment.releaseStage == 'staging' || (tenant && !environment.production);
         if (this.sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this.sessionAppService.updateUserSignInToken()
