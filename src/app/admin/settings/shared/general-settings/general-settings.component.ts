@@ -14,7 +14,8 @@ import {
     TenantLoginInfoDto,
     TenantSettingsServiceProxy,
     CountryDto,
-    TenantCustomizationServiceProxy
+    TenantCustomizationServiceProxy,
+    RenameTenantDto
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { AppTimezoneScope, ConditionsType } from '@shared/AppEnums';
@@ -25,6 +26,7 @@ import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { RootStore, CountriesStoreSelectors } from '@root/store';
 import { TimeZoneComboComponent } from '@app/shared/common/timing/timezone-combo.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'general-settings',
@@ -54,6 +56,11 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
 
     initialTimezone: string;
     initialCountry: string;
+
+    isRenameTenantEnabled: boolean = !!this.appSession.tenant && !this.appSession.orgUnitId && this.isGranted(
+        AppPermissions.AdministrationTenantSettings
+    );
+    tenantName = this.appSession.tenant?.name;
 
     constructor(
         _injector: Injector,
@@ -114,7 +121,7 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
     isValid(): boolean {
         if (!this.isHost) {
             return (!this.publicSiteUrl || this.publicSiteUrl.valid) &&
-                (!this.publicPhoneNumber || this.publicPhoneNumber.isValid())
+                (!this.publicPhoneNumber || this.publicPhoneNumber.isValid());
         }
 
         return super.isValid();
@@ -136,7 +143,8 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
                 sessionStorage.removeItem('SupportedFrom' + this.appSession.userId);
             })),
             this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile().pipe(tap((res: any) => this.handleConditionsUpload(ConditionsType.Policies, res))) : of(null),
-            this.tosUploader ? this.tosUploader.uploadFile().pipe(tap((res: any) => this.handleConditionsUpload(ConditionsType.Terms, res))) : of(null)
+            this.tosUploader ? this.tosUploader.uploadFile().pipe(tap((res: any) => this.handleConditionsUpload(ConditionsType.Terms, res))) : of(null),
+            this.isRenameTenantEnabled && this.tenantName != this.appSession.tenant.name ? this.tenantSettingsService.renameTenant(new RenameTenantDto({ name: this.tenantName })) : of(null)
         );
     }
 
@@ -150,6 +158,12 @@ export class GeneralSettingsComponent extends SettingsComponentBase {
         if (abp.clock.provider.supportsMultipleTimezone && this.initialTimezone !== this.generalSettings.timezone
         ) {
             this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(function () {
+                window.location.reload();
+            });
+        }
+
+        if (this.tenantName != this.appSession.tenant.name) {
+            this.message.info(this.l('SettingsChangedRefreshPageNotification', this.l('Tenant name'))).done(function () {
                 window.location.reload();
             });
         }

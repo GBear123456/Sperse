@@ -156,6 +156,9 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 case 'appearance':
                     message = this.ls.l('ReloadPageStylesMessage');
                     break;
+                case 'tenantName':
+                    message = this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('Tenant name'));
+                    break;
             }
 
             this.messageService.info(message).done(() => {
