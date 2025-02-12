@@ -190,8 +190,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     isPublicProductsEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
     showDowngrade = this.isHostTenant;
-    hasViewCredits = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCredits) && this.setting.getBoolean('CRM.ContactCredits.EnableTopUpBySubscription');
+    hasViewCredits = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCredits);
     hasManageCredits = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCreditsManage);
+    enableCreditTopUpBySubscription = this.setting.getBoolean('CRM.ContactCredits.EnableTopUpBySubscription');
     productTypes: string[] = Object.keys(ProductType).filter(item => item == 'Subscription' ? this.isSubscriptionManagementEnabled : true);
     defaultProductType = this.isSubscriptionManagementEnabled ? ProductType.Subscription : ProductType.General;
     productType = ProductType;
