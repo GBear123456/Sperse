@@ -53,4 +53,8 @@ export class CreditsSettingsComponent implements ITenantSettingsStepComponent {
     save(): Observable<any> {
         return this.tenantPaymentSettingsProxy.updateCreditSettings(this.creditSettings);
     }
+
+    isValid(): boolean {
+        return true;
+    }
 }

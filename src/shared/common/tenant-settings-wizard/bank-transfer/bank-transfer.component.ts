@@ -42,4 +42,8 @@ export class BankTransferComponent implements ITenantSettingsStepComponent {
     save(): Observable<any> {
         return this.tenantPaymentSettingsProxy.updateBankTransferSettings(this.settings);
     }
+
+    isValid(): boolean {
+        return true;
+    }
 }

@@ -3,7 +3,7 @@ import {
     Component, Injector, OnInit, ViewChild, ElementRef, HostBinding,
     OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { Subject } from 'rxjs';
@@ -68,6 +68,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
+        private router: Router,
         private tenantSettingsService: TenantSettingsServiceProxy,
         private changeDetector: ChangeDetectorRef,
         public layoutService: LayoutService,
@@ -152,7 +153,16 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
 
     onMenuSelect(event) {
         this.stepper.selectedIndex = event.addedItems[0].index;
+        this.setQueryParam(event.addedItems[0]);
         this.changeDetector.detectChanges();
+    }
+
+    setQueryParam(item) {
+        this.route.queryParams.subscribe(params => {
+            this.router.navigate([], {
+                queryParams: { ...params, tab: item.key == 'EmailSmtp' ? 'smtp' : item.key },
+            });
+        });
     }
 
     ngOnDestroy() {

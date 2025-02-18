@@ -133,4 +133,8 @@ export class EmailComponent implements ITenantSettingsStepComponent, AfterViewIn
             return throwError(error);
         }));
     }
+
+    isValid(): boolean {
+        return true;
+    }
 }

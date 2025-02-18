@@ -172,6 +172,11 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         return forkJoin(of(null));
     }
 
+    isValid(): boolean {
+        return (!this.publicSiteUrl || this.publicSiteUrl.valid) &&
+            (!this.publicPhoneNumber || this.publicPhoneNumber.isValid());
+    }
+
     handleConditionsUpload(type: ConditionsType, res) {
         if (res.result && res.result.id) {
             if (type == ConditionsType.Policies)

@@ -75,4 +75,8 @@ export class CommissionsComponent implements ITenantSettingsStepComponent {
 
         return this.tenantPaymentSettingsProxy.updateCommissionSettings(this.settings);
     }
+
+    isValid(): boolean {
+        return true;
+    }
 }
