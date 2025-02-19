@@ -92,24 +92,20 @@
                     </div>
                     <div class="account-details">
                         <h6>{{l("Connected account info")}}:</h6>
-                        <div><span>Account Id: </span><b>{{settings.connectedAccountId}}</b></div>
-                        <div><span>Account Type: </span><b>{{settings.connectedAccountType}}</b></div>
-                        <div><span>Account Name: </span><b>{{settings.connectedAccountName}}</b></div>
-                        <div><span>Account Email: </span><b>{{settings.connectedAccountEmail}}</b></div>
+                        <div><span>Account Id: </span><b>{{settings.connectedAccountId}}</b></div><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountId)"></i>
+                        <div><span>Account Type: </span><b>{{settings.connectedAccountType}}</b></div><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountType)"></i>
+                        <div><span>Account Name: </span><b>{{settings.connectedAccountName}}</b></div><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountName)"></i>
+                        <div><span>Account Email: </span><b>{{settings.connectedAccountEmail}}</b></div><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountEmail)"></i>
                         <div class="payment-methods" *ngIf="settings.isConnectedAccountSetUpCompleted">
                             <span>Available Payment Methods: </span><b>{{settings.availablePaymentMethods}}</b>
                             <i class="fa fa-refresh" [ngClass]="{'fa-spin': settings.paymentMethodUpdateInProgress}" (click)="updatePaymentMethods(settings)" title="Refresh payment methods"></i>
                         </div>
                     </div>
                     <h6 class="tax-settings">Tax Settings</h6>
-                    <dx-check-box *ngIf="settings.isTaxationEnabled"
-                                  [text]="l('Automatic Taxation Enable')"
-                                  [value]="settings.isTaxationEnabled"
-                                  [readOnly]="true">
-                    </dx-check-box>
                     <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
                         {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
                     </button>
+                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enable </ng-container>
                     <hr />
                     <dx-check-box [text]="l('Ignore external webhooks')"
                                   [(value)]="settings.ignoreExternalWebhooks">
@@ -187,14 +183,11 @@
                         <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
                     </p>
                     <h6 class="tax-settings">Tax Settings</h6>
-                    <dx-check-box *ngIf="settings.isTaxationEnabled"
-                                  [text]="l('Automatic Taxation Enable')"
-                                  [value]="settings.isTaxationEnabled"
-                                  [readOnly]="true">
-                    </dx-check-box>
                     <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
                         {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
                     </button>
+                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enable </ng-container>
+                    <br /><br />
                     <p>
                         <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
                                       [text]="l('Ignore external connected accounts')"

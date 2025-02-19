@@ -291,8 +291,13 @@ export class StripeSettingsComponent extends SettingsComponentBase {
             finalize(() => this.finishLoading())
         ).subscribe(() => {
             settingDto.isTaxationEnabled = !settingDto.isTaxationEnabled;
-            this.notify.info(this.l('Stripe Taxation ') + settingDto.isTaxationEnabled ? 'Enabled' : 'Disabled');
+            this.notify.info((this.l('Stripe Taxation ') + (settingDto.isTaxationEnabled ? 'Enabled' : 'Disabled')));
             this.changeDetection.detectChanges();
         });
+    }
+
+    copyToClipboard(value: string) {
+        this.clipboardService.copyFromContent(value.trim());
+        this.notify.info(this.l('SavedToClipboard'));
     }
 }
