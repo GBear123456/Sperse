@@ -44,4 +44,13 @@
                        [(value)]="settings.commissionAffiliateAssignmentMode">
         </dx-select-box>
     </div>
+    <div class="form-group">
+        <label>{{ls.l('Generate Affiliate Code On Creation')}}</label>
+        <dx-tag-box [dataSource]="affiliateNameGenerationEntities"
+                    displayExpr="text"
+                    valueExpr="id"
+                    [showDropDownButton]="true"
+                    [(value)]="affiliateNameGenerationModes">
+        </dx-tag-box>
+    </div>
 </div>

@@ -14,7 +14,8 @@ import {
     TenantPaymentSettingsServiceProxy,
     CommissionSettings,
     Tier2CommissionSource,
-    CommissionAffiliateAssignmentMode
+    CommissionAffiliateAssignmentMode,
+    AffiliateNameGenerationMode
 } from '@shared/service-proxies/service-proxies';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 
@@ -41,6 +42,16 @@ export class CommissionsComponent implements ITenantSettingsStepComponent {
             text: this.ls.l('AffiliateAssignmentMode_' + item)
         };
     });
+    affiliateNameGenerationEntities = Object.keys(AffiliateNameGenerationMode)
+        .filter(v => !Number(v))
+        .map(item => {
+            return {
+                id: AffiliateNameGenerationMode[item],
+                text: item
+            };
+        });
+
+    affiliateNameGenerationModes: AffiliateNameGenerationMode[] = [];
 
     constructor(
         private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
@@ -52,6 +63,7 @@ export class CommissionsComponent implements ITenantSettingsStepComponent {
                 this.settings = settings;
                 this.settings.defaultAffiliateRate = this.convertFromPercent(this.settings.defaultAffiliateRate);
                 this.settings.defaultAffiliateRateTier2 = this.convertFromPercent(this.settings.defaultAffiliateRateTier2);
+                this.setAffiliateNameGenerationModes();
                 this.changeDetectorRef.detectChanges();
             }
         );
@@ -69,9 +81,25 @@ export class CommissionsComponent implements ITenantSettingsStepComponent {
         return value;
     }
 
+    setAffiliateNameGenerationModes() {
+        this.affiliateNameGenerationEntities.forEach(entity => {
+            if ((entity.id & this.settings.affiliateNameGenerationMode) == entity.id)
+                this.affiliateNameGenerationModes.push(entity.id);
+        });
+    }
+
+    getAffiliateNameGenerationModes(): any {
+        let result = 0;
+        this.affiliateNameGenerationModes.forEach(v => {
+            result |= v;
+        });
+        return result;
+    }
+
     save(): Observable<any> {
         this.settings.defaultAffiliateRate = this.convertToPercent(this.settings.defaultAffiliateRate);
         this.settings.defaultAffiliateRateTier2 = this.convertToPercent(this.settings.defaultAffiliateRateTier2);
+        this.settings.affiliateNameGenerationMode = this.getAffiliateNameGenerationModes();
 
         return this.tenantPaymentSettingsProxy.updateCommissionSettings(this.settings);
     }
