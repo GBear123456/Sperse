@@ -147,6 +147,11 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         );
     }
 
+
+    isValid(): boolean {
+        return true;
+    }
+
     handleCssUpload(cssType: CustomCssType, res: any) {
         if (res.result && res.result.id) {
             this.onOptionChanged.emit('appearance');

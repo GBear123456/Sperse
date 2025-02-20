@@ -388,4 +388,9 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
 
         return obs;
     }
+
+    isValid(): boolean {
+        return !(this.isNewDomainAdding || !this.faqComponent.isValid() || !this.tabsComponent.isValid() || !this.checkoutFieldsComponent.isValid()) &&
+            this.validateRequiredCheckoutFields();
+    }
 }

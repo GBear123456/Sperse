@@ -35,4 +35,8 @@ export class SecurityComponent implements ITenantSettingsStepComponent {
     save(): Observable<void> {
         return this.tenantSettingsServiceProxy.updateSecuritySettings(this.securitySettings);
     }
+
+    isValid(): boolean {
+        return true;
+    }
 }

@@ -304,7 +304,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     saveAndNext() {
         const currentStep = this.visibleSteps[this.stepper.selectedIndex];
         const currentStepComponent: ITenantSettingsStepComponent = currentStep.getComponent();
-        if (currentStepComponent) {
+        if (currentStepComponent && currentStepComponent.isValid()) {
             this.loadingService.startLoading(this.elementRef.nativeElement);
             currentStepComponent.save().pipe(
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))

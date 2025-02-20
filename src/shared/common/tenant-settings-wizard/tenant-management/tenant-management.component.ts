@@ -25,4 +25,8 @@ export class TenantManagementComponent implements ITenantSettingsStepComponent {
     save(): Observable<void> {
         return this.hostSettingsServiceProxy.updateTenantManagementSettings(this.settings);
     }
+
+    isValid(): boolean {
+        return true;
+    }
 }

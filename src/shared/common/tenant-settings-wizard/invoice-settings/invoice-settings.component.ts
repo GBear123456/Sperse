@@ -111,4 +111,9 @@ export class InvoiceSettingsComponent implements ITenantSettingsStepComponent {
 
         return this.tenantPaymentSettingsProxy.updateInvoiceSettings(new UpdateInvoiceSettingsDto(this.settings));
     }
+
+    isValid(): boolean {
+        let dueGraceValidator = this.dueGraceValidatorComponent.instance as Validator;
+        return dueGraceValidator.validate().isValid;
+    }
 }
