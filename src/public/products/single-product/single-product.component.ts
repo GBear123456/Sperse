@@ -584,6 +584,7 @@ export class SingleProductComponent implements OnInit {
     updateSelectedSubscriptionOption() {
         this.selectedSubscriptionOption = this.productInfo.productSubscriptionOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
         this.initCustomerPrice();
+        this.calculateTax();
     }
 
     updateSubscriptionOptionPaypalButton() {
@@ -716,6 +717,7 @@ export class SingleProductComponent implements OnInit {
         this.couponInfo = null;
         this.requestInfo.couponCode = null;
         this.showCouponError = false;
+        this.calculateTax();
     }
 
     getTenantButtonText(): string {
