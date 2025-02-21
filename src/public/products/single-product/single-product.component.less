@@ -289,14 +289,14 @@ single-product {
 
             span {
                 display: inline-block;
-                font-size: 56px;
+                font-size: 40px;
                 line-height: 71px;
                 position: relative;
 
                 &::before {
                     position: absolute;
                     content: attr(data-currency);
-                    font-size: 24px;
+                    font-size: 18px;
                     line-height: 30px;
                     right: 102%;
                     top: 10px;
@@ -345,34 +345,51 @@ single-product {
     }
 
     .tax {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 6px;
-        font-weight: 500;
-        width: 100%;
-        font-size: 12px;
+        width: 60%;
+        min-width: 300px; /* Ensures it expands if needed */
 
-        .amount {
-            text-align: center;
+        .tax-row {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            line-height: 30px;
             font-size: 12px;
-            line-height: 10px;
-            margin-bottom: 6px;
-            width: 30%;
 
-            span {
-                display: inline-block;
-                font-size: 36px;
-                line-height: 71px;
-                position: relative;
+            .amount {
+                text-align: right;
+                width: 30%;
 
-                &::before {
-                    position: absolute;
-                    content: attr(data-currency);
-                    font-size: 12px;
-                    line-height: 30px;
-                    right: 102%;
-                    top: 10px;
+                span {
+                    display: inline-block;
+                    font-size: 18px;
+                    position: relative;
+
+                    &::before {
+                        position: absolute;
+                        content: attr(data-currency);
+                        font-size: 10px;
+                        line-height: 30px;
+                        right: 102%;
+                        top: -4px;
+                    }
+                }
+            }
+        }
+
+        .tax-total {
+            font-size: 18px;
+            line-height: 35px;
+
+            .amount {
+                span {
+                    font-size: 26px;
+
+                    &::before {
+                        font-size: 12px;
+                        line-height: 30px;
+                        right: 102%;
+                        top: -2px;
+                    }
                 }
             }
         }

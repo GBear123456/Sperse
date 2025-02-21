@@ -144,16 +144,21 @@
                     </ng-template>
                 </div>
             </ng-template>
+            
             <div class="tax" *ngIf="productInfo.data.isStripeTaxationEnabled">
-                <div class="amount">
-                    <div>Tax Amount</div>
-                    <span *ngIf="taxCalculation" [attr.data-currency]="currencySymbol">{{ taxCalculation.taxAmountExclusive | number : '1.0-2'}}</span>
-                    <span *ngIf="!taxCalculation" > - </span>
+                <div class="tax-row">
+                    <span>Estimated Taxes</span>
+                    <div class="amount">
+                        <span *ngIf="taxCalculation" [attr.data-currency]="currencySymbol">{{ taxCalculation.taxAmountExclusive | number : '1.0-2'}}</span>
+                        <span *ngIf="!taxCalculation"> - </span>
+                    </div>
                 </div>
-                <div class="amount">
-                    <div>Total</div>
-                    <span *ngIf="taxCalculation" [attr.data-currency]="currencySymbol">{{ taxCalculation.amountTotal | number : '1.0-2'}}</span>
-                    <span *ngIf="!taxCalculation"> - </span>
+                <div class="tax-row tax-total">
+                    <span>TOTAL</span>
+                    <div class="amount">
+                        <span *ngIf="taxCalculation" [attr.data-currency]="currencySymbol">{{ taxCalculation.amountTotal | number : '1.0-2'}}</span>
+                        <span *ngIf="!taxCalculation"> - </span>
+                    </div>
                 </div>
             </div>
             <div class="invalid" *ngIf="!isInStock || (productInfo.stock != null && productInfo.stock - productInput.quantity < 0)">

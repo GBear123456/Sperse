@@ -373,7 +373,9 @@ export class SingleProductComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        let isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid()) && this.isInStock;
+        let isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid()) && this.isInStock &&
+            (!this.productInfo.data.isStripeTaxationEnabled || (this.billingAddress.countryId && (this.billingAddress.countryId != 'US' || this.billingAddress.zip)
+            && (this.billingAddress.countryId != 'CA' || this.billingAddress.zip || this.billingAddress.stateId)));
         return !!isValidObj;
     }
 
@@ -389,6 +391,11 @@ export class SingleProductComponent implements OnInit {
             this.billingAddress.stateId,
             this.billingAddress.stateName
         );
+        if (!this.billingAddress.countryId || (this.billingAddress.countryId == 'US' && !this.billingAddress.zip)
+            || (this.billingAddress.countryId == 'CA' && !this.billingAddress.zip && !this.billingAddress.stateId)) {
+            abp.notify.error(this.ls.l('Invalid Address'));
+            return of();
+        }
 
         if ((this.productInfo.customerChoosesPrice && (!this.productInfo.price || this.customerPriceEditMode)) ||
             (this.selectedSubscriptionOption && this.selectedSubscriptionOption.customerChoosesPrice && (!this.selectedSubscriptionOption.fee || this.customerPriceEditMode))) {
