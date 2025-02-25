@@ -711,7 +711,7 @@ export class SingleProductComponent implements OnInit {
         if (this.couponInfo.amountOff)
             return amount - this.couponInfo.amountOff + usedAmountOff > 0 ? amount - this.couponInfo.amountOff + usedAmountOff : 0;
 
-        return parseFloat((amount * (1 - this.couponInfo.percentOff / 100)).toFixed(2));
+        return amount - round(amount * (this.couponInfo.percentOff / 100), 2);
     }
 
     clearCoupon() {
