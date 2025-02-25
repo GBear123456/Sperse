@@ -671,6 +671,7 @@ export class SingleProductComponent implements OnInit {
 
         if (this.couponInfoCache.hasOwnProperty(this.requestInfo.couponCode)) {
             this.couponInfo = this.couponInfoCache[this.requestInfo.couponCode];
+            this.calculateTax();
             this.changeDetector.detectChanges();
             return;
         }
