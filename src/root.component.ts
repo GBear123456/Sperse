@@ -85,7 +85,7 @@ export class RootComponent implements OnInit, AfterViewInit {
         sessionStorage.clear();
         if (abp && abp.setting && abp.setting.values) {
             let mapKey = abp.setting.values['Integrations:Google:MapsJavascriptApiKey'];
-            if (mapKey && this.SS.userId)
+            if (mapKey)
                 DomHelper.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', mapKey));
 
             let fontName = abp.setting.values['App.Appearance.FontName'] || AppConsts.defaultFontName,
