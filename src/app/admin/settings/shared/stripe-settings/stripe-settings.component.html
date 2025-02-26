@@ -92,10 +92,10 @@
                     </div>
                     <div class="account-details">
                         <h6>{{l("Connected account info")}}:</h6>
-                        <div><span>Account Id: </span><b>{{settings.connectedAccountId}}</b></div><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountId)"></i>
-                        <div><span>Account Type: </span><b>{{settings.connectedAccountType}}</b></div><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountType)"></i>
-                        <div><span>Account Name: </span><b>{{settings.connectedAccountName}}</b></div><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountName)"></i>
-                        <div><span>Account Email: </span><b>{{settings.connectedAccountEmail}}</b></div><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountEmail)"></i>
+                        <div><span>Account Id: </span><b>{{settings.connectedAccountId}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountId)"></i></div>
+                        <div><span>Account Type: </span><b>{{settings.connectedAccountType}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountType)"></i></div>
+                        <div><span>Account Name: </span><b>{{settings.connectedAccountName}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountName)"></i></div>
+                        <div><span>Account Email: </span><b>{{settings.connectedAccountEmail}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountEmail)"></i></div>
                         <div class="payment-methods" *ngIf="settings.isConnectedAccountSetUpCompleted">
                             <span>Available Payment Methods: </span><b>{{settings.availablePaymentMethods}}</b>
                             <i class="fa fa-refresh" [ngClass]="{'fa-spin': settings.paymentMethodUpdateInProgress}" (click)="updatePaymentMethods(settings)" title="Refresh payment methods"></i>
@@ -105,7 +105,7 @@
                     <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
                         {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
                     </button>
-                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enable </ng-container>
+                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
                     <hr />
                     <dx-check-box [text]="l('Ignore external webhooks')"
                                   [(value)]="settings.ignoreExternalWebhooks">
@@ -186,7 +186,7 @@
                     <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
                         {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
                     </button>
-                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enable </ng-container>
+                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
                     <br /><br />
                     <p>
                         <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
