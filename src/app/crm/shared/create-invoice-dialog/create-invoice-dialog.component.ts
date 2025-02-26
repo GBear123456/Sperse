@@ -1324,7 +1324,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return new ApplicableCheckLine({
                 quantity: row['quantity'],
                 unitId: row['unitId'] as ProductMeasurementUnit,
-                productId: row['productId']
+                productId: row['productId'],
+                priceOptionId: row['priceOptionId']
             });
         });
         let input = new GetApplicablePaymentMethodsInput({
