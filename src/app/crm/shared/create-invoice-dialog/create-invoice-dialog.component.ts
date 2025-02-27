@@ -803,6 +803,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.products = res.map((item: any) => {
                     item.details = item.description.split('\n').slice(1).join('\n');
                     item.caption = item.description.split('\n').shift();
+                    item.isInStock = true;
                     return item;
                 });
                 callback && callback(res);
@@ -901,7 +902,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.subTotal = this.subTotal + total;
         });
         this.calcuateDiscount();
-        this.balance = this.subTotal - this.discountTotal + this.shippingTotal + this.taxTotal;
+        this.balance = this.subTotal - this.discountTotal + this.shippingTotal + (this.taxTotal || 0);
 
         if (calculateTax)
             this.calculateTax();
@@ -984,6 +985,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     updateDisabledProducts() {
+        let lastAllowedProducts = this.allowedProducts;
         let firstNotCustomLine = this.lines.find(line => !!line.productId);
         this.allowedProducts = (!this.isTaxationEnabled || !this.lines || this.lines.length == 0 || !firstNotCustomLine) ? 'ALL' : (firstNotCustomLine.isStripeTaxationEnabled ? 'T' : 'NT');
         this.products.forEach((product: any) => {
@@ -998,6 +1000,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
 
         if (this.allowedProducts == 'T' && !this.disabledForUpdate)
+            this.taxTotal = 0;
+
+        if (lastAllowedProducts == 'T' && this.allowedProducts != 'T')
             this.taxTotal = 0;
     }
 
@@ -1385,6 +1390,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             discountTotal: this.discountTotal,
             shippingTotal: this.shippingTotal,
             taxTotal: this.taxTotal,
+            isAutoCalculatedTax: this.allowedProducts == 'T',
             lines: lines
         });
         this.paymentMethodsCheckTimeout = setTimeout(() => {
@@ -1418,7 +1424,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return;
 
         this.taxTotal = null;
-        this.balance = null;
+        this.calculateBalance(false);
 
         clearTimeout(this.calculationTaxTimeout);
         this.calculationTaxTimeout = setTimeout(() => {
@@ -1428,7 +1434,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     calculateTaxFunc() {
-        if (!this.selectedBillingAddress.countryId || (this.selectedBillingAddress.countryId == 'US' && !this.selectedBillingAddress.zip)
+        if (!this.selectedBillingAddress || !this.selectedBillingAddress.countryId || (this.selectedBillingAddress.countryId == 'US' && !this.selectedBillingAddress.zip)
             || (this.selectedBillingAddress.countryId == 'CA' && !this.selectedBillingAddress.zip && !this.selectedBillingAddress.stateId))
             return;
 
