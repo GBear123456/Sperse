@@ -42,7 +42,6 @@ import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/ad
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
-import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { AddCouponDialogComponent } from '../coupons/add-coupon-dialog/add-coupon-dialog.component';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
@@ -261,20 +260,6 @@ export class ShortcutsComponent implements OnInit {
                 if (refresh) this.router.navigate(['app/crm/coupons'])
             }
         );
-    }
-
-    openPaymentWizardDialog(showSubscriptions = false, data?) {
-        this.dialog.closeAll();
-        this.dialog.open(PaymentWizardComponent, {
-            height: '800px',
-            width: '1200px',
-            id: 'payment-wizard',
-            panelClass: ['payment-wizard', 'setup'],
-            data: {
-                ...data,
-                showSubscriptions: showSubscriptions
-            }
-        });
     }
 
     loadSettings() {

@@ -176,8 +176,8 @@ export class PackageChooserComponent implements OnInit {
             });
             this.initAvailablePeriods();
             this.preselectPackage();
-            
-            if (this.packages.length == 1)               
+
+            if (this.packages.length == 1)
                 setTimeout(() => {
                     this.selectPackage(0);
                     this.changeDetectionRef.detectChanges();
@@ -266,12 +266,13 @@ export class PackageChooserComponent implements OnInit {
 
     getPaymentOptions(): PaymentOptions {
         if (this.selectedPackageCardComponent) {
-            let selectedOption = this.selectedPackageCardComponent.productInfo.productSubscriptionOptions.find(option => 
+            let selectedOption = this.selectedPackageCardComponent.productInfo.productSubscriptionOptions.find(option =>
                 option.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
 
             const paymentOptions: PaymentOptions = {
                 productId: this.selectedPackageCardComponent.productInfo.id,
                 productName: this.selectedPackageCardComponent.productInfo.name,
+                priceOptionId: selectedOption ? selectedOption.id : undefined,
                 currencyId: this.selectedPackageCardComponent.productInfo.currencyId,
                 currencySymbol: this.selectedPackageCardComponent.currencySymbol,
                 paymentPeriodType: PaymentService.getPaymentPeriodType(this.selectedBillingPeriod),

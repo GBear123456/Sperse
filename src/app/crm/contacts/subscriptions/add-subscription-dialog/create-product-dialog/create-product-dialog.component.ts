@@ -606,16 +606,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     ).subscribe(([res,]) => {
                         this.notify.info(this.ls.l('SavedSuccessfully'));
                         if (this.selectedOption.data.close)
-                            this.dialogRef.close(new ProductDto({
-                                id: res.productId,
-                                group: this.product.groupName,
-                                name: this.product.name,
-                                code: this.product.code,
-                                type: this.product.type,
-                                isPublished: this.product.isPublished,
-                                paymentPeriodTypes: this.product.productSubscriptionOptions &&
-                                    this.product.productSubscriptionOptions.map(item => item.frequency)
-                            }));
+                            this.dialogRef.close();
                         else
                             this.productProxy.getProductInfo(res.productId).subscribe((product: any) => {
                                 this.product = new UpdateProductInput({ id: res.productId, ...product });

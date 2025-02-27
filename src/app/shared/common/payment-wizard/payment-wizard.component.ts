@@ -145,6 +145,7 @@ export class PaymentWizardComponent implements AfterViewInit {
             this.changePlan({
                 productId: this.data.subscription.productId,
                 productName: this.data.subscription.productName,
+                priceOptionId: selectedOption ? selectedOption.id : undefined,
                 paymentPeriodType: this.data.subscription.paymentPeriodType,
                 total: selectedOption ? selectedOption.fee : 0
             });

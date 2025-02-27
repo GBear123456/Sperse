@@ -42,9 +42,10 @@
                     <div class="field">
                         <label for="code" [title]="ls.l('PaymentPeriodType')">{{ls.l('Type')}}</label>
                         <dx-select-box [showClearButton]="true"
-                                       [dataSource]="paymentPeriodTypes"
-                                       [(value)]="subscription.paymentPeriodType"
-                                       placeholder="Select period type...">
+                                       [dataSource]="priceOptions"
+                                       displayExpr="frequency"
+                                       placeholder="Select period type..."
+                                       (onValueChanged)="onPriceOptionChanged($event)">
                         </dx-select-box>
                     </div>
                 </div>

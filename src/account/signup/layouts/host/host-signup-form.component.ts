@@ -262,6 +262,7 @@ export class HostSignupFormComponent {
         this.tenancyRequestModel.firstName = this.tenancyRequestModel.firstName.trim();
         this.tenancyRequestModel.products = [new TenantProductInfo({
             productId: this.signUpProduct.id,
+            priceOptionId: this.selectedSubscriptionOption.id,
             paymentPeriodType: PaymentPeriodType[this.selectedSubscriptionOption.frequency],
             quantity: 1,
         })];
