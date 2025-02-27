@@ -391,8 +391,9 @@ export class SingleProductComponent implements OnInit {
             this.billingAddress.stateId,
             this.billingAddress.stateName
         );
-        if (!this.billingAddress.countryId || (this.billingAddress.countryId == 'US' && !this.billingAddress.zip)
-            || (this.billingAddress.countryId == 'CA' && !this.billingAddress.zip && !this.billingAddress.stateId)) {
+
+        if (this.productInfo.data.isStripeTaxationEnabled && (!this.billingAddress.countryId || (this.billingAddress.countryId == 'US' && !this.billingAddress.zip)
+            || (this.billingAddress.countryId == 'CA' && !(this.billingAddress.zip || this.billingAddress.stateId)))) {
             abp.notify.error(this.ls.l('Invalid Address'));
             return of();
         }
