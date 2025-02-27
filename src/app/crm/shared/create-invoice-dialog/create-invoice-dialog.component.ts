@@ -672,6 +672,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (!this.startDateComponent.instance.option('isValid'))
             return this.notifyService.error(this.ls.l('InvalidField', 'subscription Start'));
 
+        if (!this.disabledForUpdate && this.allowedProducts == 'T' &&
+            (!this.selectedBillingAddress || !this.selectedBillingAddress.countryId || (this.selectedBillingAddress.countryId == 'US' && !this.selectedBillingAddress.zip)
+                || (this.selectedBillingAddress.countryId == 'CA' && !this.selectedBillingAddress.zip && !this.selectedBillingAddress.stateId))) {
+            this.notifyService.error(this.ls.l('Invoice_AutoTaxNeedsBillingAddress'));
+            return;
+        }
         setTimeout(() => {
             if (!this.linesValidationGroup.instance.validate().isValid)
                 return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
