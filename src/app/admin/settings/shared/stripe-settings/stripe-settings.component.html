@@ -92,10 +92,10 @@
                     </div>
                     <div class="account-details">
                         <h6>{{l("Connected account info")}}:</h6>
-                        <div><span>Account Id: </span><b>{{settings.connectedAccountId}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountId)"></i></div>
-                        <div><span>Account Type: </span><b>{{settings.connectedAccountType}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountType)"></i></div>
-                        <div><span>Account Name: </span><b>{{settings.connectedAccountName}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountName)"></i></div>
-                        <div><span>Account Email: </span><b>{{settings.connectedAccountEmail}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountEmail)"></i></div>
+                        <div class="clipboard-holder"><span>Account Id: </span><b>{{settings.connectedAccountId}}</b><i class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipboard(settings.connectedAccountId)"></i></div>
+                        <div class="clipboard-holder"><span>Account Type: </span><b>{{settings.connectedAccountType}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountType)"></i></div>
+                        <div class="clipboard-holder"><span>Account Name: </span><b>{{settings.connectedAccountName}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountName)"></i></div>
+                        <div class="clipboard-holder"><span>Account Email: </span><b>{{settings.connectedAccountEmail}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountEmail)"></i></div>
                         <div class="payment-methods" *ngIf="settings.isConnectedAccountSetUpCompleted">
                             <span>Available Payment Methods: </span><b>{{settings.availablePaymentMethods}}</b>
                             <i class="fa fa-refresh" [ngClass]="{'fa-spin': settings.paymentMethodUpdateInProgress}" (click)="updatePaymentMethods(settings)" title="Refresh payment methods"></i>
