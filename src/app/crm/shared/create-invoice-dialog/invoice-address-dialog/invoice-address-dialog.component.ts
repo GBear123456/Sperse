@@ -119,7 +119,7 @@ export class InvoiceAddressDialog {
         this.data.countryId = GooglePlaceService.getCountryCode(address.address_components);
         this.statesService.updateState(this.data.countryId, this.data.stateId, this.data.stateName);
         this.data.city = GooglePlaceService.getCity(address.address_components);
-        this.address = (this.addressInput.nativeElement.value = this.data.streetNumber
+        this.address = this.addressInput.nativeElement.value = (this.data.streetNumber
             ? this.data.streetNumber + ' ' + this.data.address1
             : this.data.address1) || '';
     }

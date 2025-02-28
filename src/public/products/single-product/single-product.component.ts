@@ -877,7 +877,7 @@ export class SingleProductComponent implements OnInit {
         this.billingAddress.stateName = stateName;
         this.address.countryCode = countryCode;
         this.billingAddress.city = GooglePlaceService.getCity(address.address_components);
-        this.address.address = (this.addressInput.nativeElement.value = this.address.streetNumber
+        this.address.address = this.addressInput.nativeElement.value = (this.address.streetNumber
             ? this.address.streetNumber + ' ' + this.address.street
             : this.address.street) || '';
     }

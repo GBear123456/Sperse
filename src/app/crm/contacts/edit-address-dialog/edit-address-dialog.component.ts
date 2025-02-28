@@ -122,7 +122,7 @@ export class EditAddressDialog {
         this.data.neighborhood = GooglePlaceService.getNeighborhood(address.address_components);
         this.data.formattedAddress = address.formatted_address;
         const streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
-        this.address = (this.addressInput.nativeElement.value = streetNumber
+        this.address = this.addressInput.nativeElement.value = (streetNumber
             ? streetNumber + ' ' + this.data.streetAddress
             : this.data.streetAddress) || '';
     }

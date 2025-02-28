@@ -317,7 +317,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         this.businessEntity.stateName = stateName;
         this.address.countryCode = countryCode;
         this.businessEntity.city = GooglePlaceService.getCity(address.address_components);
-        this.address.address = (this.addressInput.nativeElement.value = this.address.streetNumber
+        this.address.address = this.addressInput.nativeElement.value = (this.address.streetNumber
             ? this.address.streetNumber + ' ' + this.address.street
             : this.address.street) || '';
     }
