@@ -144,6 +144,23 @@
                     </ng-template>
                 </div>
             </ng-template>
+            
+            <div class="tax" *ngIf="productInfo.data.isStripeTaxationEnabled">
+                <div class="tax-row">
+                    <span>Estimated Taxes</span>
+                    <div class="amount">
+                        <span *ngIf="taxCalculation" [attr.data-currency]="currencySymbol">{{ taxCalculation.taxAmountExclusive | number : '1.0-2'}}</span>
+                        <span *ngIf="!taxCalculation"> - </span>
+                    </div>
+                </div>
+                <div class="tax-row tax-total">
+                    <span>TOTAL</span>
+                    <div class="amount">
+                        <span *ngIf="taxCalculation" [attr.data-currency]="currencySymbol">{{ taxCalculation.amountTotal | number : '1.0-2'}}</span>
+                        <span *ngIf="!taxCalculation"> - </span>
+                    </div>
+                </div>
+            </div>
             <div class="invalid" *ngIf="!isInStock || (productInfo.stock != null && productInfo.stock - productInput.quantity < 0)">
                 <p>Unfortunately, the quantity that you selected is out-of-stock.</p>
             </div>
@@ -195,6 +212,84 @@
                         Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="requestInfo.email" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="emailRegexp" required>
                         <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
                     </label>
+                </div>
+                <div *ngIf="productInfo.data.isStripeTaxationEnabled" class="input address">
+                    <label class="">
+                        {{ls.l('Billing Address')}}
+                        <dx-text-box *ngIf="!googleAutoComplete" name="address"
+                                     [placeholder]=""
+                                     [(value)]="billingAddress.address">
+                        </dx-text-box>
+
+                        <input *ngIf="googleAutoComplete"
+                               #addressInput
+                               type="text"
+                               name="Address"
+                               placeholder=""
+                               [(value)]="address.address"
+                               class="dx-texteditor-input"
+                               (onAddressChange)="onAddressChanged($event)"
+                               ngx-google-places-autocomplete />
+                    </label>
+                </div>
+                <div *ngIf="productInfo.data.isStripeTaxationEnabled" class="address name">
+                    <div class="input name__input">
+                        <label class="">
+                            City
+                        </label>
+                        <dx-text-box name="city"
+                                     maxLength="50"
+                                     [value]="billingAddress.city">
+                        </dx-text-box>
+                    </div>
+                    <div class="input name__input">
+                        <label>
+                            State
+                        </label>
+                        <dx-select-box [acceptCustomValue]="true"
+                                       [dataSource]="getCountryStates() | async"
+                                       displayExpr="name"
+                                       valueExpr="name"
+                                       name="state"
+                                       [activeStateEnabled]="false"
+                                       [focusStateEnabled]="false"
+                                       [hoverStateEnabled]="false"
+                                       [placeholder]="''"
+                                       [searchEnabled]="true"
+                                       [(value)]="billingAddress.stateName"
+                                       (onValueChanged)="stateChanged($event)"
+                                       (onCustomItemCreating)="onCustomStateCreate($event)">
+                        </dx-select-box>
+                    </div>
+                </div>
+                <div *ngIf="productInfo.data.isStripeTaxationEnabled" class="address name">
+                    <div class="input name__input">
+                        <label class="">
+                            Zip
+                        </label>
+                        <dx-text-box name="zip"
+                                     maxLength="10"
+                                     [(value)]="billingAddress.zip"
+                                     (onValueChanged)="calculateTax()">
+                        </dx-text-box>
+                    </div>
+                    <div class="input name__input">
+                        <label>
+                            Country
+                        </label>
+                        <dx-select-box [dataSource]="countries"
+                                        displayExpr="name"
+                                        valueExpr="name"
+                                        name="country"
+                                        [activeStateEnabled]="false"
+                                        [focusStateEnabled]="false"
+                                        [hoverStateEnabled]="false"
+                                        [placeholder]="''"
+                                        [searchEnabled]="true"
+                                        [(value)]="address.countryName"
+                                        (onValueChanged)="onCountryChange($event)">
+                        </dx-select-box>
+                    </div>
                 </div>
                 <div class="input" *ngIf="productInfo.data.hasTenantService && passwordComplexitySetting">
                     <label>

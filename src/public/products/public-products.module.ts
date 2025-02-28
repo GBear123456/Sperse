@@ -14,6 +14,9 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { PaypalModule } from '@shared/common/paypal/paypal.module';
 
 import { SingleProductComponent } from './single-product/single-product.component';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 
 import {
     LeadServiceProxy,
@@ -30,7 +33,10 @@ import {
         CountryPhoneNumberModule,
         UtilsModule,
         MatSliderModule,
-        PaypalModule
+        PaypalModule,
+        GooglePlaceModule,
+        DxSelectBoxModule,
+        DxTextBoxModule
     ],
     exports: [],
     declarations: [

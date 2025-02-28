@@ -63,7 +63,11 @@ import {
     GetApplicablePaymentMethodsInput,
     ApplicableCheckLine,
     UpdatePaymentMethodsInput,
-    InvoiceSettingsDto
+    InvoiceSettingsDto,
+    PublicProductServiceProxy,
+    TaxCalculationResultDto,
+    GetTaxCalculationInput,
+    ProductTaxInput
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -95,7 +99,7 @@ import { SettingsHelper } from '@shared/common/settings/settings.helper';
         '../../contacts/addresses/addresses.styles.less',
         'create-invoice-dialog.component.less'
     ],
-    providers: [CacheHelper, CustomerServiceProxy, InvoiceServiceProxy, ProductServiceProxy, CouponServiceProxy, PaymentServiceProxy],
+    providers: [CacheHelper, CustomerServiceProxy, InvoiceServiceProxy, ProductServiceProxy, CouponServiceProxy, PaymentServiceProxy, PublicProductServiceProxy],
     host: {
         '(click)': 'closeAddressDialogs()'
     },
@@ -161,6 +165,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     taxTotal = 0;
 
     isStripeEnabled = false;
+    isTaxationEnabled = false;
     stripeSubscriptionsLinesCount = 0;
 
     isSendEmailAllowed = false;
@@ -250,6 +255,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
     filterBoolean = Boolean;
     hideAddNew = false;
 
+    allowedProducts = 'ALL';
+
+    taxCalcInfo: GetTaxCalculationInput = new GetTaxCalculationInput();
+    private calculationTaxTimeout;
+
+    calculateTaxRequestProcessing = false;
+    needRecalculateTax = false;
+
     couponsDataSource: DataSource = new DataSource({
         pageSize: 10,
         byKey: (key) => {
@@ -281,13 +294,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
+        private publicProductProxy: PublicProductServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: CreateInvoiceDialogData
     ) {
         this.dialogRef.afterClosed().subscribe(() => {
             this.closeAddressDialogs();
         });
         this.paymetService.isStripeEnabled()
-            .subscribe(res => this.isStripeEnabled = res);
+            .subscribe(res => { this.isStripeEnabled = res.isEnabled; this.isTaxationEnabled = res.isTaxationEnabled; });
     }
 
     ngOnInit() {
@@ -382,7 +396,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
                                 unitName: res.unitName
                             }] : undefined,
                             ...res,
-                            description: description
+                            description: description,
+                            isStripeTaxationEnabled: res.isStripeTaxationEnabled,
+                            stripeTaxProcuctCode: res.stripeTaxProcuctCode
                         };
                     });
                     this.showUpdatePaymentMethodButton = this.disabledForUpdate && [InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid].indexOf(this.status) >= 0;
@@ -397,6 +413,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.initContextMenuItems();
                     this.checkSubscriptionsCount();
                     this.checkReccuringSubscriptionIsSelected(false);
+                    this.updateDisabledProducts();
                     this.changeDetectorRef.detectChanges();
                 });
         } else
@@ -516,6 +533,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.discountTotal = this.discountTotal;
             data.shippingTotal = this.shippingTotal;
             data.taxTotal = this.taxTotal;
+            data.isAutoCalculatedTax = this.allowedProducts == 'T';
             if (this.status == InvoiceStatus.Sent &&
                 this.invoiceInfo.status != this.status
             )
@@ -550,6 +568,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.discountTotal = this.discountTotal;
             data.shippingTotal = this.shippingTotal;
             data.taxTotal = this.taxTotal;
+            data.isAutoCalculatedTax = this.allowedProducts == 'T';
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 let description = row['description'] ? row['description'].split('\n').shift() : '';
@@ -635,6 +654,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     save(): void {
+        if (this.calculateTaxRequestProcessing) {
+            this.notifyService.error(this.ls.l('Tax calculation is currently in progress. Please try again shortly.'));
+            return;
+        }
         if (!this.invoiceNo)
             return this.invoiceNoComponent.instance.option('isValid', false);
 
@@ -649,6 +672,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (!this.startDateComponent.instance.option('isValid'))
             return this.notifyService.error(this.ls.l('InvalidField', 'subscription Start'));
 
+        if (!this.disabledForUpdate && this.allowedProducts == 'T' &&
+            (!this.selectedBillingAddress || !this.selectedBillingAddress.countryId || (this.selectedBillingAddress.countryId == 'US' && !this.selectedBillingAddress.zip)
+                || (this.selectedBillingAddress.countryId == 'CA' && !this.selectedBillingAddress.zip && !this.selectedBillingAddress.stateId)
+                || (!this.taxTotal && this.taxTotal != 0))) {
+            this.notifyService.error(this.ls.l('Invoice_AutoTaxNeedsBillingAddress'));
+            return;
+        }
         setTimeout(() => {
             if (!this.linesValidationGroup.instance.validate().isValid)
                 return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
@@ -742,6 +772,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.selectedBillingAddress = this.billingAddresses[0];
                     this.showEditAddressDialog(null, 'selectedBillingAddress');
                 }
+                this.calculateBalance();
                 this.changeDetectorRef.markForCheck();
             });
     }
@@ -779,6 +810,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.products = res.map((item: any) => {
                     item.details = item.description.split('\n').slice(1).join('\n');
                     item.caption = item.description.split('\n').shift();
+                    item.isInStock = true;
                     return item;
                 });
                 callback && callback(res);
@@ -869,7 +901,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
-    calculateBalance() {
+    calculateBalance(calculateTax = true) {
         this.subTotal = this.balance = 0;
         this.lines.forEach(line => {
             let total = line['total'];
@@ -877,7 +909,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.subTotal = this.subTotal + total;
         });
         this.calcuateDiscount();
-        this.balance = this.subTotal - this.discountTotal + this.shippingTotal + this.taxTotal;
+        this.balance = this.subTotal - this.discountTotal + this.shippingTotal + (this.taxTotal || 0);
+
+        if (calculateTax)
+            this.calculateTax();
+
         this.changeDetectorRef.detectChanges();
         this.initiatePaymentMethodsCheck();
     }
@@ -893,6 +929,22 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.discountTotal = this.invoiceInfo.discountTotal || 0;
         } else {
             this.discountTotal = 0;
+        }
+    }
+
+    getLineItemPriceWithDiscount(price) : number {
+        let coupon = this.selectedCoupon;
+        if (coupon) {
+            if (coupon.type == CouponDiscountType.Percentage) {
+                let itemDiscount = price * (coupon.percentOff / 100);
+                return round(price - itemDiscount, 2);
+            } else {
+                let percentOff = price / this.subTotal;
+                let itemDiscount = (this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff) * percentOff;
+                return round(price - itemDiscount, 2);
+            }
+        } else {
+            return price;
         }
     }
 
@@ -929,6 +981,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             cellData.data.maxQuantity = item.stock;
             cellData.data.productType = item.type;
             cellData.data.details = item.details;
+            cellData.data.isStripeTaxationEnabled = item.isStripeTaxationEnabled;
+            cellData.data.stripeTaxProcuctCode = item.stripeTaxProcuctCode;
+
             this.updateDisabledProducts();
             this.checkSubscriptionsCount();
             this.checkReccuringSubscriptionIsSelected();
@@ -937,6 +992,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     updateDisabledProducts() {
+        let lastAllowedProducts = this.allowedProducts;
+        let firstNotCustomLine = this.lines.find(line => !!line.productId);
+        this.allowedProducts = (!this.isTaxationEnabled || !this.lines || this.lines.length == 0 || !firstNotCustomLine) ? 'ALL' : (firstNotCustomLine.isStripeTaxationEnabled ? 'T' : 'NT');
         this.products.forEach((product: any) => {
             product.isInStock = product.stock == null || product.stock > 0;
             product.disabled = !product.isInStock;
@@ -944,7 +1002,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 if (item.productCode && product.code == item.productCode)
                     return product.disabled = true;
             });
+            if ((this.allowedProducts == 'T' && !product.isStripeTaxationEnabled) || (this.allowedProducts == 'NT' && product.isStripeTaxationEnabled))
+                product.disabled = true;
         });
+
+        if (this.allowedProducts == 'T' && !this.disabledForUpdate)
+            this.taxTotal = 0;
+
+        if (lastAllowedProducts == 'T' && this.allowedProducts != 'T')
+            this.taxTotal = 0;
     }
 
     checkSubscriptionsCount() {
@@ -1247,6 +1313,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this[field] = new InvoiceAddressInput(dialogData);
                 }
                 this.isAddressDialogOpened = false;
+                this.calculateBalance();
                 this.changeDetectorRef.detectChanges();
             });
             event.stopPropagation();
@@ -1330,6 +1397,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             discountTotal: this.discountTotal,
             shippingTotal: this.shippingTotal,
             taxTotal: this.taxTotal,
+            isAutoCalculatedTax: this.allowedProducts == 'T',
             lines: lines
         });
         this.paymentMethodsCheckTimeout = setTimeout(() => {
@@ -1351,5 +1419,82 @@ export class CreateInvoiceDialogComponent implements OnInit {
     onStartDateOpened(event) {
         if (!this.startDate)
             this.startDate = this.hasSubscription ? this.tomorrowDate : undefined;
+    }
+
+    taxChanged() {
+        if (this.allowedProducts != 'T')
+            this.calculateBalance();
+    }
+
+    calculateTax() {
+        if (this.allowedProducts != 'T' || this.disabledForUpdate)
+            return;
+
+        this.taxTotal = null;
+        this.calculateBalance(false);
+
+        clearTimeout(this.calculationTaxTimeout);
+        this.calculationTaxTimeout = setTimeout(() => {
+            this.calculateTaxFunc();
+        }, 500);
+
+    }
+
+    calculateTaxFunc() {
+        if (!this.selectedBillingAddress || !this.selectedBillingAddress.countryId || (this.selectedBillingAddress.countryId == 'US' && !this.selectedBillingAddress.zip)
+            || (this.selectedBillingAddress.countryId == 'CA' && !this.selectedBillingAddress.zip && !this.selectedBillingAddress.stateId))
+            return;
+
+        this.taxCalcInfo.tenantId = abp.session.tenantId;
+        this.taxCalcInfo.paymentGateway = 'Stripe';
+        this.taxCalcInfo.stateId = this.selectedBillingAddress.stateId;
+        this.taxCalcInfo.zip = this.selectedBillingAddress.zip;
+        this.taxCalcInfo.countryId = this.selectedBillingAddress.countryId;
+        this.taxCalcInfo.currency = this.currency;
+
+        this.taxCalcInfo.shippingCost = this.shippingTotal;
+
+        this.taxCalcInfo.products = this.lines.map((line: any, itemIndex: number) => {
+            if (line.rate && line.quantity && line.quantity > 0) {
+                let productTaxInput = new ProductTaxInput({
+                    productId: line.productId ?? itemIndex + 1000000000,
+                    stripeTaxProcuctCode: line.stripeTaxProcuctCode,
+                    price: line.rate,
+                    quantity: line.quantity
+                });
+
+                if (this.discountTotal) {
+                    if (itemIndex == 0 && this.lines.length == 1) {
+                        productTaxInput.price = line.rate * line.quantity - this.discountTotal;
+                        productTaxInput.quantity = 1;
+                    } else {
+                        productTaxInput.price = this.getLineItemPriceWithDiscount(line.rate);
+                    }
+                }
+
+                return productTaxInput;
+            }
+        });
+        if (this.taxCalcInfo.products && this.taxCalcInfo.products.length > 0) {
+            if (this.calculateTaxRequestProcessing) {
+                this.needRecalculateTax = true;
+            }
+            else {
+                this.calculateTaxRequestProcessing = true;
+                this.publicProductProxy
+                    .getTaxCalculation(this.taxCalcInfo)
+                    .pipe(finalize(() => {
+                        this.calculateTaxRequestProcessing = false;
+                        if (this.needRecalculateTax) {
+                            this.calculateTax();
+                            this.needRecalculateTax = false;
+                        }
+                    }))
+                    .subscribe(result => {
+                        this.taxTotal = result.taxAmountExclusive;
+                        this.calculateBalance(false);
+                    });
+            }
+        }
     }
 }

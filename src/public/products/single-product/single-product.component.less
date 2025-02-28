@@ -1,4 +1,4 @@
-:host {
+single-product {
     height: 100vh;
     display: block;
     background: linear-gradient(115.57deg, #C1E1FF 16.28%, #CFE5FA 95.97%);
@@ -64,6 +64,12 @@
             scale: 0.5;
             margin-top: calc(-100% / 1.5);
         }
+    }
+
+    .dx-texteditor.dx-editor-outlined {
+        background: #69bef7;
+        border: none;
+        border-radius: 7px;
     }
 
     input,
@@ -283,14 +289,14 @@
 
             span {
                 display: inline-block;
-                font-size: 56px;
+                font-size: 40px;
                 line-height: 71px;
                 position: relative;
 
                 &::before {
                     position: absolute;
                     content: attr(data-currency);
-                    font-size: 24px;
+                    font-size: 18px;
                     line-height: 30px;
                     right: 102%;
                     top: 10px;
@@ -335,6 +341,57 @@
         .customer-price-edit {
             margin-left: 15px;
             font-size: 27px;
+        }
+    }
+
+    .tax {
+        width: 60%;
+        min-width: 300px; /* Ensures it expands if needed */
+
+        .tax-row {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            line-height: 30px;
+            font-size: 12px;
+
+            .amount {
+                text-align: right;
+                width: 30%;
+
+                span {
+                    display: inline-block;
+                    font-size: 18px;
+                    position: relative;
+
+                    &::before {
+                        position: absolute;
+                        content: attr(data-currency);
+                        font-size: 10px;
+                        line-height: 30px;
+                        right: 102%;
+                        top: -4px;
+                    }
+                }
+            }
+        }
+
+        .tax-total {
+            font-size: 18px;
+            line-height: 35px;
+
+            .amount {
+                span {
+                    font-size: 26px;
+
+                    &::before {
+                        font-size: 12px;
+                        line-height: 30px;
+                        right: 102%;
+                        top: -2px;
+                    }
+                }
+            }
         }
     }
 
@@ -449,6 +506,18 @@
             &:hover,
             &:focus {
                 border-color: #fff;
+            }
+        }
+
+        .dx-selectbox {
+            input:hover,
+            input:focus,
+            input:active {
+                border-color: #69bef7;
+            }
+
+            &.dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+                background: none;
             }
         }
 
@@ -588,6 +657,10 @@
         }
     }
 
+    .address {
+        margin-bottom: 10px;
+    }
+
     .button_global {
         border-radius: 10px;
         padding: 13px 33px;
@@ -636,7 +709,7 @@
         }
     }
 
-    ::ng-deep country-phone-number {
+    country-phone-number {
         button {
             height: 45px;
             min-width: auto;
@@ -648,25 +721,25 @@
             background: #69bef7;
         }
 
-        input {
-            border-radius: 0 7px 7px 0;
-            background: #69bef7;
-            color: #FFF !important;
-            font-size: 16px;
-            font-weight: 500;
-
-            &:-webkit-autofill,
-            &:-webkit-autofill:hover,
-            &:-webkit-autofill:focus,
-            &:-webkit-autofill:active {
-                -webkit-box-shadow: 0 0 0 30px #69bef7 inset !important;
-                -webkit-text-fill-color: #fff !important;
-            }
-        }
-
         .input-group {
             width: 490px;
             border-bottom: none !important;
+
+            input {
+                border-radius: 0 7px 7px 0;
+                background: #69bef7;
+                color: #FFF !important;
+                font-size: 16px;
+                font-weight: 500;
+
+                &:-webkit-autofill,
+                &:-webkit-autofill:hover,
+                &:-webkit-autofill:focus,
+                &:-webkit-autofill:active {
+                    -webkit-box-shadow: 0 0 0 30px #69bef7 inset !important;
+                    -webkit-text-fill-color: #fff !important;
+                }
+            }
         }
     }
 
@@ -728,7 +801,7 @@
         transform: translate(-50%, -50%) scale(1);
     }
 
-    ::ng-deep validation-messages {
+    validation-messages {
         .form-control-feedback {
             color: var(--error-color);
             font-weight: 600;
@@ -817,7 +890,7 @@
             &.point1 {
                 width: 128px;
 
-                ::ng-deep .mat-slider {
+                .mat-slider {
                     .mat-slider-thumb {
                         width: 100%;
                         right: 0px;
@@ -828,7 +901,7 @@
             &.point2 {
                 width: 222px;
 
-                ::ng-deep .mat-slider {
+                .mat-slider {
                     .mat-slider-thumb {
                         width: 50%;
                         right: -50%;
@@ -839,7 +912,7 @@
             &.point4 {
                 width: 444px;
 
-                ::ng-deep .mat-slider {
+                .mat-slider {
                     .mat-slider-thumb {
                         width: 25%;
                         right: -25%;
@@ -869,7 +942,7 @@
                 }
             }
 
-            ::ng-deep .mat-slider {
+            .mat-slider {
                 width: 100%;
                 height: 38px;
 
@@ -917,7 +990,7 @@
     }
 }
 
-::ng-deep .description-html {
+.description-html {
     border-top: 1px solid;
     margin-top: 10px;
     padding-top: 10px;

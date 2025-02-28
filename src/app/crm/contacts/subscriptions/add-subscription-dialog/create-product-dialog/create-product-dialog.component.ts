@@ -21,6 +21,7 @@ import { NgxFileDropEntry } from 'ngx-file-drop';
 import { CacheService } from 'ng2-cache-service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
+import DataSource from 'devextreme/data/data_source';
 import { Observable, of, zip } from 'rxjs';
 import * as moment from 'moment';
 import { map, switchMap, finalize, first, filter, publishReplay, refCount, tap } from 'rxjs/operators';
@@ -229,6 +230,18 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     storedCurrentQuantity: number = undefined;
     topupQuantity: number;
+
+    productTaxCodeDataSource: DataSource = new DataSource({
+        pageSize: 10,
+        byKey: (key) => {
+            return this.productProxy.getStripeProductTaxCode(key).toPromise();
+        },
+        load: (loadOptions) => {
+            return loadOptions.hasOwnProperty('searchValue') ?
+                this.productProxy.getStripeProductTaxCodes(loadOptions.searchValue || '', loadOptions.take, loadOptions.skip).toPromise() :
+                Promise.resolve([]);
+        }
+    });
 
     constructor(
         private elementRef: ElementRef,
