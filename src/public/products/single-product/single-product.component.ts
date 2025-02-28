@@ -374,8 +374,8 @@ export class SingleProductComponent implements OnInit {
 
     isFormValid(): boolean {
         let isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid()) && this.isInStock &&
-            (!this.productInfo.data.isStripeTaxationEnabled || (this.billingAddress.countryId && (this.billingAddress.countryId != 'US' || this.billingAddress.zip)
-            && (this.billingAddress.countryId != 'CA' || this.billingAddress.zip || this.billingAddress.stateId)));
+            (!this.productInfo.data.isStripeTaxationEnabled || (this.billingAddress.countryId && this.billingAddress.zip &&
+            (this.billingAddress.stateId || this.billingAddress.stateName) && this.billingAddress.city));
         return !!isValidObj;
     }
 
@@ -392,8 +392,8 @@ export class SingleProductComponent implements OnInit {
             this.billingAddress.stateName
         );
 
-        if (this.productInfo.data.isStripeTaxationEnabled && (!this.billingAddress.countryId || (this.billingAddress.countryId == 'US' && !this.billingAddress.zip)
-            || (this.billingAddress.countryId == 'CA' && !(this.billingAddress.zip || this.billingAddress.stateId)))) {
+        if (this.productInfo.data.isStripeTaxationEnabled && (!this.billingAddress.countryId || !this.billingAddress.zip ||
+            !this.billingAddress.stateId || !this.billingAddress.city || !this.billingAddress.streetAddress)) {
             abp.notify.error(this.ls.l('Invalid Address'));
             return of();
         }

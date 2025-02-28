@@ -674,7 +674,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         if (!this.disabledForUpdate && this.allowedProducts == 'T' &&
             (!this.selectedBillingAddress || !this.selectedBillingAddress.countryId || (this.selectedBillingAddress.countryId == 'US' && !this.selectedBillingAddress.zip)
-                || (this.selectedBillingAddress.countryId == 'CA' && !this.selectedBillingAddress.zip && !this.selectedBillingAddress.stateId))) {
+                || (this.selectedBillingAddress.countryId == 'CA' && !this.selectedBillingAddress.zip && !this.selectedBillingAddress.stateId)
+                || (!this.taxTotal && this.taxTotal != 0))) {
             this.notifyService.error(this.ls.l('Invoice_AutoTaxNeedsBillingAddress'));
             return;
         }
