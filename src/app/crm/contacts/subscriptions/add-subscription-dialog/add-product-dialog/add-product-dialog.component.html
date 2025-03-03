@@ -209,7 +209,7 @@
                     <div *ngIf="!isReadOnly && !isOneTime" class="add-new-button" (click)="addNewPaymentPeriod()"><span>+ {{ls.l('Add')}}</span></div>
                 </div>
             </div>
-            <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
+            <div class="services" *ngFor="let option of product.priceOptions; let i = index">
                 <i *ngIf="!isReadOnly" class="fa fa-close" (click)="removePaymentPeriod(i)"></i>
                 <div class="field">
                     <label class="wide" for="name">{{ls.l('PaymentPeriod')}}</label>

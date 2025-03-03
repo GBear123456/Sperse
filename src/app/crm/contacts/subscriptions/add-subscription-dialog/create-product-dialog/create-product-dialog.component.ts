@@ -43,7 +43,7 @@ import {
     ProductType,
     UpdateProductInput,
     RecurringPaymentFrequency,
-    ProductSubscriptionOptionInfo,
+    PriceOptionInfo,
     ProductMeasurementUnit,
     SetProductImageInput,
     ProductUpgradeAssignmentInfo,
@@ -275,7 +275,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.image = data.product.imageUrl;
             this.product = new UpdateProductInput(data.product);
             this.initSubscriptionOptions();
-            let options = data.product.productSubscriptionOptions;
+            let options = data.product.priceOptions;
             this.defaultProductUri = this.product.publicName;
             if (options && options[0]) {
                 this.isFreePriceType = !options[0].fee && !options[0].customerChoosesPrice;
@@ -331,7 +331,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     ngOnInit() {
-        if (!this.data.product || !this.product.productSubscriptionOptions)
+        if (!this.data.product || !this.product.priceOptions)
             this.addNewPaymentPeriod();
 
         let contextMenu = this.buttons[0].contextMenu;
@@ -367,10 +367,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     initSubscriptionOptions() {
-        if (!this.product.productSubscriptionOptions)
+        if (!this.product.priceOptions)
             return;
 
-        this.product.productSubscriptionOptions.forEach(option => {
+        this.product.priceOptions.forEach(option => {
             option['gracePeriodEnabled'] = !!option.gracePeriodDayCount;
             option['trialEnabled'] = !!option.trialDayCount;
             option['billingCyclesEnabled'] = !!option.cycles;
@@ -496,7 +496,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
 
         if (this.product.type == ProductType.Subscription) {
-            let options = this.product.productSubscriptionOptions;
+            let options = this.product.priceOptions;
             if (!options || !options.length)
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.unit = undefined;
@@ -505,7 +505,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.product.credits = undefined;
         } else {
             this.product.productServices = undefined;
-            this.product.productSubscriptionOptions = undefined;
+            this.product.priceOptions = undefined;
             this.product.productUpgradeAssignments = undefined;
             this.product.downgradeProductId = undefined;
             this.product.creditsTopUpProductId = undefined;
@@ -522,8 +522,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 if (!this.product.groupId)
                     this.product.groupName = this.customGroup;
 
-                if (this.product.productSubscriptionOptions)
-                    this.product.productSubscriptionOptions.forEach(item => {
+                if (this.product.priceOptions)
+                    this.product.priceOptions.forEach(item => {
                         if (item.trialDayCount == null || isNaN(item.trialDayCount))
                             item.trialDayCount = 0;
                     });
@@ -692,16 +692,16 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     addNewPaymentPeriod() {
-        if (!this.product.productSubscriptionOptions)
-            this.product.productSubscriptionOptions = [];
-        if (this.product.productSubscriptionOptions.some(item => !item.frequency))
+        if (!this.product.priceOptions)
+            this.product.priceOptions = [];
+        if (this.product.priceOptions.some(item => !item.frequency))
             return;
-        let option = new ProductSubscriptionOptionInfo();
+        let option = new PriceOptionInfo();
         option['gracePeriodEnabled'] = false;
         option['trialEnabled'] = false;
         option['billingCyclesEnabled'] = false;
 
-        this.product.productSubscriptionOptions.push(
+        this.product.priceOptions.push(
             option
         );
     }
@@ -727,8 +727,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     removePaymentPeriod(index) {
-        this.product.productSubscriptionOptions.splice(index, 1);
-        if (this.isOneTime && !this.product.productSubscriptionOptions.length) {
+        this.product.priceOptions.splice(index, 1);
+        if (this.isOneTime && !this.product.priceOptions.length) {
             this.isOneTime = false;
             this.detectChanges();
         }
@@ -756,7 +756,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     getFrequencies(selected, index) {
-        let options = this.product.productSubscriptionOptions,
+        let options = this.product.priceOptions,
             frequencies = options ? this.frequencies.filter(item => {
                 return selected.frequency == item ||
                     !options.some(option => option.frequency == item);
@@ -772,7 +772,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         return frequencies;
     }
 
-    onFrequencyChanged(event, option: ProductSubscriptionOptionInfo, customPeriodValidator?) {
+    onFrequencyChanged(event, option: PriceOptionInfo, customPeriodValidator?) {
         this.isOneTime = event.value == RecurringPaymentFrequency.OneTime;
 
         if (this.isOneTime) {
@@ -865,7 +865,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             };
     }
 
-    validatePeriodDayCount(option: ProductSubscriptionOptionInfo) {
+    validatePeriodDayCount(option: PriceOptionInfo) {
         return (event) => {
             if (this.isOneTime || (option.frequency && option.frequency == RecurringPaymentFrequency.Custom))
                 return event.value && event.value > 0;
@@ -873,7 +873,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         };
     }
 
-    validateCustomPeriodDayCount(option: ProductSubscriptionOptionInfo) {
+    validateCustomPeriodDayCount(option: PriceOptionInfo) {
         return (event) => {
             if (this.isOneTime || (option.frequency && option.frequency == RecurringPaymentFrequency.Custom)) {
                 let isPeriodValid = true;
@@ -1191,7 +1191,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.product.price = undefined;
             if (!this.product.stripeXref)
                 this.product.customerChoosesPrice = false;
-            let options = this.product.productSubscriptionOptions;
+            let options = this.product.priceOptions;
             if (options && options[0]) {
                 options[0].fee = 0;
                 options[0].customerChoosesPrice = false;
@@ -1242,7 +1242,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     onProductTypeChanged(productType: ProductType) {
-        let options = this.product.productSubscriptionOptions;
+        let options = this.product.priceOptions;
         switch (productType) {
             case ProductType.Subscription:
                 if (!options || !options.length)

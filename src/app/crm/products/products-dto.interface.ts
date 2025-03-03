@@ -18,10 +18,10 @@ export interface ProductDto {
     AllowCoupon: boolean;
     PublishDate: string;
     IsArchived: boolean;
-    ProductSubscriptionOptions: ProductSubscriptionOption[];
+    PriceOptions: PriceOption[];
 }
 
-export interface ProductSubscriptionOption {
+export interface PriceOption {
     SignupFee: number;
     Fee: number;
     Frequency: RecurringPaymentFrequency;

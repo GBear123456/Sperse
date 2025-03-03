@@ -29,7 +29,7 @@ import {
     PublicProductInfo,
     PublicProductInput,
     PublicProductServiceProxy,
-    PublicProductSubscriptionOptionInfo,
+    PublicPriceOptionInfo,
     RecurringPaymentFrequency,
     SubmitProductRequestInput,
     SubmitProductRequestOutput,
@@ -116,7 +116,7 @@ export class SingleProductComponent implements OnInit {
     billingPeriod = BillingPeriod;
 
     defaultCountryCode = abp.setting.get('App.TenantManagement.DefaultCountryCode');
-    selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
+    selectedSubscriptionOption: PublicPriceOptionInfo;
     static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.OneTime, BillingPeriod.Custom];
     availablePeriods: BillingPeriod[] = [];
     selectedBillingPeriod;
@@ -203,7 +203,7 @@ export class SingleProductComponent implements OnInit {
                 let hasPayment = false;
                 let hasRecurring = false;
                 let singlePaymentOptions = [RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.OneTime];
-                this.productInfo.productSubscriptionOptions.map(v => {
+                this.productInfo.priceOptions.map(v => {
                     if (singlePaymentOptions.includes(v.frequency))
                         hasPayment = true
                     else
@@ -474,7 +474,7 @@ export class SingleProductComponent implements OnInit {
             return;
 
         let periods: RecurringPaymentFrequency[] = [];
-        this.productInfo.productSubscriptionOptions.forEach(v => {
+        this.productInfo.priceOptions.forEach(v => {
             periods.push(v.frequency);
 
             if (v.customerChoosesPrice)
@@ -490,7 +490,7 @@ export class SingleProductComponent implements OnInit {
 
         let selectedBillingPeriod = this.availablePeriods[0];
         if (this.optionId) {
-            const selectedOption = this.productInfo.productSubscriptionOptions.find(v => v.id == this.optionId);
+            const selectedOption = this.productInfo.priceOptions.find(v => v.id == this.optionId);
             if (selectedOption)
                 selectedBillingPeriod = PaymentService.getBillingPeriodByPaymentFrequency(selectedOption.frequency);
         }
@@ -579,7 +579,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     updateSelectedSubscriptionOption() {
-        this.selectedSubscriptionOption = this.productInfo.productSubscriptionOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
+        this.selectedSubscriptionOption = this.productInfo.priceOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
         this.initCustomerPrice();
         this.calculateTax();
     }

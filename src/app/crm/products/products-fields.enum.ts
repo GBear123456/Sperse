@@ -19,5 +19,5 @@ export const ProductFields: KeysEnum<ProductDto> = {
     IsPublished: 'IsPublished',
     PublishDate: 'PublishDate',
     IsArchived: 'IsArchived',
-    ProductSubscriptionOptions: 'ProductSubscriptionOptions'
+    PriceOptions: 'PriceOptions'
 };

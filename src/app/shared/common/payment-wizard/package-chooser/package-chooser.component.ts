@@ -124,7 +124,7 @@ export class PackageChooserComponent implements OnInit {
 
         this.packagesConfig$ = packagesConfig$.pipe(map(
             (products: ProductInfo[]) => {
-                return products.filter((product: ProductInfo) => !product.productSubscriptionOptions.some(option => option.frequency == RecurringPaymentFrequency.OneTime))
+                return products.filter((product: ProductInfo) => !product.priceOptions.some(option => option.frequency == RecurringPaymentFrequency.OneTime))
             }
         ));
 
@@ -164,7 +164,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     getProductMonthlyOption(product: ProductInfo) {
-        return product.productSubscriptionOptions.filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
+        return product.priceOptions.filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
     }
 
     loadPackages() {
@@ -189,8 +189,8 @@ export class PackageChooserComponent implements OnInit {
 
     initAvailablePeriods() {
         let periods: RecurringPaymentFrequency[] = this.packages.reduce((acc, val) => {
-            if (val.productSubscriptionOptions)
-                return uniqBy(acc.concat(val.productSubscriptionOptions.map(option => option.frequency)), (val) => val);
+            if (val.priceOptions)
+                return uniqBy(acc.concat(val.priceOptions.map(option => option.frequency)), (val) => val);
             return acc;
         }, []);
 
@@ -215,7 +215,7 @@ export class PackageChooserComponent implements OnInit {
         } else
             selectedPackage = this.packages.reverse()[0];
 
-        let productSubscriptionOption = selectedPackage && selectedPackage.productSubscriptionOptions.reverse()[0];
+        let productSubscriptionOption = selectedPackage && selectedPackage.priceOptions.reverse()[0];
         if (productSubscriptionOption)
             this.selectedBillingPeriod = PaymentService.getBillingPeriodByPaymentFrequency(productSubscriptionOption.frequency);
     }
@@ -266,7 +266,7 @@ export class PackageChooserComponent implements OnInit {
 
     getPaymentOptions(): PaymentOptions {
         if (this.selectedPackageCardComponent) {
-            let selectedOption = this.selectedPackageCardComponent.productInfo.productSubscriptionOptions.find(option =>
+            let selectedOption = this.selectedPackageCardComponent.productInfo.priceOptions.find(option =>
                 option.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
 
             const paymentOptions: PaymentOptions = {

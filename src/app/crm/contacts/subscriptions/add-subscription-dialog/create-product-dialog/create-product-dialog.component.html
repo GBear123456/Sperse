@@ -234,7 +234,7 @@
                                 </div>
                             </div>
                             <ng-container *ngIf="product.type == productType.Subscription">
-                                <div class="options" *ngFor="let option of product.productSubscriptionOptions; let i = index">
+                                <div class="options" *ngFor="let option of product.priceOptions; let i = index">
                                     <hr *ngIf="i" class="wide">
                                     <div *ngIf="!isReadOnly && i" class="remove-button" (click)="removePaymentPeriod(i)"><span>-</span></div>
 

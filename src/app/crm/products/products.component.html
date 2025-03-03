@@ -125,17 +125,17 @@
                         {{getUnitColumnText(cell.data)}}
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder price-column">
-                        <span id="product{{cell.data.Id}}" [ngClass]="{'underline': cell.data.ProductSubscriptionOptions.length > 1}">
-                            {{ (cell.data.Type == productType.Subscription ? cell.data.ProductSubscriptionOptions[0].Fee : cell.data.Price) | currency:cell.data.CurrencyId:'symbol':'1.2-2' }}
+                        <span id="product{{cell.data.Id}}" [ngClass]="{'underline': cell.data.PriceOptions.length > 1}">
+                            {{ (cell.data.Type == productType.Subscription ? cell.data.PriceOptions[0].Fee : cell.data.Price) | currency:cell.data.CurrencyId:'symbol':'1.2-2' }}
                         </span>
-                        <dx-tooltip *ngIf="cell.data.ProductSubscriptionOptions.length > 1"
+                        <dx-tooltip *ngIf="cell.data.PriceOptions.length > 1"
                                     position="bottom"
                                     target="#product{{cell.data.Id}}"
                                     showEvent="dxhoverstart"
                                     hideEvent="dxhoverend">
                             <div *dxTemplate="let data of 'content'" class="product-subscr-options">
                                 <div><h3>{{l('Type')}}</h3><h3>{{l('Price')}}</h3></div>
-                                <div *ngFor="let option of cell.data.ProductSubscriptionOptions">
+                                <div *ngFor="let option of cell.data.PriceOptions">
                                     <label>{{getSubscrOptionDescription(option)}}:</label><span>{{option.Fee | currency:cell.data.CurrencyId:'symbol':'1.2-2'}}</span>
                                 </div>
                             </div>
