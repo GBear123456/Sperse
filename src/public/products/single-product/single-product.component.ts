@@ -393,7 +393,7 @@ export class SingleProductComponent implements OnInit {
         );
 
         if (this.productInfo.data.isStripeTaxationEnabled && (!this.billingAddress.countryId || !this.billingAddress.zip ||
-            !this.billingAddress.stateId || !this.billingAddress.city || !this.billingAddress.streetAddress)) {
+            !(this.billingAddress.stateId || this.billingAddress.stateName) || !this.billingAddress.city || !this.billingAddress.streetAddress)) {
             abp.notify.error(this.ls.l('Invalid Address'));
             return of();
         }
