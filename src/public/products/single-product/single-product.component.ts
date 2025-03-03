@@ -381,10 +381,7 @@ export class SingleProductComponent implements OnInit {
 
     getSubmitRequest(paymentGateway: string): Observable<SubmitProductRequestOutput> {
         if (this.googleAutoComplete) {
-            this.billingAddress.streetAddress = [
-                this.address['streetNumber'],
-                this.address['street']
-            ].filter(val => val).join(' ');
+            this.billingAddress.streetAddress = this.addressInput.nativeElement.value;
         }
         this.billingAddress.countryId = this.getCountryCode(this.address.countryName);
         this.billingAddress.stateId = this.statesService.getAdjustedStateCode(
