@@ -1,22 +1,28 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 
 /** Third party imports */
 import { Observable, of } from 'rxjs';
-import { finalize, map, tap } from 'rxjs/operators';
+import { finalize, first, map, tap } from 'rxjs/operators';
 import round from 'lodash/round';
+import * as _ from 'underscore';
 
 /** Application imports */
 import {
+    AddressInfoDto,
     CompleteTenantRegistrationInput,
+    CountryDto,
+    CountryStateDto,
     CouponDiscountDuration,
     CustomPeriodType,
+    GetTaxCalculationInput,
     LeadServiceProxy,
     PasswordComplexitySetting,
     PaymentPeriodType,
     ProductDonationSuggestedAmountInfo,
+    ProductTaxInput,
     ProductType,
     ProfileServiceProxy,
     PublicCouponInfo,
@@ -28,6 +34,7 @@ import {
     SubmitProductRequestInput,
     SubmitProductRequestOutput,
     SubmitTenancyRequestInput,
+    TaxCalculationResultDto,
     TenantProductInfo,
     TenantSubscriptionServiceProxy
 } from '@root/shared/service-proxies/service-proxies';
@@ -42,21 +49,31 @@ import { ButtonType } from '@shared/common/paypal/button-type.enum';
 import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { getCurrencySymbol } from '@angular/common';
 import { DomHelper } from '../../../shared/helpers/DomHelper';
+import { Address } from 'ngx-google-places-autocomplete/objects/address';
+import { GooglePlaceService } from '../../../shared/common/google-place/google-place.service';
+import { StatesService } from '../../../store/states-store/states.service';
+import { select, Store } from '@ngrx/store';
+import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreActions, StatesStoreSelectors } from '../../../store';
+import { AppSessionService } from '../../../shared/common/session/app-session.service';
 
-declare const Stripe: any
+declare const Stripe: any;
 
 @Component({
     selector: 'single-product',
     templateUrl: 'single-product.component.html',
     styleUrls: [
-        './single-product.component.less'
+        './single-product.component.less',
+        '../../../../node_modules/devextreme/dist/css/dx.light.css'
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None
 })
+
 export class SingleProductComponent implements OnInit {
     @ViewChild('firstStepForm') firstStepForm;
     @ViewChild('phoneNumber') phoneNumber;
     @ViewChild('customerPriceElement') customerPriceElement;
+    @ViewChild('addressInput') addressInput: ElementRef;
     @ViewChild(PayPalComponent) set paypPalComponent(paypalComp: PayPalComponent) {
         this.payPal = paypalComp;
         this.initializePayPal();
@@ -78,6 +95,9 @@ export class SingleProductComponent implements OnInit {
 
     productInfo: PublicProductInfo;
     requestInfo: SubmitProductRequestInput = new SubmitProductRequestInput();
+    taxCalcInfo: GetTaxCalculationInput = new GetTaxCalculationInput();
+    productTaxInput: ProductTaxInput = new ProductTaxInput();
+    billingAddress: AddressInfoDto = new AddressInfoDto();
     productInput = new PublicProductInput();
     tenantRegistrationModel = new CompleteTenantRegistrationInput();
     passwordComplexitySetting: PasswordComplexitySetting;
@@ -117,7 +137,20 @@ export class SingleProductComponent implements OnInit {
     isDonationGoalReached = false;
     isInStock = true;
 
+    countries: any;
+    googleAutoComplete = Boolean(window['google']);
+    address: any = {
+        countryCode: null,
+        countryName: null,
+        address: null
+    };
+
+    taxCalculation: TaxCalculationResultDto;
+
+    private calculationTaxTimeout;
+
     constructor(
+        private sessionService: AppSessionService,
         private route: ActivatedRoute,
         private titleService: Title,
         private publicProductService: PublicProductServiceProxy,
@@ -127,11 +160,14 @@ export class SingleProductComponent implements OnInit {
         private changeDetector: ChangeDetectorRef,
         private sanitizer: DomSanitizer,
         private profileService: ProfileServiceProxy,
+        private store$: Store<RootStore.State>,
+        private statesService: StatesService,
         public ls: AppLocalizationService,
         public conditionsModalService: ConditionsModalService
     ) {
         this.productInput.quantity = 1;
         this.requestInfo.products = [this.productInput];
+        this.taxCalcInfo.products = [this.productTaxInput];
     }
 
     ngOnInit(): void {
@@ -145,6 +181,7 @@ export class SingleProductComponent implements OnInit {
         this.optionId = Number(this.route.snapshot.queryParamMap.get('optionId'));
         this.embeddedCheckout = Boolean(this.route.snapshot.queryParamMap.get('embeddedCheckout'));
 
+        this.countriesStateLoad();
         this.getProductInfo();
     }
 
@@ -337,11 +374,31 @@ export class SingleProductComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        let isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid()) && this.isInStock;
+        let isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid()) && this.isInStock &&
+            (!this.productInfo.data.isStripeTaxationEnabled || (this.billingAddress.countryId && this.billingAddress.zip &&
+            (this.billingAddress.stateId || this.billingAddress.stateName) && this.billingAddress.city));
         return !!isValidObj;
     }
 
     getSubmitRequest(paymentGateway: string): Observable<SubmitProductRequestOutput> {
+        if (this.googleAutoComplete) {
+            this.billingAddress.streetAddress = [
+                this.address['streetNumber'],
+                this.address['street']
+            ].filter(val => val).join(' ');
+        }
+        this.billingAddress.countryId = this.getCountryCode(this.address.countryName);
+        this.billingAddress.stateId = this.statesService.getAdjustedStateCode(
+            this.billingAddress.stateId,
+            this.billingAddress.stateName
+        );
+
+        if (this.productInfo.data.isStripeTaxationEnabled && (!this.billingAddress.countryId || !this.billingAddress.zip ||
+            !this.billingAddress.stateId || !this.billingAddress.city || !this.billingAddress.streetAddress)) {
+            abp.notify.error(this.ls.l('Invalid Address'));
+            return of();
+        }
+
         if ((this.productInfo.customerChoosesPrice && (!this.productInfo.price || this.customerPriceEditMode)) ||
             (this.selectedSubscriptionOption && this.selectedSubscriptionOption.customerChoosesPrice && (!this.selectedSubscriptionOption.fee || this.customerPriceEditMode))) {
             abp.notify.error(this.ls.l('Invalid Price'));
@@ -367,6 +424,7 @@ export class SingleProductComponent implements OnInit {
         this.productInput.productId = this.productInfo.id;
         if (this.isFreeProductSelected || this.productInfo.customerChoosesPrice || (this.selectedSubscriptionOption && this.selectedSubscriptionOption.customerChoosesPrice))
             this.requestInfo.couponCode = null;
+        this.requestInfo.billingAddress = this.billingAddress;
 
         switch (this.productInfo.type) {
             case ProductType.General:
@@ -480,6 +538,9 @@ export class SingleProductComponent implements OnInit {
                 return false;
         }
 
+        if (this.productInfo.data.isStripeTaxationEnabled)
+            return false;
+
         return this.productInfo.data.paypalClientId &&
             (!this.couponInfo || this.couponInfo.duration == CouponDiscountDuration.Forever);
     }
@@ -520,6 +581,7 @@ export class SingleProductComponent implements OnInit {
     updateSelectedSubscriptionOption() {
         this.selectedSubscriptionOption = this.productInfo.productSubscriptionOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
         this.initCustomerPrice();
+        this.calculateTax();
     }
 
     updateSubscriptionOptionPaypalButton() {
@@ -593,6 +655,7 @@ export class SingleProductComponent implements OnInit {
 
     changeQuantity(quantity: number) {
         this.productInput.quantity = quantity;
+        this.calculateTax();
     }
 
     couponChange() {
@@ -605,6 +668,7 @@ export class SingleProductComponent implements OnInit {
 
         if (this.couponInfoCache.hasOwnProperty(this.requestInfo.couponCode)) {
             this.couponInfo = this.couponInfoCache[this.requestInfo.couponCode];
+            this.calculateTax();
             this.changeDetector.detectChanges();
             return;
         }
@@ -626,6 +690,7 @@ export class SingleProductComponent implements OnInit {
                 }
                 this.couponInfo = info;
                 this.couponInfoCache[this.requestInfo.couponCode] = info;
+                this.calculateTax();
             });
     }
 
@@ -643,13 +708,14 @@ export class SingleProductComponent implements OnInit {
         if (this.couponInfo.amountOff)
             return amount - this.couponInfo.amountOff + usedAmountOff > 0 ? amount - this.couponInfo.amountOff + usedAmountOff : 0;
 
-        return round(amount * (1 - this.couponInfo.percentOff / 100), 2);
+        return amount - round(amount * (this.couponInfo.percentOff / 100), 2);
     }
 
     clearCoupon() {
         this.couponInfo = null;
         this.requestInfo.couponCode = null;
         this.showCouponError = false;
+        this.calculateTax();
     }
 
     getTenantButtonText(): string {
@@ -720,6 +786,7 @@ export class SingleProductComponent implements OnInit {
         }
         else {
             this.customerPriceEditMode = false;
+            this.calculateTax();
         }
     }
 
@@ -733,5 +800,147 @@ export class SingleProductComponent implements OnInit {
     selectSuggestedAmount(suggestedAmount: ProductDonationSuggestedAmountInfo) {
         this.customerPriceEditMode = false;
         this.productInfo.price = suggestedAmount.amount;
+    }
+
+    countriesStateLoad(): void {
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe((countries: CountryDto[]) => {
+            this.countries = countries;
+            this.changeDetector.detectChanges();
+        });
+    }
+
+    onCountryChange(event) {
+        let countryCode = this.getCountryCode(event.value);
+        this.address.countryCode = countryCode;
+        if (countryCode) {
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+        }
+
+        this.statesService.updateState(countryCode, this.billingAddress.stateId, this.billingAddress.stateName);
+        this.calculateTax();
+        this.changeDetector.detectChanges();
+    }
+
+    getCountryStates(): Observable<CountryStateDto[]> {
+        return this.store$.pipe(
+            select(StatesStoreSelectors.getCountryStates, { countryCode: this.address.countryCode }),
+            map((states: CountryStateDto[]) => states || [])
+        );
+    }
+
+    stateChanged(e) {
+        if (e.value) {
+            this.store$.pipe(
+                select(StatesStoreSelectors.getStateCodeFromStateName, {
+                    countryCode: this.address.countryCode,
+                    stateName: e.value
+                }),
+                first()
+            ).subscribe((stateCode: string) => {
+                this.billingAddress.stateId = stateCode;
+                this.calculateTax();
+            });
+        }
+    }
+
+    onCustomStateCreate(e) {
+        this.billingAddress.stateId = null;
+        this.billingAddress.stateName = e.text;
+        this.statesService.updateState(this.address.countryCode, null, e.text);
+        e.customItem = {
+            code: null,
+            name: e.text
+        };
+    }
+
+    getCountryCode(name) {
+        let country = _.findWhere(this.countries, { name: name });
+        return country && country.code;
+    }
+
+    onAddressChanged(address: Address) {
+        const countryCode = GooglePlaceService.getCountryCode(address.address_components);
+        const stateCode = GooglePlaceService.getStateCode(address.address_components);
+        const stateName = GooglePlaceService.getStateName(address.address_components);
+        this.statesService.updateState(countryCode, stateCode, stateName);
+        const countryName = GooglePlaceService.getCountryName(address.address_components);
+        this.address.countryName = this.sessionService.getCountryNameByCode(countryCode) || countryName;
+        this.billingAddress.zip = GooglePlaceService.getZipCode(address.address_components);
+        this.address.street = GooglePlaceService.getStreet(address.address_components);
+        this.address.streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
+        this.billingAddress.stateId = stateCode;
+        this.billingAddress.stateName = stateName;
+        this.address.countryCode = countryCode;
+        this.billingAddress.city = GooglePlaceService.getCity(address.address_components);
+        this.address.address = this.addressInput.nativeElement.value = (this.address.streetNumber
+            ? this.address.streetNumber + ' ' + this.address.street
+            : this.address.street) || '';
+    }
+
+    calculateTax() {
+        if (!this.productInfo?.data?.isStripeTaxationEnabled)
+            return;
+
+        this.taxCalculation = null;
+
+        clearTimeout(this.calculationTaxTimeout);
+        this.calculationTaxTimeout = setTimeout(() => {
+            this.calculateTaxFunc();
+        }, 500);
+        
+    }
+
+    calculateTaxFunc() {
+        this.billingAddress.countryId = this.getCountryCode(this.address.countryName);
+        this.billingAddress.stateId = this.statesService.getAdjustedStateCode(
+            this.billingAddress.stateId,
+            this.billingAddress.stateName
+        );
+
+        if (!this.billingAddress.countryId || (this.billingAddress.countryId == 'US' && !this.billingAddress.zip)
+            || (this.billingAddress.countryId == 'CA' && !this.billingAddress.zip && !this.billingAddress.stateId))
+            return;
+
+        this.taxCalcInfo.tenantId = this.tenantId;
+        this.taxCalcInfo.paymentGateway = 'Stripe';
+        this.taxCalcInfo.stateId = this.billingAddress.stateId;
+        this.taxCalcInfo.zip = this.billingAddress.zip;
+        this.taxCalcInfo.countryId = this.billingAddress.countryId;
+        this.taxCalcInfo.currency = this.productInfo.currencyId;
+
+        this.productTaxInput.productId = this.productInfo.id;
+        this.productTaxInput.stripeTaxProcuctCode = this.productInfo.stripeTaxProcuctCode;
+        this.productTaxInput.price = this.getGeneralPrice(true);
+        this.productTaxInput.quantity = 1;
+        
+        switch (this.productInfo.type) {
+            case ProductType.General:
+            case ProductType.Digital:
+            case ProductType.Event:
+            case ProductType.Donation:
+                if (this.productInfo.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
+                    this.productTaxInput.price = this.productInfo.price;
+                break;
+            case ProductType.Subscription:
+                if (this.selectedSubscriptionOption.customerChoosesPrice)
+                    this.productTaxInput.price = this.selectedSubscriptionOption.fee;
+                else
+                    this.productTaxInput.price = this.getSubscriptionPrice(true);
+                this.productTaxInput.price = this.productTaxInput.price + this.getSignUpFee(true);
+                break;
+        }
+        this.appHttpConfiguration.avoidErrorHandling = true;
+        this.publicProductService
+            .getTaxCalculation(this.taxCalcInfo)
+            .pipe(
+                finalize(() => {
+                    this.appHttpConfiguration.avoidErrorHandling = false;
+                })
+            )
+            .subscribe(result => {
+                this.taxCalculation = result;
+                this.changeDetector.detectChanges();
+            });
     }
 }

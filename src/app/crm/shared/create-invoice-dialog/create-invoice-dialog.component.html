@@ -251,6 +251,7 @@
                                 </dx-validator>
                                 <div *dxTemplate="let cell of 'item'">
                                     <span title="{{cell.description}}">{{cell.description}}{{cell.isInStock ? '' : ' (Out of stock)' }}</span>
+                                    <span class="tax-product" *ngIf="isTaxationEnabled && cell.isStripeTaxationEnabled">(AutoTax)</span>
                                 </div>
                             </dx-select-box>
 
@@ -364,14 +365,21 @@
                 </div>
             </div>
         </dx-scroll-view>
-        <div *ngIf="stripeSubscriptionsLinesCount > 1 || hasReccuringSubscription" class="row stripe-subs-warning">
-            <div *ngIf="stripeSubscriptionsLinesCount > 1" class="col-12">
-                * {{ls.l('Invoice_StripeSubsWarning', stripeSubscriptionsLinesCount)}}
+        <div class="row stripe-subs-warning">
+            <div *ngIf="allowedProducts == 'T'" class="col-12">
+                * {{ls.l('Invoice_AutoTaxNeedsBillingAddress')}}<br>
             </div>
-            <div *ngIf="hasReccuringSubscription" class="col-12">
-                * {{ls.l('Invoice_SubsTaxShippingWarning')}}<br>
-                * {{ls.l('Invoice_SubsStartWarning')}}
-            </div>
+            <ng-container *ngIf="stripeSubscriptionsLinesCount > 1 || hasReccuringSubscription">
+                <div *ngIf="stripeSubscriptionsLinesCount > 1" class="col-12">
+                    * {{ls.l('Invoice_StripeSubsWarning', stripeSubscriptionsLinesCount)}}
+                </div>
+                <div *ngIf="hasReccuringSubscription && allowedProducts != 'T'" class="col-12">
+                    * {{ls.l('Invoice_SubsTaxShippingWarning')}}
+                </div>
+                <div *ngIf="hasReccuringSubscription" class="col-12">
+                    * {{ls.l('Invoice_SubsStartWarning')}}
+                </div>
+            </ng-container>
         </div>
         <div class="row bottom-container">
             <div class="col-sm-6">
@@ -441,15 +449,15 @@
                     </span>
                 </div>
                 <div class="user-total">
-                    <span>{{ls.l('TaxTotal')}}</span>
+                    <span *ngIf="allowedProducts != 'T'">{{ls.l('TaxTotal')}}</span>
+                    <span *ngIf="allowedProducts == 'T'">{{ls.l('Calculated Tax Total')}}</span>
                     <span>
                         <dx-number-box [min]="0"
                                        [height]="33"
-                                       [placeholder]="ls.l('Tax')"
                                        [format]="{ style: 'currency', currency: currency, useGrouping: true }"
-                                       (onValueChanged)="calculateBalance()"
+                                       (onValueChanged)="taxChanged()"
                                        [(value)]="taxTotal"
-                                       [disabled]="hasReccuringSubscription || disabledForUpdate">
+                                       [disabled]="hasReccuringSubscription || disabledForUpdate || allowedProducts == 'T'">
                         </dx-number-box>
                     </span>
                 </div>

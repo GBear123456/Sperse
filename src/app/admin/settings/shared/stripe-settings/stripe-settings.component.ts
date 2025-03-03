@@ -283,4 +283,21 @@ export class StripeSettingsComponent extends SettingsComponentBase {
             settingDto.hasRunningImport = false;
         this.changeDetection.detectChanges();
     }
+
+    enableAutomaticTaxation(settingDto: StripeSettingsDto) {
+        this.startLoading();
+        this.tenantPaymentSettingsService.changeIsStripeTaxationEnabledSettings(settingDto.id, !settingDto.isTaxationEnabled)
+        .pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
+            settingDto.isTaxationEnabled = !settingDto.isTaxationEnabled;
+            this.notify.info((this.l('Stripe Taxation ') + (settingDto.isTaxationEnabled ? 'Enabled' : 'Disabled')));
+            this.changeDetection.detectChanges();
+        });
+    }
+
+    copyToClipboard(value: string) {
+        this.clipboardService.copyFromContent(value.trim());
+        this.notify.info(this.l('SavedToClipboard'));
+    }
 }
