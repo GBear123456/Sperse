@@ -549,6 +549,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: row['productCode'],
+                    priceOptionId: row['priceOptionId'],
                     description: description + (row['details'] ? '\n' + row['details'] : ''),
                     sortOrder: index,
                     commissionableAmount: undefined
@@ -578,6 +579,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: row['productCode'],
+                    priceOptionId: row['priceOptionId'],
                     description: description + (row['details'] ? '\n' + row['details'] : ''),
                     sortOrder: index,
                     commissionableAmount: undefined
@@ -953,6 +955,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (item && item.hasOwnProperty('rate')) {
             cellData.data.productId = undefined;
             cellData.data.productCode = undefined;
+            cellData.data.priceOptionId = undefined;
             cellData.data.units = undefined;
             cellData.data.unitId = cellData.data.unitId || item.unitId;
             cellData.data.rate = cellData.data.rate || item.rate;
@@ -975,6 +978,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             cellData.data.description =
                 cellData.data.description || item.name;
             cellData.data.units = item.paymentOptions;
+            cellData.data.priceOptionId = item.paymentOptions[0].id;
             cellData.data.unitId = item.paymentOptions[0].unitId;
             cellData.data.rate = item.paymentOptions[0].price;
             cellData.data.quantity = 1;
@@ -1152,8 +1156,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let unit = cellData.data.units.find(
                 item => item.unitId == event.value
             );
-            if (unit)
+            if (unit) {
                 cellData.data.rate = unit.price;
+                cellData.data.priceOptionId = unit.id;
+            }
         }
         this.checkSubscriptionsCount();
         this.checkReccuringSubscriptionIsSelected(false);
@@ -1385,7 +1391,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return new ApplicableCheckLine({
                 quantity: row['quantity'],
                 unitId: row['unitId'] as ProductMeasurementUnit,
-                productId: row['productId']
+                productId: row['productId'],
+                priceOptionId: row['priceOptionId']
             });
         });
         let input = new GetApplicablePaymentMethodsInput({

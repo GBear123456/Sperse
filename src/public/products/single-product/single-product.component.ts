@@ -350,6 +350,7 @@ export class SingleProductComponent implements OnInit {
         tenancyRequestModel.phone = this.requestInfo.phone;
         tenancyRequestModel.products = [new TenantProductInfo({
             productId: this.productInfo.id,
+            priceOptionId: this.selectedSubscriptionOption.id,
             paymentPeriodType: PaymentPeriodType[this.selectedSubscriptionOption.frequency],
             quantity: 1
         })];
