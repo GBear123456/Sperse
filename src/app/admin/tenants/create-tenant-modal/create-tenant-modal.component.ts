@@ -29,9 +29,9 @@ import {
     GetPasswordComplexitySettingOutput,
     ProductServiceProxy,
     ProductDto,
-    ProductType,
     RecurringPaymentFrequency,
-    ProductPriceOptionDto
+    ProductPriceOptionDto,
+    PriceOptionType
 } from '@shared/service-proxies/service-proxies';
 import { TenantsService } from '@admin/tenants/tenants.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -97,7 +97,7 @@ export class CreateTenantModalComponent implements OnInit {
             .subscribe((result: GetPasswordComplexitySettingOutput) => {
                 this.passwordComplexitySetting = result.setting;
             });
-        this.productService.getProducts(ProductType.Subscription, undefined, true, undefined).subscribe(response => {
+        this.productService.getProducts(PriceOptionType.Subscription, undefined, true, undefined).subscribe(response => {
             this.products = response;
         })
     }

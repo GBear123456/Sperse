@@ -23,10 +23,9 @@ import {
     MemberServiceServiceProxy,
     MemberServiceDto,
     ProductServiceProxy,
-    RecurringPaymentFrequency,
     ProductDto,
-    ProductType,
-    ProductPriceOptionDto
+    ProductPriceOptionDto,
+    PriceOptionType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -130,7 +129,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             right: '-100vw'
         });
 
-        this.productProxy.getProducts(ProductType.Subscription, this.currency, false, undefined).subscribe((products: ProductDto[]) => {
+        this.productProxy.getProducts(PriceOptionType.Subscription, this.currency, false, undefined).subscribe((products: ProductDto[]) => {
             this.products = products;
         });
         this.memberServiceProxy.getAll(false).subscribe(result => {
