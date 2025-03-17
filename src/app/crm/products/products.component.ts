@@ -31,7 +31,7 @@ import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/ad
 import { ShareDialogComponent } from '@app/shared/common/dialogs/share/share-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ProductServiceProxy, ProductType, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
+import { PriceOptionType, ProductServiceProxy, ProductType, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
 import { ProductDto, PriceOption } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
@@ -572,9 +572,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    getUnitColumnText(data: ProductDto) {
-        if (data.Type == ProductType.Subscription)
-            return this.getSubscrOptionDescription(data.PriceOptions[0]);
+    getUnitColumnText(data: PriceOption) {
+        if (data.Type == PriceOptionType.Subscription)
+            return this.getSubscrOptionDescription(data);
 
         return data.Unit;
     }

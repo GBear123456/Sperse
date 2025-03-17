@@ -104,15 +104,15 @@
             </ng-container>
             <ng-template #generalProduct>
                 <div class="price">
-                    <ng-container *ngIf="productInfo.customerChoosesPrice else generalPrice">
+                    <ng-container *ngIf="oneTimePriceOption.customerChoosesPrice else generalPrice">
                         <div class="price__new" *ngIf="!customerPriceEditMode">
                             <span [attr.data-currency]="currencySymbol">{{ getGeneralPrice(true) | number : '1.0-2'}}</span>
                             <i class="fa fa-pencil customer-price-edit" (click)="showCustomerPriceInput()"></i>
                         </div>
                         <div *ngIf="customerPriceEditMode">
-                            <input class="customer-price-input" #customerPriceInput="ngModel" #customerPriceElement type="number" [(ngModel)]="productInfo.price"
+                            <input class="customer-price-input" #customerPriceInput="ngModel" #customerPriceElement type="number" [(ngModel)]="oneTimePriceOption.fee"
                                    (focusout)="customerPriceFocusOut($event, customerPriceInput)" [ngModelOptions]="{updateOn: 'blur'}"
-                                   [pattern]="customerPriceRegexp" [min]="productInfo.minCustomerPrice" [max]="productInfo.maxCustomerPrice" required>
+                                   [pattern]="customerPriceRegexp" [min]="oneTimePriceOption.minCustomerPrice" [max]="oneTimePriceOption.maxCustomerPrice" required>
                             <validation-messages [formCtrl]="customerPriceInput"
                                                  [errorDefs]="customerPriceInputErrorDefs">
                             </validation-messages>
@@ -167,7 +167,7 @@
             <div *ngIf="productInfo.productDonation && productInfo.productDonation.productDonationSuggestedAmounts" class="donation-suggestions">
                 <div *ngFor="let suggestedAmount of productInfo.productDonation.productDonationSuggestedAmounts"
                      class="suggested-amount"
-                     [ngClass]="{ active: productInfo.price == suggestedAmount.amount }"
+                     [ngClass]="{ active: oneTimePriceOption.fee == suggestedAmount.amount }"
                      (click)="selectSuggestedAmount(suggestedAmount)">
                     <div class="amount">{{ currencySymbol }}{{suggestedAmount.amount | currency: productInfo.data.currency : '' : '1.0-2'}}</div>
                     <div class="text">{{suggestedAmount.text}}</div>
@@ -365,7 +365,7 @@
                         </ng-container>
                     </div>
                 </div>
-                <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected && !productInfo.customerChoosesPrice && (!selectedSubscriptionOption || !selectedSubscriptionOption.customerChoosesPrice)">
+                <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected && (!oneTimePriceOption || !oneTimePriceOption.customerChoosesPrice) && (!selectedSubscriptionOption || !selectedSubscriptionOption.customerChoosesPrice)">
                     <label class="coupon">
                         Coupon
                     </label>
