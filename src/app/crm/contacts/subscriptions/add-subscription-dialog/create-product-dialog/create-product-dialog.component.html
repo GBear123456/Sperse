@@ -56,7 +56,6 @@
                                 </dx-text-box>
                             </div>
                             <div class="product-ident">
-
                                 <div>
                                     <label>{{ls.l('Product SKU or unique code')}} <img class="info" src="assets/common/icons/info-circle.svg"></label>
                                     <dx-text-box name="code"
@@ -161,8 +160,8 @@
                                 <div class="customer-price">
                                     <dx-switch switchedOffText=""
                                                switchedOnText=""
-                                               [(value)]="product.customerChoosesPrice"
-                                               (onValueChanged)="product.credits = null"
+                                               [(value)]="generalPriceOption.customerChoosesPrice"
+                                               (onValueChanged)="generalPriceOption.credits = null"
                                                [disabled]="isReadOnly || isFreePriceType || (product.type != productType.Donation && product.stripeXref)">
                                     </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
                                 </div>
@@ -172,9 +171,9 @@
                                                        width="100%"
                                                        height="65px"
                                                        class="label"
-                                                       [placeholder]="product.customerChoosesPrice ? ls.l('Preset Price') : ls.l('Price')"
+                                                       [placeholder]="generalPriceOption.customerChoosesPrice ? ls.l('Preset Price') : ls.l('Price')"
                                                        [format]="isFreePriceType ? amountFormat : amountNullableFormat"
-                                                       [(value)]="product.price"
+                                                       [(value)]="generalPriceOption.fee"
                                                        [disabled]="isReadOnly"
                                                        (onValueChanged)="checkShowAmountChangeWarrning()">
                                             <dx-validator>
@@ -186,7 +185,7 @@
                                         <dx-select-box [dataSource]="getProductUnits()"
                                                        width="100%"
                                                        [placeholder]="ls.l('Unit')"
-                                                       [(value)]="product.unit"
+                                                       [(value)]="generalPriceOption.unit"
                                                        [disabled]="isReadOnly">
                                             <dx-validator>
                                                 <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
@@ -200,12 +199,12 @@
                                                        format="#"
                                                        height="65px"
                                                        class="label"
-                                                       [(value)]="product.credits"
-                                                       [disabled]="isReadOnly || !hasManageCredits || product.customerChoosesPrice">
+                                                       [(value)]="generalPriceOption.credits"
+                                                       [disabled]="isReadOnly || !hasManageCredits || generalPriceOption.customerChoosesPrice">
                                         </dx-number-box>
                                     </div>
                                 </div>
-                                <div class="general-product-price" *ngIf="product.customerChoosesPrice">
+                                <div class="general-product-price" *ngIf="generalPriceOption.customerChoosesPrice">
                                     <div>
                                         <dx-number-box name="minCustomerPrice"
                                                        width="100%"
@@ -214,8 +213,8 @@
                                                        [placeholder]="ls.l('Min Customer Price')"
                                                        [format]="amountNullableFormat"
                                                        [min]="0"
-                                                       [max]="product.maxCustomerPrice ? product.maxCustomerPrice - 1 : null"
-                                                       [(value)]="product.minCustomerPrice"
+                                                       [max]="generalPriceOption.maxCustomerPrice ? generalPriceOption.maxCustomerPrice - 1 : null"
+                                                       [(value)]="generalPriceOption.minCustomerPrice"
                                                        [disabled]="isReadOnly">
                                         </dx-number-box>
                                     </div>
@@ -226,15 +225,15 @@
                                                        class="label"
                                                        [placeholder]="ls.l('Max Customer Price')"
                                                        [format]="amountNullableFormat"
-                                                       [min]="product.minCustomerPrice ? product.minCustomerPrice + 1 : 0"
-                                                       [(value)]="product.maxCustomerPrice"
+                                                       [min]="generalPriceOption.minCustomerPrice ? generalPriceOption.minCustomerPrice + 1 : 0"
+                                                       [(value)]="generalPriceOption.maxCustomerPrice"
                                                        [disabled]="isReadOnly">
                                         </dx-number-box>
                                     </div>
                                 </div>
                             </div>
                             <ng-container *ngIf="product.type == productType.Subscription">
-                                <div class="options" *ngFor="let option of product.priceOptions; let i = index">
+                                <div class="options" *ngFor="let option of subscriptionOptions; let i = index">
                                     <hr *ngIf="i" class="wide">
                                     <div *ngIf="!isReadOnly && i" class="remove-button" (click)="removePaymentPeriod(i)"><span>-</span></div>
 
@@ -535,7 +534,7 @@
                                     <dx-number-box name="commissionableAmount"
                                                    width="100%"
                                                    [format]="amountNullableFormat"
-                                                   [(value)]="product.commissionableAmount"
+                                                   [(value)]="generalPriceOption.commissionableFeeAmount"
                                                    [disabled]="isReadOnly">
                                     </dx-number-box>
                                 </div>

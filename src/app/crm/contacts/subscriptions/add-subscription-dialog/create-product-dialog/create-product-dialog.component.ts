@@ -61,7 +61,8 @@ import {
     TenantPaymentSettingsServiceProxy,
     RecommendedProductInfo,
     ProductInventoryInfo,
-    AddInventoryTopupInput
+    AddInventoryTopupInput,
+    PriceOptionType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService, NotifyService, PermissionCheckerService } from 'abp-ng2-module';
@@ -183,6 +184,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     isHostTenant = !abp.session.tenantId;
     product: CreateProductInput | UpdateProductInput;
+    generalPriceOption: PriceOptionInfo;
+    subscriptionOptions: PriceOptionInfo[] = [];
+
     amountFormat: string = '';
     amountNullableFormat: string = '';
     products$: Observable<ProductDto[]> = null;
@@ -274,14 +278,15 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         if (data.product && data.product.id) {
             this.image = data.product.imageUrl;
             this.product = new UpdateProductInput(data.product);
-            this.initSubscriptionOptions();
-            let options = data.product.priceOptions;
             this.defaultProductUri = this.product.publicName;
-            if (options && options[0]) {
+            let options: PriceOptionInfo[] = data.product.priceOptions;
+            this.initPriceOptions(options);
+            if (this.product.type == ProductType.Subscription) {
                 this.isFreePriceType = !options[0].fee && !options[0].customerChoosesPrice;
                 this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
-            } else
-                this.isFreePriceType = !data.product.customerChoosesPrice && !data.product.price;
+            } else {
+                this.isFreePriceType = !this.generalPriceOption.customerChoosesPrice && !this.generalPriceOption.fee;
+            }
             this.initCollections();
         } else {
             this.product = new CreateProductInput(data.product);
@@ -331,8 +336,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     ngOnInit() {
-        if (!this.data.product || !this.product.priceOptions)
+        if (!this.product.priceOptions || !this.product.priceOptions.length) {
             this.addNewPaymentPeriod();
+        }
+        if (!this.generalPriceOption) {
+            this.generalPriceOption = new PriceOptionInfo();
+            this.generalPriceOption.type = PriceOptionType.OneTime;
+            this.generalPriceOption.unit = ProductMeasurementUnit.Unit;
+        }
 
         let contextMenu = this.buttons[0].contextMenu;
         if (this.cacheService.exists(contextMenu.cacheKey))
@@ -366,15 +377,18 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             initMethod();
     }
 
-    initSubscriptionOptions() {
-        if (!this.product.priceOptions)
-            return;
+    initPriceOptions(priceOptions: PriceOptionInfo[]) {
+        if (this.product.type == ProductType.Subscription) {
+            this.subscriptionOptions = priceOptions;
 
-        this.product.priceOptions.forEach(option => {
-            option['gracePeriodEnabled'] = !!option.gracePeriodDayCount;
-            option['trialEnabled'] = !!option.trialDayCount;
-            option['billingCyclesEnabled'] = !!option.cycles;
-        })
+            priceOptions.forEach(option => {
+                option['gracePeriodEnabled'] = !!option.gracePeriodDayCount;
+                option['trialEnabled'] = !!option.trialDayCount;
+                option['billingCyclesEnabled'] = !!option.cycles;
+            });
+        } else {
+            this.generalPriceOption = priceOptions[0];
+        }
     }
 
     initProductResources() {
@@ -496,22 +510,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
 
         if (this.product.type == ProductType.Subscription) {
-            let options = this.product.priceOptions;
+            let options = this.subscriptionOptions;
             if (!options || !options.length)
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
-            this.product.unit = undefined;
-            this.product.price = undefined;
-            this.product.customerChoosesPrice = false;
-            this.product.credits = undefined;
+            this.product.priceOptions = this.subscriptionOptions;
         } else {
+            this.product.priceOptions = [this.generalPriceOption];
             this.product.productServices = undefined;
-            this.product.priceOptions = undefined;
             this.product.productUpgradeAssignments = undefined;
             this.product.downgradeProductId = undefined;
             this.product.creditsTopUpProductId = undefined;
 
             if (this.isFreePriceType) {
-                this.product.price = 0;
+                this.generalPriceOption.fee = 0;
                 this.detectChanges();
             }
         }
@@ -522,7 +533,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 if (!this.product.groupId)
                     this.product.groupName = this.customGroup;
 
-                if (this.product.priceOptions)
+                if (this.product.type == ProductType.Subscription && this.product.priceOptions)
                     this.product.priceOptions.forEach(item => {
                         if (item.trialDayCount == null || isNaN(item.trialDayCount))
                             item.trialDayCount = 0;
@@ -576,10 +587,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 }
 
                 if (this.product.type == ProductType.Donation) {
-                    this.product.commissionableAmount = null;
+                    this.generalPriceOption.commissionableFeeAmount = null;
+                    this.generalPriceOption.credits = null;
                     this.product.maxCommissionRate = null;
                     this.product.maxCommissionRateTier2 = null;
-                    this.product.credits = null;
 
                     this.product.productInventory.isActive = false;
                     this.product.productInventory.initialQuantity = null;
@@ -590,10 +601,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         this.product.productInventory.initialQuantity = round(this.product.productInventory.initialQuantity, 0);
                 }
 
-                if (!this.product.customerChoosesPrice) {
-                    this.product.minCustomerPrice = null;
-                    this.product.maxCustomerPrice = null;
-                }
+                this.product.priceOptions.forEach(v => {
+                    if (!v.customerChoosesPrice) {
+                        v.minCustomerPrice = null;
+                        v.maxCustomerPrice = null;
+                    }
+                });
 
                 if (this.product instanceof UpdateProductInput) {
                     this.productProxy.updateProduct(this.product).pipe(
@@ -605,7 +618,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         else
                             this.productProxy.getProductInfo((<any>this.product).id).subscribe((product: any) => {
                                 this.product = new UpdateProductInput({ id: (<any>this.product).id, ...product });
-                                this.initSubscriptionOptions();
+                                this.initPriceOptions(this.product.priceOptions);
                                 this.initProductInventory();
                                 this.initProductResources();
                                 this.initCollections();
@@ -623,7 +636,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         else
                             this.productProxy.getProductInfo(res.productId).subscribe((product: any) => {
                                 this.product = new UpdateProductInput({ id: res.productId, ...product });
-                                this.initSubscriptionOptions();
+                                this.initPriceOptions(this.product.priceOptions);
                                 this.initProductInventory();
                                 this.initProductResources();
                                 this.initCollections();
@@ -692,18 +705,22 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     addNewPaymentPeriod() {
-        if (!this.product.priceOptions)
-            this.product.priceOptions = [];
-        if (this.product.priceOptions.some(item => !item.frequency))
-            return;
-        let option = new PriceOptionInfo();
-        option['gracePeriodEnabled'] = false;
-        option['trialEnabled'] = false;
-        option['billingCyclesEnabled'] = false;
+        if (this.product.type == ProductType.Subscription) {
+            if (!this.subscriptionOptions)
+                this.subscriptionOptions = [];
 
-        this.product.priceOptions.push(
-            option
-        );
+            if (this.subscriptionOptions.some(item => !item.frequency))
+                return;
+            let option = new PriceOptionInfo();
+            option.type = PriceOptionType.Subscription;
+            option['gracePeriodEnabled'] = false;
+            option['trialEnabled'] = false;
+            option['billingCyclesEnabled'] = false;
+
+            this.subscriptionOptions.push(
+                option
+            );
+        }
     }
 
     addUpgradeToProduct() {
@@ -727,8 +744,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     removePaymentPeriod(index) {
-        this.product.priceOptions.splice(index, 1);
-        if (this.isOneTime && !this.product.priceOptions.length) {
+        this.subscriptionOptions.splice(index, 1);
+        if (this.isOneTime && !this.subscriptionOptions.length) {
             this.isOneTime = false;
             this.detectChanges();
         }
@@ -756,7 +773,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     getFrequencies(selected, index) {
-        let options = this.product.priceOptions,
+        let options = this.subscriptionOptions,
             frequencies = options ? this.frequencies.filter(item => {
                 return selected.frequency == item ||
                     !options.some(option => option.frequency == item);
@@ -902,11 +919,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
     validateGeneralPrice() {
         return (event) => {
-            if (this.product.customerChoosesPrice) {
+            if (this.generalPriceOption.customerChoosesPrice) {
                 if (event.value) {
-                    if (this.product.minCustomerPrice > 0 && event.value < this.product.minCustomerPrice)
+                    if (this.generalPriceOption.minCustomerPrice > 0 && event.value < this.generalPriceOption.minCustomerPrice)
                         return false;
-                    if (this.product.maxCustomerPrice > 0 && event.value > this.product.maxCustomerPrice)
+                    if (this.generalPriceOption.maxCustomerPrice > 0 && event.value > this.generalPriceOption.maxCustomerPrice)
                         return false;
 
                     return event.value > 0;
@@ -1188,10 +1205,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             return;
 
         if (this.isFreePriceType = !this.isFreePriceType) {
-            this.product.price = undefined;
+            this.generalPriceOption = undefined;
             if (!this.product.stripeXref)
-                this.product.customerChoosesPrice = false;
-            let options = this.product.priceOptions;
+                this.generalPriceOption.customerChoosesPrice = false;
+            let options = this.subscriptionOptions;
             if (options && options[0]) {
                 options[0].fee = 0;
                 options[0].customerChoosesPrice = false;
@@ -1242,21 +1259,20 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     onProductTypeChanged(productType: ProductType) {
-        let options = this.product.priceOptions;
         switch (productType) {
             case ProductType.Subscription:
-                if (!options || !options.length)
+                if (!this.subscriptionOptions || !this.subscriptionOptions.length)
                     this.addNewPaymentPeriod();
                 break;
             case ProductType.Digital:
-                this.product.unit = ProductMeasurementUnit.Unit;
+                this.generalPriceOption.unit = ProductMeasurementUnit.Unit;
                 break;
             case ProductType.Event:
-                this.product.unit = ProductMeasurementUnit.Unit;
+                this.generalPriceOption.unit = ProductMeasurementUnit.Unit;
                 this.initEventProps();
                 break;
             case ProductType.Donation:
-                this.product.unit = ProductMeasurementUnit.Unit;
+                this.generalPriceOption.unit = ProductMeasurementUnit.Unit;
                 if (this.isFreePriceType)
                     this.togglePriceType();
                 this.initDonationProps();
