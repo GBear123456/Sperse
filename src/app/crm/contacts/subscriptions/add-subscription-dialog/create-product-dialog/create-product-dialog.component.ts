@@ -1205,7 +1205,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             return;
 
         if (this.isFreePriceType = !this.isFreePriceType) {
-            this.generalPriceOption = undefined;
             if (!this.product.stripeXref)
                 this.generalPriceOption.customerChoosesPrice = false;
             let options = this.subscriptionOptions;
