@@ -915,7 +915,6 @@ export class SingleProductComponent implements OnInit {
 
         this.productTaxInput.productId = this.productInfo.id;
         this.productTaxInput.stripeTaxProcuctCode = this.productInfo.stripeTaxProcuctCode;
-        this.productTaxInput.price = this.getGeneralPrice(true);
         this.productTaxInput.quantity = 1;
         
         switch (this.productInfo.type) {
@@ -925,6 +924,8 @@ export class SingleProductComponent implements OnInit {
             case ProductType.Donation:
                 if (this.oneTimePriceOption.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
                     this.productTaxInput.price = this.oneTimePriceOption.fee;
+                else
+                    this.productTaxInput.price = this.getGeneralPrice(true);
                 break;
             case ProductType.Subscription:
                 if (this.selectedSubscriptionOption.customerChoosesPrice)
