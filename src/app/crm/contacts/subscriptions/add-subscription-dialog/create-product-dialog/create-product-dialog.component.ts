@@ -62,7 +62,9 @@ import {
     RecommendedProductInfo,
     ProductInventoryInfo,
     AddInventoryTopupInput,
-    PriceOptionType
+    PriceOptionType,
+    ProductAddOnDto,
+    ProductAddOnOptionDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService, NotifyService, PermissionCheckerService } from 'abp-ng2-module';
@@ -212,6 +214,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     billingCyclesEnable = [
         { key: false, displayValue: this.ls.l('Forever') },
         { key: true, displayValue: this.ls.l('Limited') }
+    ];
+    addOnSelectionTypes = [
+        { key: false, displayValue: this.ls.l('Single Option') },
+        { key: true, displayValue: this.ls.l('Multiple Options') }
     ];
     gracePeriodDefaultValue: number;
     customGroup: string;
@@ -514,6 +520,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             if (!options || !options.length)
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.priceOptions = this.subscriptionOptions;
+            this.product.productAddOns = undefined;
         } else {
             this.product.priceOptions = [this.generalPriceOption];
             this.product.productServices = undefined;
@@ -538,6 +545,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         if (item.trialDayCount == null || isNaN(item.trialDayCount))
                             item.trialDayCount = 0;
                     });
+
+                if (this.product.type != ProductType.Subscription) {
+                    if (this.product.productAddOns && this.product.productAddOns.some(v => !v.productAddOnOptions || !v.productAddOnOptions.length))
+                        return this.notify.error(this.ls.l('Add-On must have at least one option'));
+                }
 
                 this.product.publishDate = this.publishDate ? DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '') : undefined;
 
@@ -701,6 +713,31 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             }
         });
         this.product.productServices.splice(index, 1);
+        this.detectChanges();
+    }
+
+    addNewAddOn() {
+        if (!this.product.productAddOns)
+            this.product.productAddOns = [];
+        var newAddOn = new ProductAddOnDto();
+        newAddOn.multiselect = false;
+        var newAddOnOption = new ProductAddOnOptionDto();
+        newAddOn.productAddOnOptions.push(newAddOnOption);
+        this.product.productAddOns.push(newAddOn);
+    }
+
+    addNewAddOnOption(addOn: ProductAddOnDto) {
+        var newAddOnOption = new ProductAddOnOptionDto();
+        addOn.productAddOnOptions.push(newAddOnOption);
+    }
+
+    removeAddOn(index: number) {
+        this.product.productAddOns.splice(index, 1);
+        this.detectChanges();
+    }
+
+    removeAddOnOption(addOn: ProductAddOnDto, index: number) {
+        addOn.productAddOnOptions.splice(index, 1);
         this.detectChanges();
     }
 

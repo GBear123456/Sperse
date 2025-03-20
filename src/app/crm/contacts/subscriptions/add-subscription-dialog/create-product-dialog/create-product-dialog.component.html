@@ -647,6 +647,93 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="block options addOn-block" *ngIf="product.type == productType.General || product.type == productType.Event || product.type == productType.Digital">
+                            <div class="options-header">
+                                <h3>{{ls.l('Add-Ons')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                                <div *ngIf="!isReadOnly" class="add-new-button" (click)="addNewAddOn()"><span>+</span></div>
+                            </div>
+                            <hr class="wide">
+                            <div *ngIf="!product.productAddOns || !product.productAddOns.length; else addOns" class="addon-hint">
+                                <p>Add-Ons Overview:</p>
+                                <p>Enhance your products with optional features, variations, or upgrades using Add-Ons. This functionality allows you to offer additional choices such as different sizes, flavors, or extra services for an additional cost.</p>
+                                <p>Customers can select from multiple options within each Add-On, and you can choose whether a selection is required. Perfect for customizable products, this feature improves flexibility and increases potential revenue.</p>
+                            </div>
+                            <ng-template #addOns>
+                                <div class="options" *ngFor="let addOn of product.productAddOns; let i = index">
+                                    <div *ngIf="!isReadOnly" class="remove-button" (click)="removeAddOn(i)"><span>-</span></div>
+                                    <div class="addOn-header">
+                                        <label>{{ls.l('Add-On Option Name')}}</label>
+                                        <dx-select-box class="hide-placeholder"
+                                                       [dataSource]="addOnSelectionTypes"
+                                                       valueExpr="key"
+                                                       displayExpr="displayValue"
+                                                       [(value)]="addOn.multiselect"
+                                                       [disabled]="isReadOnly">
+                                        </dx-select-box>
+                                        <div class="required-switch">
+                                            <label>{{ls.l('Required')}}</label>
+                                            <dx-switch switchedOffText=""
+                                                       switchedOnText=""
+                                                       [(value)]="addOn.required"
+                                                       [disabled]="isReadOnly">
+                                            </dx-switch>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <dx-text-box width="100%"
+                                                     [maxLength]="256"
+                                                     [(value)]="addOn.name"
+                                                     [disabled]="isReadOnly">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                    </div>
+                                    <div>
+                                        <div class="options-header">
+                                            <h3>{{ls.l('Add-Ons Options')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                                            <div *ngIf="!isReadOnly" class="add-new-button" (click)="addNewAddOnOption(addOn)"><span>+</span></div>
+                                        </div>
+                                        <div *ngIf="!addOn.productAddOnOptions || !addOn.productAddOnOptions.length; else addOnOptions" class="addon-hint">
+                                            <p>
+                                                Create optional features, variations, or add-ons that customers can choose to include with their purchase. This allows for product customization and can increase your average order value.
+                                            </p>
+                                        </div>
+                                        <ng-template #addOnOptions>
+                                            <div class="options" *ngFor="let addOnOption of addOn.productAddOnOptions; let j = index">
+                                                <div *ngIf="!isReadOnly" class="remove-button" (click)="removeAddOnOption(addOn, j)"><span>-</span></div>
+                                                <div class="field-wrapper">
+                                                    <div class="field-50">
+                                                        <dx-text-box width="100%"
+                                                                     [maxLength]="256"
+                                                                     [placeholder]="ls.l('Name')"
+                                                                     [(value)]="addOnOption.name"
+                                                                     [disabled]="isReadOnly">
+                                                            <dx-validator>
+                                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
+                                                            </dx-validator>
+                                                        </dx-text-box>
+                                                    </div>
+                                                    <div class="field-50">
+                                                        <dx-number-box width="100%"
+                                                                       [placeholder]="ls.l('Price')"
+                                                                       [format]="amountNullableFormat"
+                                                                       min="0"
+                                                                       [(value)]="addOnOption.price"
+                                                                       [disabled]="isReadOnly">
+                                                            <dx-validator>
+                                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Price'))}}."></dxi-validation-rule>
+                                                            </dx-validator>
+                                                        </dx-number-box>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                    <hr />
+                                </div>
+                            </ng-template>
+                        </div>
                         <div class="block" *ngIf="product.type == productType.Subscription">
                             <div class="options-header">
                                 <h3>{{ls.l('Product Services & Features')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
