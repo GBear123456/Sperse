@@ -1,6 +1,34 @@
 :host {
     display: block;
 
+    padding: 1rem;
+
+    @media screen and (min-width: 768px) {
+        padding: 2rem;
+    }
+
+    ::ng-deep settings-card {
+        margin-bottom: 2.5rem;
+    }
+
+    .form-control, 
+    ::ng-deep dx-select-box, 
+    ::ng-deep dx-select-box input, 
+    ::ng-deep timezone-combo, 
+    ::ng-deep timezone-combo input, 
+    ::ng-deep currency-selector, 
+    ::ng-deep currency-selector input, 
+    ::ng-deep country-phone-number, 
+    ::ng-deep country-phone-number input  {
+        font-weight: 500;
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+    }
+
+    .form-control {
+        padding: 10px 8px;
+    }
+
     ::ng-deep country-phone-number {
         .wrapper {
             width: 100% !important;
@@ -8,6 +36,10 @@
             .flagInput {
                 align-self: center;
             }
+        }
+
+        .list-group-item {
+            font-size: 1rem;
         }
     }
 
@@ -42,6 +74,7 @@
     margin: 0 10px;
     display: flex;
     width: calc(100% - 20px);
+    font-size: 1rem;
 
     .flag-icon {
         border-radius: 10px;

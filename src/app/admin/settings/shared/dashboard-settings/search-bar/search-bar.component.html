@@ -1,0 +1,26 @@
+<div class="searchbar-container">
+    <div 
+        class="search-icon"
+        [style.color]="isDarkMode ? '#9ca3af' : '#6b7280'"
+    >
+        <lucide-angular [img]="SearchIcon"></lucide-angular>
+    </div>
+    <input
+        type="text"
+        [placeholder]="placeholder"
+        [style.background-color]="isDarkMode ? '#232836' : 'white'"
+        [style.color]="isDarkMode ? 'white' : '#111827'"
+        [style.border-color]="isDarkMode ? '#2D3544' : '#e5e7eb'"
+        [ngModel]="searchQuery"
+        (ngModelChange)="onChange($event)"
+    />
+    <button
+        *ngIf="searchQuery"
+        [class]="isDarkMode ? 'dark-mode' : 'white-mode'"
+        aria-label="Clear search"
+        (click)="clearSearch()"
+    >
+        <span class="clear-text">Clear search</span>
+        <span class="clear-x">×</span>
+    </button>
+</div>

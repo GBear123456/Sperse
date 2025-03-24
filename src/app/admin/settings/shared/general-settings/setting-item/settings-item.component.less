@@ -1,0 +1,78 @@
+.settings-item-container {
+    margin-bottom: 2rem;
+
+    .settings-item-content {
+        display: flex;
+        flex-direction: column;
+
+        @media (min-width: 1024px) {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+
+        .settings-item-label-container {
+            width: 100%;
+            padding-right: 0px;
+            align-self: anchor-center;
+
+            @media (min-width: 1024px) {
+                width: 25%;
+            }
+
+            .settings-item-label-content {
+                display: flex;
+                flex-direction: column;
+
+                .settings-item-label-wrapper {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 0.5rem;
+
+                    lucide-angular {
+                        display: flex;
+                    }
+                
+                    lucide-angular svg {
+                        width: 1.25rem;
+                        height: 1.25rem;
+                        stroke-width: 1.5;
+                    }
+
+                    .settings-item-label-info {
+                        border: none;
+                        outline: none;
+                        box-shadow: none;
+                        width: fit-content;
+                        min-width: fit-content;
+                        padding: 0.25rem;
+                        cursor: help;
+
+                        lucide-angular svg {
+                            width: 1rem;
+                            height: 1rem;
+                            stroke-width: 1.5;
+                            color: rgb(156 163 175);
+                        }
+                    }
+
+                    h3 {
+                        font-weight: 500;
+                        font-size: 1.125rem;
+                        line-height: 1.75rem;
+                        margin-left: 0.5rem;
+                        margin-bottom: 0;
+                        margin-right: 0.5rem;
+                    }
+                }
+            }
+        }
+
+        .settings-item-main-container {
+            width: 100%;
+
+            @media (min-width: 1024px) {
+                width: 75%;
+            }
+        }
+    }
+}

@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="title-container">
+        <div class="title">
+            <lucide-angular [img]="icon" [style.color]="iconColor"></lucide-angular>
+            <h5>{{ title }}</h5>
+            <button 
+                mat-raised-button
+                [matTooltip]="tooltipDescription"
+                matTooltipPosition="above"
+                class="label-info"
+            >
+                <lucide-angular [img]="InfoIcon"></lucide-angular>
+            </button>
+        </div>
+        <p *ngIf="uploadInfoText">{{uploadInfoText}}</p>
+    </div>
+
+    <div class="function-container">
+        <form #privacyPolicyUploadForm>
+            <ngx-file-drop [accept]="acceptFileExt" [multiple]="false" (onFileDrop)="fileDropped($event)">
+                <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                        <div class="upload-container" (click)="openFileSelector()">
+                            <lucide-angular [img]="UploadIcon"></lucide-angular>
+                            <a href="javascript:void(0);" class="attach-link">
+                                {{showPlusSign ? '+' : ''}} {{ uploadButtonText }}
+                            </a>
+                        </div>
+                </ng-template>
+            </ngx-file-drop>
+            <div *ngIf="file">{{ file.fileEntry.name }}</div>
+        </form>
+        <div class="download-container">
+            <a *ngIf="documentTemplateLink && !documentId" [href]="documentTemplateLink" target="_blank">
+                <lucide-angular [img]="DownloadIcon"></lucide-angular>
+            </a>
+            <a *ngIf="documentId || !documentTemplateLink" [ngClass]="{disabled: !documentId}" [href]="documentLink" target="_blank">
+                <lucide-angular [img]="DownloadIcon"></lucide-angular>
+            </a>
+            <a href="javascript:void(0)" *ngIf="documentId && onDocumentClear?.observers?.length" (click)="clear()">
+                <lucide-angular [img]="TrashIcon"></lucide-angular>
+            </a>
+        </div>
+    </div>
+</div>

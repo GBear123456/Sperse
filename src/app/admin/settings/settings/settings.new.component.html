@@ -1,0 +1,53 @@
+<div class="settings-wrapper">
+    <app-headline [names]="[ l('Settings') ]"
+                [buttons]="headlineButtons">
+    </app-headline>
+
+    <div class="settings-container">
+        <div 
+            class="settings-sidebar" 
+            [style.background-color]="settingService.isDarkMode ? '#1B1F2B' : '#F5F7FA'"
+            [style.border-color]="settingService.isDarkMode ? '#2D3544' : '#E2E6ED'"
+            [style.transform]="sidebarOpen ? 'translateX(0)' : 'translateX(-100%)'"
+        >
+            <dx-scroll-view showScrollbar="onHover">
+                <main-menu-panel 
+                    [items]="navs"
+                    [isDarkMode]="settingService.isDarkMode" 
+                    [selectedMainItem]="selectedMainItem"
+                    [hasSubmenu]="settingService.hasSubmenu"
+                    [(toggleTheme)]="settingService.toggleTheme"
+                    [(handleMainItemClick)]="handleMainItemClick"
+                    [(navigateToWelcome)]="navigateToWelcome"
+                ></main-menu-panel>
+                <sub-menu-panel
+                    [selectedMenu]="selectedMenu"
+                    [selectedMainItem]="selectedMainItem"
+                    [isDarkMode]="settingService.isDarkMode" 
+                    [hasSubmenu]="settingService.hasSubmenu"
+                    [(handleBackClick)]="handleBackClick"
+                ></sub-menu-panel>
+            </dx-scroll-view>
+        </div>
+    
+        <div    
+            class="settings-content-wrapper"
+        >
+            <div class="settings-content">
+                <dx-scroll-view showScrollbar="onHover" [width]="'100%'">
+                    <settings-header
+                        *ngIf="!isDashboardSettings()"
+                        [title]="title"
+                        [isDarkMode]="settingService.isDarkMode" 
+                    ></settings-header>
+                    <div 
+                        class="settings-router-wrapper"
+                        [class]="variantInside"
+                    >
+                        <router-outlet></router-outlet>
+                    </div>
+                </dx-scroll-view>
+            </div>
+        </div>
+    </div>
+</div>

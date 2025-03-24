@@ -1,0 +1,31 @@
+<div 
+    class="header-container"
+    [style.transform]="selectedMainItem && hasSubmenu ? 'translateX(0)' : 'translateX(100%)'"
+    [style.background-color]="isDarkMode ? '#1B1F2B' : '#F5F7FA'"
+>
+    <div 
+        class="header"
+        [style.border-color]="isDarkMode ? '#2D3544' : '#E2E6ED'"
+    >
+        <button 
+            (click)="handleBackClick()"
+            [ngClass]="isDarkMode ? 'dark-mode' : 'white-mode'"
+        >
+            <lucide-angular [img]="ArrowIcon"></lucide-angular>
+            <span>{{ selectedMenu?.label }}</span>
+        </button>
+    </div>
+    
+    <div class="main-content">
+        <div class="content" *ngIf="selectedMenu?.submenu">
+            <ng-container *ngFor="let subItem of selectedMenu.submenu">
+                <sub-menu-item 
+                    [item]="subItem" 
+                    [isActive]="isActive(subItem)" 
+                    [isDarkMode]="isDarkMode"
+                    [(handleSubItemClick)]="handleSubItemClick"
+                ></sub-menu-item>
+            </ng-container>
+        </div>
+    </div>
+</div>
