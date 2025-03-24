@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Injector, ViewChild, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
@@ -30,6 +30,7 @@ import { DomHelper } from '@shared/helpers/DomHelper';
 import { AppFeatures } from '@shared/AppFeatures';
 import { PortalMenuItemConfig } from './portal/portal-menu-item';
 import { PortalMenuItemEnum } from './portal/portal-menu-item.enum';
+import {  Palette, FileText } from 'lucide-angular';
 
 @Component({
     selector: 'appearance-settings',
@@ -38,7 +39,10 @@ import { PortalMenuItemEnum } from './portal/portal-menu-item.enum';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantCustomizationServiceProxy, TenantSettingsServiceProxy]
 })
-export class AppearanceSettingsComponent extends SettingsComponentBase {
+export class AppearanceSettingsComponent extends SettingsComponentBase implements OnInit {
+    readonly LogoIcon = Palette;
+    readonly CustomIcon = FileText;
+
     @ViewChild('logoUploader') logoUploader: UploaderComponent;
     @ViewChild('cssUploader') cssUploader: UploaderComponent;
     @ViewChild('loginCssUploader') loginCssUploader: UploaderComponent;
@@ -124,14 +128,16 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.changeDetection.detectChanges();
         });
 
-        this.organizationUnitChanged();
-
         DomHelper.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
             + this.fontService.supportedGoogleFonts.concat(this.fontService.supportedTabularGoogleFonts).join('|')
         );
         this.fontService.supportedCustomFonts.map(font =>
             DomHelper.addStyleSheet('custom-font', './assets/fonts/fonts-' + font.toLowerCase() + '.css')
         );
+    }
+
+    ngOnInit(): void {
+        this.organizationUnitChanged();
     }
 
     organizationUnitChanged() {

@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
 
 /** Third party imports */
 import { Observable, throwError } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { catchError, finalize,tap } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -12,6 +12,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'email-settings',
@@ -31,10 +32,11 @@ export class EmailSettingsComponent extends SettingsComponentBase {
 
     constructor(
         _injector: Injector,
+        private route: ActivatedRoute,
         private tenantSettingsService: TenantSettingsServiceProxy,
         public emailSmtpSettingsService: EmailSmtpSettingsService
     ) {
-        super(_injector);
+        super(_injector);       
     }
 
     ngOnInit(): void {
@@ -53,6 +55,11 @@ export class EmailSettingsComponent extends SettingsComponentBase {
                     this.selectedProvider = this.supportedProviders.find(item => item.hosts.includes(this.emailSettings.smtpHost.toLowerCase())) || null;
                 else
                     this.onProviderChanged(this.supportedProviders[0]);
+
+                this.route.params.subscribe(params => {
+                    if (params['id'] === 'other') this.onProviderChanged(null)
+                    else this.onProviderChanged(this.supportedProviders.find(provider => provider.name.toLowerCase().search(params['id'])> -1));
+                })
 
                 this.changeDetection.detectChanges();
             });

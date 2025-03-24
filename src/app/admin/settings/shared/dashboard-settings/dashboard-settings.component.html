@@ -1,0 +1,86 @@
+<div class="container">
+    <div class="inner-container">
+        <div class="header">
+            <div>
+                <h1>Settings Menu</h1>
+                <p>Select the setting you want to modify.</p>
+            </div>
+            
+            <div class="search-bar">
+                <search-bar
+                    [isDarkMode]="settingService.isDarkMode"
+                    [(searchQuery)]="searchQuery"
+                    placeholder="Search settings..."
+                ></search-bar>
+            </div>
+        </div>
+        
+        <p class="header-description">Select the setting you want to modify.</p>
+        
+        <div *ngIf="filterNavigation(searchQuery).length === 0" class="header-nosearch">
+            <p>No settings found matching "{{ searchQuery }}"</p>
+            <button
+                (click)="searchQuery = ''"
+            >
+                Clear search
+            </button>
+        </div>
+        
+        <div class="card-container">
+        <ng-container *ngFor="let item of filterNavigation(searchQuery); let i = index">
+            <div 
+                class="card"
+                [ngClass]="getColorScheme(i).bg + ' ' + getColorScheme(i).border"
+            >
+                <a (click)="goToMain(item)" class="card-block">
+                    <div 
+                        class="card-header"
+                        [ngClass]="getColorScheme(i).icon"
+                    >
+                        <lucide-angular [img]="item.iconComponent"></lucide-angular>
+                        <h2>
+                            <div [innerHTML]="highlightMatch(item.label)"></div>
+                        </h2>
+                    </div>
+                    <p class="card-description">
+                        {{ getEnhancedDescription(item) }}
+                    </p>
+                    <div *ngIf="item.submenu && item.submenu.length > 0" class="card-includes">
+                        <p>Includes settings for:</p>
+                        <div class="include-content">
+                            <ng-container *ngIf="item.submenu.length <= 3 || isNotSM(); then underThree; else overThree"></ng-container>
+                            <ng-template #underThree>
+                                <ng-container *ngFor="let subItem of item.submenu.slice(0, 4)">
+                                    <a 
+                                        (click)="goToSub(subItem)"
+                                        class="include-item"
+                                    >
+                                        <div [innerHTML]="highlightMatch(subItem.label)"></div>
+                                    </a>
+                                </ng-container>
+                            </ng-template>
+                            <ng-template #overThree>
+                                <ng-container *ngFor="let subItem of item.submenu.slice(0, 2)">
+                                    <a 
+                                        (click)="goToSub(subItem)"
+                                        class="include-item"
+                                    >
+                                        <div [innerHTML]="highlightMatch(subItem.label)"></div>
+                                    </a>
+                                </ng-container>
+                                <a 
+                                    (click)="goToMain(item)"
+                                    class="include-item"
+                                >
+                                    +{{ item.submenu.length - 2 }} more
+                                </a>
+                            </ng-template>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </ng-container>
+
+        </div>
+    </div>
+</div>

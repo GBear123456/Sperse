@@ -1,0 +1,18 @@
+<div
+    class="item-container"
+    [class.dark-active-mode]="isDarkMode && isActive"
+    [class.white-active-mode]="!isDarkMode && isActive"
+    [class.dark-inactive-mode]="isDarkMode && !isActive"
+    [class.white-inactive-mode]="!isDarkMode && !isActive"
+    (click)="handleMainItemClick(item)"
+>
+      <div class="item">
+        <lucide-angular  *ngIf="item.iconComponent" [img]="item.iconComponent"></lucide-angular>
+        <lucide-angular *ngIf="!item.iconComponent" [img]="UserIcon"></lucide-angular>
+        <span class="whitespace-nowrap">{{ item.label }}</span>
+      </div>
+
+      <ng-container *ngIf="item.submenu && item.submenu.length > 0">
+        <lucide-angular [img]="ArrowIcon" class="arrow-icon"></lucide-angular>
+      </ng-container>
+</div>

@@ -27,6 +27,7 @@ import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.se
 import { RootStore, CountriesStoreSelectors } from '@root/store';
 import { TimeZoneComboComponent } from '@app/shared/common/timing/timezone-combo.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { Clock, DollarSign, Globe, Globe2, Phone } from 'lucide-angular';
 
 @Component({
     selector: 'general-settings',
@@ -36,6 +37,14 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [PhoneNumberService, TenantSettingsServiceProxy]
 })
 export class GeneralSettingsComponent extends SettingsComponentBase {
+    readonly GLobeIcon = Globe;
+    readonly CountryIcon = Globe2;
+    readonly ClockIcon = Clock;
+    readonly DollarSignIcon = DollarSign;
+    readonly PhoneIcon = Phone;
+    readonly PublicSiteIcon = Globe;
+    readonly ZendeskIcon = Globe;
+
     @ViewChild(TimeZoneComboComponent, { static: false }) timezoneComponent: TimeZoneComboComponent;
     @ViewChild('privacyPolicyUploader', { static: false }) privacyPolicyUploader: UploaderComponent;
     @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;

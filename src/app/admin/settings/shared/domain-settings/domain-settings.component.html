@@ -1,32 +1,41 @@
-<mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange()">
+<mat-tab-group 
+    [(selectedIndex)]="selectedTabIndex" 
+    (selectedIndexChange)="onTabChange()"
+    animationDuration="10ms" 
+    disableRipple="true" 
+    class="main-tabs"
+>
     <mat-tab>
         <ng-template mat-tab-label>
-          <img src="./assets/common/icons/house.svg">
-          <div class="title">Introduction</div>
+            <lucide-angular [img]="HouseIcon" class="mat-tab-icon"></lucide-angular>
+            {{l('Introduction')}}
         </ng-template>
 
         <div id="CustomDomainsTable" class="tab-body">
-            <dx-scroll-view [height]="scrollableAreaHeight">
+            <dx-scroll-view>
                 <div class="box-top">
                     <div class="group">
-                        <div class="overlap-group">
+                        <div class="overlap-group card-container">
                             <div class="enter-a-valid-domain">
-                                <p class="p">Add and verify DNS entries</p>
-                                <img class="dns" src="./assets/common/images/dns.svg" />
-                                <p class="text-wrapper-2">Add and validate DNS entries to ensure seamless connectivity and reliable network performance.</p>
+                                <div class="badge">1</div>
+                                <img src="./assets/common/images/dns.svg" />
+                                <p class="title">Add and verify DNS entries</p>
+                                <p class="description">Add and validate DNS entries to ensure seamless connectivity and reliable network performance.</p>
                             </div>
                             <div class="enter-a-valid-domain">
-                                <div class="text-wrapper">Enter a valid domain</div>
-                                <img class="domain" src="./assets/common/images/domain.svg" />
-                                <p class="div">Input the domain you wish to use in place of the default one.</p>
+                                <div class="badge">2</div>
+                                <img src="./assets/common/images/domain.svg" />
+                                <div class="title">Enter a valid domain</div>
+                                <p class="description">Input the domain you wish to use in place of the default one.</p>
+                                <button *ngIf="isTenantHostCreateGranted" (click)="initBindingModal(APP_DOMAIN_TAB)"><i class="fa fa-plus"></i>{{l("AddSSLBinding")}}</button>
                             </div>
                             <div class="enter-a-valid-domain">
-                                <div class="text-wrapper-3">Activate SSL Certificate</div>
-                                <img class="ssl-certificate" src="./assets/common/images/ssl-certificate.svg" />
-                                <p class="div">Create a Free SSL certificate or utilize your own certificate.</p>
+                                <div class="badge">3</div>
+                                <img src="./assets/common/images/ssl-certificate.svg" />
+                                <div class="title">Activate SSL Certificate</div>
+                                <p class="description">Create a Free SSL certificate or utilize your own certificate.</p>
                             </div>
                         </div>
-                        <button *ngIf="isTenantHostCreateGranted" class="btn btn-layout" (click)="initBindingModal(APP_DOMAIN_TAB)"><i class="fa fa-plus"></i>{{l("AddSSLBinding")}}</button>
                     </div>
                 </div>
 
@@ -68,37 +77,43 @@
                 </div>
 
                 <div class="box-bottom">
-                    <div class="group">
-                        <p class="text-wrapper-2">Benefits of Using Your Own Custom Domain</p>
-                        <div class="overlap-group">
-                            <div class="div">
-                                <div class="text-wrapper">Use Your Own Brand</div>
-                                <p class="rinting-and">
-                                    Connect your own domain to accosiate Platform with your brand.
-                                </p>
-                                <img class="img" src="./assets/common/icons/crown.svg" />
+                    <h2>Benefits of Using Your Own Custom Domain</h2>
+                    <div class="overlap-group">
+                        <div>
+                            <div>
+                                <img src="./assets/common/icons/crown.svg" />
+                                <h3>Use Your Own Brand</h3>
                             </div>
-                            <div class="group-2">
-                                <div class="text-wrapper">Customer Traffic Remains Yours</div>
-                                <img class="vuesax-linear" src="./assets/common/icons/presention-chart.svg" />
-                                <p class="p">
-                                    Retain full control over customer acquisition and engagement to foster sustained growth and brand integrity.
-                                </p>
+                            <p>
+                                Connect your own domain to accosiate Platform with your brand.
+                            </p>
+                        </div>
+                        <div>
+                            <div>
+                                <img src="./assets/common/icons/presention-chart.svg" />
+                                <h3>Customer Traffic Remains Yours</h3>
                             </div>
-                            <div class="group-3">
-                                <div class="text-wrapper">Free SSL Included</div>
-                                <img class="img" src="./assets/common/icons/status-up.svg" />
-                                <p class="rinting-and-2">
-                                    Generate and bind a Free SSL to your domain which will be automatically renewed.
-                                </p>
+                            <p>
+                                Retain full control over customer acquisition and engagement to foster sustained growth and brand integrity.
+                            </p>
+                        </div>
+                        <div>
+                            <div>
+                                <img src="./assets/common/icons/status-up.svg" />
+                                <h3>Free SSL Included</h3>
                             </div>
-                            <div class="group-4">
-                                <div class="text-wrapper">Quick activation</div>
-                                <img class="img" src="./assets/common/icons/tick-circle.svg" />
-                                <p class="p">
-                                    3-step flow to connect your custom domain.
-                                </p>
+                            <p>
+                                Generate and bind a Free SSL to your domain which will be automatically renewed.
+                            </p>
+                        </div>
+                        <div>
+                            <div>
+                                <img src="./assets/common/icons/tick-circle.svg" />
+                                <h3>Quick activation</h3>
                             </div>
+                            <p>
+                                3-step flow to connect your custom domain.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -107,187 +122,196 @@
     </mat-tab>
     <mat-tab *ngIf="isTenantHostCreateGranted || isTenantHostEditGranted">
         <ng-template mat-tab-label>
-          <img src="./assets/common/icons/blocks.svg">
-          <div class="title">Your CRM App</div>
+            <lucide-angular [img]="GridIcon" class="mat-tab-icon"></lucide-angular>
+            {{l('Your CRM App')}}
         </ng-template>
 
-        <dx-scroll-view [height]="scrollableAreaHeight" showScrollbar="onHover">
-            <div class="content">
-                <div class="box1">
-                    <div class="element">
-                        <div class="tab">
-                            <div class="overlap-2">
-                                <div class="rectangle-2"></div>
-                                <div class="vector-wrapper" [ngClass]="{valid: model?.domainName && (model?.id || domainIsValid)}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                                <div class="overlap-group-wrapper">
-                                    <div class="overlap-group-2">
-                                        <div class="ellipse"></div>
-                                        <div class="text-wrapper-2">1</div>
-                                    </div>
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="card">
+                <div class="title">
+                    Your CRM App Domain Settings
+                </div>
+                <div class="description">
+                    Configure and manage the domain settings for your CRM application. This is where your team will access the platform.
+                </div>
+
+                <div class="domains-wrapper">
+                    <div class="tab-container">
+                        <div class="tab-header">
+                            <div class="tab-title-wrapper">
+                                <div class="flow-number">
+                                    <span>1</span>
                                 </div>
-                                <div class="text-wrapper-3">Enter your custom domain</div>
-                                <img (click)="block1.classList.toggle('hidden')" [ngClass]="{closed: block1.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
-                                <div class="rectangle-3"></div>
+                                <p class="tab-title">Enter your custom domain</p>
+                            </div>
+                            <div class="tab-action-wrapper">
+                                <div class="tab-check" [class.valid]="model?.domainName && (model?.id || domainIsValid)">
+                                    <img src="./assets/common/icons/check-white.svg" />
+                                </div>
+                                <div class="tab-vertical-bar"></div>
+                                <img (click)="block1.classList.toggle('hidden')" [class.closed]="block1.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
                             </div>
                         </div>
-                        <div class="block" #block1>
-                            <div class="overlap">
-                                <div class="rectangle"></div>
-                                <p class="text-wrapper">
-                                    You can use your own custom domain ( or subdomain ) for your platform. We recommend using the
-                                    convention of <b>my.yourdomain.com</b> for your clients to access your platform.
-                                </p>
-                                <div class="group">
-                                    <div class="overlap-group">
-                                        <div class="div" *ngIf="model">
-                                            <dx-text-box #appDomainName
-                                                         width="100%"
-                                                         [placeholder]="l('HostName') + ' (custom.mysite.com)'"
-                                                         [maxLength]="256"
-                                                         [readOnly]="editing"
-                                                         [(value)]="model.domainName"
-                                                         (onKeyUp)="isDomainMappingValid = undefined"
-                                                         (onValueChanged)="onValueChanged($event)">
-                                                <dx-validator #domainValidator>
-                                                    <dxi-validation-rule type="required"
-                                                                         message="{{l('ThisFieldIsRequired')}}.">
-                                                    </dxi-validation-rule>
-                                                    <dxi-validation-rule type="pattern"
-                                                                         [pattern]="regexPatterns.url"
-                                                                         [message]="l('LetsEncrypt_FailedToValidateDomain')">
-                                                    </dxi-validation-rule>
-                                                    <dxi-validation-rule type="async"
-                                                                         [message]="l('HostName_NotMapped')"
-                                                                         [validationCallback]="checkMappingValid">
-                                                    </dxi-validation-rule>
-                                                </dx-validator>
-                                            </dx-text-box>
-                                        </div>
-                                        <div class="type-the-domain-you-wrapper">
-                                            <p class="type-the-domain-you">Type the domain<br />you want to use</p>
-                                        </div>
-                                    </div>
+                        
+                        <div class="tab-content" #block1>
+                            <div class="tab-content-bg"></div>
+                            <p class="tab-content-description">
+                                You can use your own custom domain ( or subdomain ) for your platform. We recommend using the
+                                convention of <b>my.yourdomain.com</b> for your clients to access your platform.
+                            </p>
+
+                            <div class="domain-input-wrapper">
+                                <div class="type-the-domain-you-wrapper">
+                                    <p class="type-the-domain-you">Type the domain<br />you want to use</p>
+                                </div>
+                                <div class="domain-input" *ngIf="model">
+                                    <dx-text-box #appDomainName
+                                                    width="100%"
+                                                    [placeholder]="l('HostName') + ' (custom.mysite.com)'"
+                                                    [maxLength]="256"
+                                                    [readOnly]="editing"
+                                                    [(value)]="model.domainName"
+                                                    (onKeyUp)="isDomainMappingValid = undefined"
+                                                    (onValueChanged)="onValueChanged($event)">
+                                        <dx-validator #domainValidator>
+                                            <dxi-validation-rule type="required"
+                                                                    message="{{l('ThisFieldIsRequired')}}.">
+                                            </dxi-validation-rule>
+                                            <dxi-validation-rule type="pattern"
+                                                                    [pattern]="regexPatterns.url"
+                                                                    [message]="l('LetsEncrypt_FailedToValidateDomain')">
+                                            </dxi-validation-rule>
+                                            <dxi-validation-rule type="async"
+                                                                    [message]="l('HostName_NotMapped')"
+                                                                    [validationCallback]="checkMappingValid">
+                                            </dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="box2">
-                    <div class="element">
-                        <div class="tab">
-                            <div class="overlap">
-                                <div class="rectangle-3"></div>
-                                <div class="vector-wrapper" [ngClass]="{valid: model?.domainName && (model?.id || isDomainMappingValid)}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                                <div class="overlap-group-wrapper">
-                                    <div class="overlap-group-2">
-                                        <div class="ellipse"></div>
-                                        <div class="text-wrapper-10">2</div>
-                                    </div>
+                    <div class="tab-container">
+                        <div class="tab-header">
+                            <div class="tab-title-wrapper">
+                                <div class="flow-number">
+                                    <span>2</span>
                                 </div>
-                                <p class="text-wrapper-11">Add the required entries to your domain DNS</p>
-                                <img (click)="block2.classList.toggle('hidden')" [ngClass]="{closed: block2.classList.contains('hidden')}" class="vector-2" src="./assets/common/icons/arrow-down-black.svg" />
-                                <div class="rectangle-4"></div>
+                                <p class="tab-title">Add the required entries to your domain DNS</p>
+                            </div>
+                            <div class="tab-action-wrapper">
+                                <div class="tab-check" [class.valid]="model?.domainName && (model?.id || isDomainMappingValid)">
+                                    <img src="./assets/common/icons/check-white.svg" />
+                                </div>
+                                <div class="tab-vertical-bar"></div>
+                                <img (click)="block2.classList.toggle('hidden')" [class.closed]="block2.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
                             </div>
                         </div>
-                        <div class="block" [ngClass]="{hidden: !model?.id && !domainIsValid}" #block2>
-                            <div class="overlap-group">
-                                <div class="group">
-                                    <p class="p">
-                                        To map Host Name to the {{defaultTenantName}} App the following records need to be added on the Host Name DNS:
+                        
+                        <div class="tab-content" #block2 [class.hidden]="!model?.id && !domainIsValid">
+                            <div class="tab-content-bg"></div>
+                            <p class="tab-content-description">
+                                To map Host Name to the {{defaultTenantName}} App the following records need to be added on the Host Name DNS:
+                            </p>
+
+                            <div class="dns-wrapper">
+                                <div class="dns-text-wrapper">
+                                    <p class="TXT-record-asuid">
+                                        <span class="text-format-1">TXT</span>
+                                        <span>&nbsp;</span>
+                                        <span class="text-format-2"> record </span>
+                                        <span class="text-format-3">asuid.{{model?.domainName}}</span>
+                                        <span class="text-format-2"> with domain verification id </span>
+                                        <br>
+                                        <span class="text-format-1">{{envHost.asuid}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.asuid)"></i></span>
                                     </p>
-                                    <div class="group-2">
-                                        <p class="TXT-record-asuid">
-                                            <span class="text-wrapper-5">TXT</span>
-                                            <span class="text-wrapper-3"> </span>
-                                            <span class="text-wrapper-6"> record </span>
-                                            <span class="text-wrapper-7">asuid.{{model?.domainName}}</span>
-                                            <span class="text-wrapper-6"> with domain verification id </span>
-                                            <span class="text-wrapper-5">{{envHost.asuid}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.asuid)"></i></span>
-                                        </p>
-                                        <div class="rectangle-2" [ngStyle]="{height: '122px'}"></div>
-                                        <p class="a-record-custom">
-                                            <span class="text-wrapper-5">A</span>
-                                            <span class="text-wrapper-8"> </span>
-                                            <span class="text-wrapper-6"> record </span>
-                                            <span class="text-wrapper-7">{{model?.domainName}}</span>
-                                            <span class="text-wrapper-6"> should point to </span>
-                                            <span class="text-wrapper-5">{{envHost.ip}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.ip)"></i></span>
-                                        </p>
-                                        <div class="text-wrapper-9">or</div>
-                                        <p class="CNAME-record-custom">
-                                            <span class="text-wrapper-5">CNAME</span>
-                                            <span class="text-wrapper-6"> record </span>
-                                            <span class="text-wrapper-7">{{model?.domainName}}</span>
-                                            <span class="text-wrapper-6"> should point to </span>
-                                            <span class="text-wrapper-5">{{envHost.host}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.host)"></i></span>
-                                        </p>
-                                    </div>
-                                    <div class="dns-lookup">To check correct mappings you can use <a target="_blank" href="https://mxtoolbox.com/DnsLookup.aspx">DNS Lookup</a></div>
+                                    <div class="dns-text-vertical"></div>
+                                    <p class="a-record-custom">
+                                        <span class="text-format-1">A</span>
+                                        <span>&nbsp;</span>
+                                        <span class="text-format-2"> record </span>
+                                        <span class="text-format-3">{{model?.domainName}}</span>
+                                        <span class="text-format-2"> should point to </span>
+                                        <span class="text-format-1">{{envHost.ip}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.ip)"></i></span>
+                                    </p>
+                                    <div class="text-format-4">or</div>
+                                    <p class="CNAME-record-custom">
+                                        <span class="text-format-1">CNAME</span>
+                                        <span class="text-format-2"> record </span>
+                                        <span class="text-format-3">{{model?.domainName}}</span>
+                                        <span class="text-format-2"> should point to </span>
+                                        <span class="text-format-1">{{envHost.host}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.host)"></i></span>
+                                    </p>
                                 </div>
-                                <div class="div"></div>
-                                <p class="once-you-have">
-                                    <span class="text-wrapper">Once you have updated your DNS entries,</span>
-                                    <span class="span">&nbsp;</span>
-                                    <a class="text-wrapper-2" (click)="checkHostNameDnsMapping({value: model?.domainName})">click here to verify</a>
+                                <div class="dns-lookup">To check correct mappings you can use &nbsp;<a target="_blank" href="https://mxtoolbox.com/DnsLookup.aspx">DNS Lookup</a></div>
+                                <div class="dns-text-horizontal"></div>
+                                <div class="dns-once-you-have">
+                                    <span>Once you have updated your DNS entries,</span>
+                                    <span>&nbsp;</span>
+                                    <a (click)="checkHostNameDnsMapping({value: model?.domainName})">click here to verify</a>
                                     <br>
                                     <span *ngIf="isDomainMappingValid != undefined && !isDomainMappingValid" class="host-not-mapped">"{{model?.domainName}}" {{l('HostName_NotMapped')}}</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="box3">
-                    <div class="group">
-                        <div class="overlap">
-                            <div class="rectangle"></div>
-                            <div class="vector-wrapper" [ngClass]="{valid: isDomainMappingValid}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                            <img (click)="block3.classList.toggle('hidden')" [ngClass]="{closed: block3.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
-                            <div class="div"></div>
-                            <p class="text-wrapper">Activate the Secure Socket Layer (SSL) for their domain</p>
-                            <div class="ellipse"></div>
-                            <div class="ellipse-2"></div>
-                            <div class="text-wrapper-2">3</div>
-                        </div>
-                        <div class="overlap-group" [ngClass]="{hidden: !model?.id && !isDomainMappingValid}" #block3>
-                            <div class="group-2" *ngIf="model">
-                                <div class="overlap-group-2">
-                                    <dx-select-box [(value)]="model.sslCertificateId"
-                                                   [dataSource]="sslCertificates"
-                                                   [placeholder]="l('SSLCertificate')"
-                                                   valueExpr="id"
-                                                   displayExpr="hostNames">
-                                    </dx-select-box>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="box3">
-                    <div class="group">
-                        <div class="overlap">
-                            <div class="rectangle"></div>
-                            <div class="vector-wrapper" [ngClass]="{valid: true}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                            <img (click)="block4.classList.toggle('hidden')" [ngClass]="{closed: block4.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
-                            <div class="div"></div>
-                            <p class="text-wrapper">Select Organization Unit</p>
-                            <div class="ellipse"></div>
-                            <div class="ellipse-2 purple"></div>
-                            <div class="text-wrapper-2">4</div>
-                        </div>
-                        <div class="overlap-group" [ngClass]="{hidden: !model?.id && !isDomainMappingValid}" #block4>
-                            <div class="group-3">
-                                <div class="overlap-2" *ngIf="model">
-                                    <dx-select-box [(value)]="model.organizationUnitId"
-                                                   [dataSource]="orgUnits"
-                                                   [placeholder]="l('OrganizationUnit')"
-                                                   valueExpr="id"
-                                                   displayExpr="displayName"
-                                                   [showClearButton]="true">
-                                    </dx-select-box>
+                    <div class="tab-container">
+                        <div class="tab-header">
+                            <div class="tab-title-wrapper">
+                                <div class="flow-number">
+                                    <span>3</span>
                                 </div>
+                                <p class="tab-title">Activate the Secure Socket Layer (SSL) for their domain</p>
+                            </div>
+                            <div class="tab-action-wrapper">
+                                <div class="tab-check" [class.valid]="isDomainMappingValid">
+                                    <img src="./assets/common/icons/check-white.svg" />
+                                </div>
+                                <div class="tab-vertical-bar"></div>
+                                <img (click)="block3.classList.toggle('hidden')" [class.closed]="block3.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" #block3 [class.hidden]="!model?.id && !isDomainMappingValid">
+                            <div class="tab-select" *ngIf="model">
+                                <dx-select-box [(value)]="model.sslCertificateId"
+                                                [dataSource]="sslCertificates"
+                                                [placeholder]="l('SSLCertificate')"
+                                                valueExpr="id"
+                                                displayExpr="hostNames">
+                                </dx-select-box>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-container">
+                        <div class="tab-header">
+                            <div class="tab-title-wrapper">
+                                <div class="flow-number">
+                                    <span>4</span>
+                                </div>
+                                <p class="tab-title">Select Organization Unit</p>
+                            </div>
+                            <div class="tab-action-wrapper">
+                                <div class="tab-check valid">
+                                    <img src="./assets/common/icons/check-white.svg" />
+                                </div>
+                                <div class="tab-vertical-bar"></div>
+                                <img (click)="block4.classList.toggle('hidden')" [class.closed]="block4.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" #block4 [class.hidden]="!model?.id && !isDomainMappingValid">
+                            <div class="tab-select" *ngIf="model">
+                                <dx-select-box [(value)]="model.organizationUnitId"
+                                                [dataSource]="orgUnits"
+                                                [placeholder]="l('OrganizationUnit')"
+                                                valueExpr="id"
+                                                displayExpr="displayName"
+                                                [showClearButton]="true">
+                                </dx-select-box>
                             </div>
                         </div>
                     </div>
@@ -297,416 +321,419 @@
     </mat-tab>
     <mat-tab *ngIf="isTenantHostCreateGranted || isTenantHostEditGranted">
         <ng-template mat-tab-label>
-          <img src="./assets/common/icons/personal-card.svg">
-          <div class="title">Your Client Portal</div>
+            <lucide-angular [img]="UsersIcon" class="mat-tab-icon"></lucide-angular>
+            {{l('Your Client Portal')}}
         </ng-template>
 
-        <dx-scroll-view [height]="scrollableAreaHeight" showScrollbar="onHover">
-            <div class="content">
-                <div class="box3" *ngIf="portalTypes.length > 1">
-                    <div class="group">
-                        <div class="overlap">
-                            <div class="rectangle"></div>
-                            <div class="vector-wrapper valid"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                            <img (click)="block0.classList.toggle('hidden')" [ngClass]="{closed: block0.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
-                            <div class="div"></div>
-                            <p class="text-wrapper">Choose portal type</p>
-                            <div class="ellipse"></div>
-                            <div class="ellipse-2 purple"></div>
-                            <div class="text-wrapper-2">0</div>
-                        </div>
-                        <div class="overlap-group" #block0>
-                            <div class="group-3">
-                                <div class="overlap-2" *ngIf="model">
-                                    <dx-select-box [(value)]="selectedPortalType"
-                                                   [dataSource]="portalTypes"
-                                                   valueExpr="id"
-                                                   displayExpr="displayName"
-                                                   [disabled]="model?.id || portalTypes.length == 1"
-                                                   (onValueChanged)="onSelectedPortalTypeChanged($event)">
-                                    </dx-select-box>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="card">
+                <div class="title">
+                    Your Client Portal Domain Settings
                 </div>
-                <div class="box3">
-                    <div class="group">
-                        <div class="overlap">
-                            <div class="rectangle"></div>
-                            <div class="vector-wrapper valid"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                            <img (click)="block3.classList.toggle('hidden')" [ngClass]="{closed: block3.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
-                            <div class="div"></div>
-                            <p class="text-wrapper">Select Organization Unit</p>
-                            <div class="ellipse"></div>
-                            <div class="ellipse-2"></div>
-                            <div class="text-wrapper-2">1</div>
-                        </div>
-                        <div class="overlap-group" [ngClass]="{hidden: !model?.id && !isDomainMappingValid}" #block3>
-                            <div class="group-3">
-                                <div class="overlap-2" *ngIf="model">
-                                    <dx-select-box [(value)]="model.organizationUnitId"
-                                                   [dataSource]="orgUnits"
-                                                   [placeholder]="l('OrganizationUnit')"
-                                                   valueExpr="id"
-                                                   displayExpr="displayName"
-                                                   [showClearButton]="true">
-                                    </dx-select-box>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="description">
+                    Configure and manage the domain settings for the client portal. This is where your clients will access their information.
                 </div>
-                <ng-container *ngIf="selectedPortalType == PortalType.Angular">
-                    <div class="box1">
-                        <div class="element">
-                            <div class="tab">
-                                <div class="overlap-2">
-                                    <div class="rectangle-2"></div>
-                                    <div class="vector-wrapper" [ngClass]="{valid: model?.domainName && (model?.id || domainIsValid)}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                                    <div class="overlap-group-wrapper">
-                                        <div class="overlap-group-2">
-                                            <div class="ellipse"></div>
-                                            <div class="text-wrapper-2">2</div>
-                                        </div>
+
+                <div class="domains-wrapper">
+                    <div class="tab-container" *ngIf="portalTypes.length > 1">
+                        <div class="tab-header">
+                            <div class="tab-title-wrapper">
+                                <div class="flow-number">
+                                    <span>1</span>
+                                </div>
+                                <p class="tab-title">Choose portal type</p>
+                            </div>
+                            <div class="tab-action-wrapper">
+                                <div class="tab-check valid">
+                                    <img src="./assets/common/icons/check-white.svg" />
+                                </div>
+                                <div class="tab-vertical-bar"></div>
+                                <img (click)="block1.classList.toggle('hidden')" [class.closed]="block1.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" #block1>
+                            <div class="tab-select" *ngIf="model">
+                                <dx-select-box [(value)]="selectedPortalType"
+                                                [dataSource]="portalTypes"
+                                                valueExpr="id"
+                                                displayExpr="displayName"
+                                                [disabled]="model?.id || portalTypes.length == 1"
+                                                (onValueChanged)="onSelectedPortalTypeChanged($event)">
+                                </dx-select-box>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-container">
+                        <div class="tab-header">
+                            <div class="tab-title-wrapper">
+                                <div class="flow-number">
+                                    <span>2</span>
+                                </div>
+                                <p class="tab-title">Select Organization Unit</p>
+                            </div>
+                            <div class="tab-action-wrapper">
+                                <div class="tab-check valid">
+                                    <img src="./assets/common/icons/check-white.svg" />
+                                </div>
+                                <div class="tab-vertical-bar"></div>
+                                <img (click)="block2.classList.toggle('hidden')" [class.closed]="block2.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" #block2 [class.hidden]="!model?.id && !isDomainMappingValid">
+                            <div class="tab-select" *ngIf="model">
+                                <dx-select-box [(value)]="model.organizationUnitId"
+                                                [dataSource]="orgUnits"
+                                                [placeholder]="l('OrganizationUnit')"
+                                                valueExpr="id"
+                                                displayExpr="displayName"
+                                                [showClearButton]="true">
+                                </dx-select-box>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ng-container *ngIf="selectedPortalType == PortalType.Angular">
+                        <div class="tab-container">
+                            <div class="tab-header">
+                                <div class="tab-title-wrapper">
+                                    <div class="flow-number">
+                                        <span>3</span>
                                     </div>
-                                    <div class="text-wrapper-3">Enter your custom domain</div>
-                                    <img (click)="block1.classList.toggle('hidden')" [ngClass]="{closed: block1.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
-                                    <div class="rectangle-3"></div>
+                                    <p class="tab-title">Enter your custom domain</p>
+                                </div>
+                                <div class="tab-action-wrapper">
+                                    <div class="tab-check" [class.valid]="model?.domainName && (model?.id || domainIsValid)">
+                                        <img src="./assets/common/icons/check-white.svg" />
+                                    </div>
+                                    <div class="tab-vertical-bar"></div>
+                                    <img (click)="block3.classList.toggle('hidden')" [class.closed]="block3.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
                                 </div>
                             </div>
-                            <div class="block" #block1>
-                                <div class="overlap">
-                                    <div class="rectangle"></div>
-                                    <p class="text-wrapper">
-                                        You can use your own custom domain ( or subdomain ) for your portal. We recommend using the
-                                        convention of <b>my.yourdomain.com</b> for your clients to access your portal.
-                                    </p>
-                                    <div class="group">
-                                        <div class="overlap-group">
-                                            <div class="div" *ngIf="model">
-                                                <dx-text-box #appDomainName
-                                                             width="100%"
-                                                             [placeholder]="l('HostName') + ' (custom.mysite.com)'"
-                                                             [maxLength]="256"
-                                                             [readOnly]="editing"
-                                                             [(value)]="model.domainName"
-                                                             (onKeyUp)="isDomainMappingValid = undefined"
-                                                             (onValueChanged)="onValueChanged($event)">
-                                                    <dx-validator #domainValidator>
-                                                        <dxi-validation-rule type="required"
-                                                                             message="{{l('ThisFieldIsRequired')}}.">
-                                                        </dxi-validation-rule>
-                                                        <dxi-validation-rule type="pattern"
-                                                                             [pattern]="regexPatterns.url"
-                                                                             [message]="l('LetsEncrypt_FailedToValidateDomain')">
-                                                        </dxi-validation-rule>
-                                                        <dxi-validation-rule type="async"
-                                                                             [message]="l('HostName_NotMapped')"
-                                                                             [validationCallback]="checkMappingValid">
-                                                        </dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-text-box>
-                                            </div>
-                                            <div class="type-the-domain-you-wrapper">
-                                                <p class="type-the-domain-you">Type the domain<br />you want to use</p>
-                                            </div>
-                                        </div>
+                            
+                            <div class="tab-content" #block3>
+                                <div class="tab-content-bg"></div>
+                                <p class="tab-content-description">
+                                    You can use your own custom domain ( or subdomain ) for your portal. We recommend using the
+                                    convention of <b>my.yourdomain.com</b> for your clients to access your portal.
+                                </p>
+
+                                <div class="domain-input-wrapper">
+                                    <div class="type-the-domain-you-wrapper">
+                                        <p class="type-the-domain-you">Type the domain<br />you want to use</p>
+                                    </div>
+                                    <div class="domain-input" *ngIf="model">
+                                        <dx-text-box #appDomainName
+                                                        width="100%"
+                                                        [placeholder]="l('HostName') + ' (custom.mysite.com)'"
+                                                        [maxLength]="256"
+                                                        [readOnly]="editing"
+                                                        [(value)]="model.domainName"
+                                                        (onKeyUp)="isDomainMappingValid = undefined"
+                                                        (onValueChanged)="onValueChanged($event)">
+                                            <dx-validator #domainValidator>
+                                                <dxi-validation-rule type="required"
+                                                                        message="{{l('ThisFieldIsRequired')}}.">
+                                                </dxi-validation-rule>
+                                                <dxi-validation-rule type="pattern"
+                                                                        [pattern]="regexPatterns.url"
+                                                                        [message]="l('LetsEncrypt_FailedToValidateDomain')">
+                                                </dxi-validation-rule>
+                                                <dxi-validation-rule type="async"
+                                                                        [message]="l('HostName_NotMapped')"
+                                                                        [validationCallback]="checkMappingValid">
+                                                </dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="box2">
-                        <div class="element">
-                            <div class="tab">
-                                <div class="overlap">
-                                    <div class="rectangle-3"></div>
-                                    <div class="vector-wrapper" [ngClass]="{valid: model?.domainName && (model?.id || isDomainMappingValid)}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                                    <div class="overlap-group-wrapper">
-                                        <div class="overlap-group-2">
-                                            <div class="ellipse"></div>
-                                            <div class="text-wrapper-10">3</div>
-                                        </div>
+
+                        <div class="tab-container">
+                            <div class="tab-header">
+                                <div class="tab-title-wrapper">
+                                    <div class="flow-number">
+                                        <span>4</span>
                                     </div>
-                                    <p class="text-wrapper-11">Add the required entries to your domain DNS</p>
-                                    <img (click)="block2.classList.toggle('hidden')" [ngClass]="{closed: block2.classList.contains('hidden')}" class="vector-2" src="./assets/common/icons/arrow-down-black.svg" />
-                                    <div class="rectangle-4"></div>
+                                    <p class="tab-title">Add the required entries to your domain DNS</p>
+                                </div>
+                                <div class="tab-action-wrapper">
+                                    <div class="tab-check" [class.valid]="model?.domainName && (model?.id || isDomainMappingValid)">
+                                        <img src="./assets/common/icons/check-white.svg" />
+                                    </div>
+                                    <div class="tab-vertical-bar"></div>
+                                    <img (click)="block4.classList.toggle('hidden')" [class.closed]="block4.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
                                 </div>
                             </div>
-                            <div class="block" [ngClass]="{hidden: !model?.id && !domainIsValid}" #block2>
-                                <div class="overlap-group">
-                                    <div class="group">
-                                        <p class="p">
-                                            To map Host Name to the {{defaultTenantName}} Portal the following records need to be added on the Host Name DNS:
+                            
+                            <div class="tab-content" #block4 [class.hidden]="!model?.id && !domainIsValid">
+                                <div class="tab-content-bg"></div>
+                                <p class="tab-content-description">
+                                    To map Host Name to the {{defaultTenantName}} Portal the following records need to be added on the Host Name DNS:
+                                </p>
+    
+                                <div class="dns-wrapper">
+                                    <div class="dns-text-wrapper">
+                                        <div class="dns-text-vertical" [style.height]="'16px'"></div>
+                                        <p class="CNAME-record-custom">
+                                            <span class="text-format-1">CNAME</span>
+                                            <span class="text-format-2"> record </span>
+                                            <span class="text-format-3">{{model?.domainName}}</span>
+                                            <span class="text-format-2"> should point to </span>
+                                            <span class="text-format-1">{{envHost.host}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.portalCdn)"></i></span>
                                         </p>
-                                        <div class="group-2">
-                                            <div class="rectangle-2" [ngStyle]="{height: '16px'}"></div>
-                                            <p class="CNAME-record-custom">
-                                                <span class="text-wrapper-5">CNAME</span>
-                                                <span class="text-wrapper-6"> record </span>
-                                                <span class="text-wrapper-7">{{model?.domainName}}</span>
-                                                <span class="text-wrapper-6"> should point to </span>
-                                                <span class="text-wrapper-5">{{envHost.portalCdn}} <i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.portalCdn)"></i></span>
-                                            </p>
-                                        </div>
-                                        <div class="dns-lookup">To check correct mappings you can use <a target="_blank" href="https://mxtoolbox.com/DnsLookup.aspx">DNS Lookup</a></div>
                                     </div>
-                                    <div class="div"></div>
-                                    <p class="once-you-have">
-                                        <span class="text-wrapper">Once you have updated your DNS entries,</span>
-                                        <span class="span">&nbsp;</span>
-                                        <a class="text-wrapper-2" (click)="checkHostNameDnsMapping({value: model?.domainName})">click here to verify</a>
+                                    <div class="dns-lookup">To check correct mappings you can use &nbsp;<a target="_blank" href="https://mxtoolbox.com/DnsLookup.aspx">DNS Lookup</a></div>
+                                    <div class="dns-text-horizontal"></div>
+                                    <div class="dns-once-you-have">
+                                        <span>Once you have updated your DNS entries,</span>
+                                        <span>&nbsp;</span>
+                                        <a (click)="checkHostNameDnsMapping({value: model?.domainName})">click here to verify</a>
                                         <br>
                                         <span *ngIf="isDomainMappingValid != undefined && !isDomainMappingValid" class="host-not-mapped">"{{model?.domainName}}" {{l('HostName_NotMapped')}}</span>
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </ng-container>
-                <ng-container *ngIf="selectedPortalType == PortalType.Vercel">
-                    <div class="domains">
-                        <div class="box1">
-                            <div class="element">
-                                <div class="tab">
-                                    <div class="overlap-2">
-                                        <div class="rectangle-2"></div>
-                                        <div class="vector-wrapper" [ngClass]="{valid: domainIsValid}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                                        <div class="overlap-group-wrapper">
-                                            <div class="overlap-group-2">
-                                                <div class="ellipse"></div>
-                                                <div class="text-wrapper-2">2</div>
-                                            </div>
-                                        </div>
-                                        <div class="text-wrapper-3">Enter your custom domain</div>
-                                        <img (click)="lendingBlock.classList.toggle('hidden')" [ngClass]="{closed: lendingBlock.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
-                                        <div class="rectangle-3"></div>
+                    </ng-container>
+
+                    <ng-container *ngIf="selectedPortalType == PortalType.Vercel">
+                        <div class="tab-container">
+                            <div class="tab-header">
+                                <div class="tab-title-wrapper">
+                                    <div class="flow-number">
+                                        <span>3</span>
                                     </div>
+                                    <p class="tab-title">Enter your custom domain</p>
                                 </div>
-                                <div class="block" #lendingBlock>
-                                    <div class="overlap">
-                                        <div class="rectangle"></div>
-                                        <p class="text-wrapper">
-                                            You can use your own custom domain ( or subdomain ) for your portal. We recommend using the
-                                            convention of <b>my.yourdomain.com</b> for your clients to access your portal.
-                                        </p>
-                                        <div class="group">
-                                            <div class="overlap-group">
-                                                <div class="div" *ngIf="model">
-                                                    <dx-text-box #newDomain
-                                                                 [placeholder]="l('HostName') + ' (custom.mysite.com)'"
-                                                                 [maxLength]="256"
-                                                                 [readOnly]="editing"
-                                                                 [(value)]="model.domainName"
-                                                                 (onKeyUp)="isDomainMappingValid = undefined"
-                                                                 (onValueChanged)="onValueChanged($event)">
-                                                        <dx-validator #domainValidator>
-                                                            <dxi-validation-rule type="required"
-                                                                                 message="{{l('ThisFieldIsRequired')}}.">
-                                                            </dxi-validation-rule>
-                                                            <dxi-validation-rule type="pattern"
-                                                                                 [pattern]="regexPatterns.url"
-                                                                                 [message]="l('LetsEncrypt_FailedToValidateDomain')">
-                                                            </dxi-validation-rule>
-                                                            <dxi-validation-rule type="async"
-                                                                                 [message]="l('HostName_NotMapped')"
-                                                                                 [validationCallback]="checkMappingValid">
-                                                            </dxi-validation-rule>
-                                                        </dx-validator>
-                                                    </dx-text-box>
-                                                    <button class="btn btn-layout" [disabled]="!domainIsValid" (click)="addPortalVercelDomain(newDomain)">
-                                                        Add <i [ngClass]="{ 'fa fa-spinner fa-spin': isNewPortalVercelDomainAdding }"></i>
-                                                    </button>
-                                                </div>
-                                                <div class="type-the-domain-you-wrapper">
-                                                    <p class="type-the-domain-you">
-                                                        Type the domain<br />you want to use
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="tab-action-wrapper">
+                                    <div class="tab-check" [class.valid]="domainIsValid">
+                                        <img src="./assets/common/icons/check-white.svg" />
+                                    </div>
+                                    <div class="tab-vertical-bar"></div>
+                                    <img (click)="lendingBlock.classList.toggle('hidden')" [class.closed]="lendingBlock.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" #lendingBlock>
+                                <div class="tab-content-bg"></div>
+                                <p class="tab-content-description">
+                                    You can use your own custom domain ( or subdomain ) for your portal. We recommend using the
+                                    convention of <b>my.yourdomain.com</b> for your clients to access your portal.
+                                </p>
+    
+                                <div class="domain-input-wrapper">
+                                    <div class="type-the-domain-you-wrapper">
+                                        <p class="type-the-domain-you">Type the domain<br />you want to use</p>
+                                    </div>
+                                    <div class="domain-input" *ngIf="model">
+                                        <dx-text-box #newDomain
+                                                        [placeholder]="l('HostName') + ' (custom.mysite.com)'"
+                                                        [maxLength]="256"
+                                                        [readOnly]="editing"
+                                                        [(value)]="model.domainName"
+                                                        (onKeyUp)="isDomainMappingValid = undefined"
+                                                        (onValueChanged)="onValueChanged($event)">
+                                            <dx-validator #domainValidator>
+                                                <dxi-validation-rule type="required"
+                                                                        message="{{l('ThisFieldIsRequired')}}.">
+                                                </dxi-validation-rule>
+                                                <dxi-validation-rule type="pattern"
+                                                                        [pattern]="regexPatterns.url"
+                                                                        [message]="l('LetsEncrypt_FailedToValidateDomain')">
+                                                </dxi-validation-rule>
+                                                <dxi-validation-rule type="async"
+                                                                        [message]="l('HostName_NotMapped')"
+                                                                        [validationCallback]="checkMappingValid">
+                                                </dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                        <button class="btn btn-layout" [disabled]="!domainIsValid" (click)="addPortalVercelDomain(newDomain)">
+                                            Add <i [ngClass]="{ 'fa fa-spinner fa-spin': isNewPortalVercelDomainAdding }"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="box2">
-                            <div class="element">
-                                <div class="tab">
-                                    <div class="overlap">
-                                        <div class="rectangle-3"></div>
-                                        <div class="vector-wrapper" [ngClass]="{valid: portalVercelDataSource.length}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                                        <div class="overlap-group-wrapper">
-                                            <div class="overlap-group-2">
-                                                <div class="ellipse"></div>
-                                                <div class="text-wrapper-10">3</div>
-                                            </div>
-                                        </div>
-                                        <p class="text-wrapper-11">Verify/Add the required entries to your DNS provider</p>
-                                        <img (click)="domainsBlock.classList.toggle('hidden')" [ngClass]="{closed: domainsBlock.classList.contains('hidden')}" class="vector-2" src="./assets/common/icons/arrow-down-black.svg" />
-                                        <div class="rectangle-4"></div>
+                        <div class="tab-container">
+                            <div class="tab-header">
+                                <div class="tab-title-wrapper">
+                                    <div class="flow-number">
+                                        <span>4</span>
                                     </div>
+                                    <p class="tab-title">Verify/Add the required entries to your DNS provider</p>
                                 </div>
-                                <div class="block" #domainsBlock>
-                                    <div class="overlap-group">
-                                        <div class="group">
-                                            <dx-data-grid *ngIf="portalVercelDataSource.length"
-                                                          #portalVercelDomainsGrid
-                                                          class="grid-compact-view main-component-view"
-                                                          accessKey="portalVercelDomainsGrid"
-                                                          [masterDetail]="{template: 'detailsTemplate'}"
-                                                          [dataSource]="portalVercelDataSource"
-                                                          [allowColumnReordering]="false"
-                                                          [columnAutoWidth]="true"
-                                                          [allowColumnResizing]="true"
-                                                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                                                <dxi-column dataField="name" [caption]="l('HostName')" cellTemplate="hostNameCell"></dxi-column>
-                                                <dxi-column [width]="260" dataField="organizationUnitId" [caption]="l('OrganizationUnit')" cellTemplate="organizationCell"></dxi-column>
-                                                <dxi-column [width]="80" dataField="isValid" [caption]="l('Valid')" cellTemplate="validTemplate"></dxi-column>
-                                                <dxi-column [width]="190" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
-                                                <div *dxTemplate="let data of 'hostNameCell'" class="clipboard-holder">
-                                                    {{data.value}}
-                                                    <a href="https://{{data.value}}" target="_blank">
-                                                        <img class="host-name-share-img" src="assets/common/icons/share-black.svg" />
-                                                    </a>
-                                                </div>
-                                                <div *dxTemplate="let data of 'organizationCell'" class="clipboard-holder {{data.value ? '' : 'default'}}">
-                                                    {{ getOrgUnitName(data.value) }}
-                                                </div>
-                                                <div *dxTemplate="let data of 'validTemplate'">
-                                                    <i class="fa fa-{{data.data.isValid ? 'check' : 'times'}}"></i>
-                                                </div>
-                                                <div *dxTemplate="let data of 'editDeleteTemplate'" style="text-align: right;">
-                                                    <a *ngIf="!data.data.isValid" class="dx-link action manage" (click)="verifyDomain(data, portalVercelDomainsGrid, true)">{{l('Verify')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isValidating }"></i></a>
-                                                    <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deletePortalVercelDomain(data.data)">{{l('Delete')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isDeleting }"></i></a>
-                                                </div>
-                                                <div *dxTemplate="let data of 'detailsTemplate'" class="domain">
-                                                    <div *ngIf="!data.data.isVaid && data.data.configRecords && data.data.configRecords.length" class="domain-dns-info">
-                                                        <div>Set the following record on your DNS provider to continue:</div>
-                                                        <div class="container">
-                                                            <div class="row header-row">
-                                                                <div class="col-2">Type</div>
-                                                                <div class="col-4">Name</div>
-                                                                <div class="col-6">Value</div>
-                                                            </div>
-                                                            <div *ngFor="let dnsRecord of data.data.configRecords" class="row">
-                                                                <div class="col-2">{{dnsRecord.type}}</div>
-                                                                <div class="col-4">{{dnsRecord.name}}</div>
-                                                                <div class="col-6">{{dnsRecord.value}}</div>
-                                                            </div>
-                                                        </div>
-                                                        <div>Depending on your provider, it might take some time for the DNS records to apply.</div>
+                                <div class="tab-action-wrapper">
+                                    <div class="tab-check" [class.valid]="portalVercelDataSource.length">
+                                        <img src="./assets/common/icons/check-white.svg" />
+                                    </div>
+                                    <div class="tab-vertical-bar"></div>
+                                    <img (click)="domainsBlock.classList.toggle('hidden')" [class.closed]="domainsBlock.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" #domainsBlock>
+                                <div class="tab-select">
+                                    <dx-data-grid *ngIf="portalVercelDataSource.length"
+                                                    #portalVercelDomainsGrid
+                                                    class="grid-compact-view main-component-view"
+                                                    accessKey="portalVercelDomainsGrid"
+                                                    [masterDetail]="{template: 'detailsTemplate'}"
+                                                    [dataSource]="portalVercelDataSource"
+                                                    [allowColumnReordering]="false"
+                                                    [columnAutoWidth]="true"
+                                                    [allowColumnResizing]="true"
+                                                    (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                                        <dxi-column dataField="name" [caption]="l('HostName')" cellTemplate="hostNameCell"></dxi-column>
+                                        <dxi-column [width]="260" dataField="organizationUnitId" [caption]="l('OrganizationUnit')" cellTemplate="organizationCell"></dxi-column>
+                                        <dxi-column [width]="80" dataField="isValid" [caption]="l('Valid')" cellTemplate="validTemplate"></dxi-column>
+                                        <dxi-column [width]="190" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                                        <div *dxTemplate="let data of 'hostNameCell'" class="clipboard-holder">
+                                            {{data.value}}
+                                            <a href="https://{{data.value}}" target="_blank">
+                                                <img class="host-name-share-img" src="assets/common/icons/share-black.svg" />
+                                            </a>
+                                        </div>
+                                        <div *dxTemplate="let data of 'organizationCell'" class="clipboard-holder {{data.value ? '' : 'default'}}">
+                                            {{ getOrgUnitName(data.value) }}
+                                        </div>
+                                        <div *dxTemplate="let data of 'validTemplate'">
+                                            <i class="fa fa-{{data.data.isValid ? 'check' : 'times'}}"></i>
+                                        </div>
+                                        <div *dxTemplate="let data of 'editDeleteTemplate'" style="text-align: right;">
+                                            <a *ngIf="!data.data.isValid" class="dx-link action manage" (click)="verifyDomain(data, portalVercelDomainsGrid, true)">{{l('Verify')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isValidating }"></i></a>
+                                            <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deletePortalVercelDomain(data.data)">{{l('Delete')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isDeleting }"></i></a>
+                                        </div>
+                                        <div *dxTemplate="let data of 'detailsTemplate'" class="domain">
+                                            <div *ngIf="!data.data.isVaid && data.data.configRecords && data.data.configRecords.length" class="domain-dns-info">
+                                                <div>Set the following record on your DNS provider to continue:</div>
+                                                <div class="container">
+                                                    <div class="row header-row">
+                                                        <div class="col-2">Type</div>
+                                                        <div class="col-4">Name</div>
+                                                        <div class="col-6">Value</div>
+                                                    </div>
+                                                    <div *ngFor="let dnsRecord of data.data.configRecords" class="row">
+                                                        <div class="col-2">{{dnsRecord.type}}</div>
+                                                        <div class="col-4">{{dnsRecord.name}}</div>
+                                                        <div class="col-6">{{dnsRecord.value}}</div>
                                                     </div>
                                                 </div>
-                                            </dx-data-grid>
-
-                                            <p class="no-found" *ngIf="!portalVercelDataSource.length">No domains found.</p>
+                                                <div>Depending on your provider, it might take some time for the DNS records to apply.</div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </dx-data-grid>
+
+                                    <p class="no-found" *ngIf="!portalVercelDataSource.length">No domains found.</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </ng-container>
+                    </ng-container>
+                </div>
             </div>
         </dx-scroll-view>
     </mat-tab>
     <mat-tab *ngIf="lendingPageEnabled">
         <ng-template mat-tab-label>
-          <img src="./assets/common/icons/shopping.svg">
-          <div class="title">Your Landing Pages</div>
+            <lucide-angular [img]="CartIcon" class="mat-tab-icon"></lucide-angular>
+            {{l('Your Landing Pages')}}
         </ng-template>
 
-        <dx-scroll-view [height]="scrollableAreaHeight" showScrollbar="onHover">
-            <div class="domains">
-                <div class="box1">
-                  <div class="element">
-                    <div class="tab">
-                      <div class="overlap-2">
-                        <div class="rectangle-2"></div>
-                        <div class="vector-wrapper" [ngClass]="{valid: newDomain?.value && newDomain.isValid}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                        <div class="overlap-group-wrapper">
-                          <div class="overlap-group-2">
-                            <div class="ellipse"></div>
-                            <div class="text-wrapper-2">1</div>
-                          </div>
-                        </div>
-                        <div class="text-wrapper-3">Enter your custom domain</div>
-                        <img (click)="lendingBlock.classList.toggle('hidden')" [ngClass]="{closed: lendingBlock.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
-                        <div class="rectangle-3"></div>
-                      </div>
-                    </div>
-                    <div class="block" #lendingBlock>
-                      <div class="overlap">
-                        <div class="rectangle"></div>
-                        <p class="text-wrapper">
-                          You can use your own custom domain ( or subdomain ) for your landing pages. We recommend using the
-                          convention of <b>my.yourdomain.com</b> for your clients to access your landing pages.
-                        </p>
-                        <div class="group">
-                          <div class="overlap-group">
-                            <div class="div">
-                                <dx-text-box #newDomain
-                                             [placeholder]="l('HostName') + ' (custom.mysite.com)'"
-                                             
-                                             (onValueChanged)="onLaningPageDomainChanged($event)">
-                                    <dx-validator #domainValidator>
-                                        <dxi-validation-rule type="required"
-                                                             message="{{l('ThisFieldIsRequired')}}.">
-                                        </dxi-validation-rule>
-                                        <dxi-validation-rule type="pattern"
-                                                             [pattern]="regexPatterns.url"
-                                                             [message]="l('LetsEncrypt_FailedToValidateDomain')">
-                                        </dxi-validation-rule>
-                                    </dx-validator>
-                                </dx-text-box>
-                                <button class="btn btn-layout" [disabled]="!newDomain?.value || !newDomain.isValid" (click)="addDomain(newDomain)">
-                                    Add <i [ngClass]="{ 'fa fa-spinner fa-spin': isNewLandingDomainAdding }"></i>
-                                </button>                                                        
-                            </div>
-                            <div class="type-the-domain-you-wrapper">
-                                <p class="type-the-domain-you">Type the domain<br /><a *ngIf="!landingSettings?.landingPageDomains?.length && !isNewLandingDomainAdding; else youWantToUse" class="generate-domain" (click)="generateDomain()">or {{l('Generate here')}}</a>
-                                    <ng-template #youWantToUse>you want to use</ng-template>
-                                </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="card">
+                <div class="title">
+                    Your Landing Pages Domain Settings
                 </div>
-
-                <div class="box2">
-                  <div class="element">
-                    <div class="tab">
-                      <div class="overlap">
-                        <div class="rectangle-3"></div>
-                        <div class="vector-wrapper" [ngClass]="{valid: landingSettings?.landingPageDomains?.length}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
-                        <div class="overlap-group-wrapper">
-                          <div class="overlap-group-2">
-                            <div class="ellipse"></div>
-                            <div class="text-wrapper-10">2</div>
-                          </div>
+                <div class="description">
+                    Configure and manage the domain settings for your marketing landing pages. This is where potential customers will learn about your offerings.
+                </div>
+                <div class="domains-wrapper">
+                    <div class="tab-container">
+                        <div class="tab-header">
+                            <div class="tab-title-wrapper">
+                                <div class="flow-number">
+                                    <span>1</span>
+                                </div>
+                                <p class="tab-title">Enter your custom domain</p>
+                            </div>
+                            <div class="tab-action-wrapper">
+                                <div class="tab-check" [class.valid]="newDomain?.value && newDomain.isValid">
+                                    <img src="./assets/common/icons/check-white.svg" />
+                                </div>
+                                <div class="tab-vertical-bar"></div>
+                                <img (click)="block1.classList.toggle('hidden')" [class.closed]="block1.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
+                            </div>
                         </div>
-                        <p class="text-wrapper-11">Verify/Add the required entries to your DNS provider</p>
-                        <img (click)="domainsBlock.classList.toggle('hidden')" [ngClass]="{closed: domainsBlock.classList.contains('hidden')}" class="vector-2" src="./assets/common/icons/arrow-down-black.svg" />
-                        <div class="rectangle-4"></div>
-                      </div>
+                        
+                        <div class="tab-content" #block1>
+                            <div class="tab-content-bg"></div>
+                            <p class="tab-content-description">
+                                You can use your own custom domain ( or subdomain ) for your landing pages. We recommend using the
+                                convention of <b>my.yourdomain.com</b> for your clients to access your landing pages.
+                            </p>
+
+                            <div class="domain-input-wrapper">
+                                <div class="type-the-domain-you-wrapper">
+                                    <p class="type-the-domain-you">Type the domain<br />
+                                        <a *ngIf="!landingSettings?.landingPageDomains?.length && !isNewLandingDomainAdding; else youWantToUse" class="generate-domain" (click)="generateDomain()">or {{l('Generate here')}}</a>
+                                        <ng-template #youWantToUse>you want to use</ng-template>
+                                    </p>
+                                </div>
+                                <div class="domain-input">
+                                    <dx-text-box #newDomain
+                                                    [placeholder]="l('HostName') + ' (custom.mysite.com)'"
+                                                    
+                                                    (onValueChanged)="onLaningPageDomainChanged($event)">
+                                        <dx-validator #domainValidator>
+                                            <dxi-validation-rule type="required"
+                                                                    message="{{l('ThisFieldIsRequired')}}.">
+                                            </dxi-validation-rule>
+                                            <dxi-validation-rule type="pattern"
+                                                                    [pattern]="regexPatterns.url"
+                                                                    [message]="l('LetsEncrypt_FailedToValidateDomain')">
+                                            </dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                    <button class="btn btn-layout" [disabled]="!newDomain?.value || !newDomain.isValid" (click)="addDomain(newDomain)">
+                                        Add <i [ngClass]="{ 'fa fa-spinner fa-spin': isNewLandingDomainAdding }"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="block" #domainsBlock>
-                      <div class="overlap-group">
-                        <div class="group">
+
+                    <div class="tab-container">
+                        <div class="tab-header">
+                            <div class="tab-title-wrapper">
+                                <div class="flow-number">
+                                    <span>2</span>
+                                </div>
+                                <p class="tab-title">Verify/Add the required entries to your DNS provider</p>
+                            </div>
+                            <div class="tab-action-wrapper">
+                                <div class="tab-check" [class.valid]="landingSettings?.landingPageDomains?.length">
+                                    <img src="./assets/common/icons/check-white.svg" />
+                                </div>
+                                <div class="tab-vertical-bar"></div>
+                                <img (click)="block2.classList.toggle('hidden')" [class.closed]="block2.classList.contains('hidden')" class="tab-arrow-btn" src="./assets/common/icons/arrow-down-black.svg" />
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" #block2>
                             <dx-data-grid *ngIf="landingSettings?.landingPageDomains && landingSettings.landingPageDomains.length"
-                                          #landingDomainsGrid
-                                          class="grid-compact-view main-component-view"
-                                          accessKey="landingDomainsGrid"
-                                          [masterDetail]="{template: 'detailsTemplate'}"
-                                          [dataSource]="landingSettings.landingPageDomains"
-                                          [allowColumnReordering]="false"
-                                          [columnAutoWidth]="true"
-                                          [allowColumnResizing]="true"
-                                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                                            #landingDomainsGrid
+                                            class="grid-compact-view main-component-view"
+                                            accessKey="landingDomainsGrid"
+                                            [masterDetail]="{template: 'detailsTemplate'}"
+                                            [dataSource]="landingSettings.landingPageDomains"
+                                            [allowColumnReordering]="false"
+                                            [columnAutoWidth]="true"
+                                            [allowColumnResizing]="true"
+                                            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                                 <dxi-column dataField="name" [caption]="l('HostName')" cellTemplate="hostNameCell"></dxi-column>
                                 <dxi-column [width]="80" dataField="isValid" [caption]="l('Valid')" cellTemplate="validTemplate"></dxi-column>
                                 <dxi-column [width]="190" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
@@ -745,46 +772,63 @@
 
                             <p class="no-found" *ngIf="!landingSettings?.landingPageDomains || !landingSettings?.landingPageDomains?.length">No domains found.</p>
                         </div>
-                      </div>
                     </div>
-                  </div>
                 </div>
             </div>
         </dx-scroll-view>
     </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
-          <img src="./assets/common/icons/ssl.svg">
-          <div class="title">{{l('SSLConfiguration')}}</div>
+            <lucide-angular [img]="ShieldIcon" class="mat-tab-icon"></lucide-angular>
+            {{l('SSLConfiguration')}}
         </ng-template>
 
-        <dx-scroll-view [height]="scrollableAreaHeight">
-            <div class="header">
-                <h3>{{l('SSLConfiguration')}}</h3>
-                <button *ngIf="isTenantHostCreateGranted" class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{l("UploadCertificate")}}</button>
-            </div>
-            <div id="SSLTable" class="tab-body">
-                <dx-data-grid class="grid-compact-view main-component-view"
-                              accessKey="sslGrid"
-                              #sslGrid
-                              [dataSource]="sslGridDataSource"
-                              [allowColumnReordering]="true"
-                              [columnAutoWidth]="true"
-                              [allowColumnResizing]="true"
-                              (onRowRemoving)="deleteCertificate($event)"
-                              (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                    <dxi-column dataField="id" [caption]="l('Id')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column dataField="hostNames" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column dataField="expiration" [caption]="l('ExpirationDate')" cellTemplate="dateCell"></dxi-column>
-                    <dxi-column dataField="thumbprint" [caption]="l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
-                    <div *dxTemplate="let data of 'editDeleteTemplate'">
-                        <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deleteCertificate(data)">{{l('Delete')}}</a>
+        <dx-scroll-view>
+            <div class="card">
+                <div class="title">
+                    SSL Configuration
+                </div>
+                <div class="description">
+                    Manage SSL certificates for all your domains. SSL certificates encrypt data between your users' browsers and your websites, ensuring secure connections.
+                </div>
+
+                <div class="free-ssl-certificates">
+                    <h3>Free SSL Certificates</h3>
+                    <p>We automatically provision and renew free SSL certificates for all your domains. These certificates are trusted by all major browsers and provide strong security for your users.</p>
+                </div>
+
+                <div class="custom-ssl-certificates">
+                    <h3>Custom SSL Certificates</h3>
+                    <p>If you have your own SSL certificates, you can upload them here. This is optional and only recommended for organizations with specific compliance requirements.</p>
+                    <div class="button-wrapper">
+                        <button *ngIf="isTenantHostCreateGranted" (click)="showSSLDialog()">Upload Certificate</button>
+                        <button *ngIf="isTenantHostCreateGranted" (click)="showSSLDialog()">Upload Private Key</button>
                     </div>
-                    <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                        {{cellData.value | datetime: formatting.dateTimeMoment}}
-                    </div>
-                </dx-data-grid>
+                </div>
+
+                <div id="SSLTable" class="tab-body">
+                    <dx-data-grid class="grid-compact-view main-component-view"
+                                  accessKey="sslGrid"
+                                  #sslGrid
+                                  [dataSource]="sslGridDataSource"
+                                  [allowColumnReordering]="true"
+                                  [columnAutoWidth]="true"
+                                  [allowColumnResizing]="true"
+                                  (onRowRemoving)="deleteCertificate($event)"
+                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                        <dxi-column dataField="id" [caption]="l('Id')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="hostNames" [caption]="l('HostName')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="expiration" [caption]="l('ExpirationDate')" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="thumbprint" [caption]="l('Thumbprint')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                        <div *dxTemplate="let data of 'editDeleteTemplate'">
+                            <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deleteCertificate(data)">{{l('Delete')}}</a>
+                        </div>
+                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                            {{cellData.value | datetime: formatting.dateTimeMoment}}
+                        </div>
+                    </dx-data-grid>
+                </div>
             </div>
         </dx-scroll-view>
     </mat-tab>
