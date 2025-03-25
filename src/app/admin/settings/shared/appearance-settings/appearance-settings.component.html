@@ -253,39 +253,6 @@
         </div>
 
         <div class="card">
-
-            <h2>{{l('Font')}} {{l('Settings')}}</h2>
-    
-            <span style="font-weight: 500; margin: 0.25rem 0;">{{l('Choose any font from Google Fonts for your Dashboard')}}</span>
-    
-            <div class="app-font-family">
-                <dx-select-box
-                    height="46px"
-                    [(value)]="colorSettings.fontName"
-                    [searchEnabled]="true"
-                    [dataSource]="fontFamilyList">
-                    <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
-                        {{ data }}
-                    </div>
-                </dx-select-box>
-            </div>
-    
-            <span style="font-weight: 500; margin: 0.25rem 0;">{{l('Choose tabular font from Google Fonts for numbers')}}</span>
-    
-            <div class="app-font-family">
-                <dx-select-box
-                    height="46px"
-                    [(value)]="colorSettings.tabularFont"
-                    [searchEnabled]="true"
-                    [dataSource]="tabularFontFamilyList">
-                    <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
-                        {{ data }}
-                    </div>
-                </dx-select-box>
-            </div>
-        </div>
-
-        <div class="card">
             <h2>{{l('Button')}} {{l('Styling')}}</h2>
     
             <span class="description">{{l('Choose the style of your buttons')}}</span>
@@ -357,6 +324,39 @@
                     <label><b>Pill</b><br><br>Radius 25<br></label>
                     <div class="example predefined25">Select</div>
                 </div>
+            </div>
+        </div>
+
+        <div class="card">
+
+            <h2>{{l('Font')}} {{l('Settings')}}</h2>
+    
+            <span style="font-weight: 500; margin: 0.25rem 0;">{{l('Choose any font from Google Fonts for your Dashboard')}}</span>
+    
+            <div class="app-font-family">
+                <dx-select-box
+                    height="46px"
+                    [(value)]="colorSettings.fontName"
+                    [searchEnabled]="true"
+                    [dataSource]="fontFamilyList">
+                    <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
+                        {{ data }}
+                    </div>
+                </dx-select-box>
+            </div>
+    
+            <span style="font-weight: 500; margin: 0.25rem 0;">{{l('Choose tabular font from Google Fonts for numbers')}}</span>
+    
+            <div class="app-font-family">
+                <dx-select-box
+                    height="46px"
+                    [(value)]="colorSettings.tabularFont"
+                    [searchEnabled]="true"
+                    [dataSource]="tabularFontFamilyList">
+                    <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
+                        {{ data }}
+                    </div>
+                </dx-select-box>
             </div>
         </div>
     </div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { MenuItem } from '../../settings.navigation';
 import { ArrowLeft } from 'lucide-angular';
 import { Router } from '@angular/router';
@@ -7,9 +7,8 @@ import { SettingService } from '@app/admin/settings/settings/settings.service';
 @Component({
     selector: 'sub-menu-panel',
     templateUrl: './sub-menu-panel.component.html',
-    styleUrls: [
-        './sub-menu-panel.component.less'
-    ]
+    styleUrls: ['./sub-menu-panel.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SubMenuPanelComponent  implements OnInit {
     readonly ArrowIcon = ArrowLeft;

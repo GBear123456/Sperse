@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ViewEncapsulation, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ArrowLeft } from 'lucide-angular';
 import { Router } from '@angular/router';
 import { SettingService } from '../../settings/settings.service';
@@ -8,8 +8,7 @@ import { SettingService } from '../../settings/settings.service';
     selector: 'settings-header',
     templateUrl: './settings-header.component.html',
     styleUrls: ['./settings-header.component.less'],
-    providers: [],
-    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsHeaderComponent implements OnInit {
     // readonly SaveIcon = Save;

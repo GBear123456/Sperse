@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { mainNavigation, MenuItem } from '../../settings/settings.navigation';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SettingService } from '@app/admin/settings/settings/settings.service';
@@ -8,9 +8,7 @@ import { Router } from '@angular/router';
 @Component({
     templateUrl: './dashboard-settings.component.html',
     styleUrls: ['./dashboard-settings.component.less'],
-    providers: [],
-    encapsulation: ViewEncapsulation.None,
-
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardSettingComponent {
     private searchQuery: string = '';

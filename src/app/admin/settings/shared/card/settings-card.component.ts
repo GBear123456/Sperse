@@ -1,12 +1,11 @@
 /** Core imports */
-import { Component, ViewEncapsulation, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'settings-card',
     templateUrl: './settings-card.component.html',
     styleUrls: ['./settings-card.component.less'],
-    providers: [],
-    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsCardComponent implements OnInit {
 

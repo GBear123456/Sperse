@@ -1,12 +1,11 @@
 /** Core imports */
-import { Component, ViewEncapsulation, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Info } from 'lucide-angular'
 @Component({
     selector: 'settings-item',
     templateUrl: './settings-item.component.html',
     styleUrls: ['./settings-item.component.less'],
-    providers: [],
-    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsItemComponent implements OnInit {
     readonly InfoIcon = Info;

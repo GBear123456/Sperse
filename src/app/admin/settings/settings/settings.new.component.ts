@@ -1,4 +1,4 @@
-import { Component, Injector, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { MenuItem, mainNavigation } from './settings.navigation'
 import { NavigationEnd, Router } from '@angular/router';
 import { SettingService } from '@app/admin/settings/settings/settings.service';
@@ -9,11 +9,8 @@ import { filter } from 'rxjs/operators';
 
 @Component({
     templateUrl: './settings.new.component.html',
-    styleUrls: [
-       './settings.new.component.less'
-    ],
-    encapsulation: ViewEncapsulation.None,
-    animations: [],
+    styleUrls: ['./settings.new.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsNewComponent extends AppComponentBase implements OnInit, OnDestroy {
     private sidebarOpen: boolean = true;

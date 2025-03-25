@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Home, Moon, Sun } from 'lucide-angular'
 import { MenuItem } from '../../settings.navigation'
 import { SettingService } from '@app/admin/settings/settings/settings.service';
@@ -6,9 +6,8 @@ import { SettingService } from '@app/admin/settings/settings/settings.service';
 @Component({
     selector: 'main-menu-panel',
     templateUrl: './main-menu-panel.component.html',
-    styleUrls: [
-        './main-menu-panel.component.less'
-    ]
+    styleUrls: ['./main-menu-panel.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainMenuPanelComponent implements OnInit {
     readonly HomeIcon = Home;

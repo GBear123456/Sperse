@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Injector, ChangeDetectionStrategy } from '@angular/core';
 
 /** Third party imports */
 import { throwError, Observable, of } from 'rxjs';

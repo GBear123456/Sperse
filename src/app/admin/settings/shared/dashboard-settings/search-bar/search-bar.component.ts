@@ -1,13 +1,12 @@
 /** Core imports */
-import { Component, ViewEncapsulation, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Search } from 'lucide-angular';
 
 @Component({
     selector: 'search-bar',
     templateUrl: './search-bar.component.html',
     styleUrls: ['./search-bar.component.less'],
-    providers: [],
-    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchBarComponent implements OnInit {
     readonly SearchIcon = Search;

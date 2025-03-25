@@ -39,9 +39,7 @@ import { SettingsComponentBase } from '../settings-base.component';
 
 @Component({
     templateUrl: './personal-settings.component.html',
-    styleUrls: [
-        './personal-settings.component.less'
-    ],
+    styleUrls: ['./personal-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [GoogleServiceProxy, GmailSettingsService]
 })
