@@ -152,7 +152,6 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { InvoiceAddressDialog } from '@app/crm/shared/create-invoice-dialog/invoice-address-dialog/invoice-address-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
-import { AddProductDialogComponent } from './subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
 import { CreateProductDialogComponent, FilterAssignmentsPipe } from './subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './subscriptions/add-subscription-dialog/add-member-service-dialog/add-member-service-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
@@ -226,7 +225,6 @@ import { CurrencySelectorModule } from '../../../shared/common/currency-selector
         CreateInvoiceDialogComponent,
         InvoiceAddressDialog,
         LeadRelatedContactsComponent,
-        AddProductDialogComponent,
         CreateProductDialogComponent,
         FilterAssignmentsPipe,
         AddMemberServiceDialogComponent,
@@ -332,7 +330,6 @@ import { CurrencySelectorModule } from '../../../shared/common/currency-selector
         CancelSubscriptionDialogComponent,
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
-        AddProductDialogComponent,
         CreateProductDialogComponent,
         AddMemberServiceDialogComponent,
         TemplateDocumentsDialogComponent,

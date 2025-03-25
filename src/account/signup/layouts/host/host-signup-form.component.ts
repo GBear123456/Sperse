@@ -21,7 +21,7 @@ import {
     LeadServiceProxy, TenantProductInfo, PaymentPeriodType, RecurringPaymentFrequency,
     PasswordComplexitySetting, SubmitTenancyRequestOutput, TenantSubscriptionServiceProxy, CompleteTenantRegistrationOutput,
     ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput, ProfileServiceProxy,
-    ExternalUserDataServiceProxy, GetExternalUserDataOutput, GetExternalUserDataInput, ProductSubscriptionOptionInfo, PublicProductSubscriptionOptionInfo
+    ExternalUserDataServiceProxy, GetExternalUserDataOutput, GetExternalUserDataInput, PriceOptionInfo, PublicPriceOptionInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -66,7 +66,7 @@ export class HostSignupFormComponent {
     tenancyRequestModel = new SubmitTenancyRequestInput();
     tenantRegistrationModel = new CompleteTenantRegistrationInput();
     signUpProduct: ProductInfo;
-    selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
+    selectedSubscriptionOption: PublicPriceOptionInfo;
     descriptionHtml: SafeHtml;
     currencySymbol = '$';
     buttonText = '';
@@ -205,12 +205,12 @@ export class HostSignupFormComponent {
         this.showPasswordComplexity = true;
     }
 
-    getProductMonthlyOrFirstOption(product: ProductInfo): ProductSubscriptionOptionInfo {
-        let monthly = product.productSubscriptionOptions.filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
-        return monthly || product.productSubscriptionOptions[0];
+    getProductMonthlyOrFirstOption(product: ProductInfo): PriceOptionInfo {
+        let monthly = product.priceOptions.filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
+        return monthly || product.priceOptions[0];
     }
 
-    onProductOptionSelect(event: { period, option: PublicProductSubscriptionOptionInfo }) {
+    onProductOptionSelect(event: { period, option: PublicPriceOptionInfo }) {
         this.selectedSubscriptionOption = event.option;
 
         let buttonText = 'Start ';

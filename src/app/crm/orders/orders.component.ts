@@ -77,7 +77,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import {
     OrderServiceProxy,
-    ProductServiceProxy, ProductType, ProductDto
+    ProductServiceProxy, ProductDto, PriceOptionType
 } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
@@ -1072,7 +1072,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 products: new FilterServicesAndProductsModel(
                     {
                         dataSource$: this.productProxy.getProducts(
-                            ProductType.Subscription, undefined, false, undefined
+                            PriceOptionType.Subscription, undefined, false, undefined
                         ).pipe(
                             map((products: ProductDto[]) => {
                                 let productsWithGroups = products.filter(x => x.group);

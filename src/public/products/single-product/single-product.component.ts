@@ -29,7 +29,7 @@ import {
     PublicProductInfo,
     PublicProductInput,
     PublicProductServiceProxy,
-    PublicProductSubscriptionOptionInfo,
+    PublicPriceOptionInfo,
     RecurringPaymentFrequency,
     SubmitProductRequestInput,
     SubmitProductRequestOutput,
@@ -116,7 +116,8 @@ export class SingleProductComponent implements OnInit {
     billingPeriod = BillingPeriod;
 
     defaultCountryCode = abp.setting.get('App.TenantManagement.DefaultCountryCode');
-    selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
+    oneTimePriceOption: PublicPriceOptionInfo;
+    selectedSubscriptionOption: PublicPriceOptionInfo;
     static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.OneTime, BillingPeriod.Custom];
     availablePeriods: BillingPeriod[] = [];
     selectedBillingPeriod;
@@ -203,7 +204,7 @@ export class SingleProductComponent implements OnInit {
                 let hasPayment = false;
                 let hasRecurring = false;
                 let singlePaymentOptions = [RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.OneTime];
-                this.productInfo.productSubscriptionOptions.map(v => {
+                this.productInfo.priceOptions.map(v => {
                     if (singlePaymentOptions.includes(v.frequency))
                         hasPayment = true
                     else
@@ -263,6 +264,9 @@ export class SingleProductComponent implements OnInit {
                             this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
                         if (result.data.hasTenantService)
                             this.initializePasswordComplexity();
+                        if (this.productInfo.type != ProductType.Subscription) {
+                            this.oneTimePriceOption = this.productInfo.priceOptions.find(v => !v.frequency);
+                        }
                         this.initConditions();
                         this.initSubscriptionProduct();
                         this.initCustomerPrice();
@@ -354,7 +358,7 @@ export class SingleProductComponent implements OnInit {
             paymentPeriodType: PaymentPeriodType[this.selectedSubscriptionOption.frequency],
             quantity: 1
         })];
-        tenancyRequestModel.couponCode = this.isFreeProductSelected || this.productInfo.customerChoosesPrice ? null : this.requestInfo.couponCode;
+        tenancyRequestModel.couponCode = this.isFreeProductSelected || this.selectedSubscriptionOption.customerChoosesPrice ? null : this.requestInfo.couponCode;
         tenancyRequestModel.affiliateCode = this.ref;
 
         this.leadProxy.submitTenancyRequest(tenancyRequestModel).subscribe(response => {
@@ -399,8 +403,8 @@ export class SingleProductComponent implements OnInit {
                 return of();
             }
         }
-        if ((this.productInfo.customerChoosesPrice && (!this.productInfo.price || this.customerPriceEditMode)) ||
-            (this.selectedSubscriptionOption && this.selectedSubscriptionOption.customerChoosesPrice && (!this.selectedSubscriptionOption.fee || this.customerPriceEditMode))) {
+        let submitPriceOption = this.oneTimePriceOption || this.selectedSubscriptionOption;
+        if ((submitPriceOption.customerChoosesPrice && (!submitPriceOption.fee || this.customerPriceEditMode))) {
             abp.notify.error(this.ls.l('Invalid Price'));
             return of();
         }
@@ -422,7 +426,8 @@ export class SingleProductComponent implements OnInit {
         this.requestInfo.affiliateCode = this.ref;
         this.requestInfo.paymentGateway = paymentGateway;
         this.productInput.productId = this.productInfo.id;
-        if (this.isFreeProductSelected || this.productInfo.customerChoosesPrice || (this.selectedSubscriptionOption && this.selectedSubscriptionOption.customerChoosesPrice))
+        this.productInput.optionId = submitPriceOption.id;
+        if (this.isFreeProductSelected || submitPriceOption.customerChoosesPrice)
             this.requestInfo.couponCode = null;
         this.requestInfo.billingAddress = this.billingAddress;
 
@@ -431,16 +436,15 @@ export class SingleProductComponent implements OnInit {
             case ProductType.Digital:
             case ProductType.Event:
             case ProductType.Donation:
-                this.productInput.unit = this.productInfo.unit;
-                if (this.productInfo.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
-                    this.productInput.price = this.productInfo.price;
+                this.productInput.unit = submitPriceOption.unit;
+                if (submitPriceOption.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
+                    this.productInput.price = submitPriceOption.fee;
 
                 break;
             case ProductType.Subscription:
-                this.productInput.optionId = this.selectedSubscriptionOption.id;
-                this.productInput.unit = PaymentService.getProductMeasurementUnit(this.selectedSubscriptionOption.frequency);
-                if (this.selectedSubscriptionOption.customerChoosesPrice)
-                    this.productInput.price = this.selectedSubscriptionOption.fee;
+                this.productInput.unit = PaymentService.getProductMeasurementUnit(submitPriceOption.frequency);
+                if (submitPriceOption.customerChoosesPrice)
+                    this.productInput.price = submitPriceOption.fee;
                 break;
         }
 
@@ -474,7 +478,7 @@ export class SingleProductComponent implements OnInit {
             return;
 
         let periods: RecurringPaymentFrequency[] = [];
-        this.productInfo.productSubscriptionOptions.forEach(v => {
+        this.productInfo.priceOptions.forEach(v => {
             periods.push(v.frequency);
 
             if (v.customerChoosesPrice)
@@ -490,7 +494,7 @@ export class SingleProductComponent implements OnInit {
 
         let selectedBillingPeriod = this.availablePeriods[0];
         if (this.optionId) {
-            const selectedOption = this.productInfo.productSubscriptionOptions.find(v => v.id == this.optionId);
+            const selectedOption = this.productInfo.priceOptions.find(v => v.id == this.optionId);
             if (selectedOption)
                 selectedBillingPeriod = PaymentService.getBillingPeriodByPaymentFrequency(selectedOption.frequency);
         }
@@ -503,7 +507,7 @@ export class SingleProductComponent implements OnInit {
             case ProductType.General:
             case ProductType.Digital:
             case ProductType.Event:
-                this.isFreeProductSelected = this.productInfo.price == 0 && !this.productInfo.customerChoosesPrice;
+                this.isFreeProductSelected = this.oneTimePriceOption.fee == 0 && !this.oneTimePriceOption.customerChoosesPrice;
                 break;
             case ProductType.Subscription:
                 this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0 && !this.selectedSubscriptionOption.customerChoosesPrice;
@@ -579,7 +583,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     updateSelectedSubscriptionOption() {
-        this.selectedSubscriptionOption = this.productInfo.productSubscriptionOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
+        this.selectedSubscriptionOption = this.productInfo.priceOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
         this.initCustomerPrice();
         this.calculateTax();
     }
@@ -636,7 +640,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     getGeneralPrice(includeCoupon: boolean): number {
-        let price = this.productInfo.price * this.productInput.quantity;
+        let price = this.oneTimePriceOption.fee * this.productInput.quantity;
         if (includeCoupon)
             price = this.applyCoupon(price);
         return price;
@@ -742,10 +746,10 @@ export class SingleProductComponent implements OnInit {
             min = this.selectedSubscriptionOption.minCustomerPrice;
             max = this.selectedSubscriptionOption.maxCustomerPrice;
         } else {
-            customerChoosesPrice = this.productInfo.customerChoosesPrice;
-            price = this.productInfo.price;
-            min = this.productInfo.minCustomerPrice;
-            max = this.productInfo.maxCustomerPrice;
+            customerChoosesPrice = this.oneTimePriceOption.customerChoosesPrice;
+            price = this.oneTimePriceOption.fee;
+            min = this.oneTimePriceOption.minCustomerPrice;
+            max = this.oneTimePriceOption.maxCustomerPrice;
         }
 
         if (!customerChoosesPrice) {
@@ -799,7 +803,7 @@ export class SingleProductComponent implements OnInit {
 
     selectSuggestedAmount(suggestedAmount: ProductDonationSuggestedAmountInfo) {
         this.customerPriceEditMode = false;
-        this.productInfo.price = suggestedAmount.amount;
+        this.oneTimePriceOption.fee = suggestedAmount.amount;
     }
 
     countriesStateLoad(): void {
@@ -911,7 +915,6 @@ export class SingleProductComponent implements OnInit {
 
         this.productTaxInput.productId = this.productInfo.id;
         this.productTaxInput.stripeTaxProcuctCode = this.productInfo.stripeTaxProcuctCode;
-        this.productTaxInput.price = this.getGeneralPrice(true);
         this.productTaxInput.quantity = 1;
         
         switch (this.productInfo.type) {
@@ -919,8 +922,10 @@ export class SingleProductComponent implements OnInit {
             case ProductType.Digital:
             case ProductType.Event:
             case ProductType.Donation:
-                if (this.productInfo.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
-                    this.productTaxInput.price = this.productInfo.price;
+                if (this.oneTimePriceOption.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
+                    this.productTaxInput.price = this.oneTimePriceOption.fee;
+                else
+                    this.productTaxInput.price = this.getGeneralPrice(true);
                 break;
             case ProductType.Subscription:
                 if (this.selectedSubscriptionOption.customerChoosesPrice)

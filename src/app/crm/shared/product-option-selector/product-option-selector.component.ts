@@ -13,7 +13,7 @@ import {
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
-import { CustomPeriodType, PublicProductSubscriptionOptionInfo, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
+import { CustomPeriodType, PublicPriceOptionInfo, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { AppConsts } from '../../../../shared/AppConsts';
 
@@ -27,18 +27,18 @@ export class ProductOptionSelectorComponent extends AppComponentBase {
     static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.OneTime, BillingPeriod.Custom];
     billingPeriod = BillingPeriod;
 
-    subscriptionOptions: PublicProductSubscriptionOptionInfo[];
+    subscriptionOptions: PublicPriceOptionInfo[];
     availablePeriods: BillingPeriod[] = [];
 
     selectedBillingPeriod: BillingPeriod;
-    selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
+    selectedSubscriptionOption: PublicPriceOptionInfo;
     selectedOptionDescription: string;
 
-    @Input() set productSubscriptionOptions(options: PublicProductSubscriptionOptionInfo[]) {
+    @Input() set productSubscriptionOptions(options: PublicPriceOptionInfo[]) {
         this.subscriptionOptions = options;
         this.initOptions(options);
     }
-    @Output() onSelect: EventEmitter<{ period: BillingPeriod, option: PublicProductSubscriptionOptionInfo }> = new EventEmitter();
+    @Output() onSelect: EventEmitter<{ period: BillingPeriod, option: PublicPriceOptionInfo }> = new EventEmitter();
 
     constructor(
         injector: Injector,
@@ -46,7 +46,7 @@ export class ProductOptionSelectorComponent extends AppComponentBase {
         super(injector);
     }
 
-    initOptions(options: PublicProductSubscriptionOptionInfo[]) {
+    initOptions(options: PublicPriceOptionInfo[]) {
         let periods: RecurringPaymentFrequency[] = options.map(v => v.frequency);
 
         let billingPeriods = periods.map(v => PaymentService.getBillingPeriodByPaymentFrequency(v));

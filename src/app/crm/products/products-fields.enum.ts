@@ -8,9 +8,7 @@ export const ProductFields: KeysEnum<ProductDto> = {
     Description: 'Description',
     Group: 'Group',
     Type: 'Type',
-    Price: 'Price',
     CurrencyId: 'CurrencyId',
-    Unit: 'Unit',
     ThumbnailUrl: 'ThumbnailUrl',
     PublicName: 'PublicName',
     CreateUser: 'CreateUser',
@@ -19,5 +17,5 @@ export const ProductFields: KeysEnum<ProductDto> = {
     IsPublished: 'IsPublished',
     PublishDate: 'PublishDate',
     IsArchived: 'IsArchived',
-    ProductSubscriptionOptions: 'ProductSubscriptionOptions'
+    PriceOptions: 'PriceOptions'
 };
