@@ -387,24 +387,24 @@ export class SingleProductComponent implements OnInit {
     }
 
     getSubmitRequest(paymentGateway: string): Observable<SubmitProductRequestOutput> {
-        if (this.googleAutoComplete) {
-            this.billingAddress.streetAddress = [
-                this.address['streetNumber'],
-                this.address['street']
-            ].filter(val => val).join(' ');
-        }
-        this.billingAddress.countryId = this.getCountryCode(this.address.countryName);
-        this.billingAddress.stateId = this.statesService.getAdjustedStateCode(
-            this.billingAddress.stateId,
-            this.billingAddress.stateName
-        );
+        if (this.productInfo.data.isStripeTaxationEnabled) {
+            if (this.googleAutoComplete) {
+                this.billingAddress.streetAddress = this.addressInput.nativeElement.value;
+            }
+            this.billingAddress.countryId = this.getCountryCode(this.address.countryName);
+            this.billingAddress.stateId = this.statesService.getAdjustedStateCode(
+                this.billingAddress.stateId,
+                this.billingAddress.stateName
+            );
 
-        if (this.productInfo.data.isStripeTaxationEnabled && (!this.billingAddress.countryId || !this.billingAddress.zip ||
-            !this.billingAddress.stateId || !this.billingAddress.city || !this.billingAddress.streetAddress)) {
-            abp.notify.error(this.ls.l('Invalid Address'));
-            return of();
-        }
+            if (!this.billingAddress.countryId || !this.billingAddress.zip ||
+                !(this.billingAddress.stateId || this.billingAddress.stateName) ||
+                !this.billingAddress.city || !this.billingAddress.streetAddress) {
 
+                abp.notify.error(this.ls.l('Invalid Address'));
+                return of();
+            }
+        }
         let submitPriceOption = this.oneTimePriceOption || this.selectedSubscriptionOption;
         if ((submitPriceOption.customerChoosesPrice && (!submitPriceOption.fee || this.customerPriceEditMode))) {
             abp.notify.error(this.ls.l('Invalid Price'));

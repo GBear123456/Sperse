@@ -189,6 +189,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     product: CreateProductInput | UpdateProductInput;
     generalPriceOption: PriceOptionInfo;
     subscriptionOptions: PriceOptionInfo[] = [];
+    notVisibleOptions: PriceOptionInfo[] = [];
 
     amountFormat: string = '';
     amountNullableFormat: string = '';
@@ -385,8 +386,17 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     initPriceOptions(priceOptions: PriceOptionInfo[]) {
+        this.generalPriceOption = null;
+        this.subscriptionOptions = [];
+        this.notVisibleOptions = [];
+
         if (this.product.type == ProductType.Subscription) {
-            this.subscriptionOptions = priceOptions;
+            priceOptions.forEach(option => {
+                if (option.type == PriceOptionType.Subscription)
+                    this.subscriptionOptions.push(option);
+                else
+                    this.notVisibleOptions.push(option);
+            });
 
             priceOptions.forEach(option => {
                 option['gracePeriodEnabled'] = !!option.gracePeriodDayCount;
@@ -394,7 +404,16 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 option['billingCyclesEnabled'] = !!option.cycles;
             });
         } else {
-            this.generalPriceOption = priceOptions[0];
+            priceOptions.forEach(option => {
+                if (option.type == PriceOptionType.Subscription) {
+                    this.notVisibleOptions.push(option);
+                }
+                else {
+                    if (!this.generalPriceOption)
+                        this.generalPriceOption = option;
+                    this.notVisibleOptions.push(option);
+                }
+            });
         }
     }
 
@@ -520,10 +539,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             let options = this.subscriptionOptions;
             if (!options || !options.length)
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
-            this.product.priceOptions = this.subscriptionOptions;
+            this.product.priceOptions = [...this.subscriptionOptions, ...this.notVisibleOptions];
             this.product.productAddOns = undefined;
         } else {
-            this.product.priceOptions = [this.generalPriceOption];
+            this.product.priceOptions = [this.generalPriceOption, ...this.notVisibleOptions];
             this.product.productServices = undefined;
             this.product.productUpgradeAssignments = undefined;
             this.product.downgradeProductId = undefined;
@@ -543,7 +562,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
                 if (this.product.type == ProductType.Subscription && this.product.priceOptions)
                     this.product.priceOptions.forEach(item => {
-                        if (item.trialDayCount == null || isNaN(item.trialDayCount))
+                        if (item.type == PriceOptionType.Subscription && (item.trialDayCount == null || isNaN(item.trialDayCount)))
                             item.trialDayCount = 0;
                     });
 

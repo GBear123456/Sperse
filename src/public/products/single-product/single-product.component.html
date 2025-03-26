@@ -232,7 +232,7 @@
                         {{ls.l('Billing Address')}}
                         <dx-text-box *ngIf="!googleAutoComplete" name="address"
                                      [placeholder]=""
-                                     [(value)]="billingAddress.address">
+                                     [(value)]="billingAddress.streetAddress">
                         </dx-text-box>
 
                         <input *ngIf="googleAutoComplete"
@@ -253,7 +253,7 @@
                         </label>
                         <dx-text-box name="city"
                                      maxLength="50"
-                                     [value]="billingAddress.city">
+                                     [(value)]="billingAddress.city">
                         </dx-text-box>
                     </div>
                     <div class="input name__input">
