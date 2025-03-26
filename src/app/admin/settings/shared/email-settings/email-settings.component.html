@@ -25,10 +25,23 @@
         </div>
     </div>
 
+
+
     <div *ngIf="emailSettings" class="settings">
+        <div class="settings-header">
+            <img [src]="'assets/common/icons/smtp/' + (selectedProvider === undefined ? 'system.svg' : selectedProvider === null ? 'email.svg' : selectedProvider.icon)" />
+            <mat-slide-toggle
+                class="settings-toggle"
+                [(ngModel)]="showCustomSmptSettings"
+                labelPosition="before"
+            >
+                {{ l('Enable') }}
+            </mat-slide-toggle>
+        </div>
+
         <div class="flex-2">
             <div class="credentials" *ngIf="showCustomSmptSettings">
-                <h3><img src="assets/common/icons/smtp/step2.svg">&nbsp;&nbsp;&nbsp;Enter Credentials</h3>
+                <h3><img src="assets/common/icons/smtp/step1.svg">&nbsp;&nbsp;&nbsp;Enter Credentials</h3>
                 <div class="form-group">
                     <label for="SmtpUserName">{{l("UserName")}}</label>
                     <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control"
@@ -44,7 +57,7 @@
                            maxlength="128" autocomplete="off" placeholder="Enter your password">
                 </div>
             </div>
-            <div class="information" [ngClass]="{error: smtpProviderErrorLink}">
+            <div class="information" *ngIf="showCustomSmptSettings" [ngClass]="{error: smtpProviderErrorLink}">
                 <div class="block" *ngIf="selectedProvider?.domain == 'gmail.com'">
                     Gmail requires using an app-specific password for third-party apps, instead of your regular password for your security. Your Google account requires 2FA turned on to use this feature.
                     <br><br>
@@ -63,7 +76,7 @@
         </div>
         <div class="flex-2">
             <div class="servers" *ngIf="showCustomSmptSettings">
-                <h3><img src="assets/common/icons/smtp/step3.svg">&nbsp;&nbsp;&nbsp;Manually Edit Incoming & Outgoing Servers</h3>
+                <h3><img src="assets/common/icons/smtp/step2.svg">&nbsp;&nbsp;&nbsp;Manually Edit Incoming & Outgoing Servers</h3>
                 <div class="columns">
                     <div class="outgoing">
                         <div class="outgoing-field"><img src="assets/common/icons/smtp/outgoing.svg">&nbsp;&nbsp;&nbsp;OUTGOING SERVER</div>
@@ -96,7 +109,7 @@
                 </div>
             </div>
             <div class="default" [ngStyle]="{'margin-top': showCustomSmptSettings ? '68px' : '0'}">
-                <h3><img src="assets/common/icons/smtp/step{{showCustomSmptSettings ? 4 : 2}}.svg">&nbsp;&nbsp;&nbsp;Modify {{showCustomSmptSettings ? 'and Test Your Connection' : 'Email Settings'}}</h3>
+                <h3><img src="assets/common/icons/smtp/step{{showCustomSmptSettings ? 3 : 1}}.svg">&nbsp;&nbsp;&nbsp;Modify {{showCustomSmptSettings ? 'and Test Your Connection' : 'Email Settings'}}</h3>
                 <div class="form-group">
                     <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
                     <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control"
@@ -120,6 +133,22 @@
                            class="form-control" [ngClass]="{'edited':emailSettings.defaultReplyTo}"
                            [(ngModel)]="emailSettings.defaultReplyTo" maxlength="100" [attr.disabled]="showCustomSmptSettings ? '' : null">
                     <span class="info">* "Default Reply-To" email is not used when SMTP settings are configured</span>
+                </div>
+            </div>
+            <div class="information" *ngIf="!showCustomSmptSettings" [ngClass]="{error: smtpProviderErrorLink}">
+                <div class="block" *ngIf="selectedProvider?.domain == 'gmail.com'">
+                    Gmail requires using an app-specific password for third-party apps, instead of your regular password for your security. Your Google account requires 2FA turned on to use this feature.
+                    <br><br>
+                    <a target="blank" href="https://myaccount.google.com/apppasswords"><b>Generate an app-specific password</b></a>
+                    <br>
+                    <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('gmail.com')">Provider recommendations</a>
+                    <br>
+                    <a target="blank" href="https://support.google.com/mail/answer/185833">How to generate App Password</a>
+                </div>
+                <div class="block" *ngIf="selectedProvider?.domain == 'outlook.com'">
+                    If you face with any troubles on connecting your account check the link below.
+                    <br><br>
+                    <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('office365.com')">Provider recommendations</a>
                 </div>
             </div>
         </div>

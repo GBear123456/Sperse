@@ -7,8 +7,13 @@
         [class.white-inactive-mode]="!isDarkMode && !isActive"
         (click)="handleSubItemClick(item)"
     >
-        <lucide-angular *ngIf="item.iconComponent" [img]="item.iconComponent"></lucide-angular>
-        <lucide-angular *ngIf="!item.iconComponent" [img]="UserIcon"></lucide-angular>
+        <ng-container *ngIf="item.path.startsWith('email/'); else notEmailProviders">
+            <img [src]="'assets/common/icons/smtp/' + getEmailIcon(item)"/>
+        </ng-container>
+        <ng-template #notEmailProviders>
+            <lucide-angular *ngIf="item.iconComponent" [img]="item.iconComponent"></lucide-angular>
+            <lucide-angular *ngIf="!item.iconComponent" [img]="UserIcon"></lucide-angular>
+        </ng-template>
         <span>{{ item.label }}</span>
     </div>
 
