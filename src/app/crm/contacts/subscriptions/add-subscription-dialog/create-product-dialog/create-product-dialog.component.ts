@@ -404,7 +404,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 else {
                     if (!this.generalPriceOption)
                         this.generalPriceOption = option;
-                    this.notVisibleOptions.push(option);
+                    else
+                        this.notVisibleOptions.push(option);
                 }
             });
         }
