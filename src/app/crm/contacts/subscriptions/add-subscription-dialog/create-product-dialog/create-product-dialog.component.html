@@ -717,7 +717,7 @@
                                                     <div class="field-50">
                                                         <dx-number-box width="100%"
                                                                        [placeholder]="ls.l('Price')"
-                                                                       [format]="amountNullableFormat"
+                                                                       [format]="amountFormat"
                                                                        min="0"
                                                                        [(value)]="addOnOption.price"
                                                                        [disabled]="isReadOnly">
@@ -1130,7 +1130,7 @@
                                                        valueExpr="id"
                                                        displayExpr="name"
                                                        [showClearButton]="false"
-                                                       [dataSource]="products$ | async | FilterAssignments:[]:productType.General"
+                                                       [dataSource]="products$ | async | FilterAssignments:[]:productType.General:null:true"
                                                        [placeholder]="ls.l('Select') + ' ' + ls.l('Product') + '...'"
                                                        [(value)]="product.creditsTopUpProductId"
                                                        [disabled]="isReadOnly || !hasManageCredits">

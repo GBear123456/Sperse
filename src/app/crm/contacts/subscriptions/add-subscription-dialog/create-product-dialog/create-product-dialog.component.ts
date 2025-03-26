@@ -91,11 +91,12 @@ import { AppPermissions } from '../../../../../../shared/AppPermissions';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
-    transform(products: ProductDto[], excludeIds: number[], type: ProductType, excludeType: ProductType) {
+    transform(products: ProductDto[], excludeIds: number[], type: ProductType, excludeType: ProductType, excludeAddOnsRequired: boolean) {
         return products && products.filter(product =>
             excludeIds.indexOf(product.id) == -1 &&
             (!type || product.type == type) &&
-            (!excludeType || product.type != excludeType)
+            (!excludeType || product.type != excludeType) &&
+            (!excludeAddOnsRequired || !product.hasRequiredAddOns)
         );
     }
 }
@@ -547,8 +548,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     });
 
                 if (this.product.type != ProductType.Subscription) {
-                    if (this.product.productAddOns && this.product.productAddOns.some(v => !v.productAddOnOptions || !v.productAddOnOptions.length))
-                        return this.notify.error(this.ls.l('Add-On must have at least one option'));
+                    if (this.product.productAddOns) {
+                        if (this.product.productAddOns.some(v => !v.productAddOnOptions || !v.productAddOnOptions.length))
+                            return this.notify.error(this.ls.l('Add-On must have at least one option'));
+
+                        if (this.product.priceOptions.some(v => v.customerChoosesPrice) && this.product.productAddOns.length)
+                            return this.notify.error(this.ls.l('Add-On are not supported for products with \'Customer chooses price\' prices'));
+                    }
                 }
 
                 this.product.publishDate = this.publishDate ? DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '') : undefined;

@@ -1001,7 +1001,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.allowedProducts = (!this.isTaxationEnabled || !this.lines || this.lines.length == 0 || !firstNotCustomLine) ? 'ALL' : (firstNotCustomLine.isStripeTaxationEnabled ? 'T' : 'NT');
         this.products.forEach((product: any) => {
             product.isInStock = product.stock == null || product.stock > 0;
-            product.disabled = !product.isInStock;
+            product.disabled = !product.isInStock || product.hasRequiredAddOns;
             this.lines.some((item: any) => {
                 if (item.productCode && product.code == item.productCode)
                     return product.disabled = true;
