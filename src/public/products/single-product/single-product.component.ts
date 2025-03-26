@@ -36,7 +36,9 @@ import {
     SubmitTenancyRequestInput,
     TaxCalculationResultDto,
     TenantProductInfo,
-    TenantSubscriptionServiceProxy
+    TenantSubscriptionServiceProxy,
+    ProductAddOnDto,
+    ProductAddOnOptionDto
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
@@ -380,7 +382,7 @@ export class SingleProductComponent implements OnInit {
     isFormValid(): boolean {
         let isValidObj = this.agreedTermsAndServices && this.firstStepForm && this.firstStepForm.valid && (!this.phoneNumber || this.phoneNumber.isValid()) && this.isInStock &&
             (!this.productInfo.data.isStripeTaxationEnabled || (this.billingAddress.countryId && this.billingAddress.zip &&
-            (this.billingAddress.stateId || this.billingAddress.stateName) && this.billingAddress.city));
+                (this.billingAddress.stateId || this.billingAddress.stateName) && this.billingAddress.city));
         return !!isValidObj;
     }
 
@@ -414,6 +416,13 @@ export class SingleProductComponent implements OnInit {
             return of();
         }
 
+        if (this.productInfo.productAddOns && this.productInfo.productAddOns.length) {
+            if (this.productInfo.productAddOns.some(v => v.required && !v.productAddOnOptions.some(o => o['selected']))) {
+                abp.notify.error(this.ls.l('Select an option for required Add-Ons'));
+                return of();
+            }
+        }
+
         if (!this.isFormValid()) {
             abp.notify.error(this.ls.l('SaleProductValidationError'));
             return of();
@@ -439,7 +448,7 @@ export class SingleProductComponent implements OnInit {
                 this.productInput.unit = submitPriceOption.unit;
                 if (submitPriceOption.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
                     this.productInput.price = submitPriceOption.fee;
-
+                this.productInput.addOnOptionIds = this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).filter(v => v['selected']).map(v => v.id);
                 break;
             case ProductType.Subscription:
                 this.productInput.unit = PaymentService.getProductMeasurementUnit(submitPriceOption.frequency);
@@ -639,8 +648,13 @@ export class SingleProductComponent implements OnInit {
         }
     }
 
-    getGeneralPrice(includeCoupon: boolean): number {
-        let price = this.oneTimePriceOption.fee * this.productInput.quantity;
+    getGeneralPrice(includeCoupon: boolean, includeAddOns: boolean = true): number {
+        let pricePerItem = this.oneTimePriceOption.fee;
+        if (includeAddOns) {
+            if (this.productInfo.productAddOns && this.productInfo.productAddOns.length)
+                pricePerItem += this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).reduce((p, c) => p += c['selected'] ? c.price : 0, 0);
+        }
+        let price = pricePerItem * this.productInput.quantity;
         if (includeCoupon)
             price = this.applyCoupon(price);
         return price;
@@ -801,6 +815,18 @@ export class SingleProductComponent implements OnInit {
         });
     }
 
+    onAddOnChange(addOn: ProductAddOnDto, addOnOption: ProductAddOnOptionDto, newValue: boolean) {
+        if (newValue && !addOn.multiselect) {
+            addOn.productAddOnOptions.forEach(v => {
+                if (v.id != addOnOption.id)
+                    v['selected'] = false;
+            });
+        }
+
+        if (addOnOption.price)
+            this.calculateTax();
+    }
+
     selectSuggestedAmount(suggestedAmount: ProductDonationSuggestedAmountInfo) {
         this.customerPriceEditMode = false;
         this.oneTimePriceOption.fee = suggestedAmount.amount;
@@ -892,7 +918,7 @@ export class SingleProductComponent implements OnInit {
         this.calculationTaxTimeout = setTimeout(() => {
             this.calculateTaxFunc();
         }, 500);
-        
+
     }
 
     calculateTaxFunc() {
@@ -916,7 +942,7 @@ export class SingleProductComponent implements OnInit {
         this.productTaxInput.productId = this.productInfo.id;
         this.productTaxInput.stripeTaxProcuctCode = this.productInfo.stripeTaxProcuctCode;
         this.productTaxInput.quantity = 1;
-        
+
         switch (this.productInfo.type) {
             case ProductType.General:
             case ProductType.Digital:
@@ -935,6 +961,7 @@ export class SingleProductComponent implements OnInit {
                 this.productTaxInput.price = this.productTaxInput.price + this.getSignUpFee(true);
                 break;
         }
+
         this.appHttpConfiguration.avoidErrorHandling = true;
         this.publicProductService
             .getTaxCalculation(this.taxCalcInfo)
