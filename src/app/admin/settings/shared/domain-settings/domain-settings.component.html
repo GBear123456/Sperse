@@ -3,12 +3,11 @@
     (selectedIndexChange)="onTabChange()"
     animationDuration="10ms" 
     disableRipple="true" 
-    class="main-tabs"
 >
     <mat-tab>
         <ng-template mat-tab-label>
             <lucide-angular [img]="HouseIcon" class="mat-tab-icon"></lucide-angular>
-            {{l('Introduction')}}
+            <span>{{l('Introduction')}}</span>
         </ng-template>
 
         <div id="CustomDomainsTable" class="tab-body">
@@ -123,7 +122,7 @@
     <mat-tab *ngIf="isTenantHostCreateGranted || isTenantHostEditGranted">
         <ng-template mat-tab-label>
             <lucide-angular [img]="GridIcon" class="mat-tab-icon"></lucide-angular>
-            {{l('Your CRM App')}}
+            <span>{{l('Your CRM App')}}</span>
         </ng-template>
 
         <dx-scroll-view showScrollbar="onHover">
@@ -322,7 +321,7 @@
     <mat-tab *ngIf="isTenantHostCreateGranted || isTenantHostEditGranted">
         <ng-template mat-tab-label>
             <lucide-angular [img]="UsersIcon" class="mat-tab-icon"></lucide-angular>
-            {{l('Your Client Portal')}}
+            <span>{{l('Your Client Portal')}}</span>
         </ng-template>
 
         <dx-scroll-view showScrollbar="onHover">
@@ -640,7 +639,7 @@
     <mat-tab *ngIf="lendingPageEnabled">
         <ng-template mat-tab-label>
             <lucide-angular [img]="CartIcon" class="mat-tab-icon"></lucide-angular>
-            {{l('Your Landing Pages')}}
+            <span>{{l('Your Landing Pages')}}</span>
         </ng-template>
 
         <dx-scroll-view showScrollbar="onHover">
@@ -780,7 +779,7 @@
     <mat-tab>
         <ng-template mat-tab-label>
             <lucide-angular [img]="ShieldIcon" class="mat-tab-icon"></lucide-angular>
-            {{l('SSLConfiguration')}}
+            <span>{{l('SSLConfiguration')}}</span>
         </ng-template>
 
         <dx-scroll-view>

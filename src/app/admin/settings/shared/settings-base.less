@@ -14,42 +14,113 @@
     }
 
     ::ng-deep mat-tab-group {
-        height: 100%;
-
         .mat-tab-header {
-            border-bottom: none !important;
+            padding: 0.25rem;
         }
+    
+        .mat-tab-label {
+            opacity: 1;
+            height: auto;
+            padding-top: 1.25rem;
+            padding-bottom: 1.25rem;
+            padding-left: 1.75rem;
+            padding-right: 1.75rem;
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 0.15s;
+    
+            &:hover {
+                background-color: #deffde;
+            }
 
-        .mat-tab-labels, .mat-tab-label {
-            height: 60px;
+            span {
+                display: none;
+
+                @media (min-width: 640px) {
+                    display: block;
+                }
+            }
         }
-
-        .mat-tab-label:not(.mat-tab-label-active) {
-            background: rgba(245, 249, 251, 1);
-        }
-
+    
         .mat-tab-label-content {
-            width: 210px;
-
-            img {
-                width: 22px;
-                margin-right: 10px;
-            }
-
-            .title {
-                font-family: Plus Jakarta Sans;
-                font-size: 13px;
-                font-weight: 600;
-                line-height: 27px;
-                color: rgba(16, 33, 58, 1);
-                text-transform: uppercase;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+    
+        .mat-tab-icon {
+            display: flex;
+            margin-right: 0.5rem;
+        
+            ::ng-deep svg {
+                width: 1rem;
+                height: 1rem;
+                stroke-width: 1.5;
             }
         }
-
-        .mat-ink-bar {
-            background: rgba(0, 202, 106, 1) !important;
-            height: 3px;
-            top: 0;
+    
+        .mat-tab-label:not(.mat-tab-label-active) {
+            color: rgb(107 114 128);
+        }
+    
+        .mat-tab-label-active {
+            color: rgb(22 163 74);
+        }
+    
+        &.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+            background-color: rgb(22 163 74);
+            height: 4px;
         }
     }
+
+    ::ng-deep .mat-slide-toggle-bar {
+        width: 46px;
+        height: 25.5px;
+        border-radius: 25px;
+
+        .mat-slide-toggle-thumb-container {
+            top: 2px;
+            left: 2px;
+
+            .mat-slide-toggle-thumb {
+                height: 21px;
+                width: 21px;
+            }
+        }
+
+    }
+
+    ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb-container {
+        transform: translate3d(20.5px, 0, 0);
+    }
+
+    ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+        background-color: white;
+    }
+
+    ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+        background-color: rgb(34 197 94);
+    }
+
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: .5rem;
 }

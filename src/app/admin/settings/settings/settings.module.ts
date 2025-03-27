@@ -1,18 +1,7 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
-import { SettingsRoutingModule } from './settings-routing.module';
-import { MainMenuItemComponent } from './navigation/main-menu-item/main-menu-item.component';
-import { MainMenuPanelComponent } from './navigation/main-menu-panel/main-menu-panel.component';
-import { SubMenuItemComponent } from './navigation/sub-menu-item/sub-menu-item.component';
-import { SubMenuPanelComponent } from './navigation/sub-menu-panel/sub-menu-panel.component';
-import { SettingsNewComponent } from './settings.new.component';
-import { LucideAngularModule } from 'lucide-angular';
-import { SearchBarComponent } from '../shared/dashboard-settings/search-bar/search-bar.component';
-import { DashboardSettingComponent } from '../shared/dashboard-settings/dashboard-settings.component';
-import { SettingsHeaderComponent } from '../shared/header/settings-header.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 
 /** Third party imports */
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,6 +14,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { DxFileManagerModule } from 'devextreme-angular';
 import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -58,21 +48,46 @@ import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/fileupload'
 import { InputMaskModule } from 'primeng/inputmask';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
+import { LucideAngularModule } from 'lucide-angular';
+import { NgxFileDropModule } from 'ngx-file-drop';
+import { CKEditorModule } from 'ckeditor4-angular';
 
 /** Application imports */
+import { SettingsRoutingModule } from './settings-routing.module';
 import { EditTenantModule } from '@app/admin/tenants/edit-tenant-modal/edit-tenant-modal.module';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
 import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { FeaturesModule } from '@app/shared/features/features.module';
+import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
+import { ContactsModule } from '../../../crm/contacts/contacts.module';
+import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
+import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
+import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
+import { CurrencySelectorModule } from '@shared/common/currency-selector/currency-selector.module';
+import { TenantSettingsWizardModule } from '@root/shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
+import { ZapierModule } from '@shared/common/zapier/zapier.module';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { SettingService } from './settings.service'
 import { ImpersonationService } from '../../users/impersonation.service';
+import { SettingsHeaderComponent } from '../shared/header/settings-header.component';
+import { MainMenuItemComponent } from './navigation/main-menu-item/main-menu-item.component';
+import { MainMenuPanelComponent } from './navigation/main-menu-panel/main-menu-panel.component';
+import { SubMenuItemComponent } from './navigation/sub-menu-item/sub-menu-item.component';
+import { SubMenuPanelComponent } from './navigation/sub-menu-panel/sub-menu-panel.component';
+import { SettingsNewComponent } from './settings.new.component';
+import { SearchBarComponent } from '../shared/dashboard-settings/search-bar/search-bar.component';
+import { DashboardSettingComponent } from '../shared/dashboard-settings/dashboard-settings.component';
 import { GeneralSettingsComponent } from '../shared/general-settings/general-settings.component';
 import { AppearanceSettingsComponent } from '../shared/appearance-settings/appearance-settings.component';
 import { DomainSettingsComponent } from '../shared/domain-settings/domain-settings.component';
 import { EmailSettingsComponent } from '../shared/email-settings/email-settings.component';
 import { StripeSettingsComponent } from '../shared/stripe-settings/stripe-settings.component';
 import { PaypalSettingsComponent } from '../shared/paypal-settings/paypal-settings.component';
+import { AuthorizeNetSettingsComponent } from '../shared/authorize-net-settings/authorize-net-settings.component';
+import { RazorPaySettingsComponent } from '../shared/razorpay-settings/razorpay-settings.component';
 import { BankSettingsComponent } from '../shared/bank-settings/bank-settings.component';
 import { PersonalSettingsComponent } from '../shared/personal-settings/personal-settings.component';
 import { SmsVerificationModalComponent } from '../shared/personal-settings/sms-verification-modal.component';
@@ -101,22 +116,7 @@ import { ExternalAuthInfoComponent } from '../shared/helpers/external-auth-info/
 // import { SalesTalkSettingsComponent } from './settings/shared/sales-talk-settings/sales-talk-settings.component';
 // import { UploadSSLCertificateModalComponent } from './settings/shared/domain-settings/modals/upload-ssl-cert-modal.component';
 // import { AddOrEditSSLBindingModalComponent } from './settings/shared/domain-settings/modals/add-or-edit-ssl-binding-modal.component';
-import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
-import { ContactsModule } from '../../../crm/contacts/contacts.module';
-import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
-import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
-import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
-import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
-import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
-import { CurrencySelectorModule } from '@shared/common/currency-selector/currency-selector.module';
-import { NgxFileDropModule } from 'ngx-file-drop';
-
-import { SettingService } from './settings.service'
-import { TenantSettingsWizardModule } from '@root/shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
-import { CKEditorModule } from 'ckeditor4-angular';
 import { DocumentsComponent } from '@app/crm/documents/documents.component';
-import { DxFileManagerModule } from 'devextreme-angular';
-import { ZapierModule } from '@shared/common/zapier/zapier.module';
 import { SettingsCardComponent } from '../shared/card/settings-card.component'
 import { SettingsItemComponent } from '../shared/general-settings/setting-item/settings-item.component'
 import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-uploader.component'
@@ -206,6 +206,8 @@ import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-
         DomainSettingsComponent,
         EmailSettingsComponent,
         PaypalSettingsComponent,
+        AuthorizeNetSettingsComponent,
+        RazorPaySettingsComponent,
         StripeSettingsComponent,
         BankSettingsComponent,
         SmsVerificationModalComponent,

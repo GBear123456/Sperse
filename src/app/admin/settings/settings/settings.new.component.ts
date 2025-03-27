@@ -13,14 +13,13 @@ import { filter } from 'rxjs/operators';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsNewComponent extends AppComponentBase implements OnInit, OnDestroy {
-    private sidebarOpen: boolean = true;
-    private selectedMenu: MenuItem = null;
-    private selectedMainItem: string = null;
+    sidebarOpen: boolean = true;
+    selectedMenu: MenuItem = null;
+    selectedMainItem: string = null;
 
-    private navs: MenuItem[] = mainNavigation;
+    navs: MenuItem[] = mainNavigation;
     saveSubject: Subject<any> = new Subject();
-    private title: string;
-    private variantInside: string;
+    title: string;
 
     public headlineButtons: HeadlineButton[] = [
       {

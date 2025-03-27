@@ -17,7 +17,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
     selector: 'email-settings',
     templateUrl: './email-settings.component.html',
-    styleUrls: ['./email-settings.component.less'],
+    styleUrls: ['./email-settings.component.less', '../settings-base.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantSettingsServiceProxy]
 })

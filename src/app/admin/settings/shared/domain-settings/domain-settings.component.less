@@ -2,66 +2,6 @@
     display: block;
     position: relative;
 
-    .main-tabs {
-        ::ng-deep .mat-tab-header {
-            padding: 0.25rem;
-            border-bottom: 1px solid rgba(0, 0, 0, .12) !important;
-        }
-
-        ::ng-deep .mat-tab-labels {
-            height: auto;
-        }
-    
-        ::ng-deep .mat-tab-label {
-            opacity: 1;
-            height: auto;
-            padding-top: 1.25rem;
-            padding-bottom: 1.25rem;
-            padding-left: 1.75rem;
-            padding-right: 1.75rem;
-            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 0.15s;
-    
-            &:hover {
-                background-color: #deffde;
-            }
-        }
-    
-        ::ng-deep .mat-tab-label-content {
-            width: auto;
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: 0.875rem;
-            line-height: 1.25rem;
-        }
-    
-        .mat-tab-icon {
-            display: flex;
-            margin-right: 0.5rem;
-        
-            ::ng-deep svg {
-                width: 1rem;
-                height: 1rem;
-                stroke-width: 1.5;
-            }
-        }
-    
-        ::ng-deep .mat-tab-label:not(.mat-tab-label-active) {
-            color: rgb(107 114 128);
-        }
-    
-        ::ng-deep .mat-tab-label-active {
-            color: rgb(22 163 74);
-        }
-    
-        ::ng-deep .mat-ink-bar {
-            background-color: rgb(22 163 74);
-            height: 4px;
-            top: unset;
-        }
-    }
-
     ::ng-deep .mat-tab-body-content {
         overflow: hidden;
     }

@@ -30,9 +30,7 @@
             </dx-scroll-view>
         </div>
     
-        <div    
-            class="settings-content-wrapper"
-        >
+        <div class="settings-content-wrapper">
             <div class="settings-content">
                 <dx-scroll-view showScrollbar="onHover" [width]="'100%'">
                     <settings-header
@@ -40,10 +38,7 @@
                         [title]="title"
                         [isDarkMode]="settingService.isDarkMode" 
                     ></settings-header>
-                    <div 
-                        class="settings-router-wrapper"
-                        [class]="variantInside"
-                    >
+                    <div class="settings-router-wrapper">
                         <router-outlet></router-outlet>
                     </div>
                 </dx-scroll-view>

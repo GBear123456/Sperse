@@ -16,7 +16,7 @@ import { Download, Info, LucideAngularComponent, Trash2, Upload } from 'lucide-a
 @Component({
     selector: 'settings-uploader',
     templateUrl: './settings-uploader.component.html',
-    styleUrls: [ '/settings-uploader.component.less' ],
+    styleUrls: [ '/settings-uploader.component.less', '../settings-base.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsUploaderComponent {

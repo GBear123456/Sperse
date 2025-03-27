@@ -36,4 +36,8 @@ export class SubMenuItemComponent implements OnInit {
         if (item.id === 'other') return 'email.svg'
         return this.supportedProviders.find(provider => provider.name === item.label)?.icon
     }
+
+    getPaymentIcon = (item: MenuItem) => {
+        return this.settingService.supportedPaymentProviders.find(provider => provider.id === item.id).iconUrl;
+    }
 }

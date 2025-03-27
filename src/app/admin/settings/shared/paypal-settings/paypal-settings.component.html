@@ -1,12 +1,15 @@
-<h2>{{l('Paypal')}} {{l('Settings')}}</h2>
-
-<div class="form-group">
-    <dx-check-box id="PayPalIsEnabled"
-                  [text]="l('Enabled')"
-                  [(value)]="paypalPaymentSettings.isEnabled">
-    </dx-check-box>
+<div class="header">
+    <img src="assets/common/icons/paypal.svg" />
+    <mat-slide-toggle
+        class="header-toggle"
+        [(ngModel)]="paypalPaymentSettings.isEnabled"
+        labelPosition="before"
+    >
+        {{ l('Enable PayPal Payments For Checkout') }}
+    </mat-slide-toggle>
 </div>
-<div class="form-group">
+
+<div class="form-group" style="margin-top: 1.5rem;">
     <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
     <dx-select-box class="bold-text"
                    stylingMode="outlined"

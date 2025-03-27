@@ -11,7 +11,7 @@
                 <mat-tab [label]="l('Profile')">
                     <ng-template mat-tab-label>
                         <lucide-angular [img]="UserIcon" class="mat-tab-icon"></lucide-angular>
-                        {{l('Personal Profile')}}
+                        <span>{{l('Personal Profile')}}</span>
                     </ng-template>
                     <div class="profile-settings-card">
                         <div class="profile-settings-header-container">
@@ -161,7 +161,7 @@
                 <mat-tab [label]="l('SMTP')">
                     <ng-template mat-tab-label>
                         <lucide-angular [img]="EmailIcon" class="mat-tab-icon"></lucide-angular>
-                        {{l('My Email Settings')}}
+                        <span>{{l('My Email Settings')}}</span>
                     </ng-template>
                     <div>
                         <div class="profile-settings-header-container">
@@ -307,7 +307,7 @@
                 <mat-tab [label]="l('Gmail')" [disabled]="!gmailSettings || !gmailSettings.clientId">
                     <ng-template mat-tab-label>
                         <lucide-angular [img]="SignatureIcon" class="mat-tab-icon"></lucide-angular>
-                        {{l('Gmail')}}
+                        <span>{{l('Gmail')}}</span>
                     </ng-template>
                     <div class="form-group">
                         <dx-check-box id="GmailIsEnabled"
@@ -346,7 +346,7 @@
                 <mat-tab [label]="l('Signature')">
                     <ng-template mat-tab-label>
                         <lucide-angular [img]="SignatureIcon" class="mat-tab-icon"></lucide-angular>
-                        {{l('My Email Signature')}}
+                        <span>{{l('My Email Signature')}}</span>
                     </ng-template>
                     <div>
                         <div class="profile-settings-header-container">
@@ -388,7 +388,7 @@
                 <mat-tab [label]="l('TwoFactorLogin')">
                     <ng-template mat-tab-label>
                         <lucide-angular [img]="KeyIcon" class="mat-tab-icon"></lucide-angular>
-                        {{l('2FA Secuirty')}}
+                        <span>{{l('2FA Secuirty')}}</span>
                     </ng-template>
                     <div>
                         <div class="profile-settings-header-container">

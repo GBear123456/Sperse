@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardSettingComponent {
-    private searchQuery: string = '';
+    searchQuery: string = '';
 
     constructor(
         private sanitizer: DomSanitizer,
@@ -19,7 +19,7 @@ export class DashboardSettingComponent {
         private router: Router
     ) {}
 
-    private categoryColors = [
+    categoryColors = [
         // Blues
         { bg: "blue-bg", border: "blue-border", icon: "blue-icon" },
         // Purples
