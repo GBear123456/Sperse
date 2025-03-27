@@ -49,9 +49,30 @@
 
         .toggle-button {
             width: 100%;
+            border-radius: 20px;
+            background-color: rgb(34 197 94);
 
             @media (min-width: 768px) {
                 width: auto;
+            }
+
+            button {
+                width: 100px;
+                padding: 6px;
+                border-radius: 20px;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                font-weight: bold;
+                border: 3px solid rgb(34 197 94);
+                background: rgb(34 197 94);
+                color: white;
+                transition: all 0.3s;
+                
+                &.is-active {
+                    background: white;
+                    color: #333;
+                }
             }
         }
     }
@@ -415,50 +436,6 @@
             font-size: 14px;
             letter-spacing: 0.2px;
             color: #677380;
-        }
-    }
-    /* Toggle button */
-    .toggleContainer {
-        position: relative;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        width: fit-content;
-        border: 3px solid rgb(34 197 94);
-        border-radius: 20px;
-        background: rgb(34 197 94);
-        font-weight: bold;
-        color: white;
-        cursor: pointer;
-        
-        &::before {
-            content: '';
-            position: absolute;
-            width: 50%;
-            height: 100%;
-            left: 0%;
-            border-radius: 20px;
-            background: white;
-            transition: all 0.3s;
-        }
-
-        div {
-            width: 100px;
-            padding: 6px;
-            text-align: center;
-            z-index: 1;
-            transition: all 0.3s;
-
-            &.is-active {
-                color: #333;
-            }
-        }
-    }
-
-    .toggleCheckbox {
-        display: none;
-
-        &:checked + .toggleContainer::before {
-            left: 50%;
         }
     }
 }

@@ -56,7 +56,17 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
     tenantId = this.appSession.tenantId;
 
     hasPortalFeature = this.feature.isEnabled(AppFeatures.Portal);
-    isPortalSelected = false;
+    featureTypeList = [{
+        type: AppFeatures.PortalPublic,
+        name: this.l('Public')
+    }, {
+        type: AppFeatures.Admin,
+        name: this.l('Platform')
+    }, {
+        type: AppFeatures.Portal,
+        name: this.l('Portal')
+    }];
+    selectedFeatureType: AppFeatures.PortalPublic | AppFeatures.Admin | AppFeatures.Portal = AppFeatures.PortalPublic;
 
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
@@ -157,7 +167,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
                     if (!this.selectedOrgUnitId)
                         this.tenantDefaultSettings = AppearanceSettingsDto.fromJS(res.appearanceSettings);
 
-                    this.toggleColorSetting(this.isPortalSelected);
+                    this.toggleColorSetting(this.selectedFeatureType);
                     this.changeDetection.detectChanges();
 
                     this.someColorChanged = false;
@@ -234,11 +244,11 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
         }
     }
 
-    toggleColorSetting(isPortalSelected) {
-        this.isPortalSelected = isPortalSelected;
-        this.colorSettings = this.isPortalSelected ? this.appearance.portalSettings : this.appearance;
+    toggleColorSetting(selected) {
+        this.selectedFeatureType = selected;
+        this.colorSettings = this.selectedFeatureType !== AppFeatures.Admin ? this.appearance.portalSettings : this.appearance;
 
-        this.currentDefaultSettings = this.getDefaultColorSettings(isPortalSelected);
+        this.currentDefaultSettings = this.getDefaultColorSettings(this.selectedFeatureType !== AppFeatures.Admin);
         this.changeDetection.detectChanges();
     }
 
@@ -420,7 +430,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
     }
 
     onColorValueChanged(event, defaultColor) {
-        this.someColorChanged = this.someColorChanged || (event.value != defaultColor && !this.isPortalSelected);
+        this.someColorChanged = this.someColorChanged || (event.value != defaultColor && this.selectedFeatureType === AppFeatures.Admin);
         if (!event.value)
             event.component.option('value', defaultColor);
     }

@@ -13,11 +13,9 @@
     </div>
     
     <div *ngIf="hasPortalFeature" class="toggle-button">
-        <input type="checkbox" (click)="toggleColorSetting(!isPortalSelected)" id="toggle" class="toggleCheckbox" />
-        <label for="toggle" class="toggleContainer">
-            <div [class.is-active]="!isPortalSelected">{{l('Platform')}}</div>
-            <div [class.is-active]="isPortalSelected">{{l('Portal')}}</div>
-        </label>
+        <button *ngFor="let feature of featureTypeList" [class.is-active]="selectedFeatureType === feature.type" (click)="toggleColorSetting(feature.type)">
+            {{feature.name}}
+        </button>
     </div>
 </div>
 
@@ -26,7 +24,7 @@
         <div class="card">
             <h2>{{l('Brand')}} {{l('Assets')}}</h2>
 
-            <div [class.collapse]="isPortalSelected" class="upload-wrapper">
+            <div [class.collapse]="selectedFeatureType !== featureTypeList[1].type" class="upload-wrapper">
                 <settings-uploader #logoUploader
                           [showPlusSign]="false"
                           [title]="l('ApplicationLogo')"
@@ -111,7 +109,7 @@
                     </settings-uploader>
                 </div>
             </div>
-            <div *ngIf="hasPortalFeature" [class.collapse]="!isPortalSelected" class="upload-wrapper">
+            <div *ngIf="hasPortalFeature" [class.collapse]="selectedFeatureType === featureTypeList[1].type" class="upload-wrapper">
                 <settings-uploader #portalLogoUploader
                           [showPlusSign]="false"
                           [title]="l('Portal Logo')"
