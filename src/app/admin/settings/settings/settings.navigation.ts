@@ -60,6 +60,8 @@ import { LinkedInSettingsComponent } from "../shared/linkedin-settings/linkedin-
 import { FacebookSettingsComponent } from "../shared/facebook-settings/facebook-settings.component";
 import { GoogleSettingsComponent } from "../shared/google-settings/google-settings.component";
 import { DiscordSettingsComponent } from "../shared/discord-settings/discord-settings.component";
+import { AuthorizeNetSettingsComponent } from "../shared/authorize-net-settings/authorize-net-settings.component";
+import { RazorPaySettingsComponent } from "../shared/razorpay-settings/razorpay-settings.component";
 
 export interface MenuItem {
     id: string;
@@ -132,12 +134,14 @@ export interface MenuItem {
               label: "Authorize.Net", 
               path: "payment/authorize",
               searchAliases: ["authorize net", "auth net"],
+              component: AuthorizeNetSettingsComponent
             },
             { 
               id: "razorpay", 
               label: "RazorPay", 
               path: "payment/razorpay",
               searchAliases: ["razor", "india payments"],
+              component: RazorPaySettingsComponent
             },
             { 
               id: "paystack", 

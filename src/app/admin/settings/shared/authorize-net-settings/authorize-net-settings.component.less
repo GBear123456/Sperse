@@ -1,0 +1,39 @@
+:host {
+    display: block;
+    padding: 1rem;
+
+    @media (min-width: 640px) {
+        padding: 1.5rem;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        @media (min-width: 640px) {
+            flex-direction: row;
+        }
+
+        img {
+            width: auto;
+            height: 2.5rem;
+            object-fit: contain;
+            align-self: flex-start;
+
+            @media (min-width: 640px) {
+                height: 3.5rem;
+            }
+        }
+
+        .header-toggle {
+            margin-top: 5px;
+            align-self: flex-end;
+
+            @media (min-width: 640px) {
+                align-self: flex-start;
+            }
+        }
+    }
+}
