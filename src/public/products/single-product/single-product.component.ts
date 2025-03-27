@@ -816,14 +816,17 @@ export class SingleProductComponent implements OnInit {
     }
 
     onAddOnChange(addOn: ProductAddOnDto, addOnOption: ProductAddOnOptionDto, newValue: boolean) {
+        let recalculateTaxes = !!addOnOption.price;
         if (newValue && !addOn.multiselect) {
             addOn.productAddOnOptions.forEach(v => {
-                if (v.id != addOnOption.id)
+                if (v.id != addOnOption.id && v['selected']) {
+                    recalculateTaxes = recalculateTaxes || !!v.price;
                     v['selected'] = false;
+                }
             });
         }
 
-        if (addOnOption.price)
+        if (recalculateTaxes)
             this.calculateTax();
     }
 
