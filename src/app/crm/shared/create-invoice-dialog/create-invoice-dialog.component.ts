@@ -67,7 +67,8 @@ import {
     PublicProductServiceProxy,
     TaxCalculationResultDto,
     GetTaxCalculationInput,
-    ProductTaxInput
+    ProductTaxInput,
+    PriceOptionType
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -226,8 +227,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     ];
 
     invoiceInfo: InvoiceInfo;
-    invoiceUnits = Object.keys(ProductMeasurementUnit).map(item => {
+    invoiceUnits = Object.keys(ProductMeasurementUnit).map((item, i) => {
         return {
+            id: -i,
             unitId: item,
             unitName: this.ls.l(item)
         };
@@ -391,11 +393,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             Rate: res.rate,
                             Description: description,
                             details: lineDescription.split('\n').slice(1).join('\n'),
-                            units: res.productType == 'Subscription' ? [{
+                            units: res.productCode ? [{
+                                id: res.priceOptionId,
+                                type: res.priceOptionType,
                                 unitId: res.unitId,
                                 unitName: res.unitName
                             }] : undefined,
                             ...res,
+                            priceOptionId: res.productCode ? res.priceOptionId : this.invoiceUnits.find(v => v.unitId == res.unitId).id,
                             description: description,
                             isStripeTaxationEnabled: res.isStripeTaxationEnabled,
                             stripeTaxProcuctCode: res.stripeTaxProcuctCode
@@ -549,7 +554,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: row['productCode'],
-                    priceOptionId: row['priceOptionId'],
+                    priceOptionId: row.isCrmProduct ? row['priceOptionId'] : undefined,
                     description: description + (row['details'] ? '\n' + row['details'] : ''),
                     sortOrder: index,
                     commissionableAmount: undefined
@@ -579,7 +584,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: row['productCode'],
-                    priceOptionId: row['priceOptionId'],
+                    priceOptionId: row.isCrmProduct ? row['priceOptionId'] : undefined,
                     description: description + (row['details'] ? '\n' + row['details'] : ''),
                     sortOrder: index,
                     commissionableAmount: undefined
@@ -821,7 +826,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    productsLookupRequest(phrase = '', callback?, code?: string) {
+    productsLookupRequest(phrase = '', callback?: (res: ProductPaymentOptionsInfo[]) => void, code?: string) {
         if (this.featureMaxProductCount)
             this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10, this.currency).subscribe(res => {
                 if (!phrase || phrase == this.lastProductPhrase) {
@@ -953,14 +958,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
     selectInvoiceProduct(event, cellData) {
         let item = event.selectedItem;
         if (item && item.hasOwnProperty('rate')) {
-            cellData.data.productId = undefined;
-            cellData.data.productCode = undefined;
-            cellData.data.priceOptionId = undefined;
-            cellData.data.units = undefined;
             cellData.data.unitId = cellData.data.unitId || item.unitId;
             cellData.data.rate = cellData.data.rate || item.rate;
             cellData.data.quantity = cellData.data.quantity || 1;
             cellData.data.details = item.details;
+            cellData.data.productId = undefined;
+            cellData.data.productCode = undefined;
+            cellData.data.priceOptionId = this.invoiceUnits.find(v => v.unitId == cellData.data.unitId).id;
+            cellData.data.priceOptionType = undefined;
+            cellData.data.units = undefined;
             this.changeDetectorRef.detectChanges();
         }
     }
@@ -979,6 +985,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 cellData.data.description || item.name;
             cellData.data.units = item.paymentOptions;
             cellData.data.priceOptionId = item.paymentOptions[0].id;
+            cellData.data.priceOptionType = item.paymentOptions[0].type;
             cellData.data.unitId = item.paymentOptions[0].unitId;
             cellData.data.rate = item.paymentOptions[0].price;
             cellData.data.quantity = 1;
@@ -1020,7 +1027,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     checkSubscriptionsCount() {
         if (this.isStripeEnabled) {
             let subsLines = this.lines.filter(
-                (line: any) => line.productType == 'Subscription' && (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year || line.unitId == ProductMeasurementUnit.Custom)
+                (line: any) => line.priceOptionType == PriceOptionType.Subscription && (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year || line.unitId == ProductMeasurementUnit.Custom)
             );
 
             this.stripeSubscriptionsLinesCount = subsLines.length;
@@ -1033,11 +1040,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
     checkReccuringSubscriptionIsSelected(calculateBalance: boolean = true) {
         this.hasReccuringSubscription = this.lines.some((line: any) =>
             line.isCrmProduct &&
-            line.productType == 'Subscription' &&
+            line.priceOptionType == PriceOptionType.Subscription &&
             (line.unitId == ProductMeasurementUnit.Month || line.unitId == ProductMeasurementUnit.Year || line.unitId == ProductMeasurementUnit.Custom)
         );
         this.hasSubscription = this.hasReccuringSubscription || this.lines.some((line: any) =>
-            line.isCrmProduct && line.productType == 'Subscription' && line.unitId == ProductMeasurementUnit.Piece
+            line.isCrmProduct && line.priceOptionType == PriceOptionType.Subscription && line.unitId == ProductMeasurementUnit.Piece
         );
         if (!this.disabledForUpdate && (!this.hasSubscription && this.startDate))
             this.startDate = undefined;
@@ -1141,7 +1148,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     onUnitOpened(event, cellData) {
         if (cellData.data.productCode &&
-            cellData.data.productType == 'Subscription' &&
             !cellData.data.units[0].hasOwnProperty('price')
         ) {
             this.productsLookupRequest('', (products) => {
@@ -1154,12 +1160,17 @@ export class CreateInvoiceDialogComponent implements OnInit {
     onUnitChanged(event, cellData) {
         if (cellData.data.units) {
             let unit = cellData.data.units.find(
-                item => item.unitId == event.value
+                item => item.id == event.value
             );
-            if (unit) {
-                cellData.data.rate = unit.price;
-                cellData.data.priceOptionId = unit.id;
-            }
+            cellData.data.rate = unit.price;
+            cellData.data.priceOptionId = unit.id;
+            cellData.data.priceOptionType = unit.type;
+            cellData.data.unitId = unit.unitId;
+        } else {
+            let unit = this.invoiceUnits.find(
+                item => item.id == event.value
+            );
+            cellData.data.unitId = unit.unitId;
         }
         this.checkSubscriptionsCount();
         this.checkReccuringSubscriptionIsSelected(false);
