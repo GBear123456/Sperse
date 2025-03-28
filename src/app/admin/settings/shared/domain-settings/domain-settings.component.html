@@ -6,7 +6,7 @@
 >
     <mat-tab>
         <ng-template mat-tab-label>
-            <lucide-angular [img]="HouseIcon" class="mat-tab-icon"></lucide-angular>
+            <lucide-angular [img]="HouseIcon"></lucide-angular>
             <span>{{l('Introduction')}}</span>
         </ng-template>
 
@@ -26,7 +26,10 @@
                                 <img src="./assets/common/images/domain.svg" />
                                 <div class="title">Enter a valid domain</div>
                                 <p class="description">Input the domain you wish to use in place of the default one.</p>
-                                <button *ngIf="isTenantHostCreateGranted" (click)="initBindingModal(APP_DOMAIN_TAB)"><i class="fa fa-plus"></i>{{l("AddSSLBinding")}}</button>
+                                <button class="base-button" *ngIf="isTenantHostCreateGranted" (click)="initBindingModal(APP_DOMAIN_TAB)">
+                                    <lucide-angular [img]="PlusIcon"></lucide-angular>
+                                    <span>{{l("AddSSLBinding")}}</span>
+                                </button>
                             </div>
                             <div class="enter-a-valid-domain">
                                 <div class="badge">3</div>
@@ -121,7 +124,7 @@
     </mat-tab>
     <mat-tab *ngIf="isTenantHostCreateGranted || isTenantHostEditGranted">
         <ng-template mat-tab-label>
-            <lucide-angular [img]="GridIcon" class="mat-tab-icon"></lucide-angular>
+            <lucide-angular [img]="GridIcon"></lucide-angular>
             <span>{{l('Your CRM App')}}</span>
         </ng-template>
 
@@ -320,7 +323,7 @@
     </mat-tab>
     <mat-tab *ngIf="isTenantHostCreateGranted || isTenantHostEditGranted">
         <ng-template mat-tab-label>
-            <lucide-angular [img]="UsersIcon" class="mat-tab-icon"></lucide-angular>
+            <lucide-angular [img]="UsersIcon"></lucide-angular>
             <span>{{l('Your Client Portal')}}</span>
         </ng-template>
 
@@ -638,7 +641,7 @@
     </mat-tab>
     <mat-tab *ngIf="lendingPageEnabled">
         <ng-template mat-tab-label>
-            <lucide-angular [img]="CartIcon" class="mat-tab-icon"></lucide-angular>
+            <lucide-angular [img]="CartIcon"></lucide-angular>
             <span>{{l('Your Landing Pages')}}</span>
         </ng-template>
 
@@ -778,7 +781,7 @@
     </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
-            <lucide-angular [img]="ShieldIcon" class="mat-tab-icon"></lucide-angular>
+            <lucide-angular [img]="ShieldIcon"></lucide-angular>
             <span>{{l('SSLConfiguration')}}</span>
         </ng-template>
 
@@ -800,8 +803,8 @@
                     <h3>Custom SSL Certificates</h3>
                     <p>If you have your own SSL certificates, you can upload them here. This is optional and only recommended for organizations with specific compliance requirements.</p>
                     <div class="button-wrapper">
-                        <button *ngIf="isTenantHostCreateGranted" (click)="showSSLDialog()">Upload Certificate</button>
-                        <button *ngIf="isTenantHostCreateGranted" (click)="showSSLDialog()">Upload Private Key</button>
+                        <button class="base-button" *ngIf="isTenantHostCreateGranted" (click)="showSSLDialog()">Upload Certificate</button>
+                        <button class="base-button" *ngIf="isTenantHostCreateGranted" (click)="showSSLDialog()">Upload Private Key</button>
                     </div>
                 </div>
 

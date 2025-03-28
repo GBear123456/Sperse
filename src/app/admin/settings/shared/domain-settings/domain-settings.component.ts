@@ -25,7 +25,7 @@ import { SettingsComponentBase } from './../settings-base.component';
 import { AppConsts } from '@shared/AppConsts';
 import { PortalType } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
-import { Grid, House, Shield, ShoppingCart, Users } from 'lucide-angular';
+import { Grid, House, Plus, Shield, ShoppingCart, Users } from 'lucide-angular';
 
 @Component({
     selector: 'domain-settings',
@@ -40,6 +40,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     readonly UsersIcon = Users;
     readonly CartIcon = ShoppingCart;
     readonly ShieldIcon = Shield;
+    readonly PlusIcon = Plus;
 
     @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
     @ViewChild('sslGrid') sslGrid: DxDataGridComponent;

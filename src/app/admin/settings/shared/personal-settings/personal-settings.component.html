@@ -10,7 +10,7 @@
             >
                 <mat-tab [label]="l('Profile')">
                     <ng-template mat-tab-label>
-                        <lucide-angular [img]="UserIcon" class="mat-tab-icon"></lucide-angular>
+                        <lucide-angular [img]="UserIcon"></lucide-angular>
                         <span>{{l('Personal Profile')}}</span>
                     </ng-template>
                     <div class="profile-settings-card">
@@ -160,7 +160,7 @@
                 </mat-tab>
                 <mat-tab [label]="l('SMTP')">
                     <ng-template mat-tab-label>
-                        <lucide-angular [img]="EmailIcon" class="mat-tab-icon"></lucide-angular>
+                        <lucide-angular [img]="EmailIcon"></lucide-angular>
                         <span>{{l('My Email Settings')}}</span>
                     </ng-template>
                     <div>
@@ -306,7 +306,7 @@
                 </mat-tab>
                 <mat-tab [label]="l('Gmail')" [disabled]="!gmailSettings || !gmailSettings.clientId">
                     <ng-template mat-tab-label>
-                        <lucide-angular [img]="SignatureIcon" class="mat-tab-icon"></lucide-angular>
+                        <lucide-angular [img]="SignatureIcon"></lucide-angular>
                         <span>{{l('Gmail')}}</span>
                     </ng-template>
                     <div class="form-group">
@@ -345,7 +345,7 @@
                 </mat-tab>
                 <mat-tab [label]="l('Signature')">
                     <ng-template mat-tab-label>
-                        <lucide-angular [img]="SignatureIcon" class="mat-tab-icon"></lucide-angular>
+                        <lucide-angular [img]="SignatureIcon"></lucide-angular>
                         <span>{{l('My Email Signature')}}</span>
                     </ng-template>
                     <div>
@@ -387,7 +387,7 @@
                 </mat-tab>
                 <mat-tab [label]="l('TwoFactorLogin')">
                     <ng-template mat-tab-label>
-                        <lucide-angular [img]="KeyIcon" class="mat-tab-icon"></lucide-angular>
+                        <lucide-angular [img]="KeyIcon"></lucide-angular>
                         <span>{{l('2FA Secuirty')}}</span>
                     </ng-template>
                     <div>
@@ -424,19 +424,17 @@
                                     <img [src]="user.qrCodeSetupImageUrl" />
                                 </div>
                                 <div class="authenticator-app">
-                                    <div class="form-group">
-                                        <label for="setup-key">Setup Key</label>
-                                        <div style="display: flex;">
-                                            <input id="setup-key" value="ABCD EFGH IJKL MNOP" readOnly>
-                                            <button>Copy</button>
-                                        </div>
+                                    <label class="base-label">Setup Key</label>
+                                    <div class="input-wrapper">
+                                        <input class="base-input" value="ABCD EFGH IJKL MNOP" readOnly>
+                                        <button class="base-button">Copy</button>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="verification-code">Verification Code</label>
-                                        <div style="display: flex;">
-                                            <input id="verification-code" placeholder="Enter 6-digit code">
-                                            <button>Verify</button>
-                                        </div>
+
+                                    <br/>
+                                    <label class="base-label">Verification Code</label>
+                                    <div class="input-wrapper">
+                                        <input class="base-input" placeholder="Enter 6-digit code">
+                                        <button class="base-button">Verify</button>
                                     </div>
                                 </div>
                             </div>

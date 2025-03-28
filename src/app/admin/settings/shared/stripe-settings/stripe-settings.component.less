@@ -113,11 +113,11 @@
 
                             .title {
                                 font-size: .875rem;
-                                line-height: 1.25rem;
+                                line-height: 1.5rem;
 
                                 @media (min-width: 640px) {
                                     font-size: 1rem;
-                                    line-height: 1.5rem;
+                                    line-height: 2rem;
                                 }
                             }
                         }
@@ -164,11 +164,7 @@
                             line-height: 1.75rem;
                         }
 
-                        .video-block-learnmore {
-                            font-size: 1rem;
-                            font-weight: 500;
-                            line-height: 1.5rem;
-                            color: rgb(37 99 235);
+                        a {
                             margin-top: 1rem;
                         }
                     }
@@ -213,21 +209,13 @@
                             }
                         }
 
-                        .stripe-btn {
-                            height: 2.5rem;
+                        button {
                             background-color: rgb(59 130 246);
-                            border-radius: .375rem;
                             color: white;
-                            font-weight: 500;
-                            font-size: .875rem;
-                            line-height: 1.25rem;
-                            padding: .5rem 1rem;
-                            width: 100%;
-                            margin-top: 2rem;
+                            margin-top: 1rem;
 
                             @media (min-width: 640px) {
-                                margin-top: 2rem;
-                                width: auto;
+                                margin-top: 1.5rem;
                             }
                         }
                     }
@@ -317,6 +305,11 @@
                     color: #b1b0ae;
                 }
             }
+
+            button {
+                background-color: rgb(30 174 219);
+                color: white;
+            }
         }
 
         .blocks-tab {
@@ -339,6 +332,10 @@
                     .check-icon {
                         color: var(--app-button-color) !important;
                     }
+                }
+
+                .form-group {
+                    margin-bottom: 1rem;
                 }
 
                 .section {
@@ -366,10 +363,6 @@
                     font-size: 16px;
                     font-weight: 600;
                     margin: 15px 0;
-                }
-
-                .small {
-                    font-size: 11px;
                 }
 
                 ::ng-deep .dx-checkbox .dx-checkbox-text {

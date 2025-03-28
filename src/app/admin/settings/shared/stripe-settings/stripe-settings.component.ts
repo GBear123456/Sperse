@@ -17,7 +17,7 @@ import { AppConsts } from '@root/shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingsComponentBase } from './../settings-base.component';
 import { AppPermissions } from '../../../../../shared/AppPermissions';
-import { Blocks, House, PictureInPicture, Users } from 'lucide-angular';
+import { Blocks, ExternalLink, House, PictureInPicture, Users } from 'lucide-angular';
 
 @Component({
     selector: 'stripe-settings',
@@ -30,7 +30,8 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     readonly HouseIcon = House;
     readonly PeopleIcon = Users;
     readonly BlocksIcon = Blocks;
-    readonly MaximizeIcon = PictureInPicture
+    readonly MaximizeIcon = PictureInPicture;
+    readonly ExternalIcon = ExternalLink;
 
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
     stripePaymentSettings: GetStripeSettingsDto = new GetStripeSettingsDto();

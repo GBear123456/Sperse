@@ -2,7 +2,7 @@
     <img src="assets/common/icons/razorpay.svg" />
     <mat-slide-toggle
         class="header-toggle"
-        [(ngModel)]="stripePaymentSettings.isEnabled"
+        [(ngModel)]="isEnabled"
         labelPosition="before"
     >
         {{ l('Enable RazorPay Payments For Checkout') }}
@@ -19,34 +19,38 @@
             <h3>API Configuration</h3>
             <p>Enter your RazorPay API credentials below. You can find these in your RazorPay Dashboard under Settings > API Keys.</p>
             <div class="form-group">
-                <label>Key ID <span>*</span></label>
+                <label class="base-label">Key ID <span>*</span></label>
                 <div class="form-control">
-                    <input placeholder="Enter Key ID" required value="">
-                    <button>
-                        <lucide-angular></lucide-angular>
-                        <span class="sr-only">Copy Key ID</span>
-                    </button>
+                    <input class="base-input" placeholder="Enter Key ID" required [(ngModel)]="apiKeySettings.id">
+                    <div class="btn-group">
+                        <button class="base-icon-button" (click)="copyToClipboard(apiKeySettings.id)">
+                            <lucide-angular [img]="CopyIcon"></lucide-angular>
+                            <span class="sr-only">Copy Key ID</span>
+                        </button>
+                    </div>
                 </div>
-                <p>Your RazorPay API Key ID</p>
+                <p class="base-hint">Your RazorPay API Key ID</p>
             </div>
             <div class="form-group">
-                <label>Key Secret <span>*</span></label>
+                <label class="base-label">Key Secret <span>*</span></label>
                 <div class="form-control">
-                    <input placeholder="Enter Key Secret" required value="">
-                    <button>
-                        <lucide-angular></lucide-angular>
-                        <span class="sr-only">Copy Key Secret</span>
-                    </button>
-                    <button>
-                        <lucide-angular></lucide-angular>
-                        <span class="sr-only">Show Key Secret</span>
-                    </button>
+                    <input class="base-input includes-2icons" placeholder="Enter Key Secret" required [(ngModel)]="apiKeySettings.secret" [type]="showSecret ? 'text' : 'password'">
+                    <div class="btn-group">
+                        <button class="base-icon-button" (click)="copyToClipboard(apiKeySettings.secret)">
+                            <lucide-angular [img]="CopyIcon"></lucide-angular>
+                            <span class="sr-only">Copy Key Secret</span>
+                        </button>
+                        <button class="base-icon-button" (click)="setShowSecret(!showSecret)">
+                            <lucide-angular [img]="showSecret ? EyeIcon : EyeOffIcon"></lucide-angular>
+                            <span class="sr-only">Show Key Secret</span>
+                        </button>
+                    </div>
                 </div>
-                <p>Your RazorPay API Key Secret (keep this secure)</p>
+                <p class="base-hint">Your RazorPay API Key Secret (keep this secure)</p>
             </div>
 
             <div class="webhook-config">
-                <lucide-angular></lucide-angular>
+                <lucide-angular [img]="AlertIcon"></lucide-angular>
                 <div class="webhook-content">
                     <p>Webhook Configuration</p>
                     <p>To receive webhooks from RazorPay, please add this endpoint to your RazorPay dashboard:</p>
@@ -55,8 +59,8 @@
             </div>
 
             <div class="btn-wrapper">
-                <button>Cancel</button>
-                <button>Save</button>
+                <button class="base-button">Cancel</button>
+                <button class="base-button">Save</button>
             </div>
         </div>
         <div class="info">
@@ -92,16 +96,16 @@
                     <span class="title">Custom Payment Pages</span>
                 </li>
             </ul>
-            <button>
+            <button class="base-button">
                 Connect to RazorPay
             </button>
         </div>
     </div>
     <div class="faq">
         <h3>FAQ</h3>
-        <button>
+        <a class="base-link-button">
             Visit RazorPay Documentation
-            <lucide-angular></lucide-angular>
-        </button>
+            <lucide-angular [img]="ExternalIcon"></lucide-angular>
+        </a>
     </div>
 </div>

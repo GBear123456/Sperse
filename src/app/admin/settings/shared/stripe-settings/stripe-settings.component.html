@@ -17,7 +17,7 @@
 >
     <mat-tab>
         <ng-template mat-tab-label>
-            <lucide-angular [img]="HouseIcon" class="mat-tab-icon"></lucide-angular>
+            <lucide-angular [img]="HouseIcon"></lucide-angular>
             <span>{{l('Stripe Introduction')}}</span>
         </ng-template>
 
@@ -48,9 +48,10 @@
                                 <span class="title">Choose which invoices can be paud this way</span>
                             </li>
                         </ul>
-                        <div class="video-block-learnmore">
-                            <a target="_blank" href="https://stripe.com/resources/more/card-payments ">Learn more about how card payments work <i class="fa fa-external-link"></i></a>
-                        </div>
+                        <a class="base-link-button" target="_blank" href="https://stripe.com/resources/more/card-payments">
+                            Learn more about how card payments work
+                            <lucide-angular [img]="ExternalIcon"></lucide-angular>
+                        </a>
                     </div>
                     
                     <div class="content-invoice">
@@ -84,7 +85,7 @@
                             </li>
                         </ul>
 
-                        <button *ngIf="stripePaymentSettings.isHostAccountEnabled" class="btn stripe-btn" (click)="createConnectedAccount()">
+                        <button *ngIf="stripePaymentSettings.isHostAccountEnabled" class="base-button" (click)="createConnectedAccount()">
                             {{ l('Connect to Stripe') }}
                         </button>
                     </div>
@@ -105,7 +106,7 @@
     </mat-tab>
     <mat-tab *ngIf="!isHost">
         <ng-template mat-tab-label>
-            <lucide-angular [img]="PeopleIcon" class="mat-tab-icon"></lucide-angular>
+            <lucide-angular [img]="PeopleIcon"></lucide-angular>
             <span>{{l('Connected Accounts')}}</span>
         </ng-template>
         <div class="connected-tab blocks-tab">
@@ -161,11 +162,11 @@
     </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
-            <lucide-angular [img]="BlocksIcon" class="mat-tab-icon"></lucide-angular>
+            <lucide-angular [img]="BlocksIcon"></lucide-angular>
             <span>{{l('Api Keys')}}</span>
         </ng-template>
         <div class="api-keys-tab blocks-tab">
-            <button *ngIf="apiKeySettings && !apiKeySettings.length" class="btn btn-layout" (click)="addApiKeySettings()">
+            <button *ngIf="apiKeySettings && !apiKeySettings.length" class="base-button" (click)="addApiKeySettings()">
                 {{ l('Add new API settings') }}
             </button>
             <div *ngFor="let settings of apiKeySettings" class="api-key-account block" [class.active]="settings.isActive">
@@ -182,57 +183,61 @@
                     </inplace-edit>
                 </div>
                 <div class="api-key-info" [class.section]="!isHost">
-                    <h6>{{l("Secret key")}}</h6>
-                    <input placeholder="Enter Your Secret Key" [disabled]="settings.id" type="text" [(ngModel)]="settings.apiKey">
-
-                    <h6>{{l("Publishable key")}}</h6>
-                    <input placeholder="Enter Your Secret Key" type="text" [(ngModel)]="settings.publishableKey">
-                    <p>
-                        <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
-                    </p>
-                    <br />
-                    <p>
-                        <dx-check-box id="StripeIgnoreExternalWebhooks"
-                                      [text]="l('Ignore external webhooks')"
-                                      [(value)]="settings.ignoreExternalWebhooks">
-                        </dx-check-box>
-                        <span class="small">*Skip webhooks that are not intended for <b>{{tenantName}}</b></span>
-                    </p>
-                    <div>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</div>
-                    <p>
-                        <button [disabled]="settings.webhookSingingSecret" [title]="settings.webhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, false)">
-                            {{ settings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
-                        </button>
-                        <img *ngIf="settings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
-                    </p>
-                    <div *ngIf="isHost" class="section">
-                        <h6>{{l("OAuth Client Id")}}</h6>
-                        <input type="text" [(ngModel)]="settings.oAuthClientId">
-
-                        <span class="small">{{l('Connects a tenant\'s Stripe account. The value can be found in the ')}}<a href="https://dashboard.stripe.com/settings/connect" target="_blank">settings</a>.</span><br />
-                        <span class="small">{{l('Please enable ')}}<b>OAuth for Standard accounts</b>{{l(' and add the following URL to OAuth redirects')}}</span>
-                        <span class="small">URL - <span class="copy-url"><b>{{getStripeOAuthConnectRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span>
+                    <div class="form-group">
+                        <label class="base-label">{{l("Secret key")}}</label>
+                        <input class="base-input" placeholder="Enter Your Secret Key" [disabled]="settings.id" type="text" [(ngModel)]="settings.apiKey">
                     </div>
+
+                    <div class="form-group">
+                        <label class="base-label">{{l("Publishable key")}}</label>
+                        <input class="base-input"  placeholder="Enter Your Secret Key" type="text" [(ngModel)]="settings.publishableKey">
+                        <span class="base-hint" [innerHtml]="l('StripeSecretKeyHint')"></span>
+                    </div>
+
+                    <dx-check-box id="StripeIgnoreExternalWebhooks"
+                                    [text]="l('Ignore external webhooks')"
+                                    [(value)]="settings.ignoreExternalWebhooks">
+                    </dx-check-box>
+                    <span class="base-hint">*Skip webhooks that are not intended for <b>{{tenantName}}</b></span>
+                    
+                    <br /><br />
+                    <div>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</div>
+                    <button [disabled]="settings.webhookSingingSecret" [title]="settings.webhookSingingSecret || ''" class="base-button" (click)="createWebhook(settings, false)">
+                        {{ settings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
+                    </button>
+                    <img *ngIf="settings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
+                    
+                    <div *ngIf="isHost" class="section">
+                        <div class="form-group">
+                            <label class="base-label">{{l("OAuth Client Id")}}</label>
+                            <input class="base-input" type="text" [(ngModel)]="settings.oAuthClientId">
+                        </div>
+
+                        <span class="base-hint">{{l('Connects a tenant\'s Stripe account. The value can be found in the ')}}<a href="https://dashboard.stripe.com/settings/connect" target="_blank">settings</a>.</span><br />
+                        <span class="base-hint">{{l('Please enable ')}}<b>OAuth for Standard accounts</b>{{l(' and add the following URL to OAuth redirects')}}</span>
+                        <span class="base-hint">URL - <span class="copy-url"><b>{{getStripeOAuthConnectRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span>
+                    </div>
+
+                    <br /><br />
                     <div>Use button below to create <b>Connect</b> webhook and recieve Connect events from Stripe</div>
-                    <p>
-                        <button [disabled]="settings.connectWebhookSingingSecret" [title]="settings.connectWebhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, true)">
-                            {{ settings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
-                        </button>
-                        <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
-                    </p>
+                    <button [disabled]="settings.connectWebhookSingingSecret" [title]="settings.connectWebhookSingingSecret || ''" class="base-button" (click)="createWebhook(settings, true)">
+                        {{ settings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
+                    </button>
+                    <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
+                    
                     <h6 class="tax-settings">Tax Settings</h6>
-                    <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
+                    <button class="base-button" (click)="enableAutomaticTaxation(settings)">
                         {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
                     </button>
+
                     <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
                     <br /><br />
-                    <p>
-                        <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
-                                      [text]="l('Ignore external connected accounts')"
-                                      [(value)]="settings.ignoreExternalConnectedAccounts">
-                        </dx-check-box>
-                        <span class="small">*Skip webhooks from external connected accounts</span>
-                    </p>
+
+                    <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
+                                    [text]="l('Ignore external connected accounts')"
+                                    [(value)]="settings.ignoreExternalConnectedAccounts">
+                    </dx-check-box>
+                    <span class="base-hint">*Skip webhooks from external connected accounts</span>
                 </div>
                 <div *ngIf="!isHost" class="account-actions">
                     <span *ngIf="!settings.isActive" (click)="setIsActive(settings)"><i class="fa fa-check"></i>Set as active</span>
@@ -243,7 +248,7 @@
     </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
-            <lucide-angular [img]="MaximizeIcon" class="mat-tab-icon"></lucide-angular>
+            <lucide-angular [img]="MaximizeIcon"></lucide-angular>
             <span>{{l('Import Your Data')}}</span>
         </ng-template>
         <div class="import-tab">

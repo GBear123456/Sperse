@@ -10,6 +10,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckboxModule } from '@node_modules/@angular/material/checkbox';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatButtonModule} from '@angular/material/button';
@@ -169,6 +170,7 @@ import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-
         MatButtonModule, 
         MatTooltipModule,
         MatSlideToggleModule,
+        MatCheckboxModule,
 
         UtilsModule,
         TableModule,
