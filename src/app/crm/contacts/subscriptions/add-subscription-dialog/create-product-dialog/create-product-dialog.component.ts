@@ -197,6 +197,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     suspendCurrencyChanged = false;
     readonly addNewItemId = -1;
     isPublicProductsEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
+    isProductAddOnsEnabled = this.feature.isEnabled(AppFeatures.CRMProductAddOns);
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
     showDowngrade = this.isHostTenant;
     hasViewCredits = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCredits);

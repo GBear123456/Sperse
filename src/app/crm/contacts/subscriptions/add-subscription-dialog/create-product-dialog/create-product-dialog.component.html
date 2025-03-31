@@ -558,7 +558,7 @@
                                         </dx-number-box>
                                     </div>
                                 </div>
-                                <div *ngIf="product.type != productType.Subscription">
+                                <div *ngIf="isProductAddOnsEnabled && product.type != productType.Subscription">
                                     <dx-switch switchedOffText=""
                                                switchedOnText=""
                                                [(value)]="product.enableAddOnCommissions"
@@ -656,7 +656,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="block options addOn-block" *ngIf="product.type == productType.General || product.type == productType.Event || product.type == productType.Digital">
+                        <div class="block options addOn-block" *ngIf="isProductAddOnsEnabled && (product.type == productType.General || product.type == productType.Event || product.type == productType.Digital)">
                             <div class="options-header">
                                 <h3>{{ls.l('Add-Ons')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                                 <div *ngIf="!isReadOnly" class="add-new-button" (click)="addNewAddOn()"><span>+</span></div>
