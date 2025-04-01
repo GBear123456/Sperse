@@ -897,6 +897,54 @@
         }
     }
 
+    .addOn-block {
+        .addOn-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-right: 40px;
+
+            label {
+                width: initial;
+                margin-right: 0;
+            }
+
+            ::ng-deep dx-select-box {
+                height: auto;
+                width: 150px;
+
+                .dx-texteditor-input-container {
+                    border: none !important;
+
+                    input {
+                        padding: 0;
+                        height: auto;
+                        top: 0;
+                    }
+                }
+
+                .dx-texteditor-buttons-container .dx-button-content {
+                    top: 0;
+                }
+            }
+
+            .required-switch {
+                label {
+                    display: inline;
+                }
+
+                ::ng-deep dx-switch {
+                    margin-left: 10px;
+                }
+            }
+        }
+
+        .addon-hint {
+            color: gray;
+            text-align: justify;
+        }
+    }
+
     .event-type {
         .dx-textbox, .dx-numberbox {
             margin: 10px 0;

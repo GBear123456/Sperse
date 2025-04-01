@@ -37,11 +37,6 @@ single-product {
             font-size: 36px !important;
         }
 
-        .subtitle {
-            font-size: 24px !important;
-            line-height: 32px !important;
-        }
-
         .box__inner {
             scale: 0.6;
             margin-top: -170px;
@@ -56,7 +51,6 @@ single-product {
         }
 
         .subtitle {
-            font-size: 18px !important;
             line-height: 26px !important;
         }
 
@@ -199,9 +193,10 @@ single-product {
     }
 
     .subtitle {
+        max-width: 1144px;
         font-weight: 300;
-        font-size: 32px;
-        line-height: 53px;
+        font-size: 18px;
+        line-height: 30px;
         text-align: center;
         margin-bottom: clamp(30px, 4vw, 45px);
         color: var(--title);
@@ -353,7 +348,7 @@ single-product {
             align-items: flex-end;
             justify-content: space-between;
             line-height: 30px;
-            font-size: 12px;
+            font-size: 16px;
 
             .amount {
                 text-align: right;
@@ -415,6 +410,43 @@ single-product {
         &::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
+        }
+    }
+
+    .addOns {
+        max-width: 100%;
+        min-width: 60%;
+        font-size: 16px;
+        margin-bottom: 30px;
+
+        .addOn-header {
+            margin: 5px 0;
+
+            .required {
+                color: var(--error-color);
+                margin-left: 10px;
+                font-size: 13px;
+            }
+        }
+
+        .addOn-option {
+            display: flex;
+            gap: 5px;
+
+            .check_wrap__style::before {
+                background-color: var(--m-blue);
+            }
+
+            .addOn-option-name {
+                min-width: 50%;
+                max-width: 80%;
+            }
+
+            .addOn-option-price {
+                width: 80px;
+                margin-left: auto;
+                text-align: right;
+            }
         }
     }
 

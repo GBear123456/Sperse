@@ -62,7 +62,9 @@ import {
     RecommendedProductInfo,
     ProductInventoryInfo,
     AddInventoryTopupInput,
-    PriceOptionType
+    PriceOptionType,
+    ProductAddOnDto,
+    ProductAddOnOptionDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService, NotifyService, PermissionCheckerService } from 'abp-ng2-module';
@@ -89,11 +91,12 @@ import { AppPermissions } from '../../../../../../shared/AppPermissions';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
-    transform(products: ProductDto[], excludeIds: number[], type: ProductType, excludeType: ProductType) {
+    transform(products: ProductDto[], excludeIds: number[], type: ProductType, excludeType: ProductType, excludeAddOnsRequired: boolean) {
         return products && products.filter(product =>
             excludeIds.indexOf(product.id) == -1 &&
             (!type || product.type == type) &&
-            (!excludeType || product.type != excludeType)
+            (!excludeType || product.type != excludeType) &&
+            (!excludeAddOnsRequired || !product.hasRequiredAddOns)
         );
     }
 }
@@ -194,6 +197,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     suspendCurrencyChanged = false;
     readonly addNewItemId = -1;
     isPublicProductsEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
+    isProductAddOnsEnabled = this.feature.isEnabled(AppFeatures.CRMProductAddOns);
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
     showDowngrade = this.isHostTenant;
     hasViewCredits = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCredits);
@@ -213,6 +217,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     billingCyclesEnable = [
         { key: false, displayValue: this.ls.l('Forever') },
         { key: true, displayValue: this.ls.l('Limited') }
+    ];
+    addOnSelectionTypes = [
+        { key: false, displayValue: this.ls.l('Single Option') },
+        { key: true, displayValue: this.ls.l('Multiple Options') }
     ];
     gracePeriodDefaultValue: number;
     customGroup: string;
@@ -534,6 +542,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             if (!options || !options.length)
                 return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.priceOptions = [...this.subscriptionOptions, ...this.notVisibleOptions];
+            this.product.productAddOns = undefined;
         } else {
             this.product.priceOptions = [this.generalPriceOption, ...this.notVisibleOptions];
             this.product.productServices = undefined;
@@ -558,6 +567,16 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         if (item.type == PriceOptionType.Subscription && (item.trialDayCount == null || isNaN(item.trialDayCount)))
                             item.trialDayCount = 0;
                     });
+
+                if (this.product.type != ProductType.Subscription) {
+                    if (this.product.productAddOns) {
+                        if (this.product.productAddOns.some(v => !v.productAddOnOptions || !v.productAddOnOptions.length))
+                            return this.notify.error(this.ls.l('Add-On must have at least one option'));
+
+                        if (this.product.priceOptions.some(v => v.customerChoosesPrice) && this.product.productAddOns.length)
+                            return this.notify.error(this.ls.l('Add-On are not supported for products with \'Customer chooses price\' prices'));
+                    }
+                }
 
                 this.product.publishDate = this.publishDate ? DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '') : undefined;
 
@@ -721,6 +740,31 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             }
         });
         this.product.productServices.splice(index, 1);
+        this.detectChanges();
+    }
+
+    addNewAddOn() {
+        if (!this.product.productAddOns)
+            this.product.productAddOns = [];
+        var newAddOn = new ProductAddOnDto();
+        newAddOn.multiselect = false;
+        var newAddOnOption = new ProductAddOnOptionDto();
+        newAddOn.productAddOnOptions.push(newAddOnOption);
+        this.product.productAddOns.push(newAddOn);
+    }
+
+    addNewAddOnOption(addOn: ProductAddOnDto) {
+        var newAddOnOption = new ProductAddOnOptionDto();
+        addOn.productAddOnOptions.push(newAddOnOption);
+    }
+
+    removeAddOn(index: number) {
+        this.product.productAddOns.splice(index, 1);
+        this.detectChanges();
+    }
+
+    removeAddOnOption(addOn: ProductAddOnDto, index: number) {
+        addOn.productAddOnOptions.splice(index, 1);
         this.detectChanges();
     }
 

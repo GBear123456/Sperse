@@ -35,7 +35,7 @@ export class CreditsSettingsComponent implements ITenantSettingsStepComponent {
 
     products$: Observable<ProductDto[]> = this.productProxy.getProducts(PriceOptionType.OneTime, undefined, false, true)
         .pipe(map(values => {
-            return values.filter(v => v.isPublished);
+            return values.filter(v => v.isPublished && !v.hasRequiredAddOns);
         }));
 
     constructor(

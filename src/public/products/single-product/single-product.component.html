@@ -144,7 +144,21 @@
                     </ng-template>
                 </div>
             </ng-template>
-            
+            <div class="addOns" *ngIf="oneTimePriceOption && !oneTimePriceOption.customerChoosesPrice && productInfo.productAddOns && productInfo.productAddOns.length">
+                <div class="addOn" *ngFor="let addOn of productInfo.productAddOns">
+                    <div class="addOn-header"><span>{{ addOn.name }}</span><span *ngIf="addOn.required" class="required">*required</span></div>
+                    <div class="addOn-options">
+                        <div class="addOn-option" *ngFor="let addOnOption of addOn.productAddOnOptions">
+                            <label class="check_wrap">
+                                <input class="check_wrap__input" type="checkbox" [(ngModel)]="addOnOption.selected" (ngModelChange)="onAddOnChange(addOn, addOnOption, $event)" [ngModelOptions]="{standalone: true}">
+                                <span class="check_wrap__style"></span>
+                            </label>
+                            <div class="addOn-option-name">{{ addOnOption.name }}</div>
+                            <div class="addOn-option-price">+{{ currencySymbol }}{{addOnOption.price | currency: productInfo.data.currency : '' : '1.0-2'}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="tax" *ngIf="productInfo.data.isStripeTaxationEnabled">
                 <div class="tax-row">
                     <span>Estimated Taxes</span>
@@ -278,16 +292,16 @@
                             Country
                         </label>
                         <dx-select-box [dataSource]="countries"
-                                        displayExpr="name"
-                                        valueExpr="name"
-                                        name="country"
-                                        [activeStateEnabled]="false"
-                                        [focusStateEnabled]="false"
-                                        [hoverStateEnabled]="false"
-                                        [placeholder]="''"
-                                        [searchEnabled]="true"
-                                        [(value)]="address.countryName"
-                                        (onValueChanged)="onCountryChange($event)">
+                                       displayExpr="name"
+                                       valueExpr="name"
+                                       name="country"
+                                       [activeStateEnabled]="false"
+                                       [focusStateEnabled]="false"
+                                       [hoverStateEnabled]="false"
+                                       [placeholder]="''"
+                                       [searchEnabled]="true"
+                                       [(value)]="address.countryName"
+                                       (onValueChanged)="onCountryChange($event)">
                         </dx-select-box>
                     </div>
                 </div>

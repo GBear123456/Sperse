@@ -250,7 +250,7 @@
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
                                 <div *dxTemplate="let cell of 'item'">
-                                    <span title="{{cell.description}}">{{cell.description}}{{cell.isInStock ? '' : ' (Out of stock)' }}</span>
+                                    <span title="{{cell.description}}">{{cell.description}}{{cell.isInStock ? '' : ' (Out of stock)' }}{{cell.hasRequiredAddOns ? ' (Requires AddOn)' : '' }}</span>
                                     <span class="tax-product" *ngIf="isTaxationEnabled && cell.isStripeTaxationEnabled">(AutoTax)</span>
                                 </div>
                             </dx-select-box>
