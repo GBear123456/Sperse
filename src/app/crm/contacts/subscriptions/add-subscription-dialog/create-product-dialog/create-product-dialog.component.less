@@ -327,6 +327,8 @@
             }
 
             .general-product {
+                position: relative;
+
                 .general-product-price {
                     display: flex;
                     justify-content: space-around;
@@ -493,6 +495,24 @@
 
                 span {
                     line-height: 24px;
+                }
+            }
+
+            .right-actions {
+                position: absolute;
+                right: 0;
+                display: flex;
+
+                .option-id {
+                    font-size: 15px;
+                    font-style: italic;
+                    color: #afb0b0;
+                }
+
+                .remove-button {
+                    position: static;
+                    margin-top: -4px;
+                    margin-left: 4px;
                 }
             }
 

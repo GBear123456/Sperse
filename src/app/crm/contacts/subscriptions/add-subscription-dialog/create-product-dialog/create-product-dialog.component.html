@@ -157,6 +157,11 @@
                                 </currency-selector>
                             </div>
                             <div class="general-product" *ngIf="product.type != productType.Subscription">
+                                <div class="right-actions">
+                                    <div *ngIf="generalPriceOption.id" class="option-id">
+                                        Option Id: <b>{{generalPriceOption.id}}</b> <i class="save-to-clipboard" (click)="copyTextToClipboard(product.id)"></i>
+                                    </div>
+                                </div>
                                 <div class="customer-price">
                                     <dx-switch switchedOffText=""
                                                switchedOnText=""
@@ -235,7 +240,12 @@
                             <ng-container *ngIf="product.type == productType.Subscription">
                                 <div class="options" *ngFor="let option of subscriptionOptions; let i = index">
                                     <hr *ngIf="i" class="wide">
-                                    <div *ngIf="!isReadOnly && i" class="remove-button" (click)="removePaymentPeriod(i)"><span>-</span></div>
+                                    <div class="right-actions">
+                                        <div *ngIf="option.id" class="option-id">
+                                            Option Id: <b>{{option.id}}</b> <i class="save-to-clipboard" (click)="copyTextToClipboard(option.id)"></i>
+                                        </div>
+                                        <div *ngIf="!isReadOnly && i" class="remove-button" (click)="removePaymentPeriod(i)"><span>-</span></div>
+                                    </div>
 
                                     <div class="option">
                                         <div class="customer-price">
