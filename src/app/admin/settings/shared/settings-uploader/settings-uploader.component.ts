@@ -5,13 +5,13 @@ import { ChangeDetectionStrategy, EventEmitter, Component, Input, Output } from 
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { Observable, Subscriber, of } from 'rxjs';
 import { MessageService } from 'abp-ng2-module';
+import { Download, Info, LucideAngularComponent, Trash2, Upload } from 'lucide-angular';
 
 /** Application import */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { TenantLoginInfoDto } from '@shared/service-proxies/service-proxies';
-import { Download, Info, LucideAngularComponent, Trash2, Upload } from 'lucide-angular';
 
 @Component({
     selector: 'settings-uploader',

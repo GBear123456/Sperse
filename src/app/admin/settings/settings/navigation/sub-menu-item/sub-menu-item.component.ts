@@ -1,8 +1,13 @@
+/** Core imports */
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { MenuItem } from '../../settings.navigation';
+
+/** Third party imports */
 import { CircleUser } from 'lucide-angular';
-import { SettingService } from '../../settings.service';
+
+/** Application imports */
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
+import { MenuItem } from '../../settings.navigation';
+import { SettingService } from '../../settings.service';
 
 @Component({
     selector: 'sub-menu-item',

@@ -1,5 +1,10 @@
+/** Core imports */
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+
+/** Third party imports */
 import { Home, Moon, Sun } from 'lucide-angular'
+
+/** Application imports */
 import { MenuItem } from '../../settings.navigation'
 import { SettingService } from '@app/admin/settings/settings/settings.service';
 

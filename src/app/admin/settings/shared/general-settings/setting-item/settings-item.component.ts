@@ -1,6 +1,11 @@
 /** Core imports */
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+
+/** Third party imports */
 import { Info } from 'lucide-angular'
+
+/** Application imports */
+
 @Component({
     selector: 'settings-item',
     templateUrl: './settings-item.component.html',

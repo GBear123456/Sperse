@@ -1,9 +1,11 @@
 /** Core imports */
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { mainNavigation, MenuItem } from '../../settings/settings.navigation';
-import { DomSanitizer } from '@angular/platform-browser';
-import { SettingService } from '@app/admin/settings/settings/settings.service';
 import { Router } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
+
+/** Application imports */
+import { SettingService } from '@app/admin/settings/settings/settings.service';
+import { mainNavigation, MenuItem } from '../../settings/settings.navigation';
 
 @Component({
     templateUrl: './dashboard-settings.component.html',

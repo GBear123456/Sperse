@@ -1,5 +1,7 @@
 /** Core imports */
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+
+/** Third party imports */
 import { Search } from 'lucide-angular';
 
 @Component({

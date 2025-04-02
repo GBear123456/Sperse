@@ -4,6 +4,7 @@ import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { Blocks, ChevronDown, ExternalLink, House, PictureInPicture, Users } from 'lucide-angular';
 
 /** Application imports */
 import {
@@ -17,7 +18,6 @@ import { AppConsts } from '@root/shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingsComponentBase } from './../settings-base.component';
 import { AppPermissions } from '../../../../../shared/AppPermissions';
-import { Blocks, ExternalLink, House, PictureInPicture, Users } from 'lucide-angular';
 
 @Component({
     selector: 'stripe-settings',
@@ -32,6 +32,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     readonly BlocksIcon = Blocks;
     readonly MaximizeIcon = PictureInPicture;
     readonly ExternalIcon = ExternalLink;
+    readonly ChevronIcon = ChevronDown;
 
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
     stripePaymentSettings: GetStripeSettingsDto = new GetStripeSettingsDto();
@@ -43,6 +44,16 @@ export class StripeSettingsComponent extends SettingsComponentBase {
 
     StripeImportType = StripeImportType;
     importTypes: any[] = Object.values(StripeImportType).filter(x => typeof x === "number");
+    faqs = [
+        {
+            title: "I’ve got a Stripe account, how do I connect it?",
+            link: "https://support.stripe.com/topics/connect"
+        },
+        {
+            title: "What’s Stripe and how do I get started?",
+            link: "https://support.stripe.com/questions/getting-started-with-stripe"
+        },
+    ]
 
     constructor(
         _injector: Injector,

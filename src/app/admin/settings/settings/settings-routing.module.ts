@@ -1,6 +1,8 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+
+/** Application imports */
 import { SettingsNewComponent } from './settings.new.component';
 import { mainNavigation } from './settings.navigation';
 import { DashboardSettingComponent } from '../shared/dashboard-settings/dashboard-settings.component';

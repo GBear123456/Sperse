@@ -2,10 +2,9 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
-import { finalize } from 'rxjs/operators';
+import { NotifyService } from 'abp-ng2-module';
 
 /** Application imports */
-import { NotifyService } from 'abp-ng2-module';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissions } from '@shared/AppPermissions';

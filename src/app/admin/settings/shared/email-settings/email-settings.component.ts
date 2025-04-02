@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { Observable, throwError } from 'rxjs';
@@ -12,7 +13,6 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'email-settings',

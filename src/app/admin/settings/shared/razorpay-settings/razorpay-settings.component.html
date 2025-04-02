@@ -9,7 +9,7 @@
     </mat-slide-toggle>
 </div>
 
-<div class="container">
+<div class="settings-container">
     <div class="content">
         <div class="content-header">
             <h2>Accept RazorPay Payments</h2>
@@ -103,6 +103,32 @@
     </div>
     <div class="faq">
         <h3>FAQ</h3>
+        <cdk-accordion [multi]="true">
+            <cdk-accordion-item
+                *ngFor="let item of faqs; let index = index;"
+                #accordionItem="cdkAccordionItem"
+                class="accordion-item"
+                role="button"
+                tabindex="0"
+                [attr.id]="'accordion-header-' + index"
+                [attr.aria-expanded]="accordionItem.expanded"
+                [attr.aria-controls]="'accordion-body-' + index"
+            >
+                <div class="accordion-item-header" (click)="accordionItem.toggle()">
+                    <span>{{ item.title }}</span>
+                    <lucide-angular [img]="ChevronIcon"></lucide-angular>
+                </div>
+                <div
+                    class="accordion-item-body"
+                    role="region"
+                    [style.display]="accordionItem.expanded ? '' : 'none'"
+                    [attr.id]="'accordion-body-' + index"
+                    [attr.aria-labelledby]="'accordion-header-' + index"
+                >
+                    {{ item.content }}
+                </div>
+            </cdk-accordion-item>
+        </cdk-accordion>
         <a class="base-link-button">
             Visit RazorPay Documentation
             <lucide-angular [img]="ExternalIcon"></lucide-angular>

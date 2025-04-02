@@ -1,8 +1,13 @@
+/** Core imports */
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { MenuItem } from '../../settings.navigation';
-import { ArrowLeft } from 'lucide-angular';
 import { Router } from '@angular/router';
+
+/** Third party imports */
+import { ArrowLeft } from 'lucide-angular';
+
+/** Application imports */
 import { SettingService } from '@app/admin/settings/settings/settings.service';
+import { MenuItem } from '../../settings.navigation';
 
 @Component({
     selector: 'sub-menu-panel',

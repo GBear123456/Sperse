@@ -1,11 +1,13 @@
 /** Core imports */
 import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
+import { AbstractControlDirective } from '@angular/forms';
 
 /** Third party imports */
 import { select, Store } from '@ngrx/store';
 import { forkJoin, Observable, of } from 'rxjs';
 import { finalize, tap, first, filter, map } from 'rxjs/operators';
 import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
+import { Clock, DollarSign, Globe, Globe2, Phone } from 'lucide-angular';
 
 /** Application imports */
 import {
@@ -20,14 +22,12 @@ import {
 import { SettingsComponentBase } from './../settings-base.component';
 import { AppTimezoneScope, ConditionsType } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
-import { AbstractControlDirective } from '@angular/forms';
 import { AppFeatures } from '@shared/AppFeatures';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { RootStore, CountriesStoreSelectors } from '@root/store';
 import { TimeZoneComboComponent } from '@app/shared/common/timing/timezone-combo.component';
 import { AppPermissions } from '@shared/AppPermissions';
-import { Clock, DollarSign, Globe, Globe2, Phone } from 'lucide-angular';
 
 @Component({
     selector: 'general-settings',

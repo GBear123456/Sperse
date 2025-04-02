@@ -3,13 +3,11 @@ import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
+import { AlertCircle, ChevronDown, Copy, ExternalLink, Eye, EyeOff } from 'lucide-angular';
 
 /** Application imports */
-import {
-    StripeSettingsDto, TenantPaymentSettingsServiceProxy
-} from '@shared/service-proxies/service-proxies';
+import { TenantPaymentSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from '../settings-base.component';
-import { AlertCircle, Copy, ExternalLink, Eye, EyeOff } from 'lucide-angular';
 
 @Component({
     selector: 'razorpay-settings',
@@ -24,6 +22,7 @@ export class RazorPaySettingsComponent extends SettingsComponentBase {
     readonly EyeOffIcon = EyeOff
     readonly AlertIcon = AlertCircle
     readonly ExternalIcon = ExternalLink
+    readonly ChevronIcon = ChevronDown;
 
     isEnabled: boolean = true;
     apiKeySettings: any = {
@@ -31,6 +30,28 @@ export class RazorPaySettingsComponent extends SettingsComponentBase {
         secret: ''
     }
     showSecret: boolean = false;
+    faqs = [
+        {
+            title: "What is RazorPay?",
+            content: "RazorPay is a popular Indian payment gateway that enables businesses to accept, process, and disburse payments with ease. It offers a comprehensive suite of payment solutions including payment gateway, payment links, payment pages, subscriptions, and more."
+        },
+        {
+            title: "How do I get RazorPay credentials?",
+            content: "Sign up at razorpay.com and create a business account. After verification, navigate to Settings > API Keys in your RazorPay Dashboard to generate API keys (Key ID and Key Secret)."
+        },
+        {
+            title: "Do I need to set up webhooks?",
+            content: "Yes, webhooks are recommended to receive real-time notifications about payment events. Add the webhook URL provided above to your RazorPay dashboard under Settings > Webhooks."
+        },
+        {
+            title: "What payment methods does RazorPay support?",
+            content: "RazorPay supports various payment methods including credit/debit cards, UPI, net banking, wallets, EMI options, and international payments."
+        },
+        {
+            title: "Is there a test mode in RazorPay?",
+            content: "Yes, RazorPay provides a test mode where you can simulate payments without actual money transfers. Use test credentials from your dashboard to test your integration before going live."
+        },
+    ]
 
     constructor(
         _injector: Injector,

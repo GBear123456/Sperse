@@ -118,6 +118,65 @@
         }
     }
 
+    ::ng-deep cdk-accordion {
+        .accordion-item {
+            display: block;
+            border-bottom: 1px solid hsl(var(--border));;
+
+            .accordion-item-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 1rem 0;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                font-weight: 600;
+                cursor: pointer;
+
+                @media (min-width: 640px) {
+                    font-size: 1rem;
+                    line-height: 1.5rem;
+                }
+
+                span {
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+
+                lucide-angular {
+                    display: flex;
+                }
+
+                ::ng-deep lucide-angular svg {
+                    width: 1rem;
+                    height: 1rem;
+                    stroke-width: 3;
+
+                    transition-property: transform;
+                    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                    transition-duration: 0.2s;
+                    animation-duration: 0.2s;
+                }
+            }
+
+            &[aria-expanded="true"] svg {
+                transform: rotate(180deg);
+            }
+
+            .accordion-item-body {
+                padding-bottom: 1rem;
+                font-size: 0.75rem;
+                line-height: 1rem;
+
+                @media (min-width: 640px) {
+                    font-size: 0.875rem;
+                    line-height: 1.25rem;
+                }
+            }
+        }
+    }
+
     .base-input {
         width: 100%;
         max-width: 960px;
@@ -267,6 +326,16 @@
         @media (min-width: 640px) {
             font-size: 0.75rem;
             line-height: 1rem;
+        }
+    }
+
+    .base-card {
+        border: 1px solid hsl(var(--border));
+        border-radius: 0.5rem;
+        padding: 1rem;
+
+        @media (min-width: 640px) {
+            padding: 1.5rem;
         }
     }
 

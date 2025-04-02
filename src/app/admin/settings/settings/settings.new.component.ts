@@ -1,11 +1,16 @@
+/** Core imports */
 import { ChangeDetectionStrategy, Component, Injector, OnDestroy, OnInit } from '@angular/core';
-import { MenuItem, mainNavigation } from './settings.navigation'
 import { NavigationEnd, Router } from '@angular/router';
+
+/** Third party imports */
+import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
+
+/** Application imports */
 import { SettingService } from '@app/admin/settings/settings/settings.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { Subject } from 'rxjs';
 import { AppComponentBase } from '@root/shared/common/app-component-base';
-import { filter } from 'rxjs/operators';
+import { MenuItem, mainNavigation } from './settings.navigation'
 
 @Component({
     templateUrl: './settings.new.component.html',

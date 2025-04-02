@@ -93,14 +93,32 @@
             </div>
             <div class="faq-side">
                 <div class="faq-block-title">FAQ</div>
-                <div class="faq-block-row">
-                    <img src="./assets/common/icons/document-text.svg" />
-                    <a target="_blank" href="https://support.stripe.com/topics/connect">I’ve got a Stripe account, how do I connect it?</a>
-                </div>
-                <div class="faq-block-row">
-                    <img src="./assets/common/icons/document-text.svg" />
-                    <a target="_blank" href="https://support.stripe.com/questions/getting-started-with-stripe">What’s Stripe and how do I get started?</a>
-                </div>
+                <cdk-accordion [multi]="true">
+                    <cdk-accordion-item
+                        *ngFor="let item of faqs; let index = index;"
+                        #accordionItem="cdkAccordionItem"
+                        class="accordion-item"
+                        role="button"
+                        tabindex="0"
+                        [attr.id]="'accordion-header-' + index"
+                        [attr.aria-expanded]="accordionItem.expanded"
+                        [attr.aria-controls]="'accordion-body-' + index"
+                    >
+                        <div class="accordion-item-header" (click)="accordionItem.toggle()">
+                            <span>{{ item.title }}</span>
+                            <lucide-angular [img]="ChevronIcon"></lucide-angular>
+                        </div>
+                        <div
+                            class="accordion-item-body"
+                            role="region"
+                            [style.display]="accordionItem.expanded ? '' : 'none'"
+                            [attr.id]="'accordion-body-' + index"
+                            [attr.aria-labelledby]="'accordion-header-' + index"
+                        >
+                            {{ item.content }}
+                        </div>
+                    </cdk-accordion-item>
+                </cdk-accordion>
             </div>
         </div>        
     </mat-tab>

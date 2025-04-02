@@ -5,6 +5,8 @@ import { Component, ChangeDetectionStrategy, Injector, ViewChild, OnInit } from 
 import { forkJoin, Observable, of } from 'rxjs';
 import { finalize, switchMap, tap } from 'rxjs/operators';
 import kebabCase from 'lodash/kebabCase';
+import {  Palette, FileText } from 'lucide-angular';
+import { SettingService } from 'abp-ng2-module';
 
 /** Application imports */
 import {
@@ -24,13 +26,11 @@ import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { FontService } from '@shared/common/font-service/font.service';
-import { SettingService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 import { DomHelper } from '@shared/helpers/DomHelper';
 import { AppFeatures } from '@shared/AppFeatures';
 import { PortalMenuItemConfig } from './portal/portal-menu-item';
 import { PortalMenuItemEnum } from './portal/portal-menu-item.enum';
-import {  Palette, FileText } from 'lucide-angular';
 
 @Component({
     selector: 'appearance-settings',

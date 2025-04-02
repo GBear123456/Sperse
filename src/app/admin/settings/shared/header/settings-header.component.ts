@@ -1,7 +1,11 @@
 /** Core imports */
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
-import { ArrowLeft } from 'lucide-angular';
 import { Router } from '@angular/router';
+
+/** Third party imports */
+import { ArrowLeft } from 'lucide-angular';
+
+/** Application imports */
 import { SettingService } from '../../settings/settings.service';
 
 @Component({

@@ -1,3 +1,4 @@
+/** Third party imports */
 import { 
     Globe, 
     Palette, 
@@ -14,7 +15,6 @@ import {
     Facebook,
     Mail as GmailIcon,
     Server,
-    FileText,
     Users,
     Shield,
     Cloud,
@@ -24,46 +24,46 @@ import {
     CreditCard as SubscriptionIcon,
     Coins,
     UserCircle,
-    KeyRound,
-    SendHorizontal,
-    FileSignature,
-    User
   } from "lucide-angular";
-import { GeneralSettingsComponent } from "../shared/general-settings/general-settings.component";
-import { AppearanceSettingsComponent } from "../shared/appearance-settings/appearance-settings.component";
-import { DomainSettingsComponent } from "../shared/domain-settings/domain-settings.component";
-import { EmailSettingsComponent } from "../shared/email-settings/email-settings.component";
-import { PaypalSettingsComponent } from "../shared/paypal-settings/paypal-settings.component";
-import { StripeSettingsComponent } from "../shared/stripe-settings/stripe-settings.component";
-import { BankTransferComponent } from "@root/shared/common/tenant-settings-wizard/bank-transfer/bank-transfer.component";
-import { BankSettingsComponent } from "../shared/bank-settings/bank-settings.component";
-import { PersonalSettingsComponent } from "../shared/personal-settings/personal-settings.component";
-import { LandingPageComponent } from "@root/shared/common/tenant-settings-wizard/landing-page/landing-page.component";
-import { DocumentsComponent } from "@app/crm/documents/documents.component";
-import { ZapierComponent } from "@root/shared/common/zapier/zapier.component";
-import { InvoiceSettingsComponent } from "@root/shared/common/tenant-settings-wizard/invoice-settings/invoice-settings.component";
-import { CommissionsComponent } from "@root/shared/common/tenant-settings-wizard/commissions/commissions.component";
-import { OtherSettingsComponent } from "@root/shared/common/tenant-settings-wizard/other-settings/other-settings.component";
-import { CreditsSettingsComponent } from "@root/shared/common/tenant-settings-wizard/credits-settings/credits-settings.component";
-import { TrackingToolsSettingsComponent } from "../shared/tracking-tools-settings/tracking-tools-settings.component";
-import { KlaviyoSettingsComponent } from "../shared/klaviyo-settings/klaviyo-settings.component";
-import { MailchimpSettingsComponent } from "../shared/mailchimp-settings/mailchimp-settings.component";
-import { SendgridSettingsComponent } from "../shared/sendgrid-settings/sendgrid-settings.component";
-import { IAgeSettingsComponent } from "../shared/iage-settings/iage-settings.component";
-import { OngageSettingsComponent } from "../shared/ongage-settings/ongage-settings.component";
-import { YTelSettingsComponent } from "../shared/ytel-settings/ytel-settings.component";
-import { UserManagementSettingsComponent } from "../shared/user-management-settings/user-management-settings.component";
-import { SecuritySettingsComponent } from "../shared/security-settings/security-settings.component";
-import { BugsnagSettingsComponent } from "../shared/bugsnag-settings/bugsnag-settings.component";
-import { TenantManagementSettingsComponent } from "../shared/tenant-management-settings/tenant-management-settings.component";
-import { LinkedInSettingsComponent } from "../shared/linkedin-settings/linkedin-settings.component";
-import { FacebookSettingsComponent } from "../shared/facebook-settings/facebook-settings.component";
-import { GoogleSettingsComponent } from "../shared/google-settings/google-settings.component";
-import { DiscordSettingsComponent } from "../shared/discord-settings/discord-settings.component";
-import { AuthorizeNetSettingsComponent } from "../shared/authorize-net-settings/authorize-net-settings.component";
-import { RazorPaySettingsComponent } from "../shared/razorpay-settings/razorpay-settings.component";
 
-export interface MenuItem {
+  /** Application imports */
+  import { GeneralSettingsComponent } from "../shared/general-settings/general-settings.component";
+  import { AppearanceSettingsComponent } from "../shared/appearance-settings/appearance-settings.component";
+  import { DomainSettingsComponent } from "../shared/domain-settings/domain-settings.component";
+  import { EmailSettingsComponent } from "../shared/email-settings/email-settings.component";
+  import { PaypalSettingsComponent } from "../shared/paypal-settings/paypal-settings.component";
+  import { StripeSettingsComponent } from "../shared/stripe-settings/stripe-settings.component";
+  import { BankTransferSettingsComponent } from "../shared/bank-transfer-settings/bank-transfer-settings.component";
+  import { BankSettingsComponent } from "../shared/bank-settings/bank-settings.component";
+  import { PersonalSettingsComponent } from "../shared/personal-settings/personal-settings.component";
+  import { LandingPageComponent } from "@root/shared/common/tenant-settings-wizard/landing-page/landing-page.component";
+  import { DocumentsComponent } from "@app/crm/documents/documents.component";
+  import { ZapierComponent } from "@root/shared/common/zapier/zapier.component";
+  import { InvoiceSettingsComponent } from "@root/shared/common/tenant-settings-wizard/invoice-settings/invoice-settings.component";
+  import { CommissionsComponent } from "@root/shared/common/tenant-settings-wizard/commissions/commissions.component";
+  import { OtherSettingsComponent } from "@root/shared/common/tenant-settings-wizard/other-settings/other-settings.component";
+  import { CreditsSettingsComponent } from "@root/shared/common/tenant-settings-wizard/credits-settings/credits-settings.component";
+  import { TrackingToolsSettingsComponent } from "../shared/tracking-tools-settings/tracking-tools-settings.component";
+  import { KlaviyoSettingsComponent } from "../shared/klaviyo-settings/klaviyo-settings.component";
+  import { MailchimpSettingsComponent } from "../shared/mailchimp-settings/mailchimp-settings.component";
+  import { SendgridSettingsComponent } from "../shared/sendgrid-settings/sendgrid-settings.component";
+  import { IAgeSettingsComponent } from "../shared/iage-settings/iage-settings.component";
+  import { OngageSettingsComponent } from "../shared/ongage-settings/ongage-settings.component";
+  import { YTelSettingsComponent } from "../shared/ytel-settings/ytel-settings.component";
+  import { UserManagementSettingsComponent } from "../shared/user-management-settings/user-management-settings.component";
+  import { SecuritySettingsComponent } from "../shared/security-settings/security-settings.component";
+  import { BugsnagSettingsComponent } from "../shared/bugsnag-settings/bugsnag-settings.component";
+  import { TenantManagementSettingsComponent } from "../shared/tenant-management-settings/tenant-management-settings.component";
+  import { LinkedInSettingsComponent } from "../shared/linkedin-settings/linkedin-settings.component";
+  import { FacebookSettingsComponent } from "../shared/facebook-settings/facebook-settings.component";
+  import { GoogleSettingsComponent } from "../shared/google-settings/google-settings.component";
+  import { DiscordSettingsComponent } from "../shared/discord-settings/discord-settings.component";
+  import { AuthorizeNetSettingsComponent } from "../shared/authorize-net-settings/authorize-net-settings.component";
+  import { RazorPaySettingsComponent } from "../shared/razorpay-settings/razorpay-settings.component";
+  import { PayStackSettingsComponent } from "../shared/paystack-settings/paystack-settings.component";
+  import { OtherProviderSettingsComponent } from "../shared/other-payment-provider-settings/other-payment-provider-settings.component";
+
+  export interface MenuItem {
     id: string;
     label: string;
     icon?: string;
@@ -148,6 +148,7 @@ export interface MenuItem {
               label: "PayStack", 
               path: "payment/paystack",
               searchAliases: ["africa payments"],
+              component: PayStackSettingsComponent
             },
             { 
               id: "adyen", 
@@ -178,7 +179,7 @@ export interface MenuItem {
               label: "ACH Bank Transfer", 
               path: "payment/ach",
               searchAliases: ["bank transfer", "direct deposit", "electronic transfer", "automated clearing house"],
-              component: BankTransferComponent
+              component: BankTransferSettingsComponent
             },
             { 
               id: "wire", 
@@ -192,6 +193,7 @@ export interface MenuItem {
               label: "Other 100+ Providers", 
               path: "payment/other",
               searchAliases: ["additional payment methods", "alternative payments", "more payment options"],
+              component: OtherProviderSettingsComponent
             }
         ]
     },

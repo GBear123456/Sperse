@@ -1,49 +1,61 @@
-.form-content {
-    display: flex;
-    flex-direction: column;
-    padding: 30px 0px 30px 50px;
-    height: calc(~"100vh - 82px");
-    width: 900px;
+:host {
+    display: block;
+    padding: 1rem;
 
-    .row {
-        width: 820px;
-        margin-left: 0px !important;
+    @media (min-width: 640px) {
+        padding: 1.5rem;
     }
 
-    ::ng-deep .field-area {
-        width: 100%;
-        display: block;
-        position: relative;
-        white-space: nowrap;
-        label {
-            line-height: 38px;
-            border-bottom: 1px solid #dfdfdf;
-            vertical-align: top;
-            padding-top: 1px;
-            color: #8a969b;
+    .form-content {
+        display: flex;
+        flex-direction: column;
+        height: calc(~"100vh - 82px");
+        width: 900px;
+    
+        .row {
+            width: 820px;
+            margin-left: 0px !important;
         }
+    
+        ::ng-deep .field-area {
+            width: 100%;
+            display: block;
+            position: relative;
+            white-space: nowrap;
 
-        .dx-widget {
-            display: inline-block;
-            input {
-                &, &:read-only {
-                    font-size: 12px;
-                    font-weight: 500;
-                    line-height: 1.09;
-                    letter-spacing: 0.4px;
-                    padding-left: 17px;
+            label {
+                line-height: 38px;
+                border-bottom: 1px solid #dfdfdf;
+                vertical-align: top;
+                padding-top: 1px;
+                color: #8a969b;
+            }
+    
+            .dx-widget {
+                display: inline-block;
+
+                input {
+                    &, &:read-only {
+                        font-size: 12px;
+                        font-weight: 500;
+                        line-height: 1.09;
+                        letter-spacing: 0.4px;
+                        padding-left: 17px;
+                    }
                 }
-            }
-            .dx-placeholder {
-                font-size: 15px;
-                font-weight: 400;
-                line-height: 1.79;
-                letter-spacing: 0.3px;
-                padding: 0px;
-            }
-            &.dx-state-focused {
+
                 .dx-placeholder {
-                    top: -30px;
+                    font-size: 15px;
+                    font-weight: 400;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    padding: 0px;
+                }
+                
+                &.dx-state-focused {
+                    .dx-placeholder {
+                        top: -30px;
+                    }
                 }
             }
         }

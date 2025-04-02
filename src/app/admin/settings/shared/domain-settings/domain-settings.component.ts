@@ -7,6 +7,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialog } from '@angular/material/dialog';
 import { switchMap, finalize, map, tap } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
+import { Grid, House, Plus, Shield, ShoppingCart, Users } from 'lucide-angular';
 
 /** Application imports */
 import {
@@ -25,7 +26,6 @@ import { SettingsComponentBase } from './../settings-base.component';
 import { AppConsts } from '@shared/AppConsts';
 import { PortalType } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
-import { Grid, House, Plus, Shield, ShoppingCart, Users } from 'lucide-angular';
 
 @Component({
     selector: 'domain-settings',

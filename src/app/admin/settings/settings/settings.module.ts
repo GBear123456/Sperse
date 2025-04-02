@@ -52,6 +52,7 @@ import { TableModule } from 'primeng/table';
 import { LucideAngularModule } from 'lucide-angular';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { CKEditorModule } from 'ckeditor4-angular';
+import { CdkAccordionModule } from '@angular/cdk/accordion';
 
 /** Application imports */
 import { SettingsRoutingModule } from './settings-routing.module';
@@ -89,6 +90,9 @@ import { StripeSettingsComponent } from '../shared/stripe-settings/stripe-settin
 import { PaypalSettingsComponent } from '../shared/paypal-settings/paypal-settings.component';
 import { AuthorizeNetSettingsComponent } from '../shared/authorize-net-settings/authorize-net-settings.component';
 import { RazorPaySettingsComponent } from '../shared/razorpay-settings/razorpay-settings.component';
+import { PayStackSettingsComponent } from '../shared/paystack-settings/paystack-settings.component';
+import { OtherProviderSettingsComponent } from '../shared/other-payment-provider-settings/other-payment-provider-settings.component';
+import { BankTransferSettingsComponent } from '../shared/bank-transfer-settings/bank-transfer-settings.component';
 import { BankSettingsComponent } from '../shared/bank-settings/bank-settings.component';
 import { PersonalSettingsComponent } from '../shared/personal-settings/personal-settings.component';
 import { SmsVerificationModalComponent } from '../shared/personal-settings/sms-verification-modal.component';
@@ -192,7 +196,8 @@ import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-
         CKEditorModule,
         DxFileManagerModule,
         ZapierModule,
-        NgxFileDropModule
+        NgxFileDropModule,
+        CdkAccordionModule
     ],
     declarations: [
         MainMenuItemComponent,
@@ -210,7 +215,10 @@ import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-
         PaypalSettingsComponent,
         AuthorizeNetSettingsComponent,
         RazorPaySettingsComponent,
+        PayStackSettingsComponent,
+        OtherProviderSettingsComponent,
         StripeSettingsComponent,
+        BankTransferSettingsComponent,
         BankSettingsComponent,
         SmsVerificationModalComponent,
         PersonalSettingsComponent,

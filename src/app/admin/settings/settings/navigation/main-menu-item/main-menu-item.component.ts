@@ -1,6 +1,11 @@
+/** Core imports */
 import { ChangeDetectionStrategy, Component, Injector, Input } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+
+/** Third party imports */
 import { ChevronRight, CircleUser } from 'lucide-angular'
+
+/** Application imports */
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     selector: 'main-menu-item',

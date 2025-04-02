@@ -8,11 +8,17 @@ import {
     ChangeDetectorRef,
     Injector
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { MatTabGroup } from '@angular/material/tabs';
-import { finalize, tap } from 'rxjs/operators';
+import { forkJoin, Observable, throwError } from 'rxjs';
+import { finalize, tap, catchError } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
+import { Camera, FileSignature, KeyRound, Mail, UserCircle } from 'lucide-angular';
+import { NotifyService } from 'abp-ng2-module';
+import { SettingService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -24,17 +30,9 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from 'abp-ng2-module';
-import { SettingService } from 'abp-ng2-module';
-import { MessageService } from 'abp-ng2-module';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { GmailSettingsService } from '@shared/common/settings/gmail-settings.service';
-import { forkJoin, Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
-import { ActivatedRoute } from '@angular/router';
-import { Camera, FileSignature, KeyRound, Mail, User, UserCircle } from 'lucide-angular';
 import { SettingsComponentBase } from '../settings-base.component';
 
 @Component({
