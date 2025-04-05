@@ -20,7 +20,7 @@ import { DashboardSettingComponent } from '../shared/dashboard-settings/dashboar
                         let copy  = [];
                         if (item.submenu) {
                             copy.push({ path: item.path, redirectTo: '/app/admin/settings/' + item.submenu[0].path, pathMatch: 'full' })
-                            if (['email', 'ai'].includes(item.id)) copy.push({ path: item.path + '/:id', component: item.component })
+                            if (['email'].includes(item.id)) copy.push({ path: item.path + '/:id', component: item.component })
                             else
                                 item.submenu.map(sub => {
                                     if (sub.submenu) {

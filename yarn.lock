@@ -7073,6 +7073,11 @@ ng-circle-progress@^1.5.1:
   dependencies:
     tslib "^2.0.0"
 
+ng-inline-svg-2@^19.0.0:
+  version "19.0.0"
+  resolved "https://registry.yarnpkg.com/ng-inline-svg-2/-/ng-inline-svg-2-19.0.0.tgz#d2e9f0b5ddfbf659e2a3afdb6ab003df06601754"
+  integrity sha512-1jrmlnaJpKa/9Vltq6SiBQ9dcLKa+wfvyXxyDxRqFLduVvIgEbHxD+sEt/AgUt3pF+EtsLG8kUOYipa61N/+lg==
+
 ng-starrating@^1.0.7:
   version "1.0.20"
   resolved "https://registry.yarnpkg.com/ng-starrating/-/ng-starrating-1.0.20.tgz#4b304201358186b6e31dd652d6020cda9ceb3939"

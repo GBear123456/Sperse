@@ -1,0 +1,341 @@
+<mat-tab-group 
+    animationDuration="10ms" 
+    disableRipple="true" 
+>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tab-icon" [inlineSVG]="'/assets/settings/Icons/Open AI.svg'"></div>
+            <span>{{l('OPEN AI')}}</span>
+        </ng-template>
+
+        <div class="open-ai">
+            <div class="header">
+                <lucide-angular [img]="ZapIcon"></lucide-angular>
+                <div>
+                    <h2>About AI Platform Settings</h2>
+                    <p>Configure your AI platform connections to enable advanced features throughout the application. You can set organization-wide API keys or allow users to provide their own keys. All API keys are securely encrypted at rest.</p>
+                </div>
+            </div>
+            <div class="base-card">
+                <div class="content-header">
+                    <div class="content-icon" [inlineSVG]="'/assets/settings/Icons/Open AI.svg'"></div>
+                    <h2>OpenAI</h2>
+                </div>
+                <div class="form-control">
+                    <label class="base-label">
+                        <p>OpenAI Secret Key </p>
+                        <p> (Main API Key)</p>
+                        <span>*</span>
+                        <button 
+                            [matTooltip]="openAISecretKeyTooltip"
+                            matTooltipPosition="above"
+                            class="base-icon-button"
+                        >
+                            <lucide-angular [img]="InfoIcon"></lucide-angular>
+                        </button>
+                    </label>
+                    <input class="base-input" placeholder="sk-...">
+                </div>
+                <div class="form-control">
+                    <label class="base-label">
+                        <p>OpenAI API Key Usage Model</p>
+                        <span>*</span>
+                        <button 
+                            [matTooltip]="openAIKeyModelTooltip"
+                            matTooltipPosition="above"
+                            class="base-icon-button"
+                        >
+                            <lucide-angular [img]="InfoIcon"></lucide-angular>
+                        </button>
+                    </label>
+                    <dx-select-box
+                        height="35px"
+                        stylingMode="outlined"
+                        [items]="openAIAPIKeyModels"
+                        displayExpr="name"
+                        valueExpr="value"
+                        [searchExpr]="['value', 'name']"
+                        [searchEnabled]="true"
+                        placeholder="Select Country"
+                    >
+                    </dx-select-box>
+                </div>
+                <div class="personal-api">
+                    <div class="form-control">
+                        <label class="base-label">
+                            <p>Personal OpenAI API Key</p>
+                            <span>*</span>
+                            <button 
+                                [matTooltip]="personalOpenAIKeyTooltip"
+                                matTooltipPosition="above"
+                                class="base-icon-button"
+                            >
+                                <lucide-angular [img]="InfoIcon"></lucide-angular>
+                            </button>
+                        </label>
+                        <dx-select-box
+                            height="35px"
+                            stylingMode="outlined"
+                            [items]="openAIAPIKeyModels"
+                            displayExpr="name"
+                            valueExpr="value"
+                            [searchExpr]="['value', 'name']"
+                            [searchEnabled]="true"
+                            placeholder="Select Country"
+                        >
+                        </dx-select-box>
+                    </div>
+                    <p>If enabled, all users will be required to include their Personal OpenAI API keys in their profile pages. You can also enable it via Subscription plans only.</p>
+                </div>
+                <div class="voice-over">
+                    <h2>OpenAI Voiceover Settings</h2>
+                    <div class="form-control">
+                        <label class="base-label">
+                            <p>Activate OpenAI Standard Voices</p>
+                            <span>*</span>
+                            <button 
+                                [matTooltip]="activateOpenAIStandardTooltip"
+                                matTooltipPosition="above"
+                                class="base-icon-button"
+                            >
+                                <lucide-angular [img]="InfoIcon"></lucide-angular>
+                            </button>
+                        </label>
+                        <mat-slide-toggle
+                            labelPosition="before"
+                        >
+                        </mat-slide-toggle>
+                    </div>
+                    <div class="form-control">
+                        <label class="base-label">
+                            <p>Activate OpenAI Neural Voices</p>
+                            <span>*</span>
+                            <button 
+                                [matTooltip]="activateOpenAINeuralTooltip"
+                                matTooltipPosition="above"
+                                class="base-icon-button"
+                            >
+                                <lucide-angular [img]="InfoIcon"></lucide-angular>
+                            </button>
+                        </label>
+                        <mat-slide-toggle
+                            labelPosition="before"
+                        >
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </mat-tab>
+    <mat-tab *ngIf="!isHost">
+        <ng-template mat-tab-label>
+            <div class="tab-icon" [inlineSVG]="'/assets/settings/Icons/Anthropic Claude.svg'"></div>
+            <span>{{l('ANTHROPIC CLAUDE')}}</span>
+        </ng-template>
+        <div class="anthropic-claude">
+            <div class="header">
+                <lucide-angular [img]="ZapIcon"></lucide-angular>
+                <div>
+                    <h2>About AI Platform Settings</h2>
+                    <p>Configure your AI platform connections to enable advanced features throughout the application. You can set organization-wide API keys or allow users to provide their own keys. All API keys are securely encrypted at rest.</p>
+                </div>
+            </div>
+            <div class="base-card">
+                <div class="content-header">
+                    <div class="content-icon" [inlineSVG]="'/assets/settings/Icons/Anthropic Claude.svg'"></div>
+                    <h2>Anthropic</h2>
+                </div>
+                <div class="form-control">
+                    <label class="base-label">
+                        <p>Anthropic API Key </p>
+                        <span>*</span>
+                        <button 
+                            [matTooltip]="anthropicAPIKeyTooltip"
+                            matTooltipPosition="above"
+                            class="base-icon-button"
+                        >
+                            <lucide-angular [img]="InfoIcon"></lucide-angular>
+                        </button>
+                    </label>
+                    <input class="base-input" placeholder="sk_ant-...">
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tab-icon" [inlineSVG]="'/assets/settings/Icons/Google Gemini.svg'"></div>
+            <span>{{l('GOOGLE GEMINI')}}</span>
+        </ng-template>
+        <div class="google-gemini">
+            <div class="header">
+                <lucide-angular [img]="ZapIcon"></lucide-angular>
+                <div>
+                    <h2>About AI Platform Settings</h2>
+                    <p>Configure your AI platform connections to enable advanced features throughout the application. You can set organization-wide API keys or allow users to provide their own keys. All API keys are securely encrypted at rest.</p>
+                </div>
+            </div>
+            <div class="base-card">
+                <div class="content-header">
+                    <div class="content-icon" [inlineSVG]="'/assets/settings/Icons/Google Gemini.svg'"></div>
+                    <h2>Google Gemini</h2>
+                </div>
+                <div class="form-control">
+                    <label class="base-label">
+                        <p>Google AI API Key </p>
+                        <span>*</span>
+                        <button 
+                            [matTooltip]="geminiAPIKeyTooltip"
+                            matTooltipPosition="above"
+                            class="base-icon-button"
+                        >
+                            <lucide-angular [img]="InfoIcon"></lucide-angular>
+                        </button>
+                    </label>
+                    <input class="base-input" placeholder="Alza...">
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tab-icon" [inlineSVG]="'/assets/settings/Icons/Stable Diffusion.svg'"></div>
+            <span>{{l('STABLE DIFFUSION')}}</span>
+        </ng-template>
+        <div class="stable-diffusion">
+            <div class="header">
+                <lucide-angular [img]="ZapIcon"></lucide-angular>
+                <div>
+                    <h2>About AI Platform Settings</h2>
+                    <p>Configure your AI platform connections to enable advanced features throughout the application. You can set organization-wide API keys or allow users to provide their own keys. All API keys are securely encrypted at rest.</p>
+                </div>
+            </div>
+            <div class="base-card">
+                <div class="content-header">
+                    <div class="content-icon" [inlineSVG]="'/assets/settings/Icons/Stable Diffusion.svg'"></div>
+                    <h2>Stable Diffusion</h2>
+                </div>
+                <div class="form-control">
+                    <label class="base-label">
+                        <p>Stable Diffusion API Key </p>
+                        <p> (Main API Key)</p>
+                        <span>*</span>
+                        <button 
+                            [matTooltip]="stableDiffusionAPIKeyTooltip"
+                            matTooltipPosition="above"
+                            class="base-icon-button"
+                        >
+                            <lucide-angular [img]="InfoIcon"></lucide-angular>
+                        </button>
+                    </label>
+                    <input class="base-input" placeholder="Enter API Key">
+                </div>
+                <div class="form-control">
+                    <label class="base-label">
+                        <p>SD API Key Usage Model</p>
+                        <span>*</span>
+                        <button 
+                            [matTooltip]="sdAPIModelTooltip"
+                            matTooltipPosition="above"
+                            class="base-icon-button"
+                        >
+                            <lucide-angular [img]="InfoIcon"></lucide-angular>
+                        </button>
+                    </label>
+                    <dx-select-box
+                        height="35px"
+                        stylingMode="outlined"
+                        [items]="openAIAPIKeyModels"
+                        displayExpr="name"
+                        valueExpr="value"
+                        [searchExpr]="['value', 'name']"
+                        [searchEnabled]="true"
+                        placeholder="Select Country"
+                    >
+                    </dx-select-box>
+                </div>
+                <div class="personal-api">
+                    <div class="form-control">
+                        <label class="base-label">
+                            <p>Personal Stable Diffusion API Key</p>
+                            <span>*</span>
+                            <button 
+                                [matTooltip]="personalStableDiffusionKeyTooltip"
+                                matTooltipPosition="above"
+                                class="base-icon-button"
+                            >
+                                <lucide-angular [img]="InfoIcon"></lucide-angular>
+                            </button>
+                        </label>
+                        <dx-select-box
+                            height="35px"
+                            stylingMode="outlined"
+                            [items]="openAIAPIKeyModels"
+                            displayExpr="name"
+                            valueExpr="value"
+                            [searchExpr]="['value', 'name']"
+                            [searchEnabled]="true"
+                            placeholder="Select Country"
+                        >
+                        </dx-select-box>
+                    </div>
+                    <p>If enabled, all users will be required to include their Personal OpenAI API keys in their profile pages. You can also enable it via Subscription plans only.</p>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tab-icon" [inlineSVG]="'/assets/settings/Icons/Eleven Labs.svg'"></div>
+            <span>{{l('ELEVEN LABS')}}</span>
+        </ng-template>
+        <div class="eleven-labs">
+            <div class="header">
+                <lucide-angular [img]="ZapIcon"></lucide-angular>
+                <div>
+                    <h2>About AI Platform Settings</h2>
+                    <p>Configure your AI platform connections to enable advanced features throughout the application. You can set organization-wide API keys or allow users to provide their own keys. All API keys are securely encrypted at rest.</p>
+                </div>
+            </div>
+            <div class="base-card">
+                <div class="content-header">
+                    <div class="content-icon" [inlineSVG]="'/assets/settings/Icons/Eleven Labs.svg'"></div>
+                    <h2>ElevenLabs Voiceover Settings</h2>
+                </div>
+
+                <div class="voice-over">
+                    <div class="form-control">
+                        <label class="base-label">
+                            <p>Activate ElevenLabs Voices</p>
+                            <button 
+                                [matTooltip]="activateElevenLabsTooltip"
+                                matTooltipPosition="above"
+                                class="base-icon-button"
+                            >
+                                <lucide-angular [img]="InfoIcon"></lucide-angular>
+                            </button>
+                        </label>
+                        <mat-slide-toggle
+                            labelPosition="before"
+                        >
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+
+                <div class="form-control">
+                    <label class="base-label">
+                        <p>ElevenLabs API Key </p>
+                        <button 
+                            [matTooltip]="elevenLabsAPIKeyTooltip"
+                            matTooltipPosition="above"
+                            class="base-icon-button"
+                        >
+                            <lucide-angular [img]="InfoIcon"></lucide-angular>
+                        </button>
+                    </label>
+                    <input class="base-input" placeholder="Enter API Key">
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

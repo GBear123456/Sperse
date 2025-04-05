@@ -62,6 +62,7 @@ import {
   import { RazorPaySettingsComponent } from "../shared/razorpay-settings/razorpay-settings.component";
   import { PayStackSettingsComponent } from "../shared/paystack-settings/paystack-settings.component";
   import { OtherProviderSettingsComponent } from "../shared/other-payment-provider-settings/other-payment-provider-settings.component";
+import { AISettingsComponent } from "../shared/ai-settings/ai-settings.component";
 
   export interface MenuItem {
     id: string;
@@ -280,27 +281,8 @@ import {
       label: "AI Platforms",
       path: "ai",
       iconComponent: Zap,
+      component: AISettingsComponent,
       searchAliases: ["artificial intelligence", "machine learning", "ml", "ai integration", "chatbots"],
-      submenu: [
-        { 
-          id: "openai", 
-          label: "Open AI", 
-          path: "ai/openai",
-          searchAliases: ["gpt", "chatgpt", "davinci", "openai api", "gpt-4", "gpt-3"],
-        },
-        { 
-          id: "claude", 
-          label: "Anthropic Claude", 
-          path: "ai/claude",
-          searchAliases: ["anthropic", "claude ai", "claude api"],
-        },
-        { 
-          id: "gemini", 
-          label: "Google Gemini", 
-          path: "ai/gemini",
-          searchAliases: ["google ai", "bard", "gemini api", "google llm"],
-        }
-      ]
     },
     {
       id: "content",

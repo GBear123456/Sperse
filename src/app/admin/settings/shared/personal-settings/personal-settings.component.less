@@ -48,12 +48,11 @@
     .profile-settings-header-container {
         display: flex;
         justify-content: space-between;
-        align-items: start;
+        align-items: flex-start;
         flex-direction: column;
         gap: 1rem;
 
         @media screen and (min-width: 1024px) {
-            align-items: start;
             flex-direction: row;
         }
 
@@ -82,7 +81,7 @@
             align-self: end;
 
             @media screen and (min-width: 1024px) {
-                align-self: start;
+                align-self: flex-start;
             }
 
             .profile-settings-toggle {

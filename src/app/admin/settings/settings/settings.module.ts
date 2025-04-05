@@ -53,6 +53,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { CKEditorModule } from 'ckeditor4-angular';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 
 /** Application imports */
 import { SettingsRoutingModule } from './settings-routing.module';
@@ -95,6 +96,7 @@ import { OtherProviderSettingsComponent } from '../shared/other-payment-provider
 import { BankTransferSettingsComponent } from '../shared/bank-transfer-settings/bank-transfer-settings.component';
 import { BankSettingsComponent } from '../shared/bank-settings/bank-settings.component';
 import { PersonalSettingsComponent } from '../shared/personal-settings/personal-settings.component';
+import { AISettingsComponent } from '../shared/ai-settings/ai-settings.component';
 import { SmsVerificationModalComponent } from '../shared/personal-settings/sms-verification-modal.component';
 import { TrackingToolsSettingsComponent } from '../shared/tracking-tools-settings/tracking-tools-settings.component';
 import { TrackingToolSectionComponent } from '../shared/tracking-tools-settings/tracking-tool-section/tracking-tool-section.component';
@@ -197,7 +199,8 @@ import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-
         DxFileManagerModule,
         ZapierModule,
         NgxFileDropModule,
-        CdkAccordionModule
+        CdkAccordionModule,
+        InlineSVGModule.forRoot()
     ],
     declarations: [
         MainMenuItemComponent,
@@ -242,7 +245,8 @@ import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-
         ExternalAuthInfoComponent,
         SettingsCardComponent,
         SettingsItemComponent,
-        SettingsUploaderComponent
+        SettingsUploaderComponent,
+        AISettingsComponent
     ],
     exports: [
     ],
