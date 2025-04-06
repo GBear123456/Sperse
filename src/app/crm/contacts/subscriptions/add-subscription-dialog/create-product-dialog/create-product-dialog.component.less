@@ -185,7 +185,7 @@
 
             .slider-wrapper {
                 position: absolute;
-                width: 100%;
+                left: 50%;
                 top: 0;
             }
 
@@ -308,32 +308,46 @@
                 }
             }
 
-            .currency-block {
-                margin-bottom: 20px;
-            }
+            .price-tabs {
+                padding-top: 10px;
 
-            .customer-price {
-                margin-bottom: 15px;
-
-                span {
-                    font-family: Poppins;
-                    font-size: 14px;
-                    font-weight: 400;
-                    line-height: 21px;
-                    letter-spacing: 0em;
-                    text-align: left;
-                    padding-left: 10px;
+                .no-prices {
+                    text-align: center;
+                    font-size: 25px;
+                    padding: 50px 0;
                 }
-            }
 
-            .general-product {
-                position: relative;
+                .price-tab {
+                    padding-top: 10px;
 
-                .general-product-price {
-                    display: flex;
-                    justify-content: space-around;
-                    gap: 10px;
-                    margin-bottom: 10px;
+                    .currency-block {
+                        margin-bottom: 20px;
+                    }
+
+                    .customer-price {
+                        margin-bottom: 15px;
+
+                        span {
+                            font-family: Poppins;
+                            font-size: 14px;
+                            font-weight: 400;
+                            line-height: 21px;
+                            letter-spacing: 0em;
+                            text-align: left;
+                            padding-left: 10px;
+                        }
+                    }
+
+                    .general-product {
+                        position: relative;
+
+                        .general-product-price {
+                            display: flex;
+                            justify-content: space-around;
+                            gap: 10px;
+                            margin-bottom: 10px;
+                        }
+                    }
                 }
             }
 
@@ -1076,5 +1090,12 @@
 ::ng-deep {
     .cdk-overlay-pane.new-product mat-dialog-container {
         background: #F4F7FA;
+    }
+}
+
+
+::ng-deep {
+    .cdk-overlay-pane .add-price-option-menu .mat-menu-content button:focus {
+        outline: none;
     }
 }
