@@ -455,6 +455,18 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.product.productDonation.productDonationSuggestedAmounts = [];
     }
 
+    clearNotRelatedDontaionProps(priceOption: PriceOptionInfo) {
+        priceOption['trialEnabled'] = false;
+        priceOption.trialDayCount = null;
+        priceOption['gracePeriodEnabled'] = false;
+        priceOption.gracePeriodDayCount = undefined;
+        priceOption.credits = null;
+        priceOption.signupFee = null;
+        priceOption.commissionableFeeAmount = null;
+        priceOption.commissionableSignupFeeAmount = null;
+        priceOption.signUpCredits = null;
+    }
+
     initEventDataSources() {
         this.initLanguages();
         this.initTimezones();
@@ -589,10 +601,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 }
 
                 if (this.product.type == ProductType.Donation) {
-                    this.product.priceOptions.forEach(v => {
-                        v.commissionableFeeAmount = null;
-                        v.credits = null;
-                    });
+                    this.product.priceOptions.forEach(v => this.clearNotRelatedDontaionProps(v));
                     this.product.maxCommissionRate = null;
                     this.product.maxCommissionRateTier2 = null;
 
@@ -1306,14 +1315,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.initEventProps();
                 break;
             case ProductType.Donation:
-                if (this.product.priceOptions.some(v => v.type == PriceOptionType.Subscription)) {
-                    this.notify.info('Subscription prices are not supported on Donation product type');
-                    return;
-                }
                 if (this.product.priceOptions.some(v => v['isFreePriceType'])) {
                     this.notify.info('Free prices are not supported on Donation product type');
                     return;
                 }
+                this.product.priceOptions.forEach(v => this.clearNotRelatedDontaionProps(v));
 
                 this.initDonationProps();
                 break;

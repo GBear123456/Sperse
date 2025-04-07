@@ -138,7 +138,7 @@
 
                                 <div *ngIf="!isReadOnly && !isOneTime" class="add-new-button" [matMenuTriggerFor]="beforeMenu"><span>+</span></div>
                                 <mat-menu #beforeMenu="matMenu" xPosition="before" class="add-price-option-menu">
-                                    <button mat-menu-item *ngIf="product.type != productType.Donation" (click)="addNewPriceOption(priceOptionType.Subscription)">Subscription</button>
+                                    <button mat-menu-item (click)="addNewPriceOption(priceOptionType.Subscription)">Subscription</button>
                                     <button mat-menu-item *ngIf="product.type != productType.Subscription" (click)="addNewPriceOption(priceOptionType.OneTime)">One Time</button>
                                 </mat-menu>
                             </div>
@@ -172,7 +172,7 @@
                                                            switchedOnText=""
                                                            [(value)]="priceOption.customerChoosesPrice"
                                                            (onValueChanged)="priceOption.credits = null"
-                                                           [disabled]="isReadOnly || priceOption.isFreePriceType || (product.type != productType.Donation && product.stripeXref)">
+                                                           [disabled]="isReadOnly || priceOption.isFreePriceType || (product.type != productType.Donation && priceOption.stripeXref)">
                                                 </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
                                             </div>
                                             <div *ngIf="product.type != productType.Donation" class="slider-wrapper">
@@ -317,7 +317,7 @@
                                                                        width="100%"
                                                                        [format]="amountNullableFormat"
                                                                        [(value)]="priceOption.commissionableFeeAmount"
-                                                                       [disabled]="isReadOnly">
+                                                                       [disabled]="isReadOnly || product.type == productType.Donation">
                                                         </dx-number-box>
                                                     </div>
                                                     <div *ngIf="hasViewCredits">
@@ -326,7 +326,7 @@
                                                                        min="0"
                                                                        format="#"
                                                                        [(value)]="priceOption.credits"
-                                                                       [disabled]="isReadOnly || !hasManageCredits || priceOption.customerChoosesPrice">
+                                                                       [disabled]="isReadOnly || !hasManageCredits || priceOption.customerChoosesPrice || product.type == productType.Donation">
                                                         </dx-number-box>
                                                     </div>
                                                 </div>
@@ -427,7 +427,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="option-row width-50">
-                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime}">
+                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime || product.type == productType.Donation}">
                                                         <label class="wide">{{ls.l('SignupFee')}}</label>
                                                         <dx-number-box name="price"
                                                                        width="100%"
@@ -440,7 +440,7 @@
                                                             </dx-validator>
                                                         </dx-number-box>
                                                     </div>
-                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime || !isCommissionsEnabled}">
+                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime || !isCommissionsEnabled || product.type == productType.Donation}">
                                                         <label class="wide">{{ls.l('CommissionableAmount')}}</label>
                                                         <dx-number-box name="commissionableSignupFeeAmount"
                                                                        width="100%"
@@ -449,7 +449,7 @@
                                                                        [disabled]="isReadOnly">
                                                         </dx-number-box>
                                                     </div>
-                                                    <div *ngIf="hasViewCredits" [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime}">
+                                                    <div *ngIf="hasViewCredits" [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime || product.type == productType.Donation}">
                                                         <label class="wide">{{ls.l('Sign Up Credits')}}</label>
                                                         <dx-number-box width="100%"
                                                                        min="0"
@@ -460,7 +460,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="option-row width-50">
-                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime}">
+                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime || product.type == productType.Donation}">
                                                         <label class="wide" for="level">
                                                             <dx-switch #trialSwitch
                                                                        switchedOffText=""
@@ -480,7 +480,7 @@
                                                                        [disabled]="isReadOnly || !priceOption.trialEnabled">
                                                         </dx-number-box>
                                                     </div>
-                                                    <div>
+                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || product.type == productType.Donation}">
                                                         <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">
                                                             <dx-switch switchedOffText=""
                                                                        switchedOnText=""
