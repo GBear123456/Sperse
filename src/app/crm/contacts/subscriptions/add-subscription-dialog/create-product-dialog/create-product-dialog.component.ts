@@ -553,6 +553,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     }
                 }
 
+                if (this.productTemplates.length || this.productFiles.length || this.productLinks.length)
+                    this.product.productResources = this.productTemplates.concat(this.productFiles, this.productLinks).map((item: any) => {
+                        if (item.fileId)
+                            item.url = undefined;
+                        return new ProductResourceDto(item);
+                    });
+
                 if (this.product.type == ProductType.Digital && (!this.product.productResources || !this.product.productResources.length))
                     return this.notify.error(this.ls.l('DigitalProductError'));
 
@@ -565,13 +572,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 let recommendedProducts = this.product.recommendedProducts;
                 if (recommendedProducts && recommendedProducts.length == 1 && !recommendedProducts[0].recommendedProductId)
                     this.product.recommendedProducts = undefined;
-
-                if (this.productTemplates.length || this.productFiles.length || this.productLinks.length)
-                    this.product.productResources = this.productTemplates.concat(this.productFiles, this.productLinks).map((item: any) => {
-                        if (item.fileId)
-                            item.url = undefined;
-                        return new ProductResourceDto(item);
-                    });
 
                 if (this.product.type != ProductType.Event)
                     this.product.productEvent = undefined;
