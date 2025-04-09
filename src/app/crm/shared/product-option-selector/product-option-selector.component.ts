@@ -80,9 +80,9 @@ export class ProductOptionSelectorComponent extends AppComponentBase {
             return this.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', this.selectedSubscriptionOption.customPeriodCount,
                 this.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[this.selectedSubscriptionOption.customPeriodType]));
         } else if (this.selectedBillingPeriod == BillingPeriod.OneTime) {
-            return this.l('price' + BillingPeriod[this.selectedBillingPeriod], this.selectedSubscriptionOption.customPeriodCount);
+            return this.l('price' + this.selectedSubscriptionOption.frequency, this.selectedSubscriptionOption.customPeriodCount);
         } else {
-            return this.l('price' + BillingPeriod[this.selectedBillingPeriod]);
+            return this.l('price' + this.selectedSubscriptionOption.frequency);
         }
     }
 }

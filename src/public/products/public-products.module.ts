@@ -17,6 +17,7 @@ import { SingleProductComponent } from './single-product/single-product.componen
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxTabsModule } from 'devextreme-angular/ui/tabs';
 
 import {
     LeadServiceProxy,
@@ -36,7 +37,8 @@ import {
         PaypalModule,
         GooglePlaceModule,
         DxSelectBoxModule,
-        DxTextBoxModule
+        DxTextBoxModule,
+        DxTabsModule
     ],
     exports: [],
     declarations: [

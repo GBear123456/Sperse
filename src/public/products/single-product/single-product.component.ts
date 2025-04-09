@@ -38,13 +38,12 @@ import {
     TenantProductInfo,
     TenantSubscriptionServiceProxy,
     ProductAddOnDto,
-    ProductAddOnOptionDto
+    ProductAddOnOptionDto,
+    PriceOptionType
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
-import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { PayPalComponent } from '@shared/common/paypal/paypal.component';
 import { ButtonType } from '@shared/common/paypal/button-type.enum';
@@ -91,6 +90,7 @@ export class SingleProductComponent implements OnInit {
     tenantId: number;
     productPublicName: string;
     ref: string;
+    optionId: number;
     embeddedCheckout = false;
     showCheckout = false;
     stripeCheckoutObj;
@@ -115,14 +115,11 @@ export class SingleProductComponent implements OnInit {
     showNotFound = false;
     showNoPaymentSystems = false;
     productType = ProductType;
-    billingPeriod = BillingPeriod;
+    priceOptionType = PriceOptionType;
 
     defaultCountryCode = abp.setting.get('App.TenantManagement.DefaultCountryCode');
-    oneTimePriceOption: PublicPriceOptionInfo;
-    selectedSubscriptionOption: PublicPriceOptionInfo;
-    static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.OneTime, BillingPeriod.Custom];
-    availablePeriods: BillingPeriod[] = [];
-    selectedBillingPeriod;
+    selectedPriceOption: PublicPriceOptionInfo;
+    singlePaymentOptions = [RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.OneTime];
     isFreeProductSelected = false;
 
     initialInvoiceXref: string = null;
@@ -131,7 +128,6 @@ export class SingleProductComponent implements OnInit {
     showCouponError: boolean = false;
     couponInfo: PublicCouponInfo = null;
     couponInfoCache: { [code: string]: PublicCouponInfo } = {};
-    optionId: number;
 
     customerPriceEditMode = false;
     customerPriceRegexp = /^\d+(.\d{1,2})?$/;
@@ -199,23 +195,18 @@ export class SingleProductComponent implements OnInit {
 
     initializePayPal() {
         if (this.payPal && this.productInfo && !this.payPal.initialized) {
-            let type: ButtonType;
-            if (this.productInfo.type == ProductType.General || this.productInfo.type == ProductType.Digital || this.productInfo.type == ProductType.Event || this.productInfo.type == ProductType.Donation)
-                type = ButtonType.Payment;
-            else {
-                let hasPayment = false;
-                let hasRecurring = false;
-                let singlePaymentOptions = [RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.OneTime];
-                this.productInfo.priceOptions.map(v => {
-                    if (singlePaymentOptions.includes(v.frequency))
-                        hasPayment = true
-                    else
-                        hasRecurring = true;
-                });
+            let hasPayment = false;
+            let hasRecurring = false;
+            this.productInfo.priceOptions.map(v => {
+                if (v.type == PriceOptionType.OneTime || this.singlePaymentOptions.includes(v.frequency))
+                    hasPayment = true
+                else
+                    hasRecurring = true;
+            });
 
-                type = hasRecurring && hasPayment ? ButtonType.Both :
-                    hasRecurring ? ButtonType.Subscription : ButtonType.Payment;
-            }
+            let type = hasRecurring && hasPayment ? ButtonType.Both :
+                hasRecurring ? ButtonType.Subscription : ButtonType.Payment;
+
             this.payPal.initialize(this.productInfo.data.paypalClientId, type,
                 this.getPayPalRequest.bind(this),
                 this.getPayPalRequest.bind(this),
@@ -266,14 +257,9 @@ export class SingleProductComponent implements OnInit {
                             this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
                         if (result.data.hasTenantService)
                             this.initializePasswordComplexity();
-                        if (this.productInfo.type != ProductType.Subscription) {
-                            this.oneTimePriceOption = this.productInfo.priceOptions.find(v => !v.frequency);
-                        }
                         this.initConditions();
-                        this.initSubscriptionProduct();
-                        this.initCustomerPrice();
+                        this.initPriceOptions();
                         this.initializePayPal();
-                        this.checkIsFree();
                     }
                 } else {
                     this.showNotFound = true;
@@ -356,11 +342,11 @@ export class SingleProductComponent implements OnInit {
         tenancyRequestModel.phone = this.requestInfo.phone;
         tenancyRequestModel.products = [new TenantProductInfo({
             productId: this.productInfo.id,
-            priceOptionId: this.selectedSubscriptionOption.id,
-            paymentPeriodType: PaymentPeriodType[this.selectedSubscriptionOption.frequency],
+            priceOptionId: this.selectedPriceOption.id,
+            paymentPeriodType: PaymentPeriodType[this.selectedPriceOption.frequency],
             quantity: 1
         })];
-        tenancyRequestModel.couponCode = this.isFreeProductSelected || this.selectedSubscriptionOption.customerChoosesPrice ? null : this.requestInfo.couponCode;
+        tenancyRequestModel.couponCode = this.isFreeProductSelected || this.selectedPriceOption.customerChoosesPrice ? null : this.requestInfo.couponCode;
         tenancyRequestModel.affiliateCode = this.ref;
 
         this.leadProxy.submitTenancyRequest(tenancyRequestModel).subscribe(response => {
@@ -405,7 +391,7 @@ export class SingleProductComponent implements OnInit {
                 return of();
             }
         }
-        let submitPriceOption = this.oneTimePriceOption || this.selectedSubscriptionOption;
+        let submitPriceOption = this.selectedPriceOption;
         if ((submitPriceOption.customerChoosesPrice && (!submitPriceOption.fee || this.customerPriceEditMode))) {
             abp.notify.error(this.ls.l('Invalid Price'));
             return of();
@@ -416,7 +402,7 @@ export class SingleProductComponent implements OnInit {
             return of();
         }
 
-        if (this.productInfo.productAddOns && this.productInfo.productAddOns.length) {
+        if (submitPriceOption.type == PriceOptionType.OneTime && this.productInfo.productAddOns && this.productInfo.productAddOns.length) {
             if (this.productInfo.productAddOns.some(v => v.required && !v.productAddOnOptions.some(o => o['selected']))) {
                 abp.notify.error(this.ls.l('Select an option for required Add-Ons'));
                 return of();
@@ -440,22 +426,12 @@ export class SingleProductComponent implements OnInit {
             this.requestInfo.couponCode = null;
         this.requestInfo.billingAddress = this.billingAddress;
 
-        switch (this.productInfo.type) {
-            case ProductType.General:
-            case ProductType.Digital:
-            case ProductType.Event:
-            case ProductType.Donation:
-                this.productInput.unit = submitPriceOption.unit;
-                if (submitPriceOption.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
-                    this.productInput.price = submitPriceOption.fee;
-                this.productInput.addOnOptionIds = this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).filter(v => v['selected']).map(v => v.id);
-                break;
-            case ProductType.Subscription:
-                this.productInput.unit = PaymentService.getProductMeasurementUnit(submitPriceOption.frequency);
-                if (submitPriceOption.customerChoosesPrice)
-                    this.productInput.price = submitPriceOption.fee;
-                break;
-        }
+        this.productInput.unit = submitPriceOption.unit;
+        if (submitPriceOption.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
+            this.productInput.price = submitPriceOption.fee;
+
+        if (submitPriceOption.type == PriceOptionType.OneTime)
+            this.productInput.addOnOptionIds = this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).filter(v => v['selected']).map(v => v.id);
 
         if (this.embeddedCheckout) {
             this.requestInfo.embeddedPayment = this.embeddedCheckout;
@@ -482,46 +458,23 @@ export class SingleProductComponent implements OnInit {
         window.open(this.conditionsModalService.getHtmlUrl(type, this.tenantId), '_blank');
     }
 
-    initSubscriptionProduct() {
-        if (this.productInfo.type != ProductType.Subscription)
-            return;
-
-        let periods: RecurringPaymentFrequency[] = [];
+    initPriceOptions() {
         this.productInfo.priceOptions.forEach(v => {
-            periods.push(v.frequency);
-
             if (v.customerChoosesPrice)
                 v['initialFee'] = v.fee;
         });
 
-        let billingPeriods = periods.map(v => PaymentService.getBillingPeriodByPaymentFrequency(v));
-        this.availablePeriods = [];
-        SingleProductComponent.availablePeriodsOrder.forEach(v => {
-            if (billingPeriods.indexOf(v) >= 0)
-                this.availablePeriods.push(v);
-        });
-
-        let selectedBillingPeriod = this.availablePeriods[0];
+        let selectedPriceOption = this.productInfo.priceOptions[0];
         if (this.optionId) {
-            const selectedOption = this.productInfo.priceOptions.find(v => v.id == this.optionId);
-            if (selectedOption)
-                selectedBillingPeriod = PaymentService.getBillingPeriodByPaymentFrequency(selectedOption.frequency);
+            selectedPriceOption = this.productInfo.priceOptions.find(v => v.id == this.optionId);
         }
 
-        this.toggle(selectedBillingPeriod);
+        this.selectedPriceOption = selectedPriceOption;
+        this.onPriceOptionChanged();
     }
 
     checkIsFree() {
-        switch (this.productInfo.type) {
-            case ProductType.General:
-            case ProductType.Digital:
-            case ProductType.Event:
-                this.isFreeProductSelected = this.oneTimePriceOption.fee == 0 && !this.oneTimePriceOption.customerChoosesPrice;
-                break;
-            case ProductType.Subscription:
-                this.isFreeProductSelected = this.selectedSubscriptionOption.fee == 0 && !this.selectedSubscriptionOption.customerChoosesPrice;
-                break;
-        }
+        this.isFreeProductSelected = this.selectedPriceOption.fee == 0 && !this.selectedPriceOption.customerChoosesPrice;
     }
 
     initConditions() {
@@ -530,10 +483,8 @@ export class SingleProductComponent implements OnInit {
     }
 
     showStripeButton() {
-        if (this.productInfo.type == ProductType.Subscription) {
-            if (this.selectedSubscriptionOption.trialDayCount > 0 &&
-                (this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.LifeTime ||
-                    this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.OneTime))
+        if (this.selectedPriceOption.type == PriceOptionType.Subscription) {
+            if (this.selectedPriceOption.trialDayCount > 0 && this.singlePaymentOptions.includes(this.selectedPriceOption.frequency))
                 return false;
         }
 
@@ -541,10 +492,8 @@ export class SingleProductComponent implements OnInit {
     }
 
     showPayPalButton() {
-        if (this.productInfo.type == ProductType.Subscription) {
-            if (this.selectedSubscriptionOption.trialDayCount > 0 &&
-                (this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.LifeTime ||
-                    this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.OneTime))
+        if (this.selectedPriceOption.type == PriceOptionType.Subscription) {
+            if (this.selectedPriceOption.trialDayCount > 0 && this.singlePaymentOptions.includes(this.selectedPriceOption.frequency))
                 return false;
 
             if (this.couponInfo && this.getSubscriptionPrice(true) == 0)
@@ -562,52 +511,35 @@ export class SingleProductComponent implements OnInit {
         if (this.isFreeProductSelected)
             return true;
 
-        if (this.productInfo.type == ProductType.Subscription && this.couponInfo &&
-            (this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.OneTime ||
-                this.selectedSubscriptionOption.frequency == RecurringPaymentFrequency.LifeTime) &&
+        if (this.selectedPriceOption.type == PriceOptionType.Subscription && this.couponInfo &&
+            this.singlePaymentOptions.includes(this.selectedPriceOption.frequency) &&
             this.getSubscriptionPrice(true) == 0)
             return true;
 
-        if (this.productInfo.type != ProductType.Subscription && this.couponInfo && this.getGeneralPrice(true) == 0)
+        if (this.selectedPriceOption.type == PriceOptionType.OneTime && this.couponInfo && this.getGeneralPrice(true) == 0)
             return true;
 
         return false;
     }
 
-    getActiveStatus(period: BillingPeriod) {
-        return this.selectedBillingPeriod == period;
-    }
-
-    toggle(value: BillingPeriod) {
-        this.selectedBillingPeriod = value;
-        this.updateSelectedSubscriptionOption();
-        this.updateSubscriptionOptionPaypalButton();
+    onPriceOptionChanged() {
+        this.initCustomerPrice();
+        this.calculateTax();
+        this.updatePriceOptionPaypalButton();
         this.checkIsFree();
     }
 
-    getSliderValue(): number {
-        let periodIndex = this.availablePeriods.findIndex(v => v == this.selectedBillingPeriod);
-        let value = periodIndex * (100 / this.availablePeriods.length);
-        return +value.toFixed();
-    }
-
-    updateSelectedSubscriptionOption() {
-        this.selectedSubscriptionOption = this.productInfo.priceOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
-        this.initCustomerPrice();
-        this.calculateTax();
-    }
-
-    updateSubscriptionOptionPaypalButton() {
-        this.paypalButtonType = this.selectedBillingPeriod == BillingPeriod.OneTime || this.selectedBillingPeriod == BillingPeriod.LifeTime ?
+    updatePriceOptionPaypalButton() {
+        this.paypalButtonType = this.selectedPriceOption.type == PriceOptionType.OneTime || this.singlePaymentOptions.includes(this.selectedPriceOption.frequency) ?
             ButtonType.Payment :
             ButtonType.Subscription;
     }
 
     getSubscriptionPrice(includeCoupon: boolean) {
-        let price = this.selectedSubscriptionOption.fee;
+        let price = this.selectedPriceOption.fee;
         if (includeCoupon) {
-            if (!this.selectedSubscriptionOption.trialDayCount ||
-                (this.selectedSubscriptionOption.trialDayCount && !this.selectedSubscriptionOption.signupFee) ||
+            if (!this.selectedPriceOption.trialDayCount ||
+                (this.selectedPriceOption.trialDayCount && !this.selectedPriceOption.signupFee) ||
                 (this.couponInfo && this.couponInfo.duration != CouponDiscountDuration.Once))
                 price = this.applyCoupon(price);
         }
@@ -615,10 +547,10 @@ export class SingleProductComponent implements OnInit {
     }
 
     getSignUpFee(includeCoupon: boolean): number {
-        let fee = this.selectedSubscriptionOption.signupFee;
+        let fee = this.selectedPriceOption.signupFee;
         if (includeCoupon) {
             let usedAmountOff = 0;
-            if (!this.selectedSubscriptionOption.trialDayCount) {
+            if (!this.selectedPriceOption.trialDayCount) {
                 usedAmountOff = this.getSubscriptionPrice(false) - this.getSubscriptionPrice(true);
             }
             fee = this.applyCoupon(fee, usedAmountOff);
@@ -629,27 +561,25 @@ export class SingleProductComponent implements OnInit {
 
     getPriceDescription(): string {
         var description = this.getPricePeriodDescription();
-        if (this.selectedSubscriptionOption.cycles)
-            description += `, ${this.selectedSubscriptionOption.cycles} billing cycles`;
+        if (this.selectedPriceOption.cycles)
+            description += `, ${this.selectedPriceOption.cycles} billing cycles`;
 
         return description;
     }
 
     getPricePeriodDescription() {
-        if (this.selectedBillingPeriod == BillingPeriod.Custom) {
-            return this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', this.selectedSubscriptionOption.customPeriodCount,
-                this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[this.selectedSubscriptionOption.customPeriodType]));
-        } else if (this.selectedBillingPeriod == BillingPeriod.OneTime) {
-            return this.ls.l('price' + BillingPeriod[this.selectedBillingPeriod], this.selectedSubscriptionOption.customPeriodCount);
-        } else if (this.selectedBillingPeriod == BillingPeriod.Yearly)
-            return this.ls.l(BillingPeriod[this.selectedBillingPeriod]);
-        else {
-            return this.ls.l('price' + BillingPeriod[this.selectedBillingPeriod]);
+        if (this.selectedPriceOption.frequency == RecurringPaymentFrequency.Custom) {
+            return this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', this.selectedPriceOption.customPeriodCount,
+                this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[this.selectedPriceOption.customPeriodType]));
+        } else if (this.selectedPriceOption.frequency == RecurringPaymentFrequency.OneTime) {
+            return this.ls.l('price' + this.selectedPriceOption.frequency, this.selectedPriceOption.customPeriodCount);
+        } else {
+            return this.ls.l('price' + this.selectedPriceOption.frequency);
         }
     }
 
     getGeneralPrice(includeCoupon: boolean, includeAddOns: boolean = true): number {
-        let pricePerItem = this.oneTimePriceOption.fee;
+        let pricePerItem = this.selectedPriceOption.fee;
         if (includeAddOns) {
             if (this.productInfo.productAddOns && this.productInfo.productAddOns.length)
                 pricePerItem += this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).reduce((p, c) => p += c['selected'] ? c.price : 0, 0);
@@ -661,9 +591,9 @@ export class SingleProductComponent implements OnInit {
     }
 
     getDiscount(): number {
-        if (this.productInfo.type == ProductType.Subscription) {
+        if (this.selectedPriceOption.type == PriceOptionType.Subscription) {
             let amount = this.getSubscriptionPrice(false) - this.getSubscriptionPrice(true);
-            if (this.selectedSubscriptionOption.signupFee)
+            if (this.selectedPriceOption.signupFee)
                 amount = amount + this.getSignUpFee(false) - this.getSignUpFee(true);
             return amount;
         }
@@ -738,47 +668,38 @@ export class SingleProductComponent implements OnInit {
 
     getTenantButtonText(): string {
         let buttonText = 'Start ';
-        if (this.selectedSubscriptionOption.trialDayCount) {
+        if (this.selectedPriceOption.trialDayCount) {
             buttonText += 'Your ';
-            if (!this.selectedSubscriptionOption.signupFee)
+            if (!this.selectedPriceOption.signupFee)
                 buttonText += ' Free ';
-            buttonText += `${this.selectedSubscriptionOption.trialDayCount}-Day Trial `;
+            buttonText += `${this.selectedPriceOption.trialDayCount}-Day Trial `;
         }
         buttonText += 'Today!';
         return buttonText;
     }
 
     initCustomerPrice() {
-        let customerChoosesPrice, price, min, max;
-        if (this.productInfo.type == ProductType.Subscription) {
-            customerChoosesPrice = this.selectedSubscriptionOption.customerChoosesPrice;
-            if (customerChoosesPrice) {
-                this.selectedSubscriptionOption.fee = this.selectedSubscriptionOption.fee || this.selectedSubscriptionOption['initialFee'];
-                this.clearCoupon();
-            }
-            price = this.selectedSubscriptionOption.fee;
-            min = this.selectedSubscriptionOption.minCustomerPrice;
-            max = this.selectedSubscriptionOption.maxCustomerPrice;
-        } else {
-            customerChoosesPrice = this.oneTimePriceOption.customerChoosesPrice;
-            price = this.oneTimePriceOption.fee;
-            min = this.oneTimePriceOption.minCustomerPrice;
-            max = this.oneTimePriceOption.maxCustomerPrice;
-        }
-
+        let customerChoosesPrice = this.selectedPriceOption.customerChoosesPrice;
         if (!customerChoosesPrice) {
             this.customerPriceEditMode = false;
             return;
         }
 
-        if (!price) {
+        this.selectedPriceOption.fee = this.selectedPriceOption.fee || this.selectedPriceOption['initialFee'];
+        this.clearCoupon();
+
+        if (!this.selectedPriceOption.fee) {
             this.customerPriceEditMode = true;
             this.focusCustomerPriceInput();
         } else {
+            if (this.selectedPriceOption.minCustomerPrice && this.selectedPriceOption.fee < this.selectedPriceOption.minCustomerPrice ||
+                this.selectedPriceOption.maxCustomerPrice && this.selectedPriceOption.fee > this.selectedPriceOption.maxCustomerPrice)
+                this.selectedPriceOption.fee = this.selectedPriceOption['initialFee'];
+
             this.customerPriceEditMode = false;
         }
 
-        this.initCustomerPriceInputErrorDefs(min, max);
+        this.initCustomerPriceInputErrorDefs(this.selectedPriceOption.minCustomerPrice, this.selectedPriceOption.maxCustomerPrice);
     }
 
     initCustomerPriceInputErrorDefs(min, max) {
@@ -830,9 +751,25 @@ export class SingleProductComponent implements OnInit {
             this.calculateTax();
     }
 
+    getDonationSuggestedAmounts(): ProductDonationSuggestedAmountInfo[] {
+        const donation = this.productInfo.productDonation;
+        if (!donation)
+            return [];
+
+        const suggestions = donation.productDonationSuggestedAmounts;
+        const min = this.selectedPriceOption.minCustomerPrice;
+        const max = this.selectedPriceOption.maxCustomerPrice;
+
+        if (!min && !max) return suggestions;
+
+        return suggestions.filter(({ amount }) =>
+            (!min || amount >= min) && (!max || amount <= max)
+        );
+    }
+
     selectSuggestedAmount(suggestedAmount: ProductDonationSuggestedAmountInfo) {
         this.customerPriceEditMode = false;
-        this.oneTimePriceOption.fee = suggestedAmount.amount;
+        this.selectedPriceOption.fee = suggestedAmount.amount;
     }
 
     countriesStateLoad(): void {
@@ -946,24 +883,15 @@ export class SingleProductComponent implements OnInit {
         this.productTaxInput.stripeTaxProcuctCode = this.productInfo.stripeTaxProcuctCode;
         this.productTaxInput.quantity = 1;
 
-        switch (this.productInfo.type) {
-            case ProductType.General:
-            case ProductType.Digital:
-            case ProductType.Event:
-            case ProductType.Donation:
-                if (this.oneTimePriceOption.customerChoosesPrice || this.productInfo.type == ProductType.Donation)
-                    this.productTaxInput.price = this.oneTimePriceOption.fee;
-                else
-                    this.productTaxInput.price = this.getGeneralPrice(true);
-                break;
-            case ProductType.Subscription:
-                if (this.selectedSubscriptionOption.customerChoosesPrice)
-                    this.productTaxInput.price = this.selectedSubscriptionOption.fee;
-                else
-                    this.productTaxInput.price = this.getSubscriptionPrice(true);
-                this.productTaxInput.price = this.productTaxInput.price + this.getSignUpFee(true);
-                break;
+        if (this.selectedPriceOption.customerChoosesPrice || this.productInfo.type === ProductType.Donation) {
+            this.productTaxInput.price = this.selectedPriceOption.fee;
+        } else {
+            this.productTaxInput.price = this.selectedPriceOption.type === PriceOptionType.OneTime ?
+                this.getGeneralPrice(true) :
+                this.getSubscriptionPrice(true);
         }
+        if (this.selectedPriceOption.type === PriceOptionType.Subscription)
+            this.productTaxInput.price += this.getSignUpFee(true);
 
         this.appHttpConfiguration.avoidErrorHandling = true;
         this.publicProductService

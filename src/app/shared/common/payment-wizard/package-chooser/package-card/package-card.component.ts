@@ -156,9 +156,8 @@ export class PackageCardComponent implements OnChanges {
     }
 
     getPriceDescription(): string {
+        let productFrequencyInfo = this.getFrequencyInfo();
         if (this.billingPeriod == BillingPeriod.Custom) {
-            let productFrequencyInfo = this.getFrequencyInfo();
-
             if (productFrequencyInfo)
                 return this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', productFrequencyInfo.customPeriodCount,
                     this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[productFrequencyInfo.customPeriodType]));
@@ -166,7 +165,7 @@ export class PackageCardComponent implements OnChanges {
         } else {
             return this.billingPeriod == BillingPeriod.Yearly ?
                 this.ls.l('moBilledYearly') :
-                this.ls.l('price' + BillingPeriod[this.billingPeriod]);
+                this.ls.l('price' + productFrequencyInfo.frequency);
         }
     }
 
