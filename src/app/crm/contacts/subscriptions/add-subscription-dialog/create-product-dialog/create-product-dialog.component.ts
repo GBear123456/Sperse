@@ -376,11 +376,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     initPriceOptions(priceOptions: PriceOptionInfo[]) {
         this.priceOptionTabs = [];
 
-        priceOptions.forEach(option => {
+        priceOptions.forEach((option, index) => {
             this.priceOptionTabs.push({
-                id: option.id,
-                text: option.name || option.frequency || option.unit || 'New Option'
+                id: option.id
             });
+            this.updatePriceOptionTabName(option, index);
             if (option.type == PriceOptionType.Subscription) {
                 option['gracePeriodEnabled'] = !!option.gracePeriodDayCount;
                 option['trialEnabled'] = !!option.trialDayCount;
@@ -785,15 +785,20 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     removePriceOption(index) {
-        this.product.priceOptions.splice(index, 1);
-        this.priceOptionTabs.splice(index, 1);
-        if (this.selectedTabIndex > 0)
-            this.selectedTabIndex--;
+        this.message.confirm(null, null, (res) => {
+            if (!res)
+                return;
 
-        if (this.isOneTime && !this.product.priceOptions.length) {
-            this.isOneTime = false;
+            this.product.priceOptions.splice(index, 1);
+            this.priceOptionTabs.splice(index, 1);
+            if (this.selectedTabIndex > 0)
+                this.selectedTabIndex--;
+
+            if (this.isOneTime && !this.product.priceOptions.length) {
+                this.isOneTime = false;
+            }
             this.detectChanges();
-        }
+        });
     }
 
     removeUpgradeToProduct(index, option) {
@@ -830,9 +835,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         return frequencies;
     }
 
-    onUnitChanged(event, option: PriceOptionInfo, index) {
-        if (!option.name)
-            this.priceOptionTabs[index].text = event.value;
+    priceOptionNameChanged(priceOption, index, value) {
+        priceOption.name = value;
+        this.updatePriceOptionTabName(priceOption, index);
+    }
+
+    updatePriceOptionTabName(priceOption: PriceOptionInfo, index: number) {
+        this.priceOptionTabs[index].text = priceOption.name || priceOption.frequency || priceOption.unit || 'New Option';
     }
 
     onFrequencyChanged(event, option: PriceOptionInfo, customPeriodValidator?, index?) {
@@ -859,9 +868,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             option.cycles = undefined;
         }
 
-        if (!option.name)
-            this.priceOptionTabs[index].text = event.value;
-
+        this.updatePriceOptionTabName(option, index);
         this.detectChanges();
     }
 

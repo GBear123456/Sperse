@@ -185,7 +185,7 @@
 
             .slider-wrapper {
                 position: absolute;
-                left: 50%;
+                left: 42%;
                 top: 0;
             }
 
@@ -318,9 +318,13 @@
                 }
 
                 ::ng-deep .dx-tabs {
-                    .dx-tab.dx-tab-selected {
-                        background-color: #969696;
-                        color: white;
+                    .dx-tab {
+                        max-width: 300px;
+
+                        &.dx-tab-selected {
+                            background-color: #969696;
+                            color: white;
+                        }
                     }
                 }
 
@@ -331,8 +335,16 @@
                         margin-bottom: 20px;
                     }
 
+                    ::ng-deep inplace-edit {
+                        width: 260px;
+
+                        .inplace-edit-view-mode a {
+                            font-weight: 400;
+                        }
+                    }
+
                     .customer-price {
-                        margin-bottom: 15px;
+                        align-items: center;
 
                         span {
                             font-family: Poppins;
@@ -342,6 +354,10 @@
                             letter-spacing: 0em;
                             text-align: left;
                             padding-left: 10px;
+                        }
+
+                        dx-number-box {
+                            flex: 1;
                         }
                     }
 
@@ -353,6 +369,38 @@
                             justify-content: space-around;
                             gap: 10px;
                             margin-bottom: 10px;
+
+                            ::ng-deep .commissionable-amount {
+                                .dx-placeholder {
+                                    width: 100%;
+                                    font-size: 10px;
+                                }
+                            }
+                        }
+                    }
+
+                    .option-ids {
+                        display: flex;
+
+                        & > div {
+                            flex: 1;
+                            min-width: 0;
+                        }
+
+                        .option-id {
+                            max-width: 100%;
+                            flex: 0 1 120px;
+                        }
+
+                        .wrap-text {
+                            display: flex;
+
+                            a {
+                                overflow: hidden;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                max-width: 90%;
+                            }
                         }
                     }
                 }
@@ -509,6 +557,17 @@
                     font-weight: 400;
                     line-height: 28px;
                 }
+
+                &.button-text {
+                    width: auto;
+                    height: auto;
+                    padding: 3px 11px;
+                    border: 0;
+
+                    span {
+                        font-size: 15px;
+                    }
+                }
             }
 
             .remove-button {
@@ -517,23 +576,14 @@
                 span {
                     line-height: 24px;
                 }
-            }
 
-            .right-actions {
-                position: absolute;
-                right: 0;
-                display: flex;
+                &.button-text {
+                    top: 0;
 
-                .option-id {
-                    font-size: 15px;
-                    font-style: italic;
-                    color: #afb0b0;
-                }
-
-                .remove-button {
-                    position: static;
-                    margin-top: -4px;
-                    margin-left: 4px;
+                    span {
+                        font-style: italic;
+                        color: #f44336;
+                    }
                 }
             }
 
@@ -794,8 +844,8 @@
     }
 
     .options {
-        position: relative;
         margin-bottom: 15px;
+        position: relative;
 
         & > div.upgrade-field {
             width: calc(100% - 50px);
@@ -805,18 +855,8 @@
             .option-row {
                 display: flex;
                 justify-content: space-between;
-
-                & > div {
-                    margin: 0 10px 20px;
-
-                    &:first-child {
-                        margin-left: 0;
-                    }
-
-                    &:last-child {
-                        margin-right: 0;
-                    }
-                }
+                gap: 10px;
+                margin-bottom: 20px;
             }
 
             .width-50 {
