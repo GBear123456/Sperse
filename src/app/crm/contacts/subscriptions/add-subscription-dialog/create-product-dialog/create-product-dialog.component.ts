@@ -1403,6 +1403,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
     }
 
+    formatUrl(url: string): string {
+        return url.startsWith('http') ? url : `https://${url}`;
+    }
+
     removeLink(index) {
         if (index != undefined) {
             this.productLinks.splice(index, 1);

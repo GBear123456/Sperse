@@ -903,7 +903,7 @@
                                 </div>
 
                                 <div *ngFor="let link of productLinks; let i = index" class="link">
-                                    <a target="_blank" [href]="link.url" [title]="link.url">{{link.name || link.url}}</a>&nbsp;<i *ngIf="!isReadOnly" (click)="removeLink(i)" aria-hidden="true" class="delete fa fa-times"></i>
+                                    <a target="_blank" [href]="formatUrl(link.url)" [title]="link.url">{{link.name || link.url}}</a>&nbsp;<i *ngIf="!isReadOnly" (click)="removeLink(i)" aria-hidden="true" class="delete fa fa-times"></i>
                                 </div>
 
                             </div>
