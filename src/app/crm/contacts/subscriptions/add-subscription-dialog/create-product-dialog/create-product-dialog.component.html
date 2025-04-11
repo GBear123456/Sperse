@@ -155,6 +155,7 @@
                                 <dx-tabs *ngIf="product.priceOptions.length > 1"
                                          [dataSource]="priceOptionTabs"
                                          [(selectedIndex)]="selectedTabIndex"
+                                         [scrollByContent]="true"
                                          [focusStateEnabled]="false"
                                          [hoverStateEnabled]="false">
                                 </dx-tabs>
@@ -191,7 +192,7 @@
                                                                [format]="priceOption.isFreePriceType ? amountFormat : amountNullableFormat"
                                                                [(value)]="priceOption.fee"
                                                                [disabled]="isReadOnly"
-                                                               (onValueChanged)="checkShowAmountChangeWarrning()">
+                                                               (onValueChanged)="checkShowAmountChangeWarrning(priceOption)">
                                                     <dx-validator>
                                                         <dxi-validation-rule type="custom" [validationCallback]="validateGeneralPrice(priceOption)" message="{{ls.l('InvalidField', ls.l('Price'))}}."></dxi-validation-rule>
                                                     </dx-validator>
@@ -275,7 +276,7 @@
                                                                        [format]="priceOption.customerChoosesPrice ? amountNullableFormat : amountFormat"
                                                                        [(value)]="priceOption.fee"
                                                                        [disabled]="isReadOnly"
-                                                                       (onValueChanged)="checkShowAmountChangeWarrning()">
+                                                                       (onValueChanged)="checkShowAmountChangeWarrning(priceOption)">
                                                             <dx-validator>
                                                                 <dxi-validation-rule type="custom" [validationCallback]="validateFee(priceOption)" message="{{ls.l('InvalidField', ls.l('Fee'))}}."></dxi-validation-rule>
                                                             </dx-validator>
@@ -407,7 +408,7 @@
                                                                        [format]="amountFormat"
                                                                        [(value)]="priceOption.signupFee"
                                                                        [disabled]="isReadOnly"
-                                                                       (onValueChanged)="checkShowAmountChangeWarrning()">
+                                                                       (onValueChanged)="checkShowAmountChangeWarrning(priceOption)">
                                                             <dx-validator>
                                                                 <dxi-validation-rule [type]="priceOption.frequency && !isOneTime && priceOption.trialDayCount ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
                                                             </dx-validator>
@@ -487,13 +488,13 @@
                                                     <ng-container *ngIf="priceOption.stripeXrefUrl; else plainOptionStripeXref">
                                                         <a [href]="priceOption.stripeXrefUrl" target="_blank">{{priceOption.stripeXref}}</a>
                                                     </ng-container>
-                                                    <ng-template #plainOptionStripeXref>{{priceOption.stripeXref}}</ng-template>
+                                                    <ng-template #plainOptionStripeXref><span>{{priceOption.stripeXref}}</span></ng-template>
                                                     <i class="save-to-clipboard" (click)="copyTextToClipboard(priceOption.stripeXref)"></i>
                                                 </div>
                                             </div>
                                             <div *ngIf="priceOption.paypalXref">
                                                 <label>Paypal Xref</label>
-                                                <div class="clipboard-holder wrap-text">{{priceOption.paypalXref}} <i class="save-to-clipboard" (click)="copyTextToClipboard(priceOption.paypalXref)"></i></div>
+                                                <div class="clipboard-holder wrap-text"><span>{{priceOption.paypalXref}}</span><i class="save-to-clipboard" (click)="copyTextToClipboard(priceOption.paypalXref)"></i></div>
                                             </div>
                                         </div>
                                     </ng-container>

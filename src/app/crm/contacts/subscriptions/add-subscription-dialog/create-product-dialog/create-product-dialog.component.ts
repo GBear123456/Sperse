@@ -1047,13 +1047,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         });
     }
 
-    checkShowAmountChangeWarrning() {
-        let product = this.data.product,
-            message = '';
-        if (product && product.hasExternalReference)
+    checkShowAmountChangeWarrning(priceOption?: PriceOptionInfo) {
+        let product = this.data.product;
+        if (!product)
+            return;
+
+        if (priceOption && !priceOption.id)
+            return;
+
+        let message = '';
+        if (product.hasExternalReference)
             message = this.ls.l('ExternalRefferenceWarning') + '\n';
 
-        if (product && product.hasIncompletedInvoices)
+        if (product.hasIncompletedInvoices)
             message += '\n' + this.ls.l('IncompletedInvoicesWarning');
 
         if (message)
