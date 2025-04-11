@@ -22,7 +22,6 @@ export class SettingsNewComponent extends AppComponentBase implements OnInit, On
     selectedMenu: MenuItem = null;
     selectedMainItem: string = null;
 
-    navs: MenuItem[] = mainNavigation;
     saveSubject: Subject<any> = new Subject();
     title: string;
 
@@ -45,7 +44,7 @@ export class SettingsNewComponent extends AppComponentBase implements OnInit, On
       super(injector);
 
       this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event) => {
-        this.selectedMenu = this.navs.find(nav => location.pathname.startsWith(this.settingService.getFullPath(nav.path) || ''))
+        this.selectedMenu = this.settingService.configuredNavs.find(nav => location.pathname.startsWith(this.settingService.getFullPath(nav.path) || ''))
         this.selectedMainItem = this.selectedMenu?.id;
         this.settingService.alterSubmenu(this.selectedMenu?.submenu && this.selectedMenu.submenu.length > 0);
 
@@ -78,7 +77,7 @@ export class SettingsNewComponent extends AppComponentBase implements OnInit, On
     handleMainItemClick = (item: MenuItem) => {
         this.selectedMainItem = item.id;
         this.settingService.alterSubmenu(item.submenu && item.submenu.length > 0);
-        this.selectedMenu = this.navs.find(nav => nav.id === item.id)
+        this.selectedMenu = this.settingService.configuredNavs.find(nav => nav.id === item.id)
         
         // If the item has submenu items, navigate to the first submenu item's path
         if (item.submenu && item.submenu.length > 0) {

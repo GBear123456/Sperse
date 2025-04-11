@@ -1,11 +1,12 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 
 /** Application imports */
 import { SettingService } from '@app/admin/settings/settings/settings.service';
-import { mainNavigation, MenuItem } from '../../settings/settings.navigation';
+import { MenuItem } from '../../settings/settings.navigation';
+import { finalize } from '@node_modules/rxjs/operators';
 
 @Component({
     templateUrl: './dashboard-settings.component.html',
@@ -16,10 +17,16 @@ export class DashboardSettingComponent {
     searchQuery: string = '';
 
     constructor(
+        private changeDetector: ChangeDetectorRef,
         private sanitizer: DomSanitizer,
         private settingService: SettingService,
         private router: Router
-    ) {}
+    ) {
+        this.settingService.initMenu()
+            .add(() => {
+                this.changeDetector.detectChanges()
+            });
+    }
 
     categoryColors = [
         // Blues
@@ -50,12 +57,12 @@ export class DashboardSettingComponent {
 
     filterNavigation = (q: string) => {
         if (!q.trim()) {
-            return mainNavigation;
+            return this.settingService.configuredNavs;
         }
   
         const query = q.toLowerCase().trim();
         
-        const filtered = mainNavigation.filter(item => this.matchesSearch(item, query));
+        const filtered = this.settingService.configuredNavs.filter(item => this.matchesSearch(item, query));
         
         return filtered;
     }
@@ -109,8 +116,12 @@ export class DashboardSettingComponent {
     };
 
     goToMain = (item: MenuItem) => {
-        this.router.navigateByUrl(this.settingService.getFullPath(item.path))
-        this.settingService.alterSubmenu(item?.submenu && item.submenu.length > 0);
+        if (item?.submenu && item.submenu.length > 0) {
+            this.router.navigateByUrl(this.settingService.getFullPath(item.submenu[0].path))
+            this.settingService.alterSubmenu(item?.submenu && item.submenu.length > 0);
+        } else {
+            this.router.navigateByUrl(this.settingService.getFullPath(item.path))
+        }
     }
 
     goToSub = (item: MenuItem) => {
