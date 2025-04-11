@@ -244,21 +244,21 @@ export class SingleProductComponent implements OnInit {
             .subscribe(result => {
                 if (result.id) {
                     this.productInfo = result;
+                    this.titleService.setTitle(this.productInfo.name);
+                    this.currencySymbol = getCurrencySymbol(result.currencyId, 'narrow');
+                    this.initPriceOptions();
 
                     this.isInStock = this.productInfo.stock == null || this.productInfo.stock > 0;
                     this.isDonationGoalReached = this.productInfo.type == ProductType.Donation && this.productInfo.productDonation.goalAmount &&
                         this.productInfo.productDonation.raisedAmount >= this.productInfo.productDonation.goalAmount;
 
                     if (this.isInStock && (!this.isDonationGoalReached || this.productInfo.productDonation.keepActiveIfGoalReached)) {
-                        this.currencySymbol = getCurrencySymbol(result.currencyId, 'narrow');
                         this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
-                        this.titleService.setTitle(this.productInfo.name);
                         if (result.descriptionHtml)
                             this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
                         if (result.data.hasTenantService)
                             this.initializePasswordComplexity();
                         this.initConditions();
-                        this.initPriceOptions();
                         this.initializePayPal();
                     }
                 } else {
