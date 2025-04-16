@@ -469,8 +469,7 @@ export class SingleProductComponent implements OnInit {
             selectedPriceOption = this.productInfo.priceOptions.find(v => v.id == this.optionId);
         }
 
-        this.selectedPriceOption = selectedPriceOption;
-        this.onPriceOptionChanged();
+        this.onPriceOptionChanged(selectedPriceOption);
     }
 
     checkIsFree() {
@@ -522,7 +521,9 @@ export class SingleProductComponent implements OnInit {
         return false;
     }
 
-    onPriceOptionChanged() {
+    onPriceOptionChanged(value: PublicPriceOptionInfo) {
+        this.selectedPriceOption = value;
+
         this.initCustomerPrice();
         this.calculateTax();
         this.updatePriceOptionPaypalButton();

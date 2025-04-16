@@ -36,18 +36,9 @@
                     </div>
                 </div>
             </div>
-            <dx-tabs *ngIf="productInfo.priceOptions.length > 1"
-                     [dataSource]="productInfo.priceOptions"
-                     [(selectedItem)]="selectedPriceOption"
-                     itemTemplate="priceOptionTabTemplate"
-                     (onSelectionChanged)="onPriceOptionChanged()"
-                     [scrollByContent]="true"
-                     [focusStateEnabled]="false"
-                     [hoverStateEnabled]="false">
-                <div *dxTemplate="let item of 'priceOptionTabTemplate'">
-                    <span>{{ item.name || item.frequency || item.unit }}</span>
-                </div>
-            </dx-tabs>
+            <product-option-selector [productPriceOptions]="productInfo.priceOptions"
+                                     (onSelect)="onPriceOptionChanged($event)">
+            </product-option-selector>
             <ng-container *ngIf="selectedPriceOption.type == priceOptionType.Subscription else generalProduct">
                 <div class="subscription-price">
                     <div class="price-wrapper">

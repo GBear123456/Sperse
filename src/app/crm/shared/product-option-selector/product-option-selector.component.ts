@@ -12,9 +12,7 @@ import {
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
-import { CustomPeriodType, PublicPriceOptionInfo, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
-import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
+import { CustomPeriodType, IPublicPriceOptionInfo, PriceOptionType, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '../../../../shared/AppConsts';
 
 @Component({
@@ -24,21 +22,19 @@ import { AppConsts } from '../../../../shared/AppConsts';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductOptionSelectorComponent extends AppComponentBase {
-    static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.OneTime, BillingPeriod.Custom];
-    billingPeriod = BillingPeriod;
+    priceOptions: IPublicPriceOptionInfo[];
 
-    subscriptionOptions: PublicPriceOptionInfo[];
-    availablePeriods: BillingPeriod[] = [];
-
-    selectedBillingPeriod: BillingPeriod;
-    selectedSubscriptionOption: PublicPriceOptionInfo;
+    selectedPriceOption: IPublicPriceOptionInfo;
     selectedOptionDescription: string;
+    //filterSubscriptions: boolean;
 
-    @Input() set productSubscriptionOptions(options: PublicPriceOptionInfo[]) {
-        this.subscriptionOptions = options;
-        this.initOptions(options);
+    //@Input() onlySubscriptions: boolean;
+    @Input() set productPriceOptions(options: IPublicPriceOptionInfo[]) {
+        this.priceOptions = options;
+        if (options)
+            this.initOptions(options);
     }
-    @Output() onSelect: EventEmitter<{ period: BillingPeriod, option: PublicPriceOptionInfo }> = new EventEmitter();
+    @Output() onSelect: EventEmitter<IPublicPriceOptionInfo> = new EventEmitter();
 
     constructor(
         injector: Injector,
@@ -46,43 +42,28 @@ export class ProductOptionSelectorComponent extends AppComponentBase {
         super(injector);
     }
 
-    initOptions(options: PublicPriceOptionInfo[]) {
-        let periods: RecurringPaymentFrequency[] = options.map(v => v.frequency);
-
-        let billingPeriods = periods.map(v => PaymentService.getBillingPeriodByPaymentFrequency(v));
-        this.availablePeriods = [];
-        ProductOptionSelectorComponent.availablePeriodsOrder.forEach(v => {
-            if (billingPeriods.indexOf(v) >= 0)
-                this.availablePeriods.push(v);
-        });
-        this.toggle(this.availablePeriods[0]);
+    initOptions(options: IPublicPriceOptionInfo[]) {
+        this.selectedPriceOption = options[0];
+        this.onPriceOptionChanged();
     }
 
-    getActiveStatus(period: BillingPeriod) {
-        return this.selectedBillingPeriod == period;
-    }
-
-    getSliderValue(): number {
-        let periodIndex = this.availablePeriods.findIndex(v => v == this.selectedBillingPeriod);
-        let value = periodIndex * (100 / this.availablePeriods.length);
-        return +value.toFixed();
-    }
-
-    toggle(value: BillingPeriod) {
-        this.selectedBillingPeriod = value;
-        this.selectedSubscriptionOption = this.subscriptionOptions.find(v => v.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
+    onPriceOptionChanged() {
         this.selectedOptionDescription = this.getPriceDescription();
-        this.onSelect.emit({ period: value, option: this.selectedSubscriptionOption });
+        this.onSelect.emit(this.selectedPriceOption);
     }
 
     getPriceDescription(): string {
-        if (this.selectedBillingPeriod == BillingPeriod.Custom) {
-            return this.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', this.selectedSubscriptionOption.customPeriodCount,
-                this.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[this.selectedSubscriptionOption.customPeriodType]));
-        } else if (this.selectedBillingPeriod == BillingPeriod.OneTime) {
-            return this.l('price' + this.selectedSubscriptionOption.frequency, this.selectedSubscriptionOption.customPeriodCount);
-        } else {
-            return this.l('price' + this.selectedSubscriptionOption.frequency);
+        if (this.selectedPriceOption.type == PriceOptionType.Subscription) {
+            if (this.selectedPriceOption.frequency == RecurringPaymentFrequency.Custom) {
+                return this.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', this.selectedPriceOption.customPeriodCount,
+                    this.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[this.selectedPriceOption.customPeriodType]));
+            } else if (this.selectedPriceOption.frequency == RecurringPaymentFrequency.OneTime) {
+                return this.l('price' + this.selectedPriceOption.frequency, this.selectedPriceOption.customPeriodCount);
+            } else {
+                return this.l('price' + this.selectedPriceOption.frequency);
+            }
         }
+
+        return this.l('ProductMeasurementUnit_' + this.selectedPriceOption.unit);
     }
 }

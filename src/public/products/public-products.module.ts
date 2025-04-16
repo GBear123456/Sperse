@@ -24,6 +24,7 @@ import {
     PublicProductServiceProxy,
     TenantSubscriptionServiceProxy
 } from '@root/shared/service-proxies/service-proxies';
+import { ProductOptionSelectorModule } from '@app/crm/shared/product-option-selector/product-option-selector.module';
 
 @NgModule({
     imports: [
@@ -32,6 +33,7 @@ import {
         CommonModule,
         PublicProductsRoutingModule,
         CountryPhoneNumberModule,
+        ProductOptionSelectorModule,
         UtilsModule,
         MatSliderModule,
         PaypalModule,
