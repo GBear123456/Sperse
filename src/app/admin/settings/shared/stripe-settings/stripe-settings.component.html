@@ -182,12 +182,7 @@
                         </button>
                         <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
                     </p>
-                    <h6 class="tax-settings">Tax Settings</h6>
-                    <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
-                        {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
-                    </button>
-                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
-                    <br /><br />
+                    <br />
                     <p>
                         <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
                                       [text]="l('Ignore external connected accounts')"
@@ -195,6 +190,11 @@
                         </dx-check-box>
                         <span class="small">*Skip webhooks from external connected accounts</span>
                     </p>
+                    <h6 class="tax-settings">Tax Settings</h6>
+                    <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
+                        {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
+                    </button>
+                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
                 </div>
                 <div *ngIf="!isHost" class="account-actions">
                     <span *ngIf="!settings.isActive" (click)="setIsActive(settings)"><i class="fa fa-check"></i>Set as active</span>
