@@ -48,6 +48,5 @@ export enum AppFeatures {
     PortalDashboard = 'Portal.Dashboard',
     PortalInvoices = 'Portal.Invoices',
     PortalLeads = 'Portal.Leads',
-    PortalReseller = 'Portal.Reseller',
-    PortalPublic = 'Portal.Public'
+    PortalReseller = 'Portal.Reseller'
 }

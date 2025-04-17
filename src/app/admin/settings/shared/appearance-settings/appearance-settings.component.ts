@@ -31,6 +31,7 @@ import { DomHelper } from '@shared/helpers/DomHelper';
 import { AppFeatures } from '@shared/AppFeatures';
 import { PortalMenuItemConfig } from './portal/portal-menu-item';
 import { PortalMenuItemEnum } from './portal/portal-menu-item.enum';
+import { AdditionalAppFeatures } from './appearance-settings.enum';
 
 @Component({
     selector: 'appearance-settings',
@@ -57,7 +58,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
 
     hasPortalFeature = this.feature.isEnabled(AppFeatures.Portal);
     featureTypeList = [{
-        type: AppFeatures.PortalPublic,
+        type: AdditionalAppFeatures.PortalPublic,
         name: this.l('Public')
     }, {
         type: AppFeatures.Admin,
@@ -66,7 +67,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
         type: AppFeatures.Portal,
         name: this.l('Portal')
     }];
-    selectedFeatureType: AppFeatures.PortalPublic | AppFeatures.Admin | AppFeatures.Portal = AppFeatures.PortalPublic;
+    selectedFeatureType: AdditionalAppFeatures.PortalPublic | AppFeatures.Admin | AppFeatures.Portal = AdditionalAppFeatures.PortalPublic;
 
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
