@@ -11,6 +11,7 @@ import { SettingService } from '@app/admin/settings/settings/settings.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppComponentBase } from '@root/shared/common/app-component-base';
 import { MenuItem, mainNavigation } from './settings.navigation'
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     templateUrl: './settings.new.component.html',
@@ -39,7 +40,8 @@ export class SettingsNewComponent extends AppComponentBase implements OnInit, On
     constructor(
         injector: Injector,
         private router: Router, 
-        private settingService: SettingService
+        private settingService: SettingService,
+        public layoutService: LayoutService,
     ) {
       super(injector);
 

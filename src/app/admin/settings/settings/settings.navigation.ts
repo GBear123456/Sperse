@@ -37,7 +37,7 @@ import {
   import { BankSettingsComponent } from "../shared/bank-settings/bank-settings.component";
   import { PersonalSettingsComponent } from "../shared/personal-settings/personal-settings.component";
   import { LandingPageComponent } from "@root/shared/common/tenant-settings-wizard/landing-page/landing-page.component";
-  import { DocumentsComponent } from "@app/crm/documents/documents.component";
+  import { DocumentsComponent } from "../shared/documents-settings/documents-settings.component";
   import { ZapierComponent } from "@root/shared/common/zapier/zapier.component";
   import { InvoiceSettingsComponent } from "@root/shared/common/tenant-settings-wizard/invoice-settings/invoice-settings.component";
   import { CommissionsComponent } from "@root/shared/common/tenant-settings-wizard/commissions/commissions.component";

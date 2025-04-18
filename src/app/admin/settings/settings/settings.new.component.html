@@ -1,9 +1,14 @@
 <div class="settings-wrapper">
     <app-headline [names]="[ l('Settings') ]"
-                [buttons]="headlineButtons">
+                [buttons]="headlineButtons"
+                [showToogleButton]="true"
+    >
     </app-headline>
 
-    <div class="settings-container">
+    <div
+        class="settings-container"
+        [style.height]="layoutService.showTopBar ? 'calc(100vh - 150px)' : 'calc(100vh - 75px)'"
+     >
         <div 
             class="settings-sidebar" 
             [style.background-color]="settingService.isDarkMode ? '#1B1F2B' : '#F5F7FA'"

@@ -15,7 +15,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import { DxFileManagerModule } from 'devextreme-angular';
+import { DxDropDownBoxModule, DxFileManagerModule } from 'devextreme-angular';
 import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -123,10 +123,11 @@ import { ExternalAuthInfoComponent } from '../shared/helpers/external-auth-info/
 // import { SalesTalkSettingsComponent } from './settings/shared/sales-talk-settings/sales-talk-settings.component';
 // import { UploadSSLCertificateModalComponent } from './settings/shared/domain-settings/modals/upload-ssl-cert-modal.component';
 // import { AddOrEditSSLBindingModalComponent } from './settings/shared/domain-settings/modals/add-or-edit-ssl-binding-modal.component';
-import { DocumentsComponent } from '@app/crm/documents/documents.component';
+import { DocumentsComponent } from '../shared/documents-settings/documents-settings.component';
 import { SettingsCardComponent } from '../shared/card/settings-card.component'
 import { SettingsItemComponent } from '../shared/general-settings/setting-item/settings-item.component'
 import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-uploader.component'
+
 @NgModule({
     imports: [
         FormsModule,
@@ -165,6 +166,8 @@ import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-
         DxTreeViewModule,
         DxSwitchModule,
         DxDateBoxModule,
+        DxFileManagerModule,
+        DxDropDownBoxModule,
 
         MatTabsModule,
         MatInputModule,
@@ -196,11 +199,10 @@ import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-
         CurrencySelectorModule,
         TenantSettingsWizardModule,
         CKEditorModule,
-        DxFileManagerModule,
         ZapierModule,
         NgxFileDropModule,
         CdkAccordionModule,
-        InlineSVGModule.forRoot()
+        InlineSVGModule.forRoot(),
     ],
     declarations: [
         MainMenuItemComponent,
