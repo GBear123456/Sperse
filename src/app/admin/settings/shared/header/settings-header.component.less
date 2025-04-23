@@ -5,7 +5,7 @@
     z-index: 10;
     top: 0px;
     display: flex;
-    height: 4rem;
+    height: auto;
     width: 100%;
     align-items: center;
     justify-content: space-between;
@@ -13,10 +13,17 @@
     border-bottom-style: solid;
     padding-left: 1rem;
     padding-right: 1rem;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    flex-wrap: wrap;
 
     @media screen and (min-width: 768px) {
         padding-left: 2rem;
         padding-right: 2rem;
+        padding-bottom: 0rem;
+        padding-top: 0rem;
+        height: 4rem;
     }
 
     button {
@@ -42,6 +49,7 @@
     .title-container {
         display: flex;
         align-items: center;
+        flex: 1;
 
         button {
             width: 2.5rem;

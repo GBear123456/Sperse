@@ -1,6 +1,14 @@
-<settings-card title="About Appearance Settings" description="These settings control the visual elements of your application including colors, logos, fonts, and styling. Changes will affect how your application looks for all users."></settings-card>
+<settings-header
+    title="Appearance Settings"
+    [isDarkMode]="settingService.isDarkMode"
+    class="header"
+>
+    <div *ngIf="hasPortalFeature" class="toggle-button">
+        <button *ngFor="let feature of featureTypeList" [class.is-active]="selectedFeatureType === feature.type" (click)="toggleColorSetting(feature.type)">
+            {{feature.name}}
+        </button>
+    </div>
 
-<div class="header">
     <div class="org-unit">
         <dx-select-box height="46px"
                         [(value)]="selectedOrgUnitId"
@@ -11,350 +19,348 @@
                         (onValueChanged)="organizationUnitChanged()">
         </dx-select-box>
     </div>
-    
-    <div *ngIf="hasPortalFeature" class="toggle-button">
-        <button *ngFor="let feature of featureTypeList" [class.is-active]="selectedFeatureType === feature.type" (click)="toggleColorSetting(feature.type)">
-            {{feature.name}}
-        </button>
-    </div>
-</div>
+</settings-header>
 
-<div class="wrapper">
-    <div class="left">
-        <div class="card">
-            <h2>{{l('Brand')}} {{l('Assets')}}</h2>
-
-            <div [class.collapse]="selectedFeatureType !== featureTypeList[1].type" class="upload-wrapper">
-                <settings-uploader #logoUploader
-                          [showPlusSign]="false"
-                          [title]="l('ApplicationLogo')"
-                          [documentId]="filesSettings.lightLogoId"
-                          [documentLink]="filesSettings.lightLogoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + filesSettings.lightLogoId + (selectedOrgUnitId ? ('&organizationUnitId=' + selectedOrgUnitId) : '') : undefined"
-                          [uploadInfoText]="l('UploadLogo_Info')"
-                          [uploadButtonText]="l('Click to upload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo' + (selectedOrgUnitId ? ('?organizationUnitId=' + selectedOrgUnitId) : '') "
-                          acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
-                          [maxFileSize]="maxLogoFileSize"
-                          tooltipDescription="This logo will appear in the header of your application."
-                          [icon]="LogoIcon"
-                          iconColor="rgb(59 130 246)"
-                          (onDocumentClear)="clearLogo()">
-                </settings-uploader>
+<div class="settings-container">
+    <settings-card title="About Appearance Settings" description="These settings control the visual elements of your application including colors, logos, fonts, and styling. Changes will affect how your application looks for all users."></settings-card>
     
-                <settings-uploader #faviconsUploader
-                          [showPlusSign]="false"
-                          [title]="l('CustomFavicons')"
-                          [documentId]="filesSettings.hasFavicons"
-                          [documentLink]="filesSettings.hasFavicons ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?organizationUnitId=' + (selectedOrgUnitId || '') : undefined"
-                          [uploadInfoText]="l('UploadFavicons_Info')"
-                          [uploadButtonText]="l('Click to upload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?organizationUnitId=' + (selectedOrgUnitId || '')"
-                          acceptFileExt=".zip"
-                          tooltipDescription="Favicons are the small icons that appear in browser tabs and bookmarks."
-                          [icon]="LogoIcon"
-                          iconColor="rgb(99 102 241)"
-                          (onDocumentClear)="clearFavicons()">
-                </settings-uploader>
+    <div class="wrapper">
+        <div class="left">
+            <div class="card">
+                <h2>{{l('Brand')}} {{l('Assets')}}</h2>
     
-                <settings-uploader #cssUploader
-                          [showPlusSign]="false"
-                          [title]="l('CustomCSS')"
-                          [documentId]="filesSettings.customCssId"
-                          [documentLink]="filesSettings.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.customCssId + '/' + tenantId : undefined"
-                          [documentTemplateLink]="getCustomPlatformStylePath()"
-                          [uploadInfoText]="l('UploadCSS_Info')"
-                          [uploadButtonText]="l('Click to upload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
-                          acceptFileExt=".css"
-                          [maxFileSize]="maxCssFileSize"
-                          tooltipDescription="Custom CSS will be applied to all pages of your application, allowing for deeper customization."
-                          [icon]="CustomIcon"
-                          iconColor="rgb(168 85 247)"
-                          (onDocumentClear)="clearCustomCss(CustomCssType.Platform)">
-                </settings-uploader>
-    
-                <settings-uploader #loginCssUploader
-                          [showPlusSign]="false"
-                          [title]="l('CustomLoginCSS')"
-                          [documentId]="filesSettings.loginCustomCssId"
-                          [documentLink]="filesSettings.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.loginCustomCssId + '/' + tenantId : undefined"
-                          documentTemplateLink="assets/common/styles/custom/login-custom-style.css"
-                          [uploadInfoText]="l('UploadCSS_Info')"
-                          [uploadButtonText]="l('Click to upload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Login&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
-                          acceptFileExt=".css"
-                          [maxFileSize]="maxCssFileSize"
-                          tooltipDescription="This CSS will only be applied to the login and authentication pages."
-                          [icon]="CustomIcon"
-                          iconColor="rgb(244 63 94)"
-                          (onDocumentClear)="clearCustomCss(CustomCssType.Login)">
-                </settings-uploader>
-    
-                <div *ngIf="signUpPagesEnabled">
-                    <settings-uploader #signUpCssUploader
+                <div [class.collapse]="selectedFeatureType !== featureTypeList[1].type" class="upload-wrapper">
+                    <settings-uploader #logoUploader
                               [showPlusSign]="false"
-                              [title]="l('CustomSignUpCSS')"
-                              [documentId]="filesSettings.signUpCustomCssId"
-                              [documentLink]="filesSettings.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.signUpCustomCssId + '/' + tenantId : undefined"
-                              [documentTemplateLink]="tenantId ? 'assets/common/styles/custom/signup-custom-style.css' : null"
+                              [title]="l('ApplicationLogo')"
+                              [documentId]="filesSettings.lightLogoId"
+                              [documentLink]="filesSettings.lightLogoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + filesSettings.lightLogoId + (selectedOrgUnitId ? ('&organizationUnitId=' + selectedOrgUnitId) : '') : undefined"
+                              [uploadInfoText]="l('UploadLogo_Info')"
+                              [uploadButtonText]="l('Click to upload')"
+                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo' + (selectedOrgUnitId ? ('?organizationUnitId=' + selectedOrgUnitId) : '') "
+                              acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
+                              [maxFileSize]="maxLogoFileSize"
+                              tooltipDescription="This logo will appear in the header of your application."
+                              [icon]="LogoIcon"
+                              iconColor="rgb(59 130 246)"
+                              (onDocumentClear)="clearLogo()">
+                    </settings-uploader>
+        
+                    <settings-uploader #faviconsUploader
+                              [showPlusSign]="false"
+                              [title]="l('CustomFavicons')"
+                              [documentId]="filesSettings.hasFavicons"
+                              [documentLink]="filesSettings.hasFavicons ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?organizationUnitId=' + (selectedOrgUnitId || '') : undefined"
+                              [uploadInfoText]="l('UploadFavicons_Info')"
+                              [uploadButtonText]="l('Click to upload')"
+                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?organizationUnitId=' + (selectedOrgUnitId || '')"
+                              acceptFileExt=".zip"
+                              tooltipDescription="Favicons are the small icons that appear in browser tabs and bookmarks."
+                              [icon]="LogoIcon"
+                              iconColor="rgb(99 102 241)"
+                              (onDocumentClear)="clearFavicons()">
+                    </settings-uploader>
+        
+                    <settings-uploader #cssUploader
+                              [showPlusSign]="false"
+                              [title]="l('CustomCSS')"
+                              [documentId]="filesSettings.customCssId"
+                              [documentLink]="filesSettings.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.customCssId + '/' + tenantId : undefined"
+                              [documentTemplateLink]="getCustomPlatformStylePath()"
                               [uploadInfoText]="l('UploadCSS_Info')"
                               [uploadButtonText]="l('Click to upload')"
-                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=SignUp&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
+                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
+                              acceptFileExt=".css"
+                              [maxFileSize]="maxCssFileSize"
+                              tooltipDescription="Custom CSS will be applied to all pages of your application, allowing for deeper customization."
+                              [icon]="CustomIcon"
+                              iconColor="rgb(168 85 247)"
+                              (onDocumentClear)="clearCustomCss(CustomCssType.Platform)">
+                    </settings-uploader>
+        
+                    <settings-uploader #loginCssUploader
+                              [showPlusSign]="false"
+                              [title]="l('CustomLoginCSS')"
+                              [documentId]="filesSettings.loginCustomCssId"
+                              [documentLink]="filesSettings.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.loginCustomCssId + '/' + tenantId : undefined"
+                              documentTemplateLink="assets/common/styles/custom/login-custom-style.css"
+                              [uploadInfoText]="l('UploadCSS_Info')"
+                              [uploadButtonText]="l('Click to upload')"
+                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Login&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
                               acceptFileExt=".css"
                               [maxFileSize]="maxCssFileSize"
                               tooltipDescription="This CSS will only be applied to the login and authentication pages."
                               [icon]="CustomIcon"
                               iconColor="rgb(244 63 94)"
-                              (onDocumentClear)="clearCustomCss(CustomCssType.SignUp)">
+                              (onDocumentClear)="clearCustomCss(CustomCssType.Login)">
                     </settings-uploader>
-                </div>
-            </div>
-            <div *ngIf="hasPortalFeature" [class.collapse]="selectedFeatureType === featureTypeList[1].type" class="upload-wrapper">
-                <settings-uploader #portalLogoUploader
-                          [showPlusSign]="false"
-                          [title]="l('Portal Logo')"
-                          [documentId]="filesSettings.portalLogoId"
-                          [documentLink]="filesSettings.portalLogoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + filesSettings.portalLogoId +'&portalLogo=true' + (selectedOrgUnitId ? ('&organizationUnitId=' + selectedOrgUnitId) : '') : undefined"
-                          [uploadInfoText]="l('UploadLogo_Info')"
-                          [uploadButtonText]="l('Click to upload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo?portalLogo=true&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
-                          acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
-                          [maxFileSize]="maxLogoFileSize"
-                          tooltipDescription="This logo will appear in the header of your application."
-                          [icon]="LogoIcon"
-                          iconColor="rgb(59 130 246)"
-                          (onDocumentClear)="clearLogo(true)">
-                </settings-uploader>
-    
-                <settings-uploader #portalFaviconsUploader
-                          [showPlusSign]="false"
-                          [title]="l('Custom Portal favicons')"
-                          [documentId]="filesSettings.hasPortalFavicons"
-                          [documentLink]="filesSettings.hasPortalFavicons ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?portalIcons=true&organizationUnitId=' + (selectedOrgUnitId || '') : undefined"
-                          [uploadInfoText]="l('UploadFavicons_Info')"
-                          [uploadButtonText]="l('Click to upload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?portalIcons=true&organizationUnitId=' + (selectedOrgUnitId || '')"
-                          acceptFileExt=".zip"
-                          tooltipDescription="This CSS will only be applied to the login and authentication pages."
-                          [icon]="CustomIcon"
-                          iconColor="rgb(244 63 94)"
-                          (onDocumentClear)="clearFavicons(true)">
-                </settings-uploader>
-    
-                <settings-uploader #portalLoginCssUploader
-                          [showPlusSign]="false"
-                          [title]="l('Custom Portal Login CSS')"
-                          [documentId]="filesSettings.portalLoginCustomCssId"
-                          [documentLink]="filesSettings.portalLoginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.portalLoginCustomCssId + '/' + tenantId : undefined"
-                          [uploadInfoText]="l('UploadCSS_Info')"
-                          [uploadButtonText]="l('Click to upload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=PortalLogin&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
-                          acceptFileExt=".css"
-                          [maxFileSize]="maxCssFileSize"
-                          tooltipDescription="This CSS will only be applied to the login and authentication pages."
-                          [icon]="CustomIcon"
-                          iconColor="rgb(244 63 94)"
-                          (onDocumentClear)="clearCustomCss(CustomCssType.PortalLogin)">
-                </settings-uploader>
-                <settings-uploader #portalCssUploader
-                          [showPlusSign]="false"
-                          [title]="l('CustomPortalCSS')"
-                          [documentId]="filesSettings.portalCustomCssId"
-                          [documentLink]="filesSettings.portalCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.portalCustomCssId + '/' + tenantId : undefined"
-                          documentTemplateLink="assets/common/styles/custom/portal-custom-style.css"
-                          [uploadInfoText]="l('UploadCSS_Info')"
-                          [uploadButtonText]="l('Click to upload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Portal&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
-                          acceptFileExt=".css"
-                          [maxFileSize]="maxCssFileSize"
-                          tooltipDescription="This CSS will only be applied to the login and authentication pages."
-                          [icon]="CustomIcon"
-                          iconColor="rgb(244 63 94)"
-                          (onDocumentClear)="clearCustomCss(CustomCssType.Portal)">
-                </settings-uploader>
-                <h2 style="margin-top: 20px;">{{l('Left Menu Panel Customization')}}</h2>
-                <dx-list class="portal-menu-items-list"
-                         keyExpr="item"
-                         [activeStateEnabled]="false"
-                         [focusStateEnabled]="false"
-                         [hoverStateEnabled]="false"
-                         [dataSource]="portalMenuItems"
-                         (onItemReordered)="onPortalMenuReordered($event)">
-                    <div *dxTemplate="let item of 'item'" class="portal-menu-item">
-                        <div class="menu-item-code">{{item.code}}</div>
-                        <dx-text-box class="custom-display-name"
-                                     placeholder="Custom display name"
-                                     [(value)]="item.customTitle">
-                        </dx-text-box>
-                        <dx-check-box class="menu-item-hide"
-                                      [text]="l('Hide')"
-                                      [(value)]="item.hide">
-                        </dx-check-box>
+        
+                    <div *ngIf="signUpPagesEnabled">
+                        <settings-uploader #signUpCssUploader
+                                  [showPlusSign]="false"
+                                  [title]="l('CustomSignUpCSS')"
+                                  [documentId]="filesSettings.signUpCustomCssId"
+                                  [documentLink]="filesSettings.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.signUpCustomCssId + '/' + tenantId : undefined"
+                                  [documentTemplateLink]="tenantId ? 'assets/common/styles/custom/signup-custom-style.css' : null"
+                                  [uploadInfoText]="l('UploadCSS_Info')"
+                                  [uploadButtonText]="l('Click to upload')"
+                                  [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=SignUp&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
+                                  acceptFileExt=".css"
+                                  [maxFileSize]="maxCssFileSize"
+                                  tooltipDescription="This CSS will only be applied to the login and authentication pages."
+                                  [icon]="CustomIcon"
+                                  iconColor="rgb(244 63 94)"
+                                  (onDocumentClear)="clearCustomCss(CustomCssType.SignUp)">
+                        </settings-uploader>
                     </div>
-                    <dxo-item-dragging group="tasks"
-                                       [data]="portalMenuItems"
-                                       [allowReordering]="true">
-                    </dxo-item-dragging>
-                </dx-list>
-            </div>
-        </div>
-    </div>
-    <div class="right">
-        <div class="card">
-            <h2>
-                {{l('Color')}} {{l('Settings')}}
-            </h2>        
-    
-            <span class="description">{{l('Set a custom color for all of your backgrounds, texts, elements')}}</span>
-    
-            <div class="app-header-color">
-                <dx-color-box
-                    height="44" 
-                    [(value)]="colorSettings.navBackground"
-                    [showClearButton]="true"
-                    [showDropDownButton]="false"
-                    stylingMode="filled"
-                    [openOnFieldClick]="true"
-                    labelMode="hidden"
-                    placeholder="Header Background Color"
-                    (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.navBackground)"
-                ></dx-color-box>
-            </div>
-    
-            <div class="app-text-color">
-                <dx-color-box
-                    height="44"
-                    [(value)]="colorSettings.navTextColor"
-                    [showClearButton]="true"
-                    [showDropDownButton]="false"
-                    stylingMode="filled"
-                    [openOnFieldClick]="true"
-                    labelMode="hidden"
-                    placeholder="Header Text Color"
-                    (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.navTextColor)"
-                ></dx-color-box>
-            </div>
-    
-            <div class="app-left-bar-color">
-                <dx-color-box
-                    height="44"
-                    [(value)]="colorSettings.leftsideMenuColor"
-                    [showClearButton]="true"
-                    [showDropDownButton]="false"
-                    stylingMode="filled"
-                    [openOnFieldClick]="true"
-                    labelMode="hidden"
-                    placeholder="Left Bar Color"
-                    (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.leftsideMenuColor)"
-                ></dx-color-box>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>{{l('Button')}} {{l('Styling')}}</h2>
-    
-            <span class="description">{{l('Choose the style of your buttons')}}</span>
-    
-            <div class="app-button-color">
-                <dx-color-box
-                    height="48"
-                    [(value)]="colorSettings.buttonColor"
-                    [showClearButton]="true"
-                    [showDropDownButton]="false"
-                    stylingMode="filled"
-                    [openOnFieldClick]="true"
-                    labelMode="hidden"
-                    placeholder="Main Button Color"
-                    (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonColor)"
-                ></dx-color-box>
-            </div>
-    
-            <div class="app-button-color">
-                <dx-color-box
-                    height="48"
-                    [(value)]="colorSettings.buttonTextColor"
-                    [showClearButton]="true"
-                    [showDropDownButton]="false"
-                    stylingMode="filled"
-                    [openOnFieldClick]="true"
-                    labelMode="hidden"
-                    placeholder="Text Button Color"
-                    (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonTextColor)"
-                ></dx-color-box>
-            </div>
-    
-            <div class="app-button-color">
-                <dx-color-box
-                    height="48"
-                    [(value)]="colorSettings.buttonHighlightedColor"
-                    [showClearButton]="true"
-                    [showDropDownButton]="false"
-                    stylingMode="filled"
-                    [openOnFieldClick]="true"
-                    labelMode="hidden"
-                    placeholder="Highlight Button Color"
-                    (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonHighlightedColor)"
-                ></dx-color-box>
-            </div>
-    
-            <span class="description" style="margin: 1rem 0 0.5rem 0;">{{l('Button Corner Style')}}</span>
-
-            <div class="app-button-round" style="--button-color: {{colorSettings.buttonColor || currentDefaultSettings.buttonColor}}; --button-radius: {{(colorSettings.borderRadius || currentDefaultSettings.borderRadius) + 'px'}}; --button-text-color: {{colorSettings.buttonTextColor || currentDefaultSettings.buttonTextColor}}; --button-hover-color: {{colorSettings.buttonHighlightedColor || currentDefaultSettings.buttonHighlightedColor}}; ">
-                <div [ngClass]="{selected: colorSettings.borderRadius == '0'}" (click)="colorSettings.borderRadius = '0'">
-                    <label><b>Sharp</b><br><br>Radius 0<br></label>
-                    <div class="example predefined0">Select</div>
                 </div>
-                <div [ngClass]="{selected: !['0', '25'].includes(colorSettings.borderRadius)}" (click)="['0', '25'].includes(colorSettings.borderRadius) ? colorSettings.borderRadius = '10' : null">
-                    <label><b>Rounded</b><br><br>
-                        <dx-number-box
-                            min="0"
-                            max="25"
-                            width="40px"
-                            height="20px"
-                            valueChangeEvent="keyup"
-                            [value]="['0', '25'].includes(colorSettings.borderRadius) ? 10 : colorSettings.borderRadius"
-                            (onChange)="onCustomRadiusChange($event)"                    
-                        ></dx-number-box><br>
-                    </label>
-                    <div class="example predefined-custom" style="--custom-radius-value: {{ (['0', '25'].includes(colorSettings.borderRadius) ? 10 : colorSettings.borderRadius) + 'px' }} ">Select</div>
-                </div>
-                <div [ngClass]="{selected: colorSettings.borderRadius == '25'}" (click)="colorSettings.borderRadius = '25'">
-                    <label><b>Pill</b><br><br>Radius 25<br></label>
-                    <div class="example predefined25">Select</div>
+                <div *ngIf="hasPortalFeature" [class.collapse]="selectedFeatureType === featureTypeList[1].type" class="upload-wrapper">
+                    <settings-uploader #portalLogoUploader
+                              [showPlusSign]="false"
+                              [title]="l('Portal Logo')"
+                              [documentId]="filesSettings.portalLogoId"
+                              [documentLink]="filesSettings.portalLogoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + filesSettings.portalLogoId +'&portalLogo=true' + (selectedOrgUnitId ? ('&organizationUnitId=' + selectedOrgUnitId) : '') : undefined"
+                              [uploadInfoText]="l('UploadLogo_Info')"
+                              [uploadButtonText]="l('Click to upload')"
+                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo?portalLogo=true&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
+                              acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
+                              [maxFileSize]="maxLogoFileSize"
+                              tooltipDescription="This logo will appear in the header of your application."
+                              [icon]="LogoIcon"
+                              iconColor="rgb(59 130 246)"
+                              (onDocumentClear)="clearLogo(true)">
+                    </settings-uploader>
+        
+                    <settings-uploader #portalFaviconsUploader
+                              [showPlusSign]="false"
+                              [title]="l('Custom Portal favicons')"
+                              [documentId]="filesSettings.hasPortalFavicons"
+                              [documentLink]="filesSettings.hasPortalFavicons ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?portalIcons=true&organizationUnitId=' + (selectedOrgUnitId || '') : undefined"
+                              [uploadInfoText]="l('UploadFavicons_Info')"
+                              [uploadButtonText]="l('Click to upload')"
+                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?portalIcons=true&organizationUnitId=' + (selectedOrgUnitId || '')"
+                              acceptFileExt=".zip"
+                              tooltipDescription="This CSS will only be applied to the login and authentication pages."
+                              [icon]="CustomIcon"
+                              iconColor="rgb(244 63 94)"
+                              (onDocumentClear)="clearFavicons(true)">
+                    </settings-uploader>
+        
+                    <settings-uploader #portalLoginCssUploader
+                              [showPlusSign]="false"
+                              [title]="l('Custom Portal Login CSS')"
+                              [documentId]="filesSettings.portalLoginCustomCssId"
+                              [documentLink]="filesSettings.portalLoginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.portalLoginCustomCssId + '/' + tenantId : undefined"
+                              [uploadInfoText]="l('UploadCSS_Info')"
+                              [uploadButtonText]="l('Click to upload')"
+                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=PortalLogin&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
+                              acceptFileExt=".css"
+                              [maxFileSize]="maxCssFileSize"
+                              tooltipDescription="This CSS will only be applied to the login and authentication pages."
+                              [icon]="CustomIcon"
+                              iconColor="rgb(244 63 94)"
+                              (onDocumentClear)="clearCustomCss(CustomCssType.PortalLogin)">
+                    </settings-uploader>
+                    <settings-uploader #portalCssUploader
+                              [showPlusSign]="false"
+                              [title]="l('CustomPortalCSS')"
+                              [documentId]="filesSettings.portalCustomCssId"
+                              [documentLink]="filesSettings.portalCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.portalCustomCssId + '/' + tenantId : undefined"
+                              documentTemplateLink="assets/common/styles/custom/portal-custom-style.css"
+                              [uploadInfoText]="l('UploadCSS_Info')"
+                              [uploadButtonText]="l('Click to upload')"
+                              [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Portal&' + (selectedOrgUnitId ? ('organizationUnitId=' + selectedOrgUnitId) : '')"
+                              acceptFileExt=".css"
+                              [maxFileSize]="maxCssFileSize"
+                              tooltipDescription="This CSS will only be applied to the login and authentication pages."
+                              [icon]="CustomIcon"
+                              iconColor="rgb(244 63 94)"
+                              (onDocumentClear)="clearCustomCss(CustomCssType.Portal)">
+                    </settings-uploader>
+                    <h2 style="margin-top: 20px;">{{l('Left Menu Panel Customization')}}</h2>
+                    <dx-list class="portal-menu-items-list"
+                             keyExpr="item"
+                             [activeStateEnabled]="false"
+                             [focusStateEnabled]="false"
+                             [hoverStateEnabled]="false"
+                             [dataSource]="portalMenuItems"
+                             (onItemReordered)="onPortalMenuReordered($event)">
+                        <div *dxTemplate="let item of 'item'" class="portal-menu-item">
+                            <div class="menu-item-code">{{item.code}}</div>
+                            <dx-text-box class="custom-display-name"
+                                         placeholder="Custom display name"
+                                         [(value)]="item.customTitle">
+                            </dx-text-box>
+                            <dx-check-box class="menu-item-hide"
+                                          [text]="l('Hide')"
+                                          [(value)]="item.hide">
+                            </dx-check-box>
+                        </div>
+                        <dxo-item-dragging group="tasks"
+                                           [data]="portalMenuItems"
+                                           [allowReordering]="true">
+                        </dxo-item-dragging>
+                    </dx-list>
                 </div>
             </div>
         </div>
-
-        <div class="card">
-
-            <h2>{{l('Font')}} {{l('Settings')}}</h2>
-    
-            <span style="font-weight: 500; margin: 0.25rem 0;">{{l('Choose any font from Google Fonts for your Dashboard')}}</span>
-    
-            <div class="app-font-family">
-                <dx-select-box
-                    height="46px"
-                    [(value)]="colorSettings.fontName"
-                    [searchEnabled]="true"
-                    [dataSource]="fontFamilyList">
-                    <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
-                        {{ data }}
-                    </div>
-                </dx-select-box>
+        <div class="right">
+            <div class="card">
+                <h2>
+                    {{l('Color')}} {{l('Settings')}}
+                </h2>        
+        
+                <span class="description">{{l('Set a custom color for all of your backgrounds, texts, elements')}}</span>
+        
+                <div class="app-header-color">
+                    <dx-color-box
+                        height="44" 
+                        [(value)]="colorSettings.navBackground"
+                        [showClearButton]="true"
+                        [showDropDownButton]="false"
+                        stylingMode="filled"
+                        [openOnFieldClick]="true"
+                        labelMode="hidden"
+                        placeholder="Header Background Color"
+                        (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.navBackground)"
+                    ></dx-color-box>
+                </div>
+        
+                <div class="app-text-color">
+                    <dx-color-box
+                        height="44"
+                        [(value)]="colorSettings.navTextColor"
+                        [showClearButton]="true"
+                        [showDropDownButton]="false"
+                        stylingMode="filled"
+                        [openOnFieldClick]="true"
+                        labelMode="hidden"
+                        placeholder="Header Text Color"
+                        (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.navTextColor)"
+                    ></dx-color-box>
+                </div>
+        
+                <div class="app-left-bar-color">
+                    <dx-color-box
+                        height="44"
+                        [(value)]="colorSettings.leftsideMenuColor"
+                        [showClearButton]="true"
+                        [showDropDownButton]="false"
+                        stylingMode="filled"
+                        [openOnFieldClick]="true"
+                        labelMode="hidden"
+                        placeholder="Left Bar Color"
+                        (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.leftsideMenuColor)"
+                    ></dx-color-box>
+                </div>
             </div>
     
-            <span style="font-weight: 500; margin: 0.25rem 0;">{{l('Choose tabular font from Google Fonts for numbers')}}</span>
+            <div class="card">
+                <h2>{{l('Button')}} {{l('Styling')}}</h2>
+        
+                <span class="description">{{l('Choose the style of your buttons')}}</span>
+        
+                <div class="app-button-color">
+                    <dx-color-box
+                        height="48"
+                        [(value)]="colorSettings.buttonColor"
+                        [showClearButton]="true"
+                        [showDropDownButton]="false"
+                        stylingMode="filled"
+                        [openOnFieldClick]="true"
+                        labelMode="hidden"
+                        placeholder="Main Button Color"
+                        (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonColor)"
+                    ></dx-color-box>
+                </div>
+        
+                <div class="app-button-color">
+                    <dx-color-box
+                        height="48"
+                        [(value)]="colorSettings.buttonTextColor"
+                        [showClearButton]="true"
+                        [showDropDownButton]="false"
+                        stylingMode="filled"
+                        [openOnFieldClick]="true"
+                        labelMode="hidden"
+                        placeholder="Text Button Color"
+                        (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonTextColor)"
+                    ></dx-color-box>
+                </div>
+        
+                <div class="app-button-color">
+                    <dx-color-box
+                        height="48"
+                        [(value)]="colorSettings.buttonHighlightedColor"
+                        [showClearButton]="true"
+                        [showDropDownButton]="false"
+                        stylingMode="filled"
+                        [openOnFieldClick]="true"
+                        labelMode="hidden"
+                        placeholder="Highlight Button Color"
+                        (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonHighlightedColor)"
+                    ></dx-color-box>
+                </div>
+        
+                <span class="description" style="margin: 1rem 0 0.5rem 0;">{{l('Button Corner Style')}}</span>
     
-            <div class="app-font-family">
-                <dx-select-box
-                    height="46px"
-                    [(value)]="colorSettings.tabularFont"
-                    [searchEnabled]="true"
-                    [dataSource]="tabularFontFamilyList">
-                    <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
-                        {{ data }}
+                <div class="app-button-round" style="--button-color: {{colorSettings.buttonColor || currentDefaultSettings.buttonColor}}; --button-radius: {{(colorSettings.borderRadius || currentDefaultSettings.borderRadius) + 'px'}}; --button-text-color: {{colorSettings.buttonTextColor || currentDefaultSettings.buttonTextColor}}; --button-hover-color: {{colorSettings.buttonHighlightedColor || currentDefaultSettings.buttonHighlightedColor}}; ">
+                    <div [ngClass]="{selected: colorSettings.borderRadius == '0'}" (click)="colorSettings.borderRadius = '0'">
+                        <label><b>Sharp</b><br><br>Radius 0<br></label>
+                        <div class="example predefined0">Select</div>
                     </div>
-                </dx-select-box>
+                    <div [ngClass]="{selected: !['0', '25'].includes(colorSettings.borderRadius)}" (click)="['0', '25'].includes(colorSettings.borderRadius) ? colorSettings.borderRadius = '10' : null">
+                        <label><b>Rounded</b><br><br>
+                            <dx-number-box
+                                min="0"
+                                max="25"
+                                width="40px"
+                                height="20px"
+                                valueChangeEvent="keyup"
+                                [value]="['0', '25'].includes(colorSettings.borderRadius) ? 10 : colorSettings.borderRadius"
+                                (onChange)="onCustomRadiusChange($event)"                    
+                            ></dx-number-box><br>
+                        </label>
+                        <div class="example predefined-custom" style="--custom-radius-value: {{ (['0', '25'].includes(colorSettings.borderRadius) ? 10 : colorSettings.borderRadius) + 'px' }} ">Select</div>
+                    </div>
+                    <div [ngClass]="{selected: colorSettings.borderRadius == '25'}" (click)="colorSettings.borderRadius = '25'">
+                        <label><b>Pill</b><br><br>Radius 25<br></label>
+                        <div class="example predefined25">Select</div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card">
+    
+                <h2>{{l('Font')}} {{l('Settings')}}</h2>
+        
+                <span style="font-weight: 500; margin: 0.25rem 0;">{{l('Choose any font from Google Fonts for your Dashboard')}}</span>
+        
+                <div class="app-font-family">
+                    <dx-select-box
+                        height="46px"
+                        [(value)]="colorSettings.fontName"
+                        [searchEnabled]="true"
+                        [dataSource]="fontFamilyList">
+                        <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
+                            {{ data }}
+                        </div>
+                    </dx-select-box>
+                </div>
+        
+                <span style="font-weight: 500; margin: 0.25rem 0;">{{l('Choose tabular font from Google Fonts for numbers')}}</span>
+        
+                <div class="app-font-family">
+                    <dx-select-box
+                        height="46px"
+                        [(value)]="colorSettings.tabularFont"
+                        [searchEnabled]="true"
+                        [dataSource]="tabularFontFamilyList">
+                        <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
+                            {{ data }}
+                        </div>
+                    </dx-select-box>
+                </div>
             </div>
         </div>
     </div>

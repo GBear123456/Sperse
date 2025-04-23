@@ -39,7 +39,7 @@
             <div class="settings-content">
                 <dx-scroll-view showScrollbar="onHover" [width]="'100%'">
                     <settings-header
-                        *ngIf="!isDashboardSettings()"
+                        *ngIf="!isDashboardSettings() && !['/app/admin/settings/appearance', '/app/admin/settings/email/gmail'].includes(router.url)"
                         [title]="title"
                         [isDarkMode]="settingService.isDarkMode" 
                     ></settings-header>
