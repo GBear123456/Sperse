@@ -784,8 +784,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         );
     }
 
+    toggelPriceOptionArchived(priceOption: PriceOptionInfo) {
+        let message = priceOption.isArchived ? '' : this.ls.l('ArchiveConfiramtion');
+        this.message.confirm(null, message, (res) => {
+            if (!res)
+                return;
+
+            priceOption.isArchived = !priceOption.isArchived;
+            this.detectChanges();
+        });
+    }
+
     removePriceOption(index) {
-        this.message.confirm(null, null, (res) => {
+        this.message.confirm(null, this.ls.l('DeleteConfiramtion'), (res) => {
             if (!res)
                 return;
 
@@ -1263,7 +1274,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     togglePriceType(priceOption) {
-        if (this.isReadOnly)
+        if (this.isReadOnly || priceOption.isArchived)
             return;
 
         if (priceOption.isFreePriceType = !priceOption.isFreePriceType) {
