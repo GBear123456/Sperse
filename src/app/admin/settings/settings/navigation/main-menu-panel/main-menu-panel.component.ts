@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { Home, Moon, Sun } from 'lucide-angular'
@@ -28,8 +28,14 @@ export class MainMenuPanelComponent implements OnInit {
     @Input() navigateToWelcome: () => void;
 
     constructor(
-        private settingService: SettingService
-    ) {}
+        private settingService: SettingService,
+        private changeDetector: ChangeDetectorRef
+    ) {
+        this.settingService.initMenu()
+            .add(() => {
+                this.changeDetector.detectChanges()
+            });
+    }
 
     ngOnInit(): void {
         

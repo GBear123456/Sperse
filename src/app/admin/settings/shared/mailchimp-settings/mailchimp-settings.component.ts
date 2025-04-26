@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { finalize, first } from 'rxjs/operators';
+import { Link2, AlertCircle, Check } from 'lucide-angular';
 
 /** Application imports */
 import {
@@ -19,11 +20,15 @@ import { AppConsts } from '@shared/AppConsts';
 @Component({
     selector: 'mailchimp-settings',
     templateUrl: './mailchimp-settings.component.html',
-    styleUrls: ['./mailchimp-settings.component.less'],
+    styleUrls: ['../settings-base.less', './mailchimp-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [MailchimpServiceProxy]
 })
 export class MailchimpSettingsComponent extends SettingsComponentBase {
+    readonly AlertIcon = AlertCircle
+    readonly LinkIcon = Link2;
+    readonly CheckIcon = Check;
+
     mailchimpSettings: MailchimpSettingsDto = new MailchimpSettingsDto();
     listsDataSource: MailchimpListDto[] = [];
 

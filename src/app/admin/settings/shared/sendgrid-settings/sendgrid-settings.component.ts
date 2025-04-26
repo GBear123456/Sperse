@@ -4,6 +4,7 @@ import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { Link2, AlertCircle, Check } from 'lucide-angular';
 
 /** Application imports */
 import {
@@ -15,11 +16,15 @@ import { AppConsts } from '@shared/AppConsts';
 @Component({
     selector: 'sendgrid-settings',
     templateUrl: './sendgrid-settings.component.html',
-    styleUrls: ['./sendgrid-settings.component.less'],
+    styleUrls: ['../settings-base.less', './sendgrid-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantSettingsServiceProxy]
 })
 export class SendgridSettingsComponent extends SettingsComponentBase {
+    readonly AlertIcon = AlertCircle
+    readonly LinkIcon = Link2;
+    readonly CheckIcon = Check;
+
     sendGridSettings: SendGridSettingsDto = new SendGridSettingsDto();
 
     constructor(

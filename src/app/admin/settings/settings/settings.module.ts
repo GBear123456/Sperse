@@ -15,7 +15,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import { DxDropDownBoxModule, DxFileManagerModule } from 'devextreme-angular';
+import { DxDropDownBoxModule, DxFileManagerModule, DxTagBoxModule } from 'devextreme-angular';
 import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -127,6 +127,10 @@ import { DocumentsComponent } from '../shared/documents-settings/documents-setti
 import { SettingsCardComponent } from '../shared/card/settings-card.component'
 import { SettingsItemComponent } from '../shared/general-settings/setting-item/settings-item.component'
 import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-uploader.component'
+import { InvoiceSettingsComponent } from '../shared/invoice-settings/invoice-settings.component';
+import { CommissionsComponent } from "../shared/commissions-settings/commissions-settings.component";
+import { OtherSettingsComponent } from '../shared/other-settings/other-settings.component';
+import { CreditsSettingsComponent } from '../shared/credits-settings/credits-settings.component';
 
 @NgModule({
     imports: [
@@ -161,6 +165,7 @@ import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-
         DxContextMenuModule,
         DxPieChartModule,
         DxChartModule,
+        DxTagBoxModule,
         DxListModule,
         DxColorBoxModule,
         DxTreeViewModule,
@@ -248,7 +253,11 @@ import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-
         SettingsCardComponent,
         SettingsItemComponent,
         SettingsUploaderComponent,
-        AISettingsComponent
+        AISettingsComponent,
+        InvoiceSettingsComponent,
+        CommissionsComponent,
+        OtherSettingsComponent,
+        CreditsSettingsComponent
     ],
     exports: [
     ],

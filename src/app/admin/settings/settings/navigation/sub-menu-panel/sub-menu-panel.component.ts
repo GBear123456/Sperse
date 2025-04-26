@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -26,8 +26,14 @@ export class SubMenuPanelComponent  implements OnInit {
 
     constructor(
         private router: Router,
-        private settingService: SettingService
-    ) {}
+        private settingService: SettingService,
+        private changeDetector: ChangeDetectorRef
+    ) {
+        this.settingService.initMenu()
+            .add(() => {
+                this.changeDetector.detectChanges()
+            });
+    }
 
     ngOnInit(): void {
         

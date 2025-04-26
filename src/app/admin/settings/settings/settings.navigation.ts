@@ -39,10 +39,10 @@ import {
   import { LandingPageComponent } from "@root/shared/common/tenant-settings-wizard/landing-page/landing-page.component";
   import { DocumentsComponent } from "../shared/documents-settings/documents-settings.component";
   import { ZapierComponent } from "@root/shared/common/zapier/zapier.component";
-  import { InvoiceSettingsComponent } from "@root/shared/common/tenant-settings-wizard/invoice-settings/invoice-settings.component";
-  import { CommissionsComponent } from "@root/shared/common/tenant-settings-wizard/commissions/commissions.component";
-  import { OtherSettingsComponent } from "@root/shared/common/tenant-settings-wizard/other-settings/other-settings.component";
-  import { CreditsSettingsComponent } from "@root/shared/common/tenant-settings-wizard/credits-settings/credits-settings.component";
+  import { InvoiceSettingsComponent } from "../shared/invoice-settings/invoice-settings.component";
+  import { CommissionsComponent } from "../shared/commissions-settings/commissions-settings.component";
+  import { OtherSettingsComponent } from "../shared/other-settings/other-settings.component";
+  import { CreditsSettingsComponent } from "../shared/credits-settings/credits-settings.component";
   import { TrackingToolsSettingsComponent } from "../shared/tracking-tools-settings/tracking-tools-settings.component";
   import { KlaviyoSettingsComponent } from "../shared/klaviyo-settings/klaviyo-settings.component";
   import { MailchimpSettingsComponent } from "../shared/mailchimp-settings/mailchimp-settings.component";
