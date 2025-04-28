@@ -247,7 +247,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                             sub.stripeXref = undefined;
                             sub.stripeXrefUrl = undefined;
                             sub.paypalXref = undefined;
-                            sub.isArchived = false;
                             return sub;
                         });
                 product.imageUrl = undefined;
