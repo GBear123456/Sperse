@@ -376,7 +376,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     initPriceOptions(priceOptions: PriceOptionInfo[]) {
         this.priceOptionTabs = [];
 
-        priceOptions.forEach((option, index) => {
+        priceOptions.sort((a, b) => Number(a.isArchived) - Number(b.isArchived)).forEach((option, index) => {
             this.priceOptionTabs.push({
                 id: option.id
             });
@@ -390,6 +390,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 option['isFreePriceType'] = true;
             }
         });
+
         setTimeout(() => {
             this.selectedTabIndex = 0;
             this.detectChanges();
