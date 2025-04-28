@@ -17,12 +17,14 @@ import { SingleProductComponent } from './single-product/single-product.componen
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxTabsModule } from 'devextreme-angular/ui/tabs';
 
 import {
     LeadServiceProxy,
     PublicProductServiceProxy,
     TenantSubscriptionServiceProxy
 } from '@root/shared/service-proxies/service-proxies';
+import { ProductOptionSelectorModule } from '@app/crm/shared/product-option-selector/product-option-selector.module';
 
 @NgModule({
     imports: [
@@ -31,12 +33,14 @@ import {
         CommonModule,
         PublicProductsRoutingModule,
         CountryPhoneNumberModule,
+        ProductOptionSelectorModule,
         UtilsModule,
         MatSliderModule,
         PaypalModule,
         GooglePlaceModule,
         DxSelectBoxModule,
-        DxTextBoxModule
+        DxTextBoxModule,
+        DxTabsModule
     ],
     exports: [],
     declarations: [

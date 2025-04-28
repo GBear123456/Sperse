@@ -210,8 +210,8 @@ export class HostSignupFormComponent {
         return monthly || product.priceOptions[0];
     }
 
-    onProductOptionSelect(event: { period, option: PublicPriceOptionInfo }) {
-        this.selectedSubscriptionOption = event.option;
+    onProductOptionSelect(event: PublicPriceOptionInfo) {
+        this.selectedSubscriptionOption = event;
 
         let buttonText = 'Start ';
         if (this.selectedSubscriptionOption.trialDayCount) {

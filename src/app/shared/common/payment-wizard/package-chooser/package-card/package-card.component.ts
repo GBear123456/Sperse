@@ -7,12 +7,9 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 import { DecimalPipe, getCurrencySymbol } from '@angular/common';
-import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
-import { CustomPeriodType, PackageEditionConfigDto, ProductInfo, PriceOptionInfo } from '@shared/service-proxies/service-proxies';
+import { CustomPeriodType, ProductInfo, PriceOptionInfo, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
-import { PaymentService } from '../../payment.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
@@ -24,35 +21,28 @@ import { DomSanitizer } from '@angular/platform-browser';
     providers: [DecimalPipe]
 })
 export class PackageCardComponent implements OnChanges {
-    currentBillingPeriod: BillingPeriod;
+    currentFrequency: RecurringPaymentFrequency;
 
     @Input() productInfo: ProductInfo;
-    @Input() set billingPeriod(value: BillingPeriod) {
-        this.currentBillingPeriod = value;
+    @Input() priceOptionInfo: PriceOptionInfo;
+    @Input() set paymentFrequency(value: RecurringPaymentFrequency) {
+        this.currentFrequency = value;
 
-        if (this.productInfo) {
-            let period = PaymentService.getRecurringPaymentFrequency(value);
-            let hasPeriodConfig = !!this.productInfo.priceOptions.find(x => x.frequency == period);
-            this.display = hasPeriodConfig ? 'block' : 'none';
-            this.isActive = hasPeriodConfig;
+        if (this.priceOptionInfo) {
+            let isCurrentPeriodConfig = this.priceOptionInfo.frequency == value;
+            this.display = isCurrentPeriodConfig ? 'block' : 'none';
+            this.isActive = isCurrentPeriodConfig;
         }
     }
-    get billingPeriod() {
-        return this.currentBillingPeriod;
-    }
+
     @Input() currencySymbol = '';
-    @Input() usersAmount: number;
-    @Input() module: ModuleType;
     @HostBinding('class.isActive') @Input() public isActive: boolean;
     @HostBinding('class.bestValue') @Input() bestValue = false;
     @HostBinding('style.background') @Input() background;
     @HostBinding('style.display') display = 'block';
 
-    billingPeriodEnum = BillingPeriod;
     saveAmountPerMonth: number;
     baseUrl = AppConsts.appBaseHref;
-    selectedEdition: PackageEditionConfigDto;
-    price: number;
 
     descriptionHtml;
     features;
@@ -114,107 +104,29 @@ export class PackageCardComponent implements OnChanges {
         }
         this.descriptionHtml = this.productInfo.descriptionHtml && this.sanitizer.bypassSecurityTrustHtml(this.productInfo.descriptionHtml);
         this.currencySymbol = getCurrencySymbol(this.productInfo.currencyId, 'narrow');
-        //this.selectedEdition = this.getSelectedEdition();
-        //this.isActive = this.editions && !!this.selectedEdition;
     }
-
-    // getSelectedEdition(): PackageEditionConfigDto {
-    //     return this.editions.find(edition => this.usersAmount <= edition.maxUserCount);
-    // }
-
-    // get selectedOrLastEdition(): PackageEditionConfigDto {
-    //     return this.selectedEdition || this.editions[this.editions.length - 1];
-    // }
-
-    // get selectedEditionUsersAmount(): number {
-    //     return +this.selectedOrLastEdition.maxUserCount;
-    // }
-
-    // get displayedUsersAmount(): number {
-    //     return this.isActive ? this.usersAmount : this.selectedOrLastEdition.maxUserCount;
-    // }
-
-    // get features(): PackageEditionConfigFeatureDto[] {
-    //     return this.selectedOrLastEdition.features;
-    // }
-
     get pricePerPeriod(): number {
-        let productFrequencyInfo = this.getFrequencyInfo();
-        return this.billingPeriod === BillingPeriod.Yearly ?
-            (productFrequencyInfo ? Math.round(productFrequencyInfo.fee / 12) : 0) :
-            (productFrequencyInfo ? productFrequencyInfo.fee : 0);
+        return this.currentFrequency === RecurringPaymentFrequency.Annual ?
+            Math.round(this.priceOptionInfo.fee / 12) :
+            this.priceOptionInfo.fee;
     }
 
     get signupFee(): number {
-        let productFrequencyInfo = this.getFrequencyInfo();
-        return productFrequencyInfo ? productFrequencyInfo.signupFee : 0;
+        return this.priceOptionInfo.signupFee;
     }
 
     get trialDayCount(): number {
-        let productFrequencyInfo = this.getFrequencyInfo();
-        return productFrequencyInfo ? productFrequencyInfo.trialDayCount : 0;
+        return this.priceOptionInfo.trialDayCount;
     }
 
     getPriceDescription(): string {
-        if (this.billingPeriod == BillingPeriod.Custom) {
-            let productFrequencyInfo = this.getFrequencyInfo();
-
-            if (productFrequencyInfo)
-                return this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', productFrequencyInfo.customPeriodCount,
-                    this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[productFrequencyInfo.customPeriodType]));
-            return '';
+        if (this.currentFrequency == RecurringPaymentFrequency.Custom) {
+            return this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'RecurringPaymentFrequency_CustomDescription', this.priceOptionInfo.customPeriodCount,
+                this.ls.ls(AppConsts.localization.CRMLocalizationSourceName, 'CustomPeriodType_' + CustomPeriodType[this.priceOptionInfo.customPeriodType]));
         } else {
-            return this.billingPeriod == BillingPeriod.Yearly ?
+            return this.currentFrequency === RecurringPaymentFrequency.Annual ?
                 this.ls.l('moBilledYearly') :
-                this.ls.l('price' + BillingPeriod[this.billingPeriod]);
+                this.ls.l('price' + this.priceOptionInfo.frequency);
         }
     }
-
-    getFrequencyInfo(): PriceOptionInfo {
-        let recurringFrequency = PaymentService.getRecurringPaymentFrequency(this.billingPeriod);
-        return this.productInfo.priceOptions.find(x => x.frequency == recurringFrequency);
-    }
-    // get editionPricePerMonth(): number {
-    //     return this.billingPeriod === BillingPeriod.Monthly ?
-    //             this.selectedOrLastEdition.monthlyPrice :
-    //             +(this.selectedOrLastEdition.annualPrice / 12).toFixed(2);
-    // }
-
-    // get monthlyPricePerYear(): number {
-    //     return this.selectedOrLastEdition.monthlyPrice * 12 / this.usersCoefficient;
-    // }
-
-    // get totalPrice(): number {
-    //     return this.billingPeriod === BillingPeriod.Monthly
-    //         ? this.selectedOrLastEdition.monthlyPrice / this.usersCoefficient
-    //         : this.selectedOrLastEdition.annualPrice / this.usersCoefficient;
-    // }
-
-    // get pricePerUserPerMonth(): number {
-    //     return (+(this.editionPricePerMonth / this.selectedEditionUsersAmount).toFixed(2));
-    // }
-
-    // get usersCoefficient() {
-    //     return this.selectedEditionUsersAmount / this.displayedUsersAmount;
-    // }
-
-    // getFeatureValue(feature: PackageEditionConfigFeatureDto): string {
-    //     let featureValue = '';
-    //     if (feature.value) {
-    //         if (feature.definition.isVariable && feature.value !== '-1') {
-    //             featureValue += +feature.value / this.usersCoefficient;
-    //         } else if (feature.value === '-1') {
-    //             featureValue += this.ls.l('Unlimited');
-    //         } else {
-    //             featureValue += feature.value;
-    //         }
-    //         /** If value is number - transform it to US format */
-    //         featureValue = ': ' + (!isNaN(+(featureValue)) && isFinite(+featureValue)
-    //                                   ? this.decimalPipe.transform(featureValue, '1.0-0', 'en-En')
-    //                                   : featureValue
-    //                               );
-    //     }
-    //     return featureValue;
-    // }
-
 }

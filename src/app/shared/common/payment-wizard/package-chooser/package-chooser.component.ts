@@ -16,19 +16,17 @@ import {
 import { MatSlider } from '@angular/material/slider';
 import { Observable, forkJoin } from 'rxjs';
 import { first, map } from 'rxjs/operators';
-import uniqBy from 'lodash/uniqBy';
+import uniq from 'lodash/uniq';
+import flatMap from 'lodash/flatMap';
+import countBy from 'lodash/countBy';
 
 /** Application imports */
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
-import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import { AppConsts } from '@shared/AppConsts';
 import {
     PaymentPeriodType,
-    ModuleType,
-    PackageConfigDto,
-    PackageEditionConfigDto,
     RecurringPaymentFrequency,
     ProductInfo,
 } from '@shared/service-proxies/service-proxies';
@@ -50,7 +48,6 @@ export class PackageChooserComponent implements OnInit {
     @Input() widgettitle: string;
     @Input() subtitle = this.ls.l('ChoosePlan');
     @Input() yearDiscount = 20;
-    @Input() packagesMaxUsersAmount: number;
     @Input() nextStepButtonText = this.ls.l('Next');
     @Input() nextButtonPosition: 'right' | 'center' = 'right';
     @Input() showDowngradeLink = false;
@@ -66,28 +63,20 @@ export class PackageChooserComponent implements OnInit {
     set preselect(value: boolean) {
         this._preselect = '' + value !== 'false';
     }
-    @Input() preventNextButtonDisabling = false;
     @Output() onPlanChosen: EventEmitter<PaymentOptions> = new EventEmitter();
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
     @HostBinding('class.withBackground') @Input() showBackground;
-    modules = ModuleType;
     packages: ProductInfo[];
+    maxFrequencyCount: number = 1;
     currentProductId: number;
-    usersAmount = null;
-    sliderInitialMinValue = 5;
-    sliderInitialStep = 5;
-    sliderInitialMaxValue = 100;
-    sliderStep = 5;
-    selectedPackageIndex: number;
+    currentPriceOptionId: number;
+
+    selectedPriceOptionId: number;
     selectedPackageCardComponent: PackageCardComponent;
-    selectedBillingPeriod = BillingPeriod.Yearly;
-    billingPeriod = BillingPeriod;
+    selectedPaymentFrequency = RecurringPaymentFrequency.Annual;
     recurringPaymentFrequency = RecurringPaymentFrequency;
 
-    public freePackages: PackageConfigDto[];
     packagesConfig$: Observable<ProductInfo[]>;// = this.paymentService.packagesConfig$;
-    tenantSubscriptionIsTrial: boolean;
-    tenantSubscriptionIsFree: boolean;
 
     backgroundColors: string[] = [
         '#a27cbf',
@@ -99,10 +88,10 @@ export class PackageChooserComponent implements OnInit {
         '#008b7a'
     ];
 
+    crmLocalizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
     PRODUCT_GROUP_ADD_ON = AppConsts.PRODUCT_GROUP_ADD_ON;
-    static availablePeriodsOrder = [BillingPeriod.Monthly, BillingPeriod.Yearly, BillingPeriod.LifeTime, BillingPeriod.Custom];
-    availablePeriods: BillingPeriod[] = [];
-    selectedPeriodIndex = 0;
+    static availablePeriodsOrder = [RecurringPaymentFrequency.Monthly, RecurringPaymentFrequency.Annual, RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.Custom];
+    availablePeriods: RecurringPaymentFrequency[] = [];
 
     constructor(
         public localizationService: AppLocalizationService,
@@ -142,7 +131,8 @@ export class PackageChooserComponent implements OnInit {
                 this.appService.subscriptionInGracePeriodBySubscription(moduleSubscriptionExpired)
             ) {
                 this.currentProductId = moduleSubscriptionExpired.productId;
-                this.selectedBillingPeriod = PaymentService.getBillingPeriod(moduleSubscriptionExpired.paymentPeriodType)
+                this.currentPriceOptionId = moduleSubscriptionExpired.priceOptionId;
+                this.selectedPaymentFrequency = PaymentService.getRecurringFrequencyByPaymentPeriodType(moduleSubscriptionExpired.paymentPeriodType)
             }
 
             if (this.upgradeProductId) {
@@ -179,7 +169,7 @@ export class PackageChooserComponent implements OnInit {
 
             if (this.packages.length == 1)
                 setTimeout(() => {
-                    this.selectPackage(0);
+                    this.selectPriceOption(this.packages[0].priceOptions[0].id);
                     this.changeDetectionRef.detectChanges();
                 }, 100);
             else
@@ -188,57 +178,59 @@ export class PackageChooserComponent implements OnInit {
     }
 
     initAvailablePeriods() {
-        let periods: RecurringPaymentFrequency[] = this.packages.reduce((acc, val) => {
-            if (val.priceOptions)
-                return uniqBy(acc.concat(val.priceOptions.map(option => option.frequency)), (val) => val);
-            return acc;
-        }, []);
+        const allFrequencies = flatMap(this.packages, v => v.priceOptions.map(option => option.frequency));
 
-        let billingPeriods = periods.map(v => PaymentService.getBillingPeriodByPaymentFrequency(v));
+        let periods: RecurringPaymentFrequency[] = uniq(allFrequencies);
         this.availablePeriods = [];
         PackageChooserComponent.availablePeriodsOrder.forEach(v => {
-            if (billingPeriods.indexOf(v) >= 0)
+            if (periods.indexOf(v) >= 0)
                 this.availablePeriods.push(v);
         });
+
+        const frequencyCount = countBy(allFrequencies);
+        this.maxFrequencyCount = Math.max(...Object.values(frequencyCount));
     }
 
     /** Preselect package if current edition is in list of not free packages, else - preselect best value package */
     private preselectPackage() {
         let selectedPackage = this.packages.find(packageConfig => packageConfig.id == this.currentProductId);
+        let selectedPriceOption = null;
         if (selectedPackage) {
-            this.selectedPackageIndex = this.packages.indexOf(selectedPackage);
-            /** Update selected package with the active status to handle next button status */
-            setTimeout(() => {
-                this.selectPackage(this.selectedPackageIndex);
-                this.onPlanChosen.emit(this.getPaymentOptions());
-            }, 10);
+            selectedPriceOption = selectedPackage.priceOptions.find(v => v.id == this.currentPriceOptionId);
+            if (selectedPriceOption) {
+                /** Update selected package with the active status to handle next button status */
+                setTimeout(() => {
+                    this.selectPriceOption(this.selectedPriceOptionId);
+                    this.onPlanChosen.emit(this.getPaymentOptions());
+                }, 10);
+            }
         } else
             selectedPackage = this.packages.reverse()[0];
 
-        let productSubscriptionOption = selectedPackage && selectedPackage.priceOptions.reverse()[0];
+        let productSubscriptionOption = selectedPriceOption || (selectedPackage && selectedPackage.priceOptions.reverse()[0]);
         if (productSubscriptionOption)
-            this.selectedBillingPeriod = PaymentService.getBillingPeriodByPaymentFrequency(productSubscriptionOption.frequency);
+            this.selectedPaymentFrequency = productSubscriptionOption.frequency;
     }
 
-    selectPackage(packageIndex: number) {
-        const selectedPlanCardComponent = this.packageCardComponents.toArray()[packageIndex];
+    selectPriceOption(priceOptionId: number) {
+        const selectedPlanCardComponent = this.packageCardComponents.find(v => v.priceOptionInfo.id == priceOptionId);
         if (selectedPlanCardComponent.isActive) {
-            this.selectedPackageIndex = packageIndex;
+            this.selectedPriceOptionId = priceOptionId;
             this.selectedPackageCardComponent = selectedPlanCardComponent;
         }
     }
 
-    getActiveStatus(period: BillingPeriod) {
-        return this.selectedBillingPeriod == period;
+    getActiveStatus(frequency: RecurringPaymentFrequency) {
+        return this.selectedPaymentFrequency == frequency;
     }
 
-    toggle(value: BillingPeriod) {
-        this.selectedBillingPeriod = value;
+    toggle(frequency: RecurringPaymentFrequency) {
+        this.selectedPaymentFrequency = frequency;
         this.emitPlanChange();
     }
 
     getSliderValue(): number {
-        var periodIndex = this.availablePeriods.findIndex(v => v == this.selectedBillingPeriod);
+        var periodIndex = this.availablePeriods.findIndex(v => v == this.selectedPaymentFrequency);
         var value = (this.availablePeriods.length > 1 ? periodIndex : 1) * (100 / this.availablePeriods.length);
         return +value.toFixed();
     }
@@ -253,11 +245,13 @@ export class PackageChooserComponent implements OnInit {
 
     goToNextStep() {
         if (!this.selectedPackageCardComponent) {
-            if (!this.selectedPackageIndex) {
+            if (!this.selectedPriceOptionId) {
                 /** Get last package if noone hasn't been chosen */
-                this.selectedPackageIndex = this.packages.length - 1;
+                let lastProductOptions = this.packages[this.packages.length - 1].priceOptions;
+                let lastOptionId = lastProductOptions[lastProductOptions.length - 1].id;
+                this.selectedPriceOptionId = lastOptionId;
             }
-            this.selectPackage(this.selectedPackageIndex);
+            this.selectPriceOption(this.selectedPriceOptionId);
         }
 
         this.onPlanChosen.emit(this.getPaymentOptions());
@@ -266,18 +260,18 @@ export class PackageChooserComponent implements OnInit {
 
     getPaymentOptions(): PaymentOptions {
         if (this.selectedPackageCardComponent) {
-            let selectedOption = this.selectedPackageCardComponent.productInfo.priceOptions.find(option =>
-                option.frequency == PaymentService.getRecurringPaymentFrequency(this.selectedBillingPeriod));
+            let productInfo = this.selectedPackageCardComponent.productInfo;
+            let selectedOption = this.selectedPackageCardComponent.priceOptionInfo;
 
             const paymentOptions: PaymentOptions = {
-                productId: this.selectedPackageCardComponent.productInfo.id,
-                productName: this.selectedPackageCardComponent.productInfo.name,
-                priceOptionId: selectedOption ? selectedOption.id : undefined,
-                currencyId: this.selectedPackageCardComponent.productInfo.currencyId,
+                productId: productInfo.id,
+                productName: productInfo.name,
+                priceOptionId: selectedOption.id,
+                currencyId: productInfo.currencyId,
                 currencySymbol: this.selectedPackageCardComponent.currencySymbol,
-                paymentPeriodType: PaymentService.getPaymentPeriodType(this.selectedBillingPeriod),
-                customPeriodDescription: this.selectedBillingPeriod == BillingPeriod.Custom ? this.selectedPackageCardComponent.getPriceDescription() : null,
-                total: selectedOption ? selectedOption.fee : this.selectedPackageCardComponent.pricePerPeriod,
+                paymentPeriodType: PaymentService.getPaymentPeriodType(this.selectedPaymentFrequency),
+                customPeriodDescription: this.selectedPaymentFrequency == RecurringPaymentFrequency.Custom ? this.selectedPackageCardComponent.getPriceDescription() : null,
+                total: selectedOption.fee,
                 signUpFee: this.selectedPackageCardComponent.signupFee,
                 trialDayCount: this.selectedPackageCardComponent.trialDayCount
             };
@@ -285,17 +279,12 @@ export class PackageChooserComponent implements OnInit {
         }
     }
 
-    isProductPurchased(product) {
-        return this.productsGroupName == this.PRODUCT_GROUP_ADD_ON &&
-            product && this.appService.moduleSubscriptions.length &&
-            this.appService.moduleSubscriptions.some(sub => sub.productId == product.id);
+    isProductPurchased(priceOptionId: number) {
+        return this.productsGroupName == this.PRODUCT_GROUP_ADD_ON && this.appService.moduleSubscriptions.length &&
+            this.appService.moduleSubscriptions.some(sub => sub.priceOptionId == priceOptionId);
     }
 
     get nextButtonDisabled(): boolean {
-        let disabled = false;
-        if (!this.preventNextButtonDisabling) {
-            disabled = this.selectedPackageIndex === undefined || this.selectedPackageIndex < 0 || (this.selectedPackageCardComponent && !this.selectedPackageCardComponent.isActive);
-        }
-        return disabled;
+        return !this.selectedPriceOptionId || (this.selectedPackageCardComponent && !this.selectedPackageCardComponent.isActive);
     }
 }

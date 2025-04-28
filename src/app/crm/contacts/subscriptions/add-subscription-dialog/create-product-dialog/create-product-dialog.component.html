@@ -134,19 +134,13 @@
                             <div class="options-header">
                                 <h3>
                                     {{ls.l('Price settings')}} <img class="info" src="assets/common/icons/info-circle.svg">
-                                    <div *ngIf="product.type != productType.Donation" class="slider-wrapper">
-                                        <div class="state-slider point">
-                                            <div class="captions">
-                                                <div [ngClass]="{active: isFreePriceType}" (click)="togglePriceType()">{{ ls.l('Free') }}</div>
-                                                <div [ngClass]="{active: !isFreePriceType}" (click)="togglePriceType()">{{ ls.l('Paid') }}</div>
-                                            </div>
-                                            <mat-slider [value]="getSliderValue()"
-                                                        [disabled]="true">
-                                            </mat-slider>
-                                        </div>
-                                    </div>
                                 </h3>
-                                <div *ngIf="!isReadOnly && !isOneTime && product.type == productType.Subscription" class="add-new-button" (click)="addNewPaymentPeriod()"><span>+</span></div>
+
+                                <div *ngIf="!isReadOnly && !isOneTime" class="add-new-button button-text" [matMenuTriggerFor]="beforeMenu"><span>+ Add Pricing Plan</span></div>
+                                <mat-menu #beforeMenu="matMenu" xPosition="before" class="add-price-option-menu">
+                                    <button mat-menu-item (click)="addNewPriceOption(priceOptionType.Subscription)">Subscription</button>
+                                    <button mat-menu-item *ngIf="product.type != productType.Subscription" (click)="addNewPriceOption(priceOptionType.OneTime)">One-time</button>
+                                </mat-menu>
                             </div>
                             <hr class="wide">
                             <div class="currency-block">
@@ -156,319 +150,356 @@
                                                    (onCurrencyChanged)="onCurrencyChanged($event)">
                                 </currency-selector>
                             </div>
-                            <div class="general-product" *ngIf="product.type != productType.Subscription">
-                                <div class="customer-price">
-                                    <dx-switch switchedOffText=""
-                                               switchedOnText=""
-                                               [(value)]="generalPriceOption.customerChoosesPrice"
-                                               (onValueChanged)="generalPriceOption.credits = null"
-                                               [disabled]="isReadOnly || isFreePriceType || (product.type != productType.Donation && product.stripeXref)">
-                                    </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
-                                </div>
-                                <div class="general-product-price">
-                                    <div [ngClass]="{disabled: isFreePriceType}">
-                                        <dx-number-box name="price"
-                                                       width="100%"
-                                                       height="65px"
-                                                       class="label"
-                                                       [placeholder]="generalPriceOption.customerChoosesPrice ? ls.l('Preset Price') : ls.l('Price')"
-                                                       [format]="isFreePriceType ? amountFormat : amountNullableFormat"
-                                                       [(value)]="generalPriceOption.fee"
-                                                       [disabled]="isReadOnly"
-                                                       (onValueChanged)="checkShowAmountChangeWarrning()">
-                                            <dx-validator>
-                                                <dxi-validation-rule type="custom" [validationCallback]="validateGeneralPrice()" message="{{ls.l('InvalidField', ls.l('Price'))}}."></dxi-validation-rule>
-                                            </dx-validator>
-                                        </dx-number-box>
-                                    </div>
-                                    <div *ngIf="product.type == productType.General">
-                                        <dx-select-box [dataSource]="getProductUnits()"
-                                                       width="100%"
-                                                       [placeholder]="ls.l('Unit')"
-                                                       [(value)]="generalPriceOption.unit"
-                                                       [disabled]="isReadOnly">
-                                            <dx-validator>
-                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
-                                            </dx-validator>
-                                        </dx-select-box>
-                                    </div>
-                                    <div *ngIf="hasViewCredits && product.type != productType.Donation">
-                                        <dx-number-box width="100%"
-                                                       [placeholder]="ls.l('Credits')"
-                                                       min="0"
-                                                       format="#"
-                                                       height="65px"
-                                                       class="label"
-                                                       [(value)]="generalPriceOption.credits"
-                                                       [disabled]="isReadOnly || !hasManageCredits || generalPriceOption.customerChoosesPrice">
-                                        </dx-number-box>
-                                    </div>
-                                </div>
-                                <div class="general-product-price" *ngIf="generalPriceOption.customerChoosesPrice">
-                                    <div>
-                                        <dx-number-box name="minCustomerPrice"
-                                                       width="100%"
-                                                       height="65px"
-                                                       class="label"
-                                                       [placeholder]="ls.l('Min Customer Price')"
-                                                       [format]="amountNullableFormat"
-                                                       [min]="0"
-                                                       [max]="generalPriceOption.maxCustomerPrice ? generalPriceOption.maxCustomerPrice - 1 : null"
-                                                       [(value)]="generalPriceOption.minCustomerPrice"
-                                                       [disabled]="isReadOnly">
-                                        </dx-number-box>
-                                    </div>
-                                    <div>
-                                        <dx-number-box name="maxCustomerPrice"
-                                                       width="100%"
-                                                       height="65px"
-                                                       class="label"
-                                                       [placeholder]="ls.l('Max Customer Price')"
-                                                       [format]="amountNullableFormat"
-                                                       [min]="generalPriceOption.minCustomerPrice ? generalPriceOption.minCustomerPrice + 1 : 0"
-                                                       [(value)]="generalPriceOption.maxCustomerPrice"
-                                                       [disabled]="isReadOnly">
-                                        </dx-number-box>
-                                    </div>
-                                </div>
-                            </div>
-                            <ng-container *ngIf="product.type == productType.Subscription">
-                                <div class="options" *ngFor="let option of subscriptionOptions; let i = index">
-                                    <hr *ngIf="i" class="wide">
-                                    <div *ngIf="!isReadOnly && i" class="remove-button" (click)="removePaymentPeriod(i)"><span>-</span></div>
-
-                                    <div class="option">
-                                        <div class="customer-price">
-                                            <dx-switch switchedOffText=""
-                                                       switchedOnText=""
-                                                       [(value)]="option.customerChoosesPrice"
-                                                       (onValueChanged)="option.credits = option.signUpCredits = null"
-                                                       [disabled]="isReadOnly || isFreePriceType || option.stripeXref || option.paypalXref">
-                                            </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
+                            <div class="price-tabs">
+                                <div class="no-prices" *ngIf="!product.priceOptions.length" (click)="addNewPriceOption(product.type == productType.Subscription ? priceOptionType.Subscription : priceOptionType.OneTime)">+ Add Pricing Plan</div>
+                                <dx-tabs *ngIf="product.priceOptions.length > 1"
+                                         [dataSource]="priceOptionTabs"
+                                         [(selectedIndex)]="selectedTabIndex"
+                                         [scrollByContent]="true"
+                                         [focusStateEnabled]="false"
+                                         [hoverStateEnabled]="false">
+                                </dx-tabs>
+                                <div class="price-tab collapse" *ngFor="let priceOption of product.priceOptions; let i = index" [ngClass]="selectedTabIndex == i ? 'show' : ''">
+                                    <div class="position-relative">
+                                        <div *ngIf="!isReadOnly" class="remove-button button-text" (click)="removePriceOption(i)"><span>Remove price</span></div>
+                                        <inplace-edit [(value)]="priceOption.name"
+                                                      [maxLength]="256"
+                                                      showInlineEditButton="true"
+                                                      lEntityName="DisplayName"
+                                                      [editPlaceholder]="ls.l('DisplayName')"
+                                                      (valueChanged)="priceOptionNameChanged(priceOption, i, $event)">
+                                        </inplace-edit>
+                                        <div *ngIf="product.type != productType.Donation" class="slider-wrapper">
+                                            <div class="state-slider point">
+                                                <div class="captions">
+                                                    <div [ngClass]="{active: priceOption.isFreePriceType}" (click)="togglePriceType(priceOption)">{{ ls.l('Free') }}</div>
+                                                    <div [ngClass]="{active: !priceOption.isFreePriceType}" (click)="togglePriceType(priceOption)">{{ ls.l('Paid') }}</div>
+                                                </div>
+                                                <mat-slider [value]="getSliderValue(priceOption)"
+                                                            [disabled]="true">
+                                                </mat-slider>
+                                            </div>
                                         </div>
-                                        <div class="option-row width-50">
-                                            <div [ngClass]="{disabled: !i && isFreePriceType}">
-                                                <label class="wide">{{ls.l('Subscription fee')}}</label>
+                                    </div>
+                                    <div class="general-product" *ngIf="priceOption.type == priceOptionType.OneTime">
+                                        <div class="general-product-price">
+                                            <div [ngClass]="{disabled: priceOption.isFreePriceType}">
                                                 <dx-number-box name="price"
                                                                width="100%"
-                                                               [format]="option.customerChoosesPrice ? amountNullableFormat : amountFormat"
-                                                               [(value)]="option.fee"
-                                                               [disabled]="isReadOnly"
-                                                               (onValueChanged)="checkShowAmountChangeWarrning()">
-                                                    <dx-validator>
-                                                        <dxi-validation-rule type="custom" [validationCallback]="validateFee(option)" message="{{ls.l('InvalidField', ls.l('Fee'))}}."></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-number-box>
-                                            </div>
-                                            <div [ngClass]="{disabled: !isCommissionsEnabled || (!i && isFreePriceType)}">
-                                                <label class="wide">{{ls.l('CommissionableAmount')}}</label>
-                                                <dx-number-box name="commissionableFeeAmount"
-                                                               width="100%"
-                                                               [format]="amountNullableFormat"
-                                                               [(value)]="option.commissionableFeeAmount"
-                                                               [disabled]="isReadOnly">
-                                                </dx-number-box>
-                                            </div>
-                                            <div *ngIf="hasViewCredits">
-                                                <label class="wide">{{ls.l('Credits')}}</label>
-                                                <dx-number-box width="100%"
-                                                               min="0"
-                                                               format="#"
-                                                               [(value)]="option.credits"
-                                                               [disabled]="isReadOnly || !hasManageCredits || option.customerChoosesPrice">
-                                                </dx-number-box>
-                                            </div>
-                                        </div>
-                                        <div class="option-row width-50" *ngIf="option.customerChoosesPrice">
-                                            <div>
-                                                <dx-number-box width="100%"
                                                                height="65px"
                                                                class="label"
-                                                               [placeholder]="ls.l('Min Price')"
-                                                               [format]="amountNullableFormat"
-                                                               [min]="0"
-                                                               [max]="option.maxCustomerPrice ? option.maxCustomerPrice - 1 : null"
-                                                               [(value)]="option.minCustomerPrice"
-                                                               [disabled]="isReadOnly">
+                                                               [placeholder]="priceOption.customerChoosesPrice ? ls.l('Preset Price') : ls.l('Price')"
+                                                               [format]="priceOption.isFreePriceType ? amountFormat : amountNullableFormat"
+                                                               [(value)]="priceOption.fee"
+                                                               [disabled]="isReadOnly"
+                                                               (onValueChanged)="checkShowAmountChangeWarrning(priceOption)">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule type="custom" [validationCallback]="validateGeneralPrice(priceOption)" message="{{ls.l('InvalidField', ls.l('Price'))}}."></dxi-validation-rule>
+                                                    </dx-validator>
                                                 </dx-number-box>
                                             </div>
-                                            <div>
-                                                <dx-number-box width="100%"
+                                            <div *ngIf="product.type != productType.Donation">
+                                                <dx-select-box [dataSource]="getProductUnits()"
+                                                               width="100%"
+                                                               [placeholder]="ls.l('Unit')"
+                                                               [(value)]="priceOption.unit"
+                                                               [disabled]="isReadOnly"
+                                                               (onValueChanged)="priceOptionNameChanged(priceOption, i)">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-select-box>
+                                            </div>
+                                            <div *ngIf="product.type != productType.Donation">
+                                                <dx-number-box name="commissionableAmount"
+                                                               width="100%"
                                                                height="65px"
-                                                               class="label"
-                                                               [placeholder]="ls.l('Max Price')"
+                                                               class="label commissionable-amount"
+                                                               [placeholder]="ls.l('CommissionableAmount')"
                                                                [format]="amountNullableFormat"
-                                                               [min]="option.minCustomerPrice ? option.minCustomerPrice + 1 : 0"
-                                                               [(value)]="option.maxCustomerPrice"
+                                                               [(value)]="priceOption.commissionableFeeAmount"
                                                                [disabled]="isReadOnly">
                                                 </dx-number-box>
                                             </div>
-                                        </div>
-                                        <div class="option-row periods">
-                                            <div>
-                                                <dx-select-box name="name"
-                                                               [dataSource]="getFrequencies(option, i)"
-                                                               [placeholder]="ls.l('PaymentPeriod')"
-                                                               [(value)]="option.frequency"
-                                                               [disabled]="isReadOnly"
-                                                               (onValueChanged)="onFrequencyChanged($event, option, customPeriodValidator)">
-                                                    <dx-validator>
-                                                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('PaymentPeriod'))}}."></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-select-box>
-                                            </div>
-                                            <div [ngClass]="{disabled: !(option.frequency && option.frequency == recurringPaymentFrequency.Custom)}">
-                                                <dx-select-box name="name"
-                                                               [dataSource]="customPeriodTypes"
-                                                               [placeholder]="ls.l('Period Type')"
-                                                               [(value)]="option.customPeriodType"
-                                                               [disabled]="isReadOnly">
-                                                    <dx-validator #customPeriodValidator>
-                                                        <dxi-validation-rule [type]="option.frequency && option.frequency == recurringPaymentFrequency.Custom ? 'required' : 'custom'" message="{{ls.l('RequiredField', ls.l('Type'))}}." [validationCallback]="disabledValidationCallback"></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-select-box>
-                                            </div>
-                                            <div [ngClass]="{disabled: !(isOneTime || (option.frequency && option.frequency == recurringPaymentFrequency.Custom))}">
-                                                <dx-number-box name="period"
-                                                               [min]="0"
-                                                               mode="number"
-                                                               format="###0"
-                                                               class="label"
-                                                               valueChangeEvent="keyup"
-                                                               [placeholder]="ls.l('Set number of ') + (option.customPeriodType?.toLowerCase() || 'period')"
-                                                               [(value)]="option.customPeriodCount"
-                                                               [disabled]="isReadOnly">
-                                                    <dx-validator>
-                                                        <dxi-validation-rule type="custom" [validationCallback]="validatePeriodDayCount(option)" message="{{ls.l('RequiredField', ls.l('Period'))}}."></dxi-validation-rule>
-                                                        <dxi-validation-rule type="custom" [validationCallback]="validateCustomPeriodDayCount(option)" message="{{ls.l('CustomBillingPeriodLengthError')}}."></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-number-box>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="option-row width-50" [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime || option.frequency == recurringPaymentFrequency.LifeTime }">
-                                            <div>
-                                                <dx-select-box name="name"
-                                                               [dataSource]="billingCyclesEnable"
-                                                               [placeholder]="ls.l('Billing cycles')"
-                                                               valueExpr="key"
-                                                               displayExpr="displayValue"
-                                                               [(value)]="option.billingCyclesEnabled"
-                                                               [disabled]="isReadOnly"
-                                                               (onValueChanged)="option.cycles = option.billingCyclesEnabled ? option.cycles : undefined">
-                                                </dx-select-box>
-                                            </div>
-                                            <div [ngClass]="{disabled: !option.billingCyclesEnabled}">
-                                                <dx-number-box name="cycles"
-                                                               [min]="1"
-                                                               [max]="999"
-                                                               mode="number"
-                                                               format="###0"
-                                                               class="label"
-                                                               valueChangeEvent="keyup"
-                                                               [placeholder]="ls.l('Set number of cycles')"
-                                                               [(value)]="option.cycles"
-                                                               [disabled]="isReadOnly">
-                                                    <dx-validator>
-                                                        <dxi-validation-rule [type]="option.billingCyclesEnabled ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('Cycles'))}}."></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-number-box>
-                                            </div>
-                                        </div>
-                                        <div class="option-row width-50">
-                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime}">
-                                                <label class="wide">{{ls.l('SignupFee')}}</label>
-                                                <dx-number-box name="price"
-                                                               width="100%"
-                                                               [format]="amountFormat"
-                                                               [(value)]="option.signupFee"
-                                                               [disabled]="isReadOnly"
-                                                               (onValueChanged)="checkShowAmountChangeWarrning()">
-                                                    <dx-validator>
-                                                        <dxi-validation-rule [type]="option.frequency && !isOneTime && option.trialDayCount ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-number-box>
-                                            </div>
-                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime || !isCommissionsEnabled}">
-                                                <label class="wide">{{ls.l('CommissionableAmount')}}</label>
-                                                <dx-number-box name="commissionableSignupFeeAmount"
-                                                               width="100%"
-                                                               [format]="amountNullableFormat"
-                                                               [(value)]="option.commissionableSignupFeeAmount"
-                                                               [disabled]="isReadOnly">
-                                                </dx-number-box>
-                                            </div>
-                                            <div *ngIf="hasViewCredits" [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime}">
-                                                <label class="wide">{{ls.l('Sign Up Credits')}}</label>
+                                            <div *ngIf="hasViewCredits && product.type != productType.Donation">
                                                 <dx-number-box width="100%"
+                                                               [placeholder]="ls.l('Credits')"
                                                                min="0"
                                                                format="#"
-                                                               [(value)]="option.signUpCredits"
-                                                               [disabled]="isReadOnly || !hasManageCredits || option.customerChoosesPrice">
+                                                               height="65px"
+                                                               class="label"
+                                                               [(value)]="priceOption.credits"
+                                                               [disabled]="isReadOnly || !hasManageCredits || priceOption.customerChoosesPrice">
                                                 </dx-number-box>
                                             </div>
                                         </div>
-                                        <div class="option-row width-50">
-                                            <div [ngClass]="{disabled: (!i && isFreePriceType) || !option.frequency || isOneTime}">
-                                                <label class="wide" for="level">
-                                                    <dx-switch #trialSwitch
-                                                               switchedOffText=""
-                                                               switchedOnText=""
-                                                               [(value)]="option.trialEnabled"
-                                                               [disabled]="isReadOnly">
-                                                    </dx-switch>&nbsp;<span (click)="option.trialEnabled = !option.trialEnabled">{{ls.l('Add Trial Period')}}</span>
-                                                </label>
-                                                <dx-number-box name="count"
-                                                               [min]="0"
-                                                               mode="number"
-                                                               format="###0"
-                                                               width="100%"
-                                                               valueChangeEvent="keyup"
-                                                               [placeholder]="ls.l('ByDefault', 0)"
-                                                               [(value)]="option.trialDayCount"
-                                                               [disabled]="isReadOnly || !option.trialEnabled">
-                                                </dx-number-box>
-                                            </div>
+                                        <div class="general-product-price customer-price">
                                             <div>
-                                                <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">
-                                                    <dx-switch switchedOffText=""
-                                                               switchedOnText=""
-                                                               [(value)]="option.gracePeriodEnabled"
-                                                               [disabled]="isReadOnly">
-                                                    </dx-switch>&nbsp;<span (click)="option.gracePeriodEnabled = !option.gracePeriodEnabled">{{ls.l('Custom Grace Period')}}</span>
-                                                </label>
-                                                <dx-number-box name="gracePeriodDayCount"
-                                                               [placeholder]="ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)"
-                                                               [min]="0"
-                                                               format="###0"
-                                                               mode="number"
-                                                               [(value)]="option.gracePeriodDayCount"
-                                                               [disabled]="isReadOnly || !option.gracePeriodEnabled">
-                                                </dx-number-box>
+                                                <dx-switch switchedOffText=""
+                                                           switchedOnText=""
+                                                           [(value)]="priceOption.customerChoosesPrice"
+                                                           (onValueChanged)="priceOption.credits = priceOption.minCustomerPrice = priceOption.maxCustomerPrice = null"
+                                                           [disabled]="isReadOnly || priceOption.isFreePriceType || (product.type != productType.Donation && (priceOption.stripeXref || priceOption.paypalXref))">
+                                                </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
                                             </div>
+                                            <dx-number-box name="minCustomerPrice"
+                                                           width="100%"
+                                                           height="65px"
+                                                           class="label"
+                                                           [placeholder]="ls.l('Min Price')"
+                                                           [format]="amountNullableFormat"
+                                                           [min]="0"
+                                                           [max]="priceOption.maxCustomerPrice ? priceOption.maxCustomerPrice - 1 : null"
+                                                           [(value)]="priceOption.minCustomerPrice"
+                                                           [disabled]="isReadOnly || !priceOption.customerChoosesPrice">
+                                            </dx-number-box>
+                                            <dx-number-box name="maxCustomerPrice"
+                                                           width="100%"
+                                                           height="65px"
+                                                           class="label"
+                                                           [placeholder]="ls.l('Max Price')"
+                                                           [format]="amountNullableFormat"
+                                                           [min]="priceOption.minCustomerPrice ? priceOption.minCustomerPrice + 1 : 0"
+                                                           [(value)]="priceOption.maxCustomerPrice"
+                                                           [disabled]="isReadOnly || !priceOption.customerChoosesPrice">
+                                            </dx-number-box>
                                         </div>
-                                        <ng-container *ngIf="option.stripeXref || option.paypalXref">
-                                            <hr>
-                                            <div class="option-row width-50">
-                                                <div *ngIf="option.stripeXref">
-                                                    <label>Stripe Xref</label>
-                                                    <div class="clipboard-holder">
-                                                        <ng-container *ngIf="option.stripeXrefUrl; else plainOptionStripeXref">
-                                                            <a [href]="option.stripeXrefUrl" target="_blank">{{option.stripeXref}}</a>
-                                                        </ng-container>
-                                                        <ng-template #plainOptionStripeXref>{{option.stripeXref}}</ng-template>
-                                                        <i class="save-to-clipboard" (click)="copyTextToClipboard(option.stripeXref)"></i>
+                                    </div>
+                                    <ng-container *ngIf="priceOption.type == priceOptionType.Subscription">
+                                        <div class="options">
+                                            <div class="option">
+                                                <div class="option-row width-50">
+                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType}">
+                                                        <label class="wide">{{ls.l('Subscription fee')}}</label>
+                                                        <dx-number-box name="price"
+                                                                       width="100%"
+                                                                       [format]="priceOption.customerChoosesPrice ? amountNullableFormat : amountFormat"
+                                                                       [(value)]="priceOption.fee"
+                                                                       [disabled]="isReadOnly"
+                                                                       (onValueChanged)="checkShowAmountChangeWarrning(priceOption)">
+                                                            <dx-validator>
+                                                                <dxi-validation-rule type="custom" [validationCallback]="validateFee(priceOption)" message="{{ls.l('InvalidField', ls.l('Fee'))}}."></dxi-validation-rule>
+                                                            </dx-validator>
+                                                        </dx-number-box>
+                                                    </div>
+                                                    <div [ngClass]="{disabled: !isCommissionsEnabled || priceOption.isFreePriceType}">
+                                                        <label class="wide">{{ls.l('CommissionableAmount')}}</label>
+                                                        <dx-number-box name="commissionableFeeAmount"
+                                                                       width="100%"
+                                                                       [format]="amountNullableFormat"
+                                                                       [(value)]="priceOption.commissionableFeeAmount"
+                                                                       [disabled]="isReadOnly || product.type == productType.Donation">
+                                                        </dx-number-box>
+                                                    </div>
+                                                    <div *ngIf="hasViewCredits">
+                                                        <label class="wide">{{ls.l('Credits')}}</label>
+                                                        <dx-number-box width="100%"
+                                                                       min="0"
+                                                                       format="#"
+                                                                       [(value)]="priceOption.credits"
+                                                                       [disabled]="isReadOnly || !hasManageCredits || priceOption.customerChoosesPrice || product.type == productType.Donation">
+                                                        </dx-number-box>
                                                     </div>
                                                 </div>
-                                                <div *ngIf="option.paypalXref">
-                                                    <label>Paypal Xref</label>
-                                                    <div class="clipboard-holder">{{option.paypalXref}} <i class="save-to-clipboard" (click)="copyTextToClipboard(option.paypalXref)"></i></div>
+                                                <div class="option-row periods">
+                                                    <div>
+                                                        <dx-select-box name="name"
+                                                                       [dataSource]="getFrequencies(priceOption.isFreePriceType)"
+                                                                       [placeholder]="ls.l('PaymentPeriod')"
+                                                                       [(value)]="priceOption.frequency"
+                                                                       [disabled]="isReadOnly"
+                                                                       (onValueChanged)="onFrequencyChanged($event, priceOption, customPeriodValidator, i)">
+                                                            <dx-validator>
+                                                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('PaymentPeriod'))}}."></dxi-validation-rule>
+                                                            </dx-validator>
+                                                        </dx-select-box>
+                                                    </div>
+                                                    <div [ngClass]="{disabled: !(priceOption.frequency && priceOption.frequency == recurringPaymentFrequency.Custom)}">
+                                                        <dx-select-box name="name"
+                                                                       [dataSource]="customPeriodTypes"
+                                                                       [placeholder]="ls.l('Period Type')"
+                                                                       [(value)]="priceOption.customPeriodType"
+                                                                       [disabled]="isReadOnly">
+                                                            <dx-validator #customPeriodValidator>
+                                                                <dxi-validation-rule [type]="priceOption.frequency && priceOption.frequency == recurringPaymentFrequency.Custom ? 'required' : 'custom'" message="{{ls.l('RequiredField', ls.l('Type'))}}." [validationCallback]="disabledValidationCallback"></dxi-validation-rule>
+                                                            </dx-validator>
+                                                        </dx-select-box>
+                                                    </div>
+                                                    <div [ngClass]="{disabled: !(isOneTime || (priceOption.frequency && priceOption.frequency == recurringPaymentFrequency.Custom))}">
+                                                        <dx-number-box name="period"
+                                                                       [min]="0"
+                                                                       mode="number"
+                                                                       format="###0"
+                                                                       class="label"
+                                                                       valueChangeEvent="keyup"
+                                                                       [placeholder]="ls.l('Set number of ') + (priceOption.customPeriodType?.toLowerCase() || 'period')"
+                                                                       [(value)]="priceOption.customPeriodCount"
+                                                                       [disabled]="isReadOnly">
+                                                            <dx-validator>
+                                                                <dxi-validation-rule type="custom" [validationCallback]="validatePeriodDayCount(priceOption)" message="{{ls.l('RequiredField', ls.l('Period'))}}."></dxi-validation-rule>
+                                                                <dxi-validation-rule type="custom" [validationCallback]="validateCustomPeriodDayCount(priceOption)" message="{{ls.l('CustomBillingPeriodLengthError')}}."></dxi-validation-rule>
+                                                            </dx-validator>
+                                                        </dx-number-box>
+                                                    </div>
+                                                </div>
+                                                <div class="option-row customer-price">
+                                                    <div>
+                                                        <dx-switch switchedOffText=""
+                                                                   switchedOnText=""
+                                                                   [(value)]="priceOption.customerChoosesPrice"
+                                                                   (onValueChanged)="priceOption.credits = priceOption.signUpCredits = priceOption.minCustomerPrice = priceOption.maxCustomerPrice = null"
+                                                                   [disabled]="isReadOnly || priceOption.isFreePriceType || (product.type != productType.Donation && (priceOption.stripeXref || priceOption.paypalXref))">
+                                                        </dx-switch><span>{{ls.l('Customer chooses price')}}</span>
+                                                    </div>
+                                                    <dx-number-box width="100%"
+                                                                   height="65px"
+                                                                   class="label"
+                                                                   [placeholder]="ls.l('Min Price')"
+                                                                   [format]="amountNullableFormat"
+                                                                   [min]="0"
+                                                                   [max]="priceOption.maxCustomerPrice ? priceOption.maxCustomerPrice - 1 : null"
+                                                                   [(value)]="priceOption.minCustomerPrice"
+                                                                   [disabled]="isReadOnly || !priceOption.customerChoosesPrice">
+                                                    </dx-number-box>
+                                                    <dx-number-box width="100%"
+                                                                   height="65px"
+                                                                   class="label"
+                                                                   [placeholder]="ls.l('Max Price')"
+                                                                   [format]="amountNullableFormat"
+                                                                   [min]="priceOption.minCustomerPrice ? priceOption.minCustomerPrice + 1 : 0"
+                                                                   [(value)]="priceOption.maxCustomerPrice"
+                                                                   [disabled]="isReadOnly || !priceOption.customerChoosesPrice">
+                                                    </dx-number-box>
+                                                </div>
+                                                <div class="option-row width-50" [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime || priceOption.frequency == recurringPaymentFrequency.LifeTime }">
+                                                    <div>
+                                                        <dx-select-box name="name"
+                                                                       [dataSource]="billingCyclesEnable"
+                                                                       [placeholder]="ls.l('Billing cycles')"
+                                                                       valueExpr="key"
+                                                                       displayExpr="displayValue"
+                                                                       [(value)]="priceOption.billingCyclesEnabled"
+                                                                       [disabled]="isReadOnly"
+                                                                       (onValueChanged)="priceOption.cycles = priceOption.billingCyclesEnabled ? priceOption.cycles : undefined">
+                                                        </dx-select-box>
+                                                    </div>
+                                                    <div [ngClass]="{disabled: !priceOption.billingCyclesEnabled}">
+                                                        <dx-number-box name="cycles"
+                                                                       [min]="1"
+                                                                       [max]="999"
+                                                                       mode="number"
+                                                                       format="###0"
+                                                                       class="label"
+                                                                       valueChangeEvent="keyup"
+                                                                       [placeholder]="ls.l('Set number of cycles')"
+                                                                       [(value)]="priceOption.cycles"
+                                                                       [disabled]="isReadOnly">
+                                                            <dx-validator>
+                                                                <dxi-validation-rule [type]="priceOption.billingCyclesEnabled ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('Cycles'))}}."></dxi-validation-rule>
+                                                            </dx-validator>
+                                                        </dx-number-box>
+                                                    </div>
+                                                </div>
+                                                <div class="option-row width-50">
+                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime || product.type == productType.Donation}">
+                                                        <label class="wide">{{ls.l('SignupFee')}}</label>
+                                                        <dx-number-box name="price"
+                                                                       width="100%"
+                                                                       [format]="amountFormat"
+                                                                       [(value)]="priceOption.signupFee"
+                                                                       [disabled]="isReadOnly"
+                                                                       (onValueChanged)="checkShowAmountChangeWarrning(priceOption)">
+                                                            <dx-validator>
+                                                                <dxi-validation-rule [type]="priceOption.frequency && !isOneTime && priceOption.trialDayCount ? 'required' : 'custom'" [validationCallback]="disabledValidationCallback" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
+                                                            </dx-validator>
+                                                        </dx-number-box>
+                                                    </div>
+                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime || !isCommissionsEnabled || product.type == productType.Donation}">
+                                                        <label class="wide">{{ls.l('CommissionableAmount')}}</label>
+                                                        <dx-number-box name="commissionableSignupFeeAmount"
+                                                                       width="100%"
+                                                                       [format]="amountNullableFormat"
+                                                                       [(value)]="priceOption.commissionableSignupFeeAmount"
+                                                                       [disabled]="isReadOnly">
+                                                        </dx-number-box>
+                                                    </div>
+                                                    <div *ngIf="hasViewCredits" [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime || product.type == productType.Donation}">
+                                                        <label class="wide">{{ls.l('Sign Up Credits')}}</label>
+                                                        <dx-number-box width="100%"
+                                                                       min="0"
+                                                                       format="#"
+                                                                       [(value)]="priceOption.signUpCredits"
+                                                                       [disabled]="isReadOnly || !hasManageCredits || priceOption.customerChoosesPrice">
+                                                        </dx-number-box>
+                                                    </div>
+                                                </div>
+                                                <div class="option-row width-50">
+                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || isOneTime || product.type == productType.Donation}">
+                                                        <label class="wide" for="level">
+                                                            <dx-switch #trialSwitch
+                                                                       switchedOffText=""
+                                                                       switchedOnText=""
+                                                                       [(value)]="priceOption.trialEnabled"
+                                                                       [disabled]="isReadOnly">
+                                                            </dx-switch>&nbsp;<span (click)="priceOption.trialEnabled = !priceOption.trialEnabled">{{ls.l('Add Trial Period')}}</span>
+                                                        </label>
+                                                        <dx-number-box name="count"
+                                                                       [min]="0"
+                                                                       mode="number"
+                                                                       format="###0"
+                                                                       width="100%"
+                                                                       valueChangeEvent="keyup"
+                                                                       [placeholder]="ls.l('ByDefault', 0)"
+                                                                       [(value)]="priceOption.trialDayCount"
+                                                                       [disabled]="isReadOnly || !priceOption.trialEnabled">
+                                                        </dx-number-box>
+                                                    </div>
+                                                    <div [ngClass]="{disabled: priceOption.isFreePriceType || !priceOption.frequency || product.type == productType.Donation}">
+                                                        <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">
+                                                            <dx-switch switchedOffText=""
+                                                                       switchedOnText=""
+                                                                       [(value)]="priceOption.gracePeriodEnabled"
+                                                                       [disabled]="isReadOnly">
+                                                            </dx-switch>&nbsp;<span (click)="priceOption.gracePeriodEnabled = !priceOption.gracePeriodEnabled">{{ls.l('Custom Grace Period')}}</span>
+                                                        </label>
+                                                        <dx-number-box name="gracePeriodDayCount"
+                                                                       [placeholder]="ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)"
+                                                                       [min]="0"
+                                                                       format="###0"
+                                                                       mode="number"
+                                                                       [(value)]="priceOption.gracePeriodDayCount"
+                                                                       [disabled]="isReadOnly || !priceOption.gracePeriodEnabled">
+                                                        </dx-number-box>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </ng-container>
-                                    </div>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="priceOption.id">
+                                        <hr>
+                                        <div class="option-ids">
+                                            <div *ngIf="priceOption.id" class="option-id">
+                                                <label>Price Id</label>
+                                                <div class="clipboard-holder">{{priceOption.id}} <i class="save-to-clipboard" (click)="copyTextToClipboard(priceOption.id)"></i></div>
+                                            </div>
+                                            <div *ngIf="priceOption.stripeXref">
+                                                <label>Stripe Xref</label>
+                                                <div class="clipboard-holder wrap-text">
+                                                    <ng-container *ngIf="priceOption.stripeXrefUrl; else plainOptionStripeXref">
+                                                        <a [href]="priceOption.stripeXrefUrl" target="_blank">{{priceOption.stripeXref}}</a>
+                                                    </ng-container>
+                                                    <ng-template #plainOptionStripeXref><span>{{priceOption.stripeXref}}</span></ng-template>
+                                                    <i class="save-to-clipboard" (click)="copyTextToClipboard(priceOption.stripeXref)"></i>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="priceOption.paypalXref">
+                                                <label>Paypal Xref</label>
+                                                <div class="clipboard-holder wrap-text"><span>{{priceOption.paypalXref}}</span><i class="save-to-clipboard" (click)="copyTextToClipboard(priceOption.paypalXref)"></i></div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
                                 </div>
-                            </ng-container>
+                            </div>
                         </div>
                         <div class="block donation-type" *ngIf="product.type == productType.Donation">
                             <h3>{{ls.l('Donation options')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
@@ -530,15 +561,6 @@
                             <hr>
                             <div [ngClass]="{disabled: !enableCommissions || isReadOnly}">
                                 <div class="commissions">
-                                    <div *ngIf="product.type == productType.General || product.type == productType.Digital || product.type == productType.Event">
-                                        <label>{{ls.l('CommissionableAmount')}}</label>
-                                        <dx-number-box name="commissionableAmount"
-                                                       width="100%"
-                                                       [format]="amountNullableFormat"
-                                                       [(value)]="generalPriceOption.commissionableFeeAmount"
-                                                       [disabled]="isReadOnly">
-                                        </dx-number-box>
-                                    </div>
                                     <div>
                                         <label>{{ls.l('Tier 1 Max Commission Rate')}}</label>
                                         <dx-number-box name="maxCommissionRate"
@@ -859,7 +881,7 @@
                                 </div>
 
                                 <div *ngFor="let link of productLinks; let i = index" class="link">
-                                    <a target="_blank" [href]="link.url" [title]="link.url">{{link.name || link.url}}</a>&nbsp;<i *ngIf="!isReadOnly" (click)="removeLink(i)" aria-hidden="true" class="delete fa fa-times"></i>
+                                    <a target="_blank" [href]="formatUrl(link.url)" [title]="link.url">{{link.name || link.url}}</a>&nbsp;<i *ngIf="!isReadOnly" (click)="removeLink(i)" aria-hidden="true" class="delete fa fa-times"></i>
                                 </div>
 
                             </div>
