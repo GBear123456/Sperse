@@ -88,6 +88,7 @@ export class PackageChooserComponent implements OnInit {
         '#008b7a'
     ];
 
+    crmLocalizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
     PRODUCT_GROUP_ADD_ON = AppConsts.PRODUCT_GROUP_ADD_ON;
     static availablePeriodsOrder = [RecurringPaymentFrequency.Monthly, RecurringPaymentFrequency.Annual, RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.Custom];
     availablePeriods: RecurringPaymentFrequency[] = [];

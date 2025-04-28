@@ -5,7 +5,9 @@
         <div *ngIf="packages && packages.length; else noproducts" class="state-slider point{{availablePeriods.length}}">
             <div class="captions">
                 <ng-container *ngFor="let frequency of availablePeriods; index as i">
-                    <div [ngClass]="{ 'active': getActiveStatus(frequency) }" (click)="toggle(frequency)">{{ ls.l('RecurringPaymentFrequency_' + recurringPaymentFrequency[frequency]) }}</div>
+                    <div [ngClass]="{ 'active': getActiveStatus(frequency) }" (click)="toggle(frequency)">
+                        {{ ls.ls(crmLocalizationSourceName, 'RecurringPaymentFrequency_' + recurringPaymentFrequency[frequency]) }}
+                    </div>
                 </ng-container>
             </div>
             <mat-slider [value]="getSliderValue()"
