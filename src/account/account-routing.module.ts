@@ -17,6 +17,7 @@ import { CompleteTenantRegistrationComponent } from './register/complete-tenant-
 import { SigninForgotPasswordComponent } from '@root/account/password/layouts/signin/signin-forgot-password.component';
 import { SigninComponent } from '@root/account/login/layouts/signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
+import { OAuthRedirectComponent } from './oauth-redirect/oauth-redirect.component';
 import { TenantSideRouteGuard } from '@shared/common/auth/tenat-side-route-guard';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
 
@@ -54,7 +55,8 @@ import { LocalizationResolver } from '@shared/common/localization-resolver';
                         canActivate: [TenantSideRouteGuard, LocalizationResolver]
                     },
                     { path: 'signin-forgot-password', component: ForgotPasswordComponent, data: { wrap: false, layoutComponent: SigninForgotPasswordComponent } },
-                    { path: 'complete-tenant-registration', component: CompleteTenantRegistrationComponent }
+                    { path: 'complete-tenant-registration', component: CompleteTenantRegistrationComponent },
+                    { path: 'oauth-redirect', component: OAuthRedirectComponent, data: { wrap: false } }
                 ]
             }
         ])

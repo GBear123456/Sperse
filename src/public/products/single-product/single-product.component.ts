@@ -39,7 +39,9 @@ import {
     TenantSubscriptionServiceProxy,
     ProductAddOnDto,
     ProductAddOnOptionDto,
-    PriceOptionType
+    PriceOptionType,
+    ExternalUserDataServiceProxy,
+    GetExternalUserDataInput
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
@@ -145,8 +147,9 @@ export class SingleProductComponent implements OnInit {
     };
 
     taxCalculation: TaxCalculationResultDto;
-
     private calculationTaxTimeout;
+
+    discordPopup: Window;
 
     constructor(
         private sessionService: AppSessionService,
@@ -159,6 +162,7 @@ export class SingleProductComponent implements OnInit {
         private changeDetector: ChangeDetectorRef,
         private sanitizer: DomSanitizer,
         private profileService: ProfileServiceProxy,
+        private externalUserDataService: ExternalUserDataServiceProxy,
         private store$: Store<RootStore.State>,
         private statesService: StatesService,
         public ls: AppLocalizationService,
@@ -391,6 +395,12 @@ export class SingleProductComponent implements OnInit {
                 return of();
             }
         }
+
+        if (this.productInfo.data.hasDiscordService && this.productInfo.data.discordAppId && !this.requestInfo.discordUserId) {
+            abp.notify.error(this.ls.l('Please authorize Discord before submit'));
+            return of();
+        }
+
         let submitPriceOption = this.selectedPriceOption;
         if ((submitPriceOption.customerChoosesPrice && (!submitPriceOption.fee || this.customerPriceEditMode))) {
             abp.notify.error(this.ls.l('Invalid Price'));
@@ -906,5 +916,57 @@ export class SingleProductComponent implements OnInit {
                 this.taxCalculation = result;
                 this.changeDetector.detectChanges();
             });
+    }
+
+    discordOAuth() {
+        let scopes = ['email', 'identify', 'guilds.join'];
+        let scopesString = scopes.join('%20');
+        let redirectUrl = `${AppConsts.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
+        let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.productInfo.data.discordAppId +
+            `&redirect_uri=${redirectUrl}&state=${this.tenantId}&scope=${scopesString}&prompt=none`;
+
+        this.discordPopup = window.open(popupUrl, 'discordOAuth', 'width=500,height=600');
+        if (!this.discordPopup) {
+            abp.notify.error('Please allow popups to authorize in Discord');
+            return;
+        }
+
+        const popupCheckInterval = setInterval(() => {
+            if (this.discordPopup.closed) {
+                this.discordPopup = null;
+                clearInterval(popupCheckInterval);
+                window.removeEventListener('message', messageHandler);
+            }
+        }, 500);
+
+        const messageHandler = (event: MessageEvent) => {
+            if (event.origin !== AppConsts.remoteServiceBaseUrl)
+                return;
+
+            if (event.data.code) {
+                const authCode = event.data.code;
+                this.externalUserDataService.getUserData(new GetExternalUserDataInput({
+                    tenantId: 0,
+                    provider: 'Discord',
+                    exchangeCode: authCode,
+                    loginReturnUrl: redirectUrl,
+                    options: null,
+                    vault: true
+                })).subscribe(res => {
+                    this.requestInfo.discordUserId = res.additionalData["Id"];
+                    this.requestInfo.discordUserName = res.additionalData["Username"];
+                    this.changeDetector.detectChanges();
+                });
+            } else {
+                abp.notify.error(event.data.error || 'Failed to get ');
+            }
+
+            clearInterval(popupCheckInterval);
+            window.removeEventListener('message', messageHandler);
+            this.discordPopup.close();
+            this.discordPopup = null;
+        };
+
+        window.addEventListener('message', messageHandler);
     }
 }
