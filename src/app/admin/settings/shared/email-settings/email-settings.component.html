@@ -38,27 +38,22 @@
     </div>
 
     <div *ngIf="emailSettings" class="settings">
-        <div class="settings-header">
-            <img [src]="'assets/common/icons/smtp/' + (selectedProvider === undefined ? 'system.svg' : selectedProvider === null ? 'email.svg' : selectedProvider.icon)" />
-            <mat-slide-toggle
-                class="settings-toggle"
-                [(ngModel)]="emailSettings.isEnabled"
-                labelPosition="before"
-            >
-                {{ l('Enable') }}
-            </mat-slide-toggle>
-        </div>
-
         <ng-container *ngIf="selectedProvider?.domain == 'gmail.com' && selectedGmailAuthType == gmailAuthTypes[1].type; else restSettings">
+            <div class="settings-header">
+                <img [src]="'assets/common/icons/smtp/' + (selectedProvider === undefined ? 'system.svg' : selectedProvider === null ? 'email.svg' : selectedProvider.icon)" />
+                <mat-slide-toggle
+                    id="GmailIsEnable"
+                    class="settings-toggle"
+                    [(ngModel)]="gmailSettings.isEnabled"
+                    labelPosition="before"
+                    [disabled]="!gmailSettings.isEnabled && !gmailSettings.isConfigured"
+                >
+                    {{ l('Enabled') }}
+                </mat-slide-toggle>
+            </div>
+
             <div class="gmail-oauth">
                 <div>
-                    <div class="form-group">
-                        <dx-check-box id="GmailIsEnabled"
-                                      [text]="l('Enabled')"
-                                      [(value)]="gmailSettings.isEnabled"
-                                      [disabled]="!gmailSettings.isEnabled && !gmailSettings.isConfigured">
-                        </dx-check-box>
-                    </div>
                     <div class="google-button-container">
                         <button class="btn btn-layout google-button" (click)="getAuthCode()">
                             <img src="./assets/common/icons/google.svg" />
@@ -89,6 +84,17 @@
             </div>
         </ng-container>
         <ng-template #restSettings>
+            <div class="settings-header">
+                <img [src]="'assets/common/icons/smtp/' + (selectedProvider === undefined ? 'system.svg' : selectedProvider === null ? 'email.svg' : selectedProvider.icon)" />
+                <mat-slide-toggle
+                    class="settings-toggle"
+                    [(ngModel)]="emailSettings.isEnabled"
+                    labelPosition="before"
+                >
+                    {{ l('Enable') }}
+                </mat-slide-toggle>
+            </div>
+
             <div class="flex-2">
                 <div class="credentials" *ngIf="showCustomSmptSettings">
                     <h3><img src="assets/common/icons/smtp/step1.svg">&nbsp;&nbsp;&nbsp;Enter Credentials</h3>
