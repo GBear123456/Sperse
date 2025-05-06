@@ -575,6 +575,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getUnitColumnText(data: PriceOption) {
+        if (!data)
+            return '';
+
         if (data.Type == PriceOptionType.Subscription)
             return this.getSubscrOptionDescription(data);
 

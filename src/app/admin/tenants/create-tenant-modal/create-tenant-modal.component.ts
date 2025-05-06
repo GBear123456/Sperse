@@ -97,7 +97,7 @@ export class CreateTenantModalComponent implements OnInit {
             .subscribe((result: GetPasswordComplexitySettingOutput) => {
                 this.passwordComplexitySetting = result.setting;
             });
-        this.productService.getProducts(PriceOptionType.Subscription, undefined, true, undefined).subscribe(response => {
+        this.productService.getProducts(PriceOptionType.Subscription, undefined, true, undefined, true).subscribe(response => {
             this.products = response;
         })
     }

@@ -1072,7 +1072,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 products: new FilterServicesAndProductsModel(
                     {
                         dataSource$: this.productProxy.getProducts(
-                            PriceOptionType.Subscription, undefined, false, undefined
+                            PriceOptionType.Subscription, undefined, false, undefined, false
                         ).pipe(
                             map((products: ProductDto[]) => {
                                 let productsWithGroups = products.filter(x => x.group);
