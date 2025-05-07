@@ -19,7 +19,8 @@ import {
     MemberServiceDto,
     MemberServiceLevelDto,
     FlatFeatureDto,
-    SystemTypeDto
+    SystemTypeDto,
+    HostSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { FeatureTreeComponent } from '@app/shared/features/feature-tree.component';
@@ -29,6 +30,8 @@ import { NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { shareReplay, withLatestFrom } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'add-member-service-dialog',
@@ -38,7 +41,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
         '../../../../../shared/common/styles/form.less',
         './add-member-service-dialog.component.less'
     ],
-    providers: [MemberServiceServiceProxy],
+    providers: [MemberServiceServiceProxy, HostSettingsServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
@@ -51,11 +54,15 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
     systemTypes: string[];
     featuresData: FeatureTreeEditModel;
     title: string;
+    hostDiscordClientId: string;
     isReadOnly = true;
+
+    hostDiscordClientId$ = this.hostSettingsProxy.getDiscordCientId().pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
     constructor(
         private elementRef: ElementRef,
         private memberServiceProxy: MemberServiceServiceProxy,
+        private hostSettingsProxy: HostSettingsServiceProxy,
         private notify: NotifyService,
         private changeDetection: ChangeDetectorRef,
         private loadingService: LoadingService,
@@ -77,7 +84,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
 
         this.isReadOnly = data && !!data.isReadOnly;
         this.title = ls.l(this.isReadOnly ? 'Service' : this.memberService.id ? 'EditService' : 'AddService');
-        
+
         this.memberServiceProxy.getSystemTypes().subscribe((types: SystemTypeDto[]) => {
             this.systemTypes = types.map(type => type.code);
             if (data && data.service)
@@ -96,9 +103,11 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
 
     onSystemTypeChanged(event) {
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.memberServiceProxy.getSystemFeatures(
-            event.value
-        ).subscribe((features: FlatFeatureDto[]) => {
+
+        forkJoin([
+            this.memberServiceProxy.getSystemFeatures(event.value),
+            this.hostDiscordClientId$
+        ]).subscribe(([features, clientId]: [FlatFeatureDto[], string]) => {
             this.featuresData = {
                 features: features,
                 featureValues: features.map(feature => new FeatureValuesDto({
@@ -106,6 +115,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
                     value: this.memberService.features[feature.name] || feature.defaultValue
                 }))
             };
+            this.hostDiscordClientId = clientId;
 
             this.loadingService.finishLoading(this.elementRef.nativeElement);
             this.detectChanges();

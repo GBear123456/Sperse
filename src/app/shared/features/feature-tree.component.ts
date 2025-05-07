@@ -21,6 +21,7 @@ export class FeatureTreeComponent {
     @Input() showResetToDefault: boolean = false;
     @Input() enableRestoreCustom: boolean = false;
     @Input() isReadOnly: boolean = false;
+    @Input() hostDiscordClientId: string = null;
     @Input() set editData(val: FeatureTreeEditModel) {
         if (val) {
             if (!this._editData || ArrayHelper.dataChanged(val.features, this._editData.features) || ArrayHelper.dataChanged(val.featureValues, this._editData.featureValues)) {
@@ -268,5 +269,9 @@ export class FeatureTreeComponent {
         node.isCustom = false;
         node.value = node.restoreValue == node.data.defaultValue ? '' : node.restoreValue;
         this.setFeatureValueByName(node.data.name, node.restoreValue);
+    }
+
+    installBotClick() {
+        window.open(`https://discord.com/oauth2/authorize?client_id=${this.hostDiscordClientId}&permissions=8&integration_type=0&scope=bot`, '_blank');
     }
 }
