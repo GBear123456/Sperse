@@ -1,5 +1,5 @@
 <div class="header">
-    <img src="assets/common/icons/authorize.net.svg" />
+    <img src="assets/common/icons/authorize-net.svg" />
     <mat-slide-toggle
         class="header-toggle"
         [(ngModel)]="isPaymentsEnabled"
@@ -144,40 +144,44 @@
                     <div class="form-group">
                         <label class="base-label">API Login ID</label>
                         <input class="base-input" />
-                        <p class="base-hint">Found in your Authorize.Net merchant interface under API Credentials & Keys</p>
+                        <p class="base-hint">Found in your Authorize.Net merchant interface under API Credentials & Keys in Sandbox mode</p>
                     </div>
                     <div class="form-group">
                         <label class="base-label">Transaction Key</label>
                         <input class="base-input" />
-                        <p class="base-hint">Keep this secure - found in your Authorize.Net merchant interface</p>
+                        <p class="base-hint">Keep this secure - found in your Authorize.Net merchant interface in Sandbox mode</p>
                     </div>
                     <div class="form-group">
                         <label class="base-label">Public Client Key</label>
                         <input class="base-input" />
-                        <p class="base-hint">Required for Accept.js integration - found under Manage Public Client Key</p>
+                        <p class="base-hint">Required for Accept.js integration - found under Manage Public Client Key in Sandbox mode</p>
                     </div>
                     <div class="form-group">
                         <label class="base-label">Signature Key (Optional)</label>
                         <input class="base-input" />
-                        <p class="base-hint">Optional - Used for additional security for webhooks</p>
+                        <p class="base-hint">Optional - Used for additional security for webhooks in Sandbox mode</p>
                     </div>
                 </mat-tab>
                 <mat-tab label="Live (Production)">
                     <div class="form-group">
                         <label class="base-label">API Login ID</label>
                         <input class="base-input" />
+                        <p class="base-hint">Found in your Authorize.Net merchant interface under API Credentials & Keys in Live mode</p>
                     </div>
                     <div class="form-group">
                         <label class="base-label">Transaction Key</label>
                         <input class="base-input" />
+                        <p class="base-hint">Keep this secure - found in your Authorize.Net merchant interface in Live mode</p>
                     </div>
                     <div class="form-group">
                         <label class="base-label">Public Client Key</label>
                         <input class="base-input" />
+                        <p class="base-hint">Required for Accept.js integration - found under Manage Public Client Key in Live mode</p>
                     </div>
                     <div class="form-group">
                         <label class="base-label">Signature Key (Optional)</label>
                         <input class="base-input" />
+                        <p class="base-hint">Optional - Used for additional security for webhooks in Live mode</p>
                     </div>
                 </mat-tab>
                 </mat-tab-group>
@@ -192,21 +196,21 @@
                 <h4>Payment Features</h4>
                 <div class="feature-wrapper">
                     <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
+                        <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
                         <div class="feature-content">
                             <p>Enable Customer Information Manager (CIM)</p>
                             <span class="base-hint">Store customer payment profiles for faster checkout</span>
                         </div>
                     </div>
                     <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
+                        <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
                         <div class="feature-content">
                             <p>Enable Recurring Billing</p>
                             <span class="base-hint">Process automated recurring transactions</span>
                         </div>
                     </div>
                     <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
+                        <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
                         <div class="feature-content">
                             <p>Enable Advanced Fraud Detection Suite</p>
                             <span class="base-hint">Use additional security measures to detect fraudulent transactions</span>

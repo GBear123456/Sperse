@@ -38,6 +38,7 @@ export class SettingsUploaderComponent {
     @Input() icon: LucideAngularComponent;
     @Input() tooltipDescription: string;
     @Input() iconColor: string;
+    @Input() disabled: boolean = false;
 
     @Output() onDocumentClear: EventEmitter<any> = new EventEmitter();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;

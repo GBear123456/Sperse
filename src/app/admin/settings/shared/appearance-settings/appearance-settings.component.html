@@ -15,6 +15,7 @@
                         [dataSource]="orgUnits"
                         [placeholder]="l('OrganizationUnit')"
                         valueExpr="id"
+                        [readOnly]="selectedFeatureType === featureTypeList[0].type"
                         displayExpr="displayName"
                         (onValueChanged)="organizationUnitChanged()">
         </dx-select-box>
@@ -128,6 +129,7 @@
                               tooltipDescription="This logo will appear in the header of your application."
                               [icon]="LogoIcon"
                               iconColor="rgb(59 130 246)"
+                              [disabled]="selectedFeatureType === featureTypeList[0].type"
                               (onDocumentClear)="clearLogo(true)">
                     </settings-uploader>
         
@@ -143,6 +145,7 @@
                               tooltipDescription="This CSS will only be applied to the login and authentication pages."
                               [icon]="CustomIcon"
                               iconColor="rgb(244 63 94)"
+                              [disabled]="selectedFeatureType === featureTypeList[0].type"
                               (onDocumentClear)="clearFavicons(true)">
                     </settings-uploader>
         
@@ -159,6 +162,7 @@
                               tooltipDescription="This CSS will only be applied to the login and authentication pages."
                               [icon]="CustomIcon"
                               iconColor="rgb(244 63 94)"
+                              [disabled]="selectedFeatureType === featureTypeList[0].type"
                               (onDocumentClear)="clearCustomCss(CustomCssType.PortalLogin)">
                     </settings-uploader>
                     <settings-uploader #portalCssUploader
@@ -175,6 +179,7 @@
                               tooltipDescription="This CSS will only be applied to the login and authentication pages."
                               [icon]="CustomIcon"
                               iconColor="rgb(244 63 94)"
+                              [disabled]="selectedFeatureType === featureTypeList[0].type"
                               (onDocumentClear)="clearCustomCss(CustomCssType.Portal)">
                     </settings-uploader>
                     <h2 style="margin-top: 20px;">{{l('Left Menu Panel Customization')}}</h2>
@@ -189,16 +194,18 @@
                             <div class="menu-item-code">{{item.code}}</div>
                             <dx-text-box class="custom-display-name"
                                          placeholder="Custom display name"
+                                         [disabled]="selectedFeatureType === featureTypeList[0].type"
                                          [(value)]="item.customTitle">
                             </dx-text-box>
                             <dx-check-box class="menu-item-hide"
                                           [text]="l('Hide')"
+                                          [disabled]="selectedFeatureType === featureTypeList[0].type"
                                           [(value)]="item.hide">
                             </dx-check-box>
                         </div>
                         <dxo-item-dragging group="tasks"
                                            [data]="portalMenuItems"
-                                           [allowReordering]="true">
+                                           [allowReordering]="selectedFeatureType !== featureTypeList[0].type">
                         </dxo-item-dragging>
                     </dx-list>
                 </div>
@@ -220,6 +227,7 @@
                         [showDropDownButton]="false"
                         stylingMode="filled"
                         [openOnFieldClick]="true"
+                        [readOnly]="selectedFeatureType === featureTypeList[0].type"
                         labelMode="hidden"
                         placeholder="Header Background Color"
                         (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.navBackground)"
@@ -236,6 +244,7 @@
                         [openOnFieldClick]="true"
                         labelMode="hidden"
                         placeholder="Header Text Color"
+                        [readOnly]="selectedFeatureType === featureTypeList[0].type"
                         (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.navTextColor)"
                     ></dx-color-box>
                 </div>
@@ -250,6 +259,7 @@
                         [openOnFieldClick]="true"
                         labelMode="hidden"
                         placeholder="Left Bar Color"
+                        [readOnly]="selectedFeatureType === featureTypeList[0].type"
                         (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.leftsideMenuColor)"
                     ></dx-color-box>
                 </div>
@@ -269,6 +279,7 @@
                         stylingMode="filled"
                         [openOnFieldClick]="true"
                         labelMode="hidden"
+                        [readOnly]="selectedFeatureType === featureTypeList[0].type"
                         placeholder="Main Button Color"
                         (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonColor)"
                     ></dx-color-box>
@@ -283,6 +294,7 @@
                         stylingMode="filled"
                         [openOnFieldClick]="true"
                         labelMode="hidden"
+                        [readOnly]="selectedFeatureType === featureTypeList[0].type"
                         placeholder="Text Button Color"
                         (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonTextColor)"
                     ></dx-color-box>
@@ -298,6 +310,7 @@
                         [openOnFieldClick]="true"
                         labelMode="hidden"
                         placeholder="Highlight Button Color"
+                        [readOnly]="selectedFeatureType === featureTypeList[0].type"
                         (onValueChanged)="onColorValueChanged($event, currentDefaultSettings.buttonHighlightedColor)"
                     ></dx-color-box>
                 </div>
@@ -305,11 +318,11 @@
                 <span class="description" style="margin: 1rem 0 0.5rem 0;">{{l('Button Corner Style')}}</span>
     
                 <div class="app-button-round" style="--button-color: {{colorSettings.buttonColor || currentDefaultSettings.buttonColor}}; --button-radius: {{(colorSettings.borderRadius || currentDefaultSettings.borderRadius) + 'px'}}; --button-text-color: {{colorSettings.buttonTextColor || currentDefaultSettings.buttonTextColor}}; --button-hover-color: {{colorSettings.buttonHighlightedColor || currentDefaultSettings.buttonHighlightedColor}}; ">
-                    <div [ngClass]="{selected: colorSettings.borderRadius == '0'}" (click)="colorSettings.borderRadius = '0'">
+                    <div [ngClass]="{selected: colorSettings.borderRadius == '0'}" (click)="selectedFeatureType !== featureTypeList[0].type && colorSettings.borderRadius = '0'">
                         <label><b>Sharp</b><br><br>Radius 0<br></label>
                         <div class="example predefined0">Select</div>
                     </div>
-                    <div [ngClass]="{selected: !['0', '25'].includes(colorSettings.borderRadius)}" (click)="['0', '25'].includes(colorSettings.borderRadius) ? colorSettings.borderRadius = '10' : null">
+                    <div [ngClass]="{selected: !['0', '25'].includes(colorSettings.borderRadius)}" (click)="selectedFeatureType !== featureTypeList[0].type && (['0', '25'].includes(colorSettings.borderRadius) ? colorSettings.borderRadius = '10' : null)">
                         <label><b>Rounded</b><br><br>
                             <dx-number-box
                                 min="0"
@@ -319,11 +332,12 @@
                                 valueChangeEvent="keyup"
                                 [value]="['0', '25'].includes(colorSettings.borderRadius) ? 10 : colorSettings.borderRadius"
                                 (onChange)="onCustomRadiusChange($event)"                    
-                            ></dx-number-box><br>
+                                [readOnly]="selectedFeatureType === featureTypeList[0].type"
+                        ></dx-number-box><br>
                         </label>
                         <div class="example predefined-custom" style="--custom-radius-value: {{ (['0', '25'].includes(colorSettings.borderRadius) ? 10 : colorSettings.borderRadius) + 'px' }} ">Select</div>
                     </div>
-                    <div [ngClass]="{selected: colorSettings.borderRadius == '25'}" (click)="colorSettings.borderRadius = '25'">
+                    <div [ngClass]="{selected: colorSettings.borderRadius == '25'}" (click)="selectedFeatureType !== featureTypeList[0].type && colorSettings.borderRadius = '25'">
                         <label><b>Pill</b><br><br>Radius 25<br></label>
                         <div class="example predefined25">Select</div>
                     </div>
@@ -341,6 +355,7 @@
                         height="46px"
                         [(value)]="colorSettings.fontName"
                         [searchEnabled]="true"
+                        [readOnly]="selectedFeatureType === featureTypeList[0].type"
                         [dataSource]="fontFamilyList">
                         <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
                             {{ data }}
@@ -355,6 +370,7 @@
                         height="46px"
                         [(value)]="colorSettings.tabularFont"
                         [searchEnabled]="true"
+                        [readOnly]="selectedFeatureType === featureTypeList[0].type"
                         [dataSource]="tabularFontFamilyList">
                         <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
                             {{ data }}

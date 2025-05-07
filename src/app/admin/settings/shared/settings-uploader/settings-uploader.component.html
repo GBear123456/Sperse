@@ -17,11 +17,11 @@
 
     <div class="function-container">
         <form #privacyPolicyUploadForm>
-            <ngx-file-drop [accept]="acceptFileExt" [multiple]="false" (onFileDrop)="fileDropped($event)">
+            <ngx-file-drop [disabled]="disabled" [accept]="acceptFileExt" [multiple]="false" (onFileDrop)="fileDropped($event)">
                 <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-                        <div class="upload-container" (click)="openFileSelector()">
+                        <div class="upload-container" (click)="openFileSelector()" [style.pointerEvents]="disabled ? 'none' : 'auto'">
                             <lucide-angular [img]="UploadIcon"></lucide-angular>
-                            <a href="javascript:void(0);" class="attach-link">
+                            <a href="javascript:void(0);" class="attach-link" [style.pointerEvents]="disabled ? 'none' : 'auto'">
                                 {{showPlusSign ? '+' : ''}} {{ uploadButtonText }}
                             </a>
                         </div>
@@ -30,13 +30,13 @@
             <div *ngIf="file">{{ file.fileEntry.name }}</div>
         </form>
         <div class="download-container">
-            <a *ngIf="documentTemplateLink && !documentId" [href]="documentTemplateLink" target="_blank">
+            <a *ngIf="documentTemplateLink && !documentId" [href]="documentTemplateLink" target="_blank" [style.pointerEvents]="disabled ? 'none' : 'auto'">
                 <lucide-angular [img]="DownloadIcon"></lucide-angular>
             </a>
-            <a *ngIf="documentId || !documentTemplateLink" [ngClass]="{disabled: !documentId}" [href]="documentLink" target="_blank">
+            <a *ngIf="documentId || !documentTemplateLink" [ngClass]="{disabled: !documentId}" [href]="documentLink" target="_blank" [style.pointerEvents]="disabled ? 'none' : 'auto'">
                 <lucide-angular [img]="DownloadIcon"></lucide-angular>
             </a>
-            <a href="javascript:void(0)" *ngIf="documentId && onDocumentClear?.observers?.length" (click)="clear()">
+            <a href="javascript:void(0)" *ngIf="documentId && onDocumentClear?.observers?.length" (click)="clear()" [style.pointerEvents]="disabled ? 'none' : 'auto'">
                 <lucide-angular [img]="TrashIcon"></lucide-angular>
             </a>
         </div>

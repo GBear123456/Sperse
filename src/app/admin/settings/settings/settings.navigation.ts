@@ -117,18 +117,18 @@ import { AISettingsComponent } from "../shared/ai-settings/ai-settings.component
         searchAliases: ["payment gateways", "payment methods", "payment processors", "online payments"],
         submenu: [
             { 
-              id: "paypal", 
-              label: "PayPal", 
-              path: "payment/paypal",
-              searchAliases: ["paypal checkout", "paypal payments"],
-              component: PaypalSettingsComponent
-            },
-            { 
               id: "stripe", 
               label: "Stripe", 
               path: "payment/stripe",
               searchAliases: ["stripe checkout", "stripe payments", "credit card processor"],
               component: StripeSettingsComponent
+            },
+            { 
+              id: "paypal", 
+              label: "PayPal", 
+              path: "payment/paypal",
+              searchAliases: ["paypal checkout", "paypal payments"],
+              component: PaypalSettingsComponent
             },
             { 
               id: "authorize", 

@@ -48,8 +48,8 @@
                                 <span class="title">Choose which invoices can be paid this way</span>
                             </li>
                         </ul>
-                        <a class="base-link-button" target="_blank" href="https://stripe.com/resources/more/card-payments">
-                            Learn more about how card payments work
+                        <a class="base-link-button" target="_blank" href="https://www.paypal.com/en/webapps/mpp/how-paypal-works">
+                            Learn more about how PayPal works
                             <lucide-angular [img]="ExternalIcon"></lucide-angular>
                         </a>
                     </div>
@@ -85,7 +85,7 @@
                             </li>
                         </ul>
 
-                        <button class="base-button" (click)="createConnectedAccount()">
+                        <button class="base-button" (click)="createConnectedAccount()" disabled>
                             {{ l('Connect to PayPal') }}
                         </button>
                     </div>
@@ -147,31 +147,34 @@
                     <div class="form-group">
                         <label for="PayPalClientId" class="base-label">Client ID</label>
                         <input class="base-input" id="PayPalClientId" type="text" name="PayPalClientId" [(ngModel)]="paypalPaymentSettings.clientId" />
-                        <p class="base-hint">Found in your PayPal Developer Dashboard under REST API apps</p>
+                        <p class="base-hint">Found in your PayPal Developer Dashboard under REST API apps in Sandbox mode</p>
                     </div>
                     <div class="form-group">
                         <label for="PayPalClientSecret" class="base-label">Client Secret</label>
                         <input class="base-input" id="PayPalClientSecret" type="text" name="PayPalClientSecret" [(ngModel)]="paypalPaymentSettings.clientSecret" />
-                        <p class="base-hint">Keep this secure - found in your PayPal Developer Dashboard</p>
+                        <p class="base-hint">Keep this secure - found in your PayPal Developer Dashboard in Sandbox mode</p>
                     </div>
                     <div class="form-group">
                         <label for="PayPalWebhookKey" class="base-label">Webhook ID</label>
                         <input class="base-input" id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" [(ngModel)]="paypalPaymentSettings.webhookKey" maxlength="128"/>
-                        <p class="base-hint">Generated when you create a webhook in your PayPal Developer Dashboard</p>
+                        <p class="base-hint">Generated when you create a webhook in your PayPal Developer Dashboard in Sandbox mode</p>
                     </div>
                 </mat-tab>
                 <mat-tab label="Live (Production)">
                     <div class="form-group">
                         <label for="PayPalClientId" class="base-label">Client ID</label>
                         <input class="base-input"  id="PayPalClientId" type="text" name="PayPalClientId" [(ngModel)]="paypalPaymentSettings.clientId" />
+                        <p class="base-hint">Found in your PayPal Developer Dashboard under REST API apps in Live mode</p>
                     </div>
                     <div class="form-group">
                         <label for="PayPalClientSecret" class="base-label">Client Secret</label>
                         <input class="base-input" id="PayPalClientSecret" type="text" name="PayPalClientSecret" [(ngModel)]="paypalPaymentSettings.clientSecret"/>
+                        <p class="base-hint">Keep this secure - found in your PayPal Developer Dashboard in Live mode</p>
                     </div>
                     <div class="form-group">
                         <label for="PayPalWebhookKey" class="base-label">Webhook ID</label>
                         <input class="base-input" id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" [(ngModel)]="paypalPaymentSettings.webhookKey" maxlength="128"/>
+                        <p class="base-hint">Generated when you create a webhook in your PayPal Developer Dashboard in Live mode</p>
                     </div>
                 </mat-tab>
                 </mat-tab-group>
@@ -187,7 +190,7 @@
                     <div class="webhook-content">
                         <p>Configure your webhook endpoint</p>
                         <p>To receive webhooks from PayPal, please add this endpoint to your PayPal dashboard:</p>
-                        <code>{{ getPayPalWebhookUrl() }}</code>
+                        <code>{{ getPayPalWebhookUrl() }}<i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></code>
                     </div>
                 </div>
 
@@ -196,62 +199,72 @@
                     <p>Select the events you want to receive notifications for</p>
                 </div>
 
-                <div class="feature-wrapper">
-                    <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
-                        <div class="feature-content">
-                            <p>Billing subscription activated</p>
+                <div class="feature-sub-group">
+                    <h4>Payment Events</h4>
+                    <div class="feature-wrapper">
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Billing subscription activated</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
-                        <div class="feature-content">
-                            <p>Payment sale completed</p>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Billing subscription cancelled</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
-                        <div class="feature-content">
-                            <p>Payment capture completed</p>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment sale completed</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
-                        <div class="feature-content">
-                            <p>Payment payouts-item succeeded</p>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment sale refunded</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
-                        <div class="feature-content">
-                            <p>Payment payouts-item unclaimed</p>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment capture completed</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
-                        <div class="feature-content">
-                            <p>Billing subscription cancelled</p>
-                        </div>
-                    </div>
-                    <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
-                        <div class="feature-content">
-                            <p>Payment sale refunded</p>
-                        </div>
-                    </div>
-                    <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
-                        <div class="feature-content">
-                            <p>Payment capture refunded</p>
-                        </div>
-                    </div>
-                    <div class="feature-config">
-                        <mat-checkbox [checked]="true"></mat-checkbox>
-                        <div class="feature-content">
-                            <p>Payment payouts-item failed</p>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment capture refunded</p>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="feature-sub-group">
+                    <h4>Payout Events</h4>
+                    <div class="feature-wrapper">
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment payouts-item succeeded</p>
+                            </div>
+                        </div>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment payouts-item failed</p>
+                            </div>
+                        </div>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment payouts-item unclaimed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </mat-tab>
@@ -315,37 +328,3 @@
         </div>
     </mat-tab>
 </mat-tab-group>
-
-<!-- <div class="form-group" style="margin-top: 1.5rem;">
-    <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
-    <dx-select-box class="bold-text"
-                   stylingMode="outlined"
-                   valueExpr="value"
-                   displayExpr="text"
-                   [showClearButton]="true"
-                   [(value)]="paypalPaymentSettings.environment"
-                   [dataSource]="payPalEnvironments">
-    </dx-select-box>
-</div>
-<div class="form-group">
-    <label for="PayPalClientId">{{l("Client ID")}}</label>
-    <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="paypalPaymentSettings.clientId">
-</div>
-<div class="form-group">
-    <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
-    <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="paypalPaymentSettings.clientSecret">
-</div>
-<div class="form-group">
-    <label for="PayPalWebhookKey">{{l("Webhook Id")}}</label>
-    <input id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" class="form-control" [(ngModel)]="paypalPaymentSettings.webhookKey" maxlength="128">
-</div>
-<p>
-    <span class="small">* To recieve webhooks from PayPal please add new endpoint on your application using the following info and save Webhook Id in the field above:</span><br />
-    <span class="small">URL - <span class="copy-url"><b>{{getPayPalWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
-    <span class="small">
-        Events -
-        <b>'Billing subscription activated'</b>, <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>,
-        <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b>,
-        <b>'Payment payouts-item succeeded'</b>, <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
-    </span>
-</p> -->
