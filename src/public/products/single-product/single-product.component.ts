@@ -955,6 +955,8 @@ export class SingleProductComponent implements OnInit {
                 })).subscribe(res => {
                     this.requestInfo.discordUserId = res.additionalData["Id"];
                     this.requestInfo.discordUserName = res.additionalData["Username"];
+                    if (!this.requestInfo.email && res.emailAddress)
+                        this.requestInfo.email = res.emailAddress;
                     this.changeDetector.detectChanges();
                 });
             } else {
