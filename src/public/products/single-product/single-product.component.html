@@ -188,7 +188,7 @@
                     <button type="button" class="button_global button_global_blue2" (click)="discordOAuth()" [disabled]="discordPopup">
                         <span class="discord-icon">Authorize Discord</span>
                     </button>
-                    <span *ngIf="requestInfo.discordUserName">Authorized Discord user: {{requestInfo.discordUserName}}</span>
+                    <p *ngIf="requestInfo.discordUserName">Authorized Discord user: <b>{{requestInfo.discordUserName}}</b>&nbsp;<i>({{requestInfo.discordUserId}})</i></p>
                 </div>
                 <div class="name">
                     <div class="input name__input">
