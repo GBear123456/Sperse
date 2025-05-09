@@ -1,0 +1,39 @@
+<div class="service-selector-container">
+    <div class="item-container">
+        <div class="item-title">Select service...</div>
+        <dx-select-box 
+            height="46px"
+            [value]="service.name"
+            [dataSource]="serviceConfig.serviceList"
+            placeholder="Select service..."
+            valueExpr="id"
+            displayExpr="displayName"
+            (onValueChanged)="onServiceChange($event)"
+            itemTemplate="item"
+        >
+        <div class="popup-item" *dxTemplate="let data of 'item'" [class.dx-selectbox-popup-horizonal-line-spec]="data.id === 'new'">
+            <div>{{ data.displayName }}</div>
+        </div>
+        </dx-select-box>
+    </div>
+
+    <div class="item-container">
+        <div class="item-title">Select level...</div>
+        <dx-select-box 
+            height="46px"
+            [value]="service.level"
+            [dataSource]="serviceConfig.levelList"
+            placeholder="Select level..."
+            valueExpr="id"
+            displayExpr="displayName"
+            (onValueChanged)="onLevelChange($event)"
+        >
+        </dx-select-box>
+    </div>
+
+    <div class="action-container">
+      <button class="base-icon-button">
+        <lucide-angular [img]="Pencil"></lucide-angular>
+      </button>
+    </div>
+</div>

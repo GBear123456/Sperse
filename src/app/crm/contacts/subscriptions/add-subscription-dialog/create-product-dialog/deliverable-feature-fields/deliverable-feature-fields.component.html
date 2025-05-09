@@ -1,0 +1,105 @@
+<div [class]="fields[0].gridCols" class="deliverable-feature-fields-container">
+    <ng-container *ngFor="let field of fields; let i = index" [ngSwitch]="field.type">
+        <div class="section-content" *ngSwitchCase="'section'">
+            <div>
+                <h4>{{field.label}}</h4>
+                <p *ngIf="field.description">{{field.description}}</p>
+            </div>
+            <ng-container *ngFor="let subField of field.fields">
+                <ng-container *ngIf="subField.type === 'radio'">
+                    <dx-radio-group
+                        [dataSource]="subField.options"
+                        value="data[prefix + subField.id] || ''"
+                        valueExpr="value"
+                        displayExpr="label"
+                        layout="horizontal"
+                        (onValueChanged)="handleChange(prefix + subField.id, $event.value)"
+                    >
+                    </dx-radio-group>
+                </ng-container>
+            </ng-container>
+        </div>
+
+        <div class="services-content" *ngSwitchCase="'services'">
+            <div class="services-header">
+                <h3>Product Services & Features</h3>
+                <button class="base-button" (click)="onServiceAdd(prefix + field.id, data[prefix + field.id] || field.services)">
+                <lucide-angular [img]="Plus"></lucide-angular>
+                <span>Add Service</span>
+                </button>
+            </div>
+            <ng-container *ngFor="let service of (data[prefix + field.id] || field.services); let index = index">
+                <service-level-selector
+                    [service]="service"
+                    (onChange)="onServiceChange($event, prefix + field.id, data[prefix + field.id] || field.services, index)"                    
+                    (onRemove)="onServiceRemove(prefix + field.id, data[prefix + field.id] || field.services, index)"                    
+                >
+                </service-level-selector>
+            </ng-container>
+            </div>
+
+        <div *ngSwitchCase="'grid'" class="grid-content" [style.grid-template-columns]="'repeat(' + field.columns + ', minmax(0, 1fr))'">
+            <ng-container *ngFor="let gridField of field.fields">
+                <div class="grid-item">
+                    <h4>{{gridField.label}}</h4>
+                    <dx-select-box 
+                        *ngIf="gridField.type === 'select'; else input"
+                        height="35px"
+                        [value]="data[prefix + gridField.id] || ''"
+                        [dataSource]="gridField.options"
+                        placeholder="Select..."
+                        valueExpr="value"
+                        displayExpr="label"
+                        (onValueChanged)="handleChange(prefix + gridField.id, $event.value)"
+                    ></dx-select-box>
+                    <ng-template #input>
+                        <input 
+                            class="base-input"
+                            [type]="gridField.type"
+                            [value]="data[prefix + gridField.id] || ''"
+                            (input)="handleChange(prefix + gridField.id, $event.target.value)"
+                        />
+                    </ng-template>
+                </div>
+            </ng-container>
+        </div>
+
+        <ng-container *ngSwitchDefault>
+            <ng-container *ngIf="!(field.showWhen &&
+                (!data[prefix + field.showWhen] ||
+                (field.showWhenValue &&
+                    (Array.isArray(field.showWhenValue)
+                    ? !field.showWhenValue.includes(data[prefix + field.showWhen])
+                    : data[prefix + field.showWhen] !== field.showWhenValue))))">
+                <div class="else-container" [class]="field.className" [ngSwitch]="field.type">
+                    <h4>{{field.label}}</h4>
+                    <dx-select-box 
+                        *ngSwitchCase="'select'"
+                        height="35px"
+                        [value]="data[prefix + field.id] || field.defaultValue"
+                        [dataSource]="field.options"
+                        placeholder="Select..."
+                        valueExpr="value"
+                        displayExpr="label"
+                        (onValueChanged)="handleChange(prefix + field.id, $event.value)"
+                    ></dx-select-box>
+                    <input 
+                        *ngSwitchCase="'number'"
+                        class="base-input"
+                        type="number"
+                        [value]="data[prefix + field.id] || ''"
+                        min="0"
+                        (input)="handleChange(prefix + field.id, $event.target.value)"
+                    />
+                    <input 
+                        *ngSwitchDefault
+                        class="base-input"
+                        [type]="field.type"
+                        [value]="data[prefix + field.id] || ''"
+                        (input)="handleChange(prefix + field.id, $event.target.value)"
+                    />
+                </div>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+</div>

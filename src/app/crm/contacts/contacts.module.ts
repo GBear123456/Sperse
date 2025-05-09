@@ -46,6 +46,9 @@ import { ImageViewerModule } from 'ng2-image-viewer';
 import { VgCoreModule, VgControlsModule, VgOverlayPlayModule, VgBufferingModule } from 'ngx-videogular';
 import { NgxMaskModule } from '@node_modules/ngx-mask';
 import { CKEditorModule } from 'ckeditor4-angular';
+import { CdkAccordionModule } from '@angular/cdk/accordion';
+import { LucideAngularModule } from 'lucide-angular';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -166,7 +169,9 @@ import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity
 import { PaymentsInfoService } from '@app/shared/common/payments-info/payments-info.service';
 import { ContactPaymentsInfoService } from './payment-information/payments-info.service';
 import { CurrencySelectorModule } from '../../../shared/common/currency-selector/currency-selector.module';
-
+import { DeliverableFeatureFieldsComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/deliverable-feature-fields/deliverable-feature-fields.component'
+import { ServiceLevelSelectorComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/deliverable-feature-fields/service-level-selector/service-level-selector.component';
+import { CommunityAccessSelectorComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/community-access/community-access.component'
 @NgModule({
     declarations: [
         NotesComponent,
@@ -238,7 +243,10 @@ import { CurrencySelectorModule } from '../../../shared/common/currency-selector
         CustomerListDialogComponent,
         PropertyInformationComponent,
         ResellerActivityComponent,
-        CreateActivityDialogComponent
+        CreateActivityDialogComponent,
+        DeliverableFeatureFieldsComponent,
+        ServiceLevelSelectorComponent,
+        CommunityAccessSelectorComponent
     ],
     imports: [
         FormsModule,
@@ -306,7 +314,10 @@ import { CurrencySelectorModule } from '../../../shared/common/currency-selector
         MatSliderModule,
         FeaturesModule,
         InvoiceGridMenuModule,
-        CurrencySelectorModule
+        CurrencySelectorModule,
+        CdkAccordionModule,
+        LucideAngularModule,
+        MatSlideToggleModule
     ],
     entryComponents: [
         CreateActivityDialogComponent,

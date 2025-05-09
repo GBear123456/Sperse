@@ -28,6 +28,7 @@ import { map, switchMap, finalize, first, filter, publishReplay, refCount, tap }
 import { select, Store } from '@ngrx/store';
 import { findIana } from 'windows-iana';
 import * as QRCodeStyling from 'qr-code-styling-new';
+import { BrainCircuit, Calendar, ChevronDown, CreditCard, FileText, GraduationCap, Heart, Image, Key, Link2, Mail, MessageSquare, Package, Phone, Send, Truck, Video, Webhook } from 'lucide-angular';
 
 /** Application imports */
 import {
@@ -101,6 +102,7 @@ export class FilterAssignmentsPipe implements PipeTransform {
     selector: 'create-product-dialog',
     templateUrl: './create-product-dialog.component.html',
     styleUrls: [
+        '../../subscriptions-base.less',
         '../../../../../../shared/common/styles/close-button.less',
         '../../../../../shared/common/styles/form.less',
         './create-product-dialog.component.less'
@@ -120,6 +122,26 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(DxTextAreaComponent) descriptionHtmlComponent: DxTextAreaComponent;
     @ViewChild("canvas", { static: true }) canvas: ElementRef;
+
+    readonly Link2 = Link2;
+    readonly CreditCard = CreditCard;
+    readonly FileText = FileText;
+    readonly Key = Key;
+    readonly GraduationCap = GraduationCap;
+    readonly Image = Image;
+    readonly Video = Video;
+    readonly MessageSquare = MessageSquare;
+    readonly Send = Send;
+    readonly Phone = Phone;
+    readonly Calendar = Calendar;
+    readonly Mail = Mail;
+    readonly Webhook = Webhook;
+    readonly BrainCircuit = BrainCircuit;
+    readonly Heart = Heart;
+    readonly Truck = Truck;
+    readonly Package = Package;
+    readonly ChevronIcon = ChevronDown;
+
 
     isFreePriceType = false;
     baseUrl = AppConsts.remoteServiceBaseUrl;
@@ -180,6 +202,436 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             }
         }
     ];
+
+    tabs = {
+        options: [
+            {
+                type: 'Product',
+                name: this.ls.l('Product')
+            }, {
+                type: 'Deliverables',
+                name: this.ls.l('Deliverables')
+            }
+        ],
+        toggleTab: this.toggleTab.bind(this),
+    }
+
+    selectedTab = this.tabs.options[0].type;
+
+    toggleTab(selected) {
+        this.selectedTab = selected;
+        this.changeDetection.detectChanges();
+    }
+
+    fulfillmentGroups = [
+        {
+          title: "Digital Access",
+          items: [
+            {
+              id: "subscription",
+              label: "Access Subscription Features",
+              description: "Configure subscription-based access to content or features",
+              icon: Link2,
+              color: "#2563EB",
+              fields: [
+                {
+                  id: "subscriptionServices",
+                  type: "services",
+                  services: [
+                    // { id: "1", name: "", level: "" },
+                    // { id: "2", name: "", level: "" },
+                    // { id: "3", name: "", level: "" },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "credits",
+              label: "User Credits",
+              description: "Manage user credit system for content access",
+              icon: CreditCard,
+              color: "#059669",
+              fields: [
+                {
+                  id: "creditAmount",
+                  label: "Credit Amount",
+                  type: "number",
+                  className: "col-span-1",
+                },
+                {
+                  id: "creditExpiry",
+                  label: "Credit Expiration",
+                  type: "select",
+                  className: "col-span-1",
+                  options: [
+                    { value: "never", label: "Never" },
+                    { value: "daily", label: "Every Day" },
+                    { value: "weekly", label: "Every Week" },
+                    { value: "monthly", label: "Every Month" },
+                    { value: "yearly", label: "Every Year" },
+                  ],
+                  defaultValue: "never",
+                },
+              ],
+              gridCols: "grid-cols-2 gap-4",
+            },
+            {
+              id: "digital",
+              label: "Digital Downloadable Product",
+              description: "Provide access to downloadable digital content",
+              icon: FileText,
+              color: "#2DD4BF",
+              component: 'digital-upload',
+            },
+            {
+              id: "license",
+              label: "License Key Delivery",
+              description: "Generate and deliver software license keys",
+              icon: Key,
+              color: "#DC2626",
+              fields: [
+                { id: "licenseFormat", label: "License Format", type: "text" },
+                { id: "licenseRules", label: "License Rules", type: "textarea" },
+              ],
+            },
+            {
+              id: "course",
+              label: "Digital Course",
+              description: "Grant access to online courses",
+              icon: GraduationCap,
+              color: "#FF6B6B",
+              fields: [
+                { id: "coursePlatformUrl", label: "Platform URL", type: "url" },
+                { id: "courseId", label: "Course ID", type: "text" },
+              ],
+            },
+            {
+              id: "feedAccess",
+              label: "Access to Feed Content",
+              description: "Grant access to exclusive feed content including pictures, polls, and discussions",
+              icon: Image,
+              color: "#8B5CF6",
+              fields: [
+                { id: "feedUrl", label: "Feed URL", type: "url" },
+                {
+                  id: "feedAccessLevel",
+                  label: "Access Level",
+                  type: "select",
+                  options: [
+                    { value: "basic", label: "Basic" },
+                    { value: "premium", label: "Premium" },
+                    { value: "vip", label: "VIP" },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "videoAccess",
+              label: "Access to Video Content or Live Stream",
+              description: "Provide access to exclusive video content or live streams",
+              icon: Video,
+              color: "#EF4444",
+              fields: [
+                {
+                  id: "contentType",
+                  label: "Content Type",
+                  type: "select",
+                  options: [
+                    { value: "preRecorded", label: "Pre-recorded Videos" },
+                    { value: "liveStream", label: "Live Stream" },
+                    { value: "both", label: "Both Pre-recorded and Live" },
+                  ],
+                },
+                {
+                  id: "videoLibraryUrl",
+                  label: "Video Library URL",
+                  type: "url",
+                  showWhen: "contentType",
+                  showWhenValue: ["preRecorded", "both"],
+                },
+                {
+                  id: "liveStreamUrl",
+                  label: "Live Stream URL",
+                  type: "url",
+                  showWhen: "contentType",
+                  showWhenValue: ["liveStream", "both"],
+                },
+                {
+                  id: "videoAccessDuration",
+                  label: "Access Duration",
+                  type: "select",
+                  options: [
+                    { value: "1month", label: "1 Month" },
+                    { value: "3months", label: "3 Months" },
+                    { value: "6months", label: "6 Months" },
+                    { value: "1year", label: "1 Year" },
+                    { value: "lifetime", label: "Lifetime" },
+                  ],
+                },
+                {
+                  id: "scheduleInfo",
+                  label: "Live Stream Schedule",
+                  type: "textarea",
+                  showWhen: "contentType",
+                  showWhenValue: ["liveStream", "both"],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          title: "Community Access",
+          items: [
+            {
+              id: "discord",
+              label: "Discord Member Roles",
+              description: "Manage Discord roles and server access",
+              icon: MessageSquare,
+              color: "#5865F2",
+              hoverColor: "rgb(71 82 196)",
+              component: 'discord-roles-selector',
+            },
+            {
+              id: "telegram",
+              label: "Telegram Channel Access",
+              description: "Grant access to Telegram channels",
+              icon: Send,
+              color: "#229ED9",
+              hoverColor: "rgb(26 141 195)",
+              component: 'telegram-channel-selector',
+            },
+            {
+              id: "slack",
+              label: "Slack Channel Access",
+              description: "Grant access to Slack channels",
+              icon: MessageSquare,
+              color: "#E01E5A",
+              hoverColor: "rgb(201 28 80)",
+              component: 'slack-channel-selector',
+            },
+            {
+              id: "whatsapp",
+              label: "WhatsApp",
+              description: "Send automated WhatsApp messages",
+              icon: Phone,
+              color: "#25D366",
+              fields: [
+                { id: "whatsappNumber", label: "Business Number", type: "text" },
+                { id: "whatsappApiKey", label: "API Key", type: "password" },
+              ],
+            },
+          ],
+        },
+        {
+          title: "Event and Meeting Access",
+          items: [
+            {
+              id: "event",
+              label: "Event Ticketing",
+              description: "Manage event registration and access",
+              icon: Calendar,
+              color: "#F59E0B",
+              fields: [
+                {
+                  id: "location",
+                  label: "Location",
+                  type: "section",
+                  description: "Help people in the area discover your event and let attendees know where to show up.",
+                  fields: [
+                    {
+                      id: "locationType",
+                      type: "radio",
+                      options: [
+                        { value: "online", label: "Online" },
+                        { value: "inPerson", label: "In-Person" },
+                        { value: "tba", label: "To be announced" },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  id: "dateAndTime",
+                  label: "Date and time",
+                  type: "section",
+                  description: "Tell event-goers when your event starts and ends so they can make plans to attend.",
+                  fields: [
+                    {
+                      id: "eventType",
+                      type: "radio",
+                      options: [
+                        { value: "single", label: "Single Event" },
+                        { value: "recurring", label: "Recurring Event" },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  id: "settings",
+                  type: "grid",
+                  columns: 2,
+                  fields: [
+                    {
+                      id: "timezone",
+                      label: "Time Zone",
+                      type: "select",
+                      options: [
+                        { value: "UTC-0700", label: "(UTC-07:00) Mountain Time (US & Canada)" },
+                        { value: "UTC-0500", label: "(UTC-05:00) Eastern Time (US & Canada)" },
+                        { value: "UTC-0600", label: "(UTC-06:00) Central Time (US & Canada)" },
+                        { value: "UTC-0800", label: "(UTC-08:00) Pacific Time (US & Canada)" },
+                      ],
+                    },
+                    {
+                      id: "language",
+                      label: "Event Page Language",
+                      type: "select",
+                      options: [
+                        { value: "en", label: "English" },
+                        { value: "es", label: "Spanish" },
+                        { value: "fr", label: "French" },
+                        { value: "de", label: "German" },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "meeting",
+              label: "Online Meeting Link",
+              description: "Configure video meeting access",
+              icon: Video,
+              color: "#2563EB",
+              fields: [
+                {
+                  id: "settings",
+                  type: "grid",
+                  columns: 2,
+                  fields: [
+                    {
+                      id: "platform",
+                      label: "Platform",
+                      type: "select",
+                      options: [
+                        { value: "zoom", label: "Zoom" },
+                        { value: "meet", label: "Google Meet" },
+                        { value: "teams", label: "Microsoft Teams" },
+                        { value: "custom", label: "Custom" },
+                      ],
+                    },
+                    {
+                      id: "meetingLink",
+                      label: "Meeting Link",
+                      type: "url",
+                    },
+                    {
+                      id: "meetingId",
+                      label: "Meeting ID",
+                      type: "text",
+                    },
+                    {
+                      id: "meetingPassword",
+                      label: "Meeting Password",
+                      type: "password",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          title: "Additional Options",
+          items: [
+            {
+              id: "mailchimp",
+              label: "MailChimp Audience",
+              description: "Add customers to MailChimp audiences",
+              icon: Mail,
+              color: "#FFE01B",
+              fields: [{ id: "mailchimpAudienceId", label: "Audience ID", type: "text" }],
+            },
+            {
+              id: "webhook",
+              label: "Webhook Actions",
+              description: "Send data to external systems via webhooks",
+              icon: Webhook,
+              color: "#6B7280",
+              fields: [
+                { id: "successWebhookUrl", label: "Success Webhook URL", type: "url" },
+                { id: "failureWebhookUrl", label: "Failure Webhook URL", type: "url" },
+              ],
+            },
+            {
+              id: "redirect",
+              label: "Redirect Link",
+              description: "Configure URL redirections",
+              icon: Link2,
+              color: "#4A4A4A",
+              fields: [
+                { id: "destinationUrl", label: "Destination URL", type: "url" },
+                { id: "trackClicks", label: "Track Clicks", type: "switch" },
+              ],
+            },
+            {
+              id: "gpt",
+              label: "GPT Access",
+              description: "Configure AI model access",
+              icon: BrainCircuit,
+              color: "#10A37F",
+              fields: [
+                { id: "gptModelId", label: "Model ID", type: "text" },
+                { id: "gptApiKey", label: "API Key", type: "password" },
+                { id: "gptSystemPrompt", label: "System Prompt", type: "textarea" },
+              ],
+            },
+            {
+              id: "donation",
+              label: "Donation Support",
+              description: "Configure donation options",
+              icon: Heart,
+              color: "#EC4899",
+              fields: [
+                { id: "suggestedAmount", label: "Suggested Amount", type: "number" },
+                { id: "allowRecurring", label: "Allow Recurring", type: "switch" },
+              ],
+            },
+          ],
+        },
+        {
+          title: "Physical Product Delivery",
+          items: [
+            {
+              id: "standardDelivery",
+              label: "Standard Delivery",
+              description: "Delivered within 3-5 business days",
+              icon: Truck,
+              color: "#4ade80",
+              fields: [
+                { id: "price", label: "Price", type: "number" },
+                { id: "estimatedDays", label: "Estimated Days", type: "number" },
+              ],
+            },
+            {
+              id: "expressDelivery",
+              label: "Express Delivery",
+              description: "Delivered within 1-2 business days",
+              icon: Package,
+              color: "#f472b6",
+              fields: [
+                { id: "price", label: "Price", type: "number" },
+                { id: "estimatedDays", label: "Estimated Days", type: "number" },
+              ],
+            },
+          ],
+        },
+    ]
+
+    deliverablesData = {};
+    handleChange = (field: string, value: any) => {
+        this.deliverablesData[field] = value;
+        console.log(this.deliverablesData)
+    }
 
     isHostTenant = !abp.session.tenantId;
     product: CreateProductInput | UpdateProductInput;
@@ -1048,8 +1500,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     generateQr() {
-        while (this.canvas.nativeElement.firstChild) {
-            this.canvas.nativeElement.removeChild(this.canvas.nativeElement.lastChild);
+        while (this.canvas?.nativeElement.firstChild) {
+            this.canvas?.nativeElement.removeChild(this.canvas?.nativeElement.lastChild);
         }
 
         if (!QRCodeStyling || !this.product.publicName) {
@@ -1057,7 +1509,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
 
         this.qrCode = this.getQrCodeStyling(75, 75, 0);
-        this.qrCode.append(this.canvas.nativeElement);
+        this.qrCode.append(this.canvas?.nativeElement);
     }
 
     downloadQr() {
