@@ -53,10 +53,45 @@
         .grid-content {
             display: grid;
             gap: 1rem;
+
+            .grid-item {
+                align-self: end;
+            }
         }
 
         .base-input {
             max-width: none;
+        }
+
+        .address-content {
+            .base-input {
+                display: flex;
+                align-items: center;
+
+                i {
+                    line-height: 17px;
+                    padding-left: 4px;
+                }
+            }
+        }
+
+        .duration-content {
+            & > p {
+                color: hsl(var(--muted-foreground));
+                font-size: 0.9rem;
+            }
+        }
+
+        ::ng-deep .dx-texteditor-input-container {
+            .dx-texteditor-input {
+                font-size: 0.9rem;
+                font-weight: 500 !important;
+            }
+
+            .dx-placeholder {
+                font-size: 0.9rem;
+                font-weight: 400 !important;
+            }
         }
     }
 }

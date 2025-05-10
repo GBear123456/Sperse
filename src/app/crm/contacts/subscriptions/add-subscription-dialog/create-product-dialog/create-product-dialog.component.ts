@@ -224,7 +224,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.changeDetection.detectChanges();
     }
 
-    fulfillmentGroups = [
+    fulfillmentGroups: any = [
         {
           title: "Digital Access",
           items: [
@@ -430,15 +430,20 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                   description: "Help people in the area discover your event and let attendees know where to show up.",
                   fields: [
                     {
-                      id: "locationType",
-                      type: "radio",
-                      options: [
-                        { value: ProductEventLocation.Online, label: "Online" },
-                        { value: ProductEventLocation.InPerson, label: "In-Person" },
-                        { value: ProductEventLocation.ToBeAnnounced, label: "To be announced" },
-                      ],
+                        id: "locationType",
+                        type: "radio",
+                        options: [
+                            { value: ProductEventLocation.Online, label: "Online" },
+                            { value: ProductEventLocation.InPerson, label: "In-Person" },
+                            { value: ProductEventLocation.ToBeAnnounced, label: "To be announced" },
+                        ],
                     },
                   ],
+                },
+                {
+                    id: "address",
+                    label: "Venue Location",
+                    type: "address",
                 },
                 {
                   id: "dateAndTime",
@@ -457,6 +462,34 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                   ],
                 },
                 {
+                    id: "duration",
+                    type: "duration",
+                    columns: 4,
+                    description: "Single event happens once and can last multiple days",
+                    fields: [
+                        {
+                            id: "date",
+                            label: "Date",
+                            type: "date",
+                        },
+                        {
+                            id: "time",
+                            label: "Time",
+                            type: "time",
+                        },
+                        {
+                            id: "duration",
+                            label: "Duration",
+                            type: "number",
+                        },
+                        {
+                            id: "durationType",
+                            label: "",
+                            type: "select",
+                        },
+                    ]
+                },
+                {
                   id: "settings",
                   type: "grid",
                   columns: 2,
@@ -465,23 +498,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                       id: "timezone",
                       label: "Time Zone",
                       type: "select",
-                      options: [
-                        { value: "UTC-0700", label: "(UTC-07:00) Mountain Time (US & Canada)" },
-                        { value: "UTC-0500", label: "(UTC-05:00) Eastern Time (US & Canada)" },
-                        { value: "UTC-0600", label: "(UTC-06:00) Central Time (US & Canada)" },
-                        { value: "UTC-0800", label: "(UTC-08:00) Pacific Time (US & Canada)" },
-                      ],
+                      options: [],
                     },
                     {
                       id: "language",
                       label: "Event Page Language",
                       type: "select",
-                      options: [
-                        { value: "en", label: "English" },
-                        { value: "es", label: "Spanish" },
-                        { value: "fr", label: "French" },
-                        { value: "de", label: "German" },
-                      ],
+                      options: [],
                     },
                   ],
                 },
@@ -618,8 +641,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         },
     ]
 
-    deliverablesData = {
-    };
+    deliverablesData: any = {};
+
     handleChange = (field: string, value: any) => {
         this.deliverablesData[field] = value;
         console.log(this.deliverablesData)
@@ -870,6 +893,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.product.productEvent.timezone = this.setting.get('Abp.Timing.TimeZone');
         this.product.productEvent.languageId = 'en';
         this.product.productEvent.address = new AddressInfoDto();
+        this.deliverablesData.event_address = new AddressInfoDto();
+        this.deliverablesData.event_locationType = ProductEventLocation.Online;
+        this.deliverablesData.event_eventType = 'single';
+        this.deliverablesData.event_timezone = this.setting.get('Abp.Timing.TimeZone');
+        this.deliverablesData.event_language = 'en';
     }
 
     initDonationProps() {
@@ -893,6 +921,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             first()
         ).subscribe(languages => {
             this.languages = languages;
+            this.fulfillmentGroups[2].items[0].fields[4].fields[1].options = languages
             this.changeDetection.markForCheck();
         });
     }
@@ -901,6 +930,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.timingService.getTimezones(AppTimezoneScope.Application).subscribe(res => {
             res.items.splice(0, 1);
             this.timezones = res.items;
+            this.fulfillmentGroups[2].items[0].fields[4].fields[0].options = res.items
             this.changeDetection.markForCheck();
         });
     }
