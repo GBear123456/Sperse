@@ -20,24 +20,6 @@
             </ng-container>
         </div>
 
-        <div class="services-content" *ngSwitchCase="'services'">
-            <div class="services-header">
-                <h3>Product Services & Features</h3>
-                <button class="base-button" (click)="onServiceAdd(prefix + field.id, data[prefix + field.id] || field.services)">
-                <lucide-angular [img]="Plus"></lucide-angular>
-                <span>Add Service</span>
-                </button>
-            </div>
-            <ng-container *ngFor="let service of (data[prefix + field.id] || field.services); let index = index">
-                <service-level-selector
-                    [service]="service"
-                    (onChange)="onServiceChange($event, prefix + field.id, data[prefix + field.id] || field.services, index)"                    
-                    (onRemove)="onServiceRemove(prefix + field.id, data[prefix + field.id] || field.services, index)"                    
-                >
-                </service-level-selector>
-            </ng-container>
-            </div>
-
         <div *ngSwitchCase="'grid'" class="grid-content" [style.grid-template-columns]="'repeat(' + field.columns + ', minmax(0, 1fr))'">
             <ng-container *ngFor="let gridField of field.fields">
                 <div class="grid-item">

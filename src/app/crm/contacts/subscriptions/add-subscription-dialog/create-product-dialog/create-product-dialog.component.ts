@@ -235,18 +235,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
               icon: Link2,
               color: "#2563EB",
               component: 'subscription-feature',
-
-            //   fields: [
-            //     {
-            //       id: "subscriptionServices",
-            //       type: "services",
-            //       services: [
-            //         // { id: "1", name: "", level: "" },
-            //         // { id: "2", name: "", level: "" },
-            //         // { id: "3", name: "", level: "" },
-            //       ],
-            //     },
-            //   ],
             },
             {
               id: "credits",
@@ -445,9 +433,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                       id: "locationType",
                       type: "radio",
                       options: [
-                        { value: "online", label: "Online" },
-                        { value: "inPerson", label: "In-Person" },
-                        { value: "tba", label: "To be announced" },
+                        { value: ProductEventLocation.Online, label: "Online" },
+                        { value: ProductEventLocation.InPerson, label: "In-Person" },
+                        { value: ProductEventLocation.ToBeAnnounced, label: "To be announced" },
                       ],
                     },
                   ],
@@ -630,7 +618,8 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         },
     ]
 
-    deliverablesData = {};
+    deliverablesData = {
+    };
     handleChange = (field: string, value: any) => {
         this.deliverablesData[field] = value;
         console.log(this.deliverablesData)
