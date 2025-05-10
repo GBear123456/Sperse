@@ -28,7 +28,7 @@ import { map, switchMap, finalize, first, filter, publishReplay, refCount, tap }
 import { select, Store } from '@ngrx/store';
 import { findIana } from 'windows-iana';
 import * as QRCodeStyling from 'qr-code-styling-new';
-import { BrainCircuit, Calendar, ChevronDown, CreditCard, FileText, GraduationCap, Heart, Image, Key, Link2, Mail, MessageSquare, Package, Phone, Send, Truck, Video, Webhook } from 'lucide-angular';
+import { BrainCircuit, Calendar, ChevronDown, CreditCard, FileText, GraduationCap, Heart, Image, Key, Link2, Mail, MessageSquare, Package, Phone, Plus, Send, Truck, Video, Webhook } from 'lucide-angular';
 
 /** Application imports */
 import {
@@ -123,6 +123,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     @ViewChild(DxTextAreaComponent) descriptionHtmlComponent: DxTextAreaComponent;
     @ViewChild("canvas", { static: true }) canvas: ElementRef;
 
+    readonly Plus = Plus;
     readonly Link2 = Link2;
     readonly CreditCard = CreditCard;
     readonly FileText = FileText;
@@ -233,17 +234,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
               description: "Configure subscription-based access to content or features",
               icon: Link2,
               color: "#2563EB",
-              fields: [
-                {
-                  id: "subscriptionServices",
-                  type: "services",
-                  services: [
-                    // { id: "1", name: "", level: "" },
-                    // { id: "2", name: "", level: "" },
-                    // { id: "3", name: "", level: "" },
-                  ],
-                },
-              ],
+              component: 'subscription-feature',
+
+            //   fields: [
+            //     {
+            //       id: "subscriptionServices",
+            //       type: "services",
+            //       services: [
+            //         // { id: "1", name: "", level: "" },
+            //         // { id: "2", name: "", level: "" },
+            //         // { id: "3", name: "", level: "" },
+            //       ],
+            //     },
+            //   ],
             },
             {
               id: "credits",

@@ -652,48 +652,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="block" *ngIf="product.type == productType.Subscription">
-                                <div class="options-header">
-                                    <h3>{{ls.l('Product Services & Features')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
-                                    <div *ngIf="!isReadOnly" class="add-new-button" (click)="addNewServiceFields()"><span>+</span></div>
-                                </div>
-                                <div class="options" *ngFor="let service of product.productServices; let i = index">
-                                    <div *ngIf="!isReadOnly" class="remove-button" (click)="removeServiceFields(i)"><span>-</span></div>
-    
-                                    <div class="field-wrapper">
-                                        <div class="field-50">
-                                            <dx-select-box #cmp name="name"
-                                                           width="100%"
-                                                           valueExpr="id"
-                                                           displayExpr="name"
-                                                           [dataSource]="services"
-                                                           placeholder="Select service..."
-                                                           [(value)]="service.memberServiceId"
-                                                           [disabled]="isReadOnly"
-                                                           (onValueChanged)="onServiceChanged($event, service)">
-                                                <dx-validator>
-                                                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
-                                                </dx-validator>
-                                            </dx-select-box>
-                                        </div>
-                                        <div class="field-50" *ngIf="getServiceLevels(service.memberServiceId) as levels">
-                                            <dx-select-box name="level"
-                                                           width="100%"
-                                                           valueExpr="id"
-                                                           displayExpr="name"
-                                                           [dataSource]="levels"
-                                                           placeholder="Select level..."
-                                                           [(value)]="service.memberServiceLevelId"
-                                                           [disabled]="isReadOnly || !levels.length">
-                                                <dx-validator>
-                                                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Level'))}}."></dxi-validation-rule>
-                                                </dx-validator>
-                                            </dx-select-box>
-                                        </div>
-                                        <i *ngIf="service.memberServiceId" class="edit fa" [ngClass]="{'fa-pencil': !isReadOnly, 'fa-info-circle': isReadOnly}" aria-hidden="true" (click)="showEditMemberServiceDialog(service, cmp)"></i>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="block" *ngIf="false">
                                 <h3>{{ls.l('Stock')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             </div>
@@ -1162,6 +1120,57 @@
                                                 </div>
                     
                                             </div>
+                                            <div class="block subscription-feature" *ngSwitchCase="'subscription-feature'">
+                                                <div class="services-header">
+                                                    <h3>{{ls.l('Product Services & Features')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                                                    <button *ngIf="!isReadOnly" class="base-button" (click)="addNewServiceFields()">
+                                                        <lucide-angular [img]="Plus"></lucide-angular>
+                                                        <span>Add Service</span>
+                                                    </button>
+                                                </div>
+                                                <div class="options" *ngFor="let service of product.productServices; let i = index">
+                                                    <div *ngIf="!isReadOnly" class="remove-button" (click)="removeServiceFields(i)"><span>-</span></div>
+                    
+                                                    <div class="field-wrapper">
+                                                        <div class="field-50">
+                                                            <div class="field-title">Select service...</div>
+                                                            <dx-select-box #cmp name="name"
+                                                                            class="subscription-select"
+                                                                            width="100%"
+                                                                            height="46px"
+                                                                            valueExpr="id"
+                                                                            displayExpr="name"
+                                                                            [dataSource]="services"
+                                                                            placeholder="Select service..."
+                                                                            [(value)]="service.memberServiceId"
+                                                                            [disabled]="isReadOnly"
+                                                                            (onValueChanged)="onServiceChanged($event, service)">
+                                                                <dx-validator>
+                                                                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
+                                                                </dx-validator>
+                                                            </dx-select-box>
+                                                        </div>
+                                                        <div class="field-50" *ngIf="getServiceLevels(service.memberServiceId) as levels">
+                                                            <div class="field-title">Select level...</div>
+                                                            <dx-select-box name="level"
+                                                                            class="subscription-select"
+                                                                            width="100%"
+                                                                            height="46px"
+                                                                            valueExpr="id"
+                                                                            displayExpr="name"
+                                                                            [dataSource]="levels"
+                                                                            placeholder="Select level..."
+                                                                            [(value)]="service.memberServiceLevelId"
+                                                                            [disabled]="isReadOnly || !levels.length">
+                                                                <dx-validator>
+                                                                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Level'))}}."></dxi-validation-rule>
+                                                                </dx-validator>
+                                                            </dx-select-box>
+                                                        </div>
+                                                        <i *ngIf="service.memberServiceId" class="edit fa" [ngClass]="{'fa-pencil': !isReadOnly, 'fa-info-circle': isReadOnly}" aria-hidden="true" (click)="showEditMemberServiceDialog(service, cmp)"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <community-access-selector *ngSwitchCase="'discord-roles-selector'" [community]="item">
                                             </community-access-selector>
                                             <community-access-selector *ngSwitchCase="'telegram-channel-selector'" [community]="item">
@@ -1185,7 +1194,7 @@
                                             ></deliverable-feature-fields>
                                         </div>
                                     </cdk-accordion-item>
-                                </cdk-accordion> 
+                                </cdk-accordion>
                             </div>
                         </div>
                     </ng-template>
