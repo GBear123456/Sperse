@@ -1033,6 +1033,7 @@
                                                     labelPosition="before"
                                                     [(ngModel)]="deliverablesData[item.id.charAt(0).toUpperCase() + item.id.slice(1)]"
                                                     [disabled]="isReadOnly"
+                                                    (toggleChange)="onToggleItem(item.id.charAt(0).toUpperCase() + item.id.slice(1))"
                                                 ></mat-slide-toggle>
                                                 <lucide-angular [img]="ChevronIcon" class="accordion-item-header-arrow" (click)="accordionItem.toggle()"></lucide-angular>
                                             </div>
@@ -1189,7 +1190,7 @@
                                             <deliverable-feature-fields
                                                 [fields]="item.fields"
                                                 [prefix]="item.id + '_'"
-                                                [data]="deliverablesData"
+                                                [(data)]="deliverablesData"
                                                 [isReadOnly]="isReadOnly"
                                                 [(handleChange)]="handleChange"
                                             ></deliverable-feature-fields>

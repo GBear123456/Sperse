@@ -220,8 +220,16 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     selectedTab = this.tabs.options[0].type;
 
     toggleTab(selected) {
-        this.selectedTab = selected;
-        this.changeDetection.detectChanges();
+        if (this.validationGroup.instance.validate().isValid) {
+            this.selectedTab = selected;
+            this.changeDetection.detectChanges();
+        }
+    }
+
+    onToggleItem(id) {
+        if (id === 'Event') {
+            this.initEventProps();
+        }
     }
 
     fulfillmentGroups: any = [
@@ -885,19 +893,20 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     initEventProps() {
-        if (this.product.productEvent)
-            return;
-
-        this.product.productEvent = new ProductEventDto();
-        this.product.productEvent.location = ProductEventLocation.Online;
-        this.product.productEvent.timezone = this.setting.get('Abp.Timing.TimeZone');
-        this.product.productEvent.languageId = 'en';
-        this.product.productEvent.address = new AddressInfoDto();
-        this.deliverablesData.event_address = new AddressInfoDto();
-        this.deliverablesData.event_locationType = ProductEventLocation.Online;
+        if (!this.product.productEvent) {
+            this.product.productEvent = new ProductEventDto();
+            this.product.productEvent.location = ProductEventLocation.Online;
+            this.product.productEvent.timezone = this.setting.get('Abp.Timing.TimeZone');
+            this.product.productEvent.languageId = 'en';
+            this.product.productEvent.address = new AddressInfoDto();
+        }
+        
+        this.deliverablesData.event = this.product.productEvent;
+        this.deliverablesData.event_address = this.product.productEvent.address;
+        this.deliverablesData.event_locationType = this.product.productEvent.location;
         this.deliverablesData.event_eventType = 'single';
-        this.deliverablesData.event_timezone = this.setting.get('Abp.Timing.TimeZone');
-        this.deliverablesData.event_language = 'en';
+        this.deliverablesData.event_timezone = this.product.productEvent.timezone;
+        this.deliverablesData.event_language = this.product.productEvent.languageId;
     }
 
     initDonationProps() {

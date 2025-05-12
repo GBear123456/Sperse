@@ -173,4 +173,8 @@ export class DeliverableFeatureFieldsComponent implements OnInit {
             this.eventDuration = durationInfo.eventDuration;
         }
     }
+
+    checkArray(val: any) {
+        return Array.isArray(val)
+    }
 }

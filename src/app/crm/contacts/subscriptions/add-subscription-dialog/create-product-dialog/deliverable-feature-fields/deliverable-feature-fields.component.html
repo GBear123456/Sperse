@@ -116,7 +116,7 @@
             <ng-container *ngIf="!(field.showWhen &&
                 (!data[prefix + field.showWhen] ||
                 (field.showWhenValue &&
-                    (Array.isArray(field.showWhenValue)
+                    (checkArray(field.showWhenValue)
                     ? !field.showWhenValue.includes(data[prefix + field.showWhen])
                     : data[prefix + field.showWhen] !== field.showWhenValue))))">
                 <div class="else-container" [class]="field.className" [ngSwitch]="field.type">
