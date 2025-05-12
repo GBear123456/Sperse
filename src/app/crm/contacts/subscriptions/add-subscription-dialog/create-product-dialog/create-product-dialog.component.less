@@ -336,12 +336,12 @@
             }
 
             .field {
-                ::ng-deep dx-text-area, ::ng-deep dx-number-box, ::ng-deep dx-select-box:not(.subscription-select) {
+                ::ng-deep dx-text-area:not(.subscription-select), ::ng-deep dx-number-box:not(.subscription-select), ::ng-deep dx-select-box:not(.subscription-select) {
                     min-width: 250px;
                 }
             }
 
-            ::ng-deep dx-text-box, ::ng-deep dx-number-box, ::ng-deep dx-select-box:not(.subscription-select), ::ng-deep dx-text-area, ::ng-deep dx-date-box {
+            ::ng-deep dx-text-box:not(.subscription-select), ::ng-deep dx-number-box:not(.subscription-select), ::ng-deep dx-select-box:not(.subscription-select), ::ng-deep dx-text-area, ::ng-deep dx-date-box {
                 .dx-texteditor-input-container {
                     border: 1px solid #dfdfdf !important;
                 }
@@ -390,7 +390,7 @@
                 }
             }
 
-            ::ng-deep dx-select-box:not(.subscription-select), ::ng-deep dx-number-box.label, ::ng-deep dx-date-box {
+            ::ng-deep dx-select-box:not(.subscription-select), ::ng-deep dx-number-box:not(.subscription-select).label, ::ng-deep dx-date-box:not(.subscription-select) {
                 height: 65px;
 
                 .dx-button-content {
@@ -413,7 +413,7 @@
                 }
             }
 
-            ::ng-deep dx-select-box:not(.hide-placeholder):not(.currencies-dropdown):not(.subscription-select), ::ng-deep dx-number-box.label {
+            ::ng-deep dx-select-box:not(.hide-placeholder):not(.currencies-dropdown):not(.subscription-select), ::ng-deep dx-number-box:not(.subscription-select).label {
                 input {
                     height: 40px;
                     top: 20px;
@@ -1000,6 +1000,16 @@
             }
         }
 
+        .event-address.base-input {
+            display: flex;
+            align-items: center;
+
+            i {
+                line-height: 17px;
+                padding-left: 4px;
+            }
+        }
+
         .address.dx-texteditor-input {
             font-family: Poppins;
             font-size: 13px;
@@ -1035,6 +1045,29 @@
                     background-color: #000;
                     border-color: #000;
                 }
+            }
+        }
+
+        ::ng-deep .dx-texteditor-input-container {
+            .dx-texteditor-input {
+                font-size: 0.9rem;
+                font-weight: 500 !important;
+            }
+
+            .dx-placeholder {
+                font-size: 0.9rem;
+                font-weight: 400 !important;
+            }
+        }
+
+        ::ng-deep .dx-radiogroup {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+
+            .dx-item-content {
+                font-weight: 600;
+                font-size: 0.875rem;
+                color: hsl(var(--primary));
             }
         }
     }

@@ -245,6 +245,14 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
               component: 'subscription-feature',
             },
             {
+                id: "digital",
+                label: "Digital Downloadable Product",
+                description: "Provide access to downloadable digital content",
+                icon: FileText,
+                color: "#2DD4BF",
+                component: 'digital-upload',
+              },
+            {
               id: "credits",
               label: "User Credits",
               description: "Manage user credit system for content access",
@@ -273,14 +281,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 },
               ],
               gridCols: "grid-cols-2 gap-4",
-            },
-            {
-              id: "digital",
-              label: "Digital Downloadable Product",
-              description: "Provide access to downloadable digital content",
-              icon: FileText,
-              color: "#2DD4BF",
-              component: 'digital-upload',
             },
             {
               id: "license",
@@ -430,93 +430,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
               description: "Manage event registration and access",
               icon: Calendar,
               color: "#F59E0B",
-              fields: [
-                {
-                  id: "location",
-                  label: "Location",
-                  type: "section",
-                  description: "Help people in the area discover your event and let attendees know where to show up.",
-                  fields: [
-                    {
-                        id: "locationType",
-                        type: "radio",
-                        options: [
-                            { value: ProductEventLocation.Online, label: "Online" },
-                            { value: ProductEventLocation.InPerson, label: "In-Person" },
-                            { value: ProductEventLocation.ToBeAnnounced, label: "To be announced" },
-                        ],
-                    },
-                  ],
-                },
-                {
-                    id: "address",
-                    label: "Venue Location",
-                    type: "address",
-                },
-                {
-                  id: "dateAndTime",
-                  label: "Date and time",
-                  type: "section",
-                  description: "Tell event-goers when your event starts and ends so they can make plans to attend.",
-                  fields: [
-                    {
-                      id: "eventType",
-                      type: "radio",
-                      options: [
-                        { value: "single", label: "Single Event" },
-                        { value: "recurring", label: "Recurring Event" },
-                      ],
-                    },
-                  ],
-                },
-                {
-                    id: "duration",
-                    type: "duration",
-                    columns: 4,
-                    description: "Single event happens once and can last multiple days",
-                    fields: [
-                        {
-                            id: "date",
-                            label: "Date",
-                            type: "date",
-                        },
-                        {
-                            id: "time",
-                            label: "Time",
-                            type: "time",
-                        },
-                        {
-                            id: "duration",
-                            label: "Duration",
-                            type: "number",
-                        },
-                        {
-                            id: "durationType",
-                            label: "",
-                            type: "select",
-                        },
-                    ]
-                },
-                {
-                  id: "settings",
-                  type: "grid",
-                  columns: 2,
-                  fields: [
-                    {
-                      id: "timezone",
-                      label: "Time Zone",
-                      type: "select",
-                      options: [],
-                    },
-                    {
-                      id: "language",
-                      label: "Event Page Language",
-                      type: "select",
-                      options: [],
-                    },
-                  ],
-                },
-              ],
+              component: 'event-ticketing'
             },
             {
               id: "meeting",
@@ -693,6 +607,16 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     isOneTime = false;
     EmailTemplateType = EmailTemplateType;
 
+    eventLocations = [
+        { value: ProductEventLocation.Online, label: "Online" },
+        { value: ProductEventLocation.InPerson, label: "In-Person" },
+        { value: ProductEventLocation.ToBeAnnounced, label: "To be announced" },
+    ]
+    eventTypes = [
+        { value: "single", label: "Single Event" },
+        { value: "recurring", label: "Recurring Event" },
+    ]
+    eventType = 'single'
     eventLocation = ProductEventLocation;
     eventDurationTypes = EventDurationHelper.eventDurationDataSource;
     languages: LanguageDto[] = [];
@@ -930,7 +854,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             first()
         ).subscribe(languages => {
             this.languages = languages;
-            this.fulfillmentGroups[2].items[0].fields[4].fields[1].options = languages
             this.changeDetection.markForCheck();
         });
     }
@@ -939,7 +862,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.timingService.getTimezones(AppTimezoneScope.Application).subscribe(res => {
             res.items.splice(0, 1);
             this.timezones = res.items;
-            this.fulfillmentGroups[2].items[0].fields[4].fields[0].options = res.items
             this.changeDetection.markForCheck();
         });
     }

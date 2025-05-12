@@ -661,114 +661,6 @@
                             <div class="block" *ngIf="false">
                                 <h3>{{ls.l('Shipping')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
                             </div>
-                            <div class="block event-type" *ngIf="product.type == productType.Event">
-                                <h3>{{ls.l('Location')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
-                                <p class="small-gray">Help people in the area discover your event and let attendees know where to show up.</p>
-                                <div>
-                                    <button class="btn btn-outline-dark"
-                                            [class.active]="product.productEvent.location == eventLocation.Online"
-                                            (click)="product.productEvent.location = eventLocation.Online"
-                                            [disabled]="isReadOnly">
-                                        <i class="fa fa-laptop"></i> Online
-                                    </button>
-                                    <button class="btn btn-outline-dark"
-                                            [class.active]="product.productEvent.location == eventLocation.InPerson"
-                                            (click)="product.productEvent.location = eventLocation.InPerson"
-                                            [disabled]="isReadOnly">
-                                        <i class="fa fa-map-marker"></i> In-Person
-                                    </button>
-                                    <button class="btn btn-outline-dark"
-                                            [class.active]="product.productEvent.location == eventLocation.ToBeAnnounced"
-                                            (click)="product.productEvent.location = eventLocation.ToBeAnnounced"
-                                            [disabled]="isReadOnly">
-                                        <i class="fa fa-bullhorn"></i> To be announced
-                                    </button>
-                                </div>
-                                <p>Venue location</p>
-                                <div class="edit-address" [class.placeholder]="!eventAddress" (click)="editAddress()">
-                                    {{ eventAddress ? eventAddress : ls.l('Search for venue location or address')}}
-                                    <i *ngIf="!isReadOnly && eventAddress" (click)="clearAddress($event)" class="fa fa-times"></i>
-                                </div>
-                                <dx-text-box [(value)]="product.productEvent.link"
-                                             height="65px"
-                                             [placeholder]="ls.l('Add link for Zoom, Google Meet, Twitch etc.')"
-                                             [disabled]="isReadOnly">
-                                    <dx-validator>
-                                        <dxi-validation-rule type="pattern"
-                                                             [pattern]="urlRegexPattern"
-                                                             [message]="ls.l('InvalidFieldValue', 'Link Name')">
-                                        </dxi-validation-rule>
-                                    </dx-validator>
-                                </dx-text-box>
-                                <h3>{{ls.l('Date and time')}}</h3>
-                                <p class="small-gray">Tell event-goers when your event starts and ends so they can make plans to attend.</p>
-                                <div>
-                                    <button class="btn btn-primary">Single Event</button>
-                                    <button class="btn btn-primary" disabled>Recurring Event</button>
-                                </div>
-                                <p class="small-gray">Single event happens once and can last multiple days</p>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <label>Date</label>
-                                        <dx-date-box [(value)]="eventDate"
-                                                     type="date"
-                                                     height="65px"
-                                                     [placeholder]="ls.l('Enter date')"
-                                                     [showClearButton]="true"
-                                                     [disabled]="isReadOnly">
-                                        </dx-date-box>
-                                    </div>
-                                    <div class="col-3">
-                                        <label>Time</label>
-                                        <dx-date-box [(value)]="eventTime"
-                                                     type="time"
-                                                     [placeholder]="ls.l('Select...')"
-                                                     [showClearButton]="true"
-                                                     [disabled]="isReadOnly">
-                                        </dx-date-box>
-                                    </div>
-                                    <div class="col-3">
-                                        <label>Duration</label>
-                                        <dx-number-box [placeholder]="ls.l('Duration')"
-                                                       height="65px"
-                                                       [(value)]="eventDuration"
-                                                       (onValueChanged)="eventDurationType = eventDurationType || eventDurationTypes[0].value"
-                                                       [disabled]="isReadOnly">
-                                        </dx-number-box>
-                                    </div>
-                                    <div class="col-3">
-                                        <label></label>
-                                        <dx-select-box class="hide-placeholder"
-                                                       [dataSource]="eventDurationTypes"
-                                                       displayExpr="displayValue"
-                                                       valueExpr="value"
-                                                       [(value)]="eventDurationType"
-                                                       [showClearButton]="!eventDuration"
-                                                       [disabled]="isReadOnly">
-                                        </dx-select-box>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <dx-select-box [dataSource]="timezones"
-                                                       displayExpr="name"
-                                                       valueExpr="value"
-                                                       [placeholder]="ls.l('Time Zone')"
-                                                       [(value)]="product.productEvent.timezone"
-                                                       [disabled]="isReadOnly">
-                                        </dx-select-box>
-                                    </div>
-                                    <div class="col-6">
-                                        <dx-select-box [dataSource]="languages"
-                                                       displayExpr="name"
-                                                       valueExpr="code"
-                                                       [placeholder]="ls.l('Event Page Language')"
-                                                       [(value)]="product.productEvent.languageId"
-                                                       [disabled]="isReadOnly">
-                                        </dx-select-box>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div class="right">
                             <div class="block status">
@@ -1169,6 +1061,118 @@
                                                             </dx-select-box>
                                                         </div>
                                                         <i *ngIf="service.memberServiceId" class="edit fa" [ngClass]="{'fa-pencil': !isReadOnly, 'fa-info-circle': isReadOnly}" aria-hidden="true" (click)="showEditMemberServiceDialog(service, cmp)"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="block event-type" *ngSwitchCase="'event-ticketing'">
+                                                <h3>{{ls.l('Location')}} <img class="info" src="assets/common/icons/info-circle.svg"></h3>
+                                                <p class="small-gray">Help people in the area discover your event and let attendees know where to show up.</p>
+                                                <dx-radio-group
+                                                    [dataSource]="eventLocations"
+                                                    [(value)]="product.productEvent.location"
+                                                    valueExpr="value"
+                                                    displayExpr="label"
+                                                    layout="horizontal"
+                                                    [disabled]="isReadOnly"
+                                                >
+                                                </dx-radio-group>
+                                                <p>Venue location</p>
+                                                <div class="event-address base-input" [class.placeholder]="!eventAddress" (click)="editAddress()">
+                                                    {{ eventAddress ? eventAddress : ls.l('Search for venue location or address')}}
+                                                    <i *ngIf="!isReadOnly && eventAddress" (click)="clearAddress($event)" class="fa fa-times"></i>
+                                                </div>
+                                                <dx-text-box [(value)]="product.productEvent.link"
+                                                                height="35px"
+                                                                class="subscription-select"
+                                                                [placeholder]="ls.l('Add link for Zoom, Google Meet, Twitch etc.')"
+                                                                [disabled]="isReadOnly">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule type="pattern"
+                                                                                [pattern]="urlRegexPattern"
+                                                                                [message]="ls.l('InvalidFieldValue', 'Link Name')">
+                                                        </dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-text-box>
+                                                <h3>{{ls.l('Date and time')}}</h3>
+                                                <p class="small-gray">Tell event-goers when your event starts and ends so they can make plans to attend.</p>
+                                                <dx-radio-group
+                                                    [dataSource]="eventTypes"
+                                                    [(value)]="eventType"
+                                                    valueExpr="value"
+                                                    displayExpr="label"
+                                                    layout="horizontal"
+                                                    [disabled]="isReadOnly"
+                                                >
+                                                </dx-radio-group>
+                                                <p class="small-gray">Single event happens once and can last multiple days</p>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <label>Date</label>
+                                                        <dx-date-box [(value)]="eventDate"
+                                                        class="subscription-select"
+                                                        type="date"
+                                                                        height="35px"
+                                                                        [placeholder]="ls.l('Enter date')"
+                                                                        [showClearButton]="true"
+                                                                        [disabled]="isReadOnly">
+                                                        </dx-date-box>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label>Time</label>
+                                                        <dx-date-box [(value)]="eventTime"
+                                                                        class="subscription-select"
+                                                                        type="time"
+                                                                        height="35px"
+                                                                        [placeholder]="ls.l('Select...')"
+                                                                        [showClearButton]="true"
+                                                                        [disabled]="isReadOnly">
+                                                        </dx-date-box>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label>Duration</label>
+                                                        <dx-number-box [placeholder]="ls.l('Duration')"
+                                                                        class="subscription-select"
+                                                                        height="35px"
+                                                                        [(value)]="eventDuration"
+                                                                        (onValueChanged)="eventDurationType = eventDurationType || eventDurationTypes[0].value"
+                                                                        [disabled]="isReadOnly">
+                                                        </dx-number-box>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label></label>
+                                                        <dx-select-box class="hide-placeholder subscription-select"
+                                                                        [dataSource]="eventDurationTypes"
+                                                                        height="35px"
+                                                                        displayExpr="displayValue"
+                                                                        valueExpr="value"
+                                                                        [(value)]="eventDurationType"
+                                                                        [showClearButton]="!eventDuration"
+                                                                        [disabled]="isReadOnly">
+                                                        </dx-select-box>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <dx-select-box [dataSource]="timezones"
+                                                                        class="subscription-select"
+                                                                        displayExpr="name"
+                                                                        height="35px"
+                                                                        valueExpr="value"
+                                                                        [placeholder]="ls.l('Time Zone')"
+                                                                        [(value)]="product.productEvent.timezone"
+                                                                        [disabled]="isReadOnly">
+                                                        </dx-select-box>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <dx-select-box [dataSource]="languages"
+                                                                        class="subscription-select"
+                                                                        displayExpr="name"
+                                                                        height="35px"
+                                                                        valueExpr="code"
+                                                                        [placeholder]="ls.l('Event Page Language')"
+                                                                        [(value)]="product.productEvent.languageId"
+                                                                        [disabled]="isReadOnly">
+                                                        </dx-select-box>
                                                     </div>
                                                 </div>
                                             </div>
