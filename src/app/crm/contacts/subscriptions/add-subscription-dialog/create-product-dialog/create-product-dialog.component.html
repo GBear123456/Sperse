@@ -1128,7 +1128,7 @@
                                 <h3>Fulfillment Options</h3>
                                 <p>Configure how your product will be delivered to customers after purchase.</p>
                             </div>
-                            <div class="feature-wrapper" *ngFor="let fulfillment of fulfillmentGroups">
+                            <div class="feature-wrapper" *ngFor="let fulfillment of visibleDeliverablesGroups">
                                 <h4>{{fulfillment.title}}</h4>
                                 <cdk-accordion [multi]="true">
                                     <cdk-accordion-item *ngFor="let item of fulfillment.items; let index = index;"

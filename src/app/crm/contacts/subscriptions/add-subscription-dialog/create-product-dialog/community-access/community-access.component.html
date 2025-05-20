@@ -2,53 +2,51 @@
     <h4>{{ mediumTitle + ' Connection'}}</h4>
     <div class="step-container">
         <div class="left">
-          <div class="step-title">Step 1</div>
-          <div class="step-description">{{configMedium[community.id].step1.description}}</div>
+            <div class="step-title">Step 1</div>
+            <div class="step-description">{{configMedium[community.id].step1.description}}</div>
 
-          <div class="step-action-content">
-            <button 
-                class="base-button"
-                [style.background-color]="community.color"
-                (click)="handleConnectBot()"
-            >{{configMedium[community.id].step1.buttonTitle }}</button>
-            <input class="base-input" [placeholder]="configMedium[community.id].step1.inputPlaceholder" [(ngModel)]="workspaceId"/>
-            <div class="medium-connected-content" *ngIf="isConnected">
-                <div class="connected-badge">Connected</div>
-                <span>{{configMedium[community.id].step1.connectedText}}</span>
+            <div class="step-action-content">
+                <button class="base-button"
+                        [style.background-color]="community.color"
+                        (click)="handleConnectBot()">
+                    {{configMedium[community.id].step1.buttonTitle }}
+                </button>
+                <input class="base-input" [placeholder]="configMedium[community.id].step1.inputPlaceholder" [(ngModel)]="workspaceId" />
+                <div class="medium-connected-content" *ngIf="isConnected">
+                    <div class="connected-badge">Connected</div>
+                    <span>{{configMedium[community.id].step1.connectedText}}</span>
+                </div>
             </div>
-          </div>
         </div>
 
         <div class="right">
-          <div class="step-title">Step 2</div>
-          <div class="step-description">
-            {{configMedium[community.id].step2.description}}
-          </div>
-
-          <div class="channels-container">
-            <div class="channel-title">{{configMedium[community.id].step2.channelTitle}}</div>
-            <div class="channel-content">
-                <div *ngFor="let channel of configMedium[community.id].step2.channels">
-                    <div class="channel-badge">
-                      <div class="badge-content">
-                        <span class="badge-name">{{community.id === 'slack' ? '#' : ''}}{{channel.name}}</span>
-                        <span class="badge-id">{{channel.id}}</span>
-                      </div>
-                      <button
-                        class="base-icon-button"
-                        (click)="handleRemoveChannel(channel.id)"
-                      >
-                        <lucide-angular [img]="X"></lucide-angular>
-                      </button>
-                    </div>
-                </div>
-              <div class="no-channels" *ngIf="configMedium[community.id].step2.channels.length === 0">{{configMedium[community.id].step2.noChannels}}</div>
+            <div class="step-title">Step 2</div>
+            <div class="step-description">
+                {{configMedium[community.id].step2.description}}
             </div>
-            <button (click)="handleAddChannel()" class="base-button">
-                <lucide-angular [img]="Plus"></lucide-angular>
-                <span>{{configMedium[community.id].step2.addButtonTitle}}</span>
-            </button>
-          </div>
+
+            <div class="channels-container">
+                <div class="channel-title">{{configMedium[community.id].step2.channelTitle}}</div>
+                <div class="channel-content">
+                    <div *ngFor="let channel of configMedium[community.id].step2.channels">
+                        <div class="channel-badge">
+                            <div class="badge-content">
+                                <span class="badge-name">{{community.id === 'slack' ? '#' : ''}}{{channel.name}}</span>
+                                <span class="badge-id">{{channel.id}}</span>
+                            </div>
+                            <button class="base-icon-button"
+                                    (click)="handleRemoveChannel(channel.id)">
+                                <lucide-angular [img]="X"></lucide-angular>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="no-channels" *ngIf="configMedium[community.id].step2.channels.length === 0">{{configMedium[community.id].step2.noChannels}}</div>
+                </div>
+                <button (click)="handleAddChannel()" class="base-button">
+                    <lucide-angular [img]="Plus"></lucide-angular>
+                    <span>{{configMedium[community.id].step2.addButtonTitle}}</span>
+                </button>
+            </div>
         </div>
-      </div>
+    </div>
 </div>

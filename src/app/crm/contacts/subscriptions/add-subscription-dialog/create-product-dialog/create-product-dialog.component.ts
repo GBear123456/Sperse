@@ -235,422 +235,437 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
     }
 
-    fulfillmentGroups: any = [
+    fulfillmentGroups: any[] = [
         {
-          title: "Digital Access",
-          items: [
-            {
-              id: "subscription",
-              label: "Access Subscription Features",
-              description: "Configure subscription-based access to content or features",
-              icon: Link2,
-              color: "#2563EB",
-              component: 'subscription-feature',
-            },
-            {
-              id: "credits",
-              label: "User Credits",
-              description: "Manage user credit system for content access",
-              icon: CreditCard,
-              color: "#059669",
-              fields: [
+            title: "Digital Access",
+            items: [
                 {
-                  id: "creditAmount",
-                  label: "Credit Amount",
-                  type: "number",
-                  className: "col-span-1",
+                    id: "subscription",
+                    label: "Access Subscription Features",
+                    description: "Configure subscription-based access to content or features",
+                    icon: Link2,
+                    color: "#2563EB",
+                    component: 'subscription-feature',
                 },
                 {
-                  id: "creditExpiry",
-                  label: "Credit Expiration",
-                  type: "select",
-                  className: "col-span-1",
-                  options: [
-                    { value: "never", label: "Never" },
-                    { value: "daily", label: "Every Day" },
-                    { value: "weekly", label: "Every Week" },
-                    { value: "monthly", label: "Every Month" },
-                    { value: "yearly", label: "Every Year" },
-                  ],
-                  defaultValue: "never",
-                },
-              ],
-              gridCols: "grid-cols-2 gap-4",
-            },
-            {
-              id: "digital",
-              label: "Digital Downloadable Product",
-              description: "Provide access to downloadable digital content",
-              icon: FileText,
-              color: "#2DD4BF",
-              component: 'digital-upload',
-            },
-            {
-              id: "license",
-              label: "License Key Delivery",
-              description: "Generate and deliver software license keys",
-              icon: Key,
-              color: "#DC2626",
-              fields: [
-                { id: "licenseFormat", label: "License Format", type: "text" },
-                { id: "licenseRules", label: "License Rules", type: "textarea" },
-              ],
-            },
-            {
-              id: "course",
-              label: "Digital Course",
-              description: "Grant access to online courses",
-              icon: GraduationCap,
-              color: "#FF6B6B",
-              fields: [
-                { id: "coursePlatformUrl", label: "Platform URL", type: "url" },
-                { id: "courseId", label: "Course ID", type: "text" },
-              ],
-            },
-            {
-              id: "feedAccess",
-              label: "Access to Feed Content",
-              description: "Grant access to exclusive feed content including pictures, polls, and discussions",
-              icon: Image,
-              color: "#8B5CF6",
-              fields: [
-                { id: "feedUrl", label: "Feed URL", type: "url" },
-                {
-                  id: "feedAccessLevel",
-                  label: "Access Level",
-                  type: "select",
-                  options: [
-                    { value: "basic", label: "Basic" },
-                    { value: "premium", label: "Premium" },
-                    { value: "vip", label: "VIP" },
-                  ],
-                },
-              ],
-            },
-            {
-              id: "videoAccess",
-              label: "Access to Video Content or Live Stream",
-              description: "Provide access to exclusive video content or live streams",
-              icon: Video,
-              color: "#EF4444",
-              fields: [
-                {
-                  id: "contentType",
-                  label: "Content Type",
-                  type: "select",
-                  options: [
-                    { value: "preRecorded", label: "Pre-recorded Videos" },
-                    { value: "liveStream", label: "Live Stream" },
-                    { value: "both", label: "Both Pre-recorded and Live" },
-                  ],
-                },
-                {
-                  id: "videoLibraryUrl",
-                  label: "Video Library URL",
-                  type: "url",
-                  showWhen: "contentType",
-                  showWhenValue: ["preRecorded", "both"],
-                },
-                {
-                  id: "liveStreamUrl",
-                  label: "Live Stream URL",
-                  type: "url",
-                  showWhen: "contentType",
-                  showWhenValue: ["liveStream", "both"],
-                },
-                {
-                  id: "videoAccessDuration",
-                  label: "Access Duration",
-                  type: "select",
-                  options: [
-                    { value: "1month", label: "1 Month" },
-                    { value: "3months", label: "3 Months" },
-                    { value: "6months", label: "6 Months" },
-                    { value: "1year", label: "1 Year" },
-                    { value: "lifetime", label: "Lifetime" },
-                  ],
-                },
-                {
-                  id: "scheduleInfo",
-                  label: "Live Stream Schedule",
-                  type: "textarea",
-                  showWhen: "contentType",
-                  showWhenValue: ["liveStream", "both"],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          title: "Community Access",
-          items: [
-            {
-              id: "discord",
-              label: "Discord Member Roles",
-              description: "Manage Discord roles and server access",
-              icon: MessageSquare,
-              color: "#5865F2",
-              hoverColor: "rgb(71 82 196)",
-              component: 'discord-roles-selector',
-            },
-            {
-              id: "telegram",
-              label: "Telegram Channel Access",
-              description: "Grant access to Telegram channels",
-              icon: Send,
-              color: "#229ED9",
-              hoverColor: "rgb(26 141 195)",
-              component: 'telegram-channel-selector',
-            },
-            {
-              id: "slack",
-              label: "Slack Channel Access",
-              description: "Grant access to Slack channels",
-              icon: MessageSquare,
-              color: "#E01E5A",
-              hoverColor: "rgb(201 28 80)",
-              component: 'slack-channel-selector',
-            },
-            {
-              id: "whatsapp",
-              label: "WhatsApp",
-              description: "Send automated WhatsApp messages",
-              icon: Phone,
-              color: "#25D366",
-              fields: [
-                { id: "whatsappNumber", label: "Business Number", type: "text" },
-                { id: "whatsappApiKey", label: "API Key", type: "password" },
-              ],
-            },
-          ],
-        },
-        {
-          title: "Event and Meeting Access",
-          items: [
-            {
-              id: "event",
-              label: "Event Ticketing",
-              description: "Manage event registration and access",
-              icon: Calendar,
-              color: "#F59E0B",
-              fields: [
-                {
-                  id: "location",
-                  label: "Location",
-                  type: "section",
-                  description: "Help people in the area discover your event and let attendees know where to show up.",
-                  fields: [
-                    {
-                        id: "locationType",
-                        type: "radio",
-                        options: [
-                            { value: ProductEventLocation.Online, label: "Online" },
-                            { value: ProductEventLocation.InPerson, label: "In-Person" },
-                            { value: ProductEventLocation.ToBeAnnounced, label: "To be announced" },
-                        ],
-                    },
-                  ],
-                },
-                {
-                    id: "address",
-                    label: "Venue Location",
-                    type: "address",
-                },
-                {
-                  id: "dateAndTime",
-                  label: "Date and time",
-                  type: "section",
-                  description: "Tell event-goers when your event starts and ends so they can make plans to attend.",
-                  fields: [
-                    {
-                      id: "eventType",
-                      type: "radio",
-                      options: [
-                        { value: "single", label: "Single Event" },
-                        { value: "recurring", label: "Recurring Event" },
-                      ],
-                    },
-                  ],
-                },
-                {
-                    id: "duration",
-                    type: "duration",
-                    columns: 4,
-                    description: "Single event happens once and can last multiple days",
+                    id: "credits",
+                    label: "User Credits",
+                    hidden: true,
+                    description: "Manage user credit system for content access",
+                    icon: CreditCard,
+                    color: "#059669",
                     fields: [
                         {
-                            id: "date",
-                            label: "Date",
-                            type: "date",
+                            id: "creditAmount",
+                            label: "Credit Amount",
+                            type: "number",
+                            className: "col-span-1",
                         },
                         {
-                            id: "time",
-                            label: "Time",
-                            type: "time",
+                            id: "creditExpiry",
+                            label: "Credit Expiration",
+                            type: "select",
+                            className: "col-span-1",
+                            options: [
+                                { value: "never", label: "Never" },
+                                { value: "daily", label: "Every Day" },
+                                { value: "weekly", label: "Every Week" },
+                                { value: "monthly", label: "Every Month" },
+                                { value: "yearly", label: "Every Year" },
+                            ],
+                            defaultValue: "never",
+                        },
+                    ],
+                    gridCols: "grid-cols-2 gap-4"
+                },
+                {
+                    id: "digital",
+                    label: "Digital Downloadable Product",
+                    description: "Provide access to downloadable digital content",
+                    icon: FileText,
+                    color: "#2DD4BF",
+                    component: 'digital-upload',
+                },
+                {
+                    id: "license",
+                    label: "License Key Delivery",
+                    hidden: true,
+                    description: "Generate and deliver software license keys",
+                    icon: Key,
+                    color: "#DC2626",
+                    fields: [
+                        { id: "licenseFormat", label: "License Format", type: "text" },
+                        { id: "licenseRules", label: "License Rules", type: "textarea" },
+                    ],
+                },
+                {
+                    id: "course",
+                    label: "Digital Course",
+                    hidden: true,
+                    description: "Grant access to online courses",
+                    icon: GraduationCap,
+                    color: "#FF6B6B",
+                    fields: [
+                        { id: "coursePlatformUrl", label: "Platform URL", type: "url" },
+                        { id: "courseId", label: "Course ID", type: "text" },
+                    ],
+                },
+                {
+                    id: "feedAccess",
+                    label: "Access to Feed Content",
+                    hidden: true,
+                    description: "Grant access to exclusive feed content including pictures, polls, and discussions",
+                    icon: Image,
+                    color: "#8B5CF6",
+                    fields: [
+                        { id: "feedUrl", label: "Feed URL", type: "url" },
+                        {
+                            id: "feedAccessLevel",
+                            label: "Access Level",
+                            type: "select",
+                            options: [
+                                { value: "basic", label: "Basic" },
+                                { value: "premium", label: "Premium" },
+                                { value: "vip", label: "VIP" },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id: "videoAccess",
+                    label: "Access to Video Content or Live Stream",
+                    hidden: true,
+                    description: "Provide access to exclusive video content or live streams",
+                    icon: Video,
+                    color: "#EF4444",
+                    fields: [
+                        {
+                            id: "contentType",
+                            label: "Content Type",
+                            type: "select",
+                            options: [
+                                { value: "preRecorded", label: "Pre-recorded Videos" },
+                                { value: "liveStream", label: "Live Stream" },
+                                { value: "both", label: "Both Pre-recorded and Live" },
+                            ],
+                        },
+                        {
+                            id: "videoLibraryUrl",
+                            label: "Video Library URL",
+                            type: "url",
+                            showWhen: "contentType",
+                            showWhenValue: ["preRecorded", "both"],
+                        },
+                        {
+                            id: "liveStreamUrl",
+                            label: "Live Stream URL",
+                            type: "url",
+                            showWhen: "contentType",
+                            showWhenValue: ["liveStream", "both"],
+                        },
+                        {
+                            id: "videoAccessDuration",
+                            label: "Access Duration",
+                            type: "select",
+                            options: [
+                                { value: "1month", label: "1 Month" },
+                                { value: "3months", label: "3 Months" },
+                                { value: "6months", label: "6 Months" },
+                                { value: "1year", label: "1 Year" },
+                                { value: "lifetime", label: "Lifetime" },
+                            ],
+                        },
+                        {
+                            id: "scheduleInfo",
+                            label: "Live Stream Schedule",
+                            type: "textarea",
+                            showWhen: "contentType",
+                            showWhenValue: ["liveStream", "both"],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            title: "Community Access",
+            items: [
+                {
+                    id: "discord",
+                    label: "Discord Member Roles",
+                    description: "Manage Discord roles and server access",
+                    icon: MessageSquare,
+                    color: "#5865F2",
+                    hoverColor: "rgb(71 82 196)",
+                    component: 'discord-roles-selector',
+                },
+                {
+                    id: "telegram",
+                    hidden: true,
+                    label: "Telegram Channel Access",
+                    description: "Grant access to Telegram channels",
+                    icon: Send,
+                    color: "#229ED9",
+                    hoverColor: "rgb(26 141 195)",
+                    component: 'telegram-channel-selector',
+                },
+                {
+                    id: "slack",
+                    hidden: true,
+                    label: "Slack Channel Access",
+                    description: "Grant access to Slack channels",
+                    icon: MessageSquare,
+                    color: "#E01E5A",
+                    hoverColor: "rgb(201 28 80)",
+                    component: 'slack-channel-selector',
+                },
+                {
+                    id: "whatsapp",
+                    hidden: true,
+                    label: "WhatsApp",
+                    description: "Send automated WhatsApp messages",
+                    icon: Phone,
+                    color: "#25D366",
+                    fields: [
+                        { id: "whatsappNumber", label: "Business Number", type: "text" },
+                        { id: "whatsappApiKey", label: "API Key", type: "password" },
+                    ],
+                },
+            ],
+        },
+        {
+            title: "Event and Meeting Access",
+            hidden: true,
+            items: [
+                {
+                    id: "event",
+                    label: "Event Ticketing",
+                    description: "Manage event registration and access",
+                    icon: Calendar,
+                    color: "#F59E0B",
+                    fields: [
+                        {
+                            id: "location",
+                            label: "Location",
+                            type: "section",
+                            description: "Help people in the area discover your event and let attendees know where to show up.",
+                            fields: [
+                                {
+                                    id: "locationType",
+                                    type: "radio",
+                                    options: [
+                                        { value: ProductEventLocation.Online, label: "Online" },
+                                        { value: ProductEventLocation.InPerson, label: "In-Person" },
+                                        { value: ProductEventLocation.ToBeAnnounced, label: "To be announced" },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            id: "address",
+                            label: "Venue Location",
+                            type: "address",
+                        },
+                        {
+                            id: "dateAndTime",
+                            label: "Date and time",
+                            type: "section",
+                            description: "Tell event-goers when your event starts and ends so they can make plans to attend.",
+                            fields: [
+                                {
+                                    id: "eventType",
+                                    type: "radio",
+                                    options: [
+                                        { value: "single", label: "Single Event" },
+                                        { value: "recurring", label: "Recurring Event" },
+                                    ],
+                                },
+                            ],
                         },
                         {
                             id: "duration",
-                            label: "Duration",
-                            type: "number",
+                            type: "duration",
+                            columns: 4,
+                            description: "Single event happens once and can last multiple days",
+                            fields: [
+                                {
+                                    id: "date",
+                                    label: "Date",
+                                    type: "date",
+                                },
+                                {
+                                    id: "time",
+                                    label: "Time",
+                                    type: "time",
+                                },
+                                {
+                                    id: "duration",
+                                    label: "Duration",
+                                    type: "number",
+                                },
+                                {
+                                    id: "durationType",
+                                    label: "",
+                                    type: "select",
+                                },
+                            ]
                         },
                         {
-                            id: "durationType",
-                            label: "",
-                            type: "select",
+                            id: "settings",
+                            type: "grid",
+                            columns: 2,
+                            fields: [
+                                {
+                                    id: "timezone",
+                                    label: "Time Zone",
+                                    type: "select",
+                                    options: [],
+                                },
+                                {
+                                    id: "language",
+                                    label: "Event Page Language",
+                                    type: "select",
+                                    options: [],
+                                },
+                            ],
                         },
-                    ]
+                    ],
                 },
                 {
-                  id: "settings",
-                  type: "grid",
-                  columns: 2,
-                  fields: [
-                    {
-                      id: "timezone",
-                      label: "Time Zone",
-                      type: "select",
-                      options: [],
-                    },
-                    {
-                      id: "language",
-                      label: "Event Page Language",
-                      type: "select",
-                      options: [],
-                    },
-                  ],
+                    id: "meeting",
+                    label: "Online Meeting Link",
+                    description: "Configure video meeting access",
+                    icon: Video,
+                    color: "#2563EB",
+                    fields: [
+                        {
+                            id: "settings",
+                            type: "grid",
+                            columns: 2,
+                            fields: [
+                                {
+                                    id: "platform",
+                                    label: "Platform",
+                                    type: "select",
+                                    options: [
+                                        { value: "zoom", label: "Zoom" },
+                                        { value: "meet", label: "Google Meet" },
+                                        { value: "teams", label: "Microsoft Teams" },
+                                        { value: "custom", label: "Custom" },
+                                    ],
+                                },
+                                {
+                                    id: "meetingLink",
+                                    label: "Meeting Link",
+                                    type: "url",
+                                },
+                                {
+                                    id: "meetingId",
+                                    label: "Meeting ID",
+                                    type: "text",
+                                },
+                                {
+                                    id: "meetingPassword",
+                                    label: "Meeting Password",
+                                    type: "password",
+                                },
+                            ],
+                        },
+                    ],
                 },
-              ],
-            },
-            {
-              id: "meeting",
-              label: "Online Meeting Link",
-              description: "Configure video meeting access",
-              icon: Video,
-              color: "#2563EB",
-              fields: [
+            ],
+        },
+        {
+            title: "Additional Options",
+            hidden: true,
+            items: [
                 {
-                  id: "settings",
-                  type: "grid",
-                  columns: 2,
-                  fields: [
-                    {
-                      id: "platform",
-                      label: "Platform",
-                      type: "select",
-                      options: [
-                        { value: "zoom", label: "Zoom" },
-                        { value: "meet", label: "Google Meet" },
-                        { value: "teams", label: "Microsoft Teams" },
-                        { value: "custom", label: "Custom" },
-                      ],
-                    },
-                    {
-                      id: "meetingLink",
-                      label: "Meeting Link",
-                      type: "url",
-                    },
-                    {
-                      id: "meetingId",
-                      label: "Meeting ID",
-                      type: "text",
-                    },
-                    {
-                      id: "meetingPassword",
-                      label: "Meeting Password",
-                      type: "password",
-                    },
-                  ],
+                    id: "mailchimp",
+                    label: "MailChimp Audience",
+                    description: "Add customers to MailChimp audiences",
+                    icon: Mail,
+                    color: "#FFE01B",
+                    fields: [{ id: "mailchimpAudienceId", label: "Audience ID", type: "text" }],
                 },
-              ],
-            },
-          ],
+                {
+                    id: "webhook",
+                    label: "Webhook Actions",
+                    description: "Send data to external systems via webhooks",
+                    icon: Webhook,
+                    color: "#6B7280",
+                    fields: [
+                        { id: "successWebhookUrl", label: "Success Webhook URL", type: "url" },
+                        { id: "failureWebhookUrl", label: "Failure Webhook URL", type: "url" },
+                    ],
+                },
+                {
+                    id: "redirect",
+                    label: "Redirect Link",
+                    description: "Configure URL redirections",
+                    icon: Link2,
+                    color: "#4A4A4A",
+                    fields: [
+                        { id: "destinationUrl", label: "Destination URL", type: "url" },
+                        { id: "trackClicks", label: "Track Clicks", type: "switch" },
+                    ],
+                },
+                {
+                    id: "gpt",
+                    label: "GPT Access",
+                    description: "Configure AI model access",
+                    icon: BrainCircuit,
+                    color: "#10A37F",
+                    fields: [
+                        { id: "gptModelId", label: "Model ID", type: "text" },
+                        { id: "gptApiKey", label: "API Key", type: "password" },
+                        { id: "gptSystemPrompt", label: "System Prompt", type: "textarea" },
+                    ],
+                },
+                {
+                    id: "donation",
+                    label: "Donation Support",
+                    description: "Configure donation options",
+                    icon: Heart,
+                    color: "#EC4899",
+                    fields: [
+                        { id: "suggestedAmount", label: "Suggested Amount", type: "number" },
+                        { id: "allowRecurring", label: "Allow Recurring", type: "switch" },
+                    ],
+                },
+            ],
         },
         {
-          title: "Additional Options",
-          items: [
-            {
-              id: "mailchimp",
-              label: "MailChimp Audience",
-              description: "Add customers to MailChimp audiences",
-              icon: Mail,
-              color: "#FFE01B",
-              fields: [{ id: "mailchimpAudienceId", label: "Audience ID", type: "text" }],
-            },
-            {
-              id: "webhook",
-              label: "Webhook Actions",
-              description: "Send data to external systems via webhooks",
-              icon: Webhook,
-              color: "#6B7280",
-              fields: [
-                { id: "successWebhookUrl", label: "Success Webhook URL", type: "url" },
-                { id: "failureWebhookUrl", label: "Failure Webhook URL", type: "url" },
-              ],
-            },
-            {
-              id: "redirect",
-              label: "Redirect Link",
-              description: "Configure URL redirections",
-              icon: Link2,
-              color: "#4A4A4A",
-              fields: [
-                { id: "destinationUrl", label: "Destination URL", type: "url" },
-                { id: "trackClicks", label: "Track Clicks", type: "switch" },
-              ],
-            },
-            {
-              id: "gpt",
-              label: "GPT Access",
-              description: "Configure AI model access",
-              icon: BrainCircuit,
-              color: "#10A37F",
-              fields: [
-                { id: "gptModelId", label: "Model ID", type: "text" },
-                { id: "gptApiKey", label: "API Key", type: "password" },
-                { id: "gptSystemPrompt", label: "System Prompt", type: "textarea" },
-              ],
-            },
-            {
-              id: "donation",
-              label: "Donation Support",
-              description: "Configure donation options",
-              icon: Heart,
-              color: "#EC4899",
-              fields: [
-                { id: "suggestedAmount", label: "Suggested Amount", type: "number" },
-                { id: "allowRecurring", label: "Allow Recurring", type: "switch" },
-              ],
-            },
-          ],
-        },
-        {
-          title: "Physical Product Delivery",
-          items: [
-            {
-              id: "standardDelivery",
-              label: "Standard Delivery",
-              description: "Delivered within 3-5 business days",
-              icon: Truck,
-              color: "#4ade80",
-              fields: [
-                { id: "price", label: "Price", type: "number" },
-                { id: "estimatedDays", label: "Estimated Days", type: "number" },
-              ],
-            },
-            {
-              id: "expressDelivery",
-              label: "Express Delivery",
-              description: "Delivered within 1-2 business days",
-              icon: Package,
-              color: "#f472b6",
-              fields: [
-                { id: "price", label: "Price", type: "number" },
-                { id: "estimatedDays", label: "Estimated Days", type: "number" },
-              ],
-            },
-          ],
+            title: "Physical Product Delivery",
+            hidden: true,
+            items: [
+                {
+                    id: "standardDelivery",
+                    label: "Standard Delivery",
+                    description: "Delivered within 3-5 business days",
+                    icon: Truck,
+                    color: "#4ade80",
+                    fields: [
+                        { id: "price", label: "Price", type: "number" },
+                        { id: "estimatedDays", label: "Estimated Days", type: "number" },
+                    ],
+                },
+                {
+                    id: "expressDelivery",
+                    label: "Express Delivery",
+                    description: "Delivered within 1-2 business days",
+                    icon: Package,
+                    color: "#f472b6",
+                    fields: [
+                        { id: "price", label: "Price", type: "number" },
+                        { id: "estimatedDays", label: "Estimated Days", type: "number" },
+                    ],
+                },
+            ],
         },
     ]
+    visibleDeliverablesGroups = this.fulfillmentGroups.filter(v => !v.hidden).map(v => {
+        v.items = v.items.filter(x => !x.hidden);
+        return v;
+    });
 
     deliverablesData: any = {};
 
@@ -920,7 +935,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.product.productEvent.languageId = 'en';
             this.product.productEvent.address = new AddressInfoDto();
         }
-        
+
         this.deliverablesData.event = this.product.productEvent;
         this.deliverablesData.event_address = this.product.productEvent.address;
         this.deliverablesData.event_locationType = this.product.productEvent.location;
