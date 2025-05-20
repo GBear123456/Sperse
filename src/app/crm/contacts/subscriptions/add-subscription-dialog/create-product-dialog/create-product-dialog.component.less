@@ -343,6 +343,25 @@
                         }
                     }
 
+                    .price-option-archived {
+                        position: absolute;
+                        right: 40px;
+                        background: #f3f7fa;
+                        border-radius: 15px;
+                        padding: 2px 15px;
+                        font-style: italic;
+
+                        &::before {
+                            content: "\A";
+                            width: 7px;
+                            height: 7px;
+                            border-radius: 50%;
+                            display: inline-block;
+                            margin-right: 5px;
+                            background: orange;
+                        }
+                    }
+
                     .customer-price {
                         align-items: center;
 
@@ -1142,7 +1161,7 @@
 
 
 ::ng-deep {
-    .cdk-overlay-pane .add-price-option-menu .mat-menu-content button:focus {
+    .cdk-overlay-pane .product-option-menu .mat-menu-content button:focus {
         outline: none;
     }
 }

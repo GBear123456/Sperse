@@ -353,7 +353,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     initCurrencyFields() {
         this.amountFormat = getCurrencySymbol(this.product.currencyId, 'narrow') + ' #,##0.##';
         this.amountNullableFormat = getCurrencySymbol(this.product.currencyId, 'narrow') + ' #,###.##';
-        this.products$ = this.productProxy.getProducts(undefined, this.product.currencyId, false, undefined).pipe(
+        this.products$ = this.productProxy.getProducts(undefined, this.product.currencyId, false, undefined, false).pipe(
             publishReplay(),
             refCount(),
             map((products: ProductDto[]) => {
@@ -376,7 +376,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     initPriceOptions(priceOptions: PriceOptionInfo[]) {
         this.priceOptionTabs = [];
 
-        priceOptions.forEach((option, index) => {
+        priceOptions.sort((a, b) => Number(a.isArchived) - Number(b.isArchived)).forEach((option, index) => {
             this.priceOptionTabs.push({
                 id: option.id
             });
@@ -390,6 +390,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 option['isFreePriceType'] = true;
             }
         });
+
         setTimeout(() => {
             this.selectedTabIndex = 0;
             this.detectChanges();
@@ -784,8 +785,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         );
     }
 
+    toggelPriceOptionArchived(priceOption: PriceOptionInfo) {
+        let message = priceOption.isArchived ? '' : this.ls.l('ArchiveConfiramtion');
+        this.message.confirm(null, message, (res) => {
+            if (!res)
+                return;
+
+            priceOption.isArchived = !priceOption.isArchived;
+            this.detectChanges();
+        });
+    }
+
     removePriceOption(index) {
-        this.message.confirm(null, null, (res) => {
+        this.message.confirm(null, this.ls.l('DeleteConfiramtion'), (res) => {
             if (!res)
                 return;
 
@@ -1263,7 +1275,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     togglePriceType(priceOption) {
-        if (this.isReadOnly)
+        if (this.isReadOnly || priceOption.isArchived)
             return;
 
         if (priceOption.isFreePriceType = !priceOption.isFreePriceType) {

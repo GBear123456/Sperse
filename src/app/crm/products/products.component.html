@@ -126,7 +126,7 @@
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder price-column">
                         <span id="product{{cell.data.Id}}" [ngClass]="{'underline': cell.data.PriceOptions.length > 1}">
-                            {{ cell.data.PriceOptions[0].Fee | currency:cell.data.CurrencyId:'symbol':'1.2-2' }}
+                            {{ cell.data.PriceOptions[0]?.Fee | currency:cell.data.CurrencyId:'symbol':'1.2-2' }}
                         </span>
                         <dx-tooltip *ngIf="cell.data.PriceOptions.length > 1"
                                     position="bottom"
