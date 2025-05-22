@@ -1139,7 +1139,7 @@
                                                         [attr.id]="'accordion-header-' + index"
                                                         [attr.aria-expanded]="accordionItem.expanded"
                                                         [attr.aria-controls]="'accordion-body-' + index"
-                                                        [class.enabled]="deliverablesData[item.id.charAt(0).toUpperCase() + item.id.slice(1)]">
+                                                        [class.enabled]="deliverablesData.isActiveData[item.id]">
                                         <div class="accordion-item-header">
                                             <div class="accordion-item-header-left">
                                                 <lucide-angular [img]="item.icon" class="accordion-item-header-icon" [style.background-color]="item.color + '20'" [color]="item.color"></lucide-angular>
@@ -1151,9 +1151,9 @@
                                             <div class="accordion-item-header-right">
                                                 <mat-slide-toggle class="header-toggle"
                                                                   labelPosition="before"
-                                                                  [(ngModel)]="deliverablesData[item.id.charAt(0).toUpperCase() + item.id.slice(1)]"
+                                                                  [(ngModel)]="deliverablesData.isActiveData[item.id]"
                                                                   [disabled]="isReadOnly"
-                                                                  (toggleChange)="onToggleItem(item.id.charAt(0).toUpperCase() + item.id.slice(1))"></mat-slide-toggle>
+                                                                  (toggleChange)="deliverablesData.isActiveData[item.id]"></mat-slide-toggle>
                                                 <lucide-angular [img]="ChevronIcon" class="accordion-item-header-arrow" (click)="accordionItem.toggle()"></lucide-angular>
                                             </div>
                                         </div>
@@ -1289,7 +1289,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <community-access-selector *ngSwitchCase="'discord-roles-selector'" [community]="item">
+                                            <community-access-selector *ngSwitchCase="'discord-roles-selector'"
+                                                                       [community]="item"
+                                                                       [data]="deliverablesData['discord']"
+                                                                       [hostClientId]="hostDiscordClientId">
                                             </community-access-selector>
                                             <community-access-selector *ngSwitchCase="'telegram-channel-selector'" [community]="item">
                                             </community-access-selector>

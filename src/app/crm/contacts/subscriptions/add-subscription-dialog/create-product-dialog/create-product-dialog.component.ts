@@ -65,7 +65,13 @@ import {
     AddInventoryTopupInput,
     PriceOptionType,
     ProductAddOnDto,
-    ProductAddOnOptionDto
+    ProductAddOnOptionDto,
+    ProductDeliverableTypes,
+    CommunicationDeliverableInfo,
+    ProductDeliverablesData,
+    HostSettingsServiceProxy,
+    GetProductInfoOutput,
+    ProductDeliverableInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService, NotifyService, PermissionCheckerService } from 'abp-ng2-module';
@@ -667,11 +673,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         return v;
     });
 
-    deliverablesData: any = {};
+    deliverablesData: any = {
+        isActiveData: {}
+    };
 
     handleChange = (field: string, value: any) => {
         this.deliverablesData[field] = value;
-        console.log(this.deliverablesData)
     }
 
     isHostTenant = !abp.session.tenantId;
@@ -716,6 +723,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     gracePeriodDefaultValue: number;
     customGroup: string;
     isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
+    isProductDiscordFeatureEnabled = this.feature.isEnabled(AppFeatures.CRMProductDiscordIntegration);
+    hostDiscordClientId: string;
+
     title: string;
     image: string = null;
     imageChanged: boolean = false;
@@ -764,6 +774,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         private productResourceProxy: ProductResourceServiceProxy,
         private documentProxy: DocumentTemplatesServiceProxy,
         private tenantPaymentSettings: TenantPaymentSettingsServiceProxy,
+        private hostSettingsProxy: HostSettingsServiceProxy,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         private setting: SettingService,
@@ -799,6 +810,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.initDonationProps();
         }
 
+        this.initDeliverables(data.product?.productDeliverablesData);
         this.initProductInventory();
         this.initCurrencyFields();
 
@@ -824,6 +836,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 this.showDowngrade = result.enableClientSubscriptionAutomaticCancel;
                 this.detectChanges();
             });
+        }
+
+        if (this.isProductDiscordFeatureEnabled) {
+            this.hostSettingsProxy.getDiscordCientId().subscribe(result => {
+                this.hostDiscordClientId = result;
+                this.detectChanges();
+            })
         }
 
         this.gracePeriodDefaultValue = this.setting.getInt('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount');
@@ -925,6 +944,12 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.eventDurationType = durationInfo.eventDurationType;
             this.eventDuration = durationInfo.eventDuration;
         }
+    }
+
+    initDeliverables(data: ProductDeliverablesData) {
+        let discordData = data?.discord.length ? data.discord : [CommunicationDeliverableInfo.fromJS({ type: ProductDeliverableTypes.Discord })];
+        this.deliverablesData.discord = discordData;
+        this.deliverablesData.isActiveData.discord = discordData.some(v => v.isActive);
     }
 
     initEventProps() {
@@ -1062,6 +1087,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 if (this.product.type == ProductType.Digital && (!this.product.productResources || !this.product.productResources.length))
                     return this.notify.error(this.ls.l('DigitalProductError'));
 
+                this.product.productDeliverables = this.getDeliverables();
                 this.product.publishDate = this.publishDate ? DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '') : undefined;
 
                 let upgradeProducts = this.product.productUpgradeAssignments;
@@ -1133,7 +1159,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         else
                             this.productProxy.getProductInfo((<any>this.product).id).subscribe((product: any) => {
                                 this.product = new UpdateProductInput({ id: (<any>this.product).id, ...product });
-                                this.afterSave();
+                                this.afterSave(product);
                             });
                     });
                 }
@@ -1147,7 +1173,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         else
                             this.productProxy.getProductInfo(res.productId).subscribe((product: any) => {
                                 this.product = new UpdateProductInput({ id: res.productId, ...product });
-                                this.afterSave();
+                                this.afterSave(product);
                             });
                     });
                 }
@@ -1155,12 +1181,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         });
     }
 
-    afterSave() {
+    afterSave(product: GetProductInfoOutput) {
         this.initPriceOptions(this.product.priceOptions);
         this.initProductInventory();
         this.initProductResources();
         this.initCollections();
+        this.initDeliverables(product.productDeliverablesData);
         this.detectChanges();
+    }
+
+    getDeliverables(): ProductDeliverableInfo[] {
+        let discordDeliverables: CommunicationDeliverableInfo[] = this.deliverablesData.discord.filter(v => !!v.serverId);
+        discordDeliverables.forEach(v => v.isActive = this.deliverablesData.isActiveData.discord);
+        return discordDeliverables;
     }
 
     onCurrencyChanged(event) {

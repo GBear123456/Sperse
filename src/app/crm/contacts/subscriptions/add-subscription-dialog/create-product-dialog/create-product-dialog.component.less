@@ -784,7 +784,7 @@
                         padding: 10px;
                         min-height: 250px;
                         flex-direction: column;
-                        
+
                         img {
                             margin: 0 0 15px;
                         }
@@ -978,7 +978,7 @@
                 line-height: 1.25rem;
                 color: hsl(var(--muted-foreground));
                 margin-bottom: 0.375rem;
-            }    
+            }
 
             dx-select-box[name="name"] {
                 display: inline-block;
@@ -1020,7 +1020,7 @@
         margin-bottom: 0;
     }
 
-    ::ng-deep dx-select-box:not(.hide-placeholder):not(.subscription-select) {
+    ::ng-deep dx-select-box:not(.hide-placeholder):not(.subscription-select):not(.server-select) {
         .dx-icon-clear {
             left: 12px;
             font-size: 18px;
@@ -1036,9 +1036,7 @@
                 border: none;
             }
         }
-    }
-
-    .resources {
+    } .resources {
         border-bottom: none;
 
         .resource {
@@ -1071,9 +1069,7 @@
                 }
             }
         }
-    }
-
-    .addOn-block {
+    } .addOn-block {
         .addOn-header {
             display: flex;
             align-items: center;
@@ -1119,9 +1115,7 @@
             color: gray;
             text-align: justify;
         }
-    }
-
-    .event-type {
+    } .event-type {
         .dx-textbox, .dx-numberbox {
             margin: 10px 0;
         }
@@ -1185,18 +1179,14 @@
                 }
             }
         }
-    }
-
-    .donation-type {
+    } .donation-type {
         .donation-options {
             display: flex;
             justify-content: space-around;
             margin-bottom: 10px;
             align-items: center;
         }
-    }
-
-    .paid-email-template {
+    } .paid-email-template {
         ::ng-deep email-template-selector {
             h5 {
                 display: none;
@@ -1211,9 +1201,7 @@
                 right: 46px;
             }
         }
-    }
-
-    .product-url {
+    } .product-url {
         display: flex;
         align-items: center;
         justify-content: space-between;
