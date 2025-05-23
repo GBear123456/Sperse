@@ -704,7 +704,7 @@
                                         <div *ngIf="!isReadOnly" class="remove-button" (click)="removeAddOn(i)"><span>-</span></div>
                                         <div class="addOn-header">
                                             <label>{{ls.l('Add-On Option Name')}}</label>
-                                            <dx-select-box class="hide-placeholder"
+                                            <dx-select-box class="hide-placeholder addOn-types"
                                                            [dataSource]="addOnSelectionTypes"
                                                            valueExpr="key"
                                                            displayExpr="displayValue"
@@ -1133,6 +1133,7 @@
                                 <cdk-accordion [multi]="true">
                                     <cdk-accordion-item *ngFor="let item of fulfillment.items; let index = index;"
                                                         #accordionItem="cdkAccordionItem"
+                                                        [expanded]="deliverablesData.isActiveData[item.id]"
                                                         class="accordion-item"
                                                         role="button"
                                                         tabindex="0"

@@ -177,6 +177,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     qrCode;
 
     enableCommissions: boolean = true;
+    isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
+    isProductDiscordFeatureEnabled = this.feature.isEnabled(AppFeatures.CRMProductDiscordIntegration);
+    hostDiscordClientId: string;
+
     isReadOnly = !!this.data.isReadOnly;
     saveButtonId = 'saveProductOptions';
     selectedOption: ContextMenuItem;
@@ -397,6 +401,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             items: [
                 {
                     id: "discord",
+                    hidden: !this.isProductDiscordFeatureEnabled,
                     label: "Discord Member Roles",
                     description: "Manage Discord roles and server access",
                     icon: MessageSquare,
@@ -722,9 +727,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     ];
     gracePeriodDefaultValue: number;
     customGroup: string;
-    isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
-    isProductDiscordFeatureEnabled = this.feature.isEnabled(AppFeatures.CRMProductDiscordIntegration);
-    hostDiscordClientId: string;
 
     title: string;
     image: string = null;
@@ -949,6 +951,9 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     initDeliverables(data: ProductDeliverablesData) {
         let discordData = data?.discord.length ? data.discord : [CommunicationDeliverableInfo.fromJS({ type: ProductDeliverableTypes.Discord })];
         this.deliverablesData.discord = discordData;
+
+        this.deliverablesData.isActiveData.subscription = !!this.product.productServices?.length;
+        this.deliverablesData.isActiveData.digital = !!this.product.productResources.length;
         this.deliverablesData.isActiveData.discord = discordData.some(v => v.isActive);
     }
 
@@ -1044,12 +1049,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     saveProduct() {
-        if (this.product.type != ProductType.Digital) {
-            this.productFiles = [];
-            this.productLinks = [];
-            this.productTemplates = [];
-        }
-
         if (!this.product.priceOptions || !this.product.priceOptions.length)
             return this.notify.error(this.ls.l('PriceOptionsAreRequired'));
         if (this.product.type == ProductType.Subscription) {
@@ -1077,12 +1076,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     }
                 }
 
-                if (this.productTemplates.length || this.productFiles.length || this.productLinks.length)
-                    this.product.productResources = this.productTemplates.concat(this.productFiles, this.productLinks).map((item: any) => {
-                        if (item.fileId)
-                            item.url = undefined;
-                        return new ProductResourceDto(item);
-                    });
+                this.product.productResources = this.productTemplates.concat(this.productFiles, this.productLinks).map((item: any) => {
+                    if (item.fileId)
+                        item.url = undefined;
+                    return new ProductResourceDto(item);
+                });
 
                 if (this.product.type == ProductType.Digital && (!this.product.productResources || !this.product.productResources.length))
                     return this.notify.error(this.ls.l('DigitalProductError'));
@@ -1864,8 +1862,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     this.notify.info('One Time prices are not supported on Subscription product type');
                     return;
                 }
-                break;
-            case ProductType.Digital:
                 break;
             case ProductType.Event:
                 this.initEventProps();
