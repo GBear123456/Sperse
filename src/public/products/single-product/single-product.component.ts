@@ -485,7 +485,10 @@ export class SingleProductComponent implements OnInit {
 
     checkIsFree() {
         let selectedAddOnsAmount = this.getSelectedAddOns().reduce((p, c) => p += c.price, 0);
+        let currentIsFreeProductSelected = this.isFreeProductSelected;
         this.isFreeProductSelected = (this.selectedPriceOption.fee + selectedAddOnsAmount) == 0 && !this.selectedPriceOption.customerChoosesPrice;
+        if (this.isFreeProductSelected && !currentIsFreeProductSelected)
+            this.productInput.quantity = 1;
     }
 
     initConditions() {
