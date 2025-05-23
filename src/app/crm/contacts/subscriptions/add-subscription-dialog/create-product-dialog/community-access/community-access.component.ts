@@ -12,11 +12,12 @@ import {
 import { Plus, X } from 'lucide-angular';
 
 /** Application imports */
-import { CommunicationDeliverableInfo, CommunicationRole, DiscordServiceProxy, GetDiscordServersInput } from '@shared/service-proxies/service-proxies';
+import { CommunicationDeliverableInfo, CommunicationRole, DiscordServiceProxy, GetDiscordServersInput, ProductDeliverableTypes } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { finalize } from 'rxjs/operators';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
+import { CommunicationDeliverableInfoWithOptions } from './community-access.type'
 
 @Component({
     selector: 'community-access-selector',
@@ -31,27 +32,18 @@ import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 export class CommunityAccessSelectorComponent implements OnInit {
     @Input() community: any;
     @Input()
-    set data(value: CommunicationDeliverableInfo[]) {
-        this.deliverables = value;
-        if (value && value[0])
-            this.setCurrentDeliverable(value[0]);
+    set data(value: CommunicationDeliverableInfoWithOptions[]) {
+        this.initDeliverables(value);
     }
     @Input() hostClientId: string;
 
-    deliverables: CommunicationDeliverableInfo[] = [];
-    currentDeliverable: CommunicationDeliverableInfo = new CommunicationDeliverableInfo();
-
-    serversList: any[] = [];
-    serversListInitialized = false;
-    rolesList: any[] = [];
-    rolesListIds: string[] = [];
-    rolesListInitialized = false;
+    deliverables: CommunicationDeliverableInfoWithOptions[] = [];
+    oAuthTriggeredDeliverable: CommunicationDeliverableInfoWithOptions;
 
     readonly Plus = Plus;
     readonly X = X;
 
     mediumTitle: string;
-    isConnected: boolean = false;
 
     oAuthPopup: Window;
 
@@ -129,27 +121,58 @@ export class CommunityAccessSelectorComponent implements OnInit {
 
     ngOnInit(): void {
         this.mediumTitle = this.community.id?.charAt(0).toUpperCase() + this.community.id?.slice(1);
-        if (this.currentDeliverable.serverId)
-            this.getRoles(false);
+        this.deliverables.forEach(deliverable => {
+            if (deliverable.serverId && !deliverable.uiOptions.rolesListInitialized)
+                this.getRoles(deliverable, false);
+        });
     }
 
-    setCurrentDeliverable(value: CommunicationDeliverableInfo) {
-        this.currentDeliverable = value;
-        if (!this.serversListInitialized && this.currentDeliverable.serverId) {
-            this.serversList = [{ id: this.currentDeliverable.serverId, name: this.currentDeliverable.serverName }];
-        }
-        if (!this.rolesListInitialized) {
-            this.rolesList = this.currentDeliverable.roles ? this.currentDeliverable.roles.map(v => ({ id: v.roleId, name: v.roleName })) : [];
-            this.rolesListIds = this.rolesList.map(v => v.id);
-        }
+    initDeliverables(value: CommunicationDeliverableInfoWithOptions[]) {
+        this.deliverables = value;
+        if (!value.length)
+            value.push(this.getNewEntity());
+
+        this.deliverables.forEach(deliverable => {
+            deliverable.uiOptions = deliverable.uiOptions || {};
+            if (!deliverable.uiOptions.serversListInitialized && deliverable.serverId) {
+                deliverable.uiOptions.serversList = [{ id: deliverable.serverId, name: deliverable.serverName }];
+            }
+            if (!deliverable.uiOptions.rolesListInitialized) {
+                deliverable.uiOptions.rolesList = deliverable.roles ? deliverable.roles.map(v => ({ id: v.roleId, name: v.roleName })) : [];
+                deliverable.uiOptions.rolesListIds = deliverable.uiOptions.rolesList.map(v => v.id);
+            }
+        });
         this.changeDetector.detectChanges();
     }
 
-    getServersOAuth() {
+    getNewEntity(): CommunicationDeliverableInfoWithOptions {
+        let newEntity: CommunicationDeliverableInfoWithOptions = new CommunicationDeliverableInfo();
+        newEntity.type = ProductDeliverableTypes.Discord;
+        newEntity.roles = [];
+        newEntity.uiOptions = {};
+        if (this.deliverables.length) {
+            newEntity.uiOptions.serversListInitialized = this.deliverables[0].uiOptions.serversListInitialized;
+            newEntity.uiOptions.serversList = this.deliverables[0].uiOptions.serversList;
+        }
+
+        return newEntity;
+    }
+
+    addNewDeliverable() {
+        this.deliverables.push(this.getNewEntity());
+        this.changeDetector.detectChanges();
+    }
+
+    removeDeliverable(index: number) {
+        this.deliverables.splice(index, 1);
+        this.changeDetector.detectChanges();
+    }
+
+    getServersOAuth(deliverable: CommunicationDeliverableInfoWithOptions) {
         switch (this.community.id) {
             case "discord": {
                 this.loadingService.startLoading(this.elementRef.nativeElement);
-                this.discordOAuth();
+                this.discordOAuth(deliverable);
                 break;
             }
             default: {
@@ -158,23 +181,23 @@ export class CommunityAccessSelectorComponent implements OnInit {
         }
     }
 
-    getRoles(showErrors = true) {
+    getRoles(deliverable: CommunicationDeliverableInfoWithOptions, showErrors = true) {
         switch (this.community.id) {
             case "discord": {
                 this.appHttpConfiguration.avoidErrorHandling = !showErrors;
                 this.loadingService.startLoading(this.elementRef.nativeElement);
-                this.discordService.getServerRoles(this.currentDeliverable.serverId).pipe(
+                this.discordService.getServerRoles(deliverable.serverId).pipe(
                     finalize(() => {
                         this.appHttpConfiguration.avoidErrorHandling = false;
                         this.loadingService.finishLoading(this.elementRef.nativeElement);
                     })
                 ).subscribe(res => {
-                    this.rolesList = res;
-                    this.rolesListInitialized = true;
-                    this.isConnected = true;
+                    deliverable.uiOptions.rolesList = res;
+                    deliverable.uiOptions.rolesListInitialized = true;
+                    deliverable.uiOptions.isConnected = true;
                     this.changeDetector.detectChanges();
                 }, error => {
-                    this.isConnected = false;
+                    deliverable.uiOptions.isConnected = false;
                 });
                 break;
             }
@@ -184,17 +207,16 @@ export class CommunityAccessSelectorComponent implements OnInit {
         }
     }
 
-    handleConnectBot() {
+    handleConnectBot(deliverable: CommunicationDeliverableInfoWithOptions) {
         switch (this.community.id) {
             case "discord": {
-                if (!this.currentDeliverable.serverId || !this.hostClientId)
+                if (!deliverable.serverId || !this.hostClientId)
                     return;
-                window.open(`https://discord.com/oauth2/authorize?client_id=${this.hostClientId}&permissions=8&scope=bot%20applications.commands&guild_id=${this.currentDeliverable.serverId}`, "_blank");
+                window.open(`https://discord.com/oauth2/authorize?client_id=${this.hostClientId}&permissions=8&scope=bot%20applications.commands&guild_id=${deliverable.serverId}`, "_blank");
                 return;
             }
             default: {
                 window.open("https://api.slack.com/apps", "_blank");
-                this.isConnected = true;
             }
         }
     }
@@ -210,30 +232,30 @@ export class CommunityAccessSelectorComponent implements OnInit {
         this.configMedium[this.community.id].step2.channels = this.configMedium[this.community.id].step2.channels.filter((channel) => channel.id !== channelId)
     }
 
-    onServerChanged(e) {
+    onServerChanged(e, deliverable: CommunicationDeliverableInfoWithOptions) {
         if (!e.value) {
-            this.currentDeliverable.serverId = this.currentDeliverable.serverName = null;
+            deliverable.serverId = deliverable.serverName = null;
         } else {
-            const selectedItem = this.serversList.find(item => item.id === e.value);
-            this.currentDeliverable.serverName = selectedItem.name;
+            const selectedItem = deliverable.uiOptions.serversList.find(item => item.id === e.value);
+            deliverable.serverName = selectedItem.name;
         }
 
-        this.rolesList = this.rolesListIds = [];
-        this.rolesListInitialized = false;
-        this.isConnected = false;
+        deliverable.uiOptions.rolesList = deliverable.uiOptions.rolesListIds = [];
+        deliverable.uiOptions.rolesListInitialized = false;
+        deliverable.uiOptions.isConnected = false;
         this.changeDetector.detectChanges();
 
-        if (this.currentDeliverable.serverId)
-            this.getRoles(false);
+        if (deliverable.serverId)
+            this.getRoles(deliverable, false);
     }
 
-    onRolesChanged(e) {
+    onRolesChanged(e, deliverable: CommunicationDeliverableInfoWithOptions) {
         let selectedIds: string[] = e.value;
-        let values = this.rolesList.filter(v => selectedIds.includes(v.id));
-        this.currentDeliverable.roles = values.map(v => new CommunicationRole({ roleId: v.id, roleName: v.name }));
+        let values = deliverable.uiOptions.rolesList.filter(v => selectedIds.includes(v.id));
+        deliverable.roles = values.map(v => new CommunicationRole({ roleId: v.id, roleName: v.name }));
     }
 
-    discordOAuth() {
+    discordOAuth(deliverable: CommunicationDeliverableInfoWithOptions) {
         let scopes = ['identify', 'guilds'];
         let scopesString = scopes.join('%20');
         let redirectUrl = `${AppConsts.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
@@ -246,6 +268,7 @@ export class CommunityAccessSelectorComponent implements OnInit {
             return;
         }
 
+        this.oAuthTriggeredDeliverable = deliverable;
         const popupCheckInterval = setInterval(() => {
             if (this.oAuthPopup.closed) {
                 this.oAuthPopup = null;
@@ -267,8 +290,8 @@ export class CommunityAccessSelectorComponent implements OnInit {
                 })).pipe(
                     finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
                 ).subscribe(res => {
-                    this.serversList = res;
-                    this.serversListInitialized = true;
+                    this.oAuthTriggeredDeliverable.uiOptions.serversList = res;
+                    this.oAuthTriggeredDeliverable.uiOptions.serversListInitialized = true;
                     this.changeDetector.detectChanges();
                 });
             } else {

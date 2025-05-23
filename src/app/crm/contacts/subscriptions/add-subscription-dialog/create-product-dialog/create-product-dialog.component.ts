@@ -949,7 +949,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     initDeliverables(data: ProductDeliverablesData) {
-        let discordData = data?.discord.length ? data.discord : [CommunicationDeliverableInfo.fromJS({ type: ProductDeliverableTypes.Discord })];
+        let discordData = data?.discord.length ? data.discord : [];
         this.deliverablesData.discord = discordData;
 
         this.deliverablesData.isActiveData.subscription = !!this.product.productServices?.length;
