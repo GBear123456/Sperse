@@ -41,7 +41,8 @@ import {
     ProductAddOnOptionDto,
     PriceOptionType,
     ExternalUserDataServiceProxy,
-    GetExternalUserDataInput
+    GetExternalUserDataInput,
+    PublicProductAddOnOptionInfo
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
@@ -441,7 +442,7 @@ export class SingleProductComponent implements OnInit {
             this.productInput.price = submitPriceOption.fee;
 
         if (submitPriceOption.type == PriceOptionType.OneTime)
-            this.productInput.addOnOptionIds = this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).filter(v => v['selected']).map(v => v.id);
+            this.productInput.addOnOptionIds = this.getSelectedAddOns().map(v => v.id);
 
         if (this.embeddedCheckout) {
             this.requestInfo.embeddedPayment = this.embeddedCheckout;
@@ -483,7 +484,8 @@ export class SingleProductComponent implements OnInit {
     }
 
     checkIsFree() {
-        this.isFreeProductSelected = this.selectedPriceOption.fee == 0 && !this.selectedPriceOption.customerChoosesPrice;
+        let selectedAddOnsAmount = this.getSelectedAddOns().reduce((p, c) => p += c.price, 0);
+        this.isFreeProductSelected = (this.selectedPriceOption.fee + selectedAddOnsAmount) == 0 && !this.selectedPriceOption.customerChoosesPrice;
     }
 
     initConditions() {
@@ -592,13 +594,18 @@ export class SingleProductComponent implements OnInit {
     getGeneralPrice(includeCoupon: boolean, includeAddOns: boolean = true): number {
         let pricePerItem = this.selectedPriceOption.fee;
         if (includeAddOns) {
-            if (this.productInfo.productAddOns && this.productInfo.productAddOns.length)
-                pricePerItem += this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).reduce((p, c) => p += c['selected'] ? c.price : 0, 0);
+            pricePerItem += this.getSelectedAddOns().reduce((p, c) => p += c.price, 0);
         }
         let price = pricePerItem * this.productInput.quantity;
         if (includeCoupon)
             price = this.applyCoupon(price);
         return price;
+    }
+
+    getSelectedAddOns(): PublicProductAddOnOptionInfo[] {
+        if (this.productInfo.productAddOns && this.productInfo.productAddOns.length)
+            return this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).filter(v => v['selected']);
+        return [];
     }
 
     getDiscount(): number {
@@ -760,6 +767,8 @@ export class SingleProductComponent implements OnInit {
 
         if (recalculateTaxes)
             this.calculateTax();
+
+        this.checkIsFree();
     }
 
     getDonationSuggestedAmounts(): ProductDonationSuggestedAmountInfo[] {

@@ -676,7 +676,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     visibleDeliverablesGroups = this.fulfillmentGroups.filter(v => !v.hidden).map(v => {
         v.items = v.items.filter(x => !x.hidden);
         return v;
-    });
+    }).filter(v => v.items.length);
 
     deliverablesData: any = {
         isActiveData: {}
@@ -953,7 +953,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.deliverablesData.discord = discordData;
 
         this.deliverablesData.isActiveData.subscription = !!this.product.productServices?.length;
-        this.deliverablesData.isActiveData.digital = !!this.product.productResources.length;
+        this.deliverablesData.isActiveData.digital = !!this.product.productResources?.length;
         this.deliverablesData.isActiveData.discord = discordData.some(v => v.isActive);
     }
 
