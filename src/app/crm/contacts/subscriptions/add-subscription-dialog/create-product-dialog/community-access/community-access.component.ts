@@ -121,10 +121,6 @@ export class CommunityAccessSelectorComponent implements OnInit {
 
     ngOnInit(): void {
         this.mediumTitle = this.community.id?.charAt(0).toUpperCase() + this.community.id?.slice(1);
-        this.deliverables.forEach(deliverable => {
-            if (deliverable.serverId && !deliverable.uiOptions.rolesListInitialized)
-                this.getRoles(deliverable, false);
-        });
     }
 
     initDeliverables(value: CommunicationDeliverableInfoWithOptions[]) {
@@ -141,6 +137,11 @@ export class CommunityAccessSelectorComponent implements OnInit {
                 deliverable.uiOptions.rolesList = deliverable.roles ? deliverable.roles.map(v => ({ id: v.roleId, name: v.roleName })) : [];
                 deliverable.uiOptions.rolesListIds = deliverable.uiOptions.rolesList.map(v => v.id);
             }
+        });
+
+        this.deliverables.forEach(deliverable => {
+            if (deliverable.serverId && !deliverable.uiOptions.rolesListInitialized)
+                this.getRoles(deliverable, false);
         });
         this.changeDetector.detectChanges();
     }
