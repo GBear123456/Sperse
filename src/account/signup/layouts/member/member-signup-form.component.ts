@@ -109,10 +109,12 @@ export class MemberSignupFormComponent implements OnInit, OnDestroy {
             }));
         else
             observable = this.externalUserDataProxy.getUserData(new GetExternalUserDataInput({
+                tenantId: undefined,
                 provider: providerName,
                 exchangeCode: exchangeCode,
                 loginReturnUrl: this.loginService.getRedirectUrl(providerName),
-                options: undefined
+                options: undefined,
+                vault: false
             }));
 
         observable.pipe(finalize(() => abp.ui.clearBusy()))

@@ -39,7 +39,10 @@ import {
     TenantSubscriptionServiceProxy,
     ProductAddOnDto,
     ProductAddOnOptionDto,
-    PriceOptionType
+    PriceOptionType,
+    ExternalUserDataServiceProxy,
+    GetExternalUserDataInput,
+    PublicProductAddOnOptionInfo
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
@@ -145,8 +148,9 @@ export class SingleProductComponent implements OnInit {
     };
 
     taxCalculation: TaxCalculationResultDto;
-
     private calculationTaxTimeout;
+
+    discordPopup: Window;
 
     constructor(
         private sessionService: AppSessionService,
@@ -159,6 +163,7 @@ export class SingleProductComponent implements OnInit {
         private changeDetector: ChangeDetectorRef,
         private sanitizer: DomSanitizer,
         private profileService: ProfileServiceProxy,
+        private externalUserDataService: ExternalUserDataServiceProxy,
         private store$: Store<RootStore.State>,
         private statesService: StatesService,
         public ls: AppLocalizationService,
@@ -391,6 +396,12 @@ export class SingleProductComponent implements OnInit {
                 return of();
             }
         }
+
+        if (this.productInfo.data.hasDiscordService && this.productInfo.data.discordAppId && !this.requestInfo.discordUserId) {
+            abp.notify.error(this.ls.l('Please authorize Discord before submit'));
+            return of();
+        }
+
         let submitPriceOption = this.selectedPriceOption;
         if ((submitPriceOption.customerChoosesPrice && (!submitPriceOption.fee || this.customerPriceEditMode))) {
             abp.notify.error(this.ls.l('Invalid Price'));
@@ -431,7 +442,7 @@ export class SingleProductComponent implements OnInit {
             this.productInput.price = submitPriceOption.fee;
 
         if (submitPriceOption.type == PriceOptionType.OneTime)
-            this.productInput.addOnOptionIds = this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).filter(v => v['selected']).map(v => v.id);
+            this.productInput.addOnOptionIds = this.getSelectedAddOns().map(v => v.id);
 
         if (this.embeddedCheckout) {
             this.requestInfo.embeddedPayment = this.embeddedCheckout;
@@ -473,7 +484,11 @@ export class SingleProductComponent implements OnInit {
     }
 
     checkIsFree() {
-        this.isFreeProductSelected = this.selectedPriceOption.fee == 0 && !this.selectedPriceOption.customerChoosesPrice;
+        let selectedAddOnsAmount = this.getSelectedAddOns().reduce((p, c) => p += c.price, 0);
+        let currentIsFreeProductSelected = this.isFreeProductSelected;
+        this.isFreeProductSelected = (this.selectedPriceOption.fee + selectedAddOnsAmount) == 0 && !this.selectedPriceOption.customerChoosesPrice;
+        if (this.isFreeProductSelected && !currentIsFreeProductSelected)
+            this.productInput.quantity = 1;
     }
 
     initConditions() {
@@ -582,13 +597,18 @@ export class SingleProductComponent implements OnInit {
     getGeneralPrice(includeCoupon: boolean, includeAddOns: boolean = true): number {
         let pricePerItem = this.selectedPriceOption.fee;
         if (includeAddOns) {
-            if (this.productInfo.productAddOns && this.productInfo.productAddOns.length)
-                pricePerItem += this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).reduce((p, c) => p += c['selected'] ? c.price : 0, 0);
+            pricePerItem += this.getSelectedAddOns().reduce((p, c) => p += c.price, 0);
         }
         let price = pricePerItem * this.productInput.quantity;
         if (includeCoupon)
             price = this.applyCoupon(price);
         return price;
+    }
+
+    getSelectedAddOns(): PublicProductAddOnOptionInfo[] {
+        if (this.productInfo.productAddOns && this.productInfo.productAddOns.length)
+            return this.productInfo.productAddOns.flatMap(v => v.productAddOnOptions).filter(v => v['selected']);
+        return [];
     }
 
     getDiscount(): number {
@@ -750,6 +770,8 @@ export class SingleProductComponent implements OnInit {
 
         if (recalculateTaxes)
             this.calculateTax();
+
+        this.checkIsFree();
     }
 
     getDonationSuggestedAmounts(): ProductDonationSuggestedAmountInfo[] {
@@ -906,5 +928,59 @@ export class SingleProductComponent implements OnInit {
                 this.taxCalculation = result;
                 this.changeDetector.detectChanges();
             });
+    }
+
+    discordOAuth() {
+        let scopes = ['email', 'identify', 'guilds.join'];
+        let scopesString = scopes.join('%20');
+        let redirectUrl = `${AppConsts.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
+        let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.productInfo.data.discordAppId +
+            `&redirect_uri=${redirectUrl}&state=${this.tenantId}&scope=${scopesString}&prompt=none`;
+
+        this.discordPopup = window.open(popupUrl, 'discordOAuth', 'width=500,height=600');
+        if (!this.discordPopup) {
+            abp.notify.error('Please allow popups to authorize in Discord');
+            return;
+        }
+
+        const popupCheckInterval = setInterval(() => {
+            if (this.discordPopup.closed) {
+                this.discordPopup = null;
+                clearInterval(popupCheckInterval);
+                window.removeEventListener('message', messageHandler);
+            }
+        }, 500);
+
+        const messageHandler = (event: MessageEvent) => {
+            if (event.origin !== AppConsts.remoteServiceBaseUrl)
+                return;
+
+            if (event.data.code) {
+                const authCode = event.data.code;
+                this.externalUserDataService.getUserData(new GetExternalUserDataInput({
+                    tenantId: 0,
+                    provider: 'Discord',
+                    exchangeCode: authCode,
+                    loginReturnUrl: redirectUrl,
+                    options: null,
+                    vault: true
+                })).subscribe(res => {
+                    this.requestInfo.discordUserId = res.additionalData["Id"];
+                    this.requestInfo.discordUserName = res.additionalData["Username"];
+                    if (!this.requestInfo.email && res.emailAddress)
+                        this.requestInfo.email = res.emailAddress;
+                    this.changeDetector.detectChanges();
+                });
+            } else {
+                abp.notify.error(event.data.error || 'Failed to get ');
+            }
+
+            clearInterval(popupCheckInterval);
+            window.removeEventListener('message', messageHandler);
+            this.discordPopup.close();
+            this.discordPopup = null;
+        };
+
+        window.addEventListener('message', messageHandler);
     }
 }

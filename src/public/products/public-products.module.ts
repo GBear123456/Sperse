@@ -20,6 +20,7 @@ import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxTabsModule } from 'devextreme-angular/ui/tabs';
 
 import {
+    ExternalUserDataServiceProxy,
     LeadServiceProxy,
     PublicProductServiceProxy,
     TenantSubscriptionServiceProxy
@@ -49,7 +50,8 @@ import { ProductOptionSelectorModule } from '@app/crm/shared/product-option-sele
     providers: [
         PublicProductServiceProxy,
         LeadServiceProxy,
-        TenantSubscriptionServiceProxy
+        TenantSubscriptionServiceProxy,
+        ExternalUserDataServiceProxy
     ]
 })
 export class PublicProductsModule { }

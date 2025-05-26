@@ -184,6 +184,12 @@
         </div>
         <div class="box__right box__item">
             <form id="firstStepForm" #firstStepForm="ngForm" novalidate>
+                <div class="social_login" *ngIf="productInfo.data.hasDiscordService && productInfo.data.discordAppId">
+                    <button type="button" class="button_global button_global_blue2" (click)="discordOAuth()" [disabled]="discordPopup">
+                        <span class="discord-icon">Authorize Discord</span>
+                    </button>
+                    <p *ngIf="requestInfo.discordUserName">Authorized Discord user: <b>{{requestInfo.discordUserName}}</b>&nbsp;<i>({{requestInfo.discordUserId}})</i></p>
+                </div>
                 <div class="name">
                     <div class="input name__input">
                         <label>

@@ -29,7 +29,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'odata_ContactSlice',
         'odata_SubscriptionSlice',
         'Localization_GetLocalizationSource',
-        'Profile_GetFriendProfilePictureById'
+        'Profile_GetFriendProfilePictureById',
+        'Platform_Discord_GetServerRoles'
     ];
 
     constructor(

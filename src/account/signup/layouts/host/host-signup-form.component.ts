@@ -180,10 +180,12 @@ export class HostSignupFormComponent {
             if (providerName == ExternalLoginProvider.DISCORD.toLowerCase())
                 options['IncludeUserGuilds'] = true;
             return this.externalUserDataService.getUserData(new GetExternalUserDataInput({
+                tenantId: undefined,
                 provider: providerName,
                 exchangeCode: exchangeCode,
                 loginReturnUrl: this.loginService.getRedirectUrl(providerName),
-                options: options
+                options: options,
+                vault: false
             }));
         }
     }
