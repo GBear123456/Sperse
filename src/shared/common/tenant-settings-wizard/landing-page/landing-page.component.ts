@@ -98,7 +98,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             text: item
         };
     });
-    checkoutThemes = ['Default', 'Classic', 'WooCommerce'];
+    checkoutThemes = ['Default', 'Classic', 'WooCommerce','Stripe','Shop','Virtual'];
 
     checkoutFields = [
         'FirstName', 'LastName', 'Email', 'PhoneNumber', 'Shipping', 'Billing', 'DateOfBirth', 'Company',
