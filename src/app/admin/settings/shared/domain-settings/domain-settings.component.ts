@@ -13,7 +13,7 @@ import {
     GetLandingPageSettingsDto, CheckHostNameDnsMappingInput, TenantSslCertificateServiceProxy,
     TenantHostServiceProxy, TenantHostType, TenantSslBindingInfo, DictionaryServiceProxy,
     TenantSslCertificateInfo, AddSslBindingInput, UpdateSslBindingInput, LandingPageSettingsDomainDto,
-    ContactLandingPageServiceProxy, LandingPageSettingsDto, AddVercelDomainInput, HostingType, DomainConfigDto,
+    ContactLandingPageServiceProxy, LandingPageSettingsDto, AddVercelDomainInput, HostingType, DomainConfigDto, WhitelistDomainDto,
 } from '@shared/service-proxies/service-proxies';
 import { environment } from '@root/environments/environment';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
@@ -47,6 +47,9 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     isNewLandingDomainAdding = false;
     landingSettings: GetLandingPageSettingsDto;
     defaultTenantName = AppConsts.defaultTenantName;
+
+    whitelistDomains: WhitelistDomainDto[] = [];
+    isNewWhitelistDomainAdding = false;
 
     model: any;
     orgUnits: any[] = [{
@@ -133,6 +136,12 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
             );
 
         this.getTenantSslCertificates();
+
+        this.tenantHostService.getWhitelistDomains()
+            .subscribe(result => {
+                this.whitelistDomains = result;
+                this.changeDetection.detectChanges();
+            });
     }
 
     ngOnInit(): void {
@@ -373,7 +382,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         }
     }
 
-    onLaningPageDomainChanged(event) {
+    onDomainChanged(event) {
         if (event.component.option('isValid') && (event.value.includes('http') || event.value.includes('/'))) {
             setTimeout(() => {
                 event.component.option('value', event.value.replace(
@@ -611,6 +620,54 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         let settings = LandingPageSettingsDto.fromJS(this.landingSettings);
 
         return this.landingPageProxy.updateLandingPageSettings(settings);
+    }
+
+    addWhitelistDomain(inputComponent) {
+        inputComponent.value = inputComponent.value.trim();
+        if (this.whitelistDomains.find(v => v.domainName.toLowerCase() == inputComponent.value.toLowerCase())) {
+            this.message.warn(`${inputComponent.value} is already added`);
+            return;
+        }
+
+        this.isNewWhitelistDomainAdding = true;
+        inputComponent.disabled = true;
+
+        this.tenantHostService.createWhitelistDomain(inputComponent.value)
+            .pipe(finalize(() => {
+                this.isNewWhitelistDomainAdding = false;
+                inputComponent.disabled = false;
+                this.changeDetection.detectChanges();
+            }))
+            .subscribe(res => {
+                let domainDto = new WhitelistDomainDto({
+                    domainName: inputComponent.value
+                });
+                this.whitelistDomains.push(domainDto);
+                inputComponent.value = '';
+                this.notify.info(this.l('SavedSuccessfully'));
+            });
+    }
+
+    deleteWhitelistDomain(domain: WhitelistDomainDto) {
+        if (domain['isDeleting'])
+            return;
+
+        domain['isDeleting'] = true;
+        this.tenantHostService.deleteWhitelistDomain(domain.domainName)
+            .pipe(finalize(() => {
+                domain['isDeleting'] = false;
+                this.changeDetection.detectChanges();
+            }))
+            .subscribe(() => {
+                this.whitelistDomains.some((item, index) => {
+                    if (domain.domainName == item.domainName) {
+                        this.whitelistDomains.splice(index, 1);
+                        return true;
+                    }
+                });
+                this.notify.info(this.l('SuccessfullyDeleted'));
+                this.changeDetection.detectChanges();
+            });
     }
 
     toogleMasterDatails(cell, dataGrid) {
