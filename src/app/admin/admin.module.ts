@@ -80,6 +80,7 @@ import { GeneralSettingsComponent } from './settings/shared/general-settings/gen
 import { DomainSettingsComponent } from './settings/shared/domain-settings/domain-settings.component';
 import { StripeSettingsComponent } from './settings/shared/stripe-settings/stripe-settings.component';
 import { PaypalSettingsComponent } from './settings/shared/paypal-settings/paypal-settings.component';
+import { PaymentProvidersSettingsComponent } from './settings/shared/payment-provider-settings/payment-providers-settings.component';
 import { FacebookSettingsComponent } from './settings/shared/facebook-settings/facebook-settings.component';
 import { GoogleSettingsComponent } from './settings/shared/google-settings/google-settings.component';
 import { LinkedInSettingsComponent } from './settings/shared/linkedin-settings/linkedin-settings.component';
@@ -204,6 +205,7 @@ import { CurrencySelectorModule } from '@shared/common/currency-selector/currenc
         DomainSettingsComponent,
         StripeSettingsComponent,
         PaypalSettingsComponent,
+        PaymentProvidersSettingsComponent,
         FacebookSettingsComponent,
         GoogleSettingsComponent,
         LinkedInSettingsComponent,

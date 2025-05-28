@@ -101,6 +101,11 @@
                         <stripe-settings></stripe-settings>
                     </ng-container>
                 </mat-step>
+                <mat-step *ngIf="isPaymentsEnabled" #paymentProvidersStep>
+                    <ng-container *ngIf="stepper.selected === paymentProvidersStep">
+                        <payment-providers-settings></payment-providers-settings>
+                    </ng-container>
+                </mat-step>
                 <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #epcvipLinkStep>
                     <ng-container *ngIf="stepper.selected === epcvipLinkStep">
                         <epcvip-link-settings></epcvip-link-settings>

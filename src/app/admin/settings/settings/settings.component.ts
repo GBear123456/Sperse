@@ -113,6 +113,7 @@ export class SettingsComponent extends AppComponentBase implements OnInit, OnDes
             { key: 'Bugsnag', visible: this.appService.isHostTenant },
             { key: 'PayPal', visible: this.isPaymentsEnabled },
             { key: 'Stripe', visible: this.isPaymentsEnabled },
+            { key: 'PaymentProviders', visible: this.isPaymentsEnabled },
             //{ key: 'IDCS Link', visible: this.isCreditReportFeatureEnabled },
             { key: 'EPCVIPLink', visible: !this.appService.isHostTenant && this.isPFMApplicationsFeatureEnabled },
             { key: 'EPCVIPEmail', visible: !this.appService.isHostTenant && this.isPFMApplicationsFeatureEnabled },
