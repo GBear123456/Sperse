@@ -42,7 +42,8 @@ import {
     PriceOptionType,
     ExternalUserDataServiceProxy,
     GetExternalUserDataInput,
-    PublicProductAddOnOptionInfo
+    PublicProductAddOnOptionInfo,
+    PublicProductChargeInput
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
@@ -61,6 +62,7 @@ import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreA
 import { AppSessionService } from '../../../shared/common/session/app-session.service';
 
 declare const Stripe: any;
+declare const SpreedlyExpress: any;
 
 @Component({
     selector: 'single-product',
@@ -151,6 +153,8 @@ export class SingleProductComponent implements OnInit {
     private calculationTaxTimeout;
 
     discordPopup: Window;
+    spreedlyJsLoaded: boolean = false;
+    spreedlyPopupInit: boolean = false;
 
     constructor(
         private sessionService: AppSessionService,
@@ -220,6 +224,19 @@ export class SingleProductComponent implements OnInit {
         }
     }
 
+    initializeSpreedly() {
+        if (!this.productInfo.data.spreedlyEnvironmentKey || !this.productInfo.data.spreedlyGateways.length)
+            return;
+
+        if ((<any>window).SpreedlyExpress)
+            return;
+
+        DomHelper.addScriptLink('https://core.spreedly.com/iframe/express-3.min.js', 'text/javascript', () => {
+            this.spreedlyJsLoaded = true;
+            this.changeDetector.detectChanges();
+        });
+    }
+
     initializePasswordComplexity() {
         this.profileService.getPasswordComplexitySetting().subscribe(result => {
             this.passwordComplexitySetting = result.setting;
@@ -258,13 +275,14 @@ export class SingleProductComponent implements OnInit {
                         this.productInfo.productDonation.raisedAmount >= this.productInfo.productDonation.goalAmount;
 
                     if (this.isInStock && (!this.isDonationGoalReached || this.productInfo.productDonation.keepActiveIfGoalReached)) {
-                        this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
+                        this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured && !result.data.spreedlyGateways?.length;
                         if (result.descriptionHtml)
                             this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
                         if (result.data.hasTenantService)
                             this.initializePasswordComplexity();
                         this.initConditions();
                         this.initializePayPal();
+                        this.initializeSpreedly();
                     }
                 } else {
                     this.showNotFound = true;
@@ -319,6 +337,58 @@ export class SingleProductComponent implements OnInit {
         this.showCheckout = false;
     }
 
+    submitSpreedlyRequest(spreedlyProviderId: number) {
+        if (!SpreedlyExpress || !spreedlyProviderId)
+            return;
+
+        abp.ui.setBusy();
+        this.getSubmitRequest('Spreedly')
+            .pipe(
+                finalize(() => abp.ui.clearBusy())
+            )
+            .subscribe(res => {
+                if (this.spreedlyPopupInit)
+                    SpreedlyExpress.unload();
+
+                SpreedlyExpress.init(this.productInfo.data.spreedlyEnvironmentKey,
+                    {
+                        "amount": this.getGeneralPrice(true) + ' ' + this.currencySymbol,
+                        "company_name": this.productInfo.name,
+                        "sidebar_top_description": '',
+                        "sidebar_bottom_description": this.selectedPriceOption.name,
+                        "full_name": this.requestInfo.firstName + ' ' + this.requestInfo.lastName
+                    },
+                    {
+                        "email": this.requestInfo.email.trim(),
+                        "country": "US"
+                    }
+                );
+                SpreedlyExpress.onPaymentMethod((token, paymentMethod) => {
+                    this.processSpreedlyPurchase(Number(res.paymentData), spreedlyProviderId, token);
+                });
+                SpreedlyExpress.onInit(() => {
+                    this.spreedlyPopupInit = true;
+                    SpreedlyExpress.openView();
+                });
+            });
+    }
+
+    processSpreedlyPurchase(leadRequestId, gatewayTokenId, paymentMethodToken) {
+        abp.ui.setBusy();
+        this.publicProductService.publicProductCharge(new PublicProductChargeInput({
+            tenantId: this.tenantId,
+            leadRequestId: leadRequestId,
+            paymentGateway: 'Spreedly',
+            paymentGatewayTokenId: gatewayTokenId,
+            paymentMethodToken: paymentMethodToken
+        })).pipe(
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe(invoicePublicId => {
+            this.initialInvoiceXref = invoicePublicId;
+            this.redirectToReceipt();
+        });
+    }
+
     submitFreeRequest() {
         abp.ui.setBusy();
         this.getSubmitRequest(null)
@@ -333,7 +403,7 @@ export class SingleProductComponent implements OnInit {
     submitTenant() {
         if (!this.isFormValid()) {
             abp.notify.error(this.ls.l('SaleProductValidationError'));
-            return of();
+            return;
         }
 
         if (this.phoneNumber && this.phoneNumber.isEmpty())
@@ -457,7 +527,7 @@ export class SingleProductComponent implements OnInit {
         );
     }
 
-    onPayPalApprove() {
+    redirectToReceipt() {
         location.href = this.getReceiptUrl();
     }
 
@@ -519,6 +589,13 @@ export class SingleProductComponent implements OnInit {
 
         return this.productInfo.data.paypalClientId &&
             (!this.couponInfo || this.couponInfo.duration == CouponDiscountDuration.Forever);
+    }
+
+    showSpreedlyButtons() {
+        if (this.selectedPriceOption.type == PriceOptionType.Subscription)
+            return false;
+
+        return !!this.productInfo.data.spreedlyGateways?.length;
     }
 
     showSubmitButton() {

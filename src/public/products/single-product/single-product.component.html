@@ -425,8 +425,16 @@
                                      [height]="55"
                                      [showButtonType]="paypalButtonType"
                                      [disabled]="!isFormValid()"
-                                     (onApprove)="onPayPalApprove()">
+                                     (onApprove)="redirectToReceipt()">
                             </pay-pal>
+                            <ng-container *ngIf="showSpreedlyButtons()">
+                                <button *ngFor="let spreedlyGateway of productInfo.data.spreedlyGateways"
+                                        class="button_global button_global_blue"
+                                        [ngClass]="{disabled: !isFormValid() || !spreedlyJsLoaded}"
+                                        (click)="submitSpreedlyRequest(spreedlyGateway.key)">
+                                    {{spreedlyGateway.value}}
+                                </button>
+                            </ng-container>
                             <div *ngIf="showNoPaymentSystems" class="no-payment-systems">
                                 Payment systems are not configured
                             </div>
