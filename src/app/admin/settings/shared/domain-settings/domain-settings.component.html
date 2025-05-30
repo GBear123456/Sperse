@@ -781,8 +781,9 @@
                             <div class="overlap">
                                 <div class="rectangle"></div>
                                 <p class="text-wrapper">
-                                    You can set a whitelist domain. We recommend using the
-                                    convention of <b>my.yourdomain.com</b>
+                                    You can set a whitelisted domain. We recommend using
+                                    the convention <b>my.yourdomain.com / yourdomain.com</b>.
+                                    Wildcard domains (e.g., <b>*.yourdomain.com</b>) are also supported.
                                 </p>
                                 <div class="group">
                                     <div class="overlap-group">
@@ -795,7 +796,7 @@
                                                                          message="{{l('ThisFieldIsRequired')}}.">
                                                     </dxi-validation-rule>
                                                     <dxi-validation-rule type="pattern"
-                                                                         [pattern]="regexPatterns.url"
+                                                                         [pattern]="regexPatterns.whitelistDomain"
                                                                          [message]="l('LetsEncrypt_FailedToValidateDomain')">
                                                     </dxi-validation-rule>
                                                 </dx-validator>
@@ -829,7 +830,7 @@
                                                   [columnAutoWidth]="true"
                                                   [allowColumnResizing]="true"
                                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                                        <dxi-column dataField="domainName" [caption]="l('Domain')" cellTemplate="domainNameCell"></dxi-column>
+                                        <dxi-column dataField="hostName" [caption]="l('Domain')" cellTemplate="domainNameCell"></dxi-column>
 
                                         <dxi-column [width]="190" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
                                         <div *dxTemplate="let data of 'domainNameCell'" class="clipboard-holder">
@@ -839,7 +840,7 @@
                                             </a>
                                         </div>
                                         <div *dxTemplate="let data of 'editDeleteTemplate'" style="text-align: right;">
-                                            <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deleteWhitelistDomain(data.data, data.data.index)">{{l('Delete')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isDeleting }"></i></a>
+                                            <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deleteSSLBinding(data)">{{l('Delete')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isDeleting }"></i></a>
                                         </div>
                                     </dx-data-grid>
 
