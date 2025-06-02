@@ -754,8 +754,8 @@
     </mat-tab>
     <mat-tab *ngIf="isTenantHostCreateGranted || isTenantHostEditGranted">
         <ng-template mat-tab-label>
-            <img src="./assets/common/icons/shopping.svg">
-            <div class="title">White list Domain</div>
+            <img src="./assets/common/icons/blocks.svg">
+            <div class="title">Whitelisted Domains</div>
         </ng-template>
 
         <dx-scroll-view [height]="scrollableAreaHeight" showScrollbar="onHover">
@@ -772,7 +772,7 @@
                                         <div class="text-wrapper-2">1</div>
                                     </div>
                                 </div>
-                                <div class="text-wrapper-3">Enter White list domain</div>
+                                <div class="text-wrapper-3">Enter domain to whitelist it</div>
                                 <img (click)="enterBlock.classList.toggle('hidden')" [ngClass]="{closed: enterBlock.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
                                 <div class="rectangle-3"></div>
                             </div>
@@ -782,8 +782,8 @@
                                 <div class="rectangle"></div>
                                 <p class="text-wrapper">
                                     You can set a whitelisted domain. We recommend using
-                                    the convention <b>my.yourdomain.com / yourdomain.com</b>.
-                                    Wildcard domains (e.g., <b>*.yourdomain.com</b>) are also supported.
+                                    the convention <b><i>my.yourdomain.com / yourdomain.com</i></b>.
+                                    Wildcard domains (e.g., <b><i>*.yourdomain.com</i></b>) are also supported.
                                 </p>
                                 <div class="group">
                                     <div class="overlap-group">
