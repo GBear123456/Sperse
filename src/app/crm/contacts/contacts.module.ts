@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatMenuModule } from '@angular/material/menu';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -46,6 +47,9 @@ import { ImageViewerModule } from 'ng2-image-viewer';
 import { VgCoreModule, VgControlsModule, VgOverlayPlayModule, VgBufferingModule } from 'ngx-videogular';
 import { NgxMaskModule } from '@node_modules/ngx-mask';
 import { CKEditorModule } from 'ckeditor4-angular';
+import { CdkAccordionModule } from '@angular/cdk/accordion';
+import { LucideAngularModule } from 'lucide-angular';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -152,7 +156,6 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { InvoiceAddressDialog } from '@app/crm/shared/create-invoice-dialog/invoice-address-dialog/invoice-address-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
-import { AddProductDialogComponent } from './subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
 import { CreateProductDialogComponent, FilterAssignmentsPipe } from './subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './subscriptions/add-subscription-dialog/add-member-service-dialog/add-member-service-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
@@ -166,7 +169,8 @@ import { CreateActivityDialogComponent } from '@app/crm/activity/create-activity
 import { PaymentsInfoService } from '@app/shared/common/payments-info/payments-info.service';
 import { ContactPaymentsInfoService } from './payment-information/payments-info.service';
 import { CurrencySelectorModule } from '../../../shared/common/currency-selector/currency-selector.module';
-
+import { DeliverableFeatureFieldsComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/deliverable-feature-fields/deliverable-feature-fields.component'
+import { CommunityAccessSelectorComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/community-access/community-access.component'
 @NgModule({
     declarations: [
         NotesComponent,
@@ -226,7 +230,6 @@ import { CurrencySelectorModule } from '../../../shared/common/currency-selector
         CreateInvoiceDialogComponent,
         InvoiceAddressDialog,
         LeadRelatedContactsComponent,
-        AddProductDialogComponent,
         CreateProductDialogComponent,
         FilterAssignmentsPipe,
         AddMemberServiceDialogComponent,
@@ -238,7 +241,9 @@ import { CurrencySelectorModule } from '../../../shared/common/currency-selector
         CustomerListDialogComponent,
         PropertyInformationComponent,
         ResellerActivityComponent,
-        CreateActivityDialogComponent
+        CreateActivityDialogComponent,
+        DeliverableFeatureFieldsComponent,
+        CommunityAccessSelectorComponent
     ],
     imports: [
         FormsModule,
@@ -304,9 +309,13 @@ import { CurrencySelectorModule } from '../../../shared/common/currency-selector
         GooglePlaceModule,
         MatTooltipModule,
         MatSliderModule,
+        MatMenuModule,
         FeaturesModule,
         InvoiceGridMenuModule,
-        CurrencySelectorModule
+        CurrencySelectorModule,
+        CdkAccordionModule,
+        LucideAngularModule,
+        MatSlideToggleModule
     ],
     entryComponents: [
         CreateActivityDialogComponent,
@@ -332,7 +341,6 @@ import { CurrencySelectorModule } from '../../../shared/common/currency-selector
         CancelSubscriptionDialogComponent,
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
-        AddProductDialogComponent,
         CreateProductDialogComponent,
         AddMemberServiceDialogComponent,
         TemplateDocumentsDialogComponent,

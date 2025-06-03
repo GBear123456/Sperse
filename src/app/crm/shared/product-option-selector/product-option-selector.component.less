@@ -1,90 +1,49 @@
 :host {
-    .state-slider {
-        position: relative;
-        width: 334px;
-        height: 38px;
-        border: solid 1px #9e9e9e;
-        border-radius: 19px;
-        cursor: pointer;
+    width: 100%;
+
+    ::ng-deep .dx-tabs {
         margin-bottom: 15px;
 
-        &.point1 {
-            width: 128px;
-
-            ::ng-deep .mat-slider {
-                .mat-slider-thumb {
-                    width: 100%;
-                    right: 0px;
-                }
-            }
+        &.dx-tabs-expanded {
+            border-radius: 19px;
+            border-color: #9e9e9e;
         }
 
-        &.point2 {
-            width: 222px;
+        &.dx-tabs-nav-buttons {
+            border: 0;
 
-            ::ng-deep .mat-slider {
-                .mat-slider-thumb {
-                    width: 50%;
-                    right: -50%;
-                }
-            }
-        }
-
-        &.point4 {
-            width: 444px;
-
-            ::ng-deep .mat-slider {
-                .mat-slider-thumb {
-                    width: 25%;
-                    right: -25%;
-                }
-            }
-        }
-
-        .captions {
-            position: absolute;
-            display: flex;
-            width: 100%;
-            height: 100%;
-            justify-content: space-around;
-            font-size: 14px;
-            font-weight: 500;
-            color: #919aa3;
-            z-index: 2;
-
-            div {
-                margin: auto;
-                text-align: center;
-            }
-
-            .active {
-                font-weight: 500;
-                color: #fff;
-            }
-        }
-
-        ::ng-deep .mat-slider {
-            width: 100%;
-            height: 38px;
-
-            .mat-slider-wrapper {
-                left: 0px;
-                width: 100%;
-            }
-
-            .mat-slider-track-wrapper {
-                display: none;
-            }
-
-            .mat-slider-thumb {
-                width: 33%;
-                height: 36px;
-                right: -33%;
-                bottom: -12px;
+            .dx-tabs-scrollable {
                 border-radius: 19px;
+                border: 1px solid #9e9e9e;
+                overflow: hidden;
+
+                .dx-tabs-wrapper {
+                    border: 0;
+                }
+            }
+        }
+
+        .dx-item {
+            min-width: 100px;
+            background-color: transparent;
+            color: white;
+
+            &.dx-tab-selected {
                 background-color: #4caf50;
-                border-color: transparent;
-                transform: none;
+                border-radius: 19px;
+
+                &:after {
+                    content: none;
+                    border: 0;
+                }
+            }
+        }
+
+        .dx-tabs-nav-button {
+            background-color: transparent;
+
+            .dx-icon {
+                color: white;
             }
         }
     }

@@ -32,6 +32,8 @@
             <button class="reset-button" *ngIf="showResetToDefault && feature.value" (click)="resetToDefault(feature)"></button>
         </ng-container>
         <button class="reset-button" *ngIf="enableRestoreCustom && feature.isCustom" (click)="restoreValue(feature)" title="Clear manually changed value"></button>
+
+        <button *ngIf="hostDiscordClientId && feature.data.name == 'CRM.Discord'" class="button-layout button-primary" (click)="installBotClick()" title="Click to install BOT to your server">Install Bot</button>
         <!--<select *ngIf="node.data.inputType.name === 'COMBOBOX'"
             [(ngModel)]="node.value"
             [disabled]="isReadOnly"

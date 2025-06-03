@@ -15,7 +15,7 @@
             </div>
             <div class="subscription-price">
                 <product-option-selector #optionSelector
-                                         [productSubscriptionOptions]="signUpProduct.productSubscriptionOptions"
+                                         [productPriceOptions]="signUpProduct.priceOptions"
                                          (onSelect)="onProductOptionSelect($event)">
                 </product-option-selector>
                 <div class="price-wrapper" *ngIf="selectedSubscriptionOption">

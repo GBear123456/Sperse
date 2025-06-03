@@ -15,8 +15,8 @@ import {
     TenantPaymentSettingsServiceProxy,
     CreditSettings,
     ProductServiceProxy,
-    ProductType,
-    ProductDto
+    ProductDto,
+    PriceOptionType
 } from '@shared/service-proxies/service-proxies';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 
@@ -32,9 +32,9 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
 export class CreditsSettingsComponent implements ITenantSettingsStepComponent {
     creditSettings: CreditSettings;
 
-    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.General, undefined, false, true)
+    products$: Observable<ProductDto[]> = this.productProxy.getProducts(PriceOptionType.OneTime, undefined, false, true, false)
         .pipe(map(values => {
-            return values.filter(v => v.isPublished);
+            return values.filter(v => v.isPublished && !v.hasRequiredAddOns);
         }));
 
     constructor(

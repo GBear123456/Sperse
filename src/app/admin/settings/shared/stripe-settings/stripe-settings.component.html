@@ -210,23 +210,23 @@
 
                     <div class="form-group">
                         <label class="base-label">{{l("Publishable key")}}</label>
-                        <input class="base-input"  placeholder="Enter Your Secret Key" type="text" [(ngModel)]="settings.publishableKey">
+                        <input class="base-input" placeholder="Enter Your Secret Key" type="text" [(ngModel)]="settings.publishableKey">
                         <span class="base-hint" [innerHtml]="l('StripeSecretKeyHint')"></span>
                     </div>
 
                     <dx-check-box id="StripeIgnoreExternalWebhooks"
-                                    [text]="l('Ignore external webhooks')"
-                                    [(value)]="settings.ignoreExternalWebhooks">
+                                  [text]="l('Ignore external webhooks')"
+                                  [(value)]="settings.ignoreExternalWebhooks">
                     </dx-check-box>
                     <span class="base-hint">*Skip webhooks that are not intended for <b>{{tenantName}}</b></span>
-                    
+
                     <br /><br />
                     <div>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</div>
                     <button [disabled]="settings.webhookSingingSecret" [title]="settings.webhookSingingSecret || ''" class="base-button" (click)="createWebhook(settings, false)">
                         {{ settings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
                     </button>
                     <img *ngIf="settings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
-                    
+
                     <div *ngIf="isHost" class="section">
                         <div class="form-group">
                             <label class="base-label">{{l("OAuth Client Id")}}</label>
@@ -244,20 +244,17 @@
                         {{ settings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
                     </button>
                     <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
-                    
+                    <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
+                                  [text]="l('Ignore external connected accounts')"
+                                  [(value)]="settings.ignoreExternalConnectedAccounts">
+                    </dx-check-box>
+                    <span class="base-hint">*Skip webhooks from external connected accounts</span>
                     <h6 class="tax-settings">Tax Settings</h6>
                     <button class="base-button" (click)="enableAutomaticTaxation(settings)">
                         {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
                     </button>
 
                     <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
-                    <br /><br />
-
-                    <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
-                                    [text]="l('Ignore external connected accounts')"
-                                    [(value)]="settings.ignoreExternalConnectedAccounts">
-                    </dx-check-box>
-                    <span class="base-hint">*Skip webhooks from external connected accounts</span>
                 </div>
                 <div *ngIf="!isHost" class="account-actions">
                     <span *ngIf="!settings.isActive" (click)="setIsActive(settings)"><i class="fa fa-check"></i>Set as active</span>
