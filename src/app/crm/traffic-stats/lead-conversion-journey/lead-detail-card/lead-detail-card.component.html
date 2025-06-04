@@ -1,38 +1,38 @@
 <div class="referral-status-card">
   <h3 class="section-title">
-    <i class="fas fa-user-friends icon"></i> Referred By
+    <lucide-user-plus class="icon"></lucide-user-plus> Referred By
   </h3>
   <p class="section-subtitle">Referral source and lead information</p>
 
   <div class="referral-box">
     <div class="info-item">
-      <label><i class="fas fa-user"></i> Referring Person</label>
+      <label><lucide-user class="icon-sm"></lucide-user> Referring Person</label>
       <div class="highlight-box bold">{{ referringPerson }}</div>
     </div>
     <div class="info-item">
-      <label><i class="fas fa-tag"></i> Tracking Code</label>
+      <label><lucide-tag class="icon-sm"></lucide-tag> Tracking Code</label>
       <div class="highlight-box">{{ trackingCode }}</div>
     </div>
   </div>
 
   <div class="lead-header">
-    <h3><i class="fas fa-signal icon"></i> Lead Status</h3>
+    <h3><lucide-signal class="icon"></lucide-signal> Lead Status</h3>
     <span class="badge">New Lead</span>
   </div>
 
   <div class="lead-status">
     <div class="status-row">
-      <i class="fas fa-dollar-sign icon"></i>
+      <lucide-dollar-sign class="icon-sm"></lucide-dollar-sign>
       <label>Deal Amount</label>
       <span class="value placeholder">Enter value</span>
     </div>
     <div class="status-row">
-      <i class="fas fa-calendar-plus icon"></i>
+      <lucide-calendar-plus class="icon-sm"></lucide-calendar-plus>
       <label>First Visit</label>
       <span class="value">{{ firstVisit }}</span>
     </div>
     <div class="status-row">
-      <i class="fas fa-pen icon"></i>
+      <lucide-pen-line class="icon-sm"></lucide-pen-line>
       <label>Last Modified</label>
       <span class="value">{{ lastModified }}</span>
     </div>
