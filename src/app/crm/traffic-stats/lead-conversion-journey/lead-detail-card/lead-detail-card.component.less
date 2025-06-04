@@ -1,0 +1,141 @@
+@border: #e1e1e1;
+@green-light: #eaf7ec;
+@green-text: #1e7e34;
+@text-muted: #666;
+@gold: #b88400;
+@badge-bg: #fff5d1;
+@badge-text: #b88400;
+
+.referral-status-card {
+  font-family: Arial, sans-serif;
+  border: 1px solid @border;
+  border-radius: 8px;
+  padding: 20px;
+  background: white;
+
+  .section-title {
+    font-size: 16px;
+    color: @green-text;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .section-subtitle {
+    font-size: 13px;
+    color: @text-muted;
+    margin-bottom: 16px;
+  }
+
+  .referral-box {
+    background: @green-light;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+
+    .info-item {
+      flex: 1;
+      min-width: 200px;
+
+      label {
+        font-size: 12px;
+        color: @text-muted;
+        font-weight: bold;
+        margin-bottom: 6px;
+        display: block;
+
+        i {
+          margin-right: 6px;
+        }
+      }
+
+      .highlight-box {
+        background: #fff;
+        border: 1px solid @border;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 14px;
+        color: #222;
+
+        &.bold {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+
+  .lead-header {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h3 {
+      font-size: 16px;
+      color: @gold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge {
+      background: @badge-bg;
+      color: @badge-text;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+  }
+
+  .lead-status {
+    margin-top: 12px;
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #f2f2f2;
+
+      .icon {
+        margin-right: 10px;
+        color: @gold;
+        width: 16px;
+      }
+
+      label {
+        width: 100px;
+        font-weight: bold;
+      }
+
+      .value {
+        flex: 1;
+
+        &.placeholder {
+          color: @text-muted;
+          font-style: italic;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .referral-box {
+      flex-direction: column;
+    }
+
+    .lead-header {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .badge {
+        margin-top: 8px;
+      }
+    }
+  }
+}

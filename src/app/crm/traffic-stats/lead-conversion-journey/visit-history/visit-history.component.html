@@ -1,0 +1,34 @@
+<div class="visit-history-card">
+    <h3>
+        <i class="icon">&#x1F550;</i> Visit History
+        <span class="count">50 visits</span>
+    </h3>
+    <p>Previous visits and session details</p>
+
+    <div class="visit" *ngFor="let v of visits" [class.active]="v.isCurrent">
+        <div class="header">
+            <div class="badge">#{{ v.id }}</div>
+            <div class="date">{{ v.date }}</div>
+            <div class="time">{{ v.time }}</div>
+        </div>
+
+        <div class="details">
+            <div class="duration">
+                ⏱ {{ v.duration }} &nbsp; 🧭 {{ v.pages }} pages
+            </div>
+            <div class="ip">
+                <img
+                    *ngIf="v.countryCode"
+                    [src]="getFlagUrl(v.countryCode)"
+                    alt="flag"
+                />
+                <span *ngIf="v.ip">{{ v.ip }}</span>
+            </div>
+            <div class="user">
+                <i class="icon">🌐</i>
+                <i class="icon">💻</i>
+                <span class="username">{{ v.user }}</span>
+            </div>
+        </div>
+    </div>
+</div>

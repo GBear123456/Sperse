@@ -1,0 +1,59 @@
+.root {
+   max-width: 1280px;
+   margin: 0 auto;
+
+  .lead-conversion {
+      margin: 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+  
+      .stats-title {
+        min-width: 200px;
+      }
+    
+      h2 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #222;
+        margin-bottom: 4px;
+      }
+    
+      p {
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 20px;
+      }
+  
+      .stats-container {
+        display: flex;
+        flex: 1;
+        gap: 16px;
+  
+        app-stat-card {
+          flex: 1 1 0;
+        }
+      }
+  }
+
+  app-location-network {
+    width: 100%;
+    margin-bottom: 24px;
+  }
+
+  app-device-session {
+    width: 100%;
+    margin-bottom: 24px;
+  }
+
+  .lead-details {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+}
+  
+  
+  

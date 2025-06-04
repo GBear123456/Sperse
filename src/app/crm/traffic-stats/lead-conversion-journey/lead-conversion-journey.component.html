@@ -1,0 +1,67 @@
+<div class="root">
+  <div class="lead-conversion">
+      <div class="stats-title">
+          <h2>Lead Conversion Journey</h2>
+          <p>Complete visitor profile with referral tracking and visit history</p>
+      </div>
+    
+      <div class="stats-container">
+        <app-stat-card 
+          *ngFor="let stat of stats"
+          [icon]="stat.icon"
+          [label]="stat.label"
+          [value]="stat.value"
+          [colorClass]="stat.colorClass">
+        </app-stat-card>
+      </div>
+  </div>
+  <div class="lead-details">
+    <app-lead-detail-card [referrerName]="leadDetail.referrerName"
+      [trackingCode]="leadDetail.trackingCode"
+      [firstVisit]="leadDetail.firstVisit"
+      [lastModified]="leadDetail.lastModified"
+      [dealAmount]="leadDetail.dealAmount"     
+    ></app-lead-detail-card>
+    <app-utm-parameters-card
+      [campaign]="utmData.campaign"
+      [channel]="utmData.channel"
+      [source]="utmData.source"
+      [medium]="utmData.medium"
+      [content]="utmData.content"
+      [term]="utmData.term"
+    ></app-utm-parameters-card>
+  </div>
+  <app-location-network
+    [ipAddress]="locationData.ipAddress"
+    [city]="locationData.city"
+    [region]="locationData.region"
+    [country]="locationData.country"
+    [coordinates]="locationData.coordinates"
+    [ispProvider]="locationData.ispProvider"
+    [connectionType]="locationData.connectionType"
+  ></app-location-network>
+  <app-device-session
+    [deviceType]="deviceSessionData.deviceType"
+    [operatingSystem]="deviceSessionData.operatingSystem"
+    [platformArchitecture]="deviceSessionData.platformArchitecture"
+    [connectionType]="deviceSessionData.connectionType"
+    [webBrowser]="deviceSessionData.webBrowser"
+    [screenResolution]="deviceSessionData.screenResolution"
+    [language]="deviceSessionData.language"
+    [timezone]="deviceSessionData.timezone"
+  ></app-device-session>
+  <app-custom-fields
+    [customFields]="customFields"
+    (fieldUpdated)="onFieldUpdated($event)">
+  </app-custom-fields>
+  <app-url-info
+    [entryUrl]="urlInfo.entryUrl"
+    [referringUrl]="urlInfo.referringUrl"
+    [userAgent]="urlInfo.userAgent">
+  </app-url-info>
+  <app-visit-history
+    [visits]="visits"
+>
+  </app-visit-history>
+</div>
+  
