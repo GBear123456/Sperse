@@ -592,7 +592,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     showSpreedlyButtons() {
-        if (this.selectedPriceOption.type == PriceOptionType.Subscription)
+        if (this.selectedPriceOption.type == PriceOptionType.Subscription && !this.singlePaymentOptions.includes(this.selectedPriceOption.frequency))
             return false;
 
         return !!this.productInfo.data.spreedlyGateways?.length;

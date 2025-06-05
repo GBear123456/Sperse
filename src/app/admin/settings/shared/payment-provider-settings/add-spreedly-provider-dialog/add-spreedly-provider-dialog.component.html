@@ -1,0 +1,52 @@
+<modal-dialog [title]="titleText" [buttons]="buttons">
+    <div class="content">
+        <dx-scroll-view showScrollbar="onHover">
+            <dx-validation-group>
+                <div class="field">
+                    <label>{{ls.l('Gateway')}}</label>
+                    <dx-select-box [dataSource]="gateways"
+                                   displayExpr="name"
+                                   valueExpr="gateway_type"
+                                   width="400px"
+                                   [searchEnabled]="true"
+                                   [searchExpr]="'name'"
+                                   [(value)]="selectedGatewayType"
+                                   (onValueChanged)="onGatewaySelect($event.value)"
+                                   placeholder="Select Gateway">
+                        <dx-validator>
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-select-box>
+                </div>
+                <hr />
+                <ng-container *ngFor="let param of selectedGateway?.auth_modes[0].credentials">
+                    <div class="field">
+                        <label><b>{{param.label}} *</b></label>
+                        <dx-text-box [name]="param.name"
+                                     width="360px"
+                                     [(value)]="param.value">
+                            <dx-validator>
+                                <dxi-validation-rule type="required"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                    </div>
+                </ng-container>
+                <ng-container *ngFor="let param of selectedGateway?.gateway_settings">
+                    <div class="field">
+                        <label>{{param.label}}</label>
+                        <dx-text-box name="{{param.name}}"
+                                     width="360px"
+                                     [(value)]="param.value">
+                        </dx-text-box>
+                    </div>
+                </ng-container>
+                <div *ngIf="selectedGateway && selectedGateway.gateway_type != 'test'" class="field">
+                    <label for="duration">{{ls.l('Sandbox')}}</label>
+                    <dx-check-box width="360px"
+                                  [(value)]="sandbox">
+                    </dx-check-box>
+                </div>
+            </dx-validation-group>
+        </dx-scroll-view>
+    </div>
+</modal-dialog>

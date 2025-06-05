@@ -12,7 +12,7 @@
         <dxi-column dataField="name" [caption]="l('Name')" [width]="300" cssClass="clipboard-holder"></dxi-column>
         <dxi-column dataField="isActive" [caption]="l('Active')" [width]="75" cssClass="clipboard-holder"></dxi-column>
     </dx-data-grid>
-    <button class="btn btn-layout" (click)="addProvider()" [disabled]="providers.length != 0">
+    <button class="btn btn-layout" (click)="addProvider()" [disabled]="!spreedlyAllProviders">
         {{ l('+ Add new') }}
     </button>
 </ng-container>
