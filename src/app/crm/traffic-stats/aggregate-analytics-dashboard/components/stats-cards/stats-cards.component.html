@@ -1,0 +1,84 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div
+      class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <div class="p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Visitors</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ totalVisitors.value|number }}</p>
+            <div
+              class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-xs text-green-600 border-green-600"
+            >
+              +{{ totalVisitors.percent }}%
+            </div>
+          </div>
+          <div class="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+            <lucide-angular name="users" size="24" color="blue"></lucide-angular>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <div class="p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Leads</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{totalLeads.value | number}}</p>
+            <div
+              class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-xs text-green-600 border-green-600"
+            >
+              +{{totalLeads.percent}}%
+            </div>
+          </div>
+          <div class="p-3 rounded-lg bg-green-50 dark:bg-green-900/20">
+            <lucide-angular name="trending-up" size="24" color="green"></lucide-angular>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <div class="p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Conversion Rate</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{conversionRate.value | number}}%</p>
+            <div
+              class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-xs text-green-600 border-green-600"
+            >
+              +{{conversionRate.percent}}%
+            </div>
+          </div>
+          <div class="p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20">
+            <lucide-angular name="chart-column" size="24" color="purple"></lucide-angular>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <div class="p-4">
+        
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Global Reach</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{globalReach.value}} Countries</p>
+            <div
+              class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-xs text-green-600 border-green-600"
+            >
+              +{{globalReach.percent}} new
+            </div>
+          </div>
+          <div class="p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20">
+            <lucide-angular name="globe" size="24" color="orange"></lucide-angular>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

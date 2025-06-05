@@ -125,6 +125,35 @@ import { DeviceSessionComponent } from "./traffic-stats/lead-conversion-journey/
 import { CustomFieldsComponent } from "./traffic-stats/lead-conversion-journey/custom-fields/custom-fields.component";
 import { UrlInfoComponent } from "./traffic-stats/lead-conversion-journey/url-info/url-info.component";
 import { VisitHistoryComponent } from "./traffic-stats/lead-conversion-journey/visit-history/visit-history.component";
+import { AggregateAnalyticsDashboardComponent } from "./traffic-stats/aggregate-analytics-dashboard/aggregate-analytics-dashboard.component";
+
+import {
+    LucideAngularModule,
+    House,
+    Users,
+    TrendingUp,
+    ChartColumn,
+    Globe,
+    Search,
+    Filter,
+    MapPin,
+    FileText,
+    Wifi,
+} from "lucide-angular";
+import { AggregateAnalyticsHeaderComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/aggregate-analytics-header/aggregate-analytics-header.component";
+import { AggregateAnalyticsFiltersComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/aggregate-analytics-filters/aggregate-analytics-filters.component";
+import { AggregateAnalyticsDateRangeComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/aggregate-analytics-date-range/aggregate-analytics-date-range.component";
+import { AggregateAnalyticsSelectorComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/aggregate-analytics-selector/aggregate-analytics-selector.component";
+import { StatsCardsComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/stats-cards/stats-cards.component";
+import { KeywordsComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/keywords/keywords.component";
+import { ReferrersComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/referrers/referrers.component";
+import { CountriesComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/countries/countries.component";
+import { StatesComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/states/states.component";
+import { DevicesComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/devices/devices.component";
+import { BrowsersComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/browsers/browsers.component";
+import { EntryPagesComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/entry-pages/entry-pages.component";
+import { NetworksComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/networks/networks.component";
+import { IpAddressesComponent } from './traffic-stats/aggregate-analytics-dashboard/components/ip-addresses/ip-addresses.component';
 
 @NgModule({
     imports: [
@@ -197,6 +226,18 @@ import { VisitHistoryComponent } from "./traffic-stats/lead-conversion-journey/v
         LeftMenuModule,
         ZapierModule,
         EditTenantModule,
+        LucideAngularModule.pick({
+            House,
+            Users,
+            TrendingUp,
+            ChartColumn,
+            Globe,
+            Search,
+            Filter,
+            MapPin,
+            FileText,
+            Wifi,
+        }),
     ],
     declarations: [
         ClientsComponent,
@@ -239,6 +280,21 @@ import { VisitHistoryComponent } from "./traffic-stats/lead-conversion-journey/v
         CustomFieldsComponent,
         UrlInfoComponent,
         VisitHistoryComponent,
+        AggregateAnalyticsDashboardComponent,
+        AggregateAnalyticsHeaderComponent,
+        AggregateAnalyticsFiltersComponent,
+        AggregateAnalyticsDateRangeComponent,
+        AggregateAnalyticsSelectorComponent,
+        StatsCardsComponent,
+        KeywordsComponent,
+        ReferrersComponent,
+        CountriesComponent,
+        StatesComponent,
+        DevicesComponent,
+        BrowsersComponent,
+        EntryPagesComponent,
+        NetworksComponent,
+        IpAddressesComponent,
     ],
     providers: [
         ImportServiceProxy,

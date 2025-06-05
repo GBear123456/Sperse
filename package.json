@@ -105,6 +105,7 @@
     "just-compare": "^1.4.0",
     "karma": "~6.3.9",
     "libphonenumber-js": "^1.7.33",
+    "litepicker": "2.0.12",
     "localforage": "^1.5.0",
     "lodash": "^4.17.15",
     "lucide-angular": "^0.479.0",
@@ -185,11 +186,11 @@
     "karma-jasmine-html-reporter": "^1.5.0",
     "ngrx-generator": "^1.1.0",
     "nswag": "^13.11.3",
+    "postcss": "^8.5.4",
     "protractor": "~7.0.0",
+    "tailwindcss": "^2.2.19",
     "ts-node": "~3.3.0",
     "tslint": "~6.1.0",
-    "webpack-bundle-analyzer": "^3.0.3",
-    "postcss": "^8.5.4",
-    "tailwindcss": "^2.2.19"
+    "webpack-bundle-analyzer": "^3.0.3"
   }
 }

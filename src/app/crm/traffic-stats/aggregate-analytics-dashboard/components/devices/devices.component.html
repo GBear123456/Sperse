@@ -1,0 +1,95 @@
+<div>
+    <div class="flex flex-col space-y-1.5 p-6 pb-3">
+      <h3
+        class="text-2xl font-semibold leading-none tracking-tight flex items-center space-x-2 text-orange-700"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-monitor h-5 w-5"
+        >
+          <rect width="20" height="14" x="2" y="3" rx="2"></rect>
+          <line x1="8" x2="16" y1="21" y2="21"></line>
+          <line x1="12" x2="12" y1="17" y2="21"></line>
+        </svg>
+        <span>Top Devices</span>
+        <div
+          class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 ml-auto"
+        >
+          13,293 total
+        </div>
+      </h3>
+      <p class="text-sm text-muted-foreground dark:text-gray-400">Device types used by visitors</p>
+    </div>
+    <div class="p-6 pt-0 space-y-4">
+      <div
+        *ngFor="let device of devices"
+        class="p-3 rounded-lg border bg-gray-50 dark:bg-gray-700 dark:border-gray-600 border-gray-200"
+      >
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center space-x-3">
+            <svg
+              *ngIf="device.icon === 'monitor'"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-orange-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <rect width="20" height="14" x="2" y="3" rx="2" />
+              <line x1="8" x2="16" y1="21" y2="21" />
+              <line x1="12" x2="12" y1="17" y2="21" />
+            </svg>
+  
+            <svg
+              *ngIf="device.icon === 'smartphone'"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-orange-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+              <path d="M12 18h.01" />
+            </svg>
+  
+            <svg
+              *ngIf="device.icon === 'tablet'"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-orange-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <rect width="16" height="20" x="4" y="2" rx="2" ry="2" />
+              <line x1="12" x2="12.01" y1="18" y2="18" />
+            </svg>
+  
+            <span class="text-sm font-medium text-gray-900 dark:text-white">
+              {{ device.name }}
+            </span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ device.count }}</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">({{ device.percentage }})</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-1">
+          <div
+            *ngFor="let browser of device.browsers"
+            class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors text-foreground text-xs"
+          >
+            {{ browser }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

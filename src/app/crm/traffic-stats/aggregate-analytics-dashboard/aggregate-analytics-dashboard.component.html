@@ -1,0 +1,65 @@
+<div class="min-h-screen p-4 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto">
+        <app-aggregate-analytics-header></app-aggregate-analytics-header>
+        <app-aggregate-analytics-filters></app-aggregate-analytics-filters>
+        <app-aggregate-analytics-stats-cards
+            [totalVisitors]="statsData.totalVisitors"
+            [totalLeads]="statsData.totalLeads"
+            [conversionRate]="statsData.conversionRate"
+            [globalReach]="statsData.globalReach"
+        ></app-aggregate-analytics-stats-cards>
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div
+                class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-aggregate-analytics-keywords></app-aggregate-analytics-keywords>
+            </div>
+            <div
+                class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-aggregate-analytics-referrers></app-aggregate-analytics-referrers>
+            </div>
+            <div
+                class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-aggregate-analytics-countries></app-aggregate-analytics-countries>
+            </div>
+            <div
+                class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-aggregate-analytics-states></app-aggregate-analytics-states>
+            </div>
+            <div
+                class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-aggregate-analytics-devices></app-aggregate-analytics-devices>
+            </div>
+            <div
+                class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-aggregate-analytics-browsers></app-aggregate-analytics-browsers>
+            </div>
+            <div
+                class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-aggregate-analytics-entry-pages></app-aggregate-analytics-entry-pages>
+            </div>
+            <div
+                class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-aggregate-analytics-networks></app-aggregate-analytics-networks>
+            </div>
+            <div
+                class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-aggregate-analytics-ip-addresses></app-aggregate-analytics-ip-addresses>
+            </div>
+        </div>
+        <div class="mt-8 text-center">
+            <p class="text-sm text-gray-500">
+                Comprehensive analytics • Real-time data • Last updated:
+                {{ currentDateTime }}
+            </p>
+        </div>
+    </div>
+</div>
