@@ -6625,13 +6625,6 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-lucide-angular@^0.479.0:
-  version "0.479.0"
-  resolved "https://registry.yarnpkg.com/lucide-angular/-/lucide-angular-0.479.0.tgz#409c1f4f90d5c97010c247fbf6cfe3472b5f52a0"
-  integrity sha512-deXRpmhOMQ1O9LOeuNSskwui65/KRTe027fAzxkENtyqe8FEAkcR1/N0qPz7KFyrwwkIeNPbUHr2jnQSir9IYQ==
-  dependencies:
-    tslib "^2.3.0"
-
 luxon@^1.21.3, luxon@^1.27.0:
   version "1.28.0"
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.28.0.tgz#e7f96daad3938c06a62de0fb027115d251251fbf"

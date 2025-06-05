@@ -1,13 +1,13 @@
 <div class="referral-status-card">
   <h3 class="section-title">
-    <lucide-user-plus class="icon"></lucide-user-plus> Referred By
+    <img src="./assets/images/icons/traffic-user-check.svg" class="checkIcon green" alt="checkicon"> Referred By
   </h3>
   <p class="section-subtitle">Referral source and lead information</p>
 
   <div class="referral-box">
     <div class="info-item">
-      <label><lucide-user class="icon-sm"></lucide-user> Referring Person</label>
-      <div class="highlight-box bold">{{ referringPerson }}</div>
+      <label><img src="./assets/images/icons/traffic-user-check.svg" class="checkIcon green" alt="checkicon"> Referring Person</label>
+      <div class="highlight-box bold">{{ referrerName }}</div>
     </div>
     <div class="info-item">
       <label><lucide-tag class="icon-sm"></lucide-tag> Tracking Code</label>
@@ -16,25 +16,40 @@
   </div>
 
   <div class="lead-header">
-    <h3><lucide-signal class="icon"></lucide-signal> Lead Status</h3>
+    <h3><img src="./assets/images/icons/traffic-trending-up.svg" class="checkIcon green" alt="trending-up"> Lead Status</h3>
     <span class="badge">New Lead</span>
   </div>
 
   <div class="lead-status">
     <div class="status-row">
-      <lucide-dollar-sign class="icon-sm"></lucide-dollar-sign>
-      <label>Deal Amount</label>
-      <span class="value placeholder">Enter value</span>
+      <div>
+        <img src="./assets/images/icons/traffic-dollar-sign.svg" class="checkIcon blue" alt="trending-up" />
+        <label>Deal Amount</label>
+      </div>
+      <div class="value-wrapper">
+        <span class="value placeholder">Enter value</span>
+        <img src="./assets/images/icons/traffic-copy.svg" class="copyIcon" alt="trending-up" />
+      </div>
     </div>
     <div class="status-row">
-      <lucide-calendar-plus class="icon-sm"></lucide-calendar-plus>
-      <label>First Visit</label>
-      <span class="value">{{ firstVisit }}</span>
+      <div>
+        <img src="./assets/images/icons/traffic-calendar.svg" class="checkIcon" alt="copy-up" />
+        <label>First Visit</label>
+      </div>
+      <div class="value-wrapper">
+        <span class="value">{{ firstVisit }}</span>
+        <img src="./assets/images/icons/traffic-copy.svg" class="copyIcon" alt="copy-up" />
+      </div>
     </div>
     <div class="status-row">
-      <lucide-pen-line class="icon-sm"></lucide-pen-line>
-      <label>Last Modified</label>
-      <span class="value">{{ lastModified }}</span>
+      <div>
+        <img src="./assets/images/icons/traffic-clock.svg" class="checkIcon" alt="copy-up" />
+        <label>Last Modified</label>
+      </div>
+      <div class="value-wrapper">
+        <span class="value">{{ lastModified }}</span>
+        <img src="./assets/images/icons/traffic-copy.svg" class="copyIcon" alt="copy-up" />
+      </div>
     </div>
   </div>
 </div>

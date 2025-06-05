@@ -10,34 +10,34 @@ export class LeadConversionJourneyComponent implements OnInit {
 
     stats = [
         {
-            icon: "pi pi-users",
+            icon: "./assets/images/icons/traffic-users.svg",
             label: "Total Visits",
             value: 50,
-            colorClass: "text-blue",
+            colorClass: "blue",
         },
         {
-            icon: "pi pi-users",
+            icon: "./assets/images/icons/traffic-users.svg",
             label: "Total Leads",
             value: 5,
-            colorClass: "text-green",
+            colorClass: "green",
         },
         {
-            icon: "pi pi-envelope",
+            icon: "./assets/images/icons/traffic-message-square.svg",
             label: "Total Chats",
             value: 3,
-            colorClass: "text-purple",
+            colorClass: "purple",
         },
         {
-            icon: "pi pi-shopping-cart",
+            icon: "./assets/images/icons/traffic-shopping-cart.svg",
             label: "Total Orders",
             value: 7,
-            colorClass: "text-orange",
+            colorClass: "orange",
         },
         {
-            icon: "pi pi-sign-out",
+            icon: "./assets/images/icons/traffic-logout.svg",
             label: "Total Logins",
             value: 19,
-            colorClass: "text-indigo",
+            colorClass: "blue",
         },
     ];
 
