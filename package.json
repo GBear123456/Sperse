@@ -107,6 +107,7 @@
     "libphonenumber-js": "^1.7.33",
     "localforage": "^1.5.0",
     "lodash": "^4.17.15",
+    "lucide-angular": "^0.479.0",
     "luxon": "^1.27.0",
     "malihu-custom-scrollbar-plugin": "^3.1.5",
     "moment": "^2.22.1",
@@ -187,6 +188,8 @@
     "protractor": "~7.0.0",
     "ts-node": "~3.3.0",
     "tslint": "~6.1.0",
-    "webpack-bundle-analyzer": "^3.0.3"
+    "webpack-bundle-analyzer": "^3.0.3",
+    "postcss": "^8.5.4",
+    "tailwindcss": "^2.2.19"
   }
 }
