@@ -249,3 +249,11 @@ i.save-to-clipboard {
 .text-orgnage-700 {
     color: rgb(194 65 12)
 }
+
+.bg-orgnage-50 {
+    background-color: rgb(255 247 237) !important;
+}
+
+.border-orange-200 {
+    border-color: rgb(254 215 170) !important;
+}

@@ -117,9 +117,6 @@ import { TenantReportsComponent } from "./tenant-reports/tenant-reports.componen
 import { CrmContactGroupGuard } from "./crm-contact-group-guard";
 import { ZapierModule } from "@shared/common/zapier/zapier.module";
 import { LeadConversionJourneyComponent } from "./traffic-stats/lead-conversion-journey/lead-conversion-journey.component";
-import { StatCardComponent } from "./traffic-stats/lead-conversion-journey/stat-card/stat-card.component";
-import { LeadDetailCardComponent } from "./traffic-stats/lead-conversion-journey/lead-detail-card/lead-detail-card.component";
-import { UtmParametersCardComponent } from "./traffic-stats/lead-conversion-journey/utm-parameters-card/utm-parameters-card.component";
 import { LocationNetworkComponent } from "./traffic-stats/lead-conversion-journey/location-network/location-network.component";
 import { DeviceSessionComponent } from "./traffic-stats/lead-conversion-journey/device-session/device-session.component";
 import { CustomFieldsComponent } from "./traffic-stats/lead-conversion-journey/custom-fields/custom-fields.component";
@@ -150,6 +147,15 @@ import {
     Zap,
     Award,
     BadgeDollarSign,
+    MessageSquare,
+    LogIn,
+    UserCheck,
+    Calendar,
+    Copy,
+    Megaphone,
+    Rss,
+    Tag,
+    Radio,
 } from "lucide-angular";
 import { AggregateAnalyticsHeaderComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/header/header.component";
 import { AggregateAnalyticsFiltersComponent } from "./traffic-stats/common/filters/filters.component";
@@ -166,7 +172,7 @@ import { EntryPagesComponent } from "./traffic-stats/aggregate-analytics-dashboa
 import { NetworksComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/networks/networks.component";
 import { IpAddressesComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/ip-addresses/ip-addresses.component";
 import { ConversionTrackingComponent } from "./traffic-stats/conversion-tracking/conversion-tracking.component";
-import { HeaderComponent } from "./traffic-stats/conversion-tracking/components/header/header.component";
+import { ConversionTrackingHeaderComponent } from "./traffic-stats/conversion-tracking/components/header/header.component";
 import { ConversionMetricsComponent } from "./traffic-stats/conversion-tracking/components/conversion-metrics/conversion-metrics.component";
 import { TopAffiliatesComponent } from "./traffic-stats/conversion-tracking/components/top-affiliates/top-affiliates.component";
 import { ConversionShareChartComponent } from "./traffic-stats/conversion-tracking/components/conversion-share-chart/conversion-share-chart.component";
@@ -177,6 +183,9 @@ import { ConversionTrendsChartComponent } from "./traffic-stats/conversion-track
 import { TrafficConversionsChartComponent } from "./traffic-stats/conversion-tracking/components/traffic-conversions-chart/traffic-conversions-chart.component";
 import { TopAffiliatePerformanceComponent } from "./traffic-stats/conversion-tracking/components/top-affiliate-performance/top-affiliate-performance.component";
 import { KeyMetricsPanelComponent } from "./traffic-stats/conversion-tracking/components/key-metrics-panel/key-metrics-panel.component";
+import { ConversionJourneyHeaderComponent } from "./traffic-stats/lead-conversion-journey/components/conversion-journey-header/conversion-journey-header.component";
+import { ReferralSourceCardComponent } from "./traffic-stats/lead-conversion-journey/components/referral-source-card/referral-source-card.component";
+import { UtmParametersCardComponent } from "./traffic-stats/lead-conversion-journey/components/utm-parameters-card/utm-parameters-card.component";
 
 @NgModule({
     imports: [
@@ -272,6 +281,14 @@ import { KeyMetricsPanelComponent } from "./traffic-stats/conversion-tracking/co
             Zap,
             Award,
             BadgeDollarSign,
+            MessageSquare,
+            LogIn,
+            UserCheck,
+            Calendar,
+            Copy,
+            Megaphone,
+            Radio,
+            Tag,
         }),
     ],
     declarations: [
@@ -307,9 +324,6 @@ import { KeyMetricsPanelComponent } from "./traffic-stats/conversion-tracking/co
         EditTypeItemDialogComponent,
         TenantReportsComponent,
         LeadConversionJourneyComponent,
-        StatCardComponent,
-        LeadDetailCardComponent,
-        UtmParametersCardComponent,
         LocationNetworkComponent,
         DeviceSessionComponent,
         CustomFieldsComponent,
@@ -331,7 +345,7 @@ import { KeyMetricsPanelComponent } from "./traffic-stats/conversion-tracking/co
         NetworksComponent,
         IpAddressesComponent,
         ConversionTrackingComponent,
-        HeaderComponent,
+        ConversionTrackingHeaderComponent,
         ConversionMetricsComponent,
         TopAffiliatesComponent,
         ConversionShareChartComponent,
@@ -342,6 +356,9 @@ import { KeyMetricsPanelComponent } from "./traffic-stats/conversion-tracking/co
         TrafficConversionsChartComponent,
         TopAffiliatePerformanceComponent,
         KeyMetricsPanelComponent,
+        ConversionJourneyHeaderComponent,
+        ReferralSourceCardComponent,
+        UtmParametersCardComponent,
     ],
     providers: [
         ImportServiceProxy,

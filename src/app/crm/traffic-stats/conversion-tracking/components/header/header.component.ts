@@ -4,7 +4,7 @@ import { Component, OnInit } from "@angular/core";
     selector: "app-conversion-tracking-header",
     templateUrl: "./header.component.html",
 })
-export class HeaderComponent implements OnInit {
+export class ConversionTrackingHeaderComponent implements OnInit {
     constructor() {}
 
     ngOnInit(): void {}
