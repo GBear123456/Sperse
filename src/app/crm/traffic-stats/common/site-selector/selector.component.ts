@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 
 @Component({
-    selector: "app-aggregate-analytics-selector",
+    selector: "app-traffic-stats-site-selector",
     templateUrl: "./selector.component.html",
 })
 export class AggregateAnalyticsSelectorComponent implements OnInit {

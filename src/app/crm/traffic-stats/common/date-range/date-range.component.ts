@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit } from "@angular/core";
 import Litepicker from "litepicker";
 
 @Component({
-    selector: "app-aggregate-analytics-date-range",
+    selector: "app-traffic-stats-date-range",
     templateUrl: "./date-range.component.html",
     styleUrls: [],
 })

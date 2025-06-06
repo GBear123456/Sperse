@@ -241,3 +241,11 @@ i.save-to-clipboard {
 .dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item-content.dx-selectbox-popup-horizonal-line-spec {
     border-top: 1px solid hsl(214.3 31.8% 91.4%);
 }
+
+.w-fit {
+    width: fit-content;
+}
+
+.text-orgnage-700 {
+    color: rgb(194 65 12)
+}

@@ -1,0 +1,66 @@
+<div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+    <!-- Header -->
+    <div class="mb-4">
+        <h2
+            class="text-xl font-semibold text-blue-700 flex items-center space-x-2"
+        >
+            <lucide-icon
+                name="users"
+                class="w-5 h-5 text-blue-700"
+            ></lucide-icon>
+            <span>Top Affiliate Performance</span>
+        </h2>
+        <p class="text-sm text-gray-500">
+            Best performing affiliates this month
+        </p>
+    </div>
+
+    <!-- Affiliates List -->
+    <div class="space-y-4">
+        <div
+            *ngFor="let affiliate of affiliates; let i = index"
+            class="rounded-xl p-4 border transition"
+            [ngClass]="getCardStyle(i)"
+        >
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center ">
+                    <div
+                        class="flex items-center justify-center w-8 h-8 rounded-full border text-gray-600 font-semibold mr-3"
+                    >
+                        {{ i + 1 }}
+                    </div>
+                    <lucide-icon
+                        *ngIf="i === 0"
+                        name="crown"
+                        class="w-4 h-4 text-purple-600 mr-2"
+                    ></lucide-icon>
+                    <lucide-icon
+                        *ngIf="i === 1 || i === 2"
+                        name="star"
+                        class="w-4 h-4 text-yellow-500 mr-2"
+                    ></lucide-icon>
+                    <div *ngIf="i === 3 || i === 4" class="w-4 h-4 mr-2"></div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900 mb-0">
+                            {{ affiliate.name }}
+                        </p>
+                        <span class="text-xs text-black">
+                            Code: {{ affiliate.code }}
+                        </span>
+                    </div>
+                </div>
+                <div
+                    class="px-3 py-0.5 text-xs bg-gray-100 rounded-full text-gray-800 font-medium"
+                >
+                    {{ affiliate.rate }}% rate
+                </div>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-sm">{{ affiliate.conversions }} conversions</span>
+                <span class="text-lg font-semibold text-gray-900">
+                    ${{ affiliate.revenue | number: '1.0-2' }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

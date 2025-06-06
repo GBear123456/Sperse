@@ -41,10 +41,10 @@ import { DxDropDownBoxModule } from "devextreme-angular/ui/drop-down-box";
 import { DxSchedulerModule } from "devextreme-angular/ui/scheduler";
 import { DxPopoverModule } from "devextreme-angular/ui/popover";
 import { DxCalendarModule } from "devextreme-angular/ui/calendar";
-import { DxFileManagerModule } from "devextreme-angular";
+import { DxChartModule, DxFileManagerModule } from "devextreme-angular";
+import { DxPieChartModule } from "devextreme-angular";
 import { FileUploadModule } from "ng2-file-upload";
 import { GooglePlaceModule } from "ngx-google-places-autocomplete";
-
 /** Application imports */
 import { AppConsts } from "@shared/AppConsts";
 import { AppService } from "@app/app.service";
@@ -139,11 +139,22 @@ import {
     MapPin,
     FileText,
     Wifi,
+    DollarSign,
+    Target,
+    User,
+    Crosshair,
+    Clock,
+    BarChart3,
+    Crown,
+    Star,
+    Zap,
+    Award,
+    BadgeDollarSign,
 } from "lucide-angular";
 import { AggregateAnalyticsHeaderComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/header/header.component";
-import { AggregateAnalyticsFiltersComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/filters/filters.component";
-import { AggregateAnalyticsDateRangeComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/date-range/date-range.component";
-import { AggregateAnalyticsSelectorComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/selector/selector.component";
+import { AggregateAnalyticsFiltersComponent } from "./traffic-stats/common/filters/filters.component";
+import { AggregateAnalyticsDateRangeComponent } from "./traffic-stats/common/date-range/date-range.component";
+import { AggregateAnalyticsSelectorComponent } from "./traffic-stats/common/site-selector/selector.component";
 import { StatsCardsComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/stats-cards/stats-cards.component";
 import { KeywordsComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/keywords/keywords.component";
 import { ReferrersComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/referrers/referrers.component";
@@ -154,6 +165,18 @@ import { BrowsersComponent } from "./traffic-stats/aggregate-analytics-dashboard
 import { EntryPagesComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/entry-pages/entry-pages.component";
 import { NetworksComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/networks/networks.component";
 import { IpAddressesComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/ip-addresses/ip-addresses.component";
+import { ConversionTrackingComponent } from "./traffic-stats/conversion-tracking/conversion-tracking.component";
+import { HeaderComponent } from "./traffic-stats/conversion-tracking/components/header/header.component";
+import { ConversionMetricsComponent } from "./traffic-stats/conversion-tracking/components/conversion-metrics/conversion-metrics.component";
+import { TopAffiliatesComponent } from "./traffic-stats/conversion-tracking/components/top-affiliates/top-affiliates.component";
+import { ConversionShareChartComponent } from "./traffic-stats/conversion-tracking/components/conversion-share-chart/conversion-share-chart.component";
+import { VisitsTrendChartComponent } from "./traffic-stats/conversion-tracking/components/visits-trend-chart/visits-trend-chart.component";
+import { HourlyTrafficHeatmapComponent } from "./traffic-stats/conversion-tracking/components/hourly-traffic-heatmap/hourly-traffic-heatmap.component";
+import { MonthlyRevenueChartComponent } from "./traffic-stats/conversion-tracking/components/monthly-revenue-chart/monthly-revenue-chart.component";
+import { ConversionTrendsChartComponent } from "./traffic-stats/conversion-tracking/components/conversion-trends-chart/conversion-trends-chart.component";
+import { TrafficConversionsChartComponent } from "./traffic-stats/conversion-tracking/components/traffic-conversions-chart/traffic-conversions-chart.component";
+import { TopAffiliatePerformanceComponent } from "./traffic-stats/conversion-tracking/components/top-affiliate-performance/top-affiliate-performance.component";
+import { KeyMetricsPanelComponent } from "./traffic-stats/conversion-tracking/components/key-metrics-panel/key-metrics-panel.component";
 
 @NgModule({
     imports: [
@@ -190,7 +213,8 @@ import { IpAddressesComponent } from "./traffic-stats/aggregate-analytics-dashbo
         DxPopoverModule,
         DxCalendarModule,
         DxFileManagerModule,
-
+        DxPieChartModule,
+        DxChartModule,
         ReactiveFormsModule,
         MatSidenavModule,
         MatProgressBarModule,
@@ -237,6 +261,17 @@ import { IpAddressesComponent } from "./traffic-stats/aggregate-analytics-dashbo
             MapPin,
             FileText,
             Wifi,
+            DollarSign,
+            Target,
+            User,
+            Crosshair,
+            Clock,
+            BarChart3,
+            Crown,
+            Star,
+            Zap,
+            Award,
+            BadgeDollarSign,
         }),
     ],
     declarations: [
@@ -295,6 +330,18 @@ import { IpAddressesComponent } from "./traffic-stats/aggregate-analytics-dashbo
         EntryPagesComponent,
         NetworksComponent,
         IpAddressesComponent,
+        ConversionTrackingComponent,
+        HeaderComponent,
+        ConversionMetricsComponent,
+        TopAffiliatesComponent,
+        ConversionShareChartComponent,
+        VisitsTrendChartComponent,
+        HourlyTrafficHeatmapComponent,
+        MonthlyRevenueChartComponent,
+        ConversionTrendsChartComponent,
+        TrafficConversionsChartComponent,
+        TopAffiliatePerformanceComponent,
+        KeyMetricsPanelComponent,
     ],
     providers: [
         ImportServiceProxy,

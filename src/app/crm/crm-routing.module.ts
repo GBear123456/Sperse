@@ -26,6 +26,7 @@ import { CrmContactGroupGuard } from "@app/crm/crm-contact-group-guard";
 import { InvoicesComponent } from "./invoices/invoices.component";
 import { ZapierComponent } from "@shared/common/zapier/zapier.component";
 import { AggregateAnalyticsDashboardComponent } from "./traffic-stats/aggregate-analytics-dashboard/aggregate-analytics-dashboard.component";
+import { ConversionTrackingComponent } from "./traffic-stats/conversion-tracking/conversion-tracking.component";
 
 @NgModule({
     imports: [
@@ -47,6 +48,11 @@ import { AggregateAnalyticsDashboardComponent } from "./traffic-stats/aggregate-
                     {
                         path: "traffic-stats/aggregate-analytics-dashboard",
                         component: AggregateAnalyticsDashboardComponent,
+                        data: { permission: AppPermissions.CRM, reuse: true },
+                    },
+                    {
+                        path: "traffic-stats/conversion-tracking",
+                        component: ConversionTrackingComponent,
                         data: { permission: AppPermissions.CRM, reuse: true },
                     },
                     {

@@ -1,0 +1,28 @@
+<div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+    <!-- Header -->
+    <div class="mb-2">
+      <h2 class="text-xl font-semibold text-purple-700 flex items-center space-x-2">
+        <lucide-icon name="trending-up" class="w-5 h-5 text-purple-700"></lucide-icon>
+        <span>Conversion Trends</span>
+      </h2>
+      <p class="text-sm text-gray-500">Weekly conversion performance</p>
+    </div>
+  
+    <!-- Area Chart -->
+    <dx-chart
+      [dataSource]="data"
+      palette="Soft Pastel"
+      class="w-full h-72"
+      [commonSeriesSettings]="{
+        type: 'area',
+        argumentField: 'week',
+        valueField: 'value'
+      }"
+      [tooltip]="{ enabled: false }"
+      [legend]="{ visible: false }"
+      [valueAxis]="{ grid: { visible: false } }"
+      [argumentAxis]="{ grid: { visible: false } }">
+      <dxi-series color="rgba(139, 92, 246, 0.3)" border={{lineStyle}}></dxi-series>
+    </dx-chart>
+  </div>
+  
