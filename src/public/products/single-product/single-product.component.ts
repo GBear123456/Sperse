@@ -383,9 +383,13 @@ export class SingleProductComponent implements OnInit {
             paymentMethodToken: paymentMethodToken
         })).pipe(
             finalize(() => abp.ui.clearBusy())
-        ).subscribe(invoicePublicId => {
-            this.initialInvoiceXref = invoicePublicId;
-            this.redirectToReceipt();
+        ).subscribe(res => {
+            if (res.errorMessage) {
+                abp.message.error(res.errorMessage);
+            } else {
+                this.initialInvoiceXref = res.invoicePublicId;
+                this.redirectToReceipt();
+            }
         });
     }
 
