@@ -1,7 +1,7 @@
 <h2>{{l('Payment Providers')}} {{l('Settings')}}</h2>
 <ng-container *ngIf="providers">
     <dx-data-grid id="gridContainer"
-                  width="600px"
+                  width="700px"
                   height="auto"
                   accessKey="providersGrid"
                   [dataSource]="providers"
@@ -11,6 +11,7 @@
         <dxi-column dataField="type" [caption]="l('Type')" [width]="165" cssClass="clipboard-holder"></dxi-column>
         <dxi-column dataField="name" [caption]="l('Name')" [width]="300" cssClass="clipboard-holder"></dxi-column>
         <dxi-column dataField="isActive" [caption]="l('Active')" [width]="75" cssClass="clipboard-holder"></dxi-column>
+        <dxi-column dataField="sandbox" [caption]="l('Sandbox')" [width]="100" cssClass="clipboard-holder"></dxi-column>
     </dx-data-grid>
     <button class="btn btn-layout" (click)="addProvider()" [disabled]="!spreedlyAllProviders">
         {{ l('+ Add new') }}
