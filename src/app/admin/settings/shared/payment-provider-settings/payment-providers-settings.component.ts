@@ -57,6 +57,17 @@ export class PaymentProvidersSettingsComponent extends SettingsComponentBase {
             });
     }
 
+    enableDisable(data: SpreedlyGatewayConnectionDto) {
+        this.startLoading();
+        this.paymentSettingsService.setActiveSpreedlyGatewayConnection(data.id, !data.isActive)
+            .pipe(
+                finalize(() => this.finishLoading())
+            )
+            .subscribe(() => {
+                this.getConfiguredProviders();
+            });
+    }
+
     addProvider() {
         if (!this.spreedlyAllProviders)
             return;
