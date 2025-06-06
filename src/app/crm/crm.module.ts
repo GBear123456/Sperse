@@ -140,10 +140,10 @@ import {
     FileText,
     Wifi,
 } from "lucide-angular";
-import { AggregateAnalyticsHeaderComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/aggregate-analytics-header/aggregate-analytics-header.component";
-import { AggregateAnalyticsFiltersComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/aggregate-analytics-filters/aggregate-analytics-filters.component";
-import { AggregateAnalyticsDateRangeComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/aggregate-analytics-date-range/aggregate-analytics-date-range.component";
-import { AggregateAnalyticsSelectorComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/aggregate-analytics-selector/aggregate-analytics-selector.component";
+import { AggregateAnalyticsHeaderComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/header/header.component";
+import { AggregateAnalyticsFiltersComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/filters/filters.component";
+import { AggregateAnalyticsDateRangeComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/date-range/date-range.component";
+import { AggregateAnalyticsSelectorComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/selector/selector.component";
 import { StatsCardsComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/stats-cards/stats-cards.component";
 import { KeywordsComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/keywords/keywords.component";
 import { ReferrersComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/referrers/referrers.component";
@@ -153,7 +153,7 @@ import { DevicesComponent } from "./traffic-stats/aggregate-analytics-dashboard/
 import { BrowsersComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/browsers/browsers.component";
 import { EntryPagesComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/entry-pages/entry-pages.component";
 import { NetworksComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/networks/networks.component";
-import { IpAddressesComponent } from './traffic-stats/aggregate-analytics-dashboard/components/ip-addresses/ip-addresses.component';
+import { IpAddressesComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/ip-addresses/ip-addresses.component";
 
 @NgModule({
     imports: [

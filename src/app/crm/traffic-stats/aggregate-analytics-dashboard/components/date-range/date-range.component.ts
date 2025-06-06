@@ -3,7 +3,7 @@ import Litepicker from "litepicker";
 
 @Component({
     selector: "app-aggregate-analytics-date-range",
-    templateUrl: "./aggregate-analytics-date-range.component.html",
+    templateUrl: "./date-range.component.html",
     styleUrls: [],
 })
 export class AggregateAnalyticsDateRangeComponent

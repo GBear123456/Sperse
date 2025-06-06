@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 
 @Component({
     selector: "app-aggregate-analytics-selector",
-    templateUrl: "./aggregate-analytics-selector.component.html",
+    templateUrl: "./selector.component.html",
 })
 export class AggregateAnalyticsSelectorComponent implements OnInit {
     constructor() {}
