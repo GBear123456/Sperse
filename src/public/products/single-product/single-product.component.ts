@@ -596,7 +596,11 @@ export class SingleProductComponent implements OnInit {
     }
 
     showSpreedlyButtons() {
-        if (this.selectedPriceOption.type == PriceOptionType.Subscription && !this.singlePaymentOptions.includes(this.selectedPriceOption.frequency))
+        if (this.selectedPriceOption.type == PriceOptionType.Subscription &&
+            (this.selectedPriceOption.trialDayCount > 0 || !this.singlePaymentOptions.includes(this.selectedPriceOption.frequency)))
+            return false;
+
+        if (this.productInfo.data.isStripeTaxationEnabled)
             return false;
 
         return !!this.productInfo.data.spreedlyGateways?.length;
