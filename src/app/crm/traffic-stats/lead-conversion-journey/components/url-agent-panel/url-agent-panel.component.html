@@ -1,0 +1,41 @@
+<div class="bg-white p-6 rounded-xl shadow border border-gray-200 space-y-6 my-4">
+    <!-- Entry URL -->
+     <div class="group cursor-pointer">
+       <div class="flex items-center justify-between">
+         <h3 class="text-sm font-semibold text-gray-900">Entry URL</h3>
+         <div class="flex items-center gap-2 opactiy-0 group-hover:opacity-100 transition-opacity">
+           <lucide-angular-icon name="copy" class="w-4 h-4 text-gray-500"></lucide-angular-icon>
+           <lucide-angular-icon name="link" class="w-4 h-4 text-gray-500"></lucide-angular-icon>
+         </div>
+       </div>
+       <div class="bg-gray-50 text-sm font-mono text-gray-700 p-3 rounded overflow-x-auto">
+         {{ entryUrl }}
+       </div>
+     </div>
+  
+    <!-- Referring URL -->
+     <div class="group">
+       <div class="flex items-center justify-between">
+         <h3 class="text-sm font-semibold text-gray-800 ">Referring URL</h3>
+         <div class="flex items-center gap-2 opactiy-0 group-hover:opacity-100 transition-opacity">
+           <lucide-angular-icon name="copy" class="w-4 h-4 text-gray-500"></lucide-angular-icon>
+           <lucide-angular-icon name="link" class="w-4 h-4 text-gray-500"></lucide-angular-icon>
+         </div>
+       </div>
+       <div class="bg-gray-50 text-sm font-mono text-gray-700 p-3 rounded overflow-x-auto">
+         {{ referringUrl }}
+       </div>
+     </div>
+  
+    <!-- User Agent -->
+     <div class="group">
+       <div class="flex items-center justify-between">
+         <h3 class="text-sm font-semibold text-gray-800 mb-1">User Agent String</h3>
+         <lucide-angular-icon name="copy" class="w-4 h-4 text-gray-500 opactiy-0 group-hover:opacity-100 transition-opacity"></lucide-angular-icon>
+       </div>
+       <div class="bg-gray-50 text-sm font-mono text-gray-700 p-3 rounded overflow-x-auto">
+         {{ userAgent }}
+       </div>
+     </div>
+  </div>
+  

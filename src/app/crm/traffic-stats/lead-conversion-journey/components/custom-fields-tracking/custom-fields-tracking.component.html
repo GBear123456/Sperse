@@ -1,0 +1,83 @@
+<div class="bg-white p-6 rounded-xl shadow border border-gray-200 w-full my-4">
+    <!-- Header -->
+    <div class="mb-4">
+      <h2 class="text-2xl font-semibold leading-none tracking-tight flex items-center space-x-2 text-gray-900">
+        <lucide-icon name="settings" class="w-5 h-5 text-gray-800"></lucide-icon>
+        <span>Custom Fields & Tracking</span>
+      </h2>
+      <p class="text-sm text-gray-500">Click on any custom field label or value to edit</p>
+    </div>
+  
+    <!-- Two Column Layout -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <!-- Custom Fields -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">Custom Fields</h3>
+        <div *ngFor="let field of customFields" class="flex justify-between items-center mb-2">
+          <!-- Editable Label -->
+          <div class="flex-1 min-w-0">
+            <div (click)="startEditing(field, 'label')" class="text-sm font-medium cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 rounded text-gray-900">
+              <input
+                *ngIf="field.editingLabel"
+                type="text"
+                class="border rounded px-2 py-0.5 text-sm w-full"
+                [value]="field.label"
+                (blur)="stopEditing(field, 'label', $event)"
+                (keydown.enter)="stopEditing(field, 'label', $event)"
+                autofocus
+              />
+              <span *ngIf="!field.editingLabel" class="font-medium text-gray-700">{{ field.label }}:</span>
+            </div>
+          </div>
+  
+          <!-- Editable Value -->
+          <div class="flex-1 min-w-0 ml-4">
+            <div (click)="startEditing(field, 'value')" class="cursor-pointer">
+              <input
+                *ngIf="field.editingValue"
+                type="text"
+                class="border rounded px-2 py-0.5 text-sm w-full text-right"
+                [value]="field.value"
+                (blur)="stopEditing(field, 'value', $event)"
+                (keydown.enter)="stopEditing(field, 'value', $event)"
+                autofocus
+              />
+              <span *ngIf="!field.editingValue" class="text-sm text-left cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 rounded text-gray-600 italic">
+                {{ field.value || 'Click to add value' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Tracking Fields -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">Tracking</h3>
+        <div *ngFor="let field of trackingFields" class="flex justify-between items-center py-1 gap-2 space-y-2">
+          <!-- Static Label -->
+          <div class="w-1/2">
+            <span class="font-medium text-gray-700">{{ field.label }}:</span>
+          </div>
+  
+          <!-- Editable Value -->
+          <div class="w-1/2 text-left">
+            <div (click)="startEditing(field, 'value')" class="cursor-pointer">
+              <input
+                *ngIf="field.editingValue"
+                type="text"
+                class="border rounded px-2 py-0.5 text-sm w-full text-right"
+                [value]="field.value"
+                (blur)="stopEditing(field, 'value', $event)"
+                (keydown.enter)="stopEditing(field, 'value', $event)"
+                autofocus
+              />
+              <span *ngIf="!field.editingValue" class="text-sm text-gray-500 italic">
+                {{ field.value || 'Not set' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -117,11 +117,6 @@ import { TenantReportsComponent } from "./tenant-reports/tenant-reports.componen
 import { CrmContactGroupGuard } from "./crm-contact-group-guard";
 import { ZapierModule } from "@shared/common/zapier/zapier.module";
 import { LeadConversionJourneyComponent } from "./traffic-stats/lead-conversion-journey/lead-conversion-journey.component";
-import { LocationNetworkComponent } from "./traffic-stats/lead-conversion-journey/location-network/location-network.component";
-import { DeviceSessionComponent } from "./traffic-stats/lead-conversion-journey/device-session/device-session.component";
-import { CustomFieldsComponent } from "./traffic-stats/lead-conversion-journey/custom-fields/custom-fields.component";
-import { UrlInfoComponent } from "./traffic-stats/lead-conversion-journey/url-info/url-info.component";
-import { VisitHistoryComponent } from "./traffic-stats/lead-conversion-journey/visit-history/visit-history.component";
 import { AggregateAnalyticsDashboardComponent } from "./traffic-stats/aggregate-analytics-dashboard/aggregate-analytics-dashboard.component";
 
 import {
@@ -156,6 +151,21 @@ import {
     Rss,
     Tag,
     Radio,
+    Smartphone,
+    Globe2,
+    File,
+    History,
+    GlobeLock,
+    Eye,
+    MousePointer,
+    Network,
+    MapPinCheck,
+    Navigation,
+    Laptop,
+    Monitor,
+    Languages,
+    Server,
+    Settings,
 } from "lucide-angular";
 import { AggregateAnalyticsHeaderComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/header/header.component";
 import { AggregateAnalyticsFiltersComponent } from "./traffic-stats/common/filters/filters.component";
@@ -186,6 +196,11 @@ import { KeyMetricsPanelComponent } from "./traffic-stats/conversion-tracking/co
 import { ConversionJourneyHeaderComponent } from "./traffic-stats/lead-conversion-journey/components/conversion-journey-header/conversion-journey-header.component";
 import { ReferralSourceCardComponent } from "./traffic-stats/lead-conversion-journey/components/referral-source-card/referral-source-card.component";
 import { UtmParametersCardComponent } from "./traffic-stats/lead-conversion-journey/components/utm-parameters-card/utm-parameters-card.component";
+import { VisitHistoryPanelComponent } from "./traffic-stats/lead-conversion-journey/components/visit-history-panel/visit-history-panel.component";
+import { LocationNetworkCardComponent } from "./traffic-stats/lead-conversion-journey/components/location-network-card/location-network-card.component";
+import { DeviceSessionPanelComponent } from "./traffic-stats/lead-conversion-journey/components/device-session-panel/device-session-panel.component";
+import { CustomFieldsTrackingComponent } from "./traffic-stats/lead-conversion-journey/components/custom-fields-tracking/custom-fields-tracking.component";
+import { UrlAgentPanelComponent } from "./traffic-stats/lead-conversion-journey/components/url-agent-panel/url-agent-panel.component";
 
 @NgModule({
     imports: [
@@ -289,6 +304,21 @@ import { UtmParametersCardComponent } from "./traffic-stats/lead-conversion-jour
             Megaphone,
             Radio,
             Tag,
+            Smartphone,
+            Globe2,
+            File,
+            History,
+            GlobeLock,
+            Eye,
+            MousePointer,
+            Network,
+            MapPinCheck,
+            Navigation,
+            Laptop,
+            Monitor,
+            Languages,
+            Server,
+            Settings,
         }),
     ],
     declarations: [
@@ -324,11 +354,6 @@ import { UtmParametersCardComponent } from "./traffic-stats/lead-conversion-jour
         EditTypeItemDialogComponent,
         TenantReportsComponent,
         LeadConversionJourneyComponent,
-        LocationNetworkComponent,
-        DeviceSessionComponent,
-        CustomFieldsComponent,
-        UrlInfoComponent,
-        VisitHistoryComponent,
         AggregateAnalyticsDashboardComponent,
         AggregateAnalyticsHeaderComponent,
         AggregateAnalyticsFiltersComponent,
@@ -359,6 +384,11 @@ import { UtmParametersCardComponent } from "./traffic-stats/lead-conversion-jour
         ConversionJourneyHeaderComponent,
         ReferralSourceCardComponent,
         UtmParametersCardComponent,
+        VisitHistoryPanelComponent,
+        LocationNetworkCardComponent,
+        DeviceSessionPanelComponent,
+        CustomFieldsTrackingComponent,
+        UrlAgentPanelComponent,
     ],
     providers: [
         ImportServiceProxy,
