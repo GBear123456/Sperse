@@ -38,7 +38,11 @@ export class AddSpreedlyProviderDialog {
     gateways: any[];
     selectedGatewayType;
     selectedGateway: any;
+
+    authModes: any[] = [];
+    selectedGatewayAuthType;
     selectedGatewayAuth: any;
+
     isTestSandbox = false;
 
     sandbox = false;
@@ -62,8 +66,25 @@ export class AddSpreedlyProviderDialog {
 
     onGatewaySelect(type: string) {
         this.selectedGateway = this.gateways.find(g => g.gateway_type === type);
-        this.selectedGatewayAuth = this.selectedGateway.auth_modes?.[0] ?? null;
+
+        let authModes: any[] = this.selectedGateway.auth_modes || [];
+        if (authModes.length) {
+            authModes = authModes.filter(v => v.credentials && v.credentials.length);
+        }
+
+        this.authModes = authModes;
+        if (authModes.length == 1) {
+            this.selectedGatewayAuth = this.selectedGateway.auth_modes[0];
+        }
+        else {
+            this.selectedGatewayAuth = null;
+        }
+
         this.isTestSandbox = this.selectedGateway.gateway_type == 'test';
+    }
+
+    onGatewayAuthSelect(type: string) {
+        this.selectedGatewayAuth = this.authModes.find(g => g.auth_mode_type === type);
     }
 
     save() {
@@ -73,9 +94,16 @@ export class AddSpreedlyProviderDialog {
         this.modalDialog.startLoading();
 
         const fields: Record<string, string> = {};
-        this.selectedGatewayAuth?.credentials.forEach((field: any) => {
-            fields[field.name] = field.value;
-        });
+
+        if (this.selectedGatewayAuth) {
+            if (this.selectedGatewayAuth.auth_mode_type != 'default')
+                fields['mode'] = this.selectedGatewayAuth.auth_mode_type;
+
+            this.selectedGatewayAuth.credentials.forEach((field: any) => {
+                fields[field.name] = field.value;
+            });
+        }
+
         this.selectedGateway.gateway_settings?.forEach((field: any) => {
             fields[field.name] = field.value;
         });
