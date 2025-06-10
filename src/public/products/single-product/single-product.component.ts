@@ -352,7 +352,7 @@ export class SingleProductComponent implements OnInit {
 
                 SpreedlyExpress.init(this.productInfo.data.spreedlyEnvironmentKey,
                     {
-                        "amount": this.getGeneralPrice(true) + ' ' + this.currencySymbol,
+                        "amount": this.getGeneralPrice(true).toFixed(2) + ' ' + this.currencySymbol,
                         "company_name": this.productInfo.name,
                         "sidebar_top_description": '',
                         "sidebar_bottom_description": this.selectedPriceOption.name,
