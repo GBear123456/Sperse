@@ -1,0 +1,33 @@
+@import './ghost-animation.less';
+
+:host {
+    -webkit-mask-image: -webkit-gradient(linear, left 50%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
+    display: block;
+    width: 100%;
+    ul {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+    li.ghost {
+        border-bottom: 1px solid #ddd;
+        padding: 15px;
+        min-height: 58px;
+        .lines {
+            height: 100%;
+            p {
+                background-color: #fff;
+                border-bottom: 3px solid white;
+                border-radius: 5px;
+                background-image: linear-gradient(90deg, @base-color 0px, @ghost-color 40px, @base-color 80px);
+                background-size: 80vw;
+                animation: ghost-lines @animation-duration infinite linear;
+                min-height: 28px;
+                height: 100%;
+                width: 100%;
+                margin-bottom: 0;
+            }
+        }
+    }
+
+}

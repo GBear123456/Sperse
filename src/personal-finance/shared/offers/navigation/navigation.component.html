@@ -1,0 +1,8 @@
+<ul>
+    <li *ngFor="let link of links" routerLinkActive="active">
+        <a [routerLink]="'../' + link.url">
+            <img [src]="'./assets/common/icons/offers/' + link.url + '.svg'" [alt]="link.name">
+            {{ link.name }}
+        </a>
+    </li>
+</ul>

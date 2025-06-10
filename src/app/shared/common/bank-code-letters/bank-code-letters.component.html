@@ -1,0 +1,72 @@
+<ng-container *ngIf="bankCode">
+    <ng-container *ngFor="let letter of bankCode.split('')">
+        <bank-code-letter [letter]="letter"
+                          [key]="key"
+                          [active]="active"
+                          [showDescriptionOnClick]="showDescriptionsOnClick"
+                          [showDescriptionOnHover]="showDescriptionsOnHover && !editPopupIsOpened && bankCode !== bankCodeService.emptyBankCode"
+                          (onClick)="onLetterClick($event)">
+        </bank-code-letter>
+    </ng-container>
+    <i *ngIf="allowEdit && bankCode !== bankCodeService.emptyBankCode"
+       class="edit fa fa-pencil bank-code-edit"
+       (click)="showEditPopup($event)">
+    </i>
+    <span *ngIf="showBankCodeDefinition"
+          class="bankCodeDefinition"
+          [ngStyle]="{ color: bankCodeService.getBackgroundColorByLetter(bankCode[0])}">
+        {{ bankCodeDefinition }}
+    </span>
+    <ng-container *ngIf="showReportLink">
+        <a *ngIf="reportLinkType === 'Profile'; else salesReportButton"
+           class="reportLink"
+           [href]="bankCodeService.getBankCodeReportLink('EN', bankCode)"
+           target="_blank"
+           download>
+            <img [src]="reportIconSrc" [alt]="bankCodeDefinition">
+        </a>
+        <ng-template #salesReportButton>
+            <a (click)="salesButtonClick($event)" #salesReportButton>
+                <img [src]="reportIconSrc" [alt]="bankCodeDefinition">
+            </a>
+            <dx-tooltip [(visible)]="showTooltip" [target]="salesReportButton" position="bottom" hideEvent="dxoverend">
+                <div *dxTemplate="let data = data of 'content'">
+                    <div class="sales-report-tooltip">
+                        <div class="title">{{ ls.l('DownloadReport') }}</div>
+                        <div class="report-type">
+                            <dx-select-box [items]="reportTypes"
+                                           displayExpr="displayName"
+                                           [width]="193"
+                                           [height]="35"
+                                           [(value)]="selectedReportType">
+                            </dx-select-box>
+                        </div>
+                        <div class="options">
+                            <dx-radio-group [items]="resolutions"
+                                            [(value)]="selectedResolution"
+                                            displayExpr="text"
+                                            valueExpr="value"
+                                            layout="horizontal">
+                                <div *dxTemplate="let res of 'item'">
+                                    <div class="text">{{ res.text }}</div>
+                                    <div class="size">({{ res.size }})</div>
+                                </div>
+                            </dx-radio-group>
+                        </div>
+                        <ul class="languages">
+                            <li *ngFor="let language of languages">
+                                <a [href]="bankCodeService.getBankCodeReportLink(language.code, bankCode, selectedReportType.folder, selectedReportType.type, resolution)"
+                                   target="_blank">
+                                    <img [src]="reportIconSrc">
+                                    <span>{{ ls.l('DownloadIn') }}</span>
+                                    <span class="language">{{ language.text }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </dx-tooltip>
+        </ng-template>
+    </ng-container>
+    <span *ngIf="hasBankCodeFeature && showHistoryLink" class="dx-icon-clock code-history" (click)="showBankCodeHistory($event)" [title]="ls.l('BankCodeHistory')"></span>
+</ng-container>

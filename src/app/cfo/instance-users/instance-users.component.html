@@ -1,0 +1,52 @@
+<app-headline [names]="[ l('Users') ]"
+              [showReloadButton]="ui.showReload"
+              [showToggleToolbarButton]="true"
+              [showToggleLeftMenuButton]="true"
+              (onReload)="invalidate()">
+    <synch-progress class="synch-progress"></synch-progress>
+</app-headline>
+<app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+<div class="main-wrapper">
+    <cfo-left-menu [selectedItemIndex]="5"></cfo-left-menu>
+    <dx-data-grid id="gridContainer"
+                  [columnAutoWidth]="true"
+                  [hoverStateEnabled]="true"
+                  [loadPanel]="{ enabled: false }"
+                  [pager]="defaultGridPagerConfig"
+                  [dataSource]="dataSource"
+                  (onSelectionChanged)="initToolbarConfig()">
+        <dxo-selection selectAllMode="page"
+                       showCheckBoxesMode="always"
+                       mode="multiple">
+        </dxo-selection>
+        <dxo-sorting mode="multiple"></dxo-sorting>
+
+        <dxi-column dataField="firstName"
+                    [caption]="l('FirstName')"
+                    cssClass="clipboard-holder">
+        </dxi-column>
+        <dxi-column dataField="lastName"
+                    cssClass="clipboard-holder"
+                    [caption]="l('LastName')">
+        </dxi-column>
+        <dxi-column dataField="emailAddress"
+                    cssClass="clipboard-holder"
+                    [caption]="l('Email')">
+        </dxi-column>
+        <dxi-column dataField="phoneNumber"
+                    cellTemplate="phoneCell"
+                    [caption]="l('Phone')">
+        </dxi-column>
+        <dxi-column dataField="startDate"
+                    cellTemplate="dateCell"
+                    [caption]="l('Date')">
+        </dxi-column>
+
+        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+            {{cellData.value | datetime: formatting.dateTimeMoment }}
+        </div>
+        <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
+            {{cellData.value | phone}}
+        </div>
+    </dx-data-grid>
+</div>

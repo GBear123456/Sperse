@@ -1,0 +1,92 @@
+:host {
+    .bar-info {
+        font-size: 14px;
+        margin-bottom: 14px;
+        font-weight: 500;
+
+        & > div {
+            font-family: 'AktivGroteskW01-Regular', sans-serif !important;
+            color: #000;
+        }
+
+        .font-weight-bold {
+            font-size: 16px;
+            font-family: 'AktivGroteskW01-Bold', sans-serif !important;
+        }
+
+        .text-secondary {
+            font-size: 13px;
+            letter-spacing: -0.3px;
+            color: #7a7979 !important;
+            font-weight: 400;
+        }
+    }
+
+    .bar-info .bar span {
+        width: 0;
+        height: 100%;
+        display: block;
+    }
+
+    .bar-info .bar.bar-red span {
+        background: #ac1f22;
+    }
+
+    .bar-info .bar.bar-blue span {
+        background: #104779;
+    }
+
+    .bar-info .bar.bar-yellow span {
+        background: #f09e1f;
+    }
+
+    .bar-info .bar.bar-green span {
+        background: #1b6634;
+    }
+
+    .bar-info .bar.bar-purple span {
+        background: #615ba5;
+    }
+
+    ::ng-deep dx-progress-bar {
+        &.daily-goal {
+            .dx-progressbar-range {
+                border-color: #ac1f22;
+                background-color: #ac1f22;
+            }
+        }
+        &.weekly-goal {
+            .dx-progressbar-range {
+                border-color: #104779;
+                background-color: #104779;
+            }
+        }
+        &.monthly-goal {
+            .dx-progressbar-range {
+                border-color: #f09e1f;
+                background-color: #f09e1f;
+            }
+        }
+        &.quarterly-goal {
+            .dx-progressbar-range {
+                border-color: #1b6634;
+                background-color: #1b6634;
+            }
+        }
+        &.annual-goal {
+            .dx-progressbar-range {
+                border-color: #615ba5;
+                background-color: #615ba5;
+            }
+        }
+
+        .dx-trackbar-container {
+            height: 12px;
+            border-radius: 0;
+        }
+
+        .dx-progressbar-wrapper {
+            vertical-align: top;
+        }
+    }
+}

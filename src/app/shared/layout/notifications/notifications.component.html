@@ -1,0 +1,74 @@
+<modal-dialog [title]="ls.l('Notifications')"
+              [editTitle]="false"
+              [titleClearButton]="false"
+              [placeholder]="ls.l('Notifications')">
+    <div class="tab-content">
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="form-group">
+                    <dx-select-box
+                        [items]="selectBoxList"
+                        [(value)]="readStateFilter"
+                        displayExpr="text"
+                        valueExpr="value"
+                        (onValueChanged)="loadNotifications()">
+                    </dx-select-box>
+                </div>
+            </div>
+            <div class="col-xl-6 text-right links">
+                <a href="javascript:;" class="text-right"
+                   *ngIf="userNotificationHelper.unreadNotificationCount > 0"                   
+                   (click)="setAllNotificationsAsRead($event);">
+                    {{ls.l("SetAllAsRead")}}
+                </a>
+                <a (click)="openNotificationSettingsModal($event)"
+                   href="javascript:;">
+                    {{ls.l("Preferences")}}
+                </a>
+            </div>
+        </div>
+        <div data-scrollable="true">
+            <dx-data-grid id="gridContainer"
+                          class="alone notificationGrid"
+                          [dataSource]="notificationsDataSource"
+                          sorting="none"
+                          [loadPanel]="{enabled: false}"
+                          height="calc(100vh - 158px)"
+                          [remoteOperations]="true"
+                          [hoverStateEnabled]="true"
+                          [pager]="defaultGridPagerConfig"
+                          (onRowClick)="notificationClick($event)">
+                <dxi-column [allowSorting]="false"
+                            alignment="center"
+                            caption=""
+                            [width]="50"
+                            dataField="icon"
+                            cellTemplate="iconCellTemplate">
+                </dxi-column>
+                <dxi-column [allowSorting]="false" [caption]="ls.l('Notification')"
+                            dataField="text">
+                </dxi-column>
+                <dxi-column [allowSorting]="false"
+                            alignment="right"
+                            [caption]="ls.l('Date')"
+                            dataField="state"
+                            [width]="180"
+                            cellTemplate="dateCellTemplate">
+                </dxi-column>
+
+                <div *dxTemplate="let options of 'iconCellTemplate'">
+                    <i class="fa {{options.data.icon}} {{options.data.state}}"></i>
+                </div>
+                <div *dxTemplate="let options of 'dateCellTemplate'" style="margin-rigth: 20px">
+                    {{options.data.time}}
+                    <div *ngIf="options.data.state === 'UNREAD'">
+                        <a class="set-notification-as-read"
+                           (click)="setNotificationAsRead($event, options.data);">
+                            {{ls.l("SetAsRead")}}
+                        </a>
+                    </div>
+                </div>
+            </dx-data-grid>
+        </div>
+    </div>
+</modal-dialog>

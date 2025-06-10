@@ -1,0 +1,63 @@
+:host {
+    position: relative;
+    height: 100%;
+
+    ::ng-deep dx-data-grid {
+
+        td.dx-command-edit {
+            & + td::before {
+                display: none !important;
+            }
+        }
+
+        .role-container {
+            width: 95%;
+            text-overflow: ellipsis;
+            display: inline-block!important;
+            overflow: hidden;
+            vertical-align: bottom;
+            text-align: left!important;
+        }
+
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                cursor: pointer;
+
+                & > td {
+                    span {
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+
+    ::ng-deep .dx-searchbox {
+        @media (max-width: 767px) {
+            width: 215px !important;
+        }
+        @media (max-width: 350px) {
+            width: 160px !important;
+        }
+    }
+}
+
+::ng-deep [custaccesskey="search-container"] {
+    &[filter-selected="true"] {
+        border: 0;
+
+        .dx-button-text {
+            font-size: 14px !important;
+            letter-spacing: 0.3px !important;
+            color: #00AEEF !important;
+
+            &:hover {
+                color: lighten(#00AEEF, 20%) !important;
+            }
+        }
+    }
+
+    &[filter-selected="false"] {
+        display: none;
+    }
+}

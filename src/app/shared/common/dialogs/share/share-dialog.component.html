@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+    <div class="field">
+        <label>{{ls.l('Share Link')}}</label>
+        <dx-text-area #cmpSimpleLink
+            height="50px"
+            width="600px"
+            value="{{data.linkUrl}}"
+        ></dx-text-area><button class="btn-layout" (click)="copyToClipbord(cmpSimpleLink.instance.option('value'))">{{ls.l('Copy Link')}}</button>
+    </div>
+    <div class="field">
+        <label>{{ls.l('Place Link on Your Website')}}</label>
+        <dx-text-area #cmpHTMLLink
+            width="600px"
+            value="{{getLink()}}"
+        ></dx-text-area><button class="btn-layout" (click)="copyToClipbord(cmpHTMLLink.instance.option('value'))">{{ls.l('Copy Link')}}</button>
+    </div>
+    <div class="field">
+        <label>{{ls.l('Embed Page on Your Website')}}</label>
+        <dx-text-area #cmpEmbedPage
+            width="600px"
+            value="{{getFrame()}}"
+        ></dx-text-area><button class="btn-layout" (click)="copyToClipbord(cmpEmbedPage.instance.option('value'))">{{ls.l('Copy Link')}}</button>
+    </div>
+    <div class="field">
+        <label>{{ls.l('Create Button For Your Website')}}</label>
+        <dx-text-area #cmpButtonLink
+            width="600px"
+            value="{{getButton()}}"
+        ></dx-text-area><button class="btn-layout" (click)="copyToClipbord(cmpButtonLink.instance.option('value'))">{{ls.l('Copy Link')}}</button>
+    </div>
+    <div class="field">
+        <label>{{ls.l('Button Text And Color')}}</label>
+        <dx-text-box
+            width="350px"
+            [(value)]="btnCaption"
+            valueChangeEvent="keyup"
+        ></dx-text-box>
+        <dx-color-box
+            width="330px"
+            [(value)]="btnColor"
+            [showClearButton]="false"
+            [showDropDownButton]="false"
+            [openOnFieldClick]="true"
+            labelMode="hidden"
+            placeholder="Button Color"
+        ></dx-color-box><br>
+        <button href="{{data.linkUrl}}" class="button-example" role="button" style="background-color: {{btnColor}};">{{btnCaption}}</button>
+    </div>    
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button class="button-layout button-default" style="margin-left: auto;" mat-dialog-close mat-button>
+        {{ls.l('Cancel')}}
+    </button>
+</mat-dialog-actions>

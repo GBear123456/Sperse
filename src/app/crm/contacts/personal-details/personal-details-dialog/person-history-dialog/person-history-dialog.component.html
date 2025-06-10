@@ -1,0 +1,54 @@
+<modal-dialog [title]="ls.l('PersonHistory')"
+              [editTitle]="false"
+              [titleClearButton]="false">
+    <dx-scroll-view showScrollbar="always">
+        <div class="content">
+            <div class="history-item" *ngFor="let personHistoryDto of processedHistory; index as i">
+                <div class="user-section">
+                    <img [src]="profileService.getContactPhotoUrl(personHistory[i].creatorUserPhotoPublicId, false)"
+                         [title]="personHistory[i].creatorUserName || ''"
+                         class="user-image"
+                         width="50" height="50">
+                    <p [title]="personHistory[i].creatorUserName || ''">{{personHistory[i].creatorUserName || ''}}</p>
+                </div>
+                <div class="data-section">
+                    <div class="row">
+                        <div class="col-md-6 history-prop-column">
+                            <ng-container *ngFor="let key of Object.keys(personHistoryDto); index as i">
+                                <div *ngIf="canShowProperty(personHistoryDto, i, true)" class="history-prop">
+                                    <label class="control-label">{{ls.l('PersonHistory_'+key)}}:</label>
+                                    <span class="form-control-static" [title]="personHistoryDto[key]">
+                                        {{personHistoryDto[key]}}
+                                    </span>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <div class="col-md-6 history-prop-column">
+                            <ng-container *ngFor="let key of Object.keys(personHistoryDto); index as i">
+                                <div *ngIf="canShowProperty(personHistoryDto, i, false)" class="history-prop">
+                                    <label class="control-label">{{ls.l('PersonHistory_'+key)}}:</label>
+                                    <span class="form-control-static" [title]="personHistoryDto[key]">
+                                        {{personHistoryDto[key]}}
+                                    </span>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="row bottom-row">
+                        <div class="col-md-9 history-prop-column">
+                            <label class="control-label">{{ls.l('PersonHistory_source')}}:</label>
+                            <span class="form-control-static" [title]="personHistory[i].source">
+                                {{personHistory[i].source}}
+                            </span>
+                        </div>
+                        <div class="col-md-3 history-prop-column history-date">
+                            <span class="form-control-static" [title]="getCreationTimeHint(personHistory[i])">
+                                {{getCreationTimeAgo(personHistory[i])}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>

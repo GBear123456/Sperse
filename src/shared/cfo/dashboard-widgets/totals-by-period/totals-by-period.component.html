@@ -1,0 +1,60 @@
+<section class="categorization-status">
+    <header>
+        <h2 class="title">{{l('Totals_by_period')}}</h2>
+    </header>
+    <div class="content-wrap">
+        <div [hidden]="!totalData" *ngIf="totalData?.hasOwnProperty('startingBalance')" class="align-data">
+
+            <div class="starting-balance" [hidden]="!totalData.startingBalance && currentPeriod == allPeriodLocalizationValue && totalData.startingBalanceAdjustments">
+                {{l('Stats_startingBalance')}}
+                <span>{{ totalData.startingBalance | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol }}</span>
+            </div>
+            <div class="starting-balance-entry" *ngIf="totalData.startingBalanceAdjustments !== 0">{{l('Stats_Starting_Balance_Adjustments')}}<span>{{ totalData.startingBalanceAdjustments | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol }}</span></div>
+
+            <div class="chart-head">
+                {{l('Cash_Inflows')}}
+                <a class="inflows"
+                   [routerLink]="['../transactions']"
+                   [queryParams]="{ cashflowTypeIds: 'I' }">
+                    <ng-container *ngIf="totalData.credit > 0"><span class="plus">+</span></ng-container>
+                    {{ totalData.credit | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol }}
+                </a>
+            </div>
+            <div class="chart-line inflows"><div [ngStyle]="{width: totalData.creditPercent + '%'}"></div></div>
+
+            <div class="chart-head">
+                {{l('Cash_Outflows')}}
+                <a class="outflows"
+                   [routerLink]="['../transactions']"
+                   [queryParams]="{ cashflowTypeIds: 'E' }">
+                    <ng-container *ngIf="totalData.debit > 0"><span class="plus">+</span></ng-container>
+                    {{ totalData.debit | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol }}
+                </a>
+            </div>
+            <div class="chart-line outflows"><div [ngStyle]="{width: totalData.debitPercent + '%'}"></div></div>
+
+            <div class="chart-head">
+                {{l('Net_Change')}}
+                <a [routerLink]="['../transactions']"
+                   [queryParams]="{ cashflowTypeIds: 'I,E' }"
+                   [ngClass]="totalData.netChange > 0 ? 'inflows': 'outflows'">
+                    <ng-container *ngIf="totalData.netChange > 0"><span class="plus">+</span></ng-container>
+                    {{ totalData.netChange | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol }}
+                </a>
+            </div>
+
+            <div class="adjustments" *ngIf="totalData.adjustments !== 0">
+                {{l('Unreconciled_Balance')}}
+                <span>{{ totalData.adjustments | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol }}</span>
+            </div>
+            <!--<div class="chart-line"><div [ngStyle]="{width: totalData.netChangePercent + '%', 'background-color': totalData.credit - totalData.debit > 0 ? netChangeColor : debitColor }"></div></div>-->
+
+            <div class="ending-balance">
+                {{l('Stats_endingBalance')}}
+                <span>{{ totalData.endingBalance | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol }}</span>
+            </div>
+
+        </div>
+        <app-no-data [hidden]="loading || (totalData && totalData?.hasOwnProperty('startingBalance'))"></app-no-data>
+    </div>
+</section>

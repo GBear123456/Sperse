@@ -1,0 +1,57 @@
+<modal-dialog [title]="ls.l('BankCodeHistory')"
+              [editTitle]="false"
+              [titleClearButton]="false">
+    <dx-scroll-view showScrollbar="onHover">
+        <div class="content">
+            <div *ngFor="let bankCodeInfo of bankCodeHistory">
+                <div class="m-alert m-alert--icon m-alert--icon-solid m-alert--outline alert alert-info" [ngClass]="{overridden:bankCodeInfo.overridden}" role="alert">
+                    <div class="m-alert__icon code-color">
+                        <img [src]="profileService.getContactPhotoUrl(bankCodeInfo.userPhotoPublicId, false)"
+                             [title]="bankCodeInfo.userName || ''" 
+                             class="m--img-rounded m--marginless m--img-centered" 
+                             width="50" height="50">
+                        <p [title]="bankCodeInfo.userName || ''">{{bankCodeInfo.userName || ''}}</p>
+                    </div>
+                    <div class="m-alert__text left">
+                        <div class="row">
+                            <label class="control-label col-sm-2">{{ls.l('BANKCode')}}:</label>
+                            <p class="form-control-static nopadding">
+                                <bank-code-letters [bankCode]="bankCodeInfo.bankCode">
+                                </bank-code-letters>
+                            </p>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-2">{{ls.l('Source')}}:</label>
+                            <p class="form-control-static" [title]="bankCodeInfo.source">
+                                {{bankCodeInfo.source}}
+                            </p>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-2">{{ls.l('BankCodeHistory_Overridden')}}:</label>
+                            <p class="form-control-static">
+                                {{bankCodeInfo.overridden ? ls.l('Yes') : ls.l('No')}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="m-alert__text right">
+                        <div class="row" *ngIf="getBankCodeAssessment(bankCodeInfo)">
+                            <label class="control-label col-sm-2">{{ls.l('BankCodeHistory_Assessment')}}:</label>
+                            <p class="form-control-static nopadding">
+                                <bank-code-assessment [bankCode]="bankCodeInfo.bankCode"
+                                                      [assessmentResult]="getBankCodeAssessment(bankCodeInfo)">
+                                </bank-code-assessment>
+                            </p>
+
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-2">{{ls.l('Time')}}:</label>
+                            <p class="form-control-static bank-code-date" [title]="getBankCodeTime(bankCodeInfo)">
+                                {{getBankCodeTime(bankCodeInfo)}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>

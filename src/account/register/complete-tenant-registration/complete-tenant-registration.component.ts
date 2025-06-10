@@ -1,0 +1,69 @@
+/** Core imports */
+import { Component, Injector, OnInit } from '@angular/core';
+
+/** Third party imports */
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
+import {
+    TenantSubscriptionServiceProxy, CompleteTenantRegistrationInput, CompleteTenantRegistrationOutput
+} from '@shared/service-proxies/service-proxies';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { accountModuleAnimation } from '@shared/animations/routerTransition';
+import { LoginService } from '../../login/login.service';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
+
+@Component({
+    templateUrl: './complete-tenant-registration.component.html',
+    styleUrls: ['./complete-tenant-registration.component.less'],
+    animations: [accountModuleAnimation()],
+    providers: [TenantSubscriptionServiceProxy]
+})
+export class CompleteTenantRegistrationComponent extends AppComponentBase implements OnInit {
+    model: CompleteTenantRegistrationInput = new CompleteTenantRegistrationInput();
+
+    constructor(
+        injector: Injector,
+        public loginService: LoginService,
+        private tenantSubscriptionService: TenantSubscriptionServiceProxy,
+        private authService: AppAuthService
+    ) {
+        super(injector);
+    }
+
+    ngOnInit() {
+        this.authService.logout(false);
+        abp.multiTenancy.setTenantIdCookie(null);
+        this.model.requestXref = this._activatedRoute.snapshot.queryParams['leadRequestXref'];
+        this.registerTenant();
+    }
+
+    save(): void {
+        this.registerTenant();
+    }
+
+    registerTenant(): void {
+        this.model.adminPassword = this.generatePassword();
+        this.startLoading(true);
+        this.tenantSubscriptionService.completeTenantRegistration(this.model)
+            .pipe(finalize(() => { this.finishLoading(true); }))
+            .subscribe((result: CompleteTenantRegistrationOutput) => {
+                this.notify.success(this.l('SuccessfullyRegistered'));
+                this.login(result);
+            });
+    }
+
+    login(registrationResult: CompleteTenantRegistrationOutput): void {
+
+        this.loginService.authenticateModel.userNameOrEmailAddress = registrationResult.emailAddress;
+        this.loginService.authenticateModel.password = this.model.adminPassword;
+
+        abp.multiTenancy.setTenantIdCookie(registrationResult.tenantId);
+        this.loginService.authenticate(() => { }, undefined, false);
+    }
+
+    generatePassword(): string {
+        let number = Math.random();
+        return number.toString(36).substring(6);
+    }
+}

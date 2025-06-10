@@ -1,0 +1,111 @@
+<div class="import-wrapper">
+    <crm-left-menu [hidden]="hideLeftMenu"></crm-left-menu>
+    <import-wizard
+        [title]="l('Import leads')"
+        icon="icon-globe"
+        [ngClass]="{ leftMenuCollapsed: leftMenuCollapsed$ | async }"
+        [showLeftMenuToggleButton]="!hideLeftMenu"
+        [fields]="mappingFields"
+        [columnsConfig]="fieldsConfig"
+        [checkSimilarFields]="compareFields"
+        [phoneRelatedCountryFields]="phoneRelatedCountryFields"
+        [preProcessFieldBeforeReview]="preProcessFieldBeforeReview"
+        [validateFieldsMapping]="validateFieldsMapping"
+        [validateFieldsValues]="{stages: stages}"
+        [toolbarConfig]="toolbarConfig"
+        (onMappingChanged)="onMappingChanged($event)"
+        (onSelectionChanged)="onStepChanged($event)"
+        (onComplete)="complete($event)"
+        (onCancel)="cancel()">
+        <div class="success">
+            <div *ngIf="importStatus == importStatuses.InProgress">
+                <h1>{{l('ImportProgressHeader')}}</h1>
+                <p>{{l('Total')}}: {{totalCount}}</p>
+                <p>{{l('Imported')}}: {{importedCount}}</p>
+                <p>{{l('Failed')}}: {{failedCount}}</p>
+                <import-progress-bar [summaryTooltip]="false"></import-progress-bar>
+                <button class="button-layout button-primary" (click)="navigateToList()">{{l('ViewAllImports')}}</button>
+                <button class="button-layout button-primary" (click)="reset()" [ngStyle]="{'background-color': '#34bfa3'}">{{l('AnotherImport')}}</button>
+                <button class="button-layout button-default" (click)="cancelImport()">{{l('CancelImport')}}</button>
+            </div>
+
+            <div *ngIf="importStatus == importStatuses.Completed">
+                <h1>{{ l('ImportedLeadsHeader', importedCount, totalCount, l(importType.toString() + 's').toLowerCase()) }}</h1>
+                <!-- h3>{{l('ImportedLeadsMessage')}}</h3 -->
+                <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
+                <button class="button-layout button-default" (click)="cancel()">{{l('GoToDashboard')}}</button>
+            </div>
+
+            <div *ngIf="importStatus == importStatuses.New">
+                <h1>{{l('PendingLeadsHeader')}}</h1>
+                <button class="button-layout button-primary" (click)="navigateToList()">{{l('ViewAllImports')}}</button>
+            </div>
+        </div>
+    </import-wizard>
+</div>
+
+<user-assignment-list
+    selectionMode="single"
+    [bulkUpdateMode]="true"
+    [hideButtons]="true"
+    [permissionKey]="getUserAssignmentPermissionKey()"
+    [assignedUsersSelector]="assignedUsersSelector"
+    (onSelectionChanged)="onUserAssignmentChanged($event)">
+</user-assignment-list>
+<app-static-list #stagesList
+    [width]="'210px'"
+    [highlightSelected]="true"
+    [showConfirmation]="false"
+    [title]="l('Stages')"
+    targetSelector="[aria-label='{{l('Toolbar_Stage')}}']"
+    [hideButtons]="true"
+    [disableHindmost]="false"
+    [funnelStyling]="true"
+    (onItemSelected)="onStagesChanged($event)"
+    [list]="stages">
+</app-static-list>
+<!--<app-static-list #partnerTypesList-->
+    <!--[width]="'210px'"-->
+    <!--[highlightSelected]="true"-->
+    <!--[title]="l('PartnerType')"-->
+    <!--[selectedKeys]="[selectedPartnerTypId]"-->
+    <!--[showConfirmation]="false"-->
+    <!--[hideButtons]="true"-->
+    <!--[highlightSelected]="true"-->
+    <!--[targetSelector]="'[accessKey=PartnerType]'"-->
+    <!--(onItemSelected)="onPartnerTypeChanged($event)"-->
+    <!--[list]="partnerTypes">-->
+<!--</app-static-list>-->
+<types-list [selectedKeys]="selectedClientKeys"
+            [bulkUpdateMode]="true"
+            [hideButtons]="true"
+            (onSelectedChanged)="onPartnerTypeChanged($event)">
+</types-list>
+<lists-list [selectedKeys]="selectedClientKeys"
+            [bulkUpdateMode]="true"
+            [hideButtons]="true"
+            [showSelection]="true"
+            (onSelectionChanged)="onListsChanged($event)"
+            [managePermission]="manageCGPermission">
+</lists-list>
+<tags-list [selectedKeys]="selectedClientKeys"
+           [bulkUpdateMode]="true"
+           [showSelection]="true"
+           [hideButtons]="true"
+           (onSelectedChanged)="onTagsChanged($event)"
+           [managePermission]="manageCGPermission">
+</tags-list>
+<rating [selectedKeys]="selectedClientKeys"
+        [bulkUpdateMode]="true"
+        [ratingValue]="ratingValue"
+        [hideButtons]="true"
+        (onValueChanged)="onRatingChanged($event)"
+        [managePermission]="manageCGPermission">
+</rating>
+<crm-stars-list [selectedKeys]="selectedClientKeys"
+                [bulkUpdateMode]="true"
+                [hideButtons]="true"
+                [selectionMode]="'single'"
+                (onSelectionChanged)="onStarsChanged($event)"
+                [managePermission]="manageCGPermission">
+</crm-stars-list>

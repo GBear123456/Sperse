@@ -1,0 +1,185 @@
+.dx-list[accesskey="actionsMenu"] {
+    .dx-state-invisible + .dx-list-item {
+        border-top: none;
+    }
+
+    .dx-list-item {
+        border: none !important;
+        text-align: left !important;
+
+        .dx-item-content {
+            position: relative;
+            padding-right: 70px;
+
+            div {
+                font-size: 13px;
+                letter-spacing: 0.26px;
+                color: #424c56;
+                display: flex;
+                align-items: center;
+                font-family: var(--app-font-family) !important;
+
+                &:before {
+                    margin-right: 10px;
+                    min-width: 17px
+                }
+
+                &.edit:before {
+                    content: url("../../../../assets/common/icons/d-edit.svg");
+                    height: 17px;
+                }
+
+                &.preview {
+                    position: absolute;
+                    left: 22px;
+
+                    &:before {
+                        content: url("../../../../assets/common/icons/preview.svg");
+                        width: 19px;
+                    }
+                }
+
+                &.archive:before {
+                    content: url("../../../../assets/common/icons/appointment.svg");
+                    height: 17px;
+                }
+
+                &.bookmark:before {
+                    content: url("../../../../assets/common/icons/star-icon.svg");
+                    height: 17px;
+                }
+
+                &.copy:before {
+                    content: url("../../../../assets/common/icons/copy.svg");
+                    height: 17px;
+                }
+
+                &.status:before {
+                    content: url("../../../../assets/common/icons/status-icon.svg");
+                    height: 17px;
+                }
+
+                &.call:before {
+                    content: url("../../../../assets/common/icons/phone.svg");
+                    height: 17px;
+                }
+
+                &.email:before {
+                    content: url("../../../../assets/common/icons/email.png");
+                    height: 17px;
+                }
+
+                &.sms {
+                    font-family: var(--app-font-family);
+
+                    &:before {
+                        font: normal normal normal 16px/1 FontAwesome;
+                    }
+                }
+
+                &.notes:before,
+                &.checklist:before {
+                    content: url("../../../../assets/common/icons/notes.svg");
+                    height: 17px;
+                }
+
+                &.appointment:before {
+                    content: url("../../../../assets/common/icons/appointment.svg");
+                    height: 17px;
+                }
+
+                &.orders:before {
+                    content: url("../../../../assets/common/icons/orders.svg");
+                    height: 17px;
+                }
+
+                &.notifications:before {
+                    content: url("../../../../assets/common/icons/notifications.svg");
+                    height: 17px;
+                }
+
+                &.login:before {
+                    content: url("../../../../assets/common/icons/login.svg");
+                    height: 15px;
+                }
+
+                &.delete {
+                    color: #e7326a;
+
+                    &:before {
+                        content: url("../../../../assets/common/icons/delete-icon-red.svg");
+                        height: 18px;
+                    }
+                }
+
+                &.download:before {
+                    content: url("../../../../assets/common/icons/download-icon.svg");
+                    height: 16px;
+                }
+
+                &.unlock:before {
+                    content: url("../../../../assets/common/images/bank-code/lock.svg");
+                    height: 14px;
+                }
+
+                &.dx-icon-pin:before {
+                    display: block;
+                    transform: rotate(35deg);
+                }
+
+                &.dx-icon-pin:before, &.dx-icon-unpin:before {
+                    font: 14px/1 DXIcons;
+                    font-size: 18px;
+                    color: #686F76;
+                }
+
+                &.change-texts:before {
+                    content: url("../../../../assets/common/icons/language.png");
+                }
+
+                &.set-as-default-language:before {
+                    content: url("../../../../assets/common/icons/global.png");
+                }
+
+                &.send-notification:before {
+                    content: '';
+                    width: 17px;
+                    height: 20px;
+                    background: url("../../../../assets/landing/notification-icon.svg") center center no-repeat;
+                    background-size: cover;
+                }
+
+                &.sync:before {
+                    content: "\f021";
+                    font: normal normal normal 14px/1 FontAwesome;
+                }
+            }
+
+            button {
+                margin-left: auto;
+                border: none;
+                background: no-repeat;
+                color: #00aeef;
+                outline: none;
+                cursor: pointer;
+                position: absolute;
+                right: 19px;
+                top: 0;
+                bottom: 0;
+            }
+        }
+
+        &.dx-state-focused {
+            color: initial !important;
+            background-color: #f5f5f5 !important;
+        }
+
+        &.dx-state-disabled .dx-item-content div.delete {
+            color: #424c56;
+
+            &:before {
+                content: url("../../../../assets/common/icons/delete-icon.svg");
+            }
+        }
+    }
+}

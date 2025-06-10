@@ -1,0 +1,11 @@
+<app-rating
+    [allowManage]="isManageAllowed()"
+    [filterModel]="filterModel"
+    [selectedKeys]="selectedKeys"
+    [targetSelector]="targetSelector"
+    [bulkUpdateMode]="bulkUpdateMode"
+    [hideButtons]="hideButtons"
+    [ratingValue]="ratingValue"
+    (onValueChanged)="onValueChanged.emit($event)"
+    (onProcess)="onProcess($event)">
+</app-rating>

@@ -1,0 +1,517 @@
+body app-header {
+  background: #FFF;
+}
+body .dx-treeview-node-container {
+  background: #FFF !important;
+}
+body .dx-menu-adaptive-mode,
+body app-header dx-drop-down-box,
+#m_header_topbar,
+body app-header dx-nav-bar .dx-item.dx-tab,
+body app-header dx-nav-bar .dx-state-hover {
+  background: transparent !important;
+}
+body app-header dx-drop-down-box input {
+  border: 0 !important;
+}
+body .top-bar-nav .dx-tabs-wrapper .dx-menu-items-container .dx-menu-item-wrapper .dx-menu-item-content .dx-menu-item-popout:before{
+  color:#000;
+}
+body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-items-container .dx-menu-item-wrapper .dx-menu-item-content .dx-menu-item-popout:before{
+  color: #000 !important;
+}
+body .dx-submenu .dx-menu-items-container {
+  background: transparent!important;
+}
+body .dx-submenu .dx-item.dx-menu-item.dx-menu-item-has-text {
+  color: #333;
+}
+body .dx-submenu .dx-item.dx-menu-item.dx-menu-item-has-text.dx-state-hover {
+  background: rgba(0,0,0,.04)!important;
+  color: #333;
+}
+body app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text {
+  color: #333 !important;
+}
+body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
+  color: #202b35 !important;
+}
+body .dx-item.dx-menu-item.dx-menu-item-has-text.dx-menu-item-has-submenu {
+  background: transparent!important;
+}
+body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected {
+  border-bottom: 3px solid #00aeef!important;
+}
+body app-header dx-nav-bar .dx-item.dx-tab .dx-menu-item-text {
+  color: #333 !important;
+}
+body .m-dropdown__arrow {
+  color: #313131 !important;
+  right: 6px !important;
+}
+body .page-header.navbar .page-top #m_header_topbar .m-dropdown__header {
+  box-shadow: none !important;
+  background: #313131 !important;
+}
+body .page-header.navbar .page-top #m_header_topbar .m-dropdown__header .user-info.fullName {
+  color: #f0d500 !important;
+}
+body .page-header.navbar .page-top #m_header_topbar .m-dropdown__header .user-info.email {
+  color: #f1f1f0 !important;
+}
+body .swal-modal {
+  border-radius: 12px;
+}
+body .swal-modal .swal-title {
+  padding-top: 0;
+  margin-bottom: 6px;
+}
+body .swal-modal .swal-footer {
+  margin-top: 0;
+}
+body .swal-modal .swal-button.swal-button--confirm {
+  border-radius: 2px;
+  background-color: #00aeef;
+  font-family: Montserrat;
+  letter-spacing: 0.15px;
+  font-size: 19px;
+  font-weight: 700;
+}
+@media (min-width: 768px) {
+  body .swal-modal .swal-button.swal-button--confirm {
+    width: 200px;
+    height: 48px;
+  }
+}
+@media (max-width: 768px) {
+  body .swal-modal .swal-button.swal-button--confirm:after {
+    display: none !important;
+  }
+}
+@media (min-width: 768px) {
+  body .swal-modal {
+    min-width: 550px;
+    min-height: 326px;
+  }
+}
+body .swal-modal .swal-icon.swal-icon--error,
+body .swal-modal .swal-icon.swal-icon--warning,
+body .swal-modal .swal-icon.swal-icon--info {
+  background: #FFF;
+  box-shadow: none;
+  border: none;
+}
+body .swal-modal .swal-icon.swal-icon--success {
+  background: #FFF;
+  border: 10px solid #FFD564;
+}
+body .swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
+  height: 50px !important;
+}
+body .swal-modal .swal-icon.swal-icon--success:before,
+body .swal-modal .swal-icon.swal-icon--success:after {
+  width: 0 !important;
+}
+body .swal-modal .swal-icon.swal-icon--warning:before {
+  content: "\2713";
+}
+body .swal-modal .swal-icon > div:first-child:before {
+  color: #000 !important;
+}
+body .swal-modal .swal-title {
+  color: #000;
+  font-size: 24px;
+  font-weight: bold;
+  white-space: pre-line;
+  font-family: Montserrat;
+}
+body .swal-modal .swal-button {
+  background-color: #00aeef;
+  font-size: 18px;
+  font-weight: 600;
+  color: #FFF;
+  cursor: pointer;
+}
+body .swal-modal .swal-button:hover {
+  color: #FFFFFF;
+  background-color: #3dcaff;
+}
+body .swal-modal .checkbox-container input[type="checkbox"]:hover + label:before {
+    border: 1px solid #f0d500;
+}
+body .swal-modal .checkbox-container input[type="checkbox"]:checked + label:before {
+    border-color: #f0d500;
+    background-color: #f0d500;
+}
+body .accountsContainer {
+  display: block !important;
+}
+body .accountsContainer .row {
+  width: auto !important;
+  height: calc(100vh - 146px);
+}
+body .accountsContainer .sidebar {
+  padding-left: 0;
+  padding-right: 0;
+  border-right: none !important;
+}
+body .accountsContainer .sidebar .left-navigation .left-navigation-item .left-navigation-link {
+  font-family: Montserrat !important;
+  line-height: 22px !important;
+  padding-right: 0 !important;
+}
+body .accountsContainer .sidebar .left-navigation .left-navigation-item .left-navigation-link .menu-icon {
+  margin-right: 0 !important;
+}
+body .accountsContainer .p-content {
+  padding: 0 !important;
+}
+body .accountsContainer .not-initialized-content .welcome-text,
+body .accountsContainer .not-initialized-content body-text .btn-layout {
+  border-radius: 2px !important;
+  font-size: 18px !important;
+}
+body .btn-layout {
+  font-family: Montserrat !important;
+  background-color: #00aeef;
+  color: #ffffff;
+  transition: 0.2s;
+  border: none;
+}
+body .btn-layout:hover {
+  background-color: #00aeef;
+  box-shadow: 0 0 3px rgba(255, 204, 0, 0.5);
+}
+body .alert.m-alert--outline.alert-success {
+  border-color: #00aeef;
+  color: #000;
+}
+body .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon {
+  background: #00aeef !important;
+}
+body .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon span {
+  border-left-color: #00aeef !important;
+}
+body .alert.m-alert--outline .m-alert__icon small.label {
+  font-weight: 600;
+  margin-top: 10px;
+  display: block;
+  color: #000;
+}
+body .btn.btn-primary,
+body .button-primary {
+  background-color: #00aeef;
+  color: #FFF;
+}
+body .btn.btn-primary:before,
+body .button-primary:before {
+  border-top-color: #000;
+}
+body .btn.btn-primary:after,
+body .button-primary:after {
+  background-color: #00aeef;
+}
+body .btn.btn-primary:hover,
+body .button-primary:hover {
+  background: #00aeef;
+}
+body .cdk-overlay-pane.footer-slider,
+body .cdk-overlay-pane.user-info {
+  max-width: 50vw !important;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog .close-dialog,
+body .cdk-overlay-pane.user-info modal-dialog .close-dialog,
+body .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog,
+body .cdk-overlay-pane.user-info app-modal-dialog .close-dialog {
+  background: #313131 !important;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog .close-dialog:before,
+body .cdk-overlay-pane.user-info modal-dialog .close-dialog:before,
+body .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog:before,
+body .cdk-overlay-pane.user-info app-modal-dialog .close-dialog:before,
+body .cdk-overlay-pane.footer-slider modal-dialog .close-dialog:after,
+body .cdk-overlay-pane.user-info modal-dialog .close-dialog:after,
+body .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog:after,
+body .cdk-overlay-pane.user-info app-modal-dialog .close-dialog:after {
+  background: #FFF !important;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header,
+body .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header,
+body .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header,
+body .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header {
+  background: #F3F7FA !important;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header dx-text-box,
+body .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header dx-text-box,
+body .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header dx-text-box,
+body .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header dx-text-box {
+  background: transparent !important;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header input,
+body .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header input,
+body .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header input,
+body .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header input {
+  color: #202B35 !important;
+  background: #F3F7FA !important;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content {
+  background: #FFFFFF;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content label,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content label,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content label,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content label,
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content h4,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content h4,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content h4,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content h4,
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content small,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content small,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content small,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content small,
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content span,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content span,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content span,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content span {
+  color: #333;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item {
+  margin-right: 0;
+  margin-left: 0;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link {
+  border-bottom: 1px solid #FFF;
+  padding-right: 30px;
+  padding-left: 5px;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link span,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link span,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link span,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link span {
+  color: #FFF;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover,
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active {
+  border-bottom: 1px solid #00aeef !important;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span {
+  color: #00aeef !important;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper {
+  background: #fff;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content #content *,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content *,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content #content *,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content #content * {
+  color: #FFF !important;
+}
+body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content #content * .doc-title,
+body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content * .doc-title,
+body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content #content * .doc-title,
+body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content #content * .doc-title {
+  text-align: center;
+}
+@media all and (max-width: 768px) {
+  body .cdk-overlay-pane.footer-slider,
+  body .cdk-overlay-pane.user-info {
+    max-width: 85vw !important;
+  }
+  body .cdk-overlay-pane.footer-slider mat-dialog-container,
+  body .cdk-overlay-pane.user-info mat-dialog-container {
+    position: relative !important;
+  }
+  body .cdk-overlay-pane.footer-slider mat-dialog-container modal-dialog,
+  body .cdk-overlay-pane.user-info mat-dialog-container modal-dialog {
+    position: static !important;
+  }
+  body .cdk-overlay-pane.footer-slider .mat-dialog-header,
+  body .cdk-overlay-pane.user-info .mat-dialog-header {
+    padding: 0 15px;
+  }
+  body .cdk-overlay-pane.footer-slider .mat-dialog-header .title-wrapper,
+  body .cdk-overlay-pane.user-info .mat-dialog-header .title-wrapper {
+    width: 50%;
+  }
+  body .cdk-overlay-pane.footer-slider .mat-dialog-header dx-text-box,
+  body .cdk-overlay-pane.user-info .mat-dialog-header dx-text-box {
+    width: auto !important;
+    order: 2;
+  }
+  body .cdk-overlay-pane.footer-slider .mat-dialog-header input,
+  body .cdk-overlay-pane.user-info .mat-dialog-header input {
+    text-align: center;
+    font-size: 18px;
+  }
+  body .cdk-overlay-pane.footer-slider .mat-dialog-header .dx-texteditor-input,
+  body .cdk-overlay-pane.user-info .mat-dialog-header .dx-texteditor-input {
+    font-size: 14px !important;
+    padding: 0 !important;
+  }
+  body .cdk-overlay-pane.footer-slider .mat-dialog-header .mat-dialog-actions,
+  body .cdk-overlay-pane.user-info .mat-dialog-header .mat-dialog-actions {
+    justify-content: flex-end;
+    padding: 0;
+  }
+  body .cdk-overlay-pane.footer-slider .mat-dialog-header .mat-dialog-actions .mat-dialog-buttons .button-layout,
+  body .cdk-overlay-pane.user-info .mat-dialog-header .mat-dialog-actions .mat-dialog-buttons .button-layout {
+    font-size: 12px;
+    padding: 0 8px !important;
+  }
+  body .cdk-overlay-pane.footer-slider .close-dialog,
+  body .cdk-overlay-pane.user-info .close-dialog {
+    top: 21px !important;
+    z-index: 1;
+  }
+  body .cdk-overlay-pane.footer-slider .close-dialog:before,
+  body .cdk-overlay-pane.user-info .close-dialog:before,
+  body .cdk-overlay-pane.footer-slider .close-dialog:after,
+  body .cdk-overlay-pane.user-info .close-dialog:after {
+    background: #FFF !important;
+  }
+}
+body .notification-header {
+  font-family: Montserrat;
+}
+body .notification-header .m-dropdown__header {
+  background: #313131;
+  padding: 20px 35px;
+}
+body .notification-header .m-dropdown__header .tenantName {
+  font-family: Montserrat;
+  font-size: 16px;
+  letter-spacing: 0.2px;
+  color: #fff;
+}
+body .notification-header .m-dropdown__header .fullName {
+  font-family: Montserrat;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  color: #f0d500;
+}
+body .notification-header .m-dropdown__body {
+  padding: 25px 35px 25px 0;
+}
+body .notification-header .m-dropdown__body hr {
+  visibility: hidden;
+}
+body .notification-header .m-dropdown__body .row {
+  padding-left: 35px;
+}
+@media (min-width: 768px) {
+  body .notification-header {
+    width: 433px !important;
+  }
+}
+body .notification-header,
+body .notification-modal {
+  font-family: Montserrat;
+}
+body .notification-header a,
+body .notification-modal a {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  color: #3463ae;
+  font-family: Montserrat;
+}
+body notificationsettingsmodal .mat-dialog-header input,
+body notificationsettingsmodal .mat-dialog-actions button,
+body notificationsettingsmodal h4,
+body notificationsettingsmodal .help-block,
+body notificationsettingsmodal .m-checkbox,
+body notificationsettingsmodal .mat-button-wrapper span {
+  font-family: Montserrat !important;
+}
+body .m-scrollable {
+  font-family: Montserrat;
+  padding-left: 35px;
+}
+body .m-scrollable .m-list-timeline__items:before {
+  display: none;
+}
+body .m-scrollable .m-list-timeline__items .m-list-timeline__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+body .m-scrollable .m-list-timeline__items .m-list-timeline__item:before {
+  display: none;
+}
+body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__badge {
+  left: -22px;
+  height: 10px;
+  flex: 0;
+  display: none;
+}
+body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__badge:before {
+  background-color: #00aeef;
+  width: 10px;
+  height: 10px;
+  margin-top: -5px;
+}
+body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__icon {
+  display: none;
+}
+body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__text {
+  font-size: 13px;
+  font-weight: 400;
+  color: #4a4a4a;
+  padding-right: 0;
+  font-family: Montserrat;
+}
+body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__time {
+  width: auto;
+  color: rgba(117, 117, 117, 0.8);
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 5px;
+  font-family: Montserrat;
+}
+body .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__text {
+  color: #000000;
+  font-weight: 600;
+}
+body .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__time {
+  color: #4a4a4a;
+  font-weight: 500;
+}
+body .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__badge {
+  display: block;
+}
+body .m-scrollable .m-nav__separator {
+  visibility: hidden;
+  margin: 10px;
+}
+body .primeng-datatable-container table thead tr th {
+  background-color: #fc0 !important;
+}
+body .primeng-datatable-container .primeng-no-data {
+  background: #fff;
+}

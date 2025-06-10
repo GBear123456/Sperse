@@ -1,0 +1,104 @@
+<dx-scroll-view showScrollbar="onHover">
+    <mat-dialog-content>
+        <div class="content">
+            <dx-validation-group (onInitialized)="initValidationGroup($event)">
+                <div class="field type">
+                    <dx-select-box
+                        width="320px"
+                        [dataSource]="types"
+                        displayExpr="name"
+                        valueExpr="id"
+                        [(value)]="type">
+                    </dx-select-box>
+                    <mat-dialog-actions>
+                        <button mat-button
+                                [disabled]="!enableSaveButton"
+                                class="button-layout button-primary"
+                                (click)="saveNote()">
+                            {{l('Save')}}
+                        </button>
+                    </mat-dialog-actions>
+                    <span class="close" (click)="close()"></span>
+                </div>
+                <div class="field">
+                    <label>{{l('Summary') | uppercase }}</label>
+                    <dx-text-area width="450px" height="100px" [(value)]="summary">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" [message]="l('NoteIsRequired')"></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-text-area>
+                </div>
+                <div *ngIf="contacts.length > 1" class="field contact">
+                    <label>{{l('NoteContact') | uppercase }}</label>
+                    <dx-select-box
+                        width="450px"
+                        [dataSource]="contacts"
+                        displayExpr="fullName"
+                        valueExpr="id"
+                        fieldTemplate="fieldTemplate"
+                        (onValueChanged)="onContactChanged($event)"
+                        [(value)]="contactId">
+                        <div *dxTemplate="let data of 'fieldTemplate'">
+                            <dx-text-box [inputAttr]="{ title: data.fullName }" [value]="data.fullName"></dx-text-box>
+                        </div>
+                    </dx-select-box>
+                </div>
+                <div class="field" *ngIf="isCRMOrdersGranted && showAdditionalFields">
+                    <label>{{l('Orders') | uppercase }}</label>
+                    <dx-select-box
+                        width="450px"
+                        [showClearButton]="true"
+                        [dataSource]="ordersDataSource"
+                        [displayExpr]="orderDisplayValue"
+                        [valueExpr]="invoicesFields.OrderId"
+                        [(value)]="orderId">
+                    </dx-select-box>
+                </div>
+                <div *ngIf="showAdditionalFields" class="field">
+                    <label>{{l('FollowUpDate') | uppercase }}</label>
+                    <dx-date-box
+                        #followUpDateBox
+                        width="450px"
+                        type="datetime"
+                        [(value)]="followupDate">
+                    </dx-date-box>
+                </div>
+                <div *ngIf="showAdditionalFields" class="field phone">
+                    <label>{{l('Phone') | uppercase }}</label>
+                    <dx-select-box
+                        width="420px"
+                        [dataSource]="phones"
+                        displayExpr="phoneNumber"
+                        valueExpr="id"
+                        [(value)]="phone">
+                    </dx-select-box>
+                    <div class="add-phone" (click)="showAddPhoneDialog($event)">+</div>
+                </div>
+                <span [hidden]="showOrigin" class="show-origin" (click)="showOrigin = true">{{l('Update Origin')}}</span>
+                <div [hidden]="!showOrigin">
+                    <div class="field">
+                        <label>{{l('Date') | uppercase }}</label>
+                        <dx-date-box
+                            #currentDateBox
+                            width="450px"
+                            type="datetime"
+                            [max]="today"
+                            [(value)]="currentDate">
+                        </dx-date-box>
+                    </div>
+                    <div class="field">
+                        <label>{{l('AddedBy') | uppercase }}</label>
+                        <dx-select-box
+                            width="450px"
+                            [placeholder]="l('EditValuePlaceholder')"
+                            [dataSource]="users$ | async"
+                            displayExpr="name"
+                            valueExpr="id"
+                            [(value)]="addedBy">
+                        </dx-select-box>
+                    </div>
+                </div>
+            </dx-validation-group>
+        </div>
+    </mat-dialog-content>
+</dx-scroll-view>

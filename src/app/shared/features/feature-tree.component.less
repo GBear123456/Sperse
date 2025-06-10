@@ -1,0 +1,81 @@
+:host {
+    ::ng-deep .dx-treeview {
+        .dx-treeview-item {
+            padding: 0px 6px;
+            cursor: default;
+        }
+
+        .dx-treeview-toggle-item-visibility {
+            height: 18px;
+        }
+    }
+
+    .feature-tree-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        ::ng-deep .dx-checkbox {
+            position: static;
+
+            .dx-checkbox-icon {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        ::ng-deep .dx-texteditor {
+            width: 200px;
+
+            .dx-texteditor-input-container {
+                .dx-placeholder, .dx-texteditor-input {
+                    font-size: 14px;
+                }
+
+                .dx-texteditor-input {
+                    padding: 5px;
+                    min-height: 28px;
+                    border: 1px solid #dfdfdf;
+                }
+            }
+
+            &.dx-texteditor-empty.dx-state-focused .dx-placeholder {
+                display: none !important;
+            }
+        }
+
+        .feature-text {
+            margin-right: 5px;
+        }
+
+        .reset-button {
+            border: 1px solid transparent;
+            background-color: transparent;
+            display: inline-block;
+            vertical-align: middle;
+            outline: 0;
+            cursor: pointer;
+            position: relative;
+
+            &:after {
+                content: "\2716";
+                line-height: 15px;
+                display: block;
+                width: 15px;
+                height: 15px;
+                position: absolute;
+                background-color: #95c7fa;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                margin: auto;
+                border-radius: 50%;
+                text-align: center;
+                color: white;
+                font-weight: normal;
+                font-size: 10px;
+                cursor: pointer;
+            }
+        }
+    }
+}

@@ -1,0 +1,430 @@
+:host {
+    display: block;
+    position: relative;
+    padding: 55px 5px 0px 25px;
+
+    background: rgba(214, 238, 255, 0.6);
+    background-image: url(../../../assets/common/images/bg-shortcuts.svg);
+    background-size: cover;
+    min-height: calc(100vh - 75px);
+    width: 100%;
+
+    .margin-wrapper {
+        margin-right: 20px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        width: 100%;
+
+        .left {
+            padding: 12px 0 0;
+            h1 {
+                color: rgba(8, 41, 91, 1);
+                font-family: Manrope;
+                font-size: 26px;
+                font-weight: 600;
+                line-height: 27px;
+                letter-spacing: -0.02em;
+                text-align: left;
+            }
+            h1, img {
+                display: inline-block;
+            }
+            img {
+                cursor: pointer;
+                margin: 0 0 10px 10px;
+            }
+        }
+
+        .right {
+            button {
+                width: 155px;
+                cursor: pointer;
+                font-family: Manrope;
+                font-size: 14px!important;
+                font-weight: 500!important;
+                line-height: 27px;
+                letter-spacing: -0.02em;
+                text-align: left;
+                img {
+                    margin: 0 10px;
+                }
+            }
+        }
+    }
+
+    .blocks {
+        display: flex;
+        white-space: nowrap;
+        margin-bottom: 20px;
+        .block {
+            width: 240px;
+            height: 269px;
+            margin-right: 15px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.65);
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+
+            .image {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #FFF;
+                border-radius: 10px;
+                height: 177px;
+                margin: 8px 8px 0;
+                img {
+                    display: block;
+                    margin: auto;
+                }
+            }
+            h3 {
+                font-family: Manrope;
+                font-size: 17px;
+                font-weight: 600;
+                line-height: 17px;
+                letter-spacing: -0.02em;
+                color: rgba(16, 33, 58, 1);
+                margin-left: 18px;
+                margin-top: 20px;
+            }
+            span {
+                font-family: Manrope;
+                font-size: 13px;
+                font-weight: 400;
+                line-height: 19px;
+                text-align: left;
+                margin-left: 18px;
+                color: rgba(100, 113, 132, 1);
+                margin-bottom: 16px;
+                display: block;
+            }
+            .details {
+                display: none;
+                padding: 0 8px 0;
+                .detail-item {                    
+                    width: 100%;
+                    height: 39px;
+                    border-radius: 10px;
+                    margin-bottom: 5px;
+                    background: #FFF;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    label {
+                        padding: 8px 13px;
+                        font-family: Manrope;
+                        font-size: 12px;
+                        font-weight: 500;
+                        line-height: 27px;
+                        letter-spacing: -0.02em;
+                        text-align: left;
+                        color: rgba(16, 33, 58, 1);                        
+                    }
+                    button {
+                        width: 65px;
+                        float: right;
+                        text-align: center;
+                        border-radius: 7px;
+                        border: 0;
+                        height: 29px;
+                        margin: 5px;
+                        background: rgba(238, 244, 249, 1);
+                        cursor: pointer;
+                        color: rgba(16, 33, 58, 1);
+                        font-family: Manrope;
+                        font-size: 12px;
+                        font-weight: 500;
+                        line-height: 27px;
+                        letter-spacing: -0.02em;
+                        outline: none;
+                        &[disabled] {
+                            opacity: 0.4;
+                        }
+                    }
+                }
+            }
+            &:hover {
+                .image {
+                    display: none;
+                }
+                .details {
+                    display: block;
+                }
+            }
+        }
+    }
+
+    .data-grids {
+        display: flex;
+        margin-top: 40px;
+        gap: 30px;
+
+        & > div {
+            width: 50%;
+            min-height: calc(100vh / 3);
+        }
+
+        a.all-records {
+            font-size: 15px;
+            font-weight: 500;
+            color: #17AEEB;
+            float: right;
+            padding-right: 20px;
+            margin-left: auto;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            line-height: 29px;
+
+            i {
+                margin-left: 8px;
+            }
+        }
+
+        .sales-grid {
+            .data-grid {
+                position: relative;
+                margin-top: 55px;
+                overflow: visible;
+            }
+
+            ::ng-deep recent-clients {
+                height: 100%;
+                .wrapper {
+                    height: inherit;
+                }
+                header {
+                    position: absolute;
+                    top: -70px;
+
+                    .title a {
+                        background: rgba(255, 255, 255, 0.4);
+                        border-radius: 10px;
+                        padding: 0 8px;
+                        display: inline-block;
+                        font-family: Manrope;
+                        font-size: 14px;
+                        font-weight: 500;
+                        line-height: 27px;
+                        letter-spacing: -0.02em;
+                        text-align: left;
+                        color: #08295b;
+                        cursor: pointer;
+                        margin-left: auto;
+                        margin-right: 15px;
+                        text-decoration: none;
+
+                        .fa-angle-right {
+                            margin-left: 0;
+                            &:before {
+                                content: url(../../../assets/common/icons/arrow-right2.svg);
+                            }
+                        }
+                    }
+                }
+                dx-select-box {
+                    min-width: 240px;
+                    background: transparent;
+                    input {
+                        font-family: Manrope;
+                        font-size: 26px;
+                        font-weight: 600;
+                        line-height: 27px;
+                        letter-spacing: -0.02em;
+                        text-align: left;
+                        color: #08295b;
+                    }
+                }
+                ::ng-deep dx-data-grid {
+                    &#gridContainer .dx-datagrid-headers .dx-column-lines td,
+                    &#gridContainer .dx-datagrid-headers .dx-datagrid-table td {
+                        height: 48px !important;
+                        padding-bottom: 16px;    
+                        border-bottom: 1px solid #ddd!important;
+                        &:first-child {
+                            padding-left: 40px !important;
+                        }
+                        .dx-column-indicators {
+                            float: none!important;
+                            margin: 0 10px 0 0!important;
+                        }
+                    }
+                    &#gridContainer .dx-datagrid-rowsview .dx-column-lines td,
+                    &#gridContainer .dx-datagrid-rowsview .dx-datagrid-table td {
+                        height: 58px !important;
+                        border-bottom: 1px solid #ddd!important;
+                        &:first-child {
+                            padding-left: 40px !important;
+                        }
+                    }
+                    &#gridContainer .dx-datagrid-rowsview .dx-datagrid-table tr:last-child td {
+                        border-bottom: 1px solid transparent!important;
+                    }
+                    .dx-datagrid-rowsview .dx-data-row:nth-child(odd) {
+                        background-color: transparent;
+                    }
+                }
+            }
+        }
+
+        .products-grid {
+            .grid-wrapper {
+                height: 500px;
+                padding-top: 15px;
+            }
+            ::ng-deep dx-data-grid {
+                height: 100% !important;
+
+                &#gridContainer .dx-datagrid-headers .dx-column-lines td,
+                &#gridContainer .dx-datagrid-headers .dx-datagrid-table td {
+                    height: 48px !important;
+                    padding-bottom: 16px;    
+                    border-bottom: 1px solid #ddd!important;
+                    &:first-child {
+                        padding-left: 40px !important;
+                    }
+                }
+                &#gridContainer .dx-datagrid-rowsview .dx-column-lines td,
+                &#gridContainer .dx-datagrid-rowsview .dx-datagrid-table td {
+                    height: 58px !important;
+                    border-bottom: 1px solid #ddd!important;
+                    &:first-child {
+                        padding-left: 40px !important;
+                    }
+                }
+                &#gridContainer .dx-datagrid-rowsview .dx-datagrid-table tr:last-child td {
+                    border-bottom: 1px solid transparent!important;
+                }
+                .dx-datagrid-rowsview .dx-data-row:nth-child(odd) {
+                    background-color: transparent!important;
+                }
+                .dx-datagrid-headers {
+                    border: none;
+
+                    .dx-column-indicators {
+                        float: none!important;
+                        margin: 0 10px 0 0!important;
+                    }
+
+                    .dx-datagrid-content {
+                        border-bottom: none !important;
+                    }
+
+                    .dx-column-lines td {
+                        height: 25px!important;
+                        padding-left: 10px;
+                        .dx-datagrid-text-content {
+                            color: #4a4a4a!important;
+                        }
+                    }
+                }
+                .dx-datagrid-rowsview {
+                    border-top: none;
+                    .dx-data-row {
+                        &:nth-child(odd) {
+                            background-color: rgba(243, 247, 250, 0.7);
+                        }
+
+                        td {
+                            cursor: pointer;
+                            padding: 8px 10px!important;
+                            border-bottom: none !important;
+                            font-weight: 500 !important;
+                            font-size: 15px !important;
+                            height: 21px !important;
+                            letter-spacing: 0.3px;
+                            h3 {
+                                font-family: Manrope;
+                                font-size: 14px;
+                                font-weight: 500;
+                                color: rgba(16, 33, 58, 1);
+                            }
+                            span {
+                                font-family: Manrope;
+                                font-size: 12px;
+                                font-weight: 400;
+                                line-height: 27px;
+                                text-align: left;
+                                color: rgba(16, 33, 58, 0.7);
+                            }
+                            .amount {
+                                padding-right: 30px;
+                                font-family: Plus Jakarta Sans;
+                                font-size: 14px;
+                                font-weight: 500;
+                                letter-spacing: -0.02em;
+                                color: rgba(8, 41, 91, 1);
+                            }
+                            .date {
+                                font-family: Manrope;
+                                font-size: 14px;
+                                font-weight: 400;
+                                text-align: left;
+                                color: rgba(16, 33, 58, 0.7);
+                            }
+                            .ellipsis {
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                                display: block;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
+        .grid-header {
+            h1 {
+                display: inline-block;
+                font-family: Manrope;
+                font-size: 26px;
+                font-weight: 600;
+                line-height: 27px;
+                letter-spacing: -0.02em;
+                text-align: left;
+                color: rgba(8, 41, 91, 1);
+            }
+            .actions {
+                display: inline-block;
+                margin-right: 10px;
+                float: right;
+
+                & > div {
+                    display: inline-block;
+                    margin-left: 15px;
+                    font-family: Manrope;
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 27px;
+                    letter-spacing: -0.02em;
+                    text-align: left;
+                    color: rgba(8, 41, 91, 1);
+                    cursor: pointer;
+
+                    &.view-all {
+                        background: rgba(255, 255, 255, 0.4);
+                        border-radius: 10px;
+                        padding: 0 8px;
+                    }
+                }
+            }
+        }
+        .data-grid {
+            background: #fff;
+            border-radius: 14px;
+            margin-top: 20px;
+            overflow: hidden;
+            height: 90%;
+            min-height: 350px;
+        }
+    }
+}
+
+

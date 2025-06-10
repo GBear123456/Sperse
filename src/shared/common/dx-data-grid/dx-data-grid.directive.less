@@ -1,0 +1,45 @@
+.dx-sortable-dragging {
+    position: relative;
+    &:after {
+        display: block;
+        position: absolute;
+        content: 'Merge records';
+        color: #FFF;
+        background: #000;
+        border-radius: 5px;
+        padding: 2px 5px;
+        top: 5px;
+        left: 40px;
+    }
+}
+
+.dx-datagrid-rowsview .dx-datagrid-content table:first-child {
+    .clipboard-holder {
+        position: relative;
+        padding-right: 25px!important;
+        &:hover > i.save-to-clipboard {
+            display: initial;
+        }
+        & > i.save-to-clipboard {
+            display: none;
+            cursor: pointer;
+            position: absolute;
+            top: calc((100% - 15px) / 2);
+        }
+        &.fixed-right > i.save-to-clipboard {
+            right: 5px;
+        }
+    }
+}
+
+.show-group-panel {
+    .dx-datagrid-header-panel {
+        display: block;
+    }
+    .dx-toolbar-after {
+        display: none;
+    }
+}
+.dx-datagrid-header-panel {
+    display: none;
+}

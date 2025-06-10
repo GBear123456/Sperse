@@ -1,0 +1,58 @@
+<app-static-list
+    width="330px"
+    listHeight="300px"
+    accessKey="sourceContactList"
+    [targetSelector]="targetSelector"
+    [title]="''"
+    [showSelectionControls]="checkSelectionAllowed()"
+    [hideButtons]="!checkSelectionAllowed()"
+    [selectedKeys]="selectedKeys ? selectedKeys : [selectedKey]"
+    [relatedItemsKeys]="relatedItemsKeys"
+    [showConfirmation]="false"
+    [highlightSelected]="true"
+    [searchEnabled]="true"
+    [convertNameStartCase]="false"
+    [customSearchEnabled]="showContacts"
+    [filterModel]="selectedKeys ? filterModel : undefined"
+    [bulkUpdatePermissionKey]="bulkUpdatePermissionKey"
+    (onItemSelected)="onItemSelected.emit($event)"
+    (onListFiltered)="onSourceFiltered($event)"
+    (onOptionChanged)="onOptionChanged($event)"
+    (onFilterApply)="onContactFilterApply($event)"
+    (onApply)="onApply.emit($event)"
+    [list]="contacts">
+        <div custom-title>
+            <div [hidden]="showOrgUnits">
+                <span class="selected">{{ls.l('ReferredByPerson')}}</span>
+                <dx-switch [class.centered] = "showSwitchInTheMiddle()"
+                           [(value)]="includeProspective"
+                           [switchedOffText]="ls.l('ActiveOnly')"
+                           [switchedOnText]="ls.l('AllContacts')"
+                           [width]="80"
+                           (onValueChanged)="onIncludeProspectiveChanged()">
+                </dx-switch>
+            </div>
+            <div [hidden]="!showOrgUnits">
+                <span [class]="showContacts ? 'selected' : ''" (click)="toggleContacts()">{{ls.l('ReferredByPerson')}}</span>
+                <span [class]="showContacts ? '' : 'selected'" (click)="toggleContacts()">{{ls.l('ReferredByOrgUnit')}}</span>
+                <span class="filter-apply"
+                      [hidden]="showContacts || !selectedOrgUnits?.length || !hasBulkUpdatePermission"
+                      (click)="applyOrganizationUnits()">{{ls.l('Apply')}}
+                </span>
+                <span class="filter-apply {{sourceComponent?.isFilteredItem() ? 'transparent' : ''}}"
+                      [hidden]="showContacts || !filterModelOrgUnit?.items?.element?.value?.length"
+                      (click)="onOwnerFilter()">
+                    {{ls.l('ClearFilter')}}
+                </span>
+            </div>
+        </div>
+        <div custom-content>
+            <organization-units-tree
+                selectionMode="single"
+                [showFilterButton]="true"
+                [showCheckBoxesMode]="hasBulkUpdatePermission && relatedItemsKeys?.length ? 'normal' : 'none'"
+                [hidden]="!showOrgUnits || showContacts"
+                (onFilterApplied)="onOwnerFilter($event)">
+            </organization-units-tree>
+        </div>
+</app-static-list>

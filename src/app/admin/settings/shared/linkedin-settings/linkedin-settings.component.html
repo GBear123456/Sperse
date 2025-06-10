@@ -1,0 +1,26 @@
+<h2>{{l('LinkedIn')}} {{l('Settings')}}</h2>
+<div *ngIf="linkedInSettings">
+    <div *ngIf="!isHost">
+        <div *ngIf="linkedInSettings.isHostSettingsEnabled">
+            <external-auth-info></external-auth-info>
+        </div>
+        <div class="form-group">
+            <dx-check-box id="LinkedInIsDeactivated"
+                          [text]="l('Deactivate')"
+                          [(value)]="linkedInSettings.isDeactivated">
+            </dx-check-box>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label for="LinkedInAppId">{{l("ClientId")}}</label>
+            <input id="LinkedInAppId" type="text" name="LinkedInAppId" class="form-control" [(ngModel)]="linkedInSettings.settings.appId">
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label for="LinkedInAppSecret">{{l("ClientSecret")}}</label>
+            <input id="LinkedInAppSecret" type="text" name="LinkedInAppSecret" class="form-control" [(ngModel)]="linkedInSettings.settings.appSecret">
+        </div>
+    </div>
+</div>

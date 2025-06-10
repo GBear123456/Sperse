@@ -1,0 +1,114 @@
+:host {
+    display: flex;
+    align-items: center;
+    bank-code-letter {
+        display: inline-block;
+        &:not(:last-child) {
+            margin-right: 3px;
+        }
+    }
+
+    .fa-pencil {
+        color: #00aeef;
+        font-size: 18px;
+        margin-left: 10px;
+        cursor: pointer;
+        visibility: hidden;
+        margin-right: 5px;
+    }
+
+    &:hover .fa-pencil {
+        visibility: visible;
+    }
+    &.allow-edit {
+        padding-right: 25px;
+        bank-code-letter {
+            cursor: pointer;
+        }
+    }
+    span.bankCodeDefinition {
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-right: 5px;
+    }
+    a {
+        margin-left: 5px;
+    }
+
+    ::ng-deep .dx-tooltip-wrapper {
+        .dx-overlay-content {
+            .dx-popup-content {
+                width: 100% !important;
+                height: 100% !important;
+            }
+        }
+    }
+
+    .code-history {
+        padding-left: 5px;
+        font-size: 20px;
+        color: #00aeef;
+        cursor: pointer;
+    }
+}
+
+#bankCodeLettersEditorDialog {
+    padding: 15px;
+}
+
+:host,
+::ng-deep .sales-report-tooltip {
+    a img {
+        max-width: 20px;
+        max-height: 20px;
+    }
+}
+
+::ng-deep .sales-report-tooltip {
+    .title {
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+    .dx-radiogroup {
+        .dx-radiobutton-icon:before {
+            width: 16px;
+            height: 16px;
+        }
+        .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
+            background: #00aeef;
+            margin-top: -14px;
+            margin-left: 4px;
+        }
+        .text {
+            font-weight: 600;
+            color: #000;
+            font-size: 13px;
+        }
+        .size {
+            font-weight: 400;
+            color: #000;
+            font-size: 12px;
+        }
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 0;
+        li a {
+            display: flex;
+            align-items: center;
+            span {
+                font-size: 15px;
+                margin-left: 5px;
+                line-height: 29px;
+                color: #000;
+                font-weight: 500;
+            }
+            span.language {
+                font-weight: 700;
+            }
+        }
+    }
+}

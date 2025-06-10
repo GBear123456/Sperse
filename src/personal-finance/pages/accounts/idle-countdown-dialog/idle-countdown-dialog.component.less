@@ -1,0 +1,26 @@
+::ng-deep .cdk-overlay-container {
+    .cdk-overlay-pane.idle-coundown-dialog {
+        @media (max-width: 600px) {
+            max-width: 99vw!important;
+        }        
+    }
+}
+
+:host {
+    display: block;
+    min-width: 450px;
+
+    @media (max-width: 600px){
+        min-width: 260px;
+    }
+
+    .content {
+        min-height: 70px;
+    }
+
+    ::ng-deep.mat-progress-bar {
+        .mat-progress-bar-fill:after {
+            background-color: #ffcc00;
+        }
+    }
+}

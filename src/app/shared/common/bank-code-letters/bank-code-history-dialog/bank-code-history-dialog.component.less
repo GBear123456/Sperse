@@ -1,0 +1,81 @@
+:host {
+    .content {
+        padding-left: 20px;
+        padding-right: 15px;
+        padding-top: 10px;
+
+        .alert-info {
+            width: 100%;
+            color: #000;
+            border-color: rgba(215, 55, 70, 0.1);
+
+            &.overridden {
+                border-color: rgba(55, 215, 73, 0.1);
+
+                .code-color {
+                    background: rgba(55, 215, 73, 0.1);
+                }
+            }
+
+            .code-color {
+                width: 105px;
+                max-width: 105px;
+                padding: 20px 5px 0px 5px;
+                background: rgba(215, 55, 70, 0.1);
+
+                p {
+                    max-width: 95px;
+                    height: 18px;
+                    white-space: nowrap;
+                    padding-top: 10px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
+        .m-alert__text {
+            padding: 5px 15px;
+
+            .row:first-child label {
+                text-transform: uppercase;
+            }
+
+            & > div {
+                flex-wrap: nowrap;
+            }
+
+            &.left {
+                width: 35%;
+            }
+            &.right {
+                width: 45%;
+            }
+        }
+
+        .control-label {
+            display: inline-table;
+            font-weight: 600;
+            white-space: nowrap;
+            line-height: 20px;
+        }
+
+        .form-control-static {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 5px 0 0;
+            line-height: 12px;
+            margin: 0;
+
+            &.bank-code-date {
+                min-width: 280px;
+            }
+
+            &.nopadding {
+                padding: 0;
+            }
+        }
+    }
+}

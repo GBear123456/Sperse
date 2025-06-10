@@ -1,0 +1,39 @@
+:host {
+    mat-dialog-content {
+        max-width: 670px;
+        padding-bottom: 20px;
+    }
+    md-dialog-actions {
+        justify-content: flex-end;
+
+        button {
+            outline: none;
+        }
+    }
+
+    ::ng-deep .dx-checkbox {
+        .dx-checkbox-container {
+            display: block;
+            text-overflow: initial;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .dx-checkbox-icon {
+            position: absolute;
+            top: 3px;
+            left: 0;
+        }
+
+        .dx-checkbox-text {
+            width: 400px;
+            line-height: 26px;
+            display: inline-block;    
+            font-size: 16px;
+            font-weight: 400;
+            white-space: normal;
+            margin-left: 0;
+            padding-left: 0;
+        }
+    }
+}

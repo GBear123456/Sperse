@@ -1,0 +1,181 @@
+:host {
+    display: block;
+
+    .categorization-status {
+
+        .small-button {
+            border-radius: 13px !important;
+            font-size: 13px !important;
+            text-transform: initial !important;
+            letter-spacing: 0.3px;
+            margin: 0 0 0 30px;
+            outline: none;
+            border: 1px solid #E5E9EC;
+            height: 26px;
+            padding: 3px 15px 2px;
+            color: #677380 !important;
+            cursor: pointer;
+            width: 140px;
+            transition: .25s;
+            display: inline-block;
+            text-align: center;
+            background: transparent;
+            @media (max-width: 991px) {
+                margin: 5px auto;
+            }
+
+            @media (max-width: 350px) {
+                display: block;
+            }
+
+            &:hover {
+                background: lighten(#00aeef, 5%);
+                border-color: lighten(#00aeef, 5%);
+                color: #fff !important;
+            }
+        }
+
+        .round-progress {
+            @media (max-width: 991px) {
+                margin: 10px 0;
+            }
+            @media (max-width: 767px) {
+                margin-bottom: 0;
+            }
+        }
+
+        .total-synch-progress {
+            color: #424C56;
+            font-size: 24px;
+            font-weight: 500;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .progress-wrap {
+            max-width: 130px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .col-sm-9 {
+            @media (max-width: 767px) {
+                position: static;
+            }
+        }
+
+        .title {
+            color: #212C36;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 24px;
+            margin-bottom: 0;
+            white-space: nowrap;
+            @media (max-width: 767px) {
+                position: absolute;
+                top: 10px;
+                left: 0;
+                right: 0;
+                text-align: center;
+            }
+        }
+
+        .category-synch-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 0;
+
+            .category-synch-item {
+                padding: 5px 0;
+                white-space: nowrap;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+
+                .icon {
+                    display: inline-block;
+                    height: 10px;
+                    width: 10px;
+                    background-color: #F9B74B;
+                    border-radius: 50%;
+                    position: relative;
+                    left: 5px;
+                    margin-right: 16px;
+                }
+
+                &:nth-child(1) .icon {
+                    background-color: initial;
+                    width: 12px;
+                    height: 12px;
+                    left: 2px;
+                }
+
+                .break {
+                    display: none;
+                    @media (max-width: 767px) {
+                        display: block;
+                        flex-basis: 100%;
+                        width: 0;
+                        height: 0;
+                        overflow: hidden;
+                    }
+                }
+
+                .category-type {
+                    color: #212C36;
+                    font-size: 14px;
+                    letter-spacing: 0.2px;
+                    line-height: 17px;
+                    font-weight: 500;
+                    min-width: 100px;
+                    display: inline-block;
+                }
+
+                .synch-status {
+                    font-size: 13px;
+                    letter-spacing: 0.2px;
+                    line-height: 17px;
+
+                    &.count {
+                        width: 85px;
+                        display: inline-block;
+                        text-align: right;
+                        padding-right: 15px;
+                        @media (max-width: 767px) {
+                            padding-right: 5px;
+                            width: initial;
+                        }
+                    }
+
+                    &.percent {
+                        width: 35px;
+                        display: inline-block;
+                        text-align: right;
+                        margin-right: 5px;
+                    }
+
+                    a {
+                        cursor: pointer;
+                        line-height: 1.4;
+                        font-weight: 600;
+                        display: inline-block;
+                        border-bottom: 1px solid #8bd553;
+                    }
+                }
+
+                @media (max-width: 767px) {
+                    justify-content: center;
+                }
+            }
+        }
+
+        @media (max-width: 767px) {
+            position: relative;
+            padding: 30px 0 5px;
+        }
+    }
+}

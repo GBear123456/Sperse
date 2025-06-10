@@ -1,0 +1,156 @@
+@import "../../../shared/personal-finance-layout/_settings";
+
+.content-wrap {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.credit-simulator {
+    padding: 30px;
+}
+
+.heading {
+    padding-bottom: 30px;
+    border-bottom: 1px solid #dfdfdf;
+    display: flex;
+
+    &-title {
+        font-size: 30px;
+        color: #021f44;
+        margin: 0;
+    }
+
+    .warning {
+        margin-left: auto;
+        border: 1px solid #ed9d1a;
+        padding: 0 20px;
+        position: relative;
+        border-radius: 5px;
+        text-align: center;
+
+        span {
+            font-weight: bold;
+            line-height: 28px;
+        }
+
+        i {
+            color: #ed9d1a;
+            position: relative;
+
+            &.fa-exclamation-triangle {
+                top: 8px;
+                right: 10px;
+            }
+        }
+    }
+}
+
+::ng-deep .sub-title {
+    h2 {
+        font-size: 17px;
+        font-weight: bold;
+        text-align: left;
+        color: #161b1d;
+        text-transform: uppercase;
+        margin: 25px auto;
+
+        a {
+            font-family: @lato;
+            font-size: 15px;
+            color: #8a969b;
+            text-decoration: none;
+            font-weight: 800;
+            transition: .2s;
+
+            &:hover {
+                color: #161b1d;
+            }
+        }
+    }
+}
+
+::ng-deep .btn-update {
+    outline: none;
+    font-family: @lato;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    color: #fff;
+    border: 0;
+    padding: 7px 30px 9px;
+    border-radius: 6px;
+    background-color: #ed9d1a;
+    box-shadow: 0 3px 10px 0 rgba(245, 166, 35, 0.35);
+
+    &:hover {
+        background: #ffa91b;
+        color: #fff;
+        text-decoration: none;
+    }
+}
+
+@media all and (max-width: 1400px) {
+    .content-wrap {
+        max-width: 94%;
+    }
+}
+
+.footer {
+    padding: 30px 0 0;
+
+    .text-center {
+        line-height: 40px;
+
+        img {
+            position: relative;
+            top: -8px;
+            margin-left: 5px;
+        }
+    }
+}
+
+.accessDenied {
+    p {
+        text-align: center;
+        font-size: 18px;
+        color: #8a969b;
+    }
+}
+
+:host {
+    ::ng-deep.dx-dropdowneditor {
+        display: inline-block;
+
+        .dx-dropdowneditor-icon {
+            background-color: transparent !important;
+        }
+        input {
+            font-size: 28px;
+            border: 0;
+        }
+    }
+    
+    ::ng-deep .dx-selectbox {
+        .dx-dropdowneditor-icon {
+            &::before {
+                content: '' !important;
+            }
+        }
+        .dx-texteditor-container {
+            &::before {
+                content: '' !important;
+                margin: 0 !important;
+                width: 0;
+                height: 0;
+                border-left: 4px solid transparent;
+                border-right: 4px solid transparent;
+                border-top: 4px solid #171c1d;
+                transform: translate(-50%, -50%);
+                right: 14px;
+                top: 50%;
+                position: absolute;
+            }
+        }
+    }
+}

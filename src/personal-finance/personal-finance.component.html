@@ -1,0 +1,12 @@
+<personal-finance-header [ngStyle]="{ width: widthWithoutScrollbar }"></personal-finance-header>
+
+<main id="main" class="page-content">
+    <div [ngClass]="{ wrapper: wrapperEnabled }">
+        <div *ngIf="wrapperEnabled"
+             class="wrapperBackground"
+             [ngStyle]="{ width: widthWithoutScrollbar }"></div>
+        <router-outlet></router-outlet>
+    </div>
+</main>
+
+<personal-finance-footer [hidden]="hideFooter"></personal-finance-footer>

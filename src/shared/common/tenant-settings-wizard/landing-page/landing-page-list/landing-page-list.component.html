@@ -1,0 +1,13 @@
+<div class="list-container">
+    <h5>{{title}}</h5>
+    <dx-validation-group>
+        <div *ngFor="let item of list; let i = index" class="item-wrapper">
+            <div>
+                <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: item  }">
+                </ng-container>
+            </div>
+            <i class="fa fa-times remove-list-item" (click)="removeListItem(i, item)"></i>
+        </div>
+    </dx-validation-group>
+    <div class="add-list-item" (click)="addListItem()">{{ls.l('Add new +')}}</div>
+</div>

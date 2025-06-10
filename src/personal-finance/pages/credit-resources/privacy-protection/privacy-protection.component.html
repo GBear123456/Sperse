@@ -1,0 +1,13 @@
+<div class="sub-title">
+    <h2>{{l("privacyProtectionResources")}}</h2>
+</div>
+<p class="description">
+    {{l("privacyProtectionResourcesDescription")}}
+</p>
+<div class="privacy">
+    <ul class="privacy-list">
+        <li class="privacy-item" *ngFor="let item of privacyList">
+            <a [href]="item.url" target="_blank">{{item.title}}</a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,155 @@
+::ng-deep .appointment-content {
+    width: 360px;
+    margin-top: 3px;
+}
+
+::ng-deep .dx-popup-content .appointment-content {
+    margin-top: 7px;
+    height: 50px;
+}
+
+::ng-deep .appointment-badge {
+    text-align: center;
+    float: left;
+    margin-right: 12px;
+    color: white;
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+    line-height: 20px;
+    border-radius: 28px;
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+::ng-deep .appointment-dates {
+    color: #959595;
+    font-size: 12px;
+    text-align: left;
+    float: left;
+}
+
+::ng-deep .appointment-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 270px;
+    font-size: 15px;
+    text-align: left;
+    float: left;
+}
+
+::ng-deep .delete-appointment {
+    position: relative;
+    border: none;
+    box-shadow: none;
+    top: -8px;
+    height: 50px;
+    background: transparent;
+}
+
+::ng-deep .delete-appointment .dx-button-content {
+    width: 50px;
+    height: 50px;
+    padding-left: 4px;
+    background: transparent;
+}
+
+::ng-deep .delete-appointment.dx-state-hover,
+::ng-deep .dx-list-item.dx-state-hover .dx-button {
+    box-shadow: none;
+    background-color: transparent;
+}
+
+::ng-deep .delete-appointment .dx-icon-trash {
+    color: #337ab7 !important;
+    font-size: 23px !important;
+}
+
+::ng-deep .dx-scheduler-agenda {
+    div {
+        &[data-type-event="true"] {
+            &, &:hover, &.dx-state-focused {
+                background-color: rgb(114, 123, 210);            
+                color: #FFF;
+            }
+        }
+
+        &[data-type-task="true"] {
+            &, &:hover, &.dx-state-focused {
+                background-color: rgb(50, 201, 237);
+                color: #FFF;
+            }
+        }
+    }
+}
+
+:host {
+    display: block;
+    position: relative;
+    height: calc(100% - 73px);
+
+    ::ng-deep dx-scheduler {
+        .showtime-preview,
+        .dx-scheduler-group-header, 
+        .dx-scheduler-header-panel, 
+        .dx-scheduler-time-panel,
+        .dx-scheduler-header-panel-cell {
+            line-height: 19px;
+            font-size: 16px;
+        }
+
+        .dx-scheduler-agenda .dx-scheduler-time-panel {
+            margin-left: 25px;
+        }
+
+        .dx-scheduler-header {
+            display: none;
+        }
+
+        .dx-scheduler-work-space {
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        .dx-loadpanel-content {
+            display: none;
+        }
+        .dx-scheduler-header {
+            background-color: #FFF!important;
+        }
+        .dx-scheduler-appointment {
+            border-radius: 7px;
+        }
+        .dx-scheduler-date-time-indicator {
+            height: 2px!important;
+            background-color: #00aeef!important;
+            &:before {
+                font: 31px/1 DXIcons!important;
+                color: #00aeef!important;
+            }
+        }
+        .dx-scheduler-time-panel-current-time-cell {
+            color: #00aeef!important;
+            &:before {
+                background-color: #00aeef!important;
+            }
+        }
+        .dx-scheduler-work-space-month {
+            .dx-scheduler-date-table {
+                tr:last-child {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+::ng-deep .dx-scheduler-appointment-tooltip-buttons {
+    display: flex;
+    .dx-button:first-child {
+        margin-right: 10px;
+    }
+}

@@ -1,0 +1,241 @@
+:host {
+    height: calc(100% - 85px);
+    display: block;
+
+    .businessEntities-container, .departments-container, .calendar-container, .reportTemplate-container {
+        height: 100%;
+        padding: 20px 30px 30px 30px;
+
+        ::ng-deep dx-tree-list {
+            .dx-treelist-headers {
+                td {
+                    padding: 0 !important;
+                }
+
+                .dx-treelist-select-all .dx-checkbox {
+                    padding-left: 21px !important;
+                }
+
+                .dx-treelist-text-content {
+                    display: inline-block;
+                    line-height: 20px;
+                    padding-left: 20px;
+                }
+            }
+
+            td {
+                background: transparent !important;
+                border: none !important;
+            }
+
+            .dx-treelist-text-content {
+                cursor: pointer;
+            }
+
+            .dx-select-checkbox {
+                position: static;
+                display: inline-block;
+                margin-top: 0 !important;
+            }
+        }
+    }
+
+    ::ng-deep dx-calendar[accessKey="year"] {
+        .dx-calendar-body {
+            display: none;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    }
+
+    .departments-container {
+        ::ng-deep dx-list {
+            .dx-list-select-all-label {
+                line-height: 24px;
+            }
+        }
+    }
+
+    .reportTemplate-container {
+        .report-template-header {
+            font-size: 16px;
+            font-weight: 400;
+            color: black;
+        }
+
+        img {
+            margin-right: 5px;
+            width: 18px;
+        }
+
+        ::ng-deep .dx-radiobutton {
+            padding: 5px 0px;
+
+            .dx-item-content {
+                font-size: 16px;
+                font-weight: 400;
+                color: black;
+            }
+        }
+
+        ::ng-deep .dx-treelist {
+            .selectable-parent .dx-treelist-icon-container {
+                display: none;
+            }
+
+            .readonly-parent {
+                .dx-treelist-empty-space {
+                    width: 33px;
+
+                    span::before {
+                        margin-left: 2px;
+                    }
+                }
+            }
+
+            .selectable-child .dx-treelist-empty-space {
+                width: 15px;
+            }
+        }
+    }
+
+    .calendar-container {
+        padding-top: 30px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 380px;
+    }
+
+    .final-container {
+        padding-right: 35px;
+
+        .container .row {
+            ::ng-deep dx-date-box input {
+                border: none;
+            }
+
+            ::ng-deep .custom-radio-2-btn {
+                align-content: flex-end;
+
+                .dx-radiobutton {
+                    overflow: hidden;
+
+
+                    .dx-radio-value-container {
+                        display: none;
+                    }
+
+                    .dx-item-content {
+                        overflow: hidden;
+                        border: 1px solid #dadee1;
+                        background-color: #fff;
+                        color: #424c56;
+                        padding: 0 17px;
+                        font-size: 14px;
+                        height: 32px;
+                        line-height: 32px;
+                        min-width: 110px;
+                        font-weight: 400;
+                    }
+
+                    &:first-child .dx-item-content {
+                        border-top-left-radius: 3px;
+                        border-bottom-left-radius: 3px;
+                    }
+
+                    &:last-child .dx-item-content {
+                        border-top-right-radius: 3px;
+                        border-bottom-right-radius: 3px;
+                    }
+
+                    &:not(:first-child) {
+                        border-left: none;
+                    }
+
+                    &.dx-radiobutton-checked .dx-item-content {
+                        background-color: #edf9fe;
+                        color: #000;
+                        border-color: #00aeef;
+                        font-weight: 500;
+                    }
+                }
+
+                .dx-radiogroup-horizontal .dx-radiobutton {
+                    margin-right: 0;
+                }
+            }
+
+            &.date-range {
+                display: flex;
+                align-items: center;
+
+                .arrow {
+                    margin: 0 13px;
+                }
+
+                .date {
+                    font-size: 16px;
+                    font-weight: 600;
+                    letter-spacing: 0.32px;
+                    color: #212c36;
+
+                    &:before {
+                        content: url(../../../../assets/common/icons/date.svg);
+                        margin-right: 10px;
+                        top: 1px;
+                        position: relative;
+                    }
+                }
+
+                .text-right {
+                    display: flex;
+                    align-items: center;
+                }
+            }
+
+            .blue-edit-pencil {
+                display: inline-block;
+                width: 15px;
+                height: 15px;
+                background: url(../../../../assets/common/icons/blue-edit-pencil.svg) 50% 50% no-repeat;
+                position: absolute;
+                top: 17px;
+                right: -23px;
+                margin-left: 4px;
+            }
+
+            &.business-entities {
+                .text-left {
+                    align-self: flex-start;
+                    margin-top: 14px;
+                }
+
+                ul {
+                    margin-top: 14px;
+
+                    li {
+                        list-style-type: none;
+                    }
+                }
+            }
+
+            i {
+                cursor: pointer;
+
+                &.disabled {
+                    opacity: 0.5;
+                    cursor: default;
+                    pointer-events: none;
+                }
+            }
+
+            &.run-report-button {
+                margin-top: 55px;
+            }
+        }
+    }
+
+    ::ng-deep .mat-dialog-content {
+        max-height: 100%;
+    }
+}

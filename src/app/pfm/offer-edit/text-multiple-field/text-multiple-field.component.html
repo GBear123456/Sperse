@@ -1,0 +1,19 @@
+<div class="field">
+    <label [title]="label">{{ label }}</label>
+    <div>
+        <ng-container *ngIf="value">
+            <div *ngFor="let i of keys(value)" class="detailItem">
+                <dx-text-box [valueChangeEvent]="'focusout'"
+                             [disabled]="readOnly"
+                             [placeholder]="!readOnly ? ls.ls('PFM', 'Enter_Value') : ''"
+                             [value]="value[i]"
+                             (onValueChanged)="value[i] = $event.value">
+                </dx-text-box>
+                <span *ngIf="!readOnly" class="clear-contact" (click)="remove(value, i)"><i class="minus-icon"></i></span>
+            </div>
+        </ng-container>
+        <div *ngIf="!readOnly" class="add-new-button" (click)="addNew(value)">
+            <span>+ {{ ls.l('AddNew') }}</span>
+        </div>
+    </div>
+</div>

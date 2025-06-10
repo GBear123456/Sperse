@@ -1,0 +1,36 @@
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { TransactionDto } from '@app/cfo/transactions/transaction-dto.interface';
+
+export const TransactionFields: KeysEnum<TransactionDto> = {
+    Id: 'Id',
+    Date: 'Date',
+    BusinessEntityId: 'BusinessEntityId',
+    CashflowCategoryName: 'CashflowCategoryName',
+    CounterpartyName: 'CounterpartyName',
+    Description: 'Description',
+    Amount: 'Amount',
+    BankAccountId: 'BankAccountId',
+    Comments: 'Comments',
+    CategoryName: 'CategoryName',
+    CashflowSubCategoryName: 'CashflowSubCategoryName',
+    EndingBalance: 'EndingBalance',
+    CashFlowTypeName: 'CashFlowTypeName',
+    AccountingTypeName: 'AccountingTypeName',
+    Descriptor: 'Descriptor',
+    BankAccountBankName: 'BankAccountBankName',
+    IsPending: 'IsPending',
+    MonthYear: 'MonthYear',
+    Debit: 'Debit',
+    Credit: 'Credit',
+    CashflowCategoryId: 'CashflowCategoryId',
+    CashflowSubCategoryId: 'CashflowSubCategoryId',
+    BankAccountTypeName: 'BankAccountTypeName',
+    Currency: 'Currency',
+    Fees: 'Fees',
+    TypeName: 'TypeName',
+    ProviderCashFlowCategoryName: 'ProviderCashFlowCategoryName',
+    ProviderCashFlowSubCategoryName: 'ProviderCashFlowSubCategoryName',
+    Department: 'Department',
+    BankCode: 'BankCode',
+    CashFlowTypeId: 'CashFlowTypeId'
+};

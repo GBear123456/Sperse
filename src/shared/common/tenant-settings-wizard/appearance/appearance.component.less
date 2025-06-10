@@ -1,0 +1,40 @@
+:host {
+    display: block;
+    max-height: 750px;
+    height: calc(100vh - 130px);
+
+    .row {
+        margin-right: 0;
+    }
+
+    .form-group {
+        display: flex;
+
+        label {
+            width: 50%;
+        }
+
+        ::ng-deep dx-select-box,
+        ::ng-deep dx-number-box {
+            width: 50%;
+
+            .dx-placeholder, input {
+                font-size: 15px;
+                font-family: var(--app-font-family);
+                font-weight: 500;
+                letter-spacing: 0.3px;
+                color: #424c56;
+            }
+        }
+    }
+
+    .file-uploads {
+        margin-top: 55px;
+    }
+
+    .app-logo-upload {
+        ::ng-deep uploader p span {
+            min-height: 80px;
+        }
+    }
+}

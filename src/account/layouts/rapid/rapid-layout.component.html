@@ -1,0 +1,23 @@
+<div class="wrapper">
+    <a [href]="originUrl" class="logo">
+        <img *ngIf="appSession.appearanceConfig && appSession.appearanceConfig.logoId"
+             [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.appearanceConfig.logoId"
+             alt="logo" width="auto"
+             height="60"/>
+    </a>
+
+    <main class="main-content">
+        <div class="account-forms h-100">
+            <div class="row h-100">
+                <div class="col-lg-5 col-md-12 col-xs-12 form-wrapper">
+                    <router-outlet></router-outlet>
+                    <div class="copyright">
+                        <span class="">Powered By</span><a target="_blank" href="https://www.sperse.com"><i class="sperse-logo"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-7 d-none d-lg-block text-center right-side">
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

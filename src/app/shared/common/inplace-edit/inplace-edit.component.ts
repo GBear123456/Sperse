@@ -1,0 +1,231 @@
+/** Core imports */
+import {
+    Component,
+    Injector,
+    Input,
+    Output,
+    ViewChild,
+    EventEmitter,
+    ChangeDetectorRef,
+    ChangeDetectionStrategy, HostListener
+} from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
+import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
+import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
+import { DxNumberBoxComponent } from 'devextreme-angular/ui/number-box';
+import { ClipboardService } from 'ngx-clipboard';
+
+/** Application imports */
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
+import { InplaceEditModel } from './inplace-edit.model';
+import { NotifyService } from 'abp-ng2-module';
+
+@Component({
+    selector: 'inplace-edit',
+    templateUrl: './inplace-edit.component.html',
+    styleUrls: ['./inplace-edit.component.less'],
+    providers: [ ClipboardService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class InplaceEditComponent extends AppComponentBase {
+    @ViewChild(DxTextBoxComponent) textBox: DxTextBoxComponent;
+    @ViewChild(DxTextAreaComponent) textArea: DxTextAreaComponent;
+    @ViewChild(DxNumberBoxComponent) numberBox: DxNumberBoxComponent;
+
+    @Input() set data(model: InplaceEditModel) {
+        if (model && (!this._data || this._data.value != model.value)) {
+            this._data = model;
+            this.value = this.valueOriginal = model.value;
+            this.id = model.id;
+            this.displayValue = model.displayValue;
+            this.link = model.link;
+            this.validationRules = model.validationRules;
+            this.isReadOnlyField = model.isReadOnlyField;
+            this.isEditDialogEnabled = model.isEditDialogEnabled;
+            this.isEditEnabled = model.isEditEnabled;
+            this.isDeleteEnabled = model.isDeleteEnabled;
+            this.lEntityName = model.lEntityName;
+            this.editPlaceholder = model.editPlaceholder;
+            this.lDeleteConfirmTitle = model.lDeleteConfirmTitle;
+            this.lDeleteConfirmMessage = model.lDeleteConfirmMessage;
+            this.changeDetector.detectChanges();
+        }
+    }
+    get data(): InplaceEditModel {
+        return this._data;
+    }
+
+    @Input() id: number;
+    @Input() mask: string;
+    @Input() format: any;
+    @Input() multiline = false;
+    @Input() maskInvalidMessage: string;
+    @Input() maxLength;
+    @Input() isOptional;
+    @Input() label: string;
+    @Input() value: any;
+    @Input() displayValue: string;
+    @Input() link: string;
+    @Input() validationRules: object[];
+    @Input() isReadOnlyField = false;
+    @Input() isEditDialogEnabled = false;
+    @Input() showInlineEditButton = false;
+    @Input() isEditEnabled = true;
+    @Input() isDeleteEnabled = false;
+    @Input() isCopyEnabled = true;
+    @Input() isHistoryEnabled = false;
+    @Input() lEntityName: string;
+    @Input() editPlaceholder: string;
+    @Input() lDeleteConfirmTitle: string;
+    @Input() lDeleteConfirmMessage: string;
+    @Input() allowCopy = false;
+    @Input() showUpdateButton = true;
+    @Input() showRefreshButton = true;
+    @Input() saveOnClose = false;
+    @Input() saveOnFocusOut = false;
+    @Input() saveOnEnter = false;
+    @Input() showEditModeOnEditButtonClick = false;
+    @Input() buttonsPosition: 'right' | 'below' = 'right';
+    @Input() isEditModeEnabled = false;
+    @Output() valueChanged: EventEmitter<any> = new EventEmitter();
+    @Output() itemDeleted: EventEmitter<any> = new EventEmitter();
+    @Output() openDialog: EventEmitter<any> = new EventEmitter();
+    @Output() onHistoryClick: EventEmitter<any> = new EventEmitter();
+
+    get hasValue(): boolean {
+        return !!this.value || this.value === 0;
+    }
+
+    valueOriginal = '';
+    private _data: InplaceEditModel;
+    private _clickTimeout;
+    private _clickCounter = 0;
+
+    constructor(
+        injector: Injector,
+        private changeDetector: ChangeDetectorRef,
+        private clipboardService: ClipboardService,
+        private notifyService: NotifyService,
+        public dialog: MatDialog,
+    ) {
+        super(injector);
+    }
+
+    deleteItem(event) {
+        if (!this.isReadOnlyField && this.itemDeleted) {
+            if (this.lDeleteConfirmMessage)
+                this.dialog.open(ConfirmDialogComponent, {
+                    data: {
+                      title: this.l(this.lDeleteConfirmTitle, this.l(this.lEntityName)),
+                      message: this.l(this.lDeleteConfirmMessage, this.l(this.lEntityName).toLowerCase())
+                    }
+                }).afterClosed().subscribe(result => {
+                    if (result) {
+                        if (this.itemDeleted)
+                            this.itemDeleted.emit(this.id);
+                    }
+                });
+            else
+                this.itemDeleted.emit(this.id);
+        }
+        event.stopPropagation();
+    }
+
+    updateItem() {
+        let elm: any = this.textBox || this.numberBox,
+            instance = elm && elm.instance;
+        if (this.multiline || instance && instance.option('isValid')) {
+            if (this.value != this.valueOriginal && this.valueChanged)
+                this.valueChanged.emit(this.valueOriginal);
+            this.isEditModeEnabled = false;
+            this.changeDetector.detectChanges();
+        }
+    }
+
+    setEditModeEnabled(isEnabled: boolean, event?: MouseEvent) {
+        if (this.isReadOnlyField)
+            return ;
+
+        if (this.hasValue) {
+            this._clickCounter++;
+            clearTimeout(this._clickTimeout);
+            this._clickTimeout = setTimeout(() => {
+                if (isEnabled) {
+                    if (this._clickCounter > 1)
+                        this.showInput(isEnabled);
+                    else if (!this.showEditModeOnEditButtonClick)
+                        this.showDialog(event);
+                } else
+                    this.showInput(isEnabled);
+                this._clickCounter = 0;
+                this.changeDetector.detectChanges();
+            }, 250);
+        } else
+            this.showInput(isEnabled);
+    }
+
+    showInput(enabled) {
+        this.isEditModeEnabled = enabled;
+        this.valueOriginal = this.value;
+        enabled && setTimeout(() => {
+            if (this.multiline)
+                this.textArea.instance.focus();
+            else
+                (this.textBox || this.numberBox).instance.focus();
+        });
+    }
+
+    showDialog(event) {
+        if (this.showEditModeOnEditButtonClick) {
+            this.showInput(true);
+        }
+        this.openDialog.emit(event);
+    }
+
+    historyClick(event) {
+        if (this.isHistoryEnabled)
+            this.onHistoryClick.emit(event);
+    }
+
+    onEnterKey() {
+        if (this.saveOnEnter) {
+            this.updateItem();
+        }
+    }
+
+    onFocusOut(event) {
+        if (this.mask && this.isOptional && !event.component.option('value')) {
+            event.component.option('mask', '');
+            event.component.option('isValid', true);
+        }
+        if (this.saveOnFocusOut) {
+            this.updateItem();
+        }
+    }
+
+    onFocusIn(event) {
+        if (this.mask) {
+            event.component.option('mask', this.mask);
+        }
+    }
+
+    onTextAreaInitialized(event) {
+        setTimeout(() => event.component.repaint());
+    }
+
+    onLinkClick(event, link) {
+        if (link) 
+            event.stopPropagation();
+        else 
+            event.preventDefault();
+    }
+
+    copyItem(event) {
+        this.clipboardService.copyFromContent(this.displayValue || this.value);
+        this.notifyService.info(this.l('SavedToClipboard'));
+        event.stopPropagation();
+    }
+}

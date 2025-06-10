@@ -1,0 +1,233 @@
+<div #loaderWrapper>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+        <mat-tab [label]="ls.l('Referrals')">
+            <dx-data-grid #contactDataGrid
+                height="calc(100vh - 270px)"
+                class="main-component-view"
+                accessKey="narrowHeaderPanel"
+                noDataText=""
+                [renderAsync]="true"
+                [loadPanel]="{enabled: false}"
+                [dataSource]="contactDataSource"
+                [allowColumnReordering]="true"
+                [columnAutoWidth]="true"
+                [cacheEnabled]="false"
+                [remoteOperations]="{
+                    filtering: false,
+                    grouping: false,
+                    groupPaging: true,
+                    paging: true,
+                    sorting: true,
+                    summary: true
+                }"
+                [allowColumnResizing]="true"
+                [hoverStateEnabled]="true"
+                [pager]="defaultGridPagerConfig"
+                (onCellClick)="onCellClick($event)"
+                (onContentReady)="loadingService.finishLoading()"
+                (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                <dxo-selection mode="none"></dxo-selection>
+                <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+
+                <dxi-column [width]="40"
+                            [showInColumnChooser]="false"
+                            [allowExporting]="false">
+                </dxi-column>
+
+                <dxi-column [dataField]="clientFields.Id" [visible]="false" sortOrder="desc"></dxi-column>
+                <dxi-column [dataField]="clientFields.Name" [caption]="ls.l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [dataField]="clientFields.Email" [caption]="ls.l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [dataField]="clientFields.IsActive" [caption]="ls.l('Active')" dataType="boolean"></dxi-column>
+                <dxi-column [dataField]="clientFields.ContactDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular" sortOrder="desc"></dxi-column>
+
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                    {{cellData.value | datetime: formatting.dateTimeMoment}}
+                </div>
+                <dxo-group-panel [visible]="true"></dxo-group-panel>
+                <dxo-sorting mode="multiple"></dxo-sorting>
+            </dx-data-grid>
+        </mat-tab>
+        <mat-tab [label]="ls.l('EarnedCommissions')" *ngIf="isCommissionsAllowed">
+            <dx-data-grid #commissionDataGrid
+                          height="calc(100vh - 270px)"
+                          class="main-component-view"
+                          accessKey="narrowHeaderPanel"
+                          noDataText=""
+                          [renderAsync]="true"
+                          [loadPanel]="{enabled: false}"
+                          [dataSource]="commissionDataSource"
+                          [allowColumnReordering]="true"
+                          [columnAutoWidth]="true"
+                          [cacheEnabled]="false"
+                          [remoteOperations]="{
+                    filtering: false,
+                    grouping: false,
+                    groupPaging: true,
+                    paging: true,
+                    sorting: true,
+                    summary: true
+                }"
+                          [allowColumnResizing]="true"
+                          [hoverStateEnabled]="true"
+                          [pager]="defaultGridPagerConfig"
+                          (onCellClick)="onCellClick($event)"
+                          (onContentReady)="loadingService.finishLoading()"
+                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                <dxo-selection mode="none"></dxo-selection>
+                <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+
+                <dxi-column [width]="40"
+                            [showInColumnChooser]="false"
+                            [allowExporting]="false">
+                </dxi-column>
+
+                <dxi-column width="180px"
+                            [dataField]="commissionFields.OrderNumber"
+                            [caption]="ls.l('OrderNumber')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column [dataField]="commissionFields.EarnedDate"
+                            [caption]="ls.l('EarnedDate')"
+                            cellTemplate="dateCell"
+                            cssClass="tabular">
+                </dxi-column>
+                <dxi-column width="120px"
+                            [dataField]="commissionFields.ProductAmount"
+                            [caption]="ls.l('Price')"
+                            cellTemplate="amountTemplate">
+                </dxi-column>
+                <dxi-column width="100px"
+                            dataField="Tier"
+                            [caption]="ls.l('Tier')"
+                            cellTemplate="tierCell">
+                </dxi-column>
+                <dxi-column width="120px"
+                            [dataField]="commissionFields.CommissionableAmount"
+                            [caption]="ls.l('CV')"
+                            cellTemplate="amountTemplate">
+                </dxi-column>
+                <dxi-column width="200px"
+                            cellTemplate="staticWidthCell"
+                            [dataField]="commissionFields.ProductName"
+                            [caption]="ls.l('ProductName')">
+                </dxi-column>
+                <dxi-column width="200px"
+                            cellTemplate="staticWidthCell"
+                            [dataField]="commissionFields.BuyerName"
+                            [caption]="ls.l('BuyerName')">
+                </dxi-column>
+                <dxi-column [dataField]="commissionFields.CommissionRate"
+                            [caption]="ls.l('Rate')"
+                            format="percent"
+                            cssClass="clipboard-holder padding-right">
+                </dxi-column>
+                <dxi-column width="140px"
+                            [dataField]="commissionFields.CommissionAmount"
+                            [caption]="ls.l('Commission')"
+                            cellTemplate="amountTemplate">
+                </dxi-column>
+                <dxi-column width="120px"
+                            [dataField]="commissionFields.Status"
+                            [caption]="ls.l('Status')"
+                            cssClass="clipboard-holder padding-right">
+                </dxi-column>
+
+                <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
+                    {{cellData.value}}
+                </div>
+
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                    {{cellData.value | datetime: formatting.dateTimeMoment}}
+                </div>
+                <div *dxTemplate="let cellData of 'tierCell'" class="clipboard-holder">
+                    {{ls.l(cellData.value)}}
+                </div>
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                    {{cellData.value | datetime: formatting.dateTimeMoment}}
+                </div>
+                <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
+                    <span> {{ cell.value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
+                </div>
+                <dxo-group-panel [visible]="true"></dxo-group-panel>
+                <dxo-sorting mode="multiple"></dxo-sorting>
+            </dx-data-grid>
+        </mat-tab>
+        <mat-tab [label]="ls.l('LedgerBalance')" *ngIf="isCommissionsAllowed">
+            <dx-data-grid #ledgerDataGrid
+                          height="calc(100vh - 270px)"
+                          class="main-component-view"
+                          accessKey="narrowHeaderPanel"
+                          noDataText=""
+                          [renderAsync]="true"
+                          [loadPanel]="{enabled: false}"
+                          [dataSource]="ledgerDataSource"
+                          [allowColumnReordering]="true"
+                          [columnAutoWidth]="true"
+                          [cacheEnabled]="false"
+                          [remoteOperations]="{
+                    filtering: false,
+                    grouping: false,
+                    groupPaging: true,
+                    paging: true,
+                    sorting: true,
+                    summary: true
+                }"
+                          [allowColumnResizing]="true"
+                          [hoverStateEnabled]="true"
+                          [pager]="defaultGridPagerConfig"
+                          (onCellClick)="onCellClick($event)"
+                          (onContentReady)="loadingService.finishLoading()"
+                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                <dxo-selection mode="none"></dxo-selection>
+                <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+
+                <dxi-column [width]="40"
+                            [showInColumnChooser]="false"
+                            [allowExporting]="false">
+                </dxi-column>
+
+                <dxi-column [dataField]="ledgerFields.Type"
+                            [caption]="ls.l('Type')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column [dataField]="ledgerFields.Status"
+                            [caption]="ls.l('Status')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column [dataField]="ledgerFields.StartDate"
+                            [caption]="ls.l('StartDate')"
+                            cellTemplate="dateCell"
+                            cssClass="tabular">
+                </dxi-column>
+                <dxi-column [dataField]="ledgerFields.EndDate"
+                            [caption]="ls.l('EndDate')"
+                            cellTemplate="dateCell"
+                            cssClass="tabular">
+                </dxi-column>
+                <dxi-column [dataField]="ledgerFields.EntryDate"
+                            [caption]="ls.l('EntryDate')"
+                            cellTemplate="dateCell"
+                            cssClass="tabular">
+                </dxi-column>
+                <dxi-column [dataField]="ledgerFields.TotalAmount"
+                            [caption]="ls.l('TotalAmount')"
+                            cellTemplate="amountTemplate">
+                </dxi-column>
+
+                <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
+                    {{cellData.value}}
+                </div>
+
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                    {{cellData.value | datetime: formatting.dateTimeMoment }}
+                </div>
+                <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
+                    <span> {{ cell.value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
+                </div>
+
+                <dxo-group-panel [visible]="true"></dxo-group-panel>
+                <dxo-sorting mode="multiple"></dxo-sorting>
+            </dx-data-grid>        
+        </mat-tab>    
+    </mat-tab-group>
+</div>

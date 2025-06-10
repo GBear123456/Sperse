@@ -1,0 +1,41 @@
+::ng-deep .hide {
+    display: none;
+}
+:host {
+    display: block;
+    min-width: 405px;
+    padding: 20px;
+    height: calc(~"100vh - 190px");
+
+    ::ng-deep dx-text-box[name="fullName"] {
+        display: inline-block;
+        input {
+            height: 48px;
+            font-size: 15px;
+            font-weight: 300;
+            font-style: normal;
+            font-stretch: normal;
+            letter-spacing: 0.3px;
+            color: #424c56;
+        }
+        &.dx-state-focused .dx-placeholder {
+            font-size: 10px;
+        }
+        .dx-placeholder {
+            font-size: 14px;
+            font-weight: 300;
+            font-style: normal;
+            font-stretch: normal;
+            letter-spacing: 0.3px;
+        }
+    }
+
+    mat-dialog-actions {
+        justify-content: center;
+    }
+
+    mat-dialog-content {
+        min-height: 300px;
+        padding-left: 40px;
+    }
+}

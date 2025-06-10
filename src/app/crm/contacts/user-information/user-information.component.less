@@ -1,0 +1,259 @@
+:host {
+    height: 100%;
+    display: block;
+    position: relative;
+
+    h2 {
+        text-transform: uppercase;
+        display: inline-block;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .hidden-field {
+        position: absolute !important;
+        left: -10000px !important;
+        top: -10000px !important;
+    }
+
+    span.optional {
+        color: #adadad;
+        padding: 0 5px;
+    }
+
+    .inplace-edit-wrapper {
+        display: flex;
+        height: 35px;
+
+        ::ng-deep input {
+            margin: 0;
+            padding: 0 0 0 5px;
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.67;
+            letter-spacing: 0.3px;
+            text-align: left;
+            font-family: var(--app-font-family);
+        }
+
+        dx-text-box, dx-button, country-phone-number {
+            display: inline-block;
+        }
+
+        dx-text-box, country-phone-number {
+            min-width: 170px;
+        }
+
+        ::ng-deep country-phone-number > .wrapper {
+            width: 220px;
+        }
+
+        ::ng-deep dx-button {
+            &.update i {
+                color: #00aeef;
+            }
+
+            &.exit i {
+                color: #f44336;
+            }
+
+            border: none;
+            position: relative;
+        }
+
+        dx-validation-group {
+            ::ng-deep dx-button {
+                top: -14px;
+            }
+        }
+    }
+
+    ::ng-deep .mat-tab-label {
+        color: #677380;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.71;
+        letter-spacing: 0.6px;
+        opacity: 1;
+
+        &.mat-tab-disabled {
+            display: none;
+        }
+    }
+
+    ::ng-deep .mat-tab-label-active {
+        border-bottom: none;
+        background: none;
+        font-weight: 500;
+        color: #202b35;
+    }
+
+    ul.roles {
+        display: flex;
+        flex-wrap: wrap;
+
+        li {
+            margin-top: 12px;
+            width: 50%;
+
+            ::ng-deep .dx-checkbox-container {
+                width: 100%;
+                padding-right: 5px;
+            }
+        }
+    }
+
+    .invite-user-form {
+        margin: 0 30px;
+        padding: 20px 0 20px;
+        display: block;
+
+        .invite-field {
+            & > div, dx-select-box {
+                display: inline-block;
+            }
+
+            ::ng-deep dx-select-box {
+                max-width: 450px;
+
+                input, .dx-placeholder {
+                    font-size: 16px;
+                }
+            }
+        }
+
+        .invite-user-info .dx-checkbox {
+            margin: 15px 0;
+        }
+
+        button {
+            width: 150px;
+            font-size: 20px;
+            margin: 20px auto 0;
+            display: block;
+        }
+    }
+
+    .user-info {
+        margin: 0;
+
+        & > div {
+            min-width: 300px;
+
+            &.onecolum {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+
+        h3 {
+            font-size: 12px;
+            line-height: 1.67;
+            letter-spacing: 0.7px;
+            text-align: left;
+            color: #677380;
+            margin-bottom: 22px;
+            font-weight: 400;
+        }
+
+        .title {
+            font-size: 15px;
+            padding-bottom: 5px;
+        }
+
+        .options {
+            margin-top: 5px;
+            width: 320px;
+
+            li {
+                padding-bottom: 15px;
+            }
+        }
+
+        .reset-password {
+            margin-bottom: 20px;
+            margin-left: 50px;
+        }
+    }
+
+    .item-edit-label {
+        display: block;
+        width: 50px;
+        font-size: 13px;
+        font-weight: normal;
+        line-height: 35px;
+        letter-spacing: 0.7px;
+        color: #677380;
+        margin-right: 5px;
+    }
+
+    .section {
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .section-item {
+        line-height: 35px;
+
+        div, inplace-edit {
+            display: block;
+            float: left;
+        }
+
+        inplace-edit {
+            width: calc(~"100% - 55px");
+        }
+
+        .no-phone {
+            color: #adadad;
+            font-style: italic;
+        }
+
+        ul {
+            margin-bottom: 0;
+
+            li {
+                white-space: nowrap;
+
+                .edit-phone, .delete-phone {
+                    color: #00aeef;
+                    display: none;
+                    font-size: 18px;
+                    padding: 7px;
+                    cursor: pointer;
+                }
+
+                .save-to-clipboard {
+                    display: none;
+                    cursor: pointer;
+                }
+
+                .delete-phone {
+                    color: red;
+                    font-size: 21px;
+                    padding: 4px;
+                }
+
+                &:hover {
+                    .edit-phone, .save-to-clipboard, .delete-phone {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+    }
+
+    ::ng-deep .validation-error-list {
+        padding-left: 1em;
+        margin-bottom: 0;
+
+        li {
+            list-style-type: disc;
+
+            & + li {
+                margin-top: 5px;
+            }
+        }
+    }
+}

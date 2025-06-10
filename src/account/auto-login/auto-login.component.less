@@ -1,0 +1,33 @@
+:host {
+    ::ng-deep b {
+        white-space: nowrap;
+    }
+
+    ::ng-deep .auto-login-error {
+        color: red;
+        margin-bottom: 60px;
+        font-size: 20px;
+    }
+
+    ::ng-deep dx-text-box[accessKey="AccessCode"] {
+        display: inline-block;
+        margin-bottom: 40px;
+        margin-left: 40px;
+        input {
+            font-size: 24px;
+            font-family: 'Lato'!important;
+            text-align: center;
+            padding-right: 8px!important;
+        }
+
+        .dx-texteditor-input-container:after {
+            display: none;
+        }
+    }
+
+    ::ng-deep dx-button[accessKey="AccessCode"] {
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 10px;        
+    }
+}

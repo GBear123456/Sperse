@@ -1,0 +1,38 @@
+<h2>{{l('TenantManagement')}} {{l('Settings')}}</h2>
+<div *ngIf="tenantManagementSettings" class="m-form">
+    <h5>{{l("FormBasedRegistration")}}</h5>
+    <div class="m-checkbox-list">
+        <div class="form-group">
+            <dx-check-box id="Setting_AllowSelfRegistration"
+                          [text]="l('AllowTenantsToRegisterThemselves')"
+                          [(value)]="tenantManagementSettings.allowSelfRegistration">
+            </dx-check-box>
+            <div class="m-form__help">{{l("AllowTenantsToRegisterThemselves_Hint")}}</div>
+        </div>
+        <div class="form-group">
+            <dx-check-box id="Setting_IsNewRegisteredTenantActiveByDefault"
+                          [text]="l('NewRegisteredTenantsIsActiveByDefault')"
+                          [(value)]="tenantManagementSettings.isNewRegisteredTenantActiveByDefault">
+            </dx-check-box>
+            <div class="m-form__help">{{l("NewRegisteredTenantsIsActiveByDefault_Hint")}}</div>
+        </div>
+        <div class="form-group">
+            <dx-check-box id="Setting_UseCaptchaOnRegistration"
+                          [text]="l('UseCaptchaOnRegistration')"
+                          [(value)]="tenantManagementSettings.useCaptchaOnRegistration">
+            </dx-check-box>
+        </div>
+        <div class="form-group">
+            <dx-check-box id="Setting_UseHostSettingsForExternalProviders"
+                          [text]="l('UseHostSettingsForExternalProviders')"
+                          [(value)]="tenantManagementSettings.useHostSettingsForExternalProviders">
+            </dx-check-box>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="DefaultEditionId">{{l("Edition")}}</label>
+        <select id="DefaultEditionId" class="form-control" [(ngModel)]="tenantManagementSettings.defaultEditionId">
+            <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
+        </select>
+    </div>
+</div>

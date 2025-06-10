@@ -1,0 +1,89 @@
+<header>
+    <h2 mat-dialog-title>{{title}}</h2>
+    <mat-dialog-actions>
+        <button mat-button *ngIf="!isReadOnly" (click)="saveService()" class="button-layout button-primary">{{ls.l(memberService.id ? 'Update' : 'Save')}}</button>
+    </mat-dialog-actions>
+    <span class="close" (click)="close()"></span>
+</header>
+<span class="close" (click)="close()"></span>
+<mat-dialog-content>
+    <dx-validation-group>
+        <div class="field">
+            <label for="code">{{ls.l('Code')}}</label>
+            <dx-text-box name="code"
+                         width="300px"
+                         [inputAttr]="{ id: 'code' }"
+                         [(value)]="memberService.code"
+                         [disabled]="isReadOnly">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-text-box>
+        </div>
+        <div class="field">
+            <label for="name">{{ls.l('Name')}}</label>
+            <dx-text-box name="name"
+                         width="300px"
+                         [inputAttr]="{ id: 'name' }"
+                         [(value)]="memberService.name"
+                         [disabled]="isReadOnly">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-text-box>
+        </div>
+        <div class="field">
+            <label for="name">{{ls.l('Type')}}</label>
+            <dx-select-box name="type"
+                           width="300px"
+                           [dataSource]="systemTypes"
+                           [inputAttr]="{ id: 'type' }"
+                           [(value)]="memberService.systemType"
+                           [disabled]="isReadOnly"
+                           (onValueChanged)="onSystemTypeChanged($event)">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('TypeIsRequired')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-select-box>
+        </div>
+        <div class="features">
+            <feature-tree [showResetToDefault]="true" [editData]="featuresData" [hostDiscordClientId]="hostDiscordClientId" [isReadOnly]="isReadOnly"></feature-tree>
+        </div>
+        <div class="levels-header">
+            {{ls.l('ServiceLevels')}}:
+        </div>
+        <div class="levels" *ngFor="let serviceLevel of memberService.memberServiceLevels; let i = index">
+            <i *ngIf="!isReadOnly" class="fa fa-close" (click)="removeLevelFields(i)"></i>
+            <div class="field">
+                <label for="code">{{ls.l('Code')}}</label>
+                <dx-text-box name="code"
+                             width="250px"
+                             [inputAttr]="{ id: 'code' }"
+                             [(value)]="serviceLevel.code"
+                             [disabled]="isReadOnly">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="field">
+                <label for="name">{{ls.l('Name')}}</label>
+                <dx-text-box name="name"
+                             width="250px"
+                             [inputAttr]="{ id: 'name' }"
+                             [(value)]="serviceLevel.name"
+                             [disabled]="isReadOnly">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="features">
+                <feature-tree [showResetToDefault]="true" [editData]="getServiceLevelFeatures(serviceLevel)" [isReadOnly]="isReadOnly"></feature-tree>
+            </div>
+        </div>
+        <div class="field">
+            <div *ngIf="!isReadOnly" class="add-new-button" (click)="addNewLevelFields()"><span>+ Add</span></div>
+        </div>
+    </dx-validation-group>
+</mat-dialog-content>

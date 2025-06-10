@@ -1,0 +1,101 @@
+:host {
+    width: calc(100% - 33px);
+
+    .label {
+        font-size: 17px;
+        font-weight: 500;
+        padding-right: 5px;
+        color: #202b35;
+    }
+
+    &.headline {
+        width: 280px;
+        dx-tag-box {
+            background: transparent;
+        }
+    }
+
+    ::ng-deep .selectionList {
+        .tag-value,
+        .dx-placeholder {
+            font-size: 17px;
+            letter-spacing: 0.3px;
+            padding: 0 5px;
+            height: auto !important;
+            font-weight: 500;
+            top: 0;
+            bottom: 0;
+            position: relative;
+            @media (max-width: 768px) {
+                font-size: 13px;
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .dx-texteditor-container {
+            padding-top: 0;
+            padding-right: 0;
+            display: flex;
+            align-items: center;
+            .dx-tag {
+                display: flex;
+                width: 100%;
+                max-width: 100%;
+                .dx-template-wrapper {
+                    width: 100%;
+                    display: flex;
+                    .tag-value {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                        white-space: nowrap;
+                        padding: 0;
+                    }
+                }
+            }
+            .dx-texteditor-input {
+                display: none;
+            }
+        }
+
+        .dx-placeholder,
+        .dx-tag .dx-template-wrapper {
+            &:before {
+                padding-left: 0;
+                padding-right: 0;
+            }
+            &:after {
+                content: '';
+                background: url('../../../../assets/common/icons/down-arrow-icon.svg') no-repeat;
+                min-width: 8px;
+                height: 4px;
+                margin: auto 0 auto 5px;
+            }
+        }
+
+        .dx-placeholder {
+            line-height: 1.8em;
+            padding: 0;
+        }
+
+        .dx-dropdowneditor-active {
+            .dx-tag:after {
+                transform: rotate(180deg);
+            }
+        }
+    }
+}
+
+::ng-deep .dx-item-content {
+    .selection-list-item {
+        display: flex;
+        justify-content: space-between;
+        &.highlighted span {
+            font-weight: bold;
+        }
+        &:before {
+            display: none;
+        }
+    }
+}

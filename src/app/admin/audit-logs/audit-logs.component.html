@@ -1,0 +1,80 @@
+<div>
+    <app-headline [names]="[ l('AuditLogs') ]"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="ui.showReload"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="true"
+                  [showStateResetButton]="true"
+                  (onReload)="invalidate()"
+                  (onToggleToolbar)="repaintDataGrid()"
+                  (onToggleCompactView)="showCompactRowHeight()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onStateReset)="dataGrid.instance.state(null)"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+    </app-headline>
+    <ng-template #titleTemplate>
+        <app-headline-title
+            [names]="[ l('AuditLogs') ]">
+        </app-headline-title>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate" 
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
+    <div [hidden]="isDataLoaded && !totalRowCount" class="main-wrapper portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+            <div id="operationsLogsGridContainer">
+                <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                <dx-data-grid class="main-component-view"
+                              id="operationsLogsGrid"
+                              [renderAsync]="true"
+                              [remoteOperations]="true"
+                              [dataSource]="operationLogsDataSource"
+                              [allowColumnReordering]="true"
+                              [columnAutoWidth]="true"
+                              [allowColumnResizing]="true"
+                              [loadPanel]="{ enabled: false }"
+                              [hoverStateEnabled]="true"
+                              [pager]="defaultGridPagerConfig"
+                              (onOptionChanged)="onGridOptionChanged($event)"
+                              (onInitialized)="onInitialized($event)"
+                              (onContentReady)="setGridDataLoaded()">
+                    <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                    <dxi-column [caption]="" width="45px" alignment="center" cellTemplate="editTemplate"></dxi-column>
+                    <dxi-column [caption]="" width="30px" cellTemplate="statusTemplate"></dxi-column>
+                    <dxi-column [caption]="l('Time')" dataField="executionTime" cellTemplate="dateCell" sortOrder="desc" sortIndex="0"></dxi-column>
+                    <dxi-column [caption]="l('UserName')" [allowSorting]="false" dataField="userName" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [caption]="l('Service')" dataField="serviceName" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [caption]="l('Action')" dataField="methodName" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [caption]="l('Duration')" dataField="executionDuration" cellTemplate="executionDurationTemplate"></dxi-column>
+                    <dxi-column [caption]="l('IpAddress')" dataField="clientIpAddress" cellTemplate="ipCell"></dxi-column>
+                    <dxi-column [caption]="l('Client')" dataField="clientName" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [caption]="l('Browser')" width="350px" dataField="browserInfo" cellTemplate="browserInfoTemplate"></dxi-column>
+                    <ng-container *dxTemplate="let record of 'editTemplate'">
+                        <i class="fa fa-search show-details" (click)="openAuditLogDetailModal(record.data)"></i>
+                    </ng-container>
+                    <ng-container *dxTemplate="let record of 'statusTemplate'">
+                        <i *ngIf="record.data.exception" class="fa fa-warning" style="color: red;"></i>
+                        <i *ngIf="!record.data.exception" class="fa fa-check-circle" style="color: #37d749;"></i>
+                    </ng-container>
+                    <ng-container *dxTemplate="let browser of 'browserInfoTemplate'">
+                        <div class="truncated clipboard-holder fixed-right" title="{{browser.value}}">
+                            {{browser.value}}
+                        </div>
+                    </ng-container>
+                    <ng-container *dxTemplate="let duration of 'executionDurationTemplate'" class="clipboard-holder">
+                        {{duration.value}} ms
+                    </ng-container>
+                    <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                        {{cellData.value | datetime: formatting.dateTimeMoment }}
+                    </div>
+                    <div *dxTemplate="let cellData of 'ipCell'" class="clipboard-holder">
+                        <a target="_blank" [href]="urlHelper.getLookupIpUrl(cellData.value)">{{cellData.value}}</a>
+                    </div>
+                </dx-data-grid>
+            </div>
+        </div>
+    </div>
+</div>

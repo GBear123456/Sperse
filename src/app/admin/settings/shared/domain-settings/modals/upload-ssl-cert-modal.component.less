@@ -1,0 +1,35 @@
+.dx-field {
+    padding: 0 10px;
+}
+
+:host {
+    .content {
+        padding: 30px;
+
+        form {
+            max-width: 700px;
+        }
+    }
+    
+    ::ng-deep .dx-placeholder.dx-state-invisible {
+        display: block !important;
+        opacity: 1;
+    }
+}
+
+::ng-deep .dx-fileuploader-file-name {
+    width: 225px;
+}
+
+::ng-deep .dx-fileuploader-input-wrapper {
+    float: left;
+    width: 49%;
+}
+
+::ng-deep .dx-fileuploader-show-file-list .dx-fileuploader-files-container {
+    padding: 0 0 0 10px;
+    width: 49%;
+    float: right;
+    background-color: #f5f5f5;
+    margin-top: 4px;
+}

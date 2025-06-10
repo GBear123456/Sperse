@@ -1,0 +1,85 @@
+﻿:host {
+    position: relative;
+    height: 100%;
+
+    ::ng-deep #gridContainer {
+        .verify-icon {
+            width: 11px;
+            height: 9px;
+            margin-right: 6px;
+            display: inline-block;
+            background: url('../../../assets/common/icons/verify-icon.svg') no-repeat center;
+        }
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                cursor: pointer;
+                & > td {
+                    span {
+                        text-align: center;
+                        .link-to-cfo-column {
+                            position: relative;
+                            width: 100%;
+                            &::after {
+                                content: '';
+                                background: url('../../../assets/common/icons/cfo-check.svg') no-repeat center;
+                                position: absolute;
+                                left: 10px;
+                                width: 11px;
+                                height: 9px;
+                                top: 9px;
+                            }
+                            &::before {
+                                padding-top: 2px;
+                                content: 'CFO';
+                                border-radius: 14px;
+                                background-image: linear-gradient(41deg,#f76b1c,#fad961);
+                                background-size: cover;
+                                color: #ffffff;
+                                font-size: 10px;
+                                font-weight: 600;
+                                line-height: 2.2;
+                                letter-spacing: 0.2px;
+                                width: 72px;
+                                height: 23px;
+                                display: inline-block;
+                                padding-left: 10px;
+                            }
+                        }
+                        .link-request-verification {
+                            text-decoration: none;
+                            color: #00AEEF;
+                            letter-spacing: 0.2px;
+                            font-weight: 500;
+                            &:hover {
+                                color: #56d1ff;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    ::ng-deep dx-data-grid {
+        .unsubscribed-status {
+            display: inline-block;
+            text-transform: uppercase;
+            text-align: center;
+            width: 20px;
+            position: relative;
+            padding: 4px 0 4px 10px;
+            &::before {
+                width: 8px;
+                height: 8px;
+                content: '';
+                display: block;
+                position: absolute;
+                left: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                border-radius: 50%;
+                background: #ef8f00;
+            }
+        }
+    }
+}

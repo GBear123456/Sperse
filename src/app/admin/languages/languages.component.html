@@ -1,0 +1,65 @@
+<div>
+    <app-headline [names]="[ l('Languages') ]"
+                  icon="flag"
+                  [buttons]="headlineButtons"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="ui.showReload"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="true"
+                  [showStateResetButton]="true"
+                  (onToggleToolbar)="repaintDataGrid()"
+                  (onReload)="invalidate()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onStateReset)="dataGrid.instance.state(null)"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+    </app-headline>
+    <ng-template #titleTemplate>
+        <app-headline-title
+            [names]="[ l('Languages') ]">
+        </app-headline-title>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate" 
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
+    <action-menu [items]="actionMenuItems"
+                 [visible]="actionRecord"
+                 width="240px"
+                 (onItemClick)="onMenuItemClick($event)"
+                 (onHidden)="actionRecord = null">
+    </action-menu>
+
+    <div id="admin-languages" class="portlet light no-padding margin-bottom-0">
+        <ghost-list [hidden]="isDataLoaded"></ghost-list>
+        <dx-data-grid class="main-component-view"
+            [renderAsync]="true"
+            [dataSource]="dataSource"
+            [allowColumnReordering]="true"
+            [columnAutoWidth]="true"
+            [allowColumnResizing]="true"
+            [hoverStateEnabled]="true"
+            [loadPanel]="{ enabled: false }"
+            [pager]="defaultGridPagerConfig"
+            (onOptionChanged)="onGridOptionChanged($event)"
+            (onInitialized)="onInitialized($event)"
+            (onEditingStart)="toggleActionsMenu($event)"
+            (onRowPrepared)="onRowPrepared($event)"
+            (onContentReady)="setGridDataLoaded()"
+            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxo-editing mode="popup" [allowUpdating]="true" [texts]="{editRow: ''}"></dxo-editing>
+            <dxi-column dataField="displayName" [caption]="l('Name')" cssClass="clipboard-holder" width="25%"></dxi-column>
+            <dxi-column dataField="name" [sortingMethod]="sortLanguages" [sortIndex]="0" sortOrder="asc" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="creationTime" dataType="date" [caption]="l('CreationTime')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="isEnabled" [caption]="l('IsEnabled')" cellTemplate="isEnabledTemplate"></dxi-column>
+            <div *dxTemplate="let cellData of 'isEnabledTemplate'">
+                <span class="status" [ngClass]="cellData ? 'enabled' : 'disabled'">{{ cellData ? 'Yes' : 'No' }}</span>
+            </div>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-paging [pageSize]="20"></dxo-paging>
+            <dxo-group-panel [visible]="false"></dxo-group-panel>
+        </dx-data-grid>
+    </div>
+</div>

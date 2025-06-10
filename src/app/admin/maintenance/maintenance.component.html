@@ -1,0 +1,65 @@
+<div>
+    <app-headline [names]="[ ls.l('Maintenance') ]"></app-headline>
+
+    <div class="wrapper">
+        <mat-tab-group>
+            <mat-tab [label]="ls.l('Caches')">
+                <div class="row margin-bottom-10">
+                    <div class="col-xl-6">
+                        <p>{{ls.l("CachesHeaderInfo")}}</p>
+                    </div>
+                    <div class="col-xl-6 text-right">
+                        <button class="btn btn-layout" (click)="clearAllCaches()"><i class="fa fa-recycle"></i> {{ls.l("ClearAll")}}</button>
+                    </div>
+                </div>
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <ghost-list [hidden]="!loading"></ghost-list>
+                            <dx-data-grid id="gridContainer"
+                                          accesskey="cachesGrid"
+                                          [dataSource]="caches"
+                                          [allowColumnReordering]="true"
+                                          [loadPanel]="{ enabled: false }"
+                                          [columnAutoWidth]="true"
+                                          [allowColumnResizing]="true"
+                                          [hoverStateEnabled]="true"
+                                          [pager]="gridPagerConfig">
+                                <dxi-column [caption]="ls.l('Name')" dataField="name" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column [caption]="ls.l('Actions')" width="220px" cellTemplate="clearTemplate"></dxi-column>
+                                <ng-container *dxTemplate="let item of 'clearTemplate'">
+                                    <button class="btn btn-layout" (click)="clearCache(item.data.name)">
+                                        <i class="fa fa-edit"></i> {{ls.l('Clear')}}
+                                    </button>
+                                </ng-container>
+                            </dx-data-grid>
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab [label]="ls.l('WebSiteLogs')">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="row margin-bottom-10">
+                        <div class="col-xl-6">
+                            <p>{{ls.l("WebSiteLogsHeaderInfo")}}</p>
+                        </div>
+                        <div class="col-xl-6 text-right">
+                            <button class="btn btn-default" (click)="downloadWebLogs()"><i class="fa fa-download"></i> {{ls.l("DownloadAll")}}</button>
+                            <button class="btn btn-layout" (click)="getWebLogs()"><i class="fa fa-refresh"></i> {{ls.l("Refresh")}}</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="web-log-view full-height">
+                                    <span class="log-line" *ngFor="let log of logs">
+                                        <span [class]="getLogClass(log)">{{getLogType(log)}}</span>
+                                        {{getRawLogContent(log)}}
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

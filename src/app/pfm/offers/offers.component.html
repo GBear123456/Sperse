@@ -1,0 +1,128 @@
+<div>
+    <dx-context-menu
+        [selectByClick]="true"
+        [selectionMode]="'single'"
+        [dataSource]="pullContextMenuItems"
+        [position]="{ my: 'top right', at: 'bottom right' }"
+        (onSelectionChanged)="pullOffers(true)"
+        target="#PullOffers">
+    </dx-context-menu>
+    <app-headline [names]="[ l('Offers') ]"
+                  icon="people"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="ui.showReload"
+                  [showToggleColumnSelectorButton]="true"
+                  [showStateResetButton]="true"
+                  (onToggleToolbar)="toggleToolbar()"
+                  (onReload)="refreshDataGrid()"
+                  (onStateReset)="dataGrid.instance.state(null)"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+    </app-headline>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <div class="main-wrapper">
+        <app-static-list #categoriesComponent
+                         width="310px"
+                         [title]="l('Categories')"
+                         [showConfirmation]="false"
+                         [hideButtons]="true"
+                         [filterModel]="filterModelCategories"
+                         targetSelector="[aria-label=Category]"
+                         [list]="categories">
+        </app-static-list>
+        <app-static-list #flagsComponent
+                         width="350px"
+                         [height]="450"
+                         [title]="l('Flags')"
+                         pageLoadMode="scrollBottom"
+                         [showConfirmation]="true"
+                         [filterModel]="filterModelFlags"
+                         targetSelector="[aria-label=flag-icon]"
+                         [selectionMode]="selectedOfferKeys.length ? 'multiple': 'none'"
+                         (onOptionChanged)="onFlagOptionChanged($event)"
+                         [list]="flags">
+        </app-static-list>
+        <app-static-list #attributesComponent
+                         [accessKey]="'attributes-select'"
+                         width="300px"
+                         [height]="450"
+                         [title]="l('Attributes')"
+                         template="bottomInput"
+                         [showConfirmation]="true"
+                         [filterModel]="filterModelAttributes"
+                         targetSelector="[aria-label=pen]"
+                         [selectionMode]="selectedOfferKeys.length ? 'multiple': 'none'"
+                         (onBottomInputApplyValue)="onAttributeValueApply($event)"
+                         [list]="attributes">
+        </app-static-list>
+        <app-static-list #statusesComponent
+                         width="310px"
+                         [title]="l('Statuses')"
+                         [showConfirmation]="false"
+                         [hideButtons]="true"
+                         [filterModel]="filterModelStatuses"
+                         targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
+                         [list]="statuses">
+        </app-static-list>
+        <app-rating
+                [title]="l('Rank')"
+                [allowManage]="true"
+                [targetSelector]="'[aria-label=Rank]'"
+                [selectedKeys]="selectedOfferKeys"
+                [filterModel]="filterModelRank"
+                [ratingValue]="displayedRatingValue"
+                [bulkUpdateMode]="true"
+                [emptyRatingValue]="0"
+                (onProcess)="onRankChanged($event)">
+        </app-rating>
+
+        <div class="portlet light no-padding margin-bottom-0">
+            <ghost-list [hidden]="isDataLoaded"></ghost-list>
+            <dx-data-grid id="gridContainer"
+                      accesskey="narrowHeaderPanel"
+                      [dataSource]="dataSource"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [loadPanel]="{ enabled: false }"
+                      [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
+                      [allowColumnResizing]="true"
+                      [hoverStateEnabled]="true"
+                      [pager]="defaultGridPagerConfig"
+                      (onOptionChanged)="onGridOptionChanged($event)"
+                      (onSelectionChanged)="onSelectionChanged($event)"
+                      (onRowClick)="openOfferEdit($event)"
+                      (onContentReady)="contentReady()">
+            <dxo-selection selectAllMode="page"
+                           showCheckBoxesMode="always"
+                           mode="multiple">
+            </dxo-selection>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-paging [pageSize]="20"></dxo-paging>
+            <dxi-column [dataField]="offerFields.LogoUrl" caption="Logo" cellTemplate="photoTemplate"
+                        [width]="100" [showInColumnChooser]="false" [allowExporting]="false"
+                        [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+            <dxi-column [dataField]="offerFields.Name" [caption]="l('Offer_Name')" [sortIndex]="2" sortOrder="asc" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="offerFields.CardNetwork" [caption]="l('Offer_Network')" [width]="150" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="offerFields.Categories" [caption]="l('Category')" [width]="300" [calculateSortValue]="getCategoryValue" [calculateGroupValue]="getCategoryValue" [calculateCellValue]="getCategoryValue" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="offerFields.Status" [caption]="l('Offer_Status')" [width]="180" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="offerFields.Rank" [caption]="l('Offer_Rank')" [sortIndex]="0" sortOrder="desc" dataType="number" alignment="center" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="offerFields.OverallRating" [visible]="false" [sortIndex]="1" sortOrder="desc" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="offerFields.IsPublished" [caption]="l('Offer_Published')" dataType="boolean"></dxi-column>
+            <dxi-column [dataField]="offerFields.Created" [caption]="l('Offer_Created')" [width]="180" cellTemplate="dateCell"></dxi-column>
+
+                <div *dxTemplate="let field of 'photoTemplate'">
+                    <div [ngStyle]="{'background-image': 'url(' + field.data.LogoUrl + ')'}" class="logo-url"></div>
+                </div>
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                    {{cellData.value | datetime: formatting.dateMoment}}
+                </div>
+                <dxo-group-panel [visible]="true"></dxo-group-panel>
+                <dxo-summary>
+                    <dxi-group-item [column]="offerFields.Name"
+                                    summaryType="count"
+                                    [displayFormat]="'{0} ' + l('Offers').toLocaleLowerCase()">
+                    </dxi-group-item>
+                </dxo-summary>
+            </dx-data-grid>
+        </div>
+    </div>
+</div>

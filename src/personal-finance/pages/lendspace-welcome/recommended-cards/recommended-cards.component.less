@@ -1,0 +1,34 @@
+:host {
+    display: block;
+    
+    .block-with-bg .container .right-block .recommended-block {
+        padding: 15px 30px;
+    }
+    
+    .card-item {
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        
+        &:hover {
+            opacity: .9;
+        }
+    }
+    
+    .recommended-block {
+        &:hover {
+            cursor: pointer;
+        }
+    }
+    
+    @media all and (max-width: 992px) {
+        .recommended-block,
+        .view-offers {
+            margin: 0 auto;
+        }
+    }
+    
+    @media all and (max-width: 576px) {
+        padding: 0 15px;
+    }
+}

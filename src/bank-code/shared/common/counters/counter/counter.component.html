@@ -1,0 +1,26 @@
+<h6 class="card-title">{{ title }}</h6>
+<div class="numbers">
+    <div *ngIf="total" class="incremental-counter">
+        <ng-container *ngFor="let number of range(total.length); let i = index">
+            <div *ngIf="showComma(total, i)" class="comma">,</div>
+            <div class="num">
+                {{ total[i] }}
+            </div>
+        </ng-container>
+    </div>
+</div>
+<div class="circular-graph-wrapper">
+    <div class="circular-graphs">
+        <div class="circular-progress" *ngFor="let item of totalByLetter">
+            <circle-progress
+                [percent]="item.percent"
+                [outerStrokeColor]="item.outerColor"
+                [innerStrokeColor]="item.innerColor"
+                [title]="item.title"
+                [titleColor]="item.outerColor"
+                [subtitleColor]="item.outerColor"
+                [subtitle]="item.subtitle">
+            </circle-progress>
+        </div>
+    </div>
+</div>

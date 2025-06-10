@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>
+    <div>{{ls.l('DoYouWantToFinalize', ls.l('Lead'))}}</div>
+    <div>{{ls.l('WillBeCreated', ls.l('Client'))}}</div>
+</h2>
+<mat-dialog-content>
+    <dx-select-box
+        [placeholder]="ls.l('SelectStageOfOrder')"
+        [dataSource]="orderStages"
+        [displayExpr]="'name'"
+        [valueExpr]="'id'"
+        [(value)]="orderStageId"
+        [showClearButton]="true">
+    </dx-select-box>
+    <dx-number-box
+        [visible]="orderStageId"
+        [placeholder]="ls.l('Amount')"
+        [format]="currency + ' #,##0.##'"
+        [(value)]="amount">
+    </dx-number-box>
+    <dx-text-area
+        [visible]="orderStageId"
+        [placeholder]="ls.l('Comment')"
+        [(value)]="comment">
+    </dx-text-area>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Yes')}}</button>
+</mat-dialog-actions>

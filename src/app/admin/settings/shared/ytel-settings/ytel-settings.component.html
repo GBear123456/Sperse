@@ -1,0 +1,32 @@
+<h2>{{l('YTel')}} {{l('Settings')}}</h2>
+<div>
+    <div class="form-group">
+        <br />
+        <dx-check-box id="YTelIsEnabled"
+                      [text]="l('YTelIsEnabled')"
+                      [(value)]="yTelSettings.isEnabled">
+        </dx-check-box>
+    </div>
+</div>
+<div>
+    <div class="form-group">
+        <label for="YTelAuthToken">{{l("YTelAuthToken")}}</label>
+        <input id="YTelAuthToken" type="text" name="YTelAuthToken" class="form-control" [(ngModel)]="yTelSettings.authToken" maxlength="800">
+    </div>
+</div>
+<div>
+    <div class="form-group">
+        <label for="YTelFrom">{{l("YTelFrom")}}</label>
+        <dx-text-box type="tel" id="YTelFrom" name="YTelFrom" class="form-control" [(ngModel)]="yTelSettings.from" maxlength="128" [mask]="masks.phone" useMaskedValue="true" maskInvalidMessage=""></dx-text-box>
+    </div>
+</div>
+<div>
+    <div class="form-group">
+        <label for="YTelInboundSMSKey">{{l("YTelInboundSMSKey")}}</label>
+        <input id="YTelInboundSMSKey" type="text" name="YTelInboundSMSKey" class="form-control" [(ngModel)]="yTelSettings.inboundSmsKey" maxlength="128">
+    </div>
+</div>
+<p>
+    <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span><br />
+    <span class="copy-url"><b>{{getYtelInboundSMSUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span><br /><br />
+</p>

@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>{{ls.l("Dashboard_Unclassify_Choose_Reset_Options")}}</h2>
+<div mat-dialog-content>
+    <div class="dx-fieldset">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l("Dashboard_Unclassify_Unclassify_Only")}}</div>
+            <div class="dx-field-value">
+                <dx-check-box [(value)]="resetRules.removeCategoryTree ? true : resetRules.unclassify" [disabled]="resetRules.removeCategoryTree"></dx-check-box>
+            </div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l("Dashboard_Unclassify_Remove_Rules")}}</div>
+            <div class="dx-field-value">
+                <dx-check-box [(value)]="resetRules.removeCategoryTree ? true : resetRules.removeRules" [disabled]="resetRules.removeCategoryTree"></dx-check-box>
+            </div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l("Dashboard_Unclassify_Remove_Category_Tree")}}</div>
+            <div class="dx-field-value">
+                <dx-check-box [(value)]="resetRules.removeCategoryTree"></dx-check-box>
+            </div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l("Dashboard_Unclassify_Remove_Forecasts")}}</div>
+            <div class="dx-field-value">
+                <dx-check-box [(value)]="resetRules.removeForecasts"></dx-check-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button mat-button class="button-layout button-primary" (click)="onSave()" [disabled]="!checkAnyValueIsSet()">{{ls.l('Reset')}}</button>
+</div>

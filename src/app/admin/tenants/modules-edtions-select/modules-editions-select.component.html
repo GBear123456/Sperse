@@ -1,0 +1,40 @@
+<div class="form-group moduleEdition"
+    [ngClass]="{ 'first-row': i === 0 }"
+     *ngFor="let editionGroup of editionsGroups; let i = index">
+    <ng-container *ngIf="editionGroup[1].moduleId as moduleId">
+        <label [for]="moduleId">{{ moduleId }}: </label>
+        <select [id]="moduleId"
+                name="edition"
+                [disabled]="moduleIsDisabled(moduleId)"
+                class="form-control"
+                (change)="onEditionChange($event, moduleId)">
+            <option *ngFor="let edition of editionGroup" 
+                [value]="+edition.value" 
+                [selected]="editionsModels[moduleId].editionId == edition.value">{{edition.displayText}}
+            </option>
+        </select>
+        <div>
+            <label *ngIf="i === 0">{{ ls.l('Users') }}</label>
+            <input type="number"
+                   class="form-control"
+                   min="1"
+                   [disabled]="moduleIsDisabled(moduleId)"
+                   [(ngModel)]="editionsModels[moduleId].maxUserCount"
+                   [ngModelOptions]="{standalone: true}">
+        </div>
+        <div>
+            <label *ngIf="i === 0">{{ ls.l('Trial') }} ({{ ls.l('days')}})</label>
+            <input *ngIf="editionIsNotFreeOrNotAssigned(editionsModels[moduleId], i)"
+                   type="number"
+                   class="form-control"
+                   min="1"
+                   [disabled]="moduleIsDisabled(moduleId)"
+                   [(ngModel)]="editionsModels[moduleId].trialDayCount"
+                   [ngModelOptions]="{ standalone: true }">
+        </div>
+        <clear-icon *ngIf="showCleanIcon(editionsModels[moduleId], i)"
+             class="clean-icon"
+             (click)="clearEdition(editionsModels[moduleId])">
+        </clear-icon>
+    </ng-container>
+</div>

@@ -1,0 +1,36 @@
+ul {
+    padding-left: 0;
+    padding-top: 2px;
+    position: relative;
+    &:before {
+        content: url('../../../../../assets/common/icons/offers/credit-score-range.svg');
+        position: absolute;
+        top: 0;
+    }
+    li {
+        list-style: none;
+        font-family: Poppins;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.14;
+        letter-spacing: 0.2px;
+        color: #4a4a4a;
+        font-weight: 500;
+        margin-bottom: 16px;
+        line-height: 1.16;
+        padding-left: 28px;
+        cursor: pointer;
+        position: relative;
+        .name {
+            color: #000000;
+            font-weight: 600;
+        }
+        &.checked {
+            &:before {
+                position: absolute;
+                left: 3px;
+                content: url('../../../../../assets/common/icons/offers/credit-score-check.svg');
+            }
+        }
+    }
+}

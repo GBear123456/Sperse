@@ -1,0 +1,187 @@
+:host {
+    display: block;
+    position: relative;
+    height: 100%;
+    z-index: 2;
+
+    .left-menu {
+        width: 341px;
+        height: calc(~"100vh - 215px");
+        border-right: 1px solid #dfdfdf;
+        background-color: #fff;
+        padding: 35px 25px 25px 25px;
+        float: left;
+        transition: transform 0.5s;
+        z-index: 2;
+    }
+
+    &.fullscreen .left-menu {
+        height: 100vh !important;
+    }
+
+    &.collapsed .left-menu {
+        position: absolute;
+        transform: translate(-100%);
+        .toggle-button div {
+            transform: rotate(180deg);
+            left: 0;
+        }
+    }
+
+    &.mobile .left-menu {
+        position: absolute;
+    }
+
+    .title {
+        font-size: 17px;
+        padding-left: 14px;
+        padding-bottom: 33px;
+        font-weight: 400;
+        letter-spacing: 1px;
+
+        a {
+            text-decoration: none;
+            color: rgb(103, 115, 128);
+        }
+    }
+
+    .items-progress {
+        position: relative;
+        padding-left: 45px;
+        list-style: none;
+        line-height: 1;
+        color: #677380;
+        letter-spacing: 0.3px;
+
+        &::before {
+            display: inline-block;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 15px;
+            width: 10px;
+            height: 100%;
+            border-left: 3px solid #F7F8F9;
+        }
+
+        &-item {
+            position: relative;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+
+            .img {
+                width: 45px;
+                height: 45px;
+                margin: 0;
+                padding: 0;
+                position: absolute;
+                left: -52px;
+                top: -17px;
+                background: white no-repeat center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .link {
+                width: 235px;
+                position: relative;
+                cursor: pointer;
+                display: inline-block;
+                margin-left: 10px;
+
+                .add-button {
+                    display: none;
+                    position: absolute;
+                    border-radius: 50%;
+                    line-height: 25px;
+                    font-weight: 300;
+                    text-align: center;
+                    font-size: 25px;
+                    color: #dfdfdf;
+                    width: 25px;
+                    height: 25px;
+                    right: 0;
+                    top: -7px;
+                    cursor: pointer;
+                    border: 1px solid #dfdfdf;
+                }
+
+                &:hover .add-button {
+                    display: block;
+                }
+
+                &.intro-link {
+                    color: #677380;
+                    letter-spacing: 0.3px;
+                    cursor: pointer;
+                    text-decoration: none;
+                    font-weight: 500;
+
+                    &:hover {
+                        cursor: pointer;
+                        color: rgba(0, 0, 0, 0.65);
+                        font-weight: 600;
+                    }
+                }
+            }
+
+            &:not(.disabled) .link {
+                &:hover {
+                    cursor: pointer;
+                    color: rgba(0, 0, 0, 0.65);
+                    font-weight: 600;
+                }
+            }
+
+            &:not(:last-child) {
+                padding-bottom: 63px;
+            }
+
+            &.current {
+                color: #000;
+                font-weight: 600;
+                ::ng-deep .img path {
+                    fill: #00aeef;
+                }
+            }
+
+            &.disabled {
+                pointer-events: none;
+                .img > div, span {
+                    opacity: 0.5;
+                    cursor: default;
+                }
+            }
+        }
+    }
+
+
+    .toggle-button {
+        position: absolute;
+        top: 40px;
+        right: -19px;
+        width: 20px;
+        height: 40px;
+        background-color: #fff;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        border: 1px solid #dfdfdf;
+        border-left: 0;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        div {
+            position: relative;
+            left: -3px;
+            height: 12px;
+            display: flex;
+        }
+        &:focus {
+            outline: none;
+        }
+    }
+}

@@ -1,0 +1,34 @@
+<section class="new-items-status">
+    <header>
+        <h2 class="title">{{ls.l('Totals')}}</h2>
+    </header>
+    <div class="content-wrap">
+        <div *ngIf="totalsDataAvailable$ | async; else noData" class="align-data">
+            <div class="charts-wrapper" *ngIf="(totalsData$ | async) as totalsData">
+                <ng-container *ngFor="let field of fields">
+                    <div *ngIf="field.visible" class="chart-head">
+                        {{ls.ls('CRM', 'CRMDashboard_NewAdded', [ls.l(field.title).toLowerCase()])}}
+                        <div class="value">
+                            <ng-container *ngIf="field.type == 'currency'">
+                                <div [ngStyle]="{'color': field.color}">{{ totalsData[field.name.replace('total', 'new')] | currency: currency : 'symbol' : '1.0-0' }}</div>
+                                <div *ngIf="totalsData[field.name.replace('total', 'new')] != 0">
+                                    of {{ totalsData[field.name] | currency : currency : 'symbol' : '1.0-0' }}
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="field.type == 'number'">
+                                <div [ngStyle]="{'color': field.color}">{{ totalsData[field.name.replace('total', 'new')] | number }}</div>
+                                <div>of {{ totalsData[field.name] | number }}</div>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div *ngIf="field.visible" class="chart-line" [ngStyle]="{ 'background-color': '#F1F5F6' }">
+                        <div [ngStyle]="{ width: field.percent, 'background-color': field.color }"></div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <ng-template #noData>
+            <app-no-data></app-no-data>
+        </ng-template>
+    </div>
+</section>

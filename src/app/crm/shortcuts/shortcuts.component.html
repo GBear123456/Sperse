@@ -1,0 +1,263 @@
+<app-headline *ngIf="layoutService.showLeftBar"
+    [names]="[ '' ]"
+    [buttons]="[]"
+    [showToggleFullScreenButton]="true"
+    [showReloadButton]="true"
+    (onReload)="refresh()">
+</app-headline>
+
+<dx-scroll-view showScrollbar="onHover" height="calc(100vh - 150px)">
+    <div class="margin-wrapper">
+        <div class="header">
+            <div class="left">
+                <h1>{{ls.l('Shortcuts')}}</h1><img (click)="scrollView.instance.scrollBy(-200)" class="btn-left" src="./assets/common/icons/left.svg"><img (click)="scrollView.instance.scrollBy(200)"class="btn-right" src="./assets/common/icons/right.svg">
+            </div>
+            <div class="right">
+                <button (click)="router.navigate(['app/crm/dashboard'])" class="btn-layout"><img src="./assets/common/icons/keyboard-open.svg">{{ls.l('My Dashboard')}}</button>
+            </div>
+        </div>
+        <dx-scroll-view #shortcutsScroll showScrollbar="onHover" [direction]="'horizontal'" width="100%">
+            <div class="blocks">
+                <div class="block" [hidden]="!isPaymentsEnabled">
+                    <div class="image">
+                        <img src="./assets/common/images/shortcuts/stripe.svg">
+                    </div>
+                    <h3>Payment Provider</h3>
+                    <span></span>
+                    <div class="details">
+                        <dx-scroll-view showScrollbar="onHover" height="183px">
+                            <div class="detail-item">
+                                <label><img width="46px" height="19px" src="./assets/common/images/shortcuts/stripe.svg"></label><button (click)="connectStripeAccount()" [disabled]="!isPaymentsEnabled || stripePaymentSettings.isConnectedAccountSetUpCompleted"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                            <div class="detail-item">
+                                <label><img width="64px" height="17px" src="./assets/common/images/paypal.svg"></label><button (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'paypal' } })"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                            <div class="detail-item">
+                                <label><img width="48px" height="18px" src="./assets/common/images/zelle.svg"></label><button [disabled]="true"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                            <div class="detail-item">
+                                <label><img width="44px" height="16px" src="./assets/common/images/ach-payment-solutions.svg"></label><button [disabled]="true"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                        </dx-scroll-view>
+                    </div>
+                </div>
+                <div class="block" [hidden]="!hasTenantOrCRMSettings">
+                    <div class="image">
+                        <img src="./assets/common/images/shortcuts/gears.svg">
+                    </div>
+                    <h3>Customize Settings</h3>
+                    <span></span>
+                    <div class="details">
+                        <dx-scroll-view showScrollbar="onHover" height="183px">
+                            <div class="detail-item">
+                                <label>Currency</label><button (click)="openProfileTenantSettingsDialog('general')"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>My Branding</label><button [disabled]="!showMyBranding" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Appearance' }})"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>Email Settings</label><button (click)="openProfileTenantSettingsDialog('gmail')"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>Notifications</label><button [disabled]="!showNotification" (click)="openNotificationModal($event)"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
+                            </div>
+                        </dx-scroll-view>
+                    </div>
+                </div>
+                <div class="block" [hidden]="!hasTenantOrCRMSettings && !showZapier">
+                    <div class="image">
+                        <img src="./assets/common/images/shortcuts/partnership.svg">
+                    </div>
+                    <h3>Link Your Apps</h3>
+                    <span></span>
+                    <div class="details">
+                        <dx-scroll-view showScrollbar="onHover" height="183px">
+                            <div class="detail-item">
+                                <label><img width="18px" height="21px" style="margin-right: 5px;" src="./assets/common/icons/mailchimp-freddie-icon.svg"> Mailchimp</label><button [disabled]="!hasTenantOrCRMSettings" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Mailchimp' } })"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                            <div class="detail-item">
+                                <label><img width="21px" height="21px" style="margin-right: 2px;" src="./assets/common/icons/pngwing.svg"> Google Analytics</label><button (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'TrackingTools' } })"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                            <div class="detail-item">
+                                <label><img width="27px" height="18px" style="margin-left: -3px;" src="./assets/common/icons/meta.svg"> Meta</label><button (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'TrackingTools' } })"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                            <div class="detail-item">
+                                <label><img width="17px" height="17px" style="margin: 0 3px;" src="./assets/common/icons/zapier-icon.svg"> Zapier</label><button [disabled]="!showZapier" (click)="router.navigate(['/app/crm/zapier'])"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                        </dx-scroll-view>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="image">
+                        <img src="./assets/common/images/shortcuts/social.svg">
+                    </div>
+                    <h3>Link Your Community</h3>
+                    <span></span>
+                    <div class="details">
+                        <dx-scroll-view showScrollbar="onHover" height="183px">
+                            <div class="detail-item">
+                                <label><img width="19px" height="19px" style="margin-right: 3px;" src="./assets/common/icons/social/Discord.svg"> Discord</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                            <div class="detail-item">
+                                <label><img width="19px" height="19px" style="margin-right: 3px;" src="./assets/common/icons/social/telegram.svg"> Telegram</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                            <div class="detail-item">
+                                <label><img width="19px" height="19px" style="margin-right: 3px;" src="./assets/common/icons/social/WhatsApp.svg"> Whatsapp</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                            <div class="detail-item">
+                                <label><img width="19px" height="19px" style="margin-right: 3px;" src="./assets/common/icons/social/Slack.svg"> Slack</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                            </div>
+                        </dx-scroll-view>
+                    </div>
+                </div>
+                <div class="block" [hidden]="!showImportLeads && !isGrantedCRMCustomers">
+                    <div class="image">
+                        <img src="./assets/common/images/shortcuts/file-call.svg">
+                    </div>
+                    <h3>Import Contacts</h3>
+                    <span></span>
+                    <div class="details">
+                        <dx-scroll-view showScrollbar="onHover" height="183px">
+                            <div class="detail-item">
+                                <label>Add New Contact</label><button [disabled]="!isGrantedCRMCustomers" (click)="openContactDialog()"><img width="7px" height="7px" src="./assets/common/icons/plus2.svg"> Add</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>Import CSV List</label><button [disabled]="!showImportLeads" (click)="router.navigate(['app/crm/import-leads'])"><img width="13px" height="13px" src="./assets/common/icons/import.svg"> Import</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>Import from Gmail</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/import.svg"> Import</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>View My Leads</label><button [disabled]="!showImportLeads" (click)="router.navigate(['app/crm/leads'])"><img width="13px" height="13px" src="./assets/common/icons/people2.svg"> View</button>
+                            </div>
+                        </dx-scroll-view>
+                    </div>
+                </div>
+                <div class="block" [hidden]="!manageInvoices && !showInvoices && !isGrantedCRMProducts">
+                    <div class="image">
+                        <img src="./assets/common/images/shortcuts/invoice.svg">
+                    </div>
+                    <h3>Invoices & Payments</h3>
+                    <span></span>
+                    <div class="details">
+                        <dx-scroll-view showScrollbar="onHover" height="183px">
+                            <div class="detail-item">
+                                <label>Create an Invoice</label><button [disabled]="!manageInvoices" (click)="showInvoiceDialog()"><img width="7px" height="7px" src="./assets/common/icons/plus2.svg"> Create</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>View Invoices</label><button [disabled]="!showInvoices" (click)="router.navigate(['app/crm/invoices'])"><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>Subscriptions</label><button [disabled]="!isGrantedCRMProducts" (click)="router.navigate(['app/crm/orders'], {queryParams: {orderType: 2}})"><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>Payment History</label><button disabled><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
+                            </div>
+                        </dx-scroll-view>
+                    </div>
+                </div>
+                <div class="block" [hidden]="!showCommissionsSettings && !showCommissions">
+                    <div class="image">
+                        <img src="./assets/common/images/shortcuts/affiliate.svg">
+                    </div>
+                    <h3>My Affiliate Program</h3>
+                    <span></span>
+                    <div class="details">
+                        <dx-scroll-view showScrollbar="onHover" height="183px">
+                            <div class="detail-item">
+                                <label>Add an Affiliate</label><button [disabled]="!isGrantedCRMCustomers" (click)="openContactDialog()"><img width="7px" height="7px" src="./assets/common/icons/plus2.svg"> Add</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>Set Commission Rules</label><button (click)="openProfileTenantSettingsDialog('commissions')"><img width="11px" height="11px" src="./assets/common/icons/candle.svg"> Set</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>Commissions</label><button [disabled]="!showCommissions" (click)="router.navigate(['app/crm/commission-history'])"><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
+                            </div>
+                            <div class="detail-item">
+                                <label>Payouts</label><button [disabled]="!showCommissions" (click)="router.navigate(['app/crm/commission-history'], {queryParams: {viewType: 1}})"><img width="11px" height="11px" src="./assets/common/icons/view.svg"> View</button>
+                            </div>
+                        </dx-scroll-view>
+                    </div>
+                </div>
+                <div class="block" [hidden]="!showBioPage">
+                    <div class="image">
+                        <img src="./assets/common/images/shortcuts/like-a-boss.svg">
+                    </div>
+                    <h3>Create your Bio Page</h3>
+                    <span></span>
+                    <div class="details">
+                        <dx-scroll-view showScrollbar="onHover" height="183px">
+                            <div class="detail-item">
+                                <label>Configuration</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
+                            </div>
+                        </dx-scroll-view>
+                    </div>
+                </div>
+                <div class="block" [hidden]="!showLandingPageSettings">
+                    <div class="image">
+                        <img src="./assets/common/images/shortcuts/rocket.svg">
+                    </div>
+                    <h3>Create Your Sales Page</h3>
+                    <span></span>
+                    <div class="details">
+                        <dx-scroll-view showScrollbar="onHover" height="183px">
+                            <div class="detail-item">
+                                <label>Configuration</label><button [disabled]="!showLandingPageSettings" (click)="openProfileTenantSettingsDialog('landingPage')"><img width="13px" height="13px" src="./assets/common/icons/setting.svg"> Edit</button>
+                            </div>
+                        </dx-scroll-view>
+                    </div>
+                </div>
+            </div>
+        </dx-scroll-view>
+        <div class="data-grids">
+            <div class="sales-grid">
+                <div class="data-grid">
+                    <recent-clients
+                        [viewAllText]="'View All'"
+                        [waitFor$]="waitFor$">
+                    </recent-clients>
+                </div>
+            </div>
+            <div class="products-grid">
+                <div class="grid-header">
+                    <h1>My Products</h1>
+                    <div class="actions">
+                        <div class="view-all" (click)="router.navigate(['app/crm/products'])">View All <img width="14px" src="./assets/common/icons/arrow-right2.svg"></div>
+                    </div>
+                </div>
+                <div class="data-grid">
+                    <div class="grid-wrapper" *ngIf="isGrantedCRMProducts; else noData">
+                        <dx-data-grid id="gridContainer"
+                                      accessKey="product-stats"
+                                      class="grid-compact-view"
+                                      [loadPanel]="{enabled: false}"
+                                      [dataSource]="productsDataSource"
+                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                            <dxi-column dataField="Name" [caption]="ls.l('Product Title')" cellTemplate="titleTemplate"></dxi-column>
+                            <dxi-column dataField="LastSold" [caption]="ls.l('Last Sold')" cellTemplate="dateagoTemplate" sortOrder="desc"  alignment="right"></dxi-column>
+                            <dxi-column dataField="UnitSold" [caption]="ls.l('Units Sold')" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="GrossSales" [caption]="ls.l('Gross Sales')" cellTemplate="currencyTemplate" cssClass="tabular"></dxi-column>
+
+                            <dxo-paging [enabled]="false"></dxo-paging>
+
+                            <div *dxTemplate="let cellData of 'titleTemplate'">
+                                <h3 class="ellipsis" [title]="cellData.value">{{cellData.value}}</h3>
+                                <span>SKU #{{cellData.data.Code}}</span>
+                            </div>
+                            <div *dxTemplate="let cellData of 'currencyTemplate'" class="amount">
+                                {{cellData.value | currency:cellData.data.currency:'symbol':'1.2-2'}}
+                            </div>
+                            <div *dxTemplate="let cellData of 'dateagoTemplate'">
+                                {{cellData.value | dateAgo}}
+                            </div>
+                        </dx-data-grid>
+                    </div>
+                    <ng-template #noData>
+                        <app-no-data>
+                        </app-no-data>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</dx-scroll-view>

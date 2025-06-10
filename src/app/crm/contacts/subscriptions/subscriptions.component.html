@@ -1,0 +1,173 @@
+<h2>
+    {{ ls.l('Subscriptions') }}
+</h2>
+<action-menu 
+    target=""
+    width="150px"
+    [items]="actionMenuItems"
+    (onItemClick)="onMenuItemClick($event)">
+</action-menu>
+<dx-data-grid #mainGrid
+    class="main-component-view"
+    height="100%"
+    keyExpr="id"
+    accessKey="Subscriptions"
+    [pager]="{visible: false}"
+    [paging]="{enabled: false}"
+    [dataSource]="dataSource"
+    [allowColumnReordering]="false"
+    [columnAutoWidth]="true"
+    [allowColumnResizing]="false"
+    [masterDetail]="{ enabled: false, template: 'detail'}"
+    (onRowCollapsed)="onRowExpandedCollapsed($event)"
+    (onRowExpanded)="onRowExpandedCollapsed($event)"
+    (onCellClick)="onCellClick($event)">
+    <dxo-sorting mode="multiple"></dxo-sorting>
+    <dxo-scrolling mode="infinite"></dxo-scrolling>
+
+    <dxi-column caption="" visibleIndex="1">
+        <dxi-column dataField="productName" cellTemplate="productCell" [caption]="ls.l('ProductName')"></dxi-column>
+    </dxi-column>
+
+    <dxi-column caption="Original Order" visibleIndex="2" cssClass="header-top">
+        <dxi-column dataField="originalStartDate" caption="Order Date" [allowResizing]="false" cellTemplate="dateTimeTemplate" width="150px" cssClass="tabular"></dxi-column>
+        <dxi-column dataField="trialEndDate" [allowResizing]="false" cellTemplate="dateTimeTemplate" width="150px" cssClass="tabular"></dxi-column>
+    </dxi-column>
+
+    <dxi-column caption="Latest Subscription" visibleIndex="3" cssClass="header-top second">
+        <dxi-column dataField="startDate" [allowResizing]="false" cellTemplate="dateTimeTemplate" width="150px" cssClass="tabular"></dxi-column>
+        <dxi-column dataField="endDate" [allowResizing]="false" cellTemplate="dateTimeTemplate" width="150px" cssClass="tabular"></dxi-column>
+    </dxi-column>
+
+    <dxi-column caption="" visibleIndex="4">
+        <dxi-column dataField="fee" [allowResizing]="false" cssClass="fee" cellTemplate="amountTemplate" width="90px"></dxi-column>
+    </dxi-column>
+
+    <dxi-column caption="" visibleIndex="5" >
+        <dxi-column dataField="status" [allowResizing]="false" [caption]="ls.l('Status')" cellTemplate="statusCell" width="130px"></dxi-column>
+    </dxi-column>
+
+    <dxi-column caption="" visibleIndex="6">
+        <dxi-column caption="" [allowResizing]="false" width="20px"></dxi-column>
+    </dxi-column>
+
+    <div *dxTemplate="let cellData of 'productCell'" class="field-product-name">
+        <div style="display: flex;">
+            <div class="product-icon-wrapper" (click)="toogleMasterDatails(cellData)">
+                <img width="auto" height="auto" [ngClass]="{default: !cellData.data.photoUri && !cellData.data.productThumbnailUrl}" [src]="getProductImageUrl(cellData.data)" onerror="this.src='assets/common/images/product.png'">
+            </div>
+            <div class="product-name-wrapper" (click)="toogleMasterDatails(cellData)">
+                <div class="product-name clipboard-holder"                 
+                    [title]="cellData.data.productCode ? 'Product Code: ' + cellData.data.productCode : cellData.data.serviceCodeList">
+                    {{cellData.data.productName}}<b *ngIf="!cellData.data.productCode && cellData?.data?.services[0]?.levelName">{{' - ' + cellData?.data?.services[0]?.levelName}}</b>
+                </div>
+                <div *ngIf="cellData.data.productCode" class="services" [title]="cellData.data.serviceCodeList">{{cellData.data.serviceList}}</div>
+            </div>
+        </div>
+        <a *ngIf="cellData?.data?.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage) || cellData?.data?.systemType == 'Tenant' && cellData?.data?.systemMemberId && permission.isGranted(permissions.TenantsImpersonation)" class="dx-link dx-link-edit action"></a>
+    </div>    
+
+    <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">
+        <span class="date-time" [title]="cellData.value | datetime: formatting.dateMoment">
+            {{cellData.value ? (cellData.value | datetime: formatting.dateMoment) : ''}}
+        </span>
+    </div>
+    <div *dxTemplate="let cellData of 'dateTimeTemplate'" class="date-box">
+        <span [ngStyle]="{visibility: cellData.value ? 'visible': 'hidden'}" class="date-time {{cellData.column.dataField}}" title="{{cellData.value | datetime: formatting.dateTimeMoment}}">{{cellData.value | datetime: formatting.dateMoment}}</span>
+        <dx-date-box width="33px"
+            applyValueMode="useButtons"
+            [visible]="!appService.isHostTenant && manageAllowed && cellData.column.dataField != 'originalStartDate' && cellData.column.dataField != 'trialEndDate'"
+            [min]="cellData.column.dataField == 'endDate' ? (cellData.data.startDate | datetime: formatting.dateMoment) : undefined"
+            [max]="cellData.column.dataField == 'startDate' ? (cellData.data.endDate | datetime: formatting.dateMoment) : undefined"
+            [value]="cellData.value ? (cellData.value | datetime: formatting.dateTimeMoment) : undefined"
+            (onOpened)="onCallendarOpened($event)"
+            (onValueChanged)="onDateChanged($event, cellData)"
+        ></dx-date-box>
+        <div [ngStyle]="{visibility: cellData.value ? 'visible': 'hidden'}" class="time clipboard-holder">
+            <a class="date-hidden">{{cellData.value | datetime: formatting.dateMoment}}&nbsp;</a>{{cellData.value | datetime: formatting.timeMoment}}
+        </div>
+    </div>
+    <div *dxTemplate="let cellData of 'statusCell'">
+        <div class="status {{cellData.value.toLowerCase()}}" 
+              [ngClass]="{'show-tooltip': cellData.value == 'Canceled' || cellData.value == 'Upgraded' ? !!cellData?.data?.cancelationReason : !!cellData?.data?.gracePeriodEndDate}"
+              [matTooltip]="cellData?.data?.cancelationReason ? (cellData?.value == 'Canceled' ? 'Cancellation ' : '') + 'Reason: ' + cellData.data.cancelationReason : cellData?.data?.gracePeriodDayCount + ' day(s) grace period ends at ' + cellData?.data?.gracePeriodEndDate?.format(formatting.dateTimeMoment)"
+              [matTooltipDisabled]="cellData.value == 'Canceled' || cellData.value == 'Upgraded' ? !cellData.data.cancelationReason : !cellData.data.gracePeriodEndDate"
+              matTooltipClass="mat-primary-tooltip"
+              matTooltipShowDelay="200"
+              matTooltipHideDelay="0">
+            {{ cellData.value }}
+        </div>
+    </div>
+    <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
+        <span id="product{{cell.data.id}}" (click)="toogleMasterDatails(cell)" class="amount"> {{ cell.text | currency:cell.data.currencyId:'symbol':'1.2-2' }} </span>
+        <dx-tooltip
+            *ngIf="cell?.data?.totals as totals" 
+            position="bottom" 
+            target="#product{{cell.data.id}}" 
+            showEvent="dxhoverstart" 
+            hideEvent="dxhoverend">
+            <div *dxTemplate="let data = data of 'content'" class="product-payment-details">
+                <div><h3>{{ls.l('Type')}}</h3><h3>{{ls.l('Totals')}}</h3></div>
+                <div *ngIf="totals['OriginalPayment'] as amount" class="initial"><label>{{ls.l('SubscriptionPaymentType_OriginalPayment')}}:&nbsp;</label><span>{{amount | currency:cell.data.currencyId:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="totals['Installment'] as amount" class="installment"><label>{{ls.l('SubscriptionPaymentType_Installment')}}:&nbsp;</label><span>{{amount | currency:cell.data.currencyId:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="totals['Refund'] as amount" class="refund"><label>{{ls.l('SubscriptionPaymentType_Refund')}}:&nbsp;</label><span>{{amount | currency:cell.data.currencyId:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="totals['Chargeback'] as amount" class="chargeback"><label>{{ls.l('SubscriptionPaymentType_Chargeback')}}:&nbsp;</label><span>{{amount | currency:cell.data.currencyId:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="totals['RecurringBilling'] as amount" class="recurring"><label>{{ls.l('SubscriptionPaymentType_RecurringBilling')}}:&nbsp;</label><span>{{amount | currency:cell.data.currencyId:'symbol':'1.2-2'}}</span></div>
+            </div>
+        </dx-tooltip>
+    </div>
+    <div *dxTemplate="let detail of 'detail'">
+        <span *ngIf="detail?.data?.payments?.length > 4" class="show-more" (click)="toogleMorePayment(details, $event)">{{ls.l('ShowAll')}}</span>
+        <dx-data-grid #details
+            width="100%"
+            class="alone"
+            [pager]="{visible: false}"
+            [dataSource]="detail.data.payments"
+            [allowColumnReordering]="false"
+            [columnAutoWidth]="true"
+            [allowColumnResizing]="false"
+            [paging]="{enabled: true, pageSize: 4}"
+            [showBorders]="false">
+            <dxo-sorting mode="multiple"></dxo-sorting>
+
+            <dxi-column dataField="id" [allowSorting]="false" caption="" visibleIndex="1" alignment="left" cellTemplate="captionTemplate"></dxi-column>
+            <dxi-column dataField="invoiceDate" [allowSorting]="false" visibleIndex="2" dataType="date" cellTemplate="dateTemplate" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
+            <dxi-column dataField="paymentDate" [allowSorting]="false" visibleIndex="3" dataType="date" cellTemplate="dateTemplate" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
+            <dxi-column dataField="startDate" [allowSorting]="false" caption="" visibleIndex="4" dataType="date" cellTemplate="dateTemplate" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
+            <dxi-column dataField="endDate" [allowSorting]="false" caption="" visibleIndex="5" dataType="date" cellTemplate="dateTemplate" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
+            <dxi-column dataField="fee" [allowSorting]="false" caption="" visibleIndex="6" width="90px" cellTemplate="amountTemplate"></dxi-column>
+            <dxi-column dataField="status" [allowSorting]="false" caption="" visibleIndex="7" width="130px" cellTemplate="statusCell"></dxi-column>
+            <dxi-column caption="" [allowSorting]="false" visibleIndex="8" width="30px"></dxi-column>
+
+            <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">
+                <span class="date-time" [title]="cellData.value | datetime: formatting.dateMoment">
+                    {{cellData.value ? (cellData.value | datetime: formatting.dateMoment) : ''}}
+                </span>
+            </div>
+
+            <div *dxTemplate="let cell of 'captionTemplate'" class="clipboard-holder installment">
+                <span [ngClass]="{invoice: !!cell.data.invoiceId}" (click)="onPaymentClick(cell)"> {{ ls.l('SubscriptionPaymentType_' + cell.data.type) }}<b>{{' #' + cell.data.seqNo}}</b> </span>
+            </div>
+            <div *dxTemplate="let cell of 'amountTemplate'" class="amount clipboard-holder">
+                <span (click)="onPaymentClick(cell)"> {{ cell.text | currency:cell.data.currencyId:'symbol':'1.2-2' }} </span>
+            </div>
+            <div *dxTemplate="let cell of 'statusCell'">
+                <div id="payment{{cell.data.id}}" class="status {{cell.value.toLowerCase()}}">
+                    {{ cell.value }}
+                </div>
+                <dx-tooltip 
+                    *ngIf="cell.data.paymentProvider || cell.data.paymentId || cell.data.authorizationCode"
+                    position="bottom" 
+                    target="#payment{{cell.data.id}}" 
+                    showEvent="dxhoverstart" 
+                    hideEvent="dxhoverend">
+                    <div *dxTemplate="let data = data of 'content'" class="product-payment-details">
+                        <div><label>{{ls.l('Provider')}}:&nbsp;</label><span>{{cell.data.paymentProvider}}</span></div>
+                        <div><label>{{ls.l('PaymentId')}}:&nbsp;</label><span>{{cell.data.paymentId}}</span></div>
+                        <div><label>{{ls.l('Auth')}}:&nbsp;</label><span>{{cell.data.authorizationCode}}</span></div>
+                    </div>
+                </dx-tooltip>
+            </div>
+        </dx-data-grid>
+    </div>
+</dx-data-grid>

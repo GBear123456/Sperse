@@ -1,0 +1,49 @@
+<ghost-list [hidden]="isDataLoaded"></ghost-list>
+<dx-data-grid id="gridContainer"
+              [dataSource]="dataSource"
+              [allowColumnReordering]="true"
+              [allowColumnResizing]="true"
+              [hoverStateEnabled]="true"
+              [loadPanel]="{ enabled: false }"
+              [pager]="defaultGridPagerConfig"
+              (onCellClick)="onVisitorCellClick($event)"
+              (onOptionChanged)="onGridOptionChanged($event)"
+              (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+              (onContentReady)="contentReady()">
+    <dxi-column [caption]="l('Name')"
+                name="name"
+                [calculateDisplayValue]="getVisitorFullName"
+                cssClass="clipboard-holder">
+    </dxi-column>
+    <dxi-column [dataField]="visitorStatsFields.StateCode"
+                [caption]="l('State')"
+                [width]="160"
+                cssClass="clipboard-holder">
+    </dxi-column>
+    <dxi-column [dataField]="visitorStatsFields.Email"
+                [caption]="l('Email')"
+                cssClass="clipboard-holder">
+    </dxi-column>
+    <dxi-column [dataField]="visitorStatsFields.PhoneNumber"
+                [caption]="l('PhoneNumber')"
+                cssClass="clipboard-holder">
+    </dxi-column>
+    <dxi-column [dataField]="visitorStatsFields.Date"
+                [caption]="l('Created')"
+                [calculateDisplayValue]="getCreatedDate"
+                cssClass="clipboard-holder">
+    </dxi-column>
+    <dxi-column [dataField]="visitorStatsFields.DoB"
+                [caption]="l('Birthday')"
+                dataType="date"
+                format="dd/MM/yyyy"
+                cssClass="clipboard-holder">
+    </dxi-column>
+    <dxi-column [dataField]="visitorStatsFields.CampaignName"
+                [caption]="l('CampaignName')"
+                cssClass="clipboard-holder">
+    </dxi-column>
+
+    <dxo-group-panel [visible]="false"></dxo-group-panel>
+    <dxo-sorting mode="multiple"></dxo-sorting>
+</dx-data-grid>

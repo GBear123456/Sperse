@@ -1,0 +1,11 @@
+<div [hidden]="!data?.title" class="headline">
+    <h2>{{data?.title}}</h2>
+</div>
+<div [hidden]="data?.title" class="headline">
+    <h2>{{ls.l(orgUnits.userId ? 'UserOrgUnit': 'SelectOrgUnit')}}</h2><span [hidden]="orgUnits.userId" class="optional">({{ls.l('optional')}})</span>
+    <p>{{ls.l('SelectOrgUnitDescription')}}</p>
+</div>
+<span class="close" (click)="close()"></span>
+<mat-dialog-content>
+    <organization-units-tree #orgUnits [height]="'calc(100vh - ' + (data?.title ? '305px' : '400px') + ')'" [selectionMode]="data?.selectionMode"></organization-units-tree>
+</mat-dialog-content>

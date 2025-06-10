@@ -1,0 +1,106 @@
+:host {
+    position: relative;
+    height: 100%;
+
+    ::ng-deep .title-options {
+        background: transparent;
+        width: 175px;
+        height: 30px;
+
+        input {
+            border: none;
+            font-size: 24px;
+            font-weight: 600;
+        }
+    }
+
+    ::ng-deep .main-component-view {
+        .dx-command-edit + td::before {
+            display: none !important;
+        }
+
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                height: 60px;
+                cursor: pointer;
+
+                & > td {
+                    &.name, &.price {
+                        font-family: Poppins;
+                        font-weight: 500;
+                        letter-spacing: 0em;
+                        color: #000;
+                    }
+
+                    &.name {
+                        max-width: 200px;
+                    }
+
+                    &.description {
+                        max-width: 500px;
+                    }
+
+                    span {
+                        text-align: center;
+                    }
+                }
+
+                .dx-link.dx-link-edit:before {
+                    background: url(../../../assets/common/icons/dots.png) no-repeat center;
+                }
+
+                .image-column {
+                    height: 52px;
+                    border-radius: 8px;
+                    text-align: center;
+                    margin: auto 6px;
+                    display: flex;
+
+                    &.no-image {
+                        background: rgba(217, 217, 217, 1);
+                    }
+
+                    img {
+                        margin: auto;
+                        border-radius: 8px;
+                        max-height: 100%;
+                        max-width: 100%;
+                    }
+                }
+
+                .price-column {
+                    .underline {
+                        text-decoration: underline;
+                    }
+
+                    span {
+                        color: rgba(0, 0, 0, 1);
+                    }
+                }
+
+                .share {
+                    display: flex;
+                    justify-content: space-around;
+                    img {
+                        margin: 0 5px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+::ng-deep .product-subscr-options {
+    min-width: 170px;
+    font-size: 12px;
+
+    div {
+        display: flex;
+        justify-content: space-between;
+
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+    }
+}

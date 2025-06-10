@@ -1,0 +1,232 @@
+:host {
+    display: block;
+    max-height: 750px;
+    height: calc(100vh - 130px);
+
+    ::ng-deep .form-group, .form-group {
+        display: flex;
+        margin-right: 15px;
+
+        label {
+            width: 40%;
+            margin-right: 10px;
+        }
+
+        dx-text-box,
+        dx-text-area,
+        dx-tag-box,
+        dx-select-box,
+        dx-date-box,
+        .right-side,
+        .landing-contact {
+            width: 60%;
+        }
+
+        ::ng-deep dx-text-box,
+        ::ng-deep dx-text-area,
+        ::ng-deep dx-tag-box,
+        ::ng-deep dx-select-box,
+        ::ng-deep dx-date-box {
+            .dx-placeholder, input, textarea {
+                font-size: 15px;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+                color: #424c56;
+            }
+
+            .dx-placeholder {
+                font-style: italic;
+                color: lightgray;
+            }
+
+            &.dx-texteditor-empty.dx-state-focused .dx-placeholder {
+                font-size: 11px;
+            }
+        }
+
+        ::ng-deep dx-tag-box {
+            .dx-texteditor-input-container {
+                border-bottom: 1px solid #dfdfdf;
+
+                input {
+                    border: 0;
+                }
+            }
+        }
+
+        .landing-contact {
+            display: flex;
+            align-items: center;
+            height: 44px;
+            border-bottom: 1px solid #dfdfdf;
+
+            img {
+                border-radius: 50%;
+                height: 35px;
+                width: 35px;
+                background-color: #fff;
+                margin-right: 7px;
+            }
+
+            .contact-name {
+                cursor: pointer;
+            }
+
+            .empty {
+                font-style: italic;
+                color: #aaa;
+            }
+
+            i {
+                margin-left: 7px;
+                font-size: 18px;
+                cursor: pointer;
+
+                &.fa-pencil {
+                    color: #00aeef;
+                }
+
+                &.fa-times {
+                    font-weight: 100;
+                    font-size: 20px;
+                    color: red;
+                }
+            }
+        }
+
+        .right-side {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: #424c56;
+            line-height: 45px;
+
+            button {
+                width: 150px;
+
+                i {
+                    margin-left: 7px;
+                }
+            }
+        }
+    }
+
+    .domains {
+        margin-right: 15px;
+
+        .domains-caption {
+            display: flex;
+            justify-content: space-between;
+
+            .generate-domain {
+                color: #00aeef;
+                cursor: pointer;
+                padding-right: 10px;
+            }
+        }
+
+        .new-domain {
+            display: flex;
+            margin-bottom: 10px;
+
+            ::ng-deep dx-text-box {
+                width: 100%;
+
+                input {
+                    padding: 5px 10px;
+                }
+
+                .dx-placeholder {
+                    font-style: italic;
+                    color: lightgray;
+                }
+            }
+
+            button {
+                width: 150px;
+                height: 30px;
+                padding: 0 10px;
+            }
+        }
+
+        .domain {
+            .domain-info {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 5px 0;
+
+                .domain-name {
+                    font-weight: 500;
+
+                    i {
+                        margin-right: 10px;
+                        margin-left: 3px;
+                    }
+
+                    .fa-check {
+                        color: green;
+                    }
+
+                    .fa-times {
+                        color: red;
+                    }
+                }
+
+                .buttons {
+                    margin-right: 15px;
+
+                    span {
+                        border-bottom: 1px solid;
+                        cursor: pointer;
+                        margin-left: 5px;
+                    }
+
+                    .verify {
+                        border-color: #00aeef;
+                        color: #00aeef;
+                    }
+
+                    .delete {
+                        border-color: red;
+                        color: red;
+                    }
+                }
+            }
+
+            .domain-dns-info {
+                border: 1px solid lightgray;
+                border-radius: 10px;
+                padding: 5px;
+
+                .container {
+                    margin: 10px 0;
+
+                    .header-row {
+                        font-weight: bold;
+                        background-color: lightgray;
+                    }
+                }
+            }
+        }
+    }
+
+    .checkout-field {
+        gap: 12px;
+
+        ::ng-deep dx-select-box {
+            width: 40% !important;
+        }
+    }
+
+    ::ng-deep .remove-list-item {
+        margin-top: 12px;
+        align-self: normal;
+    }
+
+    ::ng-deep uploader {
+        .m-form__help {
+            display: block;
+            min-height: initial !important;
+        }
+    }
+}
