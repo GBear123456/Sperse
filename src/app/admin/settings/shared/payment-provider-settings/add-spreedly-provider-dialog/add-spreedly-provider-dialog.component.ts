@@ -11,6 +11,7 @@ import { CreateSpreedlyGatewayInput, TenantPaymentSettingsServiceProxy } from '@
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { environment } from '@root/environments/environment';
 
 @Component({
     templateUrl: 'add-spreedly-provider-dialog.component.html',
@@ -35,8 +36,10 @@ export class AddSpreedlyProviderDialog {
         }
     ];
     gateways: any[];
-    selectedGateway: any;
     selectedGatewayType;
+    selectedGateway: any;
+    selectedGatewayAuth: any;
+    isTestSandbox = false;
 
     sandbox = false;
 
@@ -48,10 +51,19 @@ export class AddSpreedlyProviderDialog {
         public dialogRef: MatDialogRef<AddSpreedlyProviderDialog>,
     ) {
         this.gateways = data.spreedlyProviders;
+        if (environment.releaseStage == 'production') {
+            let testGatewayIndex = this.gateways.findIndex(g => g.gateway_type == 'test');
+            this.gateways.splice(testGatewayIndex, 1);
+        } else {
+            let testGateway = this.gateways.find(g => g.gateway_type == 'test');
+            testGateway.name = 'Test Gateway';
+        }
     }
 
     onGatewaySelect(type: string) {
         this.selectedGateway = this.gateways.find(g => g.gateway_type === type);
+        this.selectedGatewayAuth = this.selectedGateway.auth_modes?.[0] ?? null;
+        this.isTestSandbox = this.selectedGateway.gateway_type == 'test';
     }
 
     save() {
@@ -61,17 +73,18 @@ export class AddSpreedlyProviderDialog {
         this.modalDialog.startLoading();
 
         const fields: Record<string, string> = {};
-        this.selectedGateway.auth_modes[0].credentials.forEach((field: any) => {
+        this.selectedGatewayAuth?.credentials.forEach((field: any) => {
             fields[field.name] = field.value;
         });
-        this.selectedGateway.gateway_settings.forEach((field: any) => {
+        this.selectedGateway.gateway_settings?.forEach((field: any) => {
             fields[field.name] = field.value;
         });
         let request = new CreateSpreedlyGatewayInput({
             gatewayType: this.selectedGatewayType,
             fields: fields,
-            sandbox: this.sandbox
+            sandbox: this.isTestSandbox || this.sandbox
         });
+
         this.paymentSettingsService.createSpreedlyGatewayConnection(request)
             .pipe(
                 finalize(() => this.modalDialog.finishLoading())

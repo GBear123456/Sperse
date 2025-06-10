@@ -19,7 +19,7 @@
                     </dx-select-box>
                 </div>
                 <hr />
-                <ng-container *ngFor="let param of selectedGateway?.auth_modes[0].credentials">
+                <ng-container *ngFor="let param of selectedGatewayAuth?.credentials">
                     <div class="field">
                         <label><b>{{param.label}} *</b></label>
                         <dx-text-box [name]="param.name"
@@ -40,7 +40,7 @@
                         </dx-text-box>
                     </div>
                 </ng-container>
-                <div *ngIf="selectedGateway && selectedGateway.gateway_type != 'test'" class="field">
+                <div *ngIf="selectedGateway && !isTestSandbox" class="field">
                     <label for="duration">{{ls.l('Sandbox')}}</label>
                     <dx-check-box width="360px"
                                   [(value)]="sandbox">
