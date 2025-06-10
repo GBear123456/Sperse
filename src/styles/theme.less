@@ -1,0 +1,45 @@
+:root {
+    // Light theme variables
+    --background-color: #ffffff;
+    --text-color: #333333;
+    --navbar-bg: #ffffff;
+    --sidebar-bg: #f8f9fa;
+    --border-color: #e0e0e0;
+    --hover-bg: #f5f5f5;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --card-bg: #ffffff;
+}
+
+body.dark-theme {
+    // Dark theme variables
+    --background-color: #1a1a1a;
+    --text-color: #ffffff;
+    --navbar-bg: #2d2d2d;
+    --sidebar-bg: #2d2d2d;
+    --border-color: #404040;
+    --hover-bg: #3d3d3d;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --card-bg: #2d2d2d;
+}
+
+// Add smooth transitions for theme changes
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// Apply theme variables to common elements
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+// Add more specific theme styles as needed
+.dx-nav-bar {
+    background-color: var(--navbar-bg);
+}
+
+.dx-menu-base {
+    .dx-menu-item-content {
+        color: var(--text-color);
+    }
+}
