@@ -1,5 +1,6 @@
 :host {
     display: block;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
 
     global-search {
         margin: auto;
@@ -15,7 +16,10 @@
     .page-header.navbar {
         height: 75px;
         padding: 0;
-        border-bottom: 1px solid #e5e9ec !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        background: var(--card-bg);
+        color: var(--text-color);
+        transition: background 0.3s, color 0.3s, border-color 0.3s;
 
         .page-header-inner {
             width: 100%;
@@ -57,7 +61,7 @@
                         &.bottom-logout {
                             width: 100px;
                             .m-nav__link-text {
-                                color: #3463ae;
+                                color: var(--primary-color);
                             }
                         }
 
@@ -76,11 +80,11 @@
         }
 
         .filter-toggle {
-            color: #202b35;
+            color: var(--text-color);
             font-size: 23px;
             cursor: pointer;
             padding: 0 0 0 10px;
-
+            transition: color 0.3s;
             &:hover {
                 opacity: 0.5
             }

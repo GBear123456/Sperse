@@ -1,5 +1,4 @@
 :root {
-    // Light theme variables
     --background-color: #ffffff;
     --text-color: #333333;
     --navbar-bg: #ffffff;
@@ -8,32 +7,74 @@
     --hover-bg: #f5f5f5;
     --shadow-color: rgba(0, 0, 0, 0.1);
     --card-bg: #ffffff;
+
+    --primary-color: #58a3dc;
+    --secondary-color: #6c757d;
+    --success-color: #34bfa3;
+    --warning-color: #ffb822;
+    --danger-color: #f4516c;
+    --info-color: #36a3f7;
+
+    --menu-text-color: #212c36;
+    --menu-hover-bg: #ECF6FD;
+    --menu-active-bg: #ECF6FD;
+    --menu-border: #e0e0e0;
+
+    --input-bg: #ffffff;
+    --input-border: #e0e0e0;
+    --input-text: #333333;
+    --input-placeholder: #999999;
+
+    --btn-primary-bg: var(--primary-color);
+    --btn-primary-text: #ffffff;
+    --btn-secondary-bg: #f8f9fa;
+    --btn-secondary-text: #333333;
 }
 
 body.dark-theme {
-    // Dark theme variables
-    --background-color: #1a1a1a;
-    --text-color: #ffffff;
-    --navbar-bg: #2d2d2d;
-    --sidebar-bg: #2d2d2d;
-    --border-color: #404040;
-    --hover-bg: #3d3d3d;
-    --shadow-color: rgba(0, 0, 0, 0.3);
-    --card-bg: #2d2d2d;
+    --background-color: #18181b;         /* tailwind: zinc-900 */
+    --text-color: #f4f4f5;               /* tailwind: zinc-100 */
+    --navbar-bg: #27272a;                /* tailwind: zinc-800 */
+    --sidebar-bg: #27272a;               /* tailwind: zinc-800 */
+    --border-color: #3f3f46;             /* tailwind: zinc-700 */
+    --hover-bg: #3f3f46;                 /* tailwind: zinc-700 */
+    --shadow-color: rgba(9, 9, 11, 0.3); /* tailwind: zinc-950/30 */
+    --card-bg: #27272a;                  /* tailwind: zinc-800 */
+
+    --primary-color: #38bdf8;            /* tailwind: sky-400 */
+    --secondary-color: #a1a1aa;          /* tailwind: zinc-400 */
+    --success-color: #34d399;            /* tailwind: emerald-400 */
+    --warning-color: #fbbf24;            /* tailwind: amber-400 */
+    --danger-color: #fb7185;             /* tailwind: rose-400 */
+    --info-color: #60a5fa;               /* tailwind: blue-400 */
+
+    --menu-text-color: #f4f4f5;          /* tailwind: zinc-100 */
+    --menu-hover-bg: #3f3f46;            /* tailwind: zinc-700 */
+    --menu-active-bg: #3f3f46;           /* tailwind: zinc-700 */
+    --menu-border: #3f3f46;              /* tailwind: zinc-700 */
+
+    --input-bg: #27272a;                 /* tailwind: zinc-800 */
+    --input-border: #3f3f46;             /* tailwind: zinc-700 */
+    --input-text: #f4f4f5;               /* tailwind: zinc-100 */
+    --input-placeholder: #a1a1aa;        /* tailwind: zinc-400 */
+
+    --btn-primary-bg: #38bdf8;           /* tailwind: sky-400 */
+    --btn-primary-text: #f4f4f5;         /* tailwind: zinc-100 */
+    --btn-secondary-bg: #3f3f46;         /* tailwind: zinc-700 */
+    --btn-secondary-text: #f4f4f5;       /* tailwind: zinc-100 */
 }
 
-// Add smooth transitions for theme changes
 body {
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease;
 }
 
-// Apply theme variables to common elements
 body {
     background-color: var(--background-color);
     color: var(--text-color);
 }
 
-// Add more specific theme styles as needed
 .dx-nav-bar {
     background-color: var(--navbar-bg);
 }
@@ -41,5 +82,47 @@ body {
 .dx-menu-base {
     .dx-menu-item-content {
         color: var(--text-color);
+    }
+}
+
+input, select, textarea {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--input-text);
+
+    &::placeholder {
+        color: var(--input-placeholder);
+    }
+}
+
+.btn-primary {
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+}
+
+.btn-secondary {
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+}
+
+.card, .panel {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+table {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+
+    th, td {
+        border-color: var(--border-color);
+    }
+}
+
+a {
+    color: var(--primary-color);
+
+    &:hover {
+        color: darken(var(--primary-color), 10%);
     }
 }

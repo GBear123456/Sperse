@@ -1,4 +1,5 @@
-<div class="page-header navbar navbar-fixed-top md-shadow-zero-light" [ngStyle]="{background: appSession.appearanceConfig && appSession.appearanceConfig.customCssId ? undefined : layoutService.getLayoutColor('navBackground')}">
+<!-- <div class="page-header navbar navbar-fixed-top md-shadow-zero-light" [ngStyle]="{background: appSession.appearanceConfig && appSession.appearanceConfig.customCssId ? undefined : layoutService.getLayoutColor('navBackground')}"> -->
+<div class="page-header navbar navbar-fixed-top md-shadow-zero-light">
     <div class="page-header-inner">
         <div class="page-logo" *ngIf="layoutService.showPageLogo">
             <a (click)="logoClick()">
@@ -33,7 +34,7 @@
                         </li>
                     </ul>
                 </li>
-
+                <app-theme-toggle></app-theme-toggle>
                 <li *ngIf="userManagementService.notificationEnabled && layoutService.showNotificationsButton"
                     headerNotifications
                     class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width"

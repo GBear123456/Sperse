@@ -66,7 +66,7 @@
         display: inline-block;
     }
     div {
-        color: #424c56;
+        color: var(--text-color);
         padding-left: 5px;
         &.selected {
             font-weight: 500;
@@ -85,19 +85,24 @@
         width: 38px;
         height: 38px;
         border-radius: 50%;
-        border: 0;
+        border: 1px solid var(--border-color);
         font-size: 10px;
         line-height: 1;
         color: #ffffff;
         text-align: center;
         margin: 11px;
+        background: var(--card-bg);
         background-position: 50% 50%;
         caret-color: transparent;
+        transition: background 0.3s, color 0.3s, border-color 0.3s;
     }
 }
 
 ::ng-deep .dx-popup-content[id] {
     padding: 0!important;
+    background: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    transition: background 0.3s, color 0.3s;
 }
 
 ::ng-deep .module-description {
@@ -110,7 +115,7 @@
         font-weight: 500;
         line-height: 1.29;
         letter-spacing: 0.2px;
-        color: #202b35;
+        color: var(--text-color);
     }
     input {
         width: 38px;
@@ -162,17 +167,18 @@
     .dx-list-item {
         padding-left: 13px;
         border: none !important;
+        color: var(--text-color) !important;
 
         &.dx-state-focused {
             background: none !important;
-            color: #333 !important;
+            color: var(--text-color) !important;
         }
         .dx-icon-check {
             float: right;
             top: 22px;
             right: 15px;
             position: absolute;
-            color: #00aeef;
+            color: var(--primary-color);
         }
         .dx-list-item-content {
             padding: 0 10px 0 0;
@@ -183,7 +189,7 @@
             content: '';
             position: absolute;
             width: 1px;
-            background-color: #e5e9ec;
+            background-color: var(--border-color);
             right: 0;
             top: -20px;
             height: 110%;
@@ -199,9 +205,12 @@
         overflow: hidden;
         padding-top: 20px;
         margin: 0 10px 0 10px;
-	::ng-deep dx-drop-down-box {
+        background: var(--card-bg);
+        color: var(--text-color);
+        transition: background 0.3s, color 0.3s, border-color 0.3s;
+        ::ng-deep dx-drop-down-box {
             background: transparent;
-	}
+        }
     }
 
     ::ng-deep .dx-texteditor {
@@ -245,7 +254,7 @@
     ::ng-deep .dx-textbox {
         input {
             border: 0;
-            background: rgba(247, 247, 252, 1);
+            background: var(--card-bg);
             border-radius: 10px;
         }
         input, .dx-placeholder {
@@ -254,7 +263,7 @@
             line-height: 21px;
             letter-spacing: -0.02em;
             text-align: left;
-            color: rgba(17, 51, 120, 1);
+            color: var(--text-color);
         }
         &.dx-state-focused .dx-placeholder {
             top: -30px;
@@ -266,12 +275,12 @@
         line-height: 21px;
         letter-spacing: -0.02em;
         text-align: left;
-        color: rgba(6, 15, 68, 1);
+        color: var(--text-color);
         margin: 25px 0 15px 0;
         span {
             border-radius: 5px;
             display: inline-block;
-            background: rgba(237, 237, 250, 1);
+            background: var(--card-bg);
             padding: 0 7px;
         }
         img {
@@ -281,7 +290,7 @@
     }
     .scroll-wrapper {
         max-height: 215px;
-        height: inherit;        
+        height: inherit;
     }
     .product-list {
         margin-right: 10px;
@@ -291,7 +300,7 @@
             font-weight: 600;
             line-height: 21px;
             letter-spacing: -0.02em;
-            color: rgba(17, 51, 120, 1);
+            color: var(--text-color);
             .name {
                 max-width: 280px;
                 white-space: nowrap;
@@ -318,7 +327,7 @@
                 line-height: 13px;
                 letter-spacing: -0.02em;
                 text-align: left;
-                color: rgba(128, 131, 150, 1);
+                color: var(--secondary-color);
             }
             .price {
                 float: right;
@@ -332,6 +341,7 @@
     display: flex;
     flex-wrap: wrap;
     flex-flow: column;
+    background-color: var(--card-bg);
 
     * {
         outline: none;
@@ -344,7 +354,7 @@
 
     footer {
         min-height: 51px;
-        background-color: #edf9fe;
+        background-color: var(--card-bg);
     }
 
     ul {
@@ -373,9 +383,12 @@
 
     .shortcuts {
         margin: 0 20px 20px;
-        background: rgba(238, 238, 250, 1);
+        background: var(--card-bg);
+        color: var(--text-color);
         border-radius: 10px;
         padding-bottom: 23px;
+        border: 1px solid var(--border-color);
+        transition: background 0.3s, color 0.3s, border-color 0.3s;
 
         ::ng-deep dx-drop-down-box, ::ng-deep dx-select-box {
             display: inline-block;
@@ -384,7 +397,7 @@
                 font-size: 15px;
                 font-weight: 500;
                 letter-spacing: -0.02em;
-                color: rgba(128, 131, 150, 1);
+                color: var(--secondary-color);
                 padding-left: 0;
                 padding-right: 25px;
             }
@@ -392,7 +405,7 @@
                 font-size: 15px;
                 font-weight: 500;
                 letter-spacing: -0.02em;
-                color: rgba(128, 131, 150, 1);
+                color: var(--secondary-color);
             }
             .dx-dropdowneditor-icon {
                 background: transparent!important;
@@ -404,7 +417,8 @@
 
         .shortcuts_portal_field {
             height: 49px;
-            background: #fff;
+            background: var(--card-bg);
+            color: var(--text-color);
             margin: 7px 20px;
             border-radius: 9px;
             padding-right: 7px;
@@ -428,7 +442,7 @@
                 font-size: 15px;
                 font-weight: 500;
                 letter-spacing: -0.02em;
-                color: rgba(128, 131, 150, 1);
+                color: var(--secondary-color);
                 vertical-align: middle;
             }
         }
@@ -439,7 +453,7 @@
             justify-content: space-between;
             padding: 21px 19px 5px 18px;
             h3 {
-                color: rgba(6, 14, 68, 1);
+                color: var(--text-color);
                 font-size: 18px;
                 font-weight: 600;
                 line-height: 36px;
@@ -453,10 +467,10 @@
                 margin: 0;
                 letter-spacing: -0.02em;
                 text-align: right;
-                color: #060E44;
+                color: var(--secondary-color);
 
                 span {
-                    color: #7D8095;
+                    color: var(--secondary-color);
                 }
             }
         }
@@ -464,7 +478,7 @@
 
     .top,
     .menu {
-        &-row {            
+        &-row {
             @media (min-width: 768px) {
                 padding: 0 15px;
             }
@@ -474,7 +488,7 @@
             width: 100%;
             display: flex;
             list-style-type: none;
-            justify-content: space-around;    
+            justify-content: space-around;
         }
 
         &__item {
@@ -604,7 +618,7 @@
             }
 
             &_descr {
-                color: rgba(6, 15, 68, 1);
+                color: var(--secondary-color);
                 font-size: 15px;
                 font-weight: 500;
                 line-height: 21px;
@@ -668,6 +682,8 @@
         display: flex;
         align-items: center;
         padding: 0px 15px 30px 15px!important;
+        background: var(--card-bg);
+        color: var(--text-color);
     }
 
     .footer {
@@ -683,8 +699,8 @@
         }
         &__link {
             padding: 16px 0;
-            color: #00aeef !important;
-            background-color: #edf9fe;
+            color: var(--primary-color) !important;
+            background-color: var(--card-bg);
             text-decoration: none;
             transition: .2s;
             display: flex;
@@ -701,7 +717,7 @@
             }
 
             &:hover {
-                background-color: #dcf4ff;
+                background-color: var(--hover-bg);
             }
         }
     }

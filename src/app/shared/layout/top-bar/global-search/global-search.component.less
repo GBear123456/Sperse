@@ -9,7 +9,9 @@
     width: inherit;
     min-width: 200px;
     max-width: 361px;
-    
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+
     &.showSearchMode {
         &:hover {
             ::ng-deep .spinner,
@@ -36,7 +38,7 @@
                 .dx-icon-search {
                     visibility: hidden;
                 }
-            }            
+            }
         }
         ::ng-deep dx-select-box {
             background: transparent!important;
@@ -54,7 +56,7 @@
         position: absolute;
         cursor: pointer;
     }
-    
+
     .global-search-container {
         display: flex;
         width: inherit;
@@ -83,7 +85,7 @@
         right: 15px;
         left: initial !important;
         border-width: 3px;
-        background: #fff;
+        background: var(--card-bg);
         margin: auto 0;
     }
     ::ng-deep .blockOverlay {
@@ -108,8 +110,10 @@
             margin-top: -2px;
         }
         .dx-texteditor-input {
-            background: #FFFFFF;
+            background: var(--card-bg);
             font-weight: 500;
+            color: var(--text-color);
+            transition: background 0.3s, color 0.3s;
         }
         .dx-texteditor-buttons-container {
             position: absolute;
@@ -130,8 +134,8 @@
         &.dx-state-focused {
             .dx-placeholder {
                 display: none!important;
-            }            
-        }        
+            }
+        }
 
         .dx-placeholder:before {
             padding-left: 45px;
@@ -145,11 +149,15 @@
             line-height: 23px;
             letter-spacing: -0.02em;
             text-align: left;
+            color: var(--input-placeholder);
         }
         .dx-texteditor-input {
             border-radius: 51px;
-            border: 2px solid #dedede;
+            border: 2px solid var(--border-color);
             padding-left: 45px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
         }
     }
 }
@@ -165,7 +173,7 @@
     padding: 1px 6px;
     .group {
         &:not(:last-child) {
-            border-bottom: 1px solid #e5e9ec;
+            border-bottom: 1px solid var(--border-color);
         }
         header {
             display: flex;
@@ -175,7 +183,7 @@
             h4 {
                 font-size: 12px;
                 letter-spacing: 0.6px;
-                color: #424c56;
+                color: var(--text-color);
                 margin-bottom: 0;
                 text-transform: uppercase;
             }
@@ -183,7 +191,7 @@
                 font-weight: 300;
                 line-height: 2.92;
                 letter-spacing: 0.26px;
-                color: #00aeef;
+                color: var(--primary-color);
                 &:after {
                     content: url('../../../../../assets/common/icons/arrow-right-trend-by.svg');
                     display: inline-block;
@@ -213,14 +221,14 @@
                         font-size: 15px;
                         font-weight: 500;
                         letter-spacing: 0.3px;
-                        color: #424c56;
+                        color: var(--text-color);
                         margin-bottom: 2px;
                     }
                     p {
                         font-size: 13px;
                         font-weight: 300;
                         letter-spacing: 0.26px;
-                        color: #424c56;
+                        color: var(--input-placeholder);
                         margin-bottom: 0;
                     }
                 }
