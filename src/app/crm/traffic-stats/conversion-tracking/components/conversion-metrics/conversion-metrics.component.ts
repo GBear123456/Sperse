@@ -7,7 +7,7 @@ import { Component, OnInit } from "@angular/core";
 export class ConversionMetricsComponent implements OnInit {
     metricCards = [
         {
-            title: "Total Earnings",
+            title: "Total Affiliate Earnings",
             value: "$125,847",
             change: "+15.3%",
             icon: "dollar-sign",

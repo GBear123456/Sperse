@@ -1,19 +1,6 @@
 <div
   class="flex flex-wrap gap-4 mb-6 p-4 rounded-lg bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
 >
-  <div class="flex-1 min-w-[200px]">
-    <div class="relative">
-      <lucide-angular
-        name="search"
-        size="16"
-        class="absolute left-1 top-1/2 transform -translate-y-1/2 text-gray-400"
-      ></lucide-angular>
-      <input
-        class="flex h-10 w-full rounded-md border border-input bg-background px-3!important py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-10"
-        [placeholder]="searchPlaceholder"
-      />
-    </div>
-  </div>
   <app-traffic-stats-date-range></app-traffic-stats-date-range>
   <app-traffic-stats-site-selector></app-traffic-stats-site-selector>
   <button
