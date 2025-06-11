@@ -2,7 +2,9 @@
     display: block;
     min-height: 71px;
     padding: 28px 0;
-    border-bottom: 1px solid #e5e9ec;
+    border-bottom: 1px solid var(--border-color);
+    background-color: none;
+
     .totals-list {
         .total-item {
             padding: 0 24px;
@@ -20,7 +22,7 @@
                     font-size: 17px;
                     font-weight: bold;
                     letter-spacing: normal;
-                    color: #212c36;
+                    color: var(--text-color);
                 }
                 span:last-child {
                     float: right;
@@ -32,13 +34,13 @@
             }
 
             .chart-progress {
-                color: #D4D4D4;
+                color: var(--muted-color);
                 span:first-child {
                     float: left;
                     font-size: 13px;
                     line-height: 1.46;
                     letter-spacing: 0.26px;
-                    color: #677380;
+                    color: var(--muted-color);
                 }
                 span:last-child {
                     float: right;
@@ -46,7 +48,7 @@
                     font-weight: 600;
                     line-height: 1.27;
                     letter-spacing: 0.3px;
-                    color: #677380;
+                    color: var(--muted-color);
                 }
             }
 
@@ -56,7 +58,7 @@
                 font-style: normal;
                 font-stretch: normal;
                 letter-spacing: 0.3px;
-                color: #677380;
+                color: var(--muted-color);
 
                 span {
                     font-weight: 500;
@@ -70,7 +72,7 @@
 
             .chart-line {
                 width: 100%;
-                background-color: #F1F5F6;
+                background-color: var(--input-bg);
                 border-radius: 6.5px;
                 margin-bottom: 6px;
                 margin-top: 8px;

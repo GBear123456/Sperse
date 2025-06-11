@@ -20,10 +20,12 @@ body {
     width: 100%;
     height: 100%;
     font-family: var(--app-font-family) !important;
+    background: var(--background-color) !important;
+    color: var(--text-color);
 }
 
 body.page-md {
-    background: #fff !important;
+    background: var(--background-color) !important;
 }
 
 /* Buttons */
@@ -71,12 +73,11 @@ button {
 }
 
 .btn-default {
-    background-color: #FFF;
-    color: #000;
-
+    background-color: var(--button-bg);
+    color: var(--text-color);
     &:hover {
-        color: #000;
-        background-color: #FFF;
+        color: var(--text-color);
+        background-color: var(--button-hover-bg);
     }
 }
 
@@ -97,9 +98,9 @@ button {
     }
     &[disabled] {
         cursor: default !important;
-        background-color: #b1b0b3 !important;
-        border-color: #b1b0b3;
-        color: #ddd;
+        background-color: var(--disabled-bg) !important;
+        border-color: var(--disabled-bg);
+        color: var(--disabled-color);
     }
     &.menu {
         padding: 0 30px 0 10px;
@@ -135,12 +136,12 @@ button {
 }
 
 .button-default {
-    background-color: #FFF;
-    border: 1px solid #EFEFEF;
-    color: #000;
+    background-color: var(--button-bg);
+    border: 1px solid var(--button-border);
+    color: var(--text-color);
     transition: .2s;
     &:hover {
-        background: #EFEFEF;
+        background: var(--button-hover-bg);
         cursor: pointer;
     }
 }
@@ -155,7 +156,6 @@ button {
     background-color: var(--app-button-color);
     color: var(--app-button-text-color);
     border: none;
-
     &:hover {
         color: var(--app-button-text-color);
         background-color: var(--app-button-highlighted-color);
@@ -171,7 +171,7 @@ button {
         }
         &.without-shadow .mat-dialog-container {
             box-shadow: none;
-            border-left: 1px solid #dedede;
+            border-left: 1px solid var(--border-color);
             border-radius: 0;
         }
         .mat-dialog-container {
@@ -211,24 +211,24 @@ button {
     }
 
     .arrow-down {
-        width: 0; 
+        width: 0;
         height: 0;
-        margin: 5px;     
+        margin: 5px;
         display: inline-block;
         border-left: 5px solid transparent;
-        border-right: 5px solid transparent;        
+        border-right: 5px solid transparent;
         border-top: 5px solid #000;
-    }            
+    }
 
     .arrow-left {
-        width: 0; 
+        width: 0;
         height: 0;
         top: 7px;
         right: 0;
-        margin: 5px;     
+        margin: 5px;
         position: absolute;
         border-right: 5px solid #000;
-        border-bottom: 5px solid transparent;        
+        border-bottom: 5px solid transparent;
         border-top: 5px solid transparent;
     }
 }
@@ -516,4 +516,17 @@ button {
        width: 10%;
        height: 40%
    }
-}        
+}
+
+.card, .panel {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+table {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    th, td {
+        border-color: var(--border-color);
+    }
+}

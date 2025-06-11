@@ -2,6 +2,8 @@
 @import "~font-awesome/css/font-awesome.css";
 @import "shared/metronic/m-toast.less";
 @import "styles/theme.less";
+@import "styles/dx-theme.less";
+
 
 @tailwind base;
 @tailwind components;
@@ -258,4 +260,125 @@ i.save-to-clipboard {
 
 .border-orange-200 {
     border-color: rgb(254 215 170) !important;
+}
+
+.dx-texteditor-input {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
+
+    &::placeholder {
+        color: var(--muted-color);
+    }
+}
+
+/* DevExtreme Button Content Theme Variables */
+.dx-button-content {
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.dx-button-content:hover {
+    background-color: var(--hover-bg);
+}
+
+.dx-button-content:active {
+    background-color: var(--primary-color);
+    color: var(--button-bg);
+}
+
+.dx-button-content.dx-state-disabled {
+    background-color: var(--disabled-bg);
+    color: var(--disabled-color);
+    border-color: var(--border-color);
+}
+
+/* DevExtreme Dropdown Editor Button Theme Variables */
+.dx-dropdowneditor-button {
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.dx-dropdowneditor-button:hover {
+    background-color: var(--hover-bg);
+}
+
+.dx-dropdowneditor-button:active {
+    background-color: var(--primary-color);
+    color: var(--button-bg);
+}
+
+.dx-dropdowneditor-button.dx-state-disabled {
+    background-color: var(--disabled-bg);
+    color: var(--disabled-color);
+    border-color: var(--border-color);
+}
+
+.dx-dropdowneditor-button .dx-button-content {
+    background-color: transparent;
+    border: none;
+}
+
+/* DevExtreme VectorMap Theme Variables */
+.dx-vector-map {
+    background-color: var(--card-bg);
+}
+
+.dx-vector-map .dxm-layers {
+    fill: var(--input-bg);
+    stroke: var(--border-color);
+}
+
+.dx-vector-map .dxm-layers .dxm-layer {
+    fill: var(--input-bg);
+}
+
+.dx-vector-map .dxm-layers .dxm-layer:hover {
+    fill: var(--hover-bg);
+}
+
+.dx-vector-map .dxm-layers .dxm-layer.dxm-selected {
+    fill: var(--primary-color);
+}
+
+.dx-vector-map .dxm-layers .dxm-layer.dxm-selected:hover {
+    fill: var(--primary-color);
+    opacity: 0.9;
+}
+
+.dx-vector-map .dxm-layers .dxm-layer.dxm-selected text {
+    fill: var(--button-bg);
+}
+
+.dx-vector-map .dxm-layers text {
+    fill: var(--text-color);
+    font-family: var(--app-font-family);
+}
+
+.dx-vector-map .dxm-tooltip {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-family: var(--app-font-family);
+}
+
+.dx-vector-map .dxm-tooltip-content {
+    padding: 8px 12px;
+}
+
+.dx-vector-map .dxm-legend {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-family: var(--app-font-family);
+}
+
+.dx-vector-map .dxm-legend-item {
+    color: var(--text-color);
+}
+
+.dx-vector-map .dxm-legend-item:hover {
+    background-color: var(--hover-bg);
 }

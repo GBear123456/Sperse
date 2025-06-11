@@ -6,7 +6,7 @@
         left: 140px;
 
         &.expandedLeftBar {
-            left: -70px;            
+            left: -70px;
         }
 
         .headline-row, .reload-button-container {
@@ -19,7 +19,7 @@
             border-right: none;
         }
 
-        ul.buttons { 
+        ul.buttons {
             left: -140px!important;
         }
     }
@@ -33,13 +33,17 @@
         position: relative;
         align-items: center;
         justify-content: space-between;
-        background-color: #f3f7fa;
-        border-bottom: 1px solid #dfdfdf;
+        background-color: var(--headline-bg);
+        border-bottom: 1px solid var(--headline-border);
         width: 100%;
         height: 75px;
         @media (max-width: 767px) {
             padding-right: 5px;
             padding-left: 5px;
+        }
+        .dark-theme & {
+            background-color: var(--headline-bg);
+            border-bottom: 1px solid var(--headline-border);
         }
     }
 
@@ -97,11 +101,15 @@
     }
 
     .toggle-button-container {
-        background: #f9fbfc;
+        background: var(--headline-toolbar-bg);
         height: 100%;
-        border-right: 1px solid #dfdfdf;
+        border-right: 1px solid var(--headline-border);
         display: flex;
         align-items: center;
+        .dark-theme & {
+            background: var(--headline-toolbar-bg);
+            border-right: 1px solid var(--headline-border);
+        }
 
         .toggle-button {
             vertical-align: bottom;
@@ -110,11 +118,15 @@
             margin: 10px 15px;
             width: 42px;
             height: 42px;
-            border: 1px solid #e6eaed;
+            border: 1px solid var(--button-border);
             border-radius: 50%;
-            background: #fff url('../../../../assets/common/icons/follow-icon.svg') no-repeat center;
+            background: var(--button-bg) url('../../../../assets/common/icons/follow-icon.svg') no-repeat center;
             @media (max-width: 767px) {
                 margin: 5px;
+            }
+            .dark-theme & {
+                border: 1px solid var(--button-border);
+                background: var(--button-bg) url('../../../../assets/common/icons/follow-icon.svg') no-repeat center;
             }
         }
         ul.buttons {
@@ -122,11 +134,16 @@
             left: 0;
             top: 75px;
             flex-direction: column;
-            background-color: #f9fbfc;
-            border-right: 1px solid #dfdfdf;
-            border-bottom: 1px solid #dfdfdf;
+            background-color: var(--headline-toolbar-bg);
+            border-right: 1px solid var(--headline-border);
+            border-bottom: 1px solid var(--headline-border);
             padding: 15px 0;
             z-index: 999;
+            .dark-theme & {
+                background-color: var(--headline-toolbar-bg);
+                border-right: 1px solid var(--headline-border);
+                border-bottom: 1px solid var(--headline-border);
+            }
 
             li {
                 list-style: none;
@@ -154,21 +171,27 @@
 
         &.right {
             border-right: none;
-            border-left: 1px solid #dfdfdf;
+            border-left: 1px solid var(--headline-border);
+            .dark-theme & {
+                border-left: 1px solid var(--headline-border);
+            }
             ul.buttons {
                 left: initial;
                 right: 0;
-                border-left: 1px solid #dfdfdf;
+                border-left: 1px solid var(--headline-border);
                 border-right: none;
                 li {
                     flex-direction: row-reverse;
+                }
+                .dark-theme & {
+                    border-left: 1px solid var(--headline-border);
                 }
             }
         }
     }
 
     .icon {
-        background: #fff;
+        background: var(--button-bg);
         display: block;
         height: 45px;
         width: 45px;
@@ -176,7 +199,11 @@
         margin: auto;
         cursor: pointer;
         position: relative;
-        border: 1px solid #e5e9ec;
+        border: 1px solid var(--icon-border);
+        .dark-theme & {
+            background: var(--button-bg);
+            border: 1px solid var(--icon-border);
+        }
         &:after {
             height: 100%;
             width: 100%;
@@ -206,7 +233,7 @@
         }
         &.compact-view:after {
             background-image: url('../../../../assets/common/icons/headline/compact-view.svg');
-        }        
+        }
         &.fullscreen-view:after {
             background-image: url('../../../../assets/common/icons/headline/fullscreen.svg');
         }
@@ -220,7 +247,7 @@
             background-image: url('../../../../assets/common/icons/headline/filter.svg');
         }
 
-        
+
         &.reload:after {
             background-image: url('../../../../assets/common/icons/reload.svg');
             background-size: 20px;
@@ -241,10 +268,13 @@
             justify-content: center;
             &:before {
                 font-size: 20px;
-                color: #959A9F;
+                color: var(--muted-color);
             }
             &:after {
                 display: none;
+            }
+            .dark-theme & {
+                color: var(--muted-color);
             }
         }
     }
@@ -278,9 +308,12 @@
             width: 36px;
             height: 36px;
             padding: 0;
-            border-color: #ddd;
+            border-color: var(--divider-color);
             @media (min-width: 992px) {
                 display: none;
+            }
+            .dark-theme & {
+                border-color: var(--divider-color);
             }
             i {
                 font-style: normal;
@@ -299,10 +332,14 @@
 
         .reload-button-container {
             padding: 0 15px;
-            border-left: 1px solid #dfdfdf;
+            border-left: 1px solid var(--headline-border);
             height: 100%;
             display: flex;
-            background-color: #f9fbfc;
+            background-color: var(--headline-toolbar-bg);
+            .dark-theme & {
+                border-left: 1px solid var(--headline-border);
+                background-color: var(--headline-toolbar-bg);
+            }
 
             @media all and (min-width: 768px) {
                 margin-left: 22px;

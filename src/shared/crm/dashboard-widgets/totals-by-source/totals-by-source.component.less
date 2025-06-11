@@ -1,5 +1,6 @@
 :host {
     display: block;
+    background: none !important;
 
     .wrapper {
         width: 100%;
@@ -26,15 +27,19 @@
             .title {
                 font-size: 20px;
                 font-weight: 700;
-                fill: #212c36;
+                fill: var(--text-color);
                 cursor: default;
                 margin-bottom: 0;
                 white-space: nowrap;
             }
 
-            ::ng-deep .dx-selectbox .dx-texteditor-buttons-container {
-                position: relative;
-                height: 44px;
+            ::ng-deep {
+                .dx-selectbox .dx-texteditor-buttons-container {
+                    position: relative;
+                    height: 44px;
+                }
+
+
             }
         }
         .totalsNumbers {
@@ -71,5 +76,4 @@
             min-height: 406px;
         }
     }
-
 }

@@ -2,6 +2,9 @@
     width: 100%;
     min-height: 330px;
     background-color: #FFFFFF;
+    .dark-theme & {
+        background-color: var(--card-bg);
+    }
     position: relative;
     padding-top: 30px;
     display: block;
@@ -26,6 +29,9 @@
                 font-weight: 700;
                 letter-spacing: normal;
                 color: #212c36;
+                .dark-theme & {
+                    color: var(--text-color);
+                }
                 margin: 0 23px 0 0;
                 line-height: 1.2;
                 padding: 5px 0;
@@ -40,10 +46,16 @@
                 right: 0;
                 padding: 5px 5px 0 10px;
                 background: #fff;
+                .dark-theme & {
+                    background: var(--card-bg);
+                }
                 border: 2px solid transparent;
                 &.opened {
                     z-index: 1;
                     border: 2px solid rgb(211, 211, 211);
+                    .dark-theme & {
+                        border: 2px solid var(--border-color);
+                    }
                 }
 
                 @media (min-width: 651px) {
@@ -58,9 +70,16 @@
                     span.legendText {
                         font-size: 12px;
                         margin-right: 5px;
+                        color: rgba(103, 115, 128, .6);
+                        .dark-theme & {
+                            color: var(--muted-color);
+                        }
                     }
                     span.legendText, i {
                         color: rgba(103, 115, 128, .6);
+                        .dark-theme & {
+                            color: var(--muted-color);
+                        }
                     }
                 }
 

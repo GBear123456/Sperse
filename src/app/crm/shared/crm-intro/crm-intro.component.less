@@ -10,6 +10,9 @@
     // basic
     .color-blue {
         color: #00aeef !important;
+        .dark-theme & {
+            color: var(--primary-color) !important;
+        }
     }
 
     .close-button {
@@ -214,6 +217,9 @@
                     @media (max-width: 350px) {
                         font-size: 20px;
                     }
+                    .dark-theme & {
+                        color: var(--text-color);
+                    }
                 }
 
                 &--list {
@@ -260,6 +266,9 @@
                     @media (max-width: 350px) {
                         width: 85px;
                         font-size: 10px;
+                    }
+                    .dark-theme & {
+                        color: var(--text-color);
                     }
                 }
             }

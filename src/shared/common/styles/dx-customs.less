@@ -1,5 +1,6 @@
 @import "../../../../node_modules/devextreme/dist/css/dx.common.css";
 @import "../../../../node_modules/devextreme/dist/css/dx.light.css";
+@import "./dx-theme.less";
 
 .dx-texteditor {
     border: 0;
@@ -76,10 +77,6 @@ input.form-control {
 .dx-treelist-header-panel {
     height: 50px;
 }
-
-//.dx-tooltip-wrapper .dx-overlay-content .dx-popup-content {
-//    height: auto !important;
-//}
 
 .dx-popup-wrapper {
     z-index: 9999999999!important;
@@ -349,8 +346,8 @@ dx-data-grid.main-component-view, dx-file-manager {
                 flex-wrap: wrap;
                 padding: 0 40px;
 
-                colgroup, 
-                .dx-freespace-row, 
+                colgroup,
+                .dx-freespace-row,
                 .dx-virtual-row {
                     display: none!important;
                 }
@@ -413,7 +410,7 @@ dx-data-grid.main-component-view, dx-file-manager {
                         letter-spacing: -0.02em;
                         text-align: center;
                         color: #10213A;
-                    }        
+                    }
                     .actions {
                         img {
                             float: left;
@@ -454,7 +451,7 @@ dx-data-grid.main-component-view, dx-file-manager {
                     overflow: hidden;
                 }
 
-    
+
             }
             .galery-image {
                 border-radius: 20px;
@@ -683,7 +680,7 @@ dx-data-grid.main-component-view, dx-file-manager {
         .dx-datagrid-rowsview .dx-command-edit {
             text-overflow: initial;
             & + td.stars {
-                div.star {                    
+                div.star {
                     height: 20px!important;
                     -webkit-mask-size: 20px!important;
                     &-default {
