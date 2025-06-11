@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 
@@ -11,7 +11,7 @@ import { forkJoin } from 'rxjs';
 
 /** Application imports */
 import { ConditionsType } from '@shared/AppEnums';
-import { GetPublicInvoiceInfoOutput, UserInvoiceServiceProxy, InvoiceStatus, PayPalServiceProxy, InvoicePaypalPaymentInfo } from '@root/shared/service-proxies/service-proxies';
+import { GetPublicInvoiceInfoOutput, UserInvoiceServiceProxy, InvoiceStatus, PayPalServiceProxy, InvoicePaypalPaymentInfo, SpreedlyServiceProxy, SpreedlyInvoiceChargeInput } from '@root/shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PayPalComponent } from '@shared/common/paypal/paypal.component';
@@ -20,6 +20,7 @@ import { InvoiceDueStatus } from '@app/crm/invoices/invoices-dto.interface';
 import { InvoiceHelpers } from '@app/crm/invoices/invoices.helper';
 import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { AppConsts } from '@shared/AppConsts';
+import { SpreedlyPayButtonsComponent } from '@shared/common/spreedly-pay-buttons/spreedly-pay-buttons.component';
 
 @Component({
     selector: 'public-invoice',
@@ -29,7 +30,7 @@ import { AppConsts } from '@shared/AppConsts';
     ],
     encapsulation: ViewEncapsulation.None,
     providers: [
-        PayPalServiceProxy
+        PayPalServiceProxy, SpreedlyServiceProxy
     ]
 })
 export class InvoiceComponent implements OnInit {
@@ -61,8 +62,10 @@ export class InvoiceComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
+        private ngZone: NgZone,
         private userInvoiceService: UserInvoiceServiceProxy,
         private paypalServiceProxy: PayPalServiceProxy,
+        private spreedlyService: SpreedlyServiceProxy,
         private clipboard: Clipboard,
         private setting: SettingService,
         private notifyService: NotifyService,
@@ -117,7 +120,7 @@ export class InvoiceComponent implements OnInit {
         this.dueStatusMessage = invoiceDueInfo.message;
     }
 
-    onPayPalApprove() {
+    redirectToReceipt() {
         this.router.navigate(['/receipt', this.tenantId, this.publicId]);
     }
 
@@ -135,6 +138,38 @@ export class InvoiceComponent implements OnInit {
                 this.invoiceInfo.invoiceData.currencyId
             );
         }
+    }
+
+    onSpreedlyClick(event) {
+        let spreedlyComponent: SpreedlyPayButtonsComponent = event.component;
+        let displayOptions = {
+            amount: this.invoiceInfo.invoiceData.grandTotal.toFixed(2) + ' ' + this.invoiceInfo.invoiceData.currencyId,
+            company_name: this.invoiceInfo.legalName,
+            sidebar_top_description: 'Invoice Number: ' + this.invoiceInfo.invoiceData.number,
+            sidebar_bottom_description: this.invoiceInfo.invoiceData.description?.substr(0, 150),
+            full_name: this.invoiceInfo.invoiceData.customerName
+        };
+        let paymentMethodParams = {
+        };
+        spreedlyComponent.showBankCardPopup(event.providerId, displayOptions, paymentMethodParams);
+    }
+
+    onSpreedlyPaymentMethod(event) {
+        abp.ui.setBusy();
+        this.spreedlyService.charge(new SpreedlyInvoiceChargeInput({
+            tenantId: this.tenantId,
+            invoicePublicId: this.publicId,
+            paymentGatewayTokenId: event.providerId,
+            paymentMethodToken: event.token
+        })).pipe(
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe(res => {
+            if (res.errorMessage) {
+                abp.message.error(res.errorMessage);
+            } else {
+                this.ngZone.run(() => this.redirectToReceipt());
+            }
+        });
     }
 
     downloadInvoice() {
