@@ -60,9 +60,9 @@ import { StatesService } from '../../../store/states-store/states.service';
 import { select, Store } from '@ngrx/store';
 import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreActions, StatesStoreSelectors } from '../../../store';
 import { AppSessionService } from '../../../shared/common/session/app-session.service';
+import { SpreedlyPayButtonsComponent } from '@shared/common/spreedly-pay-buttons/spreedly-pay-buttons.component';
 
 declare const Stripe: any;
-declare const SpreedlyExpress: any;
 
 @Component({
     selector: 'single-product',
@@ -153,8 +153,7 @@ export class SingleProductComponent implements OnInit {
     private calculationTaxTimeout;
 
     discordPopup: Window;
-    spreedlyJsLoaded: boolean = false;
-    spreedlyPopupInit: boolean = false;
+    lastSubmittedLeadRequestId: number;
 
     constructor(
         private sessionService: AppSessionService,
@@ -224,19 +223,6 @@ export class SingleProductComponent implements OnInit {
         }
     }
 
-    initializeSpreedly() {
-        if (!this.productInfo.data.spreedlyEnvironmentKey || !this.productInfo.data.spreedlyGateways.length)
-            return;
-
-        if ((<any>window).SpreedlyExpress)
-            return;
-
-        DomHelper.addScriptLink('https://core.spreedly.com/iframe/express-3.min.js', 'text/javascript', () => {
-            this.spreedlyJsLoaded = true;
-            this.changeDetector.detectChanges();
-        });
-    }
-
     initializePasswordComplexity() {
         this.profileService.getPasswordComplexitySetting().subscribe(result => {
             this.passwordComplexitySetting = result.setting;
@@ -275,14 +261,13 @@ export class SingleProductComponent implements OnInit {
                         this.productInfo.productDonation.raisedAmount >= this.productInfo.productDonation.goalAmount;
 
                     if (this.isInStock && (!this.isDonationGoalReached || this.productInfo.productDonation.keepActiveIfGoalReached)) {
-                        this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured && !result.data.spreedlyGateways?.length;
+                        this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured && !result.data.spreedlyConfiguration?.spreedlyGateways.length;
                         if (result.descriptionHtml)
                             this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
                         if (result.data.hasTenantService)
                             this.initializePasswordComplexity();
                         this.initConditions();
                         this.initializePayPal();
-                        this.initializeSpreedly();
                     }
                 } else {
                     this.showNotFound = true;
@@ -337,50 +322,41 @@ export class SingleProductComponent implements OnInit {
         this.showCheckout = false;
     }
 
-    submitSpreedlyRequest(spreedlyProviderId: number) {
-        if (!SpreedlyExpress || !spreedlyProviderId)
-            return;
-
+    onSpreedlyClick(event) {
         abp.ui.setBusy();
         this.getSubmitRequest('Spreedly')
             .pipe(
                 finalize(() => abp.ui.clearBusy())
             )
             .subscribe(res => {
-                if (this.spreedlyPopupInit)
-                    SpreedlyExpress.unload();
-
-                SpreedlyExpress.init(this.productInfo.data.spreedlyEnvironmentKey,
-                    {
-                        "amount": this.getGeneralPrice(true).toFixed(2) + ' ' + this.currencySymbol,
-                        "company_name": this.productInfo.name,
-                        "sidebar_top_description": '',
-                        "sidebar_bottom_description": this.selectedPriceOption.name,
-                        "full_name": this.requestInfo.firstName + ' ' + this.requestInfo.lastName
-                    },
-                    {
-                        "email": this.requestInfo.email.trim(),
-                        "country": "US"
-                    }
-                );
-                SpreedlyExpress.onPaymentMethod((token, paymentMethod) => {
-                    this.processSpreedlyPurchase(Number(res.paymentData), spreedlyProviderId, token);
-                });
-                SpreedlyExpress.onInit(() => {
-                    this.spreedlyPopupInit = true;
-                    SpreedlyExpress.openView();
-                });
+                this.lastSubmittedLeadRequestId = Number(res.paymentData);
+                let spreedlyComponent: SpreedlyPayButtonsComponent = event.component;
+                let displayOptions = {
+                    amount: this.getGeneralPrice(true).toFixed(2) + ' ' + this.currencySymbol,
+                    company_name: this.productInfo.name,
+                    sidebar_top_description: '',
+                    sidebar_bottom_description: this.selectedPriceOption.name,
+                    full_name: this.requestInfo.firstName + ' ' + this.requestInfo.lastName
+                };
+                let paymentMethodParams = {
+                    email: this.requestInfo.email.trim(),
+                    country: "US"
+                };
+                spreedlyComponent.showBankCardPopup(event.providerId, displayOptions, paymentMethodParams);
             });
     }
 
-    processSpreedlyPurchase(leadRequestId, gatewayTokenId, paymentMethodToken) {
+    onSpreedlyPaymentMethod(event) {
+        if (!this.lastSubmittedLeadRequestId)
+            return;
+
         abp.ui.setBusy();
         this.publicProductService.publicProductCharge(new PublicProductChargeInput({
             tenantId: this.tenantId,
-            leadRequestId: leadRequestId,
+            leadRequestId: this.lastSubmittedLeadRequestId,
             paymentGateway: 'Spreedly',
-            paymentGatewayTokenId: gatewayTokenId,
-            paymentMethodToken: paymentMethodToken
+            paymentGatewayTokenId: event.providerId,
+            paymentMethodToken: event.token
         })).pipe(
             finalize(() => abp.ui.clearBusy())
         ).subscribe(res => {
@@ -596,6 +572,9 @@ export class SingleProductComponent implements OnInit {
     }
 
     showSpreedlyButtons() {
+        if (!this.productInfo.data.spreedlyConfiguration?.spreedlyGateways.length)
+            return false;
+
         if (this.selectedPriceOption.type == PriceOptionType.Subscription &&
             (this.selectedPriceOption.trialDayCount > 0 || !this.singlePaymentOptions.includes(this.selectedPriceOption.frequency)))
             return false;
@@ -603,7 +582,7 @@ export class SingleProductComponent implements OnInit {
         if (this.productInfo.data.isStripeTaxationEnabled)
             return false;
 
-        return !!this.productInfo.data.spreedlyGateways?.length;
+        return !!this.productInfo.data.spreedlyConfiguration.spreedlyGateways.length;
     }
 
     showSubmitButton() {

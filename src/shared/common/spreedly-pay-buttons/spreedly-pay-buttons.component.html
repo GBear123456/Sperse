@@ -1,0 +1,5 @@
+<button *ngFor="let spreedlyGateway of gateways"
+        [ngClass]="{disabled: disabled || !spreedlyJsLoaded}"
+        (click)="onClick(spreedlyGateway.key)">
+    {{spreedlyGateway.value}}
+</button>
