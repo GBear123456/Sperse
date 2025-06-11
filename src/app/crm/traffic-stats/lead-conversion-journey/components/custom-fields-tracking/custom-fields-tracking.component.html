@@ -1,4 +1,4 @@
-<div class="bg-white p-6 rounded-xl shadow border border-gray-200 w-full my-4">
+<div class="bg-white p-6 rounded-xl border border-gray-200 w-full my-4">
     <!-- Header -->
     <div class="mb-4">
       <h2 class="text-2xl font-semibold leading-none tracking-tight flex items-center space-x-2 text-gray-900">
@@ -7,7 +7,7 @@
       </h2>
       <p class="text-sm text-gray-500">Click on any custom field label or value to edit</p>
     </div>
-  
+
     <!-- Two Column Layout -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <!-- Custom Fields -->
@@ -29,7 +29,7 @@
               <span *ngIf="!field.editingLabel" class="font-medium text-gray-700">{{ field.label }}:</span>
             </div>
           </div>
-  
+
           <!-- Editable Value -->
           <div class="flex-1 min-w-0 ml-4">
             <div (click)="startEditing(field, 'value')" class="cursor-pointer">
@@ -49,7 +49,7 @@
           </div>
         </div>
       </div>
-  
+
       <!-- Tracking Fields -->
       <div>
         <h3 class="text-lg font-semibold text-gray-900">Tracking</h3>
@@ -58,7 +58,7 @@
           <div class="w-1/2">
             <span class="font-medium text-gray-700">{{ field.label }}:</span>
           </div>
-  
+
           <!-- Editable Value -->
           <div class="w-1/2 text-left">
             <div (click)="startEditing(field, 'value')" class="cursor-pointer">
@@ -80,4 +80,3 @@
       </div>
     </div>
   </div>
-  

@@ -1,4 +1,4 @@
-<div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+<div class="bg-white p-6 rounded-xl">
     <!-- Header -->
     <div class="mb-2">
       <h2 class="text-xl font-semibold text-green-600 flex items-center space-x-2">
@@ -7,7 +7,7 @@
       </h2>
       <p class="text-sm text-gray-500">Revenue trends over the past 12 months</p>
     </div>
-  
+
     <!-- Chart -->
     <dx-chart
       [dataSource]="revenueData"
@@ -22,9 +22,9 @@
       [valueAxis]="{ label: { customizeText: formatCurrency } }"
       palette="Soft"
       class="w-full h-72">
-      
+
       <dxi-series name="Revenue"></dxi-series>
-      
+
       <dxo-argument-axis
         [valueMarginsEnabled]="false"
         [grid]="{ visible: false }"
@@ -32,4 +32,3 @@
       </dxo-argument-axis>
     </dx-chart>
   </div>
-  
