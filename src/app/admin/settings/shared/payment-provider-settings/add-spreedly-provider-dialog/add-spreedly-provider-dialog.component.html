@@ -60,6 +60,12 @@
                                   [(value)]="sandbox">
                     </dx-check-box>
                 </div>
+                <div *ngIf="selectedGateway" class="field">
+                    <label for="duration">{{ls.l('Set as Active')}}</label>
+                    <dx-check-box width="360px"
+                                  [(value)]="isActive">
+                    </dx-check-box>
+                </div>
             </dx-validation-group>
         </dx-scroll-view>
     </div>

@@ -46,6 +46,7 @@ export class AddSpreedlyProviderDialog {
     isTestSandbox = false;
 
     sandbox = false;
+    isActive = false;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -110,7 +111,8 @@ export class AddSpreedlyProviderDialog {
         let request = new CreateSpreedlyGatewayInput({
             gatewayType: this.selectedGatewayType,
             fields: fields,
-            sandbox: this.isTestSandbox || this.sandbox
+            sandbox: this.isTestSandbox || this.sandbox,
+            isActive: this.isActive
         });
 
         this.paymentSettingsService.createSpreedlyGatewayConnection(request)
