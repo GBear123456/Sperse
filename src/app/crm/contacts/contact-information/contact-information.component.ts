@@ -53,6 +53,18 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
         })
     );
     settingsDialog$: Subscription;
+    /* my modifications */
+    groups = [
+        { name: 'Vendor', color: 'warn' },
+        { name: 'Affiliate', color: 'accent' },
+        { name: 'Client', color: 'primary' }
+    ];
+
+    lists = ['Bankpass english'];
+    tags = ['Tag example'];
+    rating = 6;
+    maxRating = 10;
+    /* end my modif*/
 
     constructor(
         private dialog: MatDialog,

@@ -76,68 +76,107 @@
         </table>
     </div>
 </dx-scroll-view>
-<div class="additional-info">
-    <!--<div class="item">
-        <span class="title">Assigned to:</span> {{ data?.contactInfo.assignedUserName }}
-    </div>
-    <div class="item">
-        <span class="title">Stage:</span> {{ data?.leadInfo.stage }}
-    </div>-->
-    <div class="item width-percent-35">
-        <div class="title">
-            <img src="./assets/common/icons/folder.svg" class="dx-icon" [alt]="ls.l('Lists')">
-            {{ls.l('Lists')}}:
-        </div>
-        <dx-tag-box
-            height="80px"
-            [items]="lists$ | async"
-            displayExpr="name"
-            valueExpr="id"
-            [value]="data?.contactInfo?.lists"
-            [multiline]="true"
-            maxDisplayedTags="8"
-            width="100%"
-            placeholder="Lists"
-            [stylingMode]="'filled'"
-            [disabled]="true"
-        ></dx-tag-box>
-    </div>
-    <div class="item width-percent-35">
-        <div class="title">
-            <img src="./assets/common/icons/pen.svg" class="dx-icon" [alt]="ls.l('Tags')">
-            {{ls.l('Tags')}}:
-        </div>
-        <dx-tag-box
-            height="80px"
-            [dataSource]="tags$ | async"
-            displayExpr="name"
-            valueExpr="id"
-            [value]="data?.contactInfo?.tags"
-            [multiline]="true"
-            maxDisplayedTags="8"
-            width="100%"
-            placeholder="Tags"
-            [stylingMode]="'filled'"
-            [disabled]="true"
-        ></dx-tag-box>
-    </div>
-    <div class="item width-percent-15">
-        <div class="title">
-            <img src="./assets/common/icons/flag-icon.svg" class="dx-icon" [alt]="ls.l('Rating')">
-            {{ls.l('Rating')}}:
-        </div>
-        <rating-bar *ngIf="data?.contactInfo?.ratingId as ratingId" [rating]="ratingId"></rating-bar>
-    </div>
-    <div class="item width-percent-15">
-        <div class="title">
-            <img src="./assets/common/icons/star-icon.svg" class="dx-icon" [alt]="ls.l('Star')">
-            {{ls.l('Star')}}:
-        </div>
-        <ng-container *ngIf="(star$ | async) as star">
-            <div class="item-row" data-id="{{star.id}}">
-                <div [ngClass]="'star star-' + star?.colorType?.toLowerCase()"></div>
-                <span>{{ ls.l(star.name) }}</span>
+<!--<div class="additional-info">-->
+<!--    &lt;!&ndash;<div class="item">-->
+<!--        <span class="title">Assigned to:</span> {{ data?.contactInfo.assignedUserName }}-->
+<!--    </div>-->
+<!--    <div class="item">-->
+<!--        <span class="title">Stage:</span> {{ data?.leadInfo.stage }}-->
+<!--    </div>&ndash;&gt;-->
+<!--    <div class="item width-percent-35">-->
+<!--        <div class="title">-->
+<!--            <img src="./assets/common/icons/folder.svg" class="dx-icon" [alt]="ls.l('Lists')">-->
+<!--            {{ls.l('Lists')}}:-->
+<!--        </div>-->
+<!--        <dx-tag-box-->
+<!--            height="80px"-->
+<!--            [items]="lists$ | async"-->
+<!--            displayExpr="name"-->
+<!--            valueExpr="id"-->
+<!--            [value]="data?.contactInfo?.lists"-->
+<!--            [multiline]="true"-->
+<!--            maxDisplayedTags="8"-->
+<!--            width="100%"-->
+<!--            placeholder="Lists"-->
+<!--            [stylingMode]="'filled'"-->
+<!--            [disabled]="true"-->
+<!--        ></dx-tag-box>-->
+<!--    </div>-->
+<!--    <div class="item width-percent-35">-->
+<!--        <div class="title">-->
+<!--            <img src="./assets/common/icons/pen.svg" class="dx-icon" [alt]="ls.l('Tags')">-->
+<!--            {{ls.l('Tags')}}:-->
+<!--        </div>-->
+<!--        <dx-tag-box-->
+<!--            height="80px"-->
+<!--            [dataSource]="tags$ | async"-->
+<!--            displayExpr="name"-->
+<!--            valueExpr="id"-->
+<!--            [value]="data?.contactInfo?.tags"-->
+<!--            [multiline]="true"-->
+<!--            maxDisplayedTags="8"-->
+<!--            width="100%"-->
+<!--            placeholder="Tags"-->
+<!--            [stylingMode]="'filled'"-->
+<!--            [disabled]="true"-->
+<!--        ></dx-tag-box>-->
+<!--    </div>-->
+<!--    <div class="item width-percent-15">-->
+<!--        <div class="title">-->
+<!--            <img src="./assets/common/icons/flag-icon.svg" class="dx-icon" [alt]="ls.l('Rating')">-->
+<!--            {{ls.l('Rating')}}:-->
+<!--        </div>-->
+<!--        <rating-bar *ngIf="data?.contactInfo?.ratingId as ratingId" [rating]="ratingId"></rating-bar>-->
+<!--    </div>-->
+<!--    <div class="item width-percent-15">-->
+<!--        <div class="title">-->
+<!--            <img src="./assets/common/icons/star-icon.svg" class="dx-icon" [alt]="ls.l('Star')">-->
+<!--            {{ls.l('Star')}}:-->
+<!--        </div>-->
+<!--        <ng-container *ngIf="(star$ | async) as star">-->
+<!--            <div class="item-row" data-id="{{star.id}}">-->
+<!--                <div [ngClass]="'star star-' + star?.colorType?.toLowerCase()"></div>-->
+<!--                <span>{{ ls.l(star.name) }}</span>-->
+<!--            </div>-->
+<!--        </ng-container>-->
+<!--    </div>-->
+<!--</div>-->
+<mat-card class="group-info-card">
+    <div class="group-info-container">
+        <div class="info-section">
+            <div class="section-header">
+                <mat-icon>folder_open</mat-icon>
+                <span class="section-title">Groups</span>
             </div>
-        </ng-container>
+            <mat-chip-list>
+                <mat-chip *ngFor="let group of groups" [color]="group.color" selected>{{ group.name }}</mat-chip>
+            </mat-chip-list>
+        </div>
+        <div class="info-section">
+            <div class="section-header">
+                <mat-icon>list</mat-icon>
+                <span class="section-title">Lists</span>
+            </div>
+            <mat-chip-list>
+                <mat-chip *ngFor="let list of lists" color="primary" selected>{{ list }}</mat-chip>
+            </mat-chip-list>
+        </div>
+        <div class="info-section">
+            <div class="section-header">
+                <mat-icon>label</mat-icon>
+                <span class="section-title">Tags</span>
+            </div>
+            <mat-chip-list>
+                <mat-chip *ngFor="let tag of tags" color="primary" selected>{{ tag }}</mat-chip>
+            </mat-chip-list>
+        </div>
+        <div class="info-section rating-section">
+            <div class="section-header">
+                <mat-icon>star_border</mat-icon>
+                <span class="section-title">Rating</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="(rating / maxRating) * 100" color="primary"></mat-progress-bar>
+            <span class="rating-label">{{ rating }}/{{ maxRating }}</span>
+        </div>
     </div>
-</div>
+</mat-card>
