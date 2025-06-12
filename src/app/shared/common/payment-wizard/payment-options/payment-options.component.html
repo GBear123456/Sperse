@@ -128,7 +128,16 @@
                             <p class="payment-text">
                                 {{ l('PayPalPaymentDescriptionText') }}
                             </p>
-                            <pay-pal [height]="54" (onApprove)="onPayPalApprove()"></pay-pal>
+                            <pay-pal [height]="54" (onApprove)="redirectToReceipt()"></pay-pal>
+                        </div>
+                    </mat-tab>
+                    <mat-tab *ngIf="spreedlyApplicable" [label]="l('Bank Card')">
+                        <div class="stripe-wrap">
+                            <spreedly-pay-buttons [environmentKey]="paymentSystemSettings.spreedlyConfiguration.environmentKey"
+                                                  [gateways]="paymentSystemSettings.spreedlyConfiguration.spreedlyGateways"
+                                                  (onButtonClick)="onSpreedlyClick($event)"
+                                                  (onPaymentMethod)="onSpreedlyPaymentMethod($event)">
+                            </spreedly-pay-buttons>
                         </div>
                     </mat-tab>
 
