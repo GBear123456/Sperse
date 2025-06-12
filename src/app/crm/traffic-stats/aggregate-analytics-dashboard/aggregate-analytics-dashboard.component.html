@@ -1,7 +1,9 @@
 <div class="min-h-screen p-4 bg-gray-50 dark:bg-gray-900">
     <div class="max-w-7xl mx-auto">
-        <app-aggregate-analytics-header></app-aggregate-analytics-header>
-        <app-traffic-stats-filters searchPlaceholder="Search keywords, referrers, countries..."></app-traffic-stats-filters>
+        <div class="flex justify-between flex-wrap">
+            <app-aggregate-analytics-header></app-aggregate-analytics-header>
+            <app-traffic-stats-filters searchPlaceholder="Search keywords, referrers, countries..."></app-traffic-stats-filters>
+        </div>
         <app-aggregate-analytics-stats-cards
             [totalVisitors]="statsData.totalVisitors"
             [totalLeads]="statsData.totalLeads"

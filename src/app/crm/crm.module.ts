@@ -166,6 +166,7 @@ import {
     Languages,
     Server,
     Settings,
+    ExternalLink,
 } from "lucide-angular";
 import { AggregateAnalyticsHeaderComponent } from "./traffic-stats/aggregate-analytics-dashboard/components/header/header.component";
 import { AggregateAnalyticsFiltersComponent } from "./traffic-stats/common/filters/filters.component";
@@ -319,6 +320,7 @@ import { UrlAgentPanelComponent } from "./traffic-stats/lead-conversion-journey/
             Languages,
             Server,
             Settings,
+            ExternalLink,
         }),
     ],
     declarations: [

@@ -1,9 +1,11 @@
 <div class="min-h-screen p-4 bg-gray-50 dark:bg-gray-900">
     <div class="max-w-7xl mx-auto">
-        <app-conversion-tracking-header></app-conversion-tracking-header>
-        <app-traffic-stats-filters
-            searchPlaceholder="Search affilate codes..."
-        ></app-traffic-stats-filters>
+        <div class="flex items-center flex-wrap justify-between ">
+            <app-conversion-tracking-header></app-conversion-tracking-header>
+            <app-traffic-stats-filters
+                searchPlaceholder="Search affilate codes..."
+            ></app-traffic-stats-filters>
+        </div>
         <app-conversion-tracking-metrics></app-conversion-tracking-metrics>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             <div
