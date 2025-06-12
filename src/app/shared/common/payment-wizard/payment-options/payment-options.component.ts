@@ -188,7 +188,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         ).subscribe(([settings, productPaymentInfo]) => {
             this.paymentSystemSettings = settings;
             this.productSubscriptionPreviouslyUsed = productPaymentInfo.previouslyUsed;
-            this.hasAnyPaymentSystemConfigured = !!settings.paypalClientId || settings.stripeIsEnabled;
+            this.hasAnyPaymentSystemConfigured = !!settings.paypalClientId || settings.stripeIsEnabled || (!!settings.spreedlyConfiguration && !!settings.spreedlyConfiguration.spreedlyGateways.length);
 
             this.stripeApplicable = settings.stripeIsEnabled && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.Stripe);
             this.payPalApplicable = settings.paypalClientId && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.PayPal);
