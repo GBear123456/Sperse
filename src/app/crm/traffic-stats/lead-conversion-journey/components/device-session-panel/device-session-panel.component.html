@@ -12,7 +12,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div
         *ngFor="let field of fields"
-        class="flex items-center justify-between bg-gray-50 p-4 rounded-md group"
+        class="flex items-center justify-between flex-col sm:flex-row bg-gray-50 p-4 rounded-md group"
       >
         <div class="flex items-center space-x-2 text-sm text-gray-600 font-medium">
           <lucide-icon [name]="field.icon" class="w-4 h-4 text-blue-500"></lucide-icon>

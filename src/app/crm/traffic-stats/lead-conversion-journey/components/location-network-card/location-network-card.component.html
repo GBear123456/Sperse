@@ -22,7 +22,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <!-- Left info list -->
       <div class="space-y-3">
-        <div *ngFor="let field of fields let index = index" class="flex items-center justify-between bg-gray-50 p-2 rounded-md group">
+        <div *ngFor="let field of fields let index = index" class="flex items-center justify-between bg-gray-50 p-2 rounded-md group flex-col sm:flex-row">
           <div class="flex items-center space-x-2">
             <lucide-icon [name]="field.icon" class="w-5 h-5 text-blue-600"></lucide-icon>
             <span class="text-sm flex-shrink-0 text-gray-900" >{{ field.label }}</span>
