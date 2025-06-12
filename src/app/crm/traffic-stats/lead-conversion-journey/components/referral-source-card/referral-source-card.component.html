@@ -1,38 +1,38 @@
-<div class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 p-6 h-full">
+<div class="rounded-lg text-card-foreground border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 sm:p-6 h-full">
     <!-- Referred By -->
     <div>
         <h2
-            class="text-2xl leading-none tracking-tight font-semibold text-green-700 flex items-center space-x-2"
+            class="text-xl sm:text-2xl leading-none tracking-tight font-semibold text-green-700 dark:text-green-400 flex items-center space-x-2"
         >
             <lucide-icon
                 name="user-check"
-                class="w-5 h-5 text-green-700"
+                class="w-4 h-4 sm:w-5 sm:h-5 text-green-700 dark:text-green-400"
             ></lucide-icon>
             <span>Referred By</span>
         </h2>
-        <p class="text-sm text-muted-foreground">
+        <p class="text-xs sm:text-sm text-muted-foreground dark:text-gray-400">
             Referral source and lead information
         </p>
 
         <div
-            class="bg-green-50 border border-green-100 rounded-lg p-4 space-y-3"
+            class="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-lg p-3 sm:p-4 space-y-2 sm:space-y-3 mt-2 sm:mt-3"
         >
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <!-- Referring Person -->
                 <div>
                     <label
-                        class="block text-sm font-medium text-gray-600 flex items-center space-x-1 mb-2"
+                        class="block text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center space-x-1 mb-1.5 sm:mb-2"
                     >
                         <lucide-icon
                             name="user-check"
-                            class="w-4 h-4 text-green-700"
+                            class="w-3 h-3 sm:w-4 sm:h-4 text-green-700 dark:text-green-400"
                         ></lucide-icon>
-                        <span class="text-sm font-medium text-green-900"
+                        <span class="text-xs sm:text-sm font-medium text-green-900 dark:text-green-400"
                             >Referring Person</span
                         >
                     </label>
                     <select
-                        class="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+                        class="w-full rounded-md border border-gray-300 dark:border-gray-600 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     >
                         <option>Sarah Johnson</option>
                         <option>Emily Carter</option>
@@ -42,11 +42,11 @@
 
                 <!-- Tracking Code -->
                 <div>
-                    <label class="text-sm font-medium mb-2 text-green-900"
+                    <label class="text-xs sm:text-sm font-medium mb-1.5 sm:mb-2 text-green-900 dark:text-green-400"
                         >Tracking Code</label
                     >
                     <div
-                        class="rounded-md bg-green-100 text-green-700 px-3 py-1.5 text-sm font-mono"
+                        class="rounded-md bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-mono"
                     >
                         johndavis
                     </div>
@@ -56,97 +56,97 @@
     </div>
 
     <!-- Lead Status -->
-    <div class="mt-6">
-        <div class="flex items-center justify-between mb-3">
+    <div class="mt-4 sm:mt-6">
+        <div class="flex items-center justify-between mb-2 sm:mb-3">
             <h2
-                class="text-lg font-semibold text-yellow-800 flex items-center space-x-2"
+                class="text-base sm:text-lg font-semibold text-yellow-800 dark:text-yellow-400 flex items-center space-x-2"
             >
                 <lucide-icon
                     name="trending-up"
-                    class="w-5 h-5 text-yellow-800"
+                    class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-800 dark:text-yellow-400"
                 ></lucide-icon>
                 <span>Lead Status</span>
             </h2>
             <span
-                class="text-xs px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full font-medium"
+                class="text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 rounded-full font-medium"
                 >New Lead</span
             >
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-1.5 sm:space-y-2">
             <!-- Deal Amount -->
             <div
-                class="group flex items-center justify-between bg-gray-50 px-4 py-2 rounded-md"
+                class="group flex items-center flex-col sm:flex-row justify-between bg-gray-50 dark:bg-gray-700 px-3 sm:px-4 py-2 rounded-md"
             >
-                <div class="flex items-center space-x-2 font-medium">
+                <div class="flex items-center space-x-1.5 sm:space-x-2 font-medium">
                     <lucide-icon
                         name="dollar-sign"
-                        class="w-4 h-4 text-blue-600"
+                        class="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400"
                     ></lucide-icon>
                     <span
-                        class="text-sm font-medium flex-shrink-0 text-gray-900"
+                        class="text-xs sm:text-sm font-medium flex-shrink-0 text-gray-900 dark:text-white"
                         >Deal Amount</span
                     >
                 </div>
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-1.5 sm:space-x-2">
                     <input
                         type="text"
                         placeholder="Enter value"
-                        class="w-32 border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-24 sm:w-32 border border-gray-300 dark:border-gray-600 rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <lucide-icon
                         name="copy"
-                        class="w-4 h-4 text-gray-500 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                        class="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 dark:text-gray-400 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                     ></lucide-icon>
                 </div>
             </div>
 
             <!-- First Visit -->
             <div
-                class="group flex items-center justify-between bg-gray-50 px-4 py-2 rounded-md"
+                class="group flex items-center flex-col sm:flex-row justify-between bg-gray-50 dark:bg-gray-700 px-3 sm:px-4 py-2 rounded-md"
             >
-                <div class="flex items-center space-x-2 font-medium">
+                <div class="flex items-center space-x-1.5 sm:space-x-2 font-medium">
                     <lucide-icon
                         name="calendar"
-                        class="w-4 h-4 text-blue-600"
+                        class="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400"
                     ></lucide-icon>
                     <span
-                        class="text-sm font-medium flex-shrink-0 text-gray-900"
+                        class="text-xs sm:text-sm font-medium flex-shrink-0 text-gray-900 dark:text-white"
                         >First Visit</span
                     >
                 </div>
-                <div class="flex items-center space-x-2">
-                    <span class="text-sm text-gray-500"
+                <div class="flex items-center space-x-1.5 sm:space-x-2">
+                    <span class="text-xs sm:text-sm text-gray-500 dark:text-gray-400"
                         >May 23, 2025 22:30</span
                     >
                     <lucide-icon
                         name="copy"
-                        class="w-4 h-4 text-gray-500 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                        class="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 dark:text-gray-400 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                     ></lucide-icon>
                 </div>
             </div>
 
             <!-- Last Modified -->
             <div
-                class="group flex items-center justify-between bg-gray-50 px-4 py-2 rounded-md"
+                class="group flex items-center flex-col sm:flex-row justify-between bg-gray-50 dark:bg-gray-700 px-3 sm:px-4 py-2 rounded-md"
             >
-                <div class="flex items-center space-x-2 font-medium">
+                <div class="flex items-center space-x-1.5 sm:space-x-2 font-medium">
                     <lucide-icon
                         name="clock"
-                        class="w-4 h-4 text-blue-600"
+                        class="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400"
                     ></lucide-icon>
                     <span
-                        class="text-sm font-medium flex-shrink-0 text-gray-900"
+                        class="text-xs sm:text-sm font-medium flex-shrink-0 text-gray-900 dark:text-white"
                         >Last Modified</span
                     >
                 </div>
-                <div class="flex items-center space-x-2">
-                    <span class="text-sm text-gray-500"
+                <div class="flex items-center space-x-1.5 sm:space-x-2">
+                    <span class="text-xs sm:text-sm text-gray-500 dark:text-gray-400"
                         >May 23, 2025 22:30</span
                     >
                     <lucide-icon
                         name="copy"
-                        class="w-4 h-4 text-gray-500 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                        class="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 dark:text-gray-400 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                     ></lucide-icon>
                 </div>
             </div>

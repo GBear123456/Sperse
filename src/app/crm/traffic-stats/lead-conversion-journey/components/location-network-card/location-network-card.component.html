@@ -1,4 +1,4 @@
-<div class="rounded-lg text-card-foreground shadow-sm border bg-white border-gray-200 p-4 my-4">
+<div class="rounded-lg text-card-foreground border bg-white border-gray-200 p-4 my-4">
     <!-- Header -->
     <div class="flex justify-between items-center mb-2">
       <div>
@@ -17,12 +17,12 @@
         <span>View in Google Maps</span>
       </a>
     </div>
-  
+
     <!-- Content Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <!-- Left info list -->
       <div class="space-y-3">
-        <div *ngFor="let field of fields let index = index" class="flex items-center justify-between bg-gray-50 p-2 rounded-md group">
+        <div *ngFor="let field of fields let index = index" class="flex items-center justify-between bg-gray-50 p-2 rounded-md group flex-col sm:flex-row">
           <div class="flex items-center space-x-2">
             <lucide-icon [name]="field.icon" class="w-5 h-5 text-blue-600"></lucide-icon>
             <span class="text-sm flex-shrink-0 text-gray-900" >{{ field.label }}</span>
@@ -36,11 +36,10 @@
           </div>
         </div>
       </div>
-  
+
       <!-- Right: Map Preview -->
       <div class="bg-gray-50 border border-gray-100 rounded-md flex items-center justify-center text-center text-gray-400 text-sm h-60">
         Google Maps Platform rejected your request. The provided API key is invalid.
       </div>
     </div>
   </div>
-  

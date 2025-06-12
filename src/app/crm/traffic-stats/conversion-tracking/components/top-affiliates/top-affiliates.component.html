@@ -5,9 +5,9 @@
           <lucide-icon name="users" class="w-5 h-5"></lucide-icon>
           <span>Top Affiliates</span>
         </div>
-      
+
         <!-- Right Tabs -->
-        <div class="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="flex items-center bg-white border border-gray-200 rounded-lg overflow-hidden">
           <button *ngFor="let tab of tabs"
                   (click)="selectTab(tab)"
                   class="flex items-center space-x-1 px-2 py-1 text-sm font-medium transition-all"
@@ -21,10 +21,10 @@
         </div>
       </div>
     <p class="text-sm text-gray-500">Revenue breakdown by region</p>
-  
+
     <!-- Tabs -->
-    
-  
+
+
     <!-- Affiliate Chart Placeholder -->
     <div class="grid grid-cols-5 gap-4 text-sm text-gray-700">
       <div class="col-span-1 space-y-3">
@@ -38,4 +38,3 @@
       </div>
     </div>
   </div>
-  

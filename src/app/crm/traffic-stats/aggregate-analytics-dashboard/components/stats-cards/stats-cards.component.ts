@@ -3,7 +3,6 @@ import { Component, OnInit, Input } from "@angular/core";
 @Component({
     selector: "app-aggregate-analytics-stats-cards",
     templateUrl: "./stats-cards.component.html",
-    styleUrls: ["./stats-cards.component.less"],
 })
 export class StatsCardsComponent implements OnInit {
     @Input() totalVisitors: {

@@ -1,4 +1,4 @@
-<div class="bg-white p-6 rounded-xl shadow border border-gray-200 w-full">
+<div class="bg-white p-6 rounded-xl border border-gray-200 w-full">
     <!-- Header -->
     <div class="mb-4">
       <h2 class="text-xl font-semibold text-purple-700 flex items-center space-x-2">
@@ -7,12 +7,12 @@
       </h2>
       <p class="text-sm text-gray-500">Hardware, software, and session information</p>
     </div>
-  
+
     <!-- Grid layout -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div
         *ngFor="let field of fields"
-        class="flex items-center justify-between bg-gray-50 p-4 rounded-md group"
+        class="flex items-center justify-between flex-col sm:flex-row bg-gray-50 p-4 rounded-md group"
       >
         <div class="flex items-center space-x-2 text-sm text-gray-600 font-medium">
           <lucide-icon [name]="field.icon" class="w-4 h-4 text-blue-500"></lucide-icon>
@@ -28,4 +28,3 @@
       </div>
     </div>
   </div>
-  
