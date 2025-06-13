@@ -1,74 +1,79 @@
 <div class="relative inline-block text-left">
     <button
-      (click)="toggleDropdown()"
-      type="button"
-      class="flex h-10 items-center justify-between w-[160px] rounded-md border border-input bg-background px-3 py-2 text-sm dark:text-white dark:border-gray-600 dark:bg-gray-700 ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&amp;&gt;span]:line-clamp-1 w-[180px]"
-      aria-expanded="true"
-      aria-haspopup="true"
+        (click)="toggleDropdown()"
+        type="button"
+        class="button-layout button-default flex items-center"
+        aria-expanded="true"
+        aria-haspopup="true"
     >
-      <div class="flex w-[160px] items-center justify-between">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-filter mr-2 h-4 w-4"
-        >
-          <polygon
-            points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"
-          ></polygon>
-        </svg>
-        {{ selectedSite }}
-  
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-chevron-down h-4 w-4 opacity-50"
-          aria-hidden="true"
-        >
-          <path d="m6 9 6 6 6-6"></path>
-        </svg>
-      </div>
+        <div class="flex w-[160px] items-center justify-between">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-filter mr-2 h-4 w-4"
+            >
+                <polygon
+                    points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"
+                ></polygon>
+            </svg>
+            {{ selectedSite }}
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                aria-hidden="true"
+            >
+                <path d="m6 9 6 6 6-6"></path>
+            </svg>
+        </div>
     </button>
-  
+
     <div
-      *ngIf="dropdownOpen"
-      class="origin-top-right absolute z-10 mt-2 w-[160px] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+        *ngIf="dropdownOpen"
+        class="origin-top-right absolute z-10 mt-2 w-[160px] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
     >
-      <div class="py-1">
-        <button
-          *ngFor="let site of sites"
-          (click)="selectSite(site)"
-          class="flex justify-between items-right w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          [ngClass]="{ 'font-semibold text-black': site === selectedSite }"
-        >
-          <svg
-            *ngIf="site === selectedSite"
-            class="h-4 w-4 text-blue-600"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M5 13l4 4L19 7" />
-          </svg>
-          <span *ngIf="site !== selectedSite"></span>
-          <span>{{ site }}</span>
-        </button>
-      </div>
+        <div class="py-1">
+            <button
+                *ngFor="let site of sites"
+                (click)="selectSite(site)"
+                class="flex justify-between items-right w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                [ngClass]="{
+                    'font-semibold text-black': site === selectedSite
+                }"
+            >
+                <svg
+                    *ngIf="site === selectedSite"
+                    class="h-4 w-4 text-blue-600"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                    />
+                </svg>
+                <span *ngIf="site !== selectedSite"></span>
+                <span>{{ site }}</span>
+            </button>
+        </div>
     </div>
-  </div>
-  
+</div>
