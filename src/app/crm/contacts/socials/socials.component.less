@@ -1,4 +1,4 @@
-.socials {  
+.socials {
     margin-bottom: 15px;
 
     h3 {
@@ -75,7 +75,7 @@
         i.edit {
           color: #00aeef;
         }
-      
+
         i.delete {
           color: #f44336;
         }
@@ -84,14 +84,14 @@
       &:hover {
         .actions {
           display: block;
-        }      
+        }
       }
     }
 
     ::ng-deep inplace-edit {
         width: 94%;
         display: inline-block;
-        vertical-align: top;        
+        vertical-align: top;
 
         .edit-buttons.right {
             display: inline-block;
@@ -167,3 +167,33 @@
         }
     }
 }
+
+.social-icon-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .social-icon-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background-color: #ecf3fa;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 4px;
+        cursor: pointer;
+
+        img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        &:hover {
+            background-color: #d6e7f7;
+        }
+    }
+}
+

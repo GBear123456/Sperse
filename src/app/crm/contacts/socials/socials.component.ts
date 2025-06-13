@@ -45,12 +45,23 @@ export class SocialsComponent {
     @Input() enableLinkDialog: boolean = true;
     @Input() isEditAllowed = false;
 
-    @Output() onChanged: EventEmitter<any> = new EventEmitter(); 
+    @Output() onChanged: EventEmitter<any> = new EventEmitter();
 
     private _contactInfo: ContactInfoDto;
 
     LINK_TYPES = {};
     urlRegEx = AppConsts.regexPatterns.url;
+    socialIcons = [
+        { name: 'Add', img: './assets/common/icons/' },
+        { name: 'Facebook', img: './assets/common/icons/social/Facebook.svg' },
+        { name: 'X', img: './assets/common/icons/social/Twitter.svg' },
+        { name: 'TikTok', img: './assets/common/icons/social/Tiktok.svg' },
+        { name: 'YouTube', img: './assets/common/icons/social/Youtube.svg' },
+        { name: 'Instagram', img: './assets/common/icons/social/Instagram.svg' },
+        { name: 'Email', img: './assets/common/icons/social/Facebook.svg' },
+        { name: 'Home', img: './assets/common/icons/social/Facebook.svg' }
+    ];
+
 
     constructor(
         private store$: Store<RootStore.State>,
@@ -185,8 +196,8 @@ export class SocialsComponent {
                 if (this.enableLinkDialog) {
                     this.contactInfoData.links
                         .push(ContactLinkDto.fromJS(dialogData));
-                } else 
-                    Object.assign(data, dialogData);               
+                } else
+                    Object.assign(data, dialogData);
             }
             this.onChanged.emit();
         });

@@ -19,7 +19,7 @@
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
                 "dragula", "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
-                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar", 
+                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar",
                 "hammerjs", "moment-timezone", "ng2-cache-service", "jquery-calendar", "@angularclass/hmr",
                 "uuid", "ng2-image-viewer", "iv-viewer", "safe-buffer", "@bugsnag/js", "buffer", "angular2-counto"
             ],
@@ -358,7 +358,7 @@
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
                 "dragula", "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
-                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar", 
+                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar",
                 "hammerjs", "moment-timezone", "ng2-cache-service", "jquery-calendar", "@angularclass/hmr",
                 "uuid", "ng2-image-viewer", "iv-viewer", "safe-buffer", "@bugsnag/js", "buffer", "angular2-counto"
             ],

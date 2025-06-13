@@ -7,7 +7,7 @@
                 <th>{{ls.l('ContactInformation_CompanyTitle')}}</th>
             </tr>
             <tr>
-                <td>{{ls.l('Emails')}}</td>
+                <td><img src="./assets/common/icons/email.svg" class="dx-icon" alt="email"> {{ls.l('Emails')}}</td>
                 <td>
                     <contacts-area [contactInfo]="data?.contactInfo"
                                    [contactInfoData]="data?.contactInfo?.personContactInfo?.details"
@@ -23,7 +23,7 @@
                 </td>
             </tr>
             <tr>
-                <td>{{ls.l('Phones')}}</td>
+                <td><img src="./assets/common/icons/phone.svg" class="dx-icon" alt="phone"> {{ls.l('Phones')}}</td>
                 <td>
                     <contacts-area [contactInfo]="data?.contactInfo"
                                    [contactInfoData]="data?.contactInfo?.personContactInfo?.details"
@@ -39,7 +39,7 @@
                 </td>
             </tr>
             <tr>
-                <td>{{ls.l('Links')}}</td>
+                <td><img src="./assets/common/icons/contact/link.svg" class="dx-icon" alt="link"> {{ls.l('Links')}}</td>
                 <td>
                     <socials [contactInfo]="data?.contactInfo"
                              [contactInfoData]="data?.contactInfo?.personContactInfo?.details">
@@ -53,7 +53,7 @@
                 </td>
             </tr>
             <tr>
-                <td>{{ls.l('Addresses')}}</td>
+                <td><img src="./assets/common/icons/location.svg" class="dx-icon" alt="email"> {{ls.l('Addresses')}}</td>
                 <td>
                     <addresses [contactInfo]="data?.contactInfo"
                                [contactId]="data?.contactInfo?.personContactInfo?.details?.contactId"
@@ -76,7 +76,7 @@
         </table>
     </div>
 </dx-scroll-view>
-<!-- <div class="additional-info">    
+<!-- <div class="additional-info">
     <div class="item width-percent-35">
         <div class="title">
             <img src="./assets/common/icons/folder.svg" class="dx-icon" [alt]="ls.l('Lists')">

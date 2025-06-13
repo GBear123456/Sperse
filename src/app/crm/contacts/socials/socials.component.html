@@ -1,9 +1,18 @@
 <div class="socials">
     <div class="social">
+        <div class="social-icon-group">
+            <button
+                *ngFor="let icon of socialIcons"
+                class="social-icon-btn"
+                [title]="icon.name">
+                <img [src]="icon.img" [alt]="icon.name" />
+            </button>
+        </div>
+
         <ul>
             <li *ngIf="contactInfoData?.publicPersonProfileUrl">
                 <img src="./assets/common/icons/social/OtherLink.svg">
-                <inplace-edit 
+                <inplace-edit
                               [value]="contactInfoData.publicPersonProfileUrl"
                               [link]="normalizeLink(contactInfoData.publicPersonProfileUrl)"
                               [isDeleteEnabled]="false"
