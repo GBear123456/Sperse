@@ -15,6 +15,7 @@ import {
 import { SettingsComponentBase } from '../settings-base.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AddSpreedlyProviderDialog } from './add-spreedly-provider-dialog/add-spreedly-provider-dialog.component';
+import { environment } from '@root/environments/environment';
 
 @Component({
     selector: 'payment-providers-settings',
@@ -27,6 +28,15 @@ export class PaymentProvidersSettingsComponent extends SettingsComponentBase {
     isPaymentsEnabled: boolean = this.feature.isEnabled(AppFeatures.CRMPayments);
     providers: SpreedlyGatewayConnectionDto[] = [];
     spreedlyAllProviders: any[];
+
+    hideGatewayTypes = [
+        'stripe',
+        'stripe_payment_intents',
+        'paypal',
+        'paypal_commerce_platform',
+        'payflow_pro',
+        'braintree'
+    ];
 
     constructor(
         _injector: Injector,
@@ -98,8 +108,21 @@ export class PaymentProvidersSettingsComponent extends SettingsComponentBase {
 
     getSpreedlyProviders() {
         this.http.get<any>('https://core.spreedly.com/v1/gateways_options.json').subscribe(val => {
-            this.spreedlyAllProviders = val.gateways;
+            this.spreedlyAllProviders = this.processGateways(val.gateways);
             this.changeDetection.detectChanges();
         });
+    }
+
+    processGateways(spreedlyGateways: any[]): any[] {
+        spreedlyGateways = spreedlyGateways.filter(v => !this.hideGatewayTypes.includes(v.gateway_type));
+        if (environment.releaseStage == 'production') {
+            let testGatewayIndex = spreedlyGateways.findIndex(g => g.gateway_type == 'test');
+            spreedlyGateways.splice(testGatewayIndex, 1);
+        } else {
+            let testGateway = spreedlyGateways.find(g => g.gateway_type == 'test');
+            testGateway.name = 'Test Gateway';
+        }
+
+        return spreedlyGateways;
     }
 }

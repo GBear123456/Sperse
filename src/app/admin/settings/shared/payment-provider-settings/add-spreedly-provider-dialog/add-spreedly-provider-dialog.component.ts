@@ -11,7 +11,6 @@ import { CreateSpreedlyGatewayInput, TenantPaymentSettingsServiceProxy } from '@
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-import { environment } from '@root/environments/environment';
 
 @Component({
     templateUrl: 'add-spreedly-provider-dialog.component.html',
@@ -56,13 +55,6 @@ export class AddSpreedlyProviderDialog {
         public dialogRef: MatDialogRef<AddSpreedlyProviderDialog>,
     ) {
         this.gateways = data.spreedlyProviders;
-        if (environment.releaseStage == 'production') {
-            let testGatewayIndex = this.gateways.findIndex(g => g.gateway_type == 'test');
-            this.gateways.splice(testGatewayIndex, 1);
-        } else {
-            let testGateway = this.gateways.find(g => g.gateway_type == 'test');
-            testGateway.name = 'Test Gateway';
-        }
     }
 
     onGatewaySelect(type: string) {
