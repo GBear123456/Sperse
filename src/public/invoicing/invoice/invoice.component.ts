@@ -143,7 +143,7 @@ export class InvoiceComponent implements OnInit {
     onSpreedlyClick(event) {
         let spreedlyComponent: SpreedlyPayButtonsComponent = event.component;
         let displayOptions = {
-            amount: this.invoiceInfo.invoiceData.grandTotal.toFixed(2) + ' ' + this.invoiceInfo.invoiceData.currencyId,
+            amount: spreedlyComponent.formatAmount(this.invoiceInfo.invoiceData.grandTotal, this.invoiceInfo.invoiceData.currencyId),
             company_name: this.invoiceInfo.legalName,
             sidebar_top_description: 'Invoice Number: ' + this.invoiceInfo.invoiceData.number,
             sidebar_bottom_description: this.invoiceInfo.invoiceData.description?.substr(0, 150),

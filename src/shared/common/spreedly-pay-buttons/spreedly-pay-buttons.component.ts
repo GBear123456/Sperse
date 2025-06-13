@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { CurrencyPipe, getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 
@@ -15,7 +16,7 @@ declare const SpreedlyExpress: any;
     templateUrl: 'spreedly-pay-buttons.component.html',
     styleUrls: ['./spreedly-pay-buttons.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: []
+    providers: [CurrencyPipe]
 })
 export class SpreedlyPayButtonsComponent implements OnInit, OnDestroy {
     @Input() environmentKey: string;
@@ -28,7 +29,8 @@ export class SpreedlyPayButtonsComponent implements OnInit, OnDestroy {
     spreedlyPopupInit: boolean = false;
 
     constructor(
-        private changeDetector: ChangeDetectorRef
+        private changeDetector: ChangeDetectorRef,
+        private currencyPipe: CurrencyPipe
     ) { }
 
     ngOnInit() {
@@ -55,6 +57,10 @@ export class SpreedlyPayButtonsComponent implements OnInit, OnDestroy {
             return;
 
         this.onButtonClick.emit({ component: this, providerId: spreedlyProviderId });
+    }
+
+    formatAmount(goalAmount: number, currencyId: string): string | null {
+        return getCurrencySymbol(currencyId, 'narrow') + this.currencyPipe.transform(goalAmount, currencyId, '', '1.2-2');
     }
 
     showBankCardPopup(spreedlyProviderId: number, displayOptions: SpreedlyExpressOptions, paymentMethodParams: SpreedlyExpressPaymentMethodParams) {

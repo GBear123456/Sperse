@@ -332,7 +332,7 @@ export class SingleProductComponent implements OnInit {
                 this.lastSubmittedLeadRequestId = Number(res.paymentData);
                 let spreedlyComponent: SpreedlyPayButtonsComponent = event.component;
                 let displayOptions = {
-                    amount: this.getGeneralPrice(true).toFixed(2) + ' ' + this.currencySymbol,
+                    amount: spreedlyComponent.formatAmount(this.getGeneralPrice(true), this.productInfo.currencyId),
                     company_name: this.productInfo.name,
                     sidebar_top_description: '',
                     sidebar_bottom_description: this.selectedPriceOption.name,

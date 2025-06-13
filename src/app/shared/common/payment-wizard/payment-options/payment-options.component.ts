@@ -377,7 +377,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     onSpreedlyClick(event) {
         let spreedlyComponent: SpreedlyPayButtonsComponent = event.component;
         let displayOptions = {
-            amount: this.getSubscriptionPrice(true) + ' ' + this.plan.currencySymbol,
+            amount: spreedlyComponent.formatAmount(this.getSubscriptionPrice(true), this.plan.currencyId),
             company_name: this.plan.productName,
             sidebar_top_description: "",
             sidebar_bottom_description: "",
