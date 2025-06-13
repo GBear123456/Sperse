@@ -78,6 +78,22 @@ export class PaymentProvidersSettingsComponent extends SettingsComponentBase {
             });
     }
 
+    delete(data: SpreedlyGatewayConnectionDto) {
+        this.message.confirm('', this.l('DeleteConfiramtion'), result => {
+            if (result) {
+                this.startLoading();
+                this.paymentSettingsService.deleteSpreedlyGatewayConnection(data.id)
+                    .pipe(
+                        finalize(() => this.finishLoading())
+                    )
+                    .subscribe(() => {
+                        this.getConfiguredProviders();
+                        this.notify.info(this.l('SuccessfullyDeleted'));
+                    });
+            }
+        });
+    }
+
     addProvider() {
         if (!this.spreedlyAllProviders)
             return;
