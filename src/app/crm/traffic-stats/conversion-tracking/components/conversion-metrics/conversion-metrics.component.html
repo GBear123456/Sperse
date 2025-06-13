@@ -1,6 +1,8 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
   <ng-container *ngFor="let card of metricCards">
-    <div class="flex flex-col justify-between p-3 rounded-xl bg-white border border-gray-200">
+    <div
+      class="flex flex-col justify-between p-3 rounded-xl bg-gray-800 border border-gray-200 dark:bg-white dark:border-gray-700"
+    >
       <div class="flex justify-between items-center mb-0">
         <div>
           <p class="text-sm text-gray-700 font-medium mb-1">{{ card.title }}</p>
@@ -10,7 +12,10 @@
           <lucide-icon [name]="card.icon" [ngClass]="card.iconColor + ' w-6 h-6 '"></lucide-icon>
         </div>
       </div>
-      <span class="text-xs text-green-600 bg-white border border-green-600 px-3 py-1 rounded-full w-fit font-semibold">{{ card.change }}</span>
+      <span
+        class="text-xs text-green-600 bg-white border border-green-600 px-3 py-1 rounded-full w-fit font-semibold"
+        >{{ card.change }}</span
+      >
     </div>
   </ng-container>
 </div>
