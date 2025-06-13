@@ -898,3 +898,28 @@ dx-check-box {
 .dx-colorview-container label .dx-texteditor {
     width: 80px!important;
 }
+
+.dx-selectbox {
+    .dx-texteditor-input {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        border-color: var(--border-color);
+    }
+
+    .dx-dropdowneditor-button {
+        // background-color: var(--background-color);
+        border-color: var(--border-color);
+
+        .dx-dropdowneditor-icon {
+            color: var(--text-color);
+        }
+    }
+
+    &.dx-state-focused {
+        border-color: var(--primary-color);
+    }
+
+    &.dx-state-hover {
+        background-color: var(--hover-bg);
+    }
+}

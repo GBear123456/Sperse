@@ -11,18 +11,9 @@ import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        DxSelectBoxModule,
-        DxVectorMapModule,
-        LoadingSpinnerModule
-    ],
-    declarations: [
-        MapComponent
-    ],
-    exports: [
-        MapComponent
-    ],
-    providers: [],
+  imports: [CommonModule, DxSelectBoxModule, DxVectorMapModule, LoadingSpinnerModule],
+  declarations: [MapComponent],
+  exports: [MapComponent],
+  providers: [],
 })
 export class MapModule {}

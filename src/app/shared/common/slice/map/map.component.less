@@ -1,24 +1,50 @@
 :host {
     display: block;
     position: relative;
-    ::ng-deep #vector-map {
-        height: 500px;
-        width: 100%;
-        display: block;
+    ::ng-deep {
+        #vector-map {
+            height: 500px;
+            width: 100%;
+            display: block;
 
-        svg {
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            .dxm-layers,
-            text.dxm-label {
-                cursor: pointer !important;
+            svg {
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                .dxm-layers,
+                text.dxm-label {
+                    cursor: pointer !important;
+                }
             }
         }
-    }
-    .dx-selectbox {
-        position: absolute;
-        left: 100px;
-        top: 12px;
+
+        .dx-selectbox {
+            position: absolute;
+            left: 100px;
+            top: 12px;
+
+            .dx-texteditor-input {
+                background-color: var(--background-color);
+                color: var(--text-color);
+                border-color: var(--border-color);
+            }
+
+            .dx-dropdowneditor-button {
+                background-color: var(--background-color);
+                border-color: var(--border-color);
+
+                .dx-dropdowneditor-icon {
+                    color: var(--text-color);
+                }
+            }
+
+            &.dx-state-focused {
+                border-color: var(--primary-color);
+            }
+
+            &.dx-state-hover {
+                background-color: var(--hover-bg);
+            }
+        }
     }
 }
 

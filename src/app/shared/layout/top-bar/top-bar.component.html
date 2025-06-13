@@ -1,40 +1,63 @@
 <platform-select></platform-select>
 <global-search *ngIf="showGlobalSearch"></global-search>
-<div class="top-bar-nav" [ngStyle]="{ 'visibility': lastInnerWidth && navbarItems.length ? 'visible' : 'hidden' }" style="--underline-color: {{appSessionService.appearanceConfig && appSessionService.appearanceConfig.customCssId ? layoutService.defaultHeaderUnderlineColor : layoutService.getLayoutColor('navUnderlineColor')}} ">
-    <dx-nav-bar
-        height="74px"
-        [items]="navbarItems"
-        [hoverStateEnabled]="true"
-        [selectedIndex]="selectedIndex"
-        itemTemplate="navBarItem"
-        selectionMode="single"
-        (onInitialized)="onNavBarInitialized()">
-        <div *dxTemplate="let link of 'navBarItem'">
-            <dx-menu
-                [dataSource]="[link]"
-                [selectByClick]="true"
-                [selectionMode]="'single'"
-                [hoverStateEnabled]="true"
-                [hideSubmenuOnMouseLeave]="true"
-                [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
-                [showSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
-                (onItemClick)="navigate($event)">
-                <div *dxTemplate="let data of 'item'" class="dx-item-content dx-menu-item-content dx-nav-item-content dx-menu-item-has-text">
-                    <span class="dx-menu-item-text" [ngStyle]="{color: data.parent ? undefined : (appSessionService.appearanceConfig && appSessionService.appearanceConfig.customCssId ? undefined : layoutService.getLayoutColor('navTextColor'))}">{{data.text}}{{data.items.length ? '&nbsp;&#9662;' : ''}}</span>
-                </div>
-            </dx-menu>
+<div
+  class="top-bar-nav"
+  [ngStyle]="{ visibility: lastInnerWidth && navbarItems.length ? 'visible' : 'hidden' }"
+  style="--underline-color: {{
+    appSessionService.appearanceConfig && appSessionService.appearanceConfig.customCssId
+      ? layoutService.defaultHeaderUnderlineColor
+      : layoutService.getLayoutColor('navUnderlineColor')
+  }} "
+>
+  <dx-nav-bar
+    height="74px"
+    [items]="navbarItems"
+    [hoverStateEnabled]="true"
+    [selectedIndex]="selectedIndex"
+    itemTemplate="navBarItem"
+    selectionMode="single"
+    (onInitialized)="onNavBarInitialized()"
+  >
+    <div *dxTemplate="let link of 'navBarItem'">
+      <dx-menu
+        [dataSource]="[link]"
+        [selectByClick]="true"
+        [selectionMode]="'single'"
+        [hideSubmenuOnMouseLeave]="true"
+        [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 } }"
+        [showSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 } }"
+        (onItemClick)="navigate($event)"
+      >
+        <div
+          *dxTemplate="let data of 'item'"
+          class="dx-item-content dx-menu-item-content dx-nav-item-content dx-menu-item-has-text"
+        >
+          <span
+            class="dx-menu-item-text"
+            [ngStyle]="{
+              color: data.parent
+                ? undefined
+                : appSessionService.appearanceConfig &&
+                  appSessionService.appearanceConfig.customCssId
+                ? undefined
+                : layoutService.getLayoutColor('navTextColor')
+            }"
+            >{{ data.text }}{{ data.items.length ? '&nbsp;&#9662;' : '' }}</span
+          >
         </div>
-    </dx-nav-bar>
-
+      </dx-menu>
+    </div>
+  </dx-nav-bar>
 </div>
 <div class="adaptive-menu" *ngIf="adaptiveMenuItems.length">
-    <dx-menu
-        accessKey="nav-menu"
-        [dataSource]="adaptiveMenuItems"
-        [hideSubmenuOnMouseLeave]="true"
-        [adaptivityEnabled]="true"
-        [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide:0, show: 0 }}"
-        [showSubmenuMode]="{ name: 'onHover', delay: { hide:0, show: 0 }}"
-        (onItemClick)="navigate($event)">
-    </dx-menu>
+  <dx-menu
+    accessKey="nav-menu"
+    [dataSource]="adaptiveMenuItems"
+    [hideSubmenuOnMouseLeave]="true"
+    [adaptivityEnabled]="true"
+    [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 } }"
+    [showSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 } }"
+    (onItemClick)="navigate($event)"
+  >
+  </dx-menu>
 </div>
