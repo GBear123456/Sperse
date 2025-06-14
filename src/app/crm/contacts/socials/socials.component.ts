@@ -52,14 +52,14 @@ export class SocialsComponent {
     LINK_TYPES = {};
     urlRegEx = AppConsts.regexPatterns.url;
     socialIcons = [
-        { name: 'Add', img: './assets/common/icons/' },
-        { name: 'Facebook', img: './assets/common/icons/social/Facebook.svg' },
-        { name: 'X', img: './assets/common/icons/social/Twitter.svg' },
-        { name: 'TikTok', img: './assets/common/icons/social/Tiktok.svg' },
-        { name: 'YouTube', img: './assets/common/icons/social/Youtube.svg' },
-        { name: 'Instagram', img: './assets/common/icons/social/Instagram.svg' },
-        { name: 'Email', img: './assets/common/icons/social/Facebook.svg' },
-        { name: 'Home', img: './assets/common/icons/social/Facebook.svg' }
+        { name: 'Add', img: './assets/common/icons/contact/plus_1.svg' },
+        { name: 'Facebook', img: './assets/common/icons/contact/facebook_symbol.svg' },
+        { name: 'X', img: './assets/common/icons/contact/twitter.svg' },
+        { name: 'TikTok', img: './assets/common/icons/contact/tik-tok.svg' },
+        { name: 'YouTube', img: './assets/common/icons/contact/youtube.svg' },
+        { name: 'Instagram', img: './assets/common/icons/contact/instagram.svg' },
+        { name: 'Email', img: './assets/common/icons/contact/inbox.svg' },
+        { name: 'Home', img: './assets/common/icons/contact/home.svg' }
     ];
 
 

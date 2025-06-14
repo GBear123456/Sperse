@@ -2,42 +2,42 @@
     <div class="avatar">
         <div class="active"></div>
         <div class="photo-area"
-            [ngStyle]="{ 'background-image': getPhoto(data?.personContactInfo?.primaryPhoto) }"
-            (click)="showUploadPhotoDialog($event)">
+             [ngStyle]="{ 'background-image': getPhoto(data?.personContactInfo?.primaryPhoto) }"
+             (click)="showUploadPhotoDialog($event)">
         </div>
     </div>
     <div class="personal_info">
         <div class="full_name">
             <h1 *ngIf="data && data?.personContactInfo as personContactInfo">
                 <inplace-edit [id]="personContactInfo.id"
-                    [value]="trim(personContactInfo.fullName)"
-                    [validationRules]="nameValidationRules"
-                    [isReadOnlyField]="!manageAllowed"
-                    lEntityName="Name"
-                    [editPlaceholder]="ls.l('ClientNamePlaceholder')"
-                    [isEditDialogEnabled]="true"
-                    [isHistoryEnabled]="true"
-                    (valueChanged)="updatePrimaryContactName($event)"
-                    (openDialog)="showEditPersonDialog($event)"
-                    (onHistoryClick)="showPersonHistory($event)">
+                              [value]="trim(personContactInfo.fullName)"
+                              [validationRules]="nameValidationRules"
+                              [isReadOnlyField]="!manageAllowed"
+                              lEntityName="Name"
+                              [editPlaceholder]="ls.l('ClientNamePlaceholder')"
+                              [isEditDialogEnabled]="true"
+                              [isHistoryEnabled]="true"
+                              (valueChanged)="updatePrimaryContactName($event)"
+                              (openDialog)="showEditPersonDialog($event)"
+                              (onHistoryClick)="showPersonHistory($event)">
                 </inplace-edit>
-                <p *ngIf="showModernLayout" class="company-name">{{data?.organizationContactInfo?.fullName}}</p>
+                <p *ngIf="showModernLayout" class="company-name">{{ data?.organizationContactInfo?.fullName }}</p>
             </h1>
         </div>
         <rating-bar *ngIf="!isBankCodeLayout; else bankCode" [rating]="ratingId || 0"></rating-bar>
         <ng-template #bankCode>
             <div class="bank-code">
                 <bank-code-letters [bankCode]="data?.personContactInfo?.person?.bankCode || '????'"
-                    [allowAdd]="manageAllowed"
-                    [allowEdit]="manageAllowed"
-                    [personId]="data.id"
-                    key="detailsHeader"
-                    [showDialogOnBottom]="true"
-                    [showDescriptionsOnHover]="true"
-                    [showReportLink]="data?.personContactInfo?.person?.bankCode"
-                    [showHistoryLink]="true"
-                    reportIconName="blue"
-                    (bankCodeChange)="contactsService.invalidate()">
+                                   [allowAdd]="manageAllowed"
+                                   [allowEdit]="manageAllowed"
+                                   [personId]="data.id"
+                                   key="detailsHeader"
+                                   [showDialogOnBottom]="true"
+                                   [showDescriptionsOnHover]="true"
+                                   [showReportLink]="data?.personContactInfo?.person?.bankCode"
+                                   [showHistoryLink]="true"
+                                   reportIconName="blue"
+                                   (bankCodeChange)="contactsService.invalidate()">
                 </bank-code-letters>
             </div>
         </ng-template>
@@ -49,9 +49,11 @@
             </div>
         </div>
         <ng-template #companyInfo>
-            <div class="company-details" [ngClass]="{ 'with-company-logo': data?.organizationContactInfo?.primaryPhoto }">
+            <div class="company-details"
+                 [ngClass]="{ 'with-company-logo': data?.organizationContactInfo?.primaryPhoto }">
                 <div class="info-icon" (click)="showCompanyDialog($event)">
-                    <img *ngIf="!showRemovingOrgRelationProgress" src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
+                    <img *ngIf="!showRemovingOrgRelationProgress" src="./assets/common/icons/info-icon-blue.svg"
+                         alt="Organization Details">
                     <div *ngIf="showRemovingOrgRelationProgress" class="loadindicator"></div>
                 </div>
                 <div class="titles">
@@ -67,7 +69,7 @@
                                       (valueChanged)="updateCompanyField($event)">
                         </inplace-edit>
                         <i *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)"
-                            class="fa fa-angle-down" (click)="showCompanyList($event)">
+                           class="fa fa-angle-down" (click)="showCompanyList($event)">
                         </i>
                         <div class="actions" [hidden]="!isOrgUpdatable || companyName.isEditModeEnabled">
                             <i class="edit fa fa-pencil"
@@ -99,7 +101,9 @@
                 </div>
             </div>
             <div class="organization_logo" *ngIf="data?.organizationContactInfo?.primaryPhoto; else addCompanyPhoto">
-                <img (click)="addCompanyLogo($event)" [src]="'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto" alt="Organization Logo">
+                <img (click)="addCompanyLogo($event)"
+                     [src]="'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto"
+                     alt="Organization Logo">
             </div>
             <ng-template #addCompanyPhoto>
                 <div *ngIf="isOrgUpdatable" class="add-company-logo">
@@ -108,10 +112,38 @@
             </ng-template>
         </ng-template>
     </div>
+    <!--    contact info detail-->
+    <div class="user-card-container">
+        <button class="nav-btn left">
+            <i class="dx-icon dx-icon-chevronleft"></i>
+        </button>
+        <div class="user-card-content">
+    <span class="icon">
+      <i class="dx-icon dx-icon-building"></i>
+    </span>
+            <span class="name-role">
+      <span class="name">{{ name }}</span>
+      <span class="divider"></span>
+      <span class="role">{{ selectedRole }}</span>
+    </span>
+            <button class="dropdown-btn">
+                <i class="dx-icon dx-icon-chevronDown"></i>
+            </button>
+            <button class="close-btn">
+                <i class="dx-icon dx-icon-close"></i>
+            </button>
+        </div>
+        <button class="nav-btn right">
+            <i class="dx-icon dx-icon-chevronright"></i>
+        </button>
+    </div>
+
     <div class="header_buttons">
-        <button id="addEntity" *ngIf="manageAllowed && addContextMenuItems.length" class="button-layout button-primary menu" (click)="addEntity($event)">
-            <img src="./assets/common/icons/contact/add.svg"> {{addButtonTitle}}
-        </button><b class="tooltip-target"></b>
+        <button id="addEntity" *ngIf="manageAllowed && addContextMenuItems.length"
+                class="button-layout button-primary menu" (click)="addEntity($event)">
+            <img src="./assets/common/icons/contact/add.svg"> {{ addButtonTitle }}
+        </button>
+        <b class="tooltip-target"></b>
 
         <div class="vertical-delimiter"></div>
         <button class="refresh-button" (click)="refresh()"></button>
@@ -122,15 +154,27 @@
     [target]="'.tooltip-target'"
     [position]="{ my: 'top right', at: 'bottom right', collision: 'fit flip' }">
     <div *dxTemplate="let data = data of 'content'" class="context-tooltip">
-        <img *ngIf="manageAllowed" (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddNotes]]})" src="./assets/common/icons/contact/notes.svg">
+        <img *ngIf="manageAllowed"
+             (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddNotes]]})"
+             src="./assets/common/icons/contact/notes.svg">
         <img src="./assets/common/icons/contact/tasks.svg">
         <img src="./assets/common/icons/contact/meetings.svg">
-        <img *ngIf="isSendSmsAndEmailAllowed" (click)="router.navigate(['user-inbox'], {relativeTo: this.activatedRoute})" src="./assets/common/icons/contact/calllog.svg">
-        <img *ngIf="isSendSmsAndEmailAllowed" (click)="showEmailDialog()" src="./assets/common/icons/contact/emails.svg">
-        <img *ngIf="isSendSmsAndEmailAllowed && !isSMSIntegrationDisabled" (click)="showSMSDialog()" src="./assets/common/icons/contact/sms.svg">
-        <img *ngIf="manageAllowed" (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddFiles]]})" src="./assets/common/icons/contact/files.svg">
-        <img *ngIf="addContextMenuItems[contextType.AddInvoice].visible" (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddInvoice]]})" src="./assets/common/icons/contact/invoices.svg">
-        <img *ngIf="!data?.parentId" (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddContact]]})" src="./assets/common/icons/contact/contacts.svg">
+        <img *ngIf="isSendSmsAndEmailAllowed"
+             (click)="router.navigate(['user-inbox'], {relativeTo: this.activatedRoute})"
+             src="./assets/common/icons/contact/calllog.svg">
+        <img *ngIf="isSendSmsAndEmailAllowed" (click)="showEmailDialog()"
+             src="./assets/common/icons/contact/emails.svg">
+        <img *ngIf="isSendSmsAndEmailAllowed && !isSMSIntegrationDisabled" (click)="showSMSDialog()"
+             src="./assets/common/icons/contact/sms.svg">
+        <img *ngIf="manageAllowed"
+             (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddFiles]]})"
+             src="./assets/common/icons/contact/files.svg">
+        <img *ngIf="addContextMenuItems[contextType.AddInvoice].visible"
+             (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddInvoice]]})"
+             src="./assets/common/icons/contact/invoices.svg">
+        <img *ngIf="!data?.parentId"
+             (click)="addOptionSelectionChanged({addedItems: [addContextMenuItems[contextType.AddContact]]})"
+             src="./assets/common/icons/contact/contacts.svg">
     </div>
 </dx-tooltip>
 <dx-context-menu

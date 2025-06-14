@@ -84,7 +84,7 @@ import { PersonHistoryDialogComponent } from '../personal-details/personal-detai
 export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
     @ViewChild(DxTooltipComponent) addTooltipComponent: DxTooltipComponent;
-    @HostBinding('class.modern') @Input() showModernLayout: boolean = 
+    @HostBinding('class.modern') @Input() showModernLayout: boolean =
         this.appService.layoutService.showModernLayout;
 
     @Input()
@@ -113,7 +113,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             && this.data['organizationContactInfo'].isUpdatable;
     }
 
-    @Input() contactGroupId: ContactGroup; 
+    @Input() contactGroupId: ContactGroup;
 
     private contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
@@ -172,6 +172,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     companyValidationRules = [
         { type: 'required', message: this.ls.l('CompanyNameIsRequired') }
     ];
+    @Input() name: string = 'JamesSmith';
+    // @Input() roles: string[] = ['Affiliate', 'Manager', 'Partner'];
+    selectedRole: string = 'Affiliate'
 
     constructor(
         injector: Injector,
@@ -215,7 +218,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 this.contactGroups = contactInfo.groups;
                 this.isSendSmsAndEmailAllowed = this.featureMaxMessageCount
                     && this.permissionService.checkCGPermission(
-                        this.contactGroups, 
+                        this.contactGroups,
                         'ViewCommunicationHistory.SendSMSAndEmail'
                     );
             }
@@ -224,7 +227,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             takeUntil(this.lifeCycleService.destroy$)
         ).subscribe((manageIsAllowed: boolean) => {
             this.manageAllowed = manageIsAllowed;
-            this.manageCompaniesAllowed = this.manageAllowed || 
+            this.manageCompaniesAllowed = this.manageAllowed ||
                 this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
         });
         this.propertyId$.pipe(
@@ -586,8 +589,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     addEntity(event?) {
-        if (event && event.offsetX > event.target.offsetWidth - 32)            
-            return this.showModernLayout 
+        if (event && event.offsetX > event.target.offsetWidth - 32)
+            return this.showModernLayout
                 ? this.addTooltipComponent.instance.option('visible', true)
                 : this.addContextComponent.instance.option('visible', true);
 
