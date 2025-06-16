@@ -74,7 +74,7 @@
     }
 
     ul {
-        padding-left: 30px;
+        // padding-left: 3px;
         position: relative;
 
         .email-row {
@@ -83,42 +83,24 @@
             justify-content: space-between;
             padding: 5px;
             position: relative;
-            background-color: #fff;
-
-            &:hover {
-                .actions {
-                    display: flex;
-                }
-            }
-
+            background-color: #fff;            
             .icon-btn {
-                background: none;
                 border: none;
-                padding: 0 5px;
-                cursor: pointer;
-
-                img {
-                    width: 20px;
-                    height: 20px;
-                }
-            }
-
-            .email-address {
-                flex-grow: 1;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                padding-left: 5px;
+                background: none;
             }
 
             .actions {
-                display: none;
+                display: flex;
                 align-items: center;
                 gap: 5px;
 
-                &.visible {
-                    display: flex;
+                i, .send-icon {
+                    transition: background 0.15s;
+                    border-radius: 4px;
                 }
+                // i:hover, .send-icon:hover {
+                //     background: #f3f7fa;
+                // }
 
                 .send-icon {
                     display: flex;
@@ -141,13 +123,13 @@
                     cursor: pointer;
                 }
 
-                i.edit {
-                    color: #00aeef;
-                }
+                // i.edit {
+                //     color: #00aeef;
+                // }
 
-                i.delete {
-                    color: #f44336;
-                }
+                // i.delete {
+                //     color: #f44336;
+                // }
 
                 i.edit-info {
                     background: url(../../../../assets/common/icons/c-info.svg) no-repeat center;

@@ -3,14 +3,16 @@
         <div class="phone" *ngFor="let phone of contactInfoData?.phones; let i = index;">
             <ul *ngIf="!phone.inplaceEdit">
                 <div class="email-row" >
-                    <button class="icon-btn" aria-label="Contact action" (click)="showDialog('emailAddress', null, $event)">
-                        <img src="./assets/common/icons/contact/plus.svg" alt="icon">
-                    </button>
-                    <span class="email-address" (click)="inPlaceEdit('phoneNumber', phone, $event, i)">
-                        {{ phone.phoneNumber | phone }}
-                        <span *ngIf="phone.phoneExtension" class="phoneExt">Ext. {{ phone.phoneExtension }}</span>
-                        <img src="./assets/common/icons/contact/call-calling.svg" alt="send">
-                    </span>
+                    <div>
+                        <button class="icon-btn" aria-label="Contact action" (click)="showDialog('emailAddress', null, $event)">
+                            <img src="./assets/common/icons/contact/plus.svg" alt="icon">
+                        </button>
+                        <span class="email-address" (click)="inPlaceEdit('phoneNumber', phone, $event, i)">
+                            {{ phone.phoneNumber | phone }}
+                            <span *ngIf="phone.phoneExtension" class="phoneExt">Ext. {{ phone.phoneExtension }}</span>
+                            <img src="./assets/common/icons/contact/call-calling.svg" alt="send">
+                        </span>
+                    </div>
 
                     <div class="actions" *ngIf="isEditAllowed" [class.visible]="hovered">
                         <span *ngIf="isEditAllowed" class="send-icon" (click)="showDialog('phoneNumber', null, $event)">
@@ -23,22 +25,24 @@
                     </div>
                 </div>
             </ul>
-            <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
+            <!-- <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
                 <country-phone-number [(phoneNumber)]="phone.phoneNumber" #countryPhoneNumber></country-phone-number>
                 <dx-button class="update" icon="todo"
                            (onClick)="updatePhoneNumber(countryPhoneNumber.isValid(), phone, $event)"></dx-button>
                 <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('phoneNumber', phone)"></dx-button>
-            </div>
+            </div> -->
         </div>
     </div>
     <div *ngIf="showContactType == 'emails'">
         <div class="emails" *ngIf="contactInfoData?.emails?.length">
             <ul *ngFor="let email of contactInfoData?.emails; let i = index;">
                 <div class="email-row" *ngIf="!email.inplaceEdit" >
-                    <button class="icon-btn" aria-label="Contact action" (click)="showDialog('emailAddress', null, $event)">
-                        <img src="./assets/common/icons/contact/plus.svg" alt="icon">
-                    </button>
-                    <span class="email-address" (click)="inPlaceEdit('emailAddress', email, $event, i)">{{ email.emailAddress }}</span>
+                    <div>
+                        <button class="icon-btn" aria-label="Contact action" (click)="showDialog('emailAddress', null, $event)">
+                            <img src="./assets/common/icons/contact/plus.svg" alt="icon">
+                        </button>
+                        <span class="email-address" (click)="inPlaceEdit('emailAddress', email, $event, i)">{{ email.emailAddress }}</span>
+                    </div>
 
                     <div class="actions" *ngIf="isEditAllowed" [class.visible]="hovered">
                         <span class="send-icon">

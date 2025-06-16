@@ -7,7 +7,7 @@
                 <th>{{ls.l('ContactInformation_CompanyTitle')}}</th>
             </tr>
             <tr>
-                <td><img src="./assets/common/icons/email.svg" class="dx-icon" alt="email"> {{ls.l('Emails')}}</td>
+                <td><img src="./assets/common/icons/contact/email.svg" class="dx-icon" alt="email"> {{ls.l('Emails')}}</td>
                 <td>
                     <contacts-area [contactInfo]="data?.contactInfo"
                                    [contactInfoData]="data?.contactInfo?.personContactInfo?.details"
@@ -23,7 +23,7 @@
                 </td>
             </tr>
             <tr>
-                <td><img src="./assets/common/icons/phone.svg" class="dx-icon" alt="phone"> {{ls.l('Phones')}}</td>
+                <td><img src="./assets/common/icons/contact/phone.svg" class="dx-icon" alt="phone"> {{ls.l('Phones')}}</td>
                 <td>
                     <contacts-area [contactInfo]="data?.contactInfo"
                                    [contactInfoData]="data?.contactInfo?.personContactInfo?.details"
@@ -53,7 +53,7 @@
                 </td>
             </tr>
             <tr>
-                <td><img src="./assets/common/icons/location.svg" class="dx-icon" alt="email"> {{ls.l('Addresses')}}</td>
+                <td><img src="./assets/common/icons/contact/location.svg" class="dx-icon" alt="email"> {{ls.l('Addresses')}}</td>
                 <td>
                     <addresses [contactInfo]="data?.contactInfo"
                                [contactId]="data?.contactInfo?.personContactInfo?.details?.contactId"
