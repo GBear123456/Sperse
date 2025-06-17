@@ -1,16 +1,19 @@
 :host {
     display: block;
+    background-color: var(--background-color);
+    min-height: 100%;
 
     .header {
         display: flex;
         & > div {
             margin: 20px 0 0 120px;
-            font-family: Manrope;
+            font-family: var(--app-font-family);
             font-size: 14px;
             font-weight: 500;
             line-height: 27px;
             letter-spacing: -0.02em;
             text-align: left;
+            color: var(--text-color);
         }
     }
 
@@ -26,20 +29,21 @@
         width: 281px;
 
         h3 {
-            font-family: Manrope;
+            font-family: var(--app-font-family);
             font-size: 19px;
             font-weight: 600;
             line-height: 23px;
             letter-spacing: -0.02em;
             text-align: left;
             margin-bottom: 28px;
+            color: var(--text-color);
         }
 
         .group-wrapper {
-          position: relative;
-          width: 283px;
-          height: 45px;
-          margin: 0 0 6px;
+            position: relative;
+            width: 283px;
+            height: 45px;
+            margin: 0 0 6px;
         }
 
         .provider-icon {
@@ -53,31 +57,31 @@
         }
 
         .overlap-group {
-          background-color: #f8fafc;
-          position: relative;
-          width: 281px;
-          height: 45px;
-          border-radius: 10px;
-          cursor: pointer;
-          &:hover, &.selected {
-              background-color: #08295b;
-              .text-wrapper {
-                  color: #FFF;        
-              }
-          }
+            background-color: var(--card-bg);
+            position: relative;
+            width: 281px;
+            height: 45px;
+            border-radius: 10px;
+            cursor: pointer;
+            &:hover, &.selected {
+                background-color: var(--primary-color);
+                .text-wrapper {
+                    color: var(--primary-color-contrast);
+                }
+            }
         }
 
         .text-wrapper {
-          position: absolute;
-          top: 8px;
-          left: 45px;
-          font-family: "Manrope", Helvetica;
-          font-weight: 500;
-          color: #08295b;
-          font-size: 14px;
-          letter-spacing: -0.28px;
-          line-height: 27px;
-          white-space: nowrap;
+            position: absolute;
+            top: 8px;
+            left: 45px;
+            font-family: var(--app-font-family);
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 14px;
+            letter-spacing: -0.28px;
+            line-height: 27px;
+            white-space: nowrap;
         }
     }
 
@@ -86,42 +90,56 @@
         margin: 0 0 0 50px;
 
         h3 {
-            font-family: Manrope;
+            font-family: var(--app-font-family);
             font-size: 19px;
             font-weight: 600;
             line-height: 23px;
             letter-spacing: -0.02em;
             text-align: left;
             margin-bottom: 0;
+            color: var(--text-color);
         }
+
         label {
             position: relative;
             top: 20px;
             left: 9px;
-            background: #FFF;
+            background: var(--background-color);
             display: inline-block;
             padding: 0 5px;
-            font-family: Manrope;
+            font-family: var(--app-font-family);
             font-size: 13px;
             font-weight: 500;
             line-height: 27px;
             letter-spacing: -0.02em;
+            color: var(--text-color);
         }
+
         input {
-            border: 1px solid rgba(225, 231, 237, 1);
+            border: 1px solid var(--border-color);
             border-radius: 10px;
-            font-family: Manrope;
+            font-family: var(--app-font-family);
             font-size: 13px;
             font-weight: 500;
             line-height: 27px;
             text-align: left;
             padding: 12px 14px;
+            background-color: var(--background-color);
+            color: var(--text-color);
 
-            &:placeholder {
-                color: rgba(121, 133, 151, 1);
+            &:hover {
+                border-color: var(--border-color-hover);
+            }
+
+            &:focus {
+                border-color: var(--primary-color);
+            }
+
+            &::placeholder {
+                color: var(--muted-color);
             }
         }
-        
+
         .credentials {
             width: 40%;
         }
@@ -138,16 +156,16 @@
             margin-top: 68px;
             .columns {
                 display: flex;
-                gap: 30px;        
+                gap: 30px;
             }
             .outgoing, .ingoing {
                 width: 50%;
             }
             .outgoing-field, .ingoing-field {
-                background: rgba(248, 250, 252, 1);
+                background: var(--card-bg);
                 height: 53px;
                 margin-top: 34px;
-                font-family: Manrope;
+                font-family: var(--app-font-family);
                 font-size: 13px;
                 font-weight: 600;
                 line-height: 22px;
@@ -155,6 +173,7 @@
                 text-align: left;
                 padding: 15px;
                 border-radius: 10px;
+                color: var(--text-color);
             }
             .ingoing-field {
                 ::ng-deep dx-switch {
@@ -171,22 +190,27 @@
                 cursor: default;
             }
         }
-    
+
         .default {
             width: 40%;
             min-width: 500px;
 
             .test-email {
-                position: relative; 
+                position: relative;
                 button {
                     position: absolute;
-                    background: rgba(8, 41, 91, 1);
+                    background: var(--primary-color);
+                    color: var(--primary-color-contrast);
                     right: 0;
                     top: 34px;
-                    font-family: Manrope!important;
-                    font-size: 13px!important;
-                    font-weight: 600!important;
+                    font-family: var(--app-font-family) !important;
+                    font-size: 13px !important;
+                    font-weight: 600 !important;
                     letter-spacing: -0.02em;
+
+                    &:hover {
+                        background: var(--primary-color-light);
+                    }
                 }
             }
         }
@@ -197,28 +221,31 @@
             &.tls {
                 margin: 0 8px 0 20px;
                 .dx-switch-container {
-                    background: rgba(248, 250, 252, 1);
+                    background: var(--card-bg);
                 }
             }
 
             &:not(.dx-switch-on-value) {
                 .dx-switch-handle::before {
-                    background: #00005e30;                    
+                    background: var(--muted-color);
                 }
             }
 
-            .dx-switch-container, 
+            .dx-switch-container,
             .dx-switch-handle::before {
                 border-radius: 12px;
             }
+
             .dx-switch-container {
                 border: 1px solid transparent;
-                background: rgba(234, 236, 239, 1);
+                background: var(--card-bg);
             }
+
             .dx-switch-handle::before {
                 width: 120%;
-                background: rgba(0, 168, 237, 1);
+                background: var(--primary-color);
             }
+
             .dx-switch-inner {
                 width: 180%;
             }
@@ -229,7 +256,7 @@
             position: relative;
             &.error {
                 .block {
-                    border: 1px solid red;
+                    border: 1px solid var(--danger-color);
                 }
             }
 
@@ -237,36 +264,45 @@
                 width: 100%;
                 height: 100%;
                 max-width: 730px;
-                font-family: Manrope;
+                font-family: var(--app-font-family);
                 font-size: 13px;
                 font-weight: 400;
                 line-height: 23px;
                 text-align: left;
-                background: rgba(248, 250, 252, 1);
+                background: var(--card-bg);
                 border-radius: 10px;
                 padding: 15px;
                 bottom: 0;
                 position: absolute;
+                color: var(--text-color);
+
                 a {
-                    font-family: Manrope;
+                    font-family: var(--app-font-family);
                     font-size: 13px;
                     font-weight: 600;
                     line-height: 27px;
                     letter-spacing: -0.02em;
                     text-align: left;
+                    color: var(--primary-color);
+
+                    &:hover {
+                        color: var(--primary-color-light);
+                    }
                 }
             }
         }
     }
-    
+
     h2 {
-        font-family: Manrope;
+        font-family: var(--app-font-family);
         font-size: 26px;
         font-weight: 600;
         line-height: 27px;
         letter-spacing: -0.02em;
         text-align: left;
         margin: 26px 0 50px 0;
+        color: var(--text-color);
+
         .arrow-left {
             top: -2px;
             position: relative;
@@ -282,5 +318,6 @@
     .info {
         font-size: 12px;
         font-style: italic;
+        color: var(--muted-color);
     }
 }

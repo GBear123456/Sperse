@@ -1,21 +1,54 @@
 :host {
     display: block;
+    background-color: var(--background-color);
+    min-height: 100%;
 
     ::ng-deep contact-group-templates dx-select-box input {
         border-top: none;
         border-right: none;
         border-left: none;
         border-radius: 0;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+
+        &:hover {
+            border-color: var(--border-color-hover);
+        }
+
+        &:focus {
+            border-color: var(--primary-color);
+        }
+
+        &::placeholder {
+            color: var(--muted-color);
+        }
     }
 
     ::ng-deep .contact-group-templates {
         margin-top: 20px;
+        background-color: var(--background-color);
 
         .email-temlate-select {
-            border-bottom: 1px solid #ebedf2;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--background-color);
 
             dx-select-box input {
                 border: none;
+                background-color: var(--background-color);
+                color: var(--text-color);
+
+                &:hover {
+                    border-color: var(--border-color-hover);
+                }
+
+                &:focus {
+                    border-color: var(--primary-color);
+                }
+
+                &::placeholder {
+                    color: var(--muted-color);
+                }
             }
         }
 
@@ -24,6 +57,21 @@
             border-right: none;
             border-left: none;
             border-radius: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+
+            &:hover {
+                border-color: var(--border-color-hover);
+            }
+
+            &:focus {
+                border-color: var(--primary-color);
+            }
+
+            &::placeholder {
+                color: var(--muted-color);
+            }
         }
     }
 }

@@ -4,16 +4,26 @@
         width: 70%;
         &:not(.valid) {
             ::ng-deep input {
-                color: #d9534f !important;
+                color: var(--danger-color) !important;
             }
         }
     }
 
     ::ng-deep div.input-group {
-        border-bottom: 1px solid #dfdfdf;
+        border-bottom: 1px solid var(--border-color);
         input {
             border: none;
             font-family: var(--app-font-family) !important;
+            background-color: var(--background-color);
+            color: var(--text-color);
+
+            &:hover {
+                border-color: var(--border-color-hover);
+            }
+
+            &:focus {
+                border-color: var(--primary-color);
+            }
         }
     }
 
@@ -21,8 +31,8 @@
         .input-group:after {
             pointer-events: none;
             font-weight: bold;
-            background-color: #d9534f;
-            color: #fff;
+            background-color: var(--danger-color);
+            color: var(--danger-color-contrast);
             content: '!';
             position: absolute;
             top: 50%;
@@ -38,10 +48,10 @@
     }
 
     ::ng-deep input.form-control:focus {
-        border-color: #dfdfdf;
+        border-color: var(--border-color);
     }
 
-    .invalid-message-wrapper{
+    .invalid-message-wrapper {
         position: relative;
         line-height: 1.35715;
     }
@@ -55,8 +65,8 @@
         left: 0px;
         top: 0px;
         transform: translate(0px, 0px);
-        background-color: #d9534f;
-        color: #fff;
+        background-color: var(--danger-color);
+        color: var(--danger-color-contrast);
         border-radius: 4px;
         padding: 10px;
         font-size: .85em;
@@ -67,6 +77,14 @@
     ::ng-deep international-phone-number {
         .btn.focus, .btn:focus {
             box-shadow: none;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            border-color: var(--border-color);
+
+            &:hover {
+                background-color: var(--hover-bg);
+                border-color: var(--border-color-hover);
+            }
         }
     }
 }
