@@ -1,23 +1,39 @@
 ﻿:host {
     position: relative;
     height: 100%;
+    background-color: var(--background-color);
+
     ::ng-deep dx-data-grid {
+        background-color: var(--background-color);
+        color: var(--text-color);
+
         .verify-icon {
             width: 11px;
             height: 9px;
             margin-right: 6px;
             display: inline-block;
             background: url('../../../assets/common/icons/verify-icon.svg') no-repeat center;
+            filter: var(--icon-filter);
         }
+
         .dx-datagrid-rowsview {
+            background-color: var(--background-color);
+            color: var(--text-color);
+
             .dx-datagrid-focus-overlay.dx-pointer-events-target {
                 display: none;
             }
+
             .dx-column-lines {
                 cursor: pointer;
+                background-color: var(--background-color);
+                color: var(--text-color);
+
                 & > td {
                     span {
                         text-align: center;
+                        color: var(--text-color);
+
                         .link-to-cfo-column {
                             position: relative;
                             width: 80px;
@@ -29,13 +45,14 @@
                                 width: 11px;
                                 height: 12px;
                                 top: calc(50% - 6px);
+                                filter: var(--icon-filter);
                             }
                             &::before {
                                 content: 'CFO';
                                 border-radius: 14px;
-                                background-image: linear-gradient(41deg,#f76b1c,#fad961);
+                                background-image: linear-gradient(41deg, var(--primary-color), var(--primary-color-light));
                                 background-size: cover;
-                                color: #ffffff;
+                                color: var(--primary-color-contrast);
                                 font-size: 10px;
                                 font-weight: 600;
                                 line-height: 26px;
@@ -48,11 +65,11 @@
                         }
                         .link-request-verification {
                             text-decoration: none;
-                            color: #00AEEF;
+                            color: var(--primary-color);
                             letter-spacing: 0.2px;
                             font-weight: 500;
                             &:hover {
-                                color: #56d1ff;
+                                color: var(--primary-color-light);
                             }
                         }
                     }
@@ -67,6 +84,8 @@
             width: 20px;
             position: relative;
             padding: 4px 0 4px 10px;
+            color: var(--text-color);
+
             &::before {
                 width: 8px;
                 height: 8px;
@@ -77,8 +96,18 @@
                 top: 50%;
                 transform: translateY(-50%);
                 border-radius: 50%;
-                background: #ef8f00;
+                background: var(--warning-color);
             }
+        }
+
+        .dx-row {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .dx-header-row {
+            background-color: var(--background-color);
+            color: var(--text-color);
         }
     }
 }

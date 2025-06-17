@@ -5,6 +5,7 @@
 
     h2 {
         margin-bottom: 32px !important;
+        color: var(--text-color);
     }
 
     .settings {
@@ -12,42 +13,51 @@
         margin: 0;
 
         h3 {
-            font-family: Manrope;
+            font-family: var(--app-font-family);
             font-size: 19px;
             font-weight: 600;
             line-height: 23px;
             letter-spacing: -0.02em;
             text-align: left;
             margin-bottom: 0;
+            color: var(--text-color);
         }
         label {
             position: relative;
             top: 13px;
             left: 9px;
-            background: #FFF;
+            background: var(--background-color);
             display: inline-block;
             padding: 0 5px;
-            font-family: Manrope;
+            font-family: var(--app-font-family);
             font-size: 13px;
             font-weight: 500;
             line-height: 27px;
             letter-spacing: -0.02em;
             min-width: 70px;
             border-bottom: none;
+            color: var(--text-color);
         }
         input {
             height: 53px;
-            border: 1px solid rgba(225, 231, 237, 1);
+            border: 1px solid var(--border-color);
             border-radius: 10px;
-            font-family: Manrope;
+            font-family: var(--app-font-family);
             font-size: 13px;
             font-weight: 500;
             line-height: 27px;
             text-align: left;
             padding: 12px 14px;
+            background-color: var(--background-color);
+            color: var(--text-color);
 
             &:placeholder {
-                color: rgba(121, 133, 151, 1);
+                color: var(--muted-color);
+            }
+
+            &:focus {
+                border-color: var(--primary-color);
+                outline: none;
             }
         }
 
@@ -57,17 +67,20 @@
 
             ::ng-deep dx-select-box {
                 .dx-dropdowneditor-field-template-wrapper {
-                    border: 1px solid #dedede;
+                    border: 1px solid var(--border-color);
                     border-radius: 10px;
                     padding-left: 15px;
+                    background-color: var(--background-color);
                 }
                 input {
                     border-radius: 10px;
-                    border: 1px solid rgba(225, 231, 237, 1);
+                    border: 1px solid var(--border-color);
+                    background-color: var(--background-color);
+                    color: var(--text-color);
                 }
             }
         }
-        
+
         .credentials {
             width: 96%;
         }
@@ -84,16 +97,16 @@
             margin-top: 20px;
             .columns {
                 display: flex;
-                gap: 30px;        
+                gap: 30px;
             }
             .outgoing, .ingoing {
                 width: 50%;
             }
             .outgoing-field, .ingoing-field {
-                background: rgba(248, 250, 252, 1);
+                background: var(--card-bg);
                 height: 53px;
                 margin-top: 34px;
-                font-family: Manrope;
+                font-family: var(--app-font-family);
                 font-size: 13px;
                 font-weight: 600;
                 line-height: 22px;
@@ -101,6 +114,7 @@
                 text-align: left;
                 padding: 15px;
                 border-radius: 10px;
+                color: var(--text-color);
             }
             .ingoing-field {
                 ::ng-deep dx-switch {
@@ -117,22 +131,27 @@
                 cursor: default;
             }
         }
-    
+
         .default {
             width: 96%;
             min-width: 500px;
 
             .test-email {
-                position: relative; 
+                position: relative;
                 button {
                     position: absolute;
-                    background: rgba(8, 41, 91, 1);
+                    background: var(--primary-color);
+                    color: var(--primary-color-contrast);
                     right: 0;
                     top: 28px;
-                    font-family: Manrope!important;
-                    font-size: 13px!important;
-                    font-weight: 600!important;
+                    font-family: var(--app-font-family) !important;
+                    font-size: 13px !important;
+                    font-weight: 600 !important;
                     letter-spacing: -0.02em;
+
+                    &:hover {
+                        background: var(--primary-color-light);
+                    }
                 }
             }
         }
@@ -143,32 +162,32 @@
             &.tls {
                 margin: 0 8px 0 15px;
                 .dx-switch-container {
-                    background: rgba(248, 250, 252, 1);
+                    background: var(--card-bg);
                 }
             }
 
             &:not(.dx-switch-on-value) {
                 .dx-switch-handle::before {
-                    background: #00005e30;                    
+                    background: var(--muted-color);
                 }
             }
 
-            .dx-switch-container, 
+            .dx-switch-container,
             .dx-switch-handle::before {
                 border-radius: 12px;
             }
             .dx-switch-container {
                 border: 1px solid transparent;
-                background: rgba(234, 236, 239, 1);
+                background: var(--card-bg);
             }
             .dx-switch-handle::before {
                 width: 120%;
-                background: rgba(0, 168, 237, 1);
+                background: var(--primary-color);
             }
             .dx-switch-inner {
                 width: 180%;
             }
-        }        
+        }
     }
 
     .information {
@@ -179,7 +198,7 @@
 
         &.error {
             .block {
-                border: 1px solid red;
+                border: 1px solid var(--danger-color);
             }
         }
 
@@ -187,22 +206,28 @@
             width: 100%;
             height: 100%;
             max-width: 730px;
-            font-family: Manrope;
+            font-family: var(--app-font-family);
             font-size: 13px;
             font-weight: 400;
             line-height: 23px;
             text-align: left;
-            background: rgba(248, 250, 252, 1);
+            background: var(--card-bg);
             border-radius: 10px;
             padding: 15px;
             bottom: 0;
+            color: var(--text-color);
             a {
-                font-family: Manrope;
+                font-family: var(--app-font-family);
                 font-size: 13px;
                 font-weight: 600;
                 line-height: 27px;
                 letter-spacing: -0.02em;
                 text-align: left;
+                color: var(--primary-color);
+
+                &:hover {
+                    color: var(--primary-color-light);
+                }
             }
         }
     }
@@ -211,6 +236,7 @@
 ::ng-deep .provider-select-item {
     display: flex;
     margin: auto;
+    color: var(--text-color);
 
     .provider-icon {
         width: 22px;
@@ -220,5 +246,6 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
+        filter: var(--icon-filter);
     }
 }

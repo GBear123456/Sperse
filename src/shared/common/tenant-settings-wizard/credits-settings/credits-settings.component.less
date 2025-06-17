@@ -1,10 +1,27 @@
 :host {
+    display: block;
+    max-height: 750px;
+    height: calc(100vh - 130px);
+
+    h2 {
+        color: var(--text-color);
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        margin-bottom: 40px;
+    }
+
     .form-group {
         display: flex;
+        margin-bottom: 20px;
 
         label {
             width: 190px;
             margin-right: 10px;
+            color: var(--text-color);
+            font-family: var(--app-font-family);
+            font-weight: 500;
+            line-height: 30px;
         }
 
         ::ng-deep dx-select-box {
@@ -15,7 +32,77 @@
                 font-family: var(--app-font-family);
                 font-weight: 500;
                 letter-spacing: 0.3px;
-                color: #424c56;
+                color: var(--text-color);
+                background-color: var(--background-color);
+            }
+
+            .dx-placeholder {
+                color: var(--muted-color);
+            }
+
+            &:hover {
+                border-color: var(--border-color-hover);
+            }
+
+            &.dx-state-focused {
+                border-color: var(--primary-color);
+            }
+
+            &.dx-state-disabled {
+                background-color: var(--disabled-bg);
+                color: var(--disabled-color);
+                opacity: 0.7;
+            }
+
+            .dx-dropdowneditor-button {
+                color: var(--text-color);
+            }
+
+            .dx-dropdowneditor-icon {
+                color: var(--text-color);
+            }
+        }
+    }
+
+    .help-block {
+        color: var(--danger-color);
+        font-size: 12px;
+        margin-top: 5px;
+        font-family: var(--app-font-family);
+    }
+
+    .credits-info {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+
+        h3 {
+            color: var(--text-color);
+            font-family: var(--app-font-family);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+
+            .label {
+                width: 30%;
+                color: var(--muted-color);
+                font-family: var(--app-font-family);
+                font-size: 14px;
+            }
+
+            .value {
+                width: 70%;
+                color: var(--text-color);
+                font-family: var(--app-font-family);
+                font-size: 14px;
+                font-weight: 500;
             }
         }
     }

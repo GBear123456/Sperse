@@ -20,6 +20,7 @@
             line-height: 27px;
             letter-spacing: -0.02em;
             text-align: center;
+            color: var(--text-color);
         }
         .headline-content {
             display: none;
@@ -33,7 +34,7 @@
         .head {
             font-family: "Plus Jakarta Sans-SemiBold", Helvetica;
             font-weight: 600;
-            color: #102039;
+            color: var(--text-color);
             font-size: 15px;
             text-align: center;
             letter-spacing: -0.3px;
@@ -42,7 +43,7 @@
             margin-bottom: 39px;
 
             a {
-                color: #102039;
+                color: var(--text-color);
                 &:hover {
                     text-decoration: underline;
                 }
@@ -80,18 +81,19 @@
                 height: 368px;
                 border-radius: 10px;
                 border: 1px solid;
+                background-color: var(--background-color);
 
                 &.products {
-                    background-color: #00b5000f;
-                    border-color: #e5eee5;
+                    background-color: var(--products-bg);
+                    border-color: var(--products-border);
                 }
                 &.payment {
-                    background-color: #00b6f50f;
-                    border-color: #e4eff2;
+                    background-color: var(--payment-bg);
+                    border-color: var(--payment-border);
                 }
                 &.settings {
-                    background-color: #7611db0f;
-                    border-color: #ebe3f3;
+                    background-color: var(--settings-bg);
+                    border-color: var(--settings-border);
 
                     .btn-img {
                         width: 14px;
@@ -99,8 +101,8 @@
                     }
                 }
                 &.favorite {
-                    background-color: #e4463c0f;
-                    border-color: #eee8e0;
+                    background-color: var(--favorite-bg);
+                    border-color: var(--favorite-border);
 
                     .points {
                         height: 170px;
@@ -114,19 +116,19 @@
                     }
                 }
                 &.import {
-                    background-color: #6381ed0f;
-                    border-color: #ebecf8;
+                    background-color: var(--import-bg);
+                    border-color: var(--import-border);
 
                     .points {
                         height: 80px;
                         .point {
                             width: auto;
                         }
-                    }                    
+                    }
                 }
                 &.affiliate {
-                    background-color: #f0bb000f;
-                    border-color: #efece2;
+                    background-color: var(--affiliate-bg);
+                    border-color: var(--affiliate-border);
                     .points {
                         height: 170px;
                         display: block;
@@ -151,16 +153,15 @@
                 position: relative;
                 width: 45px;
                 height: 45px;
-                background-color: #ffffff;
+                background-color: var(--background-color);
                 border-radius: 0px 8px 0px 8px;
-                border: 1px solid;
-                border-color: #e5eee5;
+                border: 1px solid var(--border-color);
             }
 
             .text-wrapper {
                 font-family: "Plus Jakarta Sans-SemiBold", Helvetica;
                 font-weight: 600;
-                color: #10213a;
+                color: var(--text-color);
                 font-size: 15px;
                 text-align: center;
                 letter-spacing: -0.3px;
@@ -171,7 +172,7 @@
             .title {
                 font-family: "Plus Jakarta Sans-SemiBold", Helvetica;
                 font-weight: 600;
-                color: #102039;
+                color: var(--text-color);
                 font-size: 20px;
                 letter-spacing: -0.4px;
                 line-height: 27px;
@@ -196,7 +197,7 @@
                     opacity: 0.4;
                     cursor: default;
                     pointer-events: none;
-                }        
+                }
             }
 
             .point {
@@ -210,7 +211,7 @@
                 display: inline-block;
                 font-family: "Plus Jakarta Sans-Medium", Helvetica;
                 font-weight: 500;
-                color: #425672;
+                color: var(--text-color);
                 font-size: 14px;
                 text-align: center;
                 letter-spacing: -0.28px;
@@ -233,9 +234,9 @@
                 padding: 17px 19px;
                 margin-left: 35px;
                 margin-bottom: 31px;
-                background-color: #00a8ed;
+                background-color: var(--primary-color);
                 border-radius: 10px;
-                box-shadow: 0px 2px 11px #0086bd1a;
+                box-shadow: 0px 2px 11px var(--primary-shadow);
                 height: 44px;
                 cursor: pointer;
                 &.add-coupon {
@@ -252,7 +253,7 @@
                width: fit-content;
                font-family: "Plus Jakarta Sans-SemiBold", Helvetica;
                font-weight: 600;
-               color: #ffffff;
+               color: var(--primary-color-contrast);
                font-size: 13px;
                letter-spacing: -0.26px;
                line-height: 11px;
@@ -286,7 +287,7 @@
         width: 430px;
         padding: 25px;
         border-radius: 10px;
-        background: #F8FAFC;
+        background: var(--background-color);
         position: relative;
         height: calc(100vh - 95px);
 
@@ -318,7 +319,7 @@
             left: 0;
             font-family: "Plus Jakarta Sans-SemiBold", Helvetica;
             font-weight: 600;
-            color: #000000;
+            color: var(--text-color);
             font-size: 16px;
             letter-spacing: -0.32px;
             line-height: 27px;
@@ -336,7 +337,7 @@
             height: 1px;
             top: 156px;
             left: 0;
-            background-color: #e1e7ed;
+            background-color: var(--border-color);
         }
 
         .ellipse {
@@ -345,7 +346,7 @@
             height: 8px;
             top: 10px;
             left: 0;
-            background-color: #f29431;
+            background-color: var(--warning-color);
             border-radius: 4px;
         }
 
@@ -356,10 +357,9 @@
             width: 286px;
             height: auto;
             padding: 10px;
-            background-color: #f8fafc;
+            background-color: var(--background-color);
             border-radius: 10px;
-            border: 1px dashed;
-            border-color: #d6dee5;
+            border: 1px dashed var(--border-color);
         }
 
         .icon {
@@ -371,9 +371,9 @@
             position: relative;
             width: 91px;
             height: 35px;
-            background-color: #00a8ed;
+            background-color: var(--primary-color);
             border-radius: 8px;
-            box-shadow: 0px 2px 11px #0086bd1a;
+            box-shadow: 0px 2px 11px var(--primary-shadow);
             cursor: pointer;
         }
 
@@ -383,7 +383,7 @@
             left: 21px;
             font-family: "Plus Jakarta Sans-Medium", Helvetica;
             font-weight: 500;
-            color: #ffffff;
+            color: var(--primary-color-contrast);
             font-size: 12px;
             letter-spacing: 0;
             line-height: 27px;
@@ -396,7 +396,7 @@
             justify-content: space-between;
             font-family: "Plus Jakarta Sans-Medium", Helvetica;
             font-weight: 500;
-            color: #000000;
+            color: var(--text-color);
             font-size: 14px;
             letter-spacing: -0.28px;
             line-height: 27px;
@@ -427,7 +427,7 @@
             left: 18px;
             font-family: "Plus Jakarta Sans-SemiBold", Helvetica;
             font-weight: 600;
-            color: #000000;
+            color: var(--text-color);
             font-size: 16px;
             letter-spacing: -0.32px;
             line-height: 27px;
@@ -445,7 +445,7 @@
             left: 18px;
             font-family: "Plus Jakarta Sans-SemiBold", Helvetica;
             font-weight: 600;
-            color: #000000;
+            color: var(--text-color);
             font-size: 16px;
             letter-spacing: -0.32px;
             line-height: 27px;
@@ -463,7 +463,7 @@
             height: 8px;
             top: 10px;
             left: 0;
-            background-color: #48aef9;
+            background-color: var(--info-color);
             border-radius: 4px;
         }
 
@@ -473,7 +473,7 @@
             height: 8px;
             top: 175px;
             left: 0;
-            background-color: #63d940;
+            background-color: var(--success-color);
             border-radius: 4px;
         }
 
@@ -483,7 +483,7 @@
             height: 80px;
             top: 33px;
             left: 18px;
-            background-color: #4e5ec4;
+            background-color: var(--primary-color);
             border-radius: 10px;
             cursor: pointer;
         }
@@ -494,7 +494,7 @@
             left: 77px;
             font-family: "Plus Jakarta Sans-Medium", Helvetica;
             font-weight: 500;
-            color: #ffffff;
+            color: var(--primary-color-contrast);
             font-size: 14px;
             letter-spacing: -0.28px;
             line-height: 18px;

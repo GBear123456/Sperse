@@ -3,12 +3,52 @@
     max-height: 750px;
     height: calc(100vh - 130px);
 
+    h2 {
+        color: var(--text-color);
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        margin-bottom: 40px;
+    }
+
     .form-group {
         display: flex;
         height: 30px;
+        margin-bottom: 20px;
+
+        label {
+            min-width: 190px;
+            color: var(--text-color);
+            font-weight: 500;
+            line-height: 30px;
+        }
 
         &.zendesk {
             margin-top: 51px;
+        }
+
+        input.form-control {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            padding: 5px;
+            height: 30px;
+            border-radius: 0;
+            font-size: 15px;
+            font-family: var(--app-font-family);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: var(--text-color);
+            background-color: var(--background-color);
+
+            &:focus {
+                border-color: var(--primary-color);
+                outline: none;
+            }
+
+            &.ng-invalid.ng-touched {
+                border-color: var(--danger-color);
+            }
         }
     }
 
@@ -21,7 +61,7 @@
 
         .form-control {
             border: none;
-            border-bottom: 1px solid #dfdfdf;
+            border-bottom: 1px solid var(--border-color);
             padding: 5px;
             height: 30px;
             border-radius: 0;
@@ -29,10 +69,11 @@
             font-family: var(--app-font-family);
             font-weight: 500;
             letter-spacing: 0.3px;
-            color: #424c56;
+            color: var(--text-color);
+            background-color: var(--background-color);
 
             &:focus {
-                border-color: #dfdfdf;
+                border-color: var(--primary-color);
                 outline: none;
             }
         }
@@ -42,23 +83,22 @@
         display: flex;
 
         .selected-flag-icon {
-            border-bottom: 1px solid #dfdfdf;
-        }
-
-        label {
-            min-width: 190px;
+            border-bottom: 1px solid var(--border-color);
+            margin-right: 10px;
         }
     }
 
     ::ng-deep dx-select-box {
-        border-bottom: 1px solid #dfdfdf !important;
+        flex-grow: 1;
+        border-bottom: 1px solid var(--border-color) !important;
 
         .dx-placeholder, input {
             font-size: 15px;
             font-family: var(--app-font-family);
             font-weight: 500;
             letter-spacing: 0.3px;
-            color: #424c56;
+            color: var(--text-color);
+            background-color: var(--background-color);
         }
 
         input {
@@ -66,10 +106,14 @@
             text-overflow: ellipsis !important;
             overflow: hidden;
         }
+
+        &:hover {
+            border-color: var(--primary-color) !important;
+        }
     }
 
     ::ng-deep country-phone-number {
-        width: 100%;
+        flex-grow: 1;
 
         .wrapper {
             display: block !important;
@@ -77,42 +121,76 @@
 
             .dropbtn {
                 padding: 6px;
+                background-color: var(--background-color);
+                color: var(--text-color);
+                border-bottom: 1px solid var(--border-color);
             }
 
             input {
                 padding: 0;
+                background-color: var(--background-color);
+                color: var(--text-color);
+                border: none;
+                border-bottom: 1px solid var(--border-color);
             }
         }
     }
 
     ::ng-deep currency-selector {
-        width: 100%;
+        flex-grow: 1;
 
         .flag-field {
             border: none;
             padding: initial;
+            background-color: var(--background-color);
         }
 
         dx-text-box {
             height: 29px !important;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+    }
+
+    .help-block {
+        color: var(--danger-color);
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    ::ng-deep dx-scroll-view {
+        .dx-scrollable-content {
+            background-color: var(--background-color);
         }
     }
 }
 
 ::ng-deep .flag-row {
-    border-bottom: 1px solid #E5E8F3;
+    border-bottom: 1px solid var(--border-color);
     padding: 7px 0px!important;
     margin: 0 10px;
     display: flex;
     width: calc(100% - 20px);
+    background-color: var(--background-color);
 
     .flag-icon {
         border-radius: 10px;
-        border: 1px solid #dedede;
+        border: 1px solid var(--border-color);
     }
+
     div {
         display: inline-block;
         margin: auto 0 auto 10px;
         white-space: pre-wrap;
+        color: var(--text-color);
+
+        .currency-name {
+            color: var(--text-color);
+        }
+
+        .currency-id {
+            color: var(--muted-color);
+        }
     }
 }

@@ -3,13 +3,26 @@
     max-height: 750px;
     height: calc(100vh - 130px);
 
+    h2 {
+        color: var(--text-color);
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        margin-bottom: 40px;
+    }
+
     ::ng-deep .form-group, .form-group {
         display: flex;
         margin-right: 15px;
+        margin-bottom: 20px;
 
         label {
             width: 40%;
             margin-right: 10px;
+            color: var(--text-color);
+            font-family: var(--app-font-family);
+            font-weight: 500;
+            line-height: 30px;
         }
 
         dx-text-box,
@@ -29,27 +42,61 @@
         ::ng-deep dx-date-box {
             .dx-placeholder, input, textarea {
                 font-size: 15px;
+                font-family: var(--app-font-family);
                 font-weight: 500;
                 letter-spacing: 0.3px;
-                color: #424c56;
+                color: var(--text-color);
+                background-color: var(--background-color);
             }
 
             .dx-placeholder {
                 font-style: italic;
-                color: lightgray;
+                color: var(--muted-color);
             }
 
             &.dx-texteditor-empty.dx-state-focused .dx-placeholder {
                 font-size: 11px;
             }
+
+            &:hover {
+                border-color: var(--border-color-hover);
+            }
+
+            &.dx-state-focused {
+                border-color: var(--primary-color);
+            }
+
+            &.dx-state-disabled {
+                background-color: var(--disabled-bg);
+                color: var(--disabled-color);
+                opacity: 0.7;
+            }
         }
 
         ::ng-deep dx-tag-box {
             .dx-texteditor-input-container {
-                border-bottom: 1px solid #dfdfdf;
+                border-bottom: 1px solid var(--border-color);
 
                 input {
                     border: 0;
+                }
+            }
+
+            .dx-tag {
+                background-color: var(--primary-color);
+                color: var(--primary-color-contrast);
+                border-radius: 4px;
+                padding: 2px 8px;
+                margin: 2px;
+                font-size: 13px;
+
+                .dx-tag-remove-button {
+                    color: var(--primary-color-contrast);
+                    opacity: 0.8;
+
+                    &:hover {
+                        opacity: 1;
+                    }
                 }
             }
         }
@@ -58,23 +105,24 @@
             display: flex;
             align-items: center;
             height: 44px;
-            border-bottom: 1px solid #dfdfdf;
+            border-bottom: 1px solid var(--border-color);
 
             img {
                 border-radius: 50%;
                 height: 35px;
                 width: 35px;
-                background-color: #fff;
+                background-color: var(--card-bg);
                 margin-right: 7px;
             }
 
             .contact-name {
                 cursor: pointer;
+                color: var(--text-color);
             }
 
             .empty {
                 font-style: italic;
-                color: #aaa;
+                color: var(--muted-color);
             }
 
             i {
@@ -83,22 +131,23 @@
                 cursor: pointer;
 
                 &.fa-pencil {
-                    color: #00aeef;
+                    color: var(--primary-color);
                 }
 
                 &.fa-times {
                     font-weight: 100;
                     font-size: 20px;
-                    color: red;
+                    color: var(--danger-color);
                 }
             }
         }
 
         .right-side {
             font-size: 15px;
+            font-family: var(--app-font-family);
             font-weight: 500;
             letter-spacing: 0.3px;
-            color: #424c56;
+            color: var(--text-color);
             line-height: 45px;
 
             button {
@@ -117,11 +166,16 @@
         .domains-caption {
             display: flex;
             justify-content: space-between;
+            color: var(--text-color);
 
             .generate-domain {
-                color: #00aeef;
+                color: var(--primary-color);
                 cursor: pointer;
                 padding-right: 10px;
+
+                &:hover {
+                    color: var(--primary-color-light);
+                }
             }
         }
 
@@ -138,7 +192,7 @@
 
                 .dx-placeholder {
                     font-style: italic;
-                    color: lightgray;
+                    color: var(--muted-color);
                 }
             }
 
@@ -157,6 +211,7 @@
 
                 .domain-name {
                     font-weight: 500;
+                    color: var(--text-color);
 
                     i {
                         margin-right: 10px;
@@ -164,11 +219,11 @@
                     }
 
                     .fa-check {
-                        color: green;
+                        color: var(--success-color);
                     }
 
                     .fa-times {
-                        color: red;
+                        color: var(--danger-color);
                     }
                 }
 
@@ -182,28 +237,38 @@
                     }
 
                     .verify {
-                        border-color: #00aeef;
-                        color: #00aeef;
+                        border-color: var(--primary-color);
+                        color: var(--primary-color);
+
+                        &:hover {
+                            color: var(--primary-color-light);
+                        }
                     }
 
                     .delete {
-                        border-color: red;
-                        color: red;
+                        border-color: var(--danger-color);
+                        color: var(--danger-color);
+
+                        &:hover {
+                            color: var(--danger-color-light);
+                        }
                     }
                 }
             }
 
             .domain-dns-info {
-                border: 1px solid lightgray;
+                border: 1px solid var(--border-color);
                 border-radius: 10px;
                 padding: 5px;
+                background-color: var(--card-bg);
 
                 .container {
                     margin: 10px 0;
 
                     .header-row {
                         font-weight: bold;
-                        background-color: lightgray;
+                        background-color: var(--hover-bg);
+                        color: var(--text-color);
                     }
                 }
             }
@@ -221,12 +286,19 @@
     ::ng-deep .remove-list-item {
         margin-top: 12px;
         align-self: normal;
+        color: var(--danger-color);
+        cursor: pointer;
+
+        &:hover {
+            color: var(--danger-color-light);
+        }
     }
 
     ::ng-deep uploader {
         .m-form__help {
             display: block;
             min-height: initial !important;
+            color: var(--muted-color);
         }
     }
 }
