@@ -1,5 +1,6 @@
 .contacts {
     max-width: 490px;
+
     i.icons {
         width: 20px;
         height: 30px;
@@ -74,7 +75,8 @@
     }
 
     ul {
-        // padding-left: 3px;
+        
+        padding-left: 30px;
         position: relative;
 
         .email-row {
@@ -84,32 +86,46 @@
             padding: 5px;
             position: relative;
             background-color: #fff;            
+
+            &:hover {
+                .actions {
+                    display: flex;
+                }
+            }
+
             .icon-btn {
-                border: none;
                 background: none;
+                border: none;
+                padding: 0 5px;
+                cursor: pointer;
+            }
+
+            .email-address {
+                flex-grow: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding-left: 5px;
             }
 
             .actions {
-                display: flex;
+                display: none;
                 align-items: center;
                 gap: 5px;
 
-                i, .send-icon {
-                    transition: background 0.15s;
-                    border-radius: 4px;
+                &.visible {
+                    display: flex;
                 }
-                // i:hover, .send-icon:hover {
-                //     background: #f3f7fa;
-                // }
 
                 .send-icon {
                     display: flex;
                     align-items: center;
                     background-color: #ECF3FA;
                     padding: 3px;
-                    border-radius: 2px;
+                    border-radius: 3px;
                     font-size: 14px;
                     gap: 4px;
+                    cursor: pointer;
 
                     img {
                         width: 16px;
@@ -123,13 +139,17 @@
                     cursor: pointer;
                 }
 
-                // i.edit {
-                //     color: #00aeef;
-                // }
+                i.edit {
+                    color: #00aeef;
+                }
 
-                // i.delete {
-                //     color: #f44336;
-                // }
+                i.delete {
+                    color: #f44336;
+                }
+
+                .icon-button {
+                    cursor: pointer;
+                }
 
                 i.edit-info {
                     background: url(../../../../assets/common/icons/c-info.svg) no-repeat center;
@@ -144,6 +164,10 @@
         &:hover {
             li {
                 background-color: #F8FAFC;
+            }
+
+            .icon-button {
+                cursor: pointer;
             }
 
             // .actions {

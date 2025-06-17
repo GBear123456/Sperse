@@ -52,7 +52,6 @@ export class SocialsComponent {
     LINK_TYPES = {};
     urlRegEx = AppConsts.regexPatterns.url;
     socialIcons = [
-        { name: 'Add', img: './assets/common/icons/contact/plus_1.svg' },
         { name: 'Facebook', img: './assets/common/icons/contact/facebook_symbol.svg' },
         { name: 'X', img: './assets/common/icons/contact/twitter.svg' },
         { name: 'TikTok', img: './assets/common/icons/contact/tik-tok.svg' },
