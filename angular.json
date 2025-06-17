@@ -443,7 +443,7 @@
               "optimization": true,
               "sourceMap": false,
               "namedChunks": false,
-              "aot": true,
+              "aot": false,
               "extractLicenses": true,
               "buildOptimizer": true,
               "fileReplacements": [
@@ -467,7 +467,7 @@
               "optimization": true,
               "sourceMap": false,
               "namedChunks": false,
-              "aot": true,
+              "aot": false,
               "extractLicenses": true,
               "buildOptimizer": true,
               "fileReplacements": [
@@ -491,7 +491,7 @@
               "optimization": true,
               "sourceMap": false,
               "namedChunks": false,
-              "aot": true,
+              "aot": false,
               "extractLicenses": true,
               "buildOptimizer": true,
               "fileReplacements": [
@@ -597,7 +597,7 @@
               "optimization": true,
               "outputHashing": "all",
               "namedChunks": false,
-              "aot": true,
+              "aot": false,
               "extractLicenses": true,
               "buildOptimizer": true
             }

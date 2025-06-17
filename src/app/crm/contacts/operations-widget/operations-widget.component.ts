@@ -77,7 +77,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     @Input() customerType: string;
     @Input() leadId: number;
     @Input() selectedPipelineId: number;
-    @Input() 
+    @Input()
     set pipelineDataSource(pipelines: any[]) {
         this._pipelines = pipelines;
         if (pipelines.length)
@@ -170,8 +170,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 this.contactGroups = res;
                 this.updateActiveGroups();
             }
-        );                                                                
-        this.initSalesTalkApiLink();        
+        );
+        this.initSalesTalkApiLink();
     }
 
     initSalesTalkApiLink() {
@@ -196,12 +196,20 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         });
     }
 
+    moveNext() {
+        this.loadNextItem.bind(this);
+    }
+
+    moveBack() {
+        this.loadPrevItem.bind(this);
+    }
+
     ngOnChanges(changes: SimpleChanges) {
         /** Load users instance (or get from cache) for user id to find out whether to show cfo or verify button */
         if (changes.contactInfo && this.contactInfo.groups) {
             this.updateActiveGroups();
 
-            if (this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) && 
+            if (this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) &&
                 this.appService.isCfoLinkOrVerifyEnabled
             ) {
                 const contactInfo: ContactInfoDto = changes.contactInfo.currentValue;
@@ -312,7 +320,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 },
                                 {
                                     text: this.l('LoginToPortal'),
-                                    visible: (this.canImpersonate || this.autoLoginAllowed) 
+                                    visible: (this.canImpersonate || this.autoLoginAllowed)
                                         && !!AppConsts.appMemberPortalUrl
                                         && !this.isBankCodeLayout,
                                     action: () => {
@@ -429,7 +437,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'groups',
                             action: this.toggleStatus.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')                                
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
                         },
                         {
                             name: 'partnerType',
@@ -490,8 +498,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             },
                             disabled: !this.salesTalkApiLink ||
                                 !this.permission.checkCGPermission(this.contactInfo.groups, ''),
-                            visible: !this.appService.isHostTenant 
-                                && this.customerType != ContactGroup.Employee 
+                            visible: !this.appService.isHostTenant
+                                && this.customerType != ContactGroup.Employee
                                  && abp.features.isEnabled(AppFeatures.CRMSalesTalk)
                         }
                     ]
@@ -524,7 +532,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         options: {
                             width: '18px',
                             height: '18px',
-                            accessKey: 'open-settings-dialog',                            
+                            accessKey: 'open-settings-dialog',
                             icon: './assets/common/icons/angle-left.svg'
                         },
                         checkVisible: () => {
@@ -550,7 +558,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     get autoLoginAllowed(): Boolean {
-        return this.isUserAvailable() && this.contactInfo && 
+        return this.isUserAvailable() && this.contactInfo &&
             this.permission.checkCGPermission(this.contactInfo.groups, 'UserInformation.AutoLogin');
     }
 
@@ -640,7 +648,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         id: group.id,
                         groupId: group.id,
                         name: startCase(this.l('ContactGroup_' + this.contactGroupKeys[group.id])),
-                        isActive: status && status.groupId == group.id ? status.isActive : 
+                        isActive: status && status.groupId == group.id ? status.isActive :
                             this.contactInfo.groups.some(cg => cg.groupId == group.id && cg.isActive),
                         disabled: !this.permission.checkCGPermission([group.id], 'Manage')
                     });

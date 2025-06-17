@@ -1,13 +1,14 @@
 <div class="operations-widget">
     <ng-template #titleTemplate>
-        <h3 class="title">{{title}}</h3>
+        <h3 class="title">{{ title }}</h3>
     </ng-template>
     <app-toolbar
         [titleTemplate]="titleTemplate"
         [config]="toolbarConfig"
     ></app-toolbar>
     <ng-container *ngIf="enabled">
-        <app-static-list *ngIf="permission.checkCGPermission(contactInfo?.groups, '') && pipelineDataSource?.length && !contactInfo.parentId"
+        <app-static-list
+            *ngIf="permission.checkCGPermission(contactInfo?.groups, '') && pipelineDataSource?.length && !contactInfo.parentId"
             #stagesList
             [width]="'210px'"
             [title]="l('Stages')"
@@ -38,32 +39,32 @@
             (onSelectionChanged)="updateStatus($event)">
         </app-static-list>
         <!--<app-static-list-->
-            <!--#partnerTypesList-->
-            <!--[width]="'210px'"-->
-            <!--[title]="l('Type')"-->
-            <!--[selectedKeys]="[selectedPartnerTypeId]"-->
-            <!--[selectedItems]=""-->
-            <!--[hideButtons]="true"-->
-            <!--[highlightSelected]="true"-->
-            <!-- [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates" -->
-            <!--(onSelectionChanged)="updatePartnerType($event)"-->
-            <!--[targetSelector]="'[accessKey=PartnerType]'"-->
-            <!--[showTitle]="false"-->
-            <!--[list]="partnerTypes">-->
+        <!--#partnerTypesList-->
+        <!--[width]="'210px'"-->
+        <!--[title]="l('Type')"-->
+        <!--[selectedKeys]="[selectedPartnerTypeId]"-->
+        <!--[selectedItems]=""-->
+        <!--[hideButtons]="true"-->
+        <!--[highlightSelected]="true"-->
+        <!-- [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates" -->
+        <!--(onSelectionChanged)="updatePartnerType($event)"-->
+        <!--[targetSelector]="'[accessKey=PartnerType]'"-->
+        <!--[showTitle]="false"-->
+        <!--[list]="partnerTypes">-->
         <!--</app-static-list>-->
-        <types-list 
-            [selectedKeys]="[contactInfo.id]" 
+        <types-list
+            [selectedKeys]="[contactInfo.id]"
             [selectedItems]="[selectedPartnerTypeId]">
         </types-list>
-        <tags-list 
-            [selectedKeys]="[contactInfo.id]" 
-            [selectedItems]="contactInfo?.tags" 
+        <tags-list
+            [selectedKeys]="[contactInfo.id]"
+            [selectedItems]="contactInfo?.tags"
             [managePermission]="manageCGPermision"
             (onUpdated)="invalidateContact()">
         </tags-list>
-        <lists-list 
-            [selectedKeys]="[contactInfo.id]" 
-            [selectedItems]="contactInfo?.lists" 
+        <lists-list
+            [selectedKeys]="[contactInfo.id]"
+            [selectedItems]="contactInfo?.lists"
             [managePermission]="manageCGPermision"
             (onUpdated)="invalidateContact()">
         </lists-list>
@@ -74,17 +75,17 @@
             [permissionKey]="getAssignmentsPermissionKey()"
             [proxyService]="getProxyService()">
         </user-assignment-list>
-        <rating 
-            [selectedKeys]="[contactInfo.id]" 
-            [ratingValue]="contactInfo?.ratingId" 
-            (onRatingUpdated)="invalidateContact()" 
+        <rating
+            [selectedKeys]="[contactInfo.id]"
+            [ratingValue]="contactInfo?.ratingId"
+            (onRatingUpdated)="invalidateContact()"
             [managePermission]="manageCGPermision">
         </rating>
-        <crm-stars-list *ngIf="!isBankCodeLayout" 
-            [selectedKeys]="[contactInfo.id]" 
-            [selectedItemKey]="contactInfo?.starId"
-            [managePermission]="manageCGPermision" 
-            (onUpdated)="invalidateContact()">
+        <crm-stars-list *ngIf="!isBankCodeLayout"
+                        [selectedKeys]="[contactInfo.id]"
+                        [selectedItemKey]="contactInfo?.starId"
+                        [managePermission]="manageCGPermision"
+                        (onUpdated)="invalidateContact()">
         </crm-stars-list>
     </ng-container>
 </div>

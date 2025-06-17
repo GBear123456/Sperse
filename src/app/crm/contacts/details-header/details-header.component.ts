@@ -10,30 +10,32 @@ import {
     Output,
     ViewChild
 } from '@angular/core';
-import { ActivatedRoute, Router, Params } from '@angular/router';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 
 /** Third party import */
 import capitalize from 'underscore.string/capitalize';
-import { MatDialog } from '@angular/material/dialog';
-import { CacheService } from 'ng2-cache-service';
-import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
-import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
+import {MatDialog} from '@angular/material/dialog';
+import {CacheService} from 'ng2-cache-service';
+import {DxContextMenuComponent} from 'devextreme-angular/ui/context-menu';
+import {DxTooltipComponent} from 'devextreme-angular/ui/tooltip';
 import * as _ from 'underscore';
-import { BehaviorSubject, combineLatest, Observable, ReplaySubject, zip } from 'rxjs';
-import { filter, finalize, first, map, switchMap, takeUntil } from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, Observable, ReplaySubject, zip} from 'rxjs';
+import {filter, finalize, first, map, switchMap, takeUntil} from 'rxjs/operators';
 
 /** Application imports */
-import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppConsts } from '@shared/AppConsts';
-import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
-import { PersonDialogComponent } from '../person-dialog/person-dialog.component';
-import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
-import { RelationCompaniesDialogComponent } from '../relation-companies-dialog/relation-companies-dialog.component';
-import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
-import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
+import {DialogService} from '@app/shared/common/dialogs/dialog.service';
+import {AppConsts} from '@shared/AppConsts';
+import {UploadPhotoDialogComponent} from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import {PersonDialogComponent} from '../person-dialog/person-dialog.component';
+import {CreateEntityDialogComponent} from '@shared/common/create-entity-dialog/create-entity-dialog.component';
+import {RelationCompaniesDialogComponent} from '../relation-companies-dialog/relation-companies-dialog.component';
+import {CreateInvoiceDialogComponent} from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import {
-    ContactInfoDto,
+    AddSubscriptionDialogComponent
+} from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
+import {
     ContactGroupInfo,
+    ContactInfoDto,
     ContactPhotoServiceProxy,
     ContactServiceProxy,
     CreateContactPhotoInput,
@@ -49,37 +51,38 @@ import {
     UpdatePersonNameInput,
     UpdatePersonOrgRelationInput
 } from '@shared/service-proxies/service-proxies';
-import { NameParserService } from '@shared/common/name-parser/name-parser.service';
-import { NoteAddDialogComponent } from '../notes/note-add-dialog/note-add-dialog.component';
-import { AppService } from '@app/app.service';
-import { StringHelper } from '@shared/helpers/StringHelper';
-import { ContactGroup } from '@shared/AppEnums';
-import { CompanyDialogComponent } from '@app/crm/contacts/company-dialog/company-dialog.component';
-import { ContactsService } from '../contacts.service';
-import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
-import { ContextMenuItem } from '@app/crm/contacts/details-header/context-menu-item.interface';
-import { AppPermissions } from '@shared/AppPermissions';
-import { AppFeatures } from '@shared/AppFeatures';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { MessageService } from 'abp-ng2-module';
-import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { PermissionCheckerService } from 'abp-ng2-module';
-import { ProfileService } from '@shared/common/profile-service/profile.service';
-import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
-import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
-import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
-import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
-import { PersonHistoryDialogComponent } from '../personal-details/personal-details-dialog/person-history-dialog/person-history-dialog.component';
+import {NameParserService} from '@shared/common/name-parser/name-parser.service';
+import {NoteAddDialogComponent} from '../notes/note-add-dialog/note-add-dialog.component';
+import {AppService} from '@app/app.service';
+import {StringHelper} from '@shared/helpers/StringHelper';
+import {ContactGroup} from '@shared/AppEnums';
+import {CompanyDialogComponent} from '@app/crm/contacts/company-dialog/company-dialog.component';
+import {ContactsService} from '../contacts.service';
+import {LifecycleSubjectsService} from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import {UserManagementService} from '@shared/common/layout/user-management-list/user-management.service';
+import {ContextType} from '@app/crm/contacts/details-header/context-type.enum';
+import {ContextMenuItem} from '@app/crm/contacts/details-header/context-menu-item.interface';
+import {AppPermissions} from '@shared/AppPermissions';
+import {AppFeatures} from '@shared/AppFeatures';
+import {AppLocalizationService} from '@app/shared/common/localization/app-localization.service';
+import {CacheHelper} from '@shared/common/cache-helper/cache-helper';
+import {MessageService, PermissionCheckerService} from 'abp-ng2-module';
+import {LoadingService} from '@shared/common/loading-service/loading.service';
+import {ProfileService} from '@shared/common/profile-service/profile.service';
+import {AppPermissionService} from '@shared/common/auth/permission.service';
+import {CreateEntityDialogData} from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
+import {UploadPhotoData} from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import {UploadPhotoResult} from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
+import {NoteAddDialogData} from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
+import {
+    PersonHistoryDialogComponent
+} from '../personal-details/personal-details-dialog/person-history-dialog/person-history-dialog.component';
 
 @Component({
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [ ContactPhotoServiceProxy, LifecycleSubjectsService ]
+    providers: [ContactPhotoServiceProxy, LifecycleSubjectsService]
 })
 export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
@@ -91,6 +94,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     public set data(data: ContactInfoDto) {
         data && this.contactInfo.next(data);
     }
+
     public get data(): ContactInfoDto {
         return this.contactInfo.getValue();
     }
@@ -99,6 +103,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     public set personContactInfo(data: PersonContactInfoDto) {
         this._personContactInfo.next(data);
     }
+
     public get personContactInfo(): PersonContactInfoDto {
         return this._personContactInfo.getValue();
     }
@@ -106,8 +111,11 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @Input() ratingId: number;
     private readonly ADD_OPTION_DEFAULT = ContextType.AddFiles;
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
+    @Output() onPrev: EventEmitter<any> = new EventEmitter();
+    @Output() onNext: EventEmitter<any> = new EventEmitter();
 
     contextType = ContextType;
+
     get isOrgUpdatable(): Boolean {
         return this.manageCompaniesAllowed && this.data && this.data['organizationContactInfo']
             && this.data['organizationContactInfo'].isUpdatable;
@@ -166,20 +174,21 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     addButtonTitle = '';
     isBankCodeLayout = this.userManagementService.checkBankCodeFeature();
     nameValidationRules = [
-        { type: 'required', message: this.ls.l('FullNameIsRequired') },
-        { type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.ls.l('FullNameIsNotValid') }
+        {type: 'required', message: this.ls.l('FullNameIsRequired')},
+        {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.ls.l('FullNameIsNotValid')}
     ];
     companyValidationRules = [
-        { type: 'required', message: this.ls.l('CompanyNameIsRequired') }
+        {type: 'required', message: this.ls.l('CompanyNameIsRequired')}
     ];
     @Input() name: string = 'JamesSmith';
     // @Input() roles: string[] = ['Affiliate', 'Manager', 'Partner'];
-    selectedRole: string = 'Affiliate'
+    selectedRole: string = 'Affiliate';
 
     constructor(
         injector: Injector,
         private activatedRoute: ActivatedRoute,
         private contactServiceProxy: ContactServiceProxy,
+        private contactService: ContactsService,
         private personOrgRelationService: PersonOrgRelationServiceProxy,
         private orgContactService: OrganizationContactServiceProxy,
         private userManagementService: UserManagementService,
@@ -413,9 +422,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             maxWidth: '830px'
         }).afterClosed().subscribe(result => {
             if (result) {
-                 companyInfo.organization = new OrganizationInfoDto(result.company);
-                 companyInfo.fullName = result.company.fullName;
-                 companyInfo.primaryPhoto = result.company.primaryPhoto;
+                companyInfo.organization = new OrganizationInfoDto(result.company);
+                companyInfo.fullName = result.company.fullName;
+                companyInfo.primaryPhoto = result.company.primaryPhoto;
             }
         });
         if (e.stopPropagation) {
@@ -490,10 +499,10 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                             thumbnail: base64ThumbImage,
                             source: result.source
                         })).subscribe((result: string) => {
-                            this.handlePhotoChange(dataField, base64OrigImage, result);
-                        });
+                        this.handlePhotoChange(dataField, base64OrigImage, result);
+                    });
                 }
-        });
+            });
         event.stopPropagation();
     }
 
@@ -544,7 +553,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         let person = this.data.personContactInfo.person;
         this.nameParserService.parseIntoPerson(value, person);
         this.personContactServiceProxy.updatePersonName(
-            UpdatePersonNameInput.fromJS(_.extend({ id: person.contactId}, person))
+            UpdatePersonNameInput.fromJS(_.extend({id: person.contactId}, person))
         ).subscribe(() => {
             this.data.personContactInfo.fullName = value;
         });
@@ -666,7 +675,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 hasBackdrop: false,
                 closeOnNavigation: false,
                 disableClose: true,
-                data: { contactId: this.data.id, leadId: leadId }
+                data: {contactId: this.data.id, leadId: leadId}
             });
 
         }
@@ -731,14 +740,14 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     showEmailDialog() {
         this.contactsService.showEmailDialog(
-            { contact: this.data }
+            {contact: this.data}
         ).subscribe();
 
         this.closeContextTooltip();
     }
 
     showSMSDialog() {
-        this.contactsService.showSMSDialog({ contact: this.data });
+        this.contactsService.showSMSDialog({contact: this.data});
         this.closeContextTooltip();
     }
 

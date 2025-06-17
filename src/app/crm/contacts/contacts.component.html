@@ -2,7 +2,7 @@
     [navLinks]="navLinks"
     [queryParams]="queryParams"
     [rightPanelOpened]="showModernLayout ? contactsService?.settingsDialogOpened?.value : false"
-    [showModernLayout]="showModernLayout"    
+    [showModernLayout]="showModernLayout"
     (onClose)="close()"
     (onChanged)="updateContextType($event)">
     <ng-container topHeader *ngIf="!showModernLayout">
@@ -22,7 +22,7 @@
             <a [class.disabled]="!manageAllowed" (click)="contactsService.showNoteAddDialog()">
                 <i class="note-icon" aria-hidden="true"></i>
             </a>
-            <a *ngIf="isInboundOutboundSMSAllowed" 
+            <a *ngIf="isInboundOutboundSMSAllowed"
                (click)="contactsService.showSMSDialog({ contact: contactInfo })"
                [class.disabled]="!isSendSmsAndEmailAllowed || isSMSIntegrationDisabled">
                 <i class="sms-icon fa fa-commenting-o"></i>
@@ -48,25 +48,33 @@
     </ng-container>
     <ng-container aboveNavigation>
         <details-header *ngIf="showModernLayout"
-            [data]="contactInfo"
-            [contactGroupId]="contactGroupId$ | async"
-            [personContactInfo]="personContactInfo"
-            [ratingId]="contactInfo.ratingId"
-            (onInvalidate)="reloadCurrentSection($event)">
+                        [data]="contactInfo"
+                        [contactGroupId]="contactGroupId$ | async"
+                        [personContactInfo]="personContactInfo"
+                        [ratingId]="contactInfo.ratingId"
+                        (onInvalidate)="reloadCurrentSection($event)"
+                        (onPrev)="moveBack()"
+        >
         </details-header>
 
         <div class="short-contact" *ngIf="!isUserProfile && !showModernLayout">
             <div class="related-contacts">
-                <div *ngIf="contactInfo && contactInfo['organizationContactInfo']?.contactPersons?.length > 1; else addNew" class="contact-persons-info" (click)="showContactPersons($event)">
+                <div
+                    *ngIf="contactInfo && contactInfo['organizationContactInfo']?.contactPersons?.length > 1; else addNew"
+                    class="contact-persons-info" (click)="showContactPersons($event)">
                     <img src="./assets/common/icons/similar-contacts.svg" alt="Contact Persons">
-                    <span class="similar-contacts-count">{{ contactInfo['organizationContactInfo']?.contactPersons.length - 1 }} related contact<span *ngIf="contactInfo['organizationContactInfo']?.contactPersons.length - 1 > 1">s</span></span>
+                    <span
+                        class="similar-contacts-count">{{ contactInfo['organizationContactInfo']?.contactPersons.length - 1 }}
+                        related contact<span
+                            *ngIf="contactInfo['organizationContactInfo']?.contactPersons.length - 1 > 1">s</span></span>
                     <img src="./assets/common/icons/down-arrow-icon.svg" alt="Contact Persons">
                 </div>
 
                 <ng-template #addNew>
-                    <div class="contact-persons-info" (click)="addNewContact($event)" *ngIf="contactInfo?.primaryOrganizationContactId && manageAllowed">
+                    <div class="contact-persons-info" (click)="addNewContact($event)"
+                         *ngIf="contactInfo?.primaryOrganizationContactId && manageAllowed">
                         <img src="./assets/common/icons/similar-contacts.svg" alt="Contact Persons">
-                        <a class="add-new-contact">{{l('AddRelatedContact')}}</a>
+                        <a class="add-new-contact">{{ l('AddRelatedContact') }}</a>
                     </div>
                 </ng-template>
                 <div class="sub-contacts-info" (click)="addNewContact($event, true)"
@@ -74,17 +82,19 @@
                     <img src="./assets/common/icons/similar-contacts.svg" [alt]="l('SubContact')">
                     <div>
                         <div *ngIf="contactInfo?.subContactsCount">
-                            {{ contactInfo.subContactsCount + ' ' + (contactInfo.subContactsCount === 1
-                            ? this.l('subContact_single')
-                            : this.l('subContact_plural')) }}
+                            {{
+                                contactInfo.subContactsCount + ' ' + (contactInfo.subContactsCount === 1
+                                    ? this.l('subContact_single')
+                                    : this.l('subContact_plural'))
+                            }}
                         </div>
-                        <a *ngIf="manageAllowed" class="add-new-contact sub-contact">+ {{l('AddSubContact')}}</a>
+                        <a *ngIf="manageAllowed" class="add-new-contact sub-contact">+ {{ l('AddSubContact') }}</a>
                     </div>
                 </div>
                 <ng-template #backToParent>
                     <div class="contact-persons-info" (click)="showParent()" [title]="l('Parent Contact')">
                         <img src="./assets/common/icons/similar-contacts.svg">
-                        <a class="add-new-contact">{{contactInfo?.parentName || l('Parent')}}</a>
+                        <a class="add-new-contact">{{ contactInfo?.parentName || l('Parent') }}</a>
                     </div>
                 </ng-template>
             </div>
@@ -111,9 +121,9 @@
         </operations-widget>
     </ng-container>
     <ng-container rightPanel>
-        <personal-details-dialog 
-            [isModal]="false" 
-            [showContactPersons]="showContactPersons" 
+        <personal-details-dialog
+            [isModal]="false"
+            [showContactPersons]="showContactPersons"
             [addNewContact]="addNewContact">
         </personal-details-dialog>
     </ng-container>

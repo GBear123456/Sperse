@@ -1,5 +1,6 @@
 .contacts {
     max-width: 490px;
+
     i.icons {
         width: 20px;
         height: 30px;
@@ -41,6 +42,7 @@
             ::ng-deep &.update i {
                 color: #00aeef;
             }
+
             ::ng-deep &.exit i {
                 color: #f44336;
             }
@@ -96,11 +98,6 @@
                 border: none;
                 padding: 0 5px;
                 cursor: pointer;
-
-                img {
-                    width: 20px;
-                    height: 20px;
-                }
             }
 
             .email-address {
@@ -125,9 +122,10 @@
                     align-items: center;
                     background-color: #ECF3FA;
                     padding: 3px;
-                    border-radius: 2px;
+                    border-radius: 3px;
                     font-size: 14px;
                     gap: 4px;
+                    cursor: pointer;
 
                     img {
                         width: 16px;
@@ -149,6 +147,10 @@
                     color: #f44336;
                 }
 
+                .icon-button {
+                    cursor: pointer;
+                }
+
                 i.edit-info {
                     background: url(../../../../assets/common/icons/c-info.svg) no-repeat center;
                     background-size: 20px;
@@ -158,7 +160,6 @@
                 }
             }
         }
-
 
 
         //.actions {
@@ -198,6 +199,10 @@
         &:hover {
             li {
                 background-color: #F8FAFC;
+            }
+
+            .icon-button {
+                cursor: pointer;
             }
 
             //.actions {

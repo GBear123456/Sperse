@@ -1,17 +1,17 @@
 /** Core imports */
-import { Component, Injector, HostBinding, OnDestroy, ViewChild } from '@angular/core';
-import { ActivationEnd, Event, NavigationEnd, Params } from '@angular/router';
+import {Component, HostBinding, Injector, OnDestroy, ViewChild} from '@angular/core';
+import {ActivationEnd, Event, NavigationEnd, Params} from '@angular/router';
 
 /** Third party imports */
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, forkJoin, Observable, of, zip } from 'rxjs';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {select, Store} from '@ngrx/store';
+import {BehaviorSubject, combineLatest, forkJoin, Observable, of, zip} from 'rxjs';
 import {
-    first,
     buffer,
     debounceTime,
     filter,
     finalize,
+    first,
     map,
     publishReplay,
     refCount,
@@ -22,14 +22,15 @@ import {
 import * as _ from 'underscore';
 
 /** Application imports */
-import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppStore, ContactAssignedUsersStoreSelectors, PartnerTypesStoreSelectors } from '@app/store';
-import { PipelinesStoreActions } from '@app/crm/store';
-import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup, ContactStatus } from '@shared/AppEnums';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import {PipelineService} from '@app/shared/pipeline/pipeline.service';
+import {DialogService} from '@app/shared/common/dialogs/dialog.service';
+import {AppStore, ContactAssignedUsersStoreSelectors, PartnerTypesStoreSelectors} from '@app/store';
+import {PipelinesStoreActions} from '@app/crm/store';
+import {AppConsts} from '@shared/AppConsts';
+import {ContactGroup} from '@shared/AppEnums';
+import {AppComponentBase} from '@shared/common/app-component-base';
 import {
+    ContactGroupInfo,
     ContactInfoDto,
     ContactServiceProxy,
     CustomerServiceProxy,
@@ -39,41 +40,39 @@ import {
     OrganizationContactServiceProxy,
     PartnerInfoDto,
     PartnerServiceProxy,
+    PartnerTypeDto,
     PersonContactInfoDto,
     PersonShortInfoDto,
     PipelineDto,
     StageDto,
     UpdatePartnerTypeInput,
-    UserServiceProxy,
-    LayoutType,
-    PartnerTypeDto,
-    ContactGroupInfo
+    UserServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { OperationsWidgetComponent } from './operations-widget/operations-widget.component';
-import { ContactsService } from './contacts.service';
-import { AppStoreService } from '@app/store/app-store.service';
-import { RP_CONTACT_INFO_ID, RP_DEFAULT_ID, RP_LEAD_INFO_ID, RP_USER_INFO_ID } from './contacts.const';
-import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
-import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
-import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
-import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
-import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
-import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
-import { AppPermissions } from '@shared/AppPermissions';
-import { NavLink } from '@app/crm/contacts/nav-link.model';
-import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
-import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
-import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
-import { GroupStatus } from '@app/crm/contacts/operations-widget/status.interface';
-import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
-import { AppSessionService } from '@shared/common/session/app-session.service';
-import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
-import { AppFeatures } from '@shared/AppFeatures';
+import {OperationsWidgetComponent} from './operations-widget/operations-widget.component';
+import {ContactsService} from './contacts.service';
+import {AppStoreService} from '@app/store/app-store.service';
+import {RP_CONTACT_INFO_ID, RP_DEFAULT_ID, RP_LEAD_INFO_ID, RP_USER_INFO_ID} from './contacts.const';
+import {ContactPersonsDialogComponent} from './contact-persons-dialog/contact-persons-dialog.component';
+import {CreateEntityDialogComponent} from '@shared/common/create-entity-dialog/create-entity-dialog.component';
+import {ItemDetailsService} from '@shared/common/item-details-layout/item-details.service';
+import {ItemTypeEnum} from '@shared/common/item-details-layout/item-type.enum';
+import {ItemFullInfo} from '@shared/common/item-details-layout/item-full-info';
+import {TargetDirectionEnum} from '@app/crm/contacts/target-direction.enum';
+import {AppPermissions} from '@shared/AppPermissions';
+import {NavLink} from '@app/crm/contacts/nav-link.model';
+import {ContextType} from '@app/crm/contacts/details-header/context-type.enum';
+import {DetailsHeaderComponent} from '@app/crm/contacts/details-header/details-header.component';
+import {AppHttpConfiguration} from '@shared/http/appHttpConfiguration';
+import {GroupStatus} from '@app/crm/contacts/operations-widget/status.interface';
+import {CreateEntityDialogData} from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
+import {AppSessionService} from '@shared/common/session/app-session.service';
+import {EntityTypeSys} from '@app/crm/leads/entity-type-sys.enum';
+import {AppFeatures} from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './contacts.component.html',
     styleUrls: ['./contacts.component.less'],
-    providers: [ AppStoreService, DialogService ]
+    providers: [AppStoreService, DialogService]
 })
 export class ContactsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
@@ -82,7 +81,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         return this.layoutService.showModernLayout
     };
 
-    readonly RP_DEFAULT_ID   = RP_DEFAULT_ID;
+    readonly RP_DEFAULT_ID = RP_DEFAULT_ID;
     readonly RP_USER_INFO_ID = RP_USER_INFO_ID;
     readonly RP_LEAD_INFO_ID = RP_LEAD_INFO_ID;
     readonly RP_CONTACT_INFO_ID = RP_CONTACT_INFO_ID;
@@ -164,15 +163,15 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                         if (lead.typeSysId == EntityTypeSys.PropertyAcquisition) return this.l('SellerContactInfo');
                         if (lead.typeSysId.startsWith(EntityTypeSys.PropertyRentAndSale)) return this.l('BuyerContactInfo');
                     }
-                    return this.l('Contact Overview')
+                    return this.l('Contact Overview');
                 }
             )),
             route: 'contact-information',
             icon: 'contact'
         },
-        { 
-            name: 'personal-details', 
-            label: this.l('PersonalDetails'), 
+        {
+            name: 'personal-details',
+            label: this.l('PersonalDetails'),
             route: 'personal-details',
             icon: 'personal'
         },
@@ -182,10 +181,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 ? this.l('UserInformation')
                 : this.l('InviteUser'))),
             visible$: combineLatest(this.userId$, this.contactsService.contactInfo$).pipe(
-                map(([userId, contactInfo] : [number, ContactInfoDto]) => {
+                map(([userId, contactInfo]: [number, ContactInfoDto]) => {
                     return userId ? this.permission.isGranted(AppPermissions.AdministrationUsersEdit)
                         || contactInfo && this.permission.checkCGPermission(contactInfo.groups, 'UserInformation')
-                    : this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
+                        : this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
                 })
             ),
             route: 'user-information',
@@ -212,9 +211,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             route: 'documents',
             icon: 'documents'
         },
-        { 
-            name: 'notes', 
-            label: this.l('Notes'), 
+        {
+            name: 'notes',
+            label: this.l('Notes'),
             route: 'notes',
             icon: 'notes-messages'
         },
@@ -243,7 +242,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         },
         {
             name: 'reseller-activity',
-            label: this.l('ResellerActivity'), 
+            label: this.l('ResellerActivity'),
             route: 'reseller-activity',
             icon: 'reseller-activity'
         },
@@ -299,7 +298,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
     manageAllowed = false;
-    
+
     isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
     isInboundOutboundSMSAllowed = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     isCommunicationHistoryAllowed = false;
@@ -410,7 +409,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.pageHeaderFixed();
         this.initNavigatorProperties();
         const itemKeyField = this.dataSourceURI == ItemTypeEnum.User ? 'id' : 'Id',
-              itemDistinctField = [ItemTypeEnum.Order, ItemTypeEnum.Subscription].indexOf(this.dataSourceURI) >= 0 ? 'LeadId' : itemKeyField;
+            itemDistinctField = [ItemTypeEnum.Order, ItemTypeEnum.Subscription].indexOf(this.dataSourceURI) >= 0 ? 'LeadId' : itemKeyField;
         let subscription = this.targetEntity$.pipe(
             /** To avoid fast next/prev clicking */
             takeUntil(this.destroy$),
@@ -431,7 +430,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 finalize(() => this.finishLoading(true))
             ))
         ).subscribe((itemFullInfo: ItemFullInfo) => {
-            let isImproperItemInfo = itemFullInfo && itemFullInfo.itemData && this.currentItemId != itemFullInfo.itemData[itemKeyField]; 
+            let isImproperItemInfo = itemFullInfo && itemFullInfo.itemData && this.currentItemId != itemFullInfo.itemData[itemKeyField];
             if (isImproperItemInfo && itemFullInfo.items.some(item => this.currentItemId == item[itemKeyField])) {
                 subscription.unsubscribe();
                 this.targetEntity.next(TargetDirectionEnum.Current);
@@ -494,7 +493,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         if (contactGroupId && contactInfo.groups.some(group => group.groupId == contactGroupId)) {
             return contactGroupId;
         }
-        let group = contactInfo.groups.filter(group => group.isActive).shift() || 
+        let group = contactInfo.groups.filter(group => group.isActive).shift() ||
             contactInfo.groups.filter(group => group.isProspective).shift();
 
         return (group && group.groupId) || contactInfo.groups[0].groupId || ContactGroup.Client;
@@ -507,7 +506,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.manageAllowed = this.permission.checkCGPermission(result.groups);
         this.assignedUsersSelector = select(
             ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
-            { contactGroup: this.contactGroupId.value }
+            {contactGroup: this.contactGroupId.value}
         );
         contactId = contactId || result.personContactInfo.id;
         if (result['organizationContactInfo'] && result['organizationContactInfo'].contactPersons) {
@@ -522,7 +521,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             'ViewCommunicationHistory'
         );
         this.isSendSmsAndEmailAllowed = featureMaxMessageCount && this.permission.checkCGPermission(
-            result.groups, 
+            result.groups,
             'ViewCommunicationHistory.SendSMSAndEmail'
         );
 
@@ -545,7 +544,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.contactsService.leadInfoUpdate({
                 ...this.params,
                 ...leadInfo
-            });        
+            });
             this.loadLeadsStages();
         }
         this.storeInitialData();
@@ -631,12 +630,24 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     updateContextType(navLink: NavLink, closeDialogs = true): ContextType {
         let newSelectedContextType: ContextType;
         switch (navLink.name) {
-            case 'documents': newSelectedContextType = ContextType.AddFiles;  break;
-            case 'contact-information': newSelectedContextType = ContextType.AddContact;  break;
-            case 'notes': newSelectedContextType = ContextType.AddNotes;  break;
-            case 'invoices': newSelectedContextType = ContextType.AddInvoice; break;
-            case 'lead-related-contacts': newSelectedContextType = ContextType.AddContact; break;
-            case 'subscriptions': newSelectedContextType = ContextType.AddSubscription; break;
+            case 'documents':
+                newSelectedContextType = ContextType.AddFiles;
+                break;
+            case 'contact-information':
+                newSelectedContextType = ContextType.AddContact;
+                break;
+            case 'notes':
+                newSelectedContextType = ContextType.AddNotes;
+                break;
+            case 'invoices':
+                newSelectedContextType = ContextType.AddInvoice;
+                break;
+            case 'lead-related-contacts':
+                newSelectedContextType = ContextType.AddContact;
+                break;
+            case 'subscriptions':
+                newSelectedContextType = ContextType.AddSubscription;
+                break;
         }
         if (closeDialogs)
             this.closeEditDialogs();
@@ -701,7 +712,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.contactGroupId$.pipe(filter(Boolean), first()).subscribe((contactGroupId: string) => {
                 !lastLeadCallback && this.startLoading(true);
                 let leadId = leadInfo && leadInfo.id,
-                    leadInfo$ = leadId && !lastLeadCallback ? 
+                    leadInfo$ = leadId && !lastLeadCallback ?
                         this.leadService.getLeadInfo(leadId) :
                         this.leadService.getLastLeadInfo(
                             contactGroupId, contactInfo.id
@@ -745,7 +756,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.allPipelines = pipelines.filter(
                 (pipeline: PipelineDto) => leadCGManageAllowed ?
                     this.permission.checkCGPermission([pipeline.contactGroupId]) && (
-                        !pipeline.entityTypeSysId || (                        
+                        !pipeline.entityTypeSysId || (
                             pipeline.entityTypeSysId.startsWith('Property') && leadInfo.propertyId
                         )
                     ) : pipeline.contactGroupId == leadInfo.contactGroupId
@@ -762,7 +773,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                             action: this.updateLeadStage.bind(this),
                             disabled: !leadCGManageAllowed || (leadInfo.pipelineId != pipeline.id && stage.isFinal),
                             pipelineId: pipeline.id
-                        }
+                        };
                     })
                 };
             });
@@ -787,14 +798,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private showConfirmationDialog(status: GroupStatus) {
         let hasActiveGroupBefore = this.contactInfo.groups.some(group => group.isActive),
-            hasActiveGroupAfter = this.contactInfo.groups.some(group => 
+            hasActiveGroupAfter = this.contactInfo.groups.some(group =>
                 group.groupId == status.groupId ? status.isActive : group.isActive
             );
         this.contactsService.updateStatus(
-            this.contactInfo.id, status.groupId, 
-            status.isActive, 'contact', !hasActiveGroupAfter            
+            this.contactInfo.id, status.groupId,
+            status.isActive, 'contact', !hasActiveGroupAfter
         ).subscribe((confirm: boolean) => {
-            if (confirm) {   
+            if (confirm) {
                 this.contactInfo.groups.some(group => {
                     if (group.groupId == status.groupId) {
                         group.isActive = status.isActive;
@@ -815,8 +826,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         status.isActive = !status.isActive;
         if (this.contactInfo.groups.every(group => group.groupId != status.groupId))
             this.contactInfo.groups.push(<ContactGroupInfo>{
-                groupId: status.groupId, 
-                isActive: status.isActive, 
+                groupId: status.groupId,
+                isActive: status.isActive,
                 isProspective: true
             });
         this.toolbarComponent.updateActiveGroups();
@@ -831,7 +842,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             closeOnNavigation: true,
             position: this.getDialogPosition(event, posLeft, 89),
             panelClass: [
-                'related-contacts', 
+                'related-contacts',
                 ...(this.showModernLayout ? ['modern'] : [])
             ]
         }).afterClosed().subscribe(result => {
@@ -853,7 +864,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             }
         });
         event.stopPropagation();
-    }
+    };
 
     getDialogPosition(event, shiftX, shiftY) {
         return DialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, shiftY);
@@ -867,7 +878,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             let compare = JSON.stringify(<any>data);
             refresh = this.initialData != compare;
         }
-        let queryParams = { ... this.queryParams };
+        let queryParams = {...this.queryParams};
         if (queryParams.referrer) {
             delete queryParams.referrer;
         }
@@ -876,7 +887,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             {
                 queryParams: _.extend(
                     queryParams,
-                    refresh ? { refresh: Date.now() } : {}
+                    refresh ? {refresh: Date.now()} : {}
                 )
             }
         );
@@ -941,10 +952,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     confirmed => {
                         if (confirmed)
                             this.updateStageInternal(pipelineId, $event.itemData);
-                        else 
+                        else
                             this.toolbarComponent.stagesComponent.disabled = false;
                     }
-                )
+                );
             this.toolbarComponent.stagesComponent.toggle();
         });
         $event.event.stopPropagation();
@@ -1017,11 +1028,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     getAssignmentsPermissionKey = () => {
         return this.contactGroupId.value ? this.permission.getCGPermissionKey(
             [this.contactGroupId.value], 'ManageAssignments') : '';
-    }
+    };
 
     getProxyService = () => {
         return this.contactService;
-    }
+    };
 
     addNewContact = (event, isSubContact = false) => {
         if (this.isUserProfile || !this.manageAllowed)
@@ -1049,7 +1060,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 });
         });
         event.stopPropagation();
-    }
+    };
 
     reloadCurrentSection(params = this.params) {
         let area = this._router.url.split('?').shift().split('/').pop();

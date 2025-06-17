@@ -174,6 +174,15 @@
     align-items: center;
     gap: 8px;
 
+    .add-icon-btn {
+        width: 30px;
+        height: 30px;
+        background-color: #ffffff;
+        border: 0.5px solid #F2F6F8;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
     .social-icon-btn {
         width: 24px;
         height: 24px;
@@ -187,8 +196,8 @@
         cursor: pointer;
 
         img {
-            width: 16px;
-            height: 16px;
+            width: 12px;
+            height: 12px;
             object-fit: contain;
         }
 
@@ -201,7 +210,7 @@
 .video-link-row {
     display: flex;
     align-items: center;
-    min-height: 36px;
+    min-height: 38px;
     margin-top: 10px;
     padding: 0 6px;
     background: #fff;
@@ -220,13 +229,13 @@
     .link-block {
         display: flex;
         align-items: center;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
+        border: 1px solid #E1E7ED;
+        border-radius: 8px;
         padding: 0 8px 0 5px;
         background: #fff;
         min-width: 0;
         flex: 1;
-        min-height: 32px;
+        min-height: 38px;
 
         .icon {
             display: flex;
@@ -234,9 +243,6 @@
             margin-right: 6px;
 
             svg {
-                width: 22px;
-                height: 22px;
-                border-radius: 6px;
                 display: block;
             }
         }
@@ -257,9 +263,8 @@
             pointer-events: none;
             background: transparent;
             border: none;
-            border-radius: 50%;
             padding: 3px;
-            margin-left: 2px;
+            margin: 4px;
             display: flex;
             align-items: center;
 
@@ -270,7 +275,7 @@
             transition: background 0.2s, color 0.2s;
 
             &:hover {
-                background: #f1f5f9;
+                //background: #f1f5f9;
 
                 svg rect,
                 svg path {
@@ -298,7 +303,7 @@
         transition: background 0.2s, color 0.2s;
 
         &:hover {
-            background: #f1f5f9;
+            //background: #f1f5f9;
 
             svg rect,
             svg path {
