@@ -20,6 +20,7 @@
                 <div class="link disabled"><i class="ungroup"></i>{{l('Duplicate as Recurring')}}</div>
             </div>
             <div class="list">
+                <div class="link" [ngClass]="{disabled: refundDisabled}" (click)="onMenuItemClick(refundInvoice)"><i class="refund"></i>{{l('Refund')}}</div>
                 <div class="link" [ngClass]="{disabled: markAsCancelledDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Canceled))"><i class="e-remove"></i>{{l('Cancel')}}</div>
                 <div class="link disabled" [hidden]="true"><i class="folder-13"></i>{{l('Archive')}}</div>
                 <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(deleteInvoice)"><i class="bin"></i>{{l('Delete')}}</div>
