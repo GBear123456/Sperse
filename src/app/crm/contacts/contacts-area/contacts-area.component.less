@@ -29,11 +29,14 @@
             font-family: var(--app-font-family);
         }
 
-        dx-text-box, dx-button, international-phone-number {
+        dx-text-box,
+        dx-button,
+        international-phone-number {
             display: inline-block;
         }
 
-        dx-text-box, international-phone-number {
+        dx-text-box,
+        international-phone-number {
             min-width: 230px;
             width: 70%;
         }
@@ -42,6 +45,7 @@
             ::ng-deep &.update i {
                 color: #00aeef;
             }
+
             ::ng-deep &.exit i {
                 color: #f44336;
             }
@@ -75,8 +79,6 @@
     }
 
     ul {
-        
-        padding-left: 30px;
         position: relative;
 
         .email-row {
@@ -85,7 +87,7 @@
             justify-content: space-between;
             padding: 5px;
             position: relative;
-            background-color: #fff;            
+            background-color: #fff;
 
             &:hover {
                 .actions {
@@ -96,7 +98,7 @@
             .icon-btn {
                 background: none;
                 border: none;
-                padding: 0 5px;
+                padding: 0 0;
                 cursor: pointer;
             }
 
@@ -176,7 +178,7 @@
         }
     }
 
-    & > div {
+    &>div {
         width: 94%;
         margin-bottom: 15px;
     }
@@ -192,11 +194,16 @@
         text-align: left;
         color: #424c56;
 
-        -webkit-touch-callout: none; /* iOS Safari */
-        -webkit-user-select: none; /* Safari */
-        -khtml-user-select: none; /* Konqueror HTML */
-        -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
+        -webkit-touch-callout: none;
+        /* iOS Safari */
+        -webkit-user-select: none;
+        /* Safari */
+        -khtml-user-select: none;
+        /* Konqueror HTML */
+        -moz-user-select: none;
+        /* Firefox */
+        -ms-user-select: none;
+        /* Internet Explorer/Edge */
         user-select: none;
         /* Non-prefixed version, currently
                                          supported by Chrome and Opera */
