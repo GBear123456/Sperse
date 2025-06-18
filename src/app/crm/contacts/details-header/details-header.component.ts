@@ -79,12 +79,12 @@ import { PersonHistoryDialogComponent } from '../personal-details/personal-detai
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [ ContactPhotoServiceProxy, LifecycleSubjectsService ]
+    providers: [ContactPhotoServiceProxy, LifecycleSubjectsService]
 })
 export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
     @ViewChild(DxTooltipComponent) addTooltipComponent: DxTooltipComponent;
-    @HostBinding('class.modern') @Input() showModernLayout: boolean = 
+    @HostBinding('class.modern') @Input() showModernLayout: boolean =
         this.appService.layoutService.showModernLayout;
 
     @Input()
@@ -113,7 +113,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             && this.data['organizationContactInfo'].isUpdatable;
     }
 
-    @Input() contactGroupId: ContactGroup; 
+    @Input() contactGroupId: ContactGroup;
 
     private contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
@@ -172,9 +172,13 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     companyValidationRules = [
         { type: 'required', message: this.ls.l('CompanyNameIsRequired') }
     ];
-    @Input() name: string = 'JamesSmith';
+    @Input() name: string;
+    @Input() companyName: string;
     // @Input() roles: string[] = ['Affiliate', 'Manager', 'Partner'];
-    selectedRole: string = 'Affiliate'
+    selectedRole: string;
+
+    @Input() contactIds: number[] = []; // List of all contact IDs
+    @Input() currentContactId: number;  // Current contact's ID
 
     constructor(
         injector: Injector,
@@ -199,7 +203,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         public router: Router
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.contactsService.leadInfo$.pipe(takeUntil(this.lifeCycleService.destroy$))
@@ -218,7 +222,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 this.contactGroups = contactInfo.groups;
                 this.isSendSmsAndEmailAllowed = this.featureMaxMessageCount
                     && this.permissionService.checkCGPermission(
-                        this.contactGroups, 
+                        this.contactGroups,
                         'ViewCommunicationHistory.SendSMSAndEmail'
                     );
             }
@@ -227,7 +231,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             takeUntil(this.lifeCycleService.destroy$)
         ).subscribe((manageIsAllowed: boolean) => {
             this.manageAllowed = manageIsAllowed;
-            this.manageCompaniesAllowed = this.manageAllowed || 
+            this.manageCompaniesAllowed = this.manageAllowed ||
                 this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
         });
         this.propertyId$.pipe(
@@ -270,6 +274,22 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 this.selectedOrganizationId.next(selectedRelation.id);
             }
         });
+
+        this.contactInfo$.pipe(
+            filter(Boolean),
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe((contactInfo: ContactInfoDto) => {
+            this.name = contactInfo.personContactInfo?.fullName || '';
+            this.companyName = contactInfo['organizationContactInfo']?.fullName || '';
+            this.currentContactId = contactInfo.id;
+        });
+
+        // Get the list of contacts
+        this.contactServiceProxy.getSourceContacts('', this.leadId, true, 100)
+            .pipe(takeUntil(this.lifeCycleService.destroy$))
+            .subscribe((contacts) => {
+                this.contactIds = contacts.map(contact => contact.id);
+            });
     }
 
     private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): Pick<UploadPhotoData, 'source'> {
@@ -279,10 +299,11 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         } else if (!isCompany && data.personContactInfo.primaryPhoto) {
             photoBase64 = data.personContactInfo.primaryPhoto;
         }
-        return { source: photoBase64
-                    ? 'data:image/jpeg;base64,' + photoBase64
-                    : this.profileService.getContactPhotoUrl(null, true, 'large')
-               };
+        return {
+            source: photoBase64
+                ? 'data:image/jpeg;base64,' + photoBase64
+                : this.profileService.getContactPhotoUrl(null, true, 'large')
+        };
     }
 
     getDefaultContextMenuItems(manageAllowed: boolean, showAddProperty: boolean): ContextMenuItem[] {
@@ -413,9 +434,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             maxWidth: '830px'
         }).afterClosed().subscribe(result => {
             if (result) {
-                 companyInfo.organization = new OrganizationInfoDto(result.company);
-                 companyInfo.fullName = result.company.fullName;
-                 companyInfo.primaryPhoto = result.company.primaryPhoto;
+                companyInfo.organization = new OrganizationInfoDto(result.company);
+                companyInfo.fullName = result.company.fullName;
+                companyInfo.primaryPhoto = result.company.primaryPhoto;
             }
         });
         if (e.stopPropagation) {
@@ -493,7 +514,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                             this.handlePhotoChange(dataField, base64OrigImage, result);
                         });
                 }
-        });
+            });
         event.stopPropagation();
     }
 
@@ -530,7 +551,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         let data = this.data['organizationContactInfo'];
         data.organization[field] = value;
         this.orgContactService.updateOrganizationInfo(
-            UpdateOrganizationInfoInput.fromJS(_.extend({id: data.id}, data.organization))
+            UpdateOrganizationInfoInput.fromJS(_.extend({ id: data.id }, data.organization))
         ).subscribe(() => {
             data.fullName = value;
             this.contactsService.invalidateUserData();
@@ -544,7 +565,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         let person = this.data.personContactInfo.person;
         this.nameParserService.parseIntoPerson(value, person);
         this.personContactServiceProxy.updatePersonName(
-            UpdatePersonNameInput.fromJS(_.extend({ id: person.contactId}, person))
+            UpdatePersonNameInput.fromJS(_.extend({ id: person.contactId }, person))
         ).subscribe(() => {
             this.data.personContactInfo.fullName = value;
         });
@@ -589,8 +610,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     addEntity(event?) {
-        if (event && event.offsetX > event.target.offsetWidth - 32)            
-            return this.showModernLayout 
+        if (event && event.offsetX > event.target.offsetWidth - 32)
+            return this.showModernLayout
                 ? this.addTooltipComponent.instance.option('visible', true)
                 : this.addContextComponent.instance.option('visible', true);
 
@@ -756,5 +777,31 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     closeContextTooltip() {
         this.addTooltipComponent.instance.option('visible', false);
+    }
+
+    goToPrevClient() {
+        if (!this.contactIds || !this.currentContactId) return;
+        const idx = this.contactIds.indexOf(this.currentContactId);
+        if (idx > 0) {
+            const prevId = this.contactIds[idx - 1];
+            this.contactsService.updateLocation(prevId);
+        }
+    }
+
+    goToNextClient() {
+        if (!this.contactIds || !this.currentContactId) return;
+        const idx = this.contactIds.indexOf(this.currentContactId);
+        if (idx < this.contactIds.length - 1 && idx !== -1) {
+            const nextId = this.contactIds[idx + 1];
+            this.contactsService.updateLocation(nextId);
+        }
+    }
+
+    onRoleDropdown() {
+        // Open your role selection dropdown logic here
+    }
+
+    onClose() {
+        // Implement close logic (e.g., navigate away or emit an event)
     }
 }
