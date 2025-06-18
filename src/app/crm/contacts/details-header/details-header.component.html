@@ -109,27 +109,31 @@
         </ng-template>
     </div>
     <div class="user-card-container">
-        <button class="nav-btn left">
-            <i class="dx-icon dx-icon-chevronleft"></i>
+        <button class="icon-btn nav-btn"
+                [disabled]="!contactIds || contactIds.indexOf(currentContactId) <= 0"
+                (click)="goToPrevClient()">
+            <img src="assets/common/icons/contact/header-angle-left.svg" alt="Previous" />
         </button>
         <div class="user-card-content">
-    <span class="icon">
-      <i class="dx-icon dx-icon-building"></i>
-    </span>
+            <img src="assets/common/icons/contact/building.svg" class="icon-building" alt="Company" />
+
+
             <span class="name-role">
-      <span class="name">{{ name }}</span>
-      <span class="divider"></span>
-      <span class="role">{{ selectedRole }}</span>
-    </span>
+                <span class="name">{{ name }}</span>
+                <span class="divider"></span>
+                <span class="role">{{ companyName }}</span>
+            </span>
             <button class="dropdown-btn">
-                <i class="dx-icon dx-icon-chevronDown"></i>
+                <img src="assets/common/icons/arrow-down-grey.svg" alt="Select Role" />
             </button>
-            <button class="close-btn">
-                <i class="dx-icon dx-icon-close"></i>
+            <button class="icon-btn close-btn" (click)="onClose()">
+                <img src="assets/common/icons/contact/header-close.svg" alt="Close" />
             </button>
         </div>
-        <button class="nav-btn right">
-            <i class="dx-icon dx-icon-chevronright"></i>
+        <button class="icon-btn nav-btn"
+                [disabled]="!contactIds || contactIds.indexOf(currentContactId) === contactIds.length - 1"
+                (click)="goToNextClient()">
+            <img src="assets/common/icons/contact/header-angle-right.svg" alt="Next" />
         </button>
     </div>
     <div class="header_buttons">

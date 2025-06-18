@@ -172,9 +172,13 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     companyValidationRules = [
         { type: 'required', message: this.ls.l('CompanyNameIsRequired') }
     ];
-    @Input() name: string = 'JamesSmith';
+    @Input() name: string;
+    @Input() companyName: string;
     // @Input() roles: string[] = ['Affiliate', 'Manager', 'Partner'];
-    selectedRole: string = 'Affiliate'
+    selectedRole: string;
+
+    @Input() contactIds: number[] = []; // List of all contact IDs
+    @Input() currentContactId: number;  // Current contact's ID
 
     constructor(
         injector: Injector,
@@ -270,6 +274,22 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 this.selectedOrganizationId.next(selectedRelation.id);
             }
         });
+
+        this.contactInfo$.pipe(
+            filter(Boolean),
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe((contactInfo: ContactInfoDto) => {
+            this.name = contactInfo.personContactInfo?.fullName || '';
+            this.companyName = contactInfo['organizationContactInfo']?.fullName || '';
+            this.currentContactId = contactInfo.id;
+        });
+
+        // Get the list of contacts
+        this.contactServiceProxy.getSourceContacts('', this.leadId, true, 100)
+            .pipe(takeUntil(this.lifeCycleService.destroy$))
+            .subscribe((contacts) => {
+                this.contactIds = contacts.map(contact => contact.id);
+            });
     }
 
     private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): Pick<UploadPhotoData, 'source'> {
@@ -756,5 +776,31 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     closeContextTooltip() {
         this.addTooltipComponent.instance.option('visible', false);
+    }
+
+    goToPrevClient() {
+        if (!this.contactIds || !this.currentContactId) return;
+        const idx = this.contactIds.indexOf(this.currentContactId);
+        if (idx > 0) {
+            const prevId = this.contactIds[idx - 1];
+            this.contactsService.updateLocation(prevId);
+        }
+    }
+
+    goToNextClient() {
+        if (!this.contactIds || !this.currentContactId) return;
+        const idx = this.contactIds.indexOf(this.currentContactId);
+        if (idx < this.contactIds.length - 1 && idx !== -1) {
+            const nextId = this.contactIds[idx + 1];
+            this.contactsService.updateLocation(nextId);
+        }
+    }
+
+    onRoleDropdown() {
+        // Open your role selection dropdown logic here
+    }
+
+    onClose() {
+        // Implement close logic (e.g., navigate away or emit an event)Add commentMore actions
     }
 }
