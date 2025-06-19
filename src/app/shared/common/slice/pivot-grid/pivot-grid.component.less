@@ -10,14 +10,14 @@
     ::ng-deep .dx-pivotgrid {
         .dx-pivotgrid .dx-data-header,
         .dx-area-description-cell.dx-pivotgrid-background {
-            background-color: rgba(243, 247, 250, 0.4);
+            background-color: var(--muted-bg);
         }
 
         .dx-area-field-content {
             font-size: 15px;
             font-weight: 500;
             letter-spacing: 0.11px;
-            color: #424c56;
+            color: var(--text-color);
         }
 
         .dx-filter-header {
@@ -30,11 +30,11 @@
             /** Allows not to decrease pivot grid height by the field-area height */
             height: 0;
             .dx-pivotgrid-fields-area {
-                background: #fff;
+                background: var(--background-color);
                 overflow: auto;
                 transition: width 1s;
                 .dx-area-field-container {
-                    border: 2px dashed #dadee1;
+                    border: 2px dashed var(--border-color);
                     width: 100%;
 
                     .dx-pivotgrid-fields-area-head {
@@ -50,9 +50,9 @@
 
                     .dx-area-field {
                         border: none;
-                        background-color: #f3f7fa;
+                        background-color: var(--background-color);
                         letter-spacing: 0.1px;
-                        color: #424c56;
+                        color: var(--text-color);
                         flex-direction: row;
                         position: relative;
 
@@ -64,7 +64,7 @@
                                 width: 5px;
                                 height: 5px;
                                 border-radius: 50%;
-                                background: red;
+                                background: var(--danger-color);
                                 top: 5px;
                                 right: 5px;
                             }
@@ -90,7 +90,7 @@
 
             .dx-area-field.dx-area-box {
                 border-radius: 4px;
-                color: #424c56;
+                color: var(--text-color);
                 display: flex;
                 flex-direction: row-reverse;
                 justify-content: space-between;
@@ -105,13 +105,13 @@
         .dx-pivotgrid-horizontal-headers,
         .dx-pivotgrid-vertical-headers {
             td {
-                background-color: rgba(224, 244, 251, 0.5);
+                background-color: var(--accent-bg);
                 font-weight: 600;
                 font-style: normal;
                 font-stretch: normal;
                 line-height: normal;
                 letter-spacing: 0.11px;
-                color: #212c36;
+                color: var(--text-color);
             }
         }
 
@@ -133,14 +133,14 @@
                 font-size: 15px;
                 letter-spacing: 0.11px;
                 text-align: right;
-                color: #424c56;
+                color: var(--text-color);
             }
         }
 
         td {
             &.dx-row-total,
             &.dx-grandtotal {
-                background-color: #def9f3;
+                background-color: var(--success-color-light);
             }
         }
     }
@@ -149,21 +149,21 @@
         position: fixed;
         bottom: 0;
         height: 30px;
-        border-top: 1px solid #ddd;
+        border-top: 1px solid var(--border-color);
         display: flex;
         & > div {
             height: 100%;
-            background-color: #def9f3;
+            background-color: var(--success-color-light);
             text-align: right;
             padding: 0 10px;
             line-height: 27px;
-            border-left: 1px solid #ddd;
+            border-left: 1px solid var(--border-color);
             &:first-child {
                 text-align: left;
                 border: none;
                 font-weight: 600;
                 letter-spacing: 0.11px;
-                color: #212c36;
+                color: var(--text-color);
             }
         }
     }

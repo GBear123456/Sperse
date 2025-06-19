@@ -3,7 +3,7 @@
     position: absolute;
 
     &.show-left-bar {
-        top: 61px !important;        
+        top: 61px !important;
     }
 
     &.fullscreen {
@@ -33,7 +33,7 @@
             width: 20px;
             height: 20px;
             border-radius: 2px;
-            border-color: #dfdfdf;
+            border-color: var(--border-color);
         }
 
         .dx-checkbox-text {
@@ -43,7 +43,7 @@
             font-weight: 300;
             // line-height: 2.53;
             letter-spacing: 0.3px;
-            color: #424c56;
+            color: var(--text-color);
             display: inline;
         }
 
@@ -52,7 +52,7 @@
         }
 
         .dx-checkbox-checked .dx-checkbox-icon {
-            color: #00aeef;
+            color: var(--primary-color);
             font-size: 12px !important;
 
             &::before {
@@ -61,7 +61,7 @@
         }
 
         .dx-checkbox.sx-state-hover .dx-checkbox-icon {
-            border-color: #00aeef !important;
+            border-color: var(--primary-color) !important;
         }
     }
 
@@ -70,17 +70,18 @@
 
         input {
             width: 300px;
-            color: #677380;
+            color: var(--muted-color);
             font-weight: 300;
             line-height: 1.71;
             letter-spacing: 0.3px;
             text-align: left;
             padding-left: 36px;
-            border: 1px solid #dadee1;
+            border: 1px solid var(--border-color);
             border-radius: 3px;
             font-size: 14px;
             height: 37px;
             outline: none;
+            background: var(--background-color);
         }
 
         &:before {
@@ -93,15 +94,15 @@
             height: 16px;
             top: 25px;
             left: 33px;
-            color: #677380;
+            color: var(--muted-color);
         }
     }
 
     .sidebar-filter-links {
-        border-right: 1px solid #e5e9ec;
+        border-right: 1px solid var(--border-color);
         width: 341px;
         height: calc(~"100vh - 148px");
-        background-color: #fff;
+        background-color: var(--background-color);
         margin-bottom: 300px;
         padding: 13px 0 15px 20px;
 
@@ -110,7 +111,7 @@
             font-size: 15px;
             line-height: 1.6;
             letter-spacing: 0.3px;
-            color: #212c36;
+            color: var(--text-color);
             display: inline-block;
             width: 100%;
             font-weight: 500;
@@ -135,7 +136,7 @@
                 font-size: 11px;
                 line-height: 2.18;
                 letter-spacing: 0.4px;
-                color: #677380;
+                color: var(--muted-color);
                 padding-right: 1px;
                 text-transform: uppercase;
                 background-color: transparent;
@@ -161,7 +162,7 @@
                     content: ' ';
                     height: 20px;
                     width: 2px;
-                    background-color: #1b1b1b;
+                    background-color: var(--text-color);
                 }
 
                 &:before {
@@ -203,7 +204,7 @@
                 &.dx-state-hover,
                 &.dx-state-focused,
                 &.dx-state-active {
-                    background-color: #FFF;
+                    background-color: var(--background-color);
                 }
 
                 .dx-button-content {
@@ -243,7 +244,7 @@
                     width: 5px;
                     height: 5px;
                     border-radius: 50%;
-                    background: red;
+                    background: var(--danger-color);
                     top: 18px;
                     left: -17px;
                 }
@@ -255,14 +256,14 @@
                     letter-spacing: 0.3px;
                     padding: 10px 0;
                     display: block;
-                    color: #424c56;
+                    color: var(--text-color);
                     position: relative;
                     text-decoration: none;
                     cursor: pointer;
                     i {
                         text-align: right;
                         line-height: 1.4;
-                        color: #686f76;
+                        color: var(--muted-color);
                         background: url('../../../../assets/common/icons/right-arrow-icon.svg') right center no-repeat;
 
                         &::before {
@@ -276,7 +277,7 @@
         .sub-filter-list {
             list-style: none;
             padding-left: 14px;
-            border-left: 1px solid #e5e9ec;
+            border-left: 1px solid var(--border-color);
 
             .sub-filter-item, .toggle-more {
                 font-size: 14px;
@@ -286,7 +287,7 @@
                 text-align: left;
                 padding: 3px 20px 3px 0;
                 position: relative;
-                color: #677380;
+                color: var(--muted-color);
                 overflow: hidden;
                 text-overflow:  ellipsis;
 
@@ -312,16 +313,16 @@
             }
 
             .toggle-more {
-                color: #01b0f0;
+                color: var(--primary-color);
                 font-weight: 500;
             }
 
             .clear-group {
                 text-transform: lowercase;
-                color: #677380;
+                color: var(--muted-color);
 
                 &:hover {
-                    color: #01b0f0;
+                    color: var(--primary-color);
                 }
             }
         }
@@ -336,8 +337,8 @@
         height: calc(~"100vh - 78px");
         z-index: 100;
         padding: 0 20px;
-        border: 1px solid #dfdfdf;
-        background-color: #fff;
+        border: 1px solid var(--border-color);
+        background-color: var(--background-color);
         &.toolbar-is-hidden {
             height: calc(~"100vh - 21px");
         }
@@ -354,7 +355,7 @@
         padding: 20px 0 20px 0;
         line-height: 37px;
         font-weight: bold;
-        color: #212c36;
+        color: var(--text-color);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -384,7 +385,7 @@
     height: 16px;
     display: inline-block;
     border-radius: 50%;
-    background: #F9E6E6;
+    background: var(--danger-color-light);
     position: absolute;
     top: 5px;
     right: 2px;
@@ -393,7 +394,7 @@
         content: '';
         width: 8px;
         height: 2px;
-        background: #e7326a;
+        background: var(--danger-color);
         position: absolute;
         left: 50%;
         top: 50%;

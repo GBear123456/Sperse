@@ -526,3 +526,62 @@ i.save-to-clipboard {
     }
 }
 
+.mat-dialog-container {
+    background-color: var(--background-color) !important;
+}
+
+.close-button {
+    background-color: var(--button-bg) !important;
+    color: var(--text-color) !important;
+}
+
+.form-control {
+    background-color: var(--background-color) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 6px !important;
+    font-family: var(--app-font-family) !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+    padding: 0.5rem 0.75rem !important;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        border-color: var(--border-color-hover) !important;
+    }
+
+    &:focus {
+        border-color: var(--primary-color) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 2px var(--primary-color-light) !important;
+    }
+
+    &::placeholder {
+        color: var(--muted-color);
+    }
+
+    &:disabled {
+        background-color: var(--disabled-bg);
+        border-color: var(--border-color);
+        color: var(--muted-color);
+        cursor: not-allowed;
+    }
+
+    &.is-invalid {
+        border-color: var(--danger-color);
+        background-color: var(--danger-color-light);
+
+        &:focus {
+            box-shadow: 0 0 0 2px var(--danger-color-light);
+        }
+    }
+
+    &.is-valid {
+        border-color: var(--success-color);
+        background-color: var(--success-color-light);
+
+        &:focus {
+            box-shadow: 0 0 0 2px var(--success-color-light);
+        }
+    }
+}
