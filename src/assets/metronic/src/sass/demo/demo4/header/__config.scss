@@ -37,7 +37,7 @@ $m-config-header: (
 				minimize: get-shadow(light, '-')
 			),
 			transition: all 0.3s ease
-		)		
+		)
 	),
 
 	//== Brand
@@ -57,17 +57,17 @@ $m-config-header: (
 			self: (
 				// space between togglers and icons
 				space: (
-					mobile: 15px 
+					mobile: 15px
 				)
 			),
 
 			// toggler
 			toggler: (
 				width: 24px,
-				height: 24px,  
+				height: 24px,
 				transition-duration: 0.4s,
 				thickness: 1px,
-				space: 6px, 
+				space: 6px,
 				radius: 4px,
 				color: (
 					default: (
@@ -127,9 +127,9 @@ $m-config-header: (
 							hover: rgba(#2d1b5b, 0.43)
 						),
 						minimize: (
-							default: darken(#f7f7fb, 0%),					
+							default: darken(#f7f7fb, 0%),
 							hover: get-brand-color()
-						) 						
+						)
 					),
 					color: (
 						default: (
@@ -149,7 +149,7 @@ $m-config-header: (
 	//== Topbar
 	topbar: (
 		// Default mode
-		default: (		
+		default: (
 			// self
 			self: (
 				padding: (
@@ -162,7 +162,7 @@ $m-config-header: (
 			),
 			// nav bar
 			nav: (
-				// nav itself 
+				// nav itself
 				self: (
 					margin: (
 						desktop: 0 0 0 30px,
@@ -309,7 +309,7 @@ $m-config-header: (
 						expanded: 240px
 					),
 					default: 180px
-				)						
+				)
 			),
 			border-radius: 30px
 		),
@@ -321,7 +321,7 @@ $m-config-header: (
 				mobile: 7px 10px 7px 20px
 			),
 			border-color: (
-				desktop: #e3e4ed, 
+				desktop: #e3e4ed,
 				mobile: transparent
 			),
 			bg-color: (
@@ -395,11 +395,11 @@ $m-config-header: (
 			)
 		),
 
-		// spinner 
+		// spinner
 		spinner: (
 			color: #282a3c,
 			right: (
-				desktop: 16px, 
+				desktop: 16px,
 				mobile: 1.7rem
 			)
 		)

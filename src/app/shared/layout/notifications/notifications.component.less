@@ -1,15 +1,15 @@
 #NotificationsTable {
-    color: #000;
+    color: var(--text-color);
 
     a {
-        color: #000;
+        color: var(--text-color);
     }
 
     .notification-read {
-        color: #999;
+        color: var(--muted-color);
 
         a {
-            color: #999;
+            color: var(--muted-color);
         }
     }
 }
@@ -32,7 +32,7 @@
     i.fa {
         position: relative;
         padding-left: 15px;
-        color: #ced5db;
+        color: var(--border-color);
         &:after {
             content: '';
             position: absolute;
@@ -45,13 +45,13 @@
             border-radius: 100%;
         }
         &.UNREAD:after {
-            background-color: #34bfa3;
+            background-color: var(--success-color);
         }
         &.READ:after {
-            background-color: #c4c5d6;
+            background-color: var(--muted-bg);
         }
         &.fa-envelope-o {
-            color: #00aeef;
+            color: var(--primary-color);
         }
     }
 
@@ -60,7 +60,7 @@
     }
 
     a.set-notification-as-read {
-        color: #58a3dc !important;
+        color: var(--primary-color-light) !important;
         background-color: transparent;
     }
     .dx-column-lines {

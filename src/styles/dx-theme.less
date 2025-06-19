@@ -526,25 +526,16 @@
     .dx-filemanager-toolbar {
         background-color: var(--card-bg);
         border-bottom: 1px solid var(--border-color);
-
-        .dx-toolbar-items-container {
-            .dx-toolbar-item {
-                color: var(--text-color);
-
-                .dx-button {
-                    background-color: var(--background-color);
-                    color: var(--text-color);
-                    border-color: var(--border-color);
-
-                    &:hover {
-                        background-color: var(--hover-bg);
-                        border-color: var(--border-color-hover);
-                    }
-
-                    &.dx-state-focused {
-                        border-color: var(--primary-color);
-                    }
-                }
+        .dx-toolbar-item .dx-button {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            border-color: var(--border-color);
+            &:hover {
+                background-color: var(--hover-bg);
+                border-color: var(--border-color-hover);
+            }
+            &.dx-state-focused {
+                border-color: var(--primary-color);
             }
         }
     }
@@ -554,10 +545,8 @@
         background-color: var(--card-bg);
         border-bottom: 1px solid var(--border-color);
         color: var(--text-color);
-
         .dx-breadcrumbs-item {
             color: var(--text-color);
-
             &:hover {
                 color: var(--primary-color);
             }
@@ -568,22 +557,13 @@
     .dx-filemanager-navigation-panel {
         background-color: var(--card-bg);
         border-right: 1px solid var(--border-color);
-
-        .dx-treeview {
-            .dx-treeview-node {
+        .dx-treeview .dx-treeview-node {
+            color: var(--text-color);
+            &:hover, &.dx-state-focused {
+                background-color: var(--hover-bg);
+            }
+            .dx-treeview-item {
                 color: var(--text-color);
-
-                &:hover {
-                    background-color: var(--hover-bg);
-                }
-
-                &.dx-state-focused {
-                    background-color: var(--hover-bg);
-                }
-
-                .dx-treeview-item {
-                    color: var(--text-color);
-                }
             }
         }
     }
@@ -598,16 +578,10 @@
                 background-color: var(--card-bg);
                 border: 1px solid var(--border-color);
                 color: var(--text-color);
-
-                &:hover {
-                    background-color: var(--hover-bg);
-                }
-
-                &.dx-state-focused {
+                &:hover, &.dx-state-focused {
                     background-color: var(--hover-bg);
                     border-color: var(--primary-color);
                 }
-
                 .dx-filemanager-thumbnails-item-name {
                     color: var(--text-color);
                 }
@@ -620,16 +594,10 @@
                 .dx-row {
                     color: var(--text-color);
                     background-color: var(--background-color);
-
-                    &:hover {
-                        background-color: var(--hover-bg);
-                    }
-
-                    &.dx-row-focused {
+                    &:hover, &.dx-row-focused {
                         background-color: var(--hover-bg);
                     }
                 }
-
                 .dx-header-row {
                     background-color: var(--card-bg);
                     color: var(--text-color);
@@ -644,15 +612,9 @@
         background-color: var(--card-bg);
         border: 1px solid var(--border-color);
         box-shadow: var(--shadow-color);
-
         .dx-menu-item {
             color: var(--text-color);
-
-            &:hover {
-                background-color: var(--hover-bg);
-            }
-
-            &.dx-state-focused {
+            &:hover, &.dx-state-focused {
                 background-color: var(--hover-bg);
             }
         }
@@ -675,11 +637,9 @@
         background-color: var(--card-bg);
         border: 1px solid var(--border-color);
         box-shadow: var(--shadow-color);
-
         .dx-filemanager-progress-panel-title {
             color: var(--text-color);
         }
-
         .dx-filemanager-progress-panel-text {
             color: var(--muted-color);
         }
@@ -690,25 +650,18 @@
         background-color: var(--card-bg);
         border: 1px solid var(--border-color);
         box-shadow: var(--shadow-color);
-
-        .dx-filemanager-dialog-title {
-            color: var(--text-color);
-        }
-
+        .dx-filemanager-dialog-title,
         .dx-filemanager-dialog-content {
             color: var(--text-color);
         }
-
         .dx-button {
             background-color: var(--background-color);
             color: var(--text-color);
             border-color: var(--border-color);
-
             &:hover {
                 background-color: var(--hover-bg);
                 border-color: var(--border-color-hover);
             }
-
             &.dx-state-focused {
                 border-color: var(--primary-color);
             }
@@ -793,3 +746,22 @@
     background-color: var(--background-color) !important;
     color: var(--text-color) !important;
 }
+
+.dx-submenu {
+    background-color: var(--card-bg) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 4px;
+}
+
+.dx-treeview-item.dx-filemanager-focused-item {
+    color: var(--text-color) !important;
+}
+
+.dx-button-mode-text .dx-icon {
+    color: var(--text-color) !important;
+}
+
+.dx-popup-normal {
+    background-color: var(--background-color) !important;
+}
+

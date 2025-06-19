@@ -4,11 +4,11 @@
 
 #m_quick_sidebar_back {
     i.la-arrow-circle-left {
-        color: #cfcedb;
+        color: var(--muted-color);
         text-decoration: none;
 
         &:hover {
-            color: #716aca !important;
+            color: var(--primary-color-dark) !important;
         }
     }
 }
@@ -36,11 +36,11 @@
         margin-top: 26px;
 
         &.online {
-            background-color: #26C281;
+            background-color: var(--success-color);
         }
 
         &.offline {
-            background-color: #BFCAD1;
+            background-color: var(--muted-bg);
         }
     }
 }
@@ -57,16 +57,17 @@ span.contact-status2 {
     margin-top: -10px;
 
     &.online {
-        background-color: #26C281;
+        background-color: var(--success-color);
     }
 
     &.offline {
-        background-color: #BFCAD1;
+        background-color: var(--muted-bg);
     }
 }
 
 .m-quick-sidebar {
     overflow-y: hidden !important;
+    background-color: var(--sidebar-bg);
 }
 
 ::ng-deep {
@@ -75,7 +76,7 @@ span.contact-status2 {
     }
 
     chat-friend-list-item .m-list-search__result-item-text {
-        color: #7b838a;
+        color: var(--muted-color);
     }
 }
 
@@ -117,7 +118,7 @@ div.selected-chat-user {
 
 #friendListFriends {
     .m-badge.m-badge--warning {
-        color: white !important;
+        color: #fff !important;
         float: right;
     }
 }
@@ -141,9 +142,9 @@ div.selected-chat-user {
     margin-top: 15px;
     text-align: left;
     padding: 5px;
-    background-color: #625dbb;
+    background-color: var(--primary-color-dark);
     display: block;
-    color: #d9d9d9;
+    color: var(--muted-bg);
 
     i.la-file {
         margin-right: 2px;
@@ -170,8 +171,8 @@ div.selected-chat-user {
     margin-top: 15px;
     text-align: left;
     padding: 5px;
-    background-color: #3598dc;
-    color: #f7f7f7;
+    background-color: var(--primary-color);
+    color: var(--muted-bg);
 }
 
 .chat-progress-bar {
@@ -180,14 +181,14 @@ div.selected-chat-user {
 
 .m-messenger-friends {
     .m-list-search__result-category {
-        color: black !important;
+        color: var(--text-color) !important;
         margin-top: 10px !important;
     }
 }
 
 .slimScrollBar {
     width: 2px !important;
-    background-color: lightgray !important;
+    background-color: var(--border-color) !important;
 }
 
 #m_quick_sidebar_close {
@@ -257,18 +258,18 @@ a.page-quick-sidebar-pinner.pinned {
 }
 
 .ui-fileupload-choose.ui-button, .ui-fileupload-choose.ui-button .ui-widget, .ui-fileupload-choose.ui-button .ui-state-default {
-    background-color: #fff;
-    color: #6f6f6f;
+    background-color: var(--background-color);
+    color: var(--muted-color);
 }
 
 .ui-fileupload-choose.ui-button.ui-state-hover, .ui-fileupload-choose.ui-button.ui-state-focus, .ui-fileupload-choose.ui-button.ui-state-active {
-    background-color: #eee;
+    background-color: var(--muted-bg);
 }
 
 .m-messenger__form-tools {
     a:hover {
         .ui-button {
-            background-color: #f4f5f8 !important;
+            background-color: var(--muted-bg) !important;
         }
     }
 }
@@ -276,7 +277,7 @@ a.page-quick-sidebar-pinner.pinned {
 .m-messenger__form-tools .ui-fileupload-choose:not(.ui-state-disabled):hover,
 .m-messenger__form-tools .ui-fileupload-choose:not(.ui-state-disabled):focus,
 .m-messenger__form-tools .ui-fileupload-choose:not(.ui-state-disabled):active {
-    background-color: #f4f5f8 !important;
+    background-color: var(--muted-bg) !important;
     box-shadow: none !important;
 }
 
@@ -297,9 +298,9 @@ a.page-quick-sidebar-pinner.pinned {
     margin-top: 15px;
     text-align: left;
     padding: 5px;
-    background-color: #f0ad4e;
+    background-color: var(--warning-color);
     display: block;
-    color: #f7f7f7;
+    color: var(--muted-bg);
 }
 
 .m-messenger__form-tools .chat-link-message {
@@ -310,15 +311,15 @@ a.page-quick-sidebar-pinner.pinned {
     margin-top: 15px;
     text-align: left;
     padding: 5px;
-    background-color: #3598dc;
-    color: #f7f7f7;
+    background-color: var(--primary-color);
+    color: var(--muted-bg);
 }
 
 ::ng-deep {
     .dropdown-menu .p-button {
         border-radius: 10px;
-        background: #6aa0ca;
-        border-color: #6aa0ca;
+        background: var(--info-color);
+        border-color: var(--info-color);
     }
 
     chat-message {

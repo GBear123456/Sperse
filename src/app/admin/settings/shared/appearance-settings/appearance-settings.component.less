@@ -8,16 +8,16 @@
             font-family: Plus Jakarta Sans;
             font-size: 20px;
             letter-spacing: -0.02em;
-            border-bottom: 3px solid #E5E8F3;
+            border-bottom: 3px solid var(--border-color);
             padding: 13px 0;
-            color: #10213A;
+            color: var(--text-color);
             height: 60px;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
-            border-bottom: 3px solid #E5E8F3;
+            border-bottom: 3px solid var(--border-color);
 
             span {
                 border-bottom: none;
@@ -35,14 +35,14 @@
 
         ::ng-deep uploader {
             display: block;
-            border-bottom: 1px solid #E5E8F3;
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 12px;
 
             h5 {
                 font-family: Plus Jakarta Sans;
                 font-size: 17px;
                 letter-spacing: 0em;
-                color: #10213A;
+                color: var(--text-color);
                 position: relative;
                 top: 20px;
             }
@@ -54,7 +54,7 @@
                 font-size: 14px;
                 font-weight: 400;
                 letter-spacing: 0em;
-                color: #10213A;
+                color: var(--text-color);
 
                 span {
                     padding-top: 10px;
@@ -62,14 +62,14 @@
 
                 a {
                     float: right;
-                    color: #00A8ED !important;
+                    color: var(--primary-color) !important;
                     font-weight: 500;
                     padding: 10px 10px 0;
                     line-height: 22px;
 
                     &:before {
                         content: url(../../../../../assets/common/icons/download.svg);
-                        border-bottom: 2px solid #00A8ED;
+                        border-bottom: 2px solid var(--primary-color);
                         position: relative;
                         right: 4px;
                     }
@@ -94,7 +94,7 @@
                 width: 100%;
                 padding-left: calc((100% - 175px) / 2);
                 border-radius: 10px !important;
-                background: rgba(245, 249, 251, 0.3);
+                background: var(--muted-bg);
 
                 &:before {
                     margin-right: 5px;
@@ -106,7 +106,7 @@
                     font-size: 14px;
                     letter-spacing: -0.02em;
                     text-align: left;
-                    color: #10213A;
+                    color: var(--text-color);
                 }
             }
         }
@@ -114,7 +114,7 @@
         .left {
             width: 70%;
             min-height: calc(100vh - 120px);
-            border-right: 3px solid #E5E8F3;
+            border-right: 3px solid var(--border-color);
             padding-right: 20px;
 
             ::ng-deep .portal-menu-items-list {
@@ -137,7 +137,7 @@
                     .custom-display-name {
                         .dx-placeholder {
                             font-style: italic;
-                            color: lightgray;
+                            color: var(--muted-color);
                             font-size: 15px;
                             font-weight: 500;
                             letter-spacing: 0.3px;
@@ -169,7 +169,7 @@
                 font-weight: 400;
                 letter-spacing: 0em;
                 padding: 22px 0 17px 0;
-                color: #10213A;
+                color: var(--text-color);
             }
 
             .app-button-round {
@@ -178,16 +178,16 @@
                 margin-right: 25px;
 
                 & > div {
-                    background: #F8FAFC;
+                    background: var(--card-bg);
                     min-width: 100px;
                     cursor: pointer;
                     text-align: center;
-                    border: 3px solid #dedede;
+                    border: 3px solid var(--border-color);
                     border-radius: 10px;
                     padding: 8px 4px;
 
                     &.selected {
-                        border: 3px solid #00aeef;
+                        border: 3px solid var(--primary-color);
                     }
 
                     ::ng-deep dx-number-box {
@@ -226,7 +226,7 @@
             }
 
             ::ng-deep dx-color-box {
-                background: #F8FAFC;
+                background: var(--card-bg);
                 border-radius: 10px;
                 max-width: 95%;
 
@@ -244,7 +244,7 @@
                 }
 
                 .dx-texteditor-label {
-                    color: #10213A;
+                    color: var(--text-color);
                 }
 
                 input {
@@ -253,7 +253,7 @@
                     font-size: 13px;
                     line-height: 27px;
                     letter-spacing: 0em;
-                    color: #10213A;
+                    color: var(--text-color);
                 }
 
                 .dx-placeholder {
@@ -265,7 +265,7 @@
                     font-size: 13px;
                     font-weight: 500;
                     letter-spacing: 0em;
-                    color: #10213A;
+                    color: var(--text-color);
                     width: calc(100% - 125px);
                 }
             }
@@ -291,7 +291,7 @@
             font-size: 13px;
             line-height: 27px;
             letter-spacing: 0em;
-            color: #10213A;
+            color: var(--text-color);
         }
 
         .dx-placeholder {
@@ -299,7 +299,7 @@
             font-size: 13px;
             font-weight: 500;
             letter-spacing: 0em;
-            color: #10213A;
+            color: var(--text-color);
         }
     }
 
@@ -317,7 +317,7 @@
         h5 {
             font-size: 14px;
             letter-spacing: 0.2px;
-            color: #677380;
+            color: var(--muted-color);
         }
     }
     /* Toggle button */
@@ -326,11 +326,11 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         width: fit-content;
-        border: 3px solid #e5e5e5;
+        border: 3px solid var(--border-color);
         border-radius: 20px;
-        background: #e5e5e5;
+        background: var(--muted-bg);
         font-weight: bold;
-        color: #333;
+        color: var(--text-color);
         cursor: pointer;
 
         &::before {
@@ -340,7 +340,7 @@
             height: 100%;
             left: 0%;
             border-radius: 20px;
-            background: white;
+            background: var(--background-color);
             transition: all 0.3s;
         }
 
