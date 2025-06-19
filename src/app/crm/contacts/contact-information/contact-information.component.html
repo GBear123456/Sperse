@@ -139,8 +139,9 @@
     <div class="group-info-container">
         <div class="info-section">
             <div class="section-header">
-                <mat-icon>folder_open</mat-icon>
-                <span class="section-title">Groups</span>
+                <!-- <mat-icon>folder_open</mat-icon> -->
+                <img src="./assets/common/icons/groups.svg" class="dx-icon" [alt]="ls.l('Groups')">
+                <span class="section-title">{{ls.l('Groups')}}:</span>
             </div>
             <mat-chip-list>
                 <mat-chip *ngFor="let group of groups" [color]="group.color" selected>{{ group.name }}</mat-chip>
@@ -148,8 +149,9 @@
         </div>
         <div class="info-section">
             <div class="section-header">
-                <mat-icon>list</mat-icon>
-                <span class="section-title">Lists</span>
+                <!-- <mat-icon>list</mat-icon> -->
+                 <img src="./assets/common/icons/lists.svg" class="dx-icon" [alt]="ls.l('Lists')">
+                <span class="section-title">{{ls.l('Lists')}}:</span>
             </div>
             <mat-chip-list>
                 <mat-chip *ngFor="let list of lists" color="primary" selected>{{ list }}</mat-chip>
@@ -157,8 +159,9 @@
         </div>
         <div class="info-section">
             <div class="section-header">
-                <mat-icon>label</mat-icon>
-                <span class="section-title">Tags</span>
+                <!-- <mat-icon>label</mat-icon> -->
+                <img src="./assets/common/icons/tags_pen.svg" class="dx-icon" [alt]="ls.l('Tags')">
+                <span class="section-title">{{ls.l('Tags')}}:</span>
             </div>
             <mat-chip-list>
                 <mat-chip *ngFor="let tag of tags" color="primary" selected>{{ tag }}</mat-chip>
@@ -166,11 +169,14 @@
         </div>
         <div class="info-section rating-section">
             <div class="section-header">
-                <mat-icon>star_border</mat-icon>
-                <span class="section-title">Rating</span>
+                <!-- <mat-icon>star_border</mat-icon> -->
+                <img src="./assets/common/icons/rating_star.svg" class="dx-icon" [alt]="ls.l('Rating')">
+                <span class="section-title">{{ls.l('Rating')}}:</span>
             </div>
-            <mat-progress-bar mode="determinate" [value]="(rating / maxRating) * 100" color="primary"></mat-progress-bar>
-            <span class="rating-label">{{ rating }}/{{ maxRating }}</span>
+            <div class="rating-bar">
+                <mat-progress-bar ng-reflect-color="#2fb8f0" color="#2fb8f0" [value]="(rating / maxRating) * 100"></mat-progress-bar>
+                <span class="rating-label">{{ rating }}/{{ maxRating }}</span>
+            </div>
         </div>
     </div>
 </mat-card>
