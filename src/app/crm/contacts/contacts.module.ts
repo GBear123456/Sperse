@@ -14,6 +14,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatMenuModule } from '@angular/material/menu';
+import {MatCardModule} from '@angular/material/card';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatIconModule} from '@angular/material/icon';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -258,6 +261,9 @@ import { CommunityAccessSelectorComponent } from './subscriptions/add-subscripti
         MatProgressSpinnerModule,
         MatSelectModule,
         MatInputModule,
+        MatIconModule,
+        MatChipsModule,
+        MatCardModule,
         ContactsRoutingModule,
         DxContextMenuModule,
         DxSelectBoxModule,
