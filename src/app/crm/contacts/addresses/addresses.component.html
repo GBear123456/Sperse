@@ -37,6 +37,6 @@
     <div *ngIf="isEditAllowed && isAddAllowed"
          class="add-address"
          (click)="showDialog(null, $event)">
-        + {{ls.l('Add') + ' ' + ls.l('Address')}}
+        <img src="./assets/common/icons/contact/plus.svg" alt="plus"> {{ls.l('Add') + ' ' + ls.l('Address')}}
     </div>
 </div>
