@@ -172,6 +172,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     companyValidationRules = [
         { type: 'required', message: this.ls.l('CompanyNameIsRequired') }
     ];
+    @Input() name: string = 'JamesSmith';
+    // @Input() roles: string[] = ['Affiliate', 'Manager', 'Partner'];
+    selectedRole: string = 'Affiliate'
 
     constructor(
         injector: Injector,
