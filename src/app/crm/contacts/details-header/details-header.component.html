@@ -107,6 +107,30 @@
             </ng-template>
         </ng-template>
     </div>
+    <div class="user-card-container">
+        <button class="nav-btn left">
+            <i class="dx-icon dx-icon-chevronleft"></i>
+        </button>
+        <div class="user-card-content">
+    <span class="icon">
+      <i class="dx-icon dx-icon-building"></i>
+    </span>
+            <span class="name-role">
+      <span class="name">{{ name }}</span>
+      <span class="divider"></span>
+      <span class="role">{{ selectedRole }}</span>
+    </span>
+            <button class="dropdown-btn">
+                <i class="dx-icon dx-icon-chevronDown"></i>
+            </button>
+            <button class="close-btn">
+                <i class="dx-icon dx-icon-close"></i>
+            </button>
+        </div>
+        <button class="nav-btn right">
+            <i class="dx-icon dx-icon-chevronright"></i>
+        </button>
+    </div>
     <div class="header_buttons">
         <button id="addEntity" *ngIf="manageAllowed && addContextMenuItems.length" class="button-layout button-primary menu" (click)="addEntity($event)">
             + {{addButtonTitle}}
