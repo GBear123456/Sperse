@@ -1,6 +1,17 @@
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 @import "~font-awesome/css/font-awesome.css";
 @import "shared/metronic/m-toast.less";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@font-face {
+    font-family: 'DXIcons';
+    src: url('/assets/common/icons/dxicons.woff2') format('woff2'),
+        url('/assets/common/icons/dxicons.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 
 /* You can add global styles to this file, and also import other style files */
 
@@ -17,10 +28,17 @@ body {
     width: 100%;
     height: 100%;
 }
+
 .cdk-global-scrollblock {
     overflow: hidden;
 }
-body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
+
+body,
+html,
+*,
+.btn,
+.dx-texteditor-input,
+.dx-widget .dx-texteditor-input {
     font-family: var(--app-font-family);
 }
 
@@ -28,7 +46,8 @@ a {
     cursor: pointer;
 }
 
-[class^=dx]:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.dx-datagrid-group-opened):not(.dx-datagrid-group-closed):not(.dx-total):not(.tabular):not(.dx-texteditor-input):not([class*="fontName"]):not(.dx-placeholder):not(.dx-button-text):not(.dx-navigate-button):not(.dx-list-reorder-handle), input.form-control {
+[class^=dx]:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.dx-datagrid-group-opened):not(.dx-datagrid-group-closed):not(.dx-total):not(.tabular):not(.dx-texteditor-input):not([class*="fontName"]):not(.dx-placeholder):not(.dx-button-text):not(.dx-navigate-button):not(.dx-list-reorder-handle),
+input.form-control {
     font-family: var(--app-font-family) !important;
 }
 
@@ -132,6 +151,7 @@ body.overflow-hidden.modal-open,
     left: -17px;
     padding: 8px 17px;
 }
+
 .tooltip-item.inflows::before,
 .tooltip-item.outflows::before,
 .tooltip-item.net::before,
@@ -146,42 +166,54 @@ body.overflow-hidden.modal-open,
     display: inline-block;
     margin-right: 5px;
 }
+
 .tooltip-item .tooltip-item-value,
-.tooltip-item .tooltip-item-percent{
+.tooltip-item .tooltip-item-percent {
     float: right;
     font-family: Lato;
     margin-left: 10px
 }
+
 .tooltip-item.outflows::before {
     background: #f05b2a;
 }
+
 .tooltip-item.net::before {
     background: #fab800;
 }
+
 .tooltip-item.forecast.inflows::before {
     background: #a9e3f9;
 }
+
 .tooltip-item.forecast.outflows::before {
     background: #fec6b3;
 }
+
 .tooltip-item.forecast.net::before {
     background: #a82aba;
 }
 
 .noselect {
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 
 .modal-open .page-container {
     z-index: auto !important;
 }
 
-app-root > ng-component {
+app-root>ng-component {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -215,7 +247,7 @@ i.save-to-clipboard {
     z-index: 1002;
 }
 
-.pac-container .pac-item > span:last-child {
+.pac-container .pac-item>span:last-child {
     display: block;
 }
 

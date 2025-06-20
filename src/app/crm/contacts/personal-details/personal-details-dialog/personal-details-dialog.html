@@ -11,7 +11,7 @@
             >
                 <div class="general-tab">
                     <mat-accordion displayMode="flat" [multi]="true">
-                        <mat-expansion-panel
+                        <!-- <mat-expansion-panel
                             *ngIf="hasCreditsFeature && hasCreditsViewPermission"
                             class="credit-balance"
                             [expanded]="true"
@@ -58,14 +58,14 @@
                                     >{{ ls.l('Deduct') }} -</span
                                 >
                             </div>
-                        </mat-expansion-panel>
+                        </mat-expansion-panel> -->
                         <mat-expansion-panel
                             class="affiliate-info"
                             [expanded]="true"
                         >
                             <mat-expansion-panel-header>
                                 <mat-panel-title
-                                    >{{ ls.l('AffiliateInfo')
+                                    >{{ ls.l('Affiliate Settings')
                                     }}</mat-panel-title
                                 >
                                 <span
@@ -114,7 +114,7 @@
                                 </dx-check-box>
                             </div>
                             <div
-                                class="field tier"
+                                class="field tier flex justify-between"
                                 *ngIf="hasCommissionsFeature"
                             >
                                 <label>{{ ls.l('AffiliateRateTier1') }}:</label>
@@ -135,7 +135,7 @@
                                 </inplace-edit>
                             </div>
                             <div
-                                class="field tier"
+                                class="field tier flex justify-between"
                                 *ngIf="hasCommissionsFeature"
                             >
                                 <label>{{ ls.l('AffiliateRateTier2') }}:</label>
