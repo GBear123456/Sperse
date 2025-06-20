@@ -1,9 +1,14 @@
+/*
+  IMPORTANT: All color, background, and border styles in this file must use theme variables (e.g., var(--background-color), var(--text-color), var(--card-bg), var(--primary-color), etc.)
+  for robust light/dark mode support. Do NOT use hardcoded color values for these properties.
+  Module/brand colors (e.g., #00B0F5, #4D3AA0, #107500, #0051AA) are left as-is unless you want to map them to theme variables.
+*/
 :host {
     transition: width 0.5s;
     height: calc(100vh - 75px);
     z-index: 999;
-    border-right: 1px solid #dedede;
-    background: var(--app-left-bar-color);
+    border-right: 1px solid var(--border-color);
+    background: var(--background-color);
     position: absolute;
     display: block;
     top: 75px;
@@ -16,7 +21,6 @@
     ::ng-deep .flaticon-music-2 {
         &:before {
             content: url(../../../../assets/common/icons/notification-bing.svg);
-
         }
     }
 
@@ -33,9 +37,9 @@
                 background: transparent;
                 &.dx-state-hover {
                     .dx-item-content.dx-menu-item-content {
-                        background: #FFF;
+                        background: var(--background-color);
                         img {
-                            //border: 3px solid #d0d3e7;
+                            //border: 3px solid var(--border-color);
                         }
                     }
                 }
@@ -76,10 +80,10 @@
         width: 54px;
         height: 40px;
         border-radius: 8px;
-        border: 1px solid #E1E7ED;
+        border: 1px solid var(--border-color);
         margin: 10px 18px 6px 18px;
         background: url(../../../../assets/common/icons/three-dots.svg) center no-repeat;
-        background-color: #FFFFFF;
+        background-color: var(--background-color);
         cursor: pointer;
     }
 
@@ -112,7 +116,7 @@
         }
         .dx-accordion-item {
             border-radius: 8px;
-            border: 1px solid #ECE5EF;
+            border: 1px solid var(--border-color);
             outline: none;
             margin: 5px 16px;
             &.dx-accordion-item-opened {
@@ -123,16 +127,16 @@
                 }
                 .dx-accordion-item-body {
                     &.api {
-                        background: #F9FBF9;
+                        background: var(--card-bg);
                     }
                     &.admin {
-                        background: rgba(246, 250, 255, 0.8);
+                        background: var(--card-bg);
                     }
                     &.crm {
-                        background: #FAF9FB;
+                        background: var(--card-bg);
                     }
                     &.cfo {
-                        background: rgba(246, 252, 255, 0.8);
+                        background: var(--card-bg);
                     }
                 }
             }
@@ -190,7 +194,7 @@
             text-align: center;
             border-radius: 8px;
             padding: 0;
-            color: #FFF;
+            color: var(--button-bg);
             width: 55px;
             height: 30px;
             margin: 0;
@@ -202,27 +206,27 @@
             &.cfo {
                 ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
                     border-left: 2px solid #00B0F5;
-                    background: #E9FAFD;
+                    background: var(--card-bg);
                 }
             }
             &.crm {
                 ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
                     border-left: 2px solid #4D3AA0;
-                    background: #EDE7F3;
+                    background: var(--card-bg);
                 }
             }
 
             &.api {
                 ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
                     border-left: 2px solid #107500;
-                    background: #E2EEE2;
+                    background: var(--card-bg);
                 }
             }
 
             &.admin {
                 ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
                     border-left: 2px solid #0051AA;
-                    background: #E9F2FD;
+                    background: var(--card-bg);
                 }
             }
 
@@ -258,7 +262,7 @@
     font-weight: 500;
     line-height: 13px;
     letter-spacing: 0em;
-    color: #10213A;
+    color: var(--text-color);
     padding: 0;
     margin: 0;
 }

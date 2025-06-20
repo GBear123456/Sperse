@@ -1,5 +1,4 @@
 <div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
-
 <a
   routerLink="/app/crm/{{
     appService.isHostTenant ? 'dashboard' : layoutService.getWelcomePageUri()
@@ -10,7 +9,6 @@
 >
   <platform-select></platform-select>
 </a>
-
 <div class="accordion-wrapper" *ngIf="selectedModuleIndex != undefined">
   <dx-accordion
     [(selectedIndex)]="selectedModuleIndex"
@@ -71,7 +69,6 @@
     </div>
   </dx-accordion>
 </div>
-
 <user-management-list>
   <app-theme-toggle></app-theme-toggle>
   <li

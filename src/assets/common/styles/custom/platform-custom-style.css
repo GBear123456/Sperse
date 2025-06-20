@@ -1,8 +1,12 @@
+/*
+  IMPORTANT: All color, background, and border styles in this file must use theme variables (e.g., var(--background-color), var(--text-color), var(--card-bg), var(--primary-color), etc.)
+  for robust light/dark mode support. Do NOT use hardcoded color values for these properties.
+*/
 body app-header {
-  background: #FFF;
+  background: var(--background-color);
 }
 body .dx-treeview-node-container {
-  background: #FFF !important;
+  background: var(--background-color) !important;
 }
 body .dx-menu-adaptive-mode,
 body app-header dx-drop-down-box,
@@ -15,49 +19,49 @@ body app-header dx-drop-down-box input {
   border: 0 !important;
 }
 body .top-bar-nav .dx-tabs-wrapper .dx-menu-items-container .dx-menu-item-wrapper .dx-menu-item-content .dx-menu-item-popout:before{
-  color:#000;
+  color: var(--text-color);
 }
 body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-items-container .dx-menu-item-wrapper .dx-menu-item-content .dx-menu-item-popout:before{
-  color: #000 !important;
+  color: var(--text-color) !important;
 }
 body .dx-submenu .dx-menu-items-container {
   background: transparent!important;
 }
 body .dx-submenu .dx-item.dx-menu-item.dx-menu-item-has-text {
-  color: #333;
+  color: var(--text-color);
 }
 body .dx-submenu .dx-item.dx-menu-item.dx-menu-item-has-text.dx-state-hover {
-  background: rgba(0,0,0,.04)!important;
-  color: #333;
+  background: var(--hover-bg)!important;
+  color: var(--text-color);
 }
 body app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text {
-  color: #333 !important;
+  color: var(--text-color) !important;
 }
 body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
-  color: #202b35 !important;
+  color: var(--text-color) !important;
 }
 body .dx-item.dx-menu-item.dx-menu-item-has-text.dx-menu-item-has-submenu {
   background: transparent!important;
 }
 body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected {
-  border-bottom: 3px solid #00aeef!important;
+  border-bottom: 3px solid var(--primary-color)!important;
 }
 body app-header dx-nav-bar .dx-item.dx-tab .dx-menu-item-text {
-  color: #333 !important;
+  color: var(--text-color) !important;
 }
 body .m-dropdown__arrow {
-  color: #313131 !important;
+  color: var(--text-color) !important;
   right: 6px !important;
 }
 body .page-header.navbar .page-top #m_header_topbar .m-dropdown__header {
   box-shadow: none !important;
-  background: #313131 !important;
+  background: var(--navbar-bg) !important;
 }
 body .page-header.navbar .page-top #m_header_topbar .m-dropdown__header .user-info.fullName {
-  color: #f0d500 !important;
+  color: var(--warning-color) !important;
 }
 body .page-header.navbar .page-top #m_header_topbar .m-dropdown__header .user-info.email {
-  color: #f1f1f0 !important;
+  color: var(--text-color) !important;
 }
 body .swal-modal {
   border-radius: 12px;
@@ -71,7 +75,7 @@ body .swal-modal .swal-footer {
 }
 body .swal-modal .swal-button.swal-button--confirm {
   border-radius: 2px;
-  background-color: #00aeef;
+  background-color: var(--primary-color);
   font-family: Montserrat;
   letter-spacing: 0.15px;
   font-size: 19px;
@@ -97,13 +101,13 @@ body .swal-modal .swal-button.swal-button--confirm {
 body .swal-modal .swal-icon.swal-icon--error,
 body .swal-modal .swal-icon.swal-icon--warning,
 body .swal-modal .swal-icon.swal-icon--info {
-  background: #FFF;
+  background: var(--card-bg);
   box-shadow: none;
   border: none;
 }
 body .swal-modal .swal-icon.swal-icon--success {
-  background: #FFF;
-  border: 10px solid #FFD564;
+  background: var(--card-bg);
+  border: 10px solid var(--warning-color);
 }
 body .swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
   height: 50px !important;
@@ -116,32 +120,32 @@ body .swal-modal .swal-icon.swal-icon--warning:before {
   content: "\2713";
 }
 body .swal-modal .swal-icon > div:first-child:before {
-  color: #000 !important;
+  color: var(--text-color) !important;
 }
 body .swal-modal .swal-title {
-  color: #000;
+  color: var(--text-color);
   font-size: 24px;
   font-weight: bold;
   white-space: pre-line;
   font-family: Montserrat;
 }
 body .swal-modal .swal-button {
-  background-color: #00aeef;
+  background-color: var(--primary-color);
   font-size: 18px;
   font-weight: 600;
-  color: #FFF;
+  color: var(--button-bg);
   cursor: pointer;
 }
 body .swal-modal .swal-button:hover {
-  color: #FFFFFF;
-  background-color: #3dcaff;
+  color: var(--button-bg);
+  background-color: var(--primary-color);
 }
 body .swal-modal .checkbox-container input[type="checkbox"]:hover + label:before {
-    border: 1px solid #f0d500;
+    border: 1px solid var(--warning-color);
 }
 body .swal-modal .checkbox-container input[type="checkbox"]:checked + label:before {
-    border-color: #f0d500;
-    background-color: #f0d500;
+    border-color: var(--warning-color);
+    background-color: var(--warning-color);
 }
 body .accountsContainer {
   display: block !important;
@@ -173,47 +177,47 @@ body .accountsContainer .not-initialized-content body-text .btn-layout {
 }
 body .btn-layout {
   font-family: Montserrat !important;
-  background-color: #00aeef;
-  color: #ffffff;
+  background-color: var(--primary-color);
+  color: var(--button-bg);
   transition: 0.2s;
   border: none;
 }
 body .btn-layout:hover {
-  background-color: #00aeef;
+  background-color: var(--primary-color);
   box-shadow: 0 0 3px rgba(255, 204, 0, 0.5);
 }
 body .alert.m-alert--outline.alert-success {
-  border-color: #00aeef;
-  color: #000;
+  border-color: var(--primary-color);
+  color: var(--text-color);
 }
 body .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon {
-  background: #00aeef !important;
+  background: var(--primary-color) !important;
 }
 body .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon span {
-  border-left-color: #00aeef !important;
+  border-left-color: var(--primary-color) !important;
 }
 body .alert.m-alert--outline .m-alert__icon small.label {
   font-weight: 600;
   margin-top: 10px;
   display: block;
-  color: #000;
+  color: var(--text-color);
 }
 body .btn.btn-primary,
 body .button-primary {
-  background-color: #00aeef;
-  color: #FFF;
+  background-color: var(--primary-color);
+  color: var(--button-bg);
 }
 body .btn.btn-primary:before,
 body .button-primary:before {
-  border-top-color: #000;
+  border-top-color: var(--text-color);
 }
 body .btn.btn-primary:after,
 body .button-primary:after {
-  background-color: #00aeef;
+  background-color: var(--primary-color);
 }
 body .btn.btn-primary:hover,
 body .button-primary:hover {
-  background: #00aeef;
+  background: var(--primary-color);
 }
 body .cdk-overlay-pane.footer-slider,
 body .cdk-overlay-pane.user-info {
@@ -223,7 +227,7 @@ body .cdk-overlay-pane.footer-slider modal-dialog .close-dialog,
 body .cdk-overlay-pane.user-info modal-dialog .close-dialog,
 body .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog,
 body .cdk-overlay-pane.user-info app-modal-dialog .close-dialog {
-  background: #313131 !important;
+  background: var(--navbar-bg) !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog .close-dialog:before,
 body .cdk-overlay-pane.user-info modal-dialog .close-dialog:before,
@@ -233,13 +237,13 @@ body .cdk-overlay-pane.footer-slider modal-dialog .close-dialog:after,
 body .cdk-overlay-pane.user-info modal-dialog .close-dialog:after,
 body .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog:after,
 body .cdk-overlay-pane.user-info app-modal-dialog .close-dialog:after {
-  background: #FFF !important;
+  background: var(--background-color) !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header,
 body .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header,
 body .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header,
 body .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header {
-  background: #F3F7FA !important;
+  background: var(--card-bg) !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header dx-text-box,
 body .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header dx-text-box,
@@ -251,14 +255,14 @@ body .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header input,
 body .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header input,
 body .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header input,
 body .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header input {
-  color: #202B35 !important;
-  background: #F3F7FA !important;
+  color: var(--text-color) !important;
+  background: var(--card-bg) !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content {
-  background: #FFFFFF;
+  background: var(--background-color);
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content label,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content label,
@@ -276,7 +280,7 @@ body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content span,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content span,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content span,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content span {
-  color: #333;
+  color: var(--text-color);
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item,
@@ -289,7 +293,7 @@ body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__it
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link {
-  border-bottom: 1px solid #FFF;
+  border-bottom: 1px solid var(--background-color);
   padding-right: 30px;
   padding-left: 5px;
 }
@@ -297,7 +301,7 @@ body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__it
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link span,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link span,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link span {
-  color: #FFF;
+  color: var(--background-color);
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover,
@@ -307,7 +311,7 @@ body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__it
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active {
-  border-bottom: 1px solid #00aeef !important;
+  border-bottom: 1px solid var(--primary-color) !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
@@ -317,19 +321,19 @@ body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__it
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span {
-  color: #00aeef !important;
+  color: var(--primary-color) !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper {
-  background: #fff;
+  background: var(--background-color);
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content #content *,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content *,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content #content *,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content #content * {
-  color: #FFF !important;
+  color: var(--background-color) !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content #content * .doc-title,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content * .doc-title,
@@ -392,28 +396,28 @@ body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content #content * 
   body .cdk-overlay-pane.user-info .close-dialog:before,
   body .cdk-overlay-pane.footer-slider .close-dialog:after,
   body .cdk-overlay-pane.user-info .close-dialog:after {
-    background: #FFF !important;
+    background: var(--background-color) !important;
   }
 }
 body .notification-header {
   font-family: Montserrat;
 }
 body .notification-header .m-dropdown__header {
-  background: #313131;
+  background: var(--navbar-bg);
   padding: 20px 35px;
 }
 body .notification-header .m-dropdown__header .tenantName {
   font-family: Montserrat;
   font-size: 16px;
   letter-spacing: 0.2px;
-  color: #fff;
+  color: var(--text-color);
 }
 body .notification-header .m-dropdown__header .fullName {
   font-family: Montserrat;
   font-size: 18px;
   font-weight: 500;
   letter-spacing: 0.1px;
-  color: #f0d500;
+  color: var(--warning-color);
 }
 body .notification-header .m-dropdown__body {
   padding: 25px 35px 25px 0;
@@ -438,7 +442,7 @@ body .notification-modal a {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.2px;
-  color: #3463ae;
+  color: var(--primary-color);
   font-family: Montserrat;
 }
 body notificationsettingsmodal .mat-dialog-header input,
@@ -471,7 +475,7 @@ body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeli
   display: none;
 }
 body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__badge:before {
-  background-color: #00aeef;
+  background-color: var(--primary-color);
   width: 10px;
   height: 10px;
   margin-top: -5px;
@@ -482,7 +486,7 @@ body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeli
 body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__text {
   font-size: 13px;
   font-weight: 400;
-  color: #4a4a4a;
+  color: var(--text-color);
   padding-right: 0;
   font-family: Montserrat;
 }
@@ -495,11 +499,11 @@ body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeli
   font-family: Montserrat;
 }
 body .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__text {
-  color: #000000;
+  color: var(--text-color);
   font-weight: 600;
 }
 body .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__time {
-  color: #4a4a4a;
+  color: var(--text-color);
   font-weight: 500;
 }
 body .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__badge {
@@ -510,8 +514,8 @@ body .m-scrollable .m-nav__separator {
   margin: 10px;
 }
 body .primeng-datatable-container table thead tr th {
-  background-color: #fc0 !important;
+  background-color: var(--primary-color) !important;
 }
 body .primeng-datatable-container .primeng-no-data {
-  background: #fff;
+  background: var(--background-color);
 }
