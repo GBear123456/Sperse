@@ -136,6 +136,8 @@
     }
 
     .box-shadow-wrapper {
+        position: relative;
+        z-index: 4;
     }
 
     ::ng-deep mat-sidenav {
@@ -164,6 +166,10 @@
     mat-sidenav.right_sidenav {
         width: 400px;
         padding-top: 0;
+        z-index: 4;
+        position: fixed;
+        top: 77px;
+        right: 10px;
 
         ::ng-deep .mat-tab-label {
             text-transform: uppercase;
