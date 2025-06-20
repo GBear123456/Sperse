@@ -1,28 +1,28 @@
-<div class="min-h-screen p-4 bg-white dark:bg-gray-900">
-   <div class="max-w-7xl mx-auto">
-      <app-conversion-journey-header></app-conversion-journey-header>
-      <div class="grid grid-cols-1 xl:grid-cols-4 gap-3 mt-4">
-        <div class="xl:col-span-3 space-y-3">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-              <app-referral-source-card></app-referral-source-card>
-              <app-utm-parameters-card></app-utm-parameters-card>
-            </div>
-            <app-location-network-card></app-location-network-card>
-            <app-device-session-panel></app-device-session-panel>
-            <app-custom-fields-tracking></app-custom-fields-tracking>
-            <app-url-agent-panel></app-url-agent-panel>
+<div class="min-h-screen p-4 bg-[#fff] dark:bg-gray-900">
+  <div class="max-w-7xl mx-auto">
+    <app-conversion-journey-header></app-conversion-journey-header>
+    <div class="grid grid-cols-1 xl:grid-cols-4 gap-3 mt-4">
+      <div class="xl:col-span-3 space-y-3">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <app-referral-source-card></app-referral-source-card>
+          <app-utm-parameters-card></app-utm-parameters-card>
         </div>
-        <div class="xl:col-span-1 hidden xl:block">
-          <div class="sticky top-4">
-            <app-visit-history-panel></app-visit-history-panel>
-          </div>
+        <app-location-network-card></app-location-network-card>
+        <app-device-session-panel></app-device-session-panel>
+        <app-custom-fields-tracking></app-custom-fields-tracking>
+        <app-url-agent-panel></app-url-agent-panel>
+      </div>
+      <div class="xl:col-span-1 hidden xl:block">
+        <div class="sticky top-4">
+          <app-visit-history-panel></app-visit-history-panel>
         </div>
       </div>
-   </div>
-   <div class="mt-8 text-center">
+    </div>
+  </div>
+  <div class="mt-8 text-center">
     <p class="text-sm text-gray-500">
       Enhanced visitor analytics • Privacy compliant • Last updated:
-        {{ currentDateTime }}
+      {{ currentDateTime }}
     </p>
-</div>
+  </div>
 </div>

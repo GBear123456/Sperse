@@ -1,41 +1,49 @@
-<div class="bg-white p-6 rounded-xl h-full">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-2 flex-wrap gap-3">
-      <div class="flex items-center space-x-2 text-blue-700 font-semibold text-lg">
-        <lucide-icon name="bar-chart-3" class="w-5 h-5 text-blue-700"></lucide-icon>
-        <span>Traffic & Conversions</span>
-      </div>
-      <div class="flex space-x-2">
-        <button *ngFor="let period of periods"
-                (click)="selectPeriod(period)"
-                class="px-4 py-1.5 rounded-md text-sm font-medium"
-                [ngClass]="{
-                  'bg-gray-900 text-white': selectedPeriod === period,
-                  'bg-white text-gray-800 border border-gray-200 hover:bg-gray-100': selectedPeriod !== period
-                }">
-          {{ period }}
-        </button>
-      </div>
+<div class="bg-[#fff] p-6 rounded-xl h-full dark:bg-gray-800">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-2 flex-wrap gap-3">
+    <div class="flex items-center space-x-2 text-blue-700 font-semibold text-lg dark:text-blue-400">
+      <lucide-icon
+        name="bar-chart-3"
+        class="w-5 h-5 text-blue-700 dark:text-blue-400"
+      ></lucide-icon>
+      <span>Traffic & Conversions</span>
     </div>
-
-    <p class="text-sm text-gray-500 mb-4">Daily link traffic and conversion rates</p>
-
-    <!-- Bar Chart -->
-    <dx-chart
-      [dataSource]="data"
-      palette="Soft Pastel"
-      [rotated]="false"
-      class="w-full h-72"
-      [commonSeriesSettings]="{
-        argumentField: 'day',
-        type: 'bar'
-      }"
-      [legend]="{ visible: false }"
-      [valueAxis]="{ grid: { visible: false } }"
-      [argumentAxis]="{ grid: { visible: false } }"
-      [barGroupPadding]="0.2">
-
-      <dxi-series valueField="traffic" name="Traffic" color="#3b82f6"></dxi-series>
-      <dxi-series valueField="conversions" name="Conversions" color="#10b981"></dxi-series>
-    </dx-chart>
+    <div class="flex space-x-2">
+      <button
+        *ngFor="let period of periods"
+        (click)="selectPeriod(period)"
+        class="px-4 py-1.5 rounded-md text-sm font-medium"
+        [ngClass]="{
+          'bg-gray-900 text-white dark:bg-gray-700 dark:text-white': selectedPeriod === period,
+          'bg-[#fff] text-gray-800 border border-gray-200 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800':
+            selectedPeriod !== period
+        }"
+      >
+        {{ period }}
+      </button>
+    </div>
   </div>
+
+  <p class="text-sm text-gray-500 mb-4 dark:text-gray-400">
+    Daily link traffic and conversion rates
+  </p>
+
+  <!-- Bar Chart -->
+  <dx-chart
+    [dataSource]="data"
+    palette="Soft Pastel"
+    [rotated]="false"
+    class="w-full h-72"
+    [commonSeriesSettings]="{
+      argumentField: 'day',
+      type: 'bar'
+    }"
+    [legend]="{ visible: false }"
+    [valueAxis]="{ grid: { visible: false } }"
+    [argumentAxis]="{ grid: { visible: false } }"
+    [barGroupPadding]="0.2"
+  >
+    <dxi-series valueField="traffic" name="Traffic" color="#3b82f6"></dxi-series>
+    <dxi-series valueField="conversions" name="Conversions" color="#10b981"></dxi-series>
+  </dx-chart>
+</div>

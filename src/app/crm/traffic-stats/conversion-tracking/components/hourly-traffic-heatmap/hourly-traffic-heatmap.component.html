@@ -1,54 +1,44 @@
-<div class="bg-white p-6 rounded-xl">
-    <!-- Header -->
-    <div class="mb-0">
-        <h2
-            class="text-xl font-semibold text-orange-700 flex items-center space-x-2"
-        >
-            <lucide-icon
-                name="clock"
-                class="w-5 h-5 text-orange-700"
-            ></lucide-icon>
-            <span>Hourly Traffic by Days</span>
-        </h2>
-        <p class="text-sm text-gray-500">
-            Heat map showing activity patterns throughout the week by hour
-        </p>
-    </div>
-
-    <!-- Grid Labels -->
-    <div class="max-h-80 overflow-y-auto">
-        <div
-            class="grid grid-cols-8 gap-2 mt-4 text-sm font-medium text-center"
-        >
-            <div class="text-left font-semibold">Hour</div>
-            <div *ngFor="let day of days" class="">{{ day }}</div>
-        </div>
-
-        <div
-            class="grid grid-cols-8 gap-x-2 gap-y-2 mb-2 text-sm text-white text-center font-semibold"
-            *ngFor="let row of trafficData"
-        >
-            <div class="text-gray-700 font-medium">{{ row.hour }}</div>
-            <ng-container *ngFor="let cell of row.values">
-                <div
-                    class="rounded px-2 py-1"
-                    [ngStyle]="{ 'background-color': getColor(cell) }"
-                >
-                    {{ cell }}
-                </div>
-            </ng-container>
-        </div>
-    </div>
-
-    <!-- Legend -->
-    <div
-        class="flex justify-center items-center mt-4 text-xs font-medium space-x-2"
+<div class="bg-[#fff] p-6 rounded-xl dark:bg-gray-800">
+  <!-- Header -->
+  <div class="mb-0">
+    <h2
+      class="text-xl font-semibold text-orange-700 flex items-center space-x-2 dark:text-orange-400"
     >
-        <span class="text-gray-500">Low</span>
-        <div class="w-4 h-4 rounded" style="background-color: #cbd5e1"></div>
-        <div class="w-4 h-4 rounded" style="background-color: #60a5fa"></div>
-        <div class="w-4 h-4 rounded" style="background-color: #ec4899"></div>
-        <div class="w-4 h-4 rounded" style="background-color: #ef4444"></div>
-        <span class="text-gray-500">High</span>
+      <lucide-icon name="clock" class="w-5 h-5 text-orange-700 dark:text-orange-400"></lucide-icon>
+      <span>Hourly Traffic by Days</span>
+    </h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      Heat map showing activity patterns throughout the week by hour
+    </p>
+  </div>
+
+  <!-- Grid Labels -->
+  <div class="max-h-80 overflow-y-auto">
+    <div class="grid grid-cols-8 gap-2 mt-4 text-sm font-medium text-center">
+      <div class="text-left font-semibold text-gray-700 dark:text-gray-200">Hour</div>
+      <div *ngFor="let day of days" class="text-gray-700 dark:text-gray-200">{{ day }}</div>
     </div>
+
+    <div
+      class="grid grid-cols-8 gap-x-2 gap-y-2 mb-2 text-sm text-white text-center font-semibold"
+      *ngFor="let row of trafficData"
+    >
+      <div class="text-gray-700 font-medium dark:text-gray-200">{{ row.hour }}</div>
+      <ng-container *ngFor="let cell of row.values">
+        <div class="rounded px-2 py-1" [ngStyle]="{ 'background-color': getColor(cell) }">
+          {{ cell }}
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="flex justify-center items-center mt-4 text-xs font-medium space-x-2">
+    <span class="text-gray-500 dark:text-gray-400">Low</span>
+    <div class="w-4 h-4 rounded" style="background-color: #cbd5e1"></div>
+    <div class="w-4 h-4 rounded" style="background-color: #60a5fa"></div>
+    <div class="w-4 h-4 rounded" style="background-color: #ec4899"></div>
+    <div class="w-4 h-4 rounded" style="background-color: #ef4444"></div>
+    <span class="text-gray-500 dark:text-gray-400">High</span>
+  </div>
 </div>

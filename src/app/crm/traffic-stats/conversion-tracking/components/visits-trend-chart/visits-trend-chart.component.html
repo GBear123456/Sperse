@@ -1,57 +1,52 @@
-<div class="bg-white p-6 rounded-xl h-full">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-        <div
-            class="flex items-center space-x-2 text-blue-700 font-semibold text-lg"
-        >
-            <lucide-icon
-                name="trending-up"
-                class="w-5 h-5 text-blue-700"
-            ></lucide-icon>
-            <span>Daily Visits Trend</span>
-        </div>
-        <div class="flex space-x-2">
-            <button
-                *ngFor="let range of timeRanges"
-                (click)="selectRange(range)"
-                class="px-4 py-1.5 rounded-md text-sm font-medium"
-                [ngClass]="{
-                    'bg-gray-900 text-white': selectedRange === range,
-                    'bg-white text-gray-800 border border-gray-200 hover:bg-gray-100':
-                        selectedRange !== range
-                }"
-            >
-                {{ range }}
-            </button>
-        </div>
+<div class="bg-[#fff] p-6 rounded-xl h-full dark:bg-gray-800">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+    <div class="flex items-center space-x-2 text-blue-700 font-semibold text-lg dark:text-blue-400">
+      <lucide-icon
+        name="trending-up"
+        class="w-5 h-5 text-blue-700 dark:text-blue-400"
+      ></lucide-icon>
+      <span>Daily Visits Trend</span>
     </div>
-
-    <!-- Subtitle -->
-    <p class="text-sm text-gray-500 mb-4">
-        Daily visits from top affiliates over time
-    </p>
-
-    <dx-chart
-        [dataSource]="filteredData"
-        palette="Soft Pastel"
-        [commonSeriesSettings]="{
-            type: 'spline',
-            argumentField: 'date',
-            point: { visible: true, size: 6 }
+    <div class="flex space-x-2">
+      <button
+        *ngFor="let range of timeRanges"
+        (click)="selectRange(range)"
+        class="px-4 py-1.5 rounded-md text-sm font-medium"
+        [ngClass]="{
+          'bg-gray-900 text-white dark:bg-gray-700 dark:text-white': selectedRange === range,
+          'bg-[#fff] text-gray-800 border border-gray-200 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800':
+            selectedRange !== range
         }"
-        [legend]="{ visible: false }"
-        [tooltip]="{ enabled: true }"
-        class="w-full h-72"
-    >
-        <dxi-series
-            *ngFor="let series of seriesFields"
-            [valueField]="series.field"
-            [name]="series.name"
-            [color]="series.color"
-        >
-        </dxi-series>
+      >
+        {{ range }}
+      </button>
+    </div>
+  </div>
 
-        <dxo-value-axis [grid]="{ visible: true }"></dxo-value-axis>
-        <dxo-argument-axis [grid]="{ visible: false }"></dxo-argument-axis>
-    </dx-chart>
+  <!-- Subtitle -->
+  <p class="text-sm text-gray-500 mb-4 dark:text-gray-400">
+    Daily visits from top affiliates over time
+  </p>
+
+  <dx-chart
+    [dataSource]="filteredData"
+    palette="Soft Pastel"
+    [commonSeriesSettings]="{
+      type: 'spline',
+      argumentField: 'date',
+      point: { visible: true, size: 6 }
+    }"
+    [legend]="{ visible: false }"
+    [tooltip]="{ enabled: true }"
+    class="w-full h-72"
+  >
+    <dxi-series
+      *ngFor="let series of seriesFields"
+      [valueField]="series.field"
+      [name]="series.name"
+      [color]="series.color"
+    >
+    </dxi-series>
+  </dx-chart>
 </div>

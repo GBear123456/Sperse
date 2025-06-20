@@ -1,20 +1,25 @@
-<div class="bg-white p-6 overflow-hidden rounded-xl">
+<div class="bg-[#fff] p-6 overflow-hidden rounded-xl dark:bg-gray-800">
   <div class="flex items-center justify-between gap-4 mb-2">
     <!-- Left Title -->
-    <div class="flex items-center space-x-2 text-purple-700 font-semibold text-lg">
+    <div
+      class="flex items-center space-x-2 text-purple-700 font-semibold text-lg dark:text-purple-400"
+    >
       <lucide-icon name="users" class="w-5 h-5"></lucide-icon>
       <span>Top Affiliates</span>
     </div>
 
     <!-- Right Tabs -->
-    <div class="flex items-center bg-white border border-gray-200 rounded-lg overflow-hidden">
+    <div
+      class="flex items-center bg-[#fff] border border-gray-200 rounded-lg overflow-hidden dark:bg-gray-900 dark:border-gray-700"
+    >
       <button
         *ngFor="let tab of tabs"
         (click)="selectTab(tab)"
         class="flex items-center space-x-1 px-2 py-1 text-sm font-medium transition-all"
         [ngClass]="{
-          'bg-gray-100 text-gray-900': selectedTab === tab,
-          'text-gray-700 hover:bg-gray-50': selectedTab !== tab
+          'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white': selectedTab === tab,
+          'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800':
+            selectedTab !== tab
         }"
       >
         <lucide-icon [name]="tab.icon" class="w-4 h-4"></lucide-icon>
@@ -22,7 +27,7 @@
       </button>
     </div>
   </div>
-  <p class="text-sm text-gray-500">Revenue breakdown by region</p>
+  <p class="text-sm text-gray-500 dark:text-gray-400">Revenue breakdown by region</p>
 
   <dx-chart
     [dataSource]="affiliates"
