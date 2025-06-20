@@ -1,5 +1,9 @@
 .contacts {
     max-width: 490px;
+    .display-flex {
+        display: flex;
+        align-items: center;
+    }
     i.icons {
         width: 20px;
         height: 30px;
@@ -28,11 +32,14 @@
             font-family: var(--app-font-family);
         }
 
-        dx-text-box, dx-button, international-phone-number {
+        dx-text-box,
+        dx-button,
+        international-phone-number {
             display: inline-block;
         }
 
-        dx-text-box, international-phone-number {
+        dx-text-box,
+        international-phone-number {
             min-width: 230px;
             width: 70%;
         }
@@ -83,7 +90,7 @@
             justify-content: space-between;
             padding: 5px;
             position: relative;
-            background-color: #fff;            
+            background-color: #fff;
             .icon-btn {
                 border: none;
                 background: none;
@@ -94,7 +101,8 @@
                 align-items: center;
                 gap: 5px;
 
-                i, .send-icon {
+                i,
+                .send-icon {
                     transition: background 0.15s;
                     border-radius: 4px;
                 }
@@ -105,7 +113,7 @@
                 .send-icon {
                     display: flex;
                     align-items: center;
-                    background-color: #ECF3FA;
+                    background-color: #ecf3fa;
                     padding: 3px;
                     border-radius: 2px;
                     font-size: 14px;
@@ -132,7 +140,8 @@
                 // }
 
                 i.edit-info {
-                    background: url(../../../../assets/common/icons/c-info.svg) no-repeat center;
+                    background: url(../../../../assets/common/icons/c-info.svg)
+                        no-repeat center;
                     background-size: 20px;
                     display: inline-block;
                     width: 25px;
@@ -143,7 +152,7 @@
 
         &:hover {
             li {
-                background-color: #F8FAFC;
+                background-color: #f8fafc;
             }
 
             // .actions {

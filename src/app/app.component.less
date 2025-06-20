@@ -1,23 +1,30 @@
 /** Node modules assets */
-@import '~jstree/dist/themes/default/style.min.css';
-@import '~malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css';
+@import "~jstree/dist/themes/default/style.min.css";
+@import "~malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css";
 @import "~primeng/resources/primeng.min.css";
 @import "~bootstrap-select/dist/css/bootstrap-select.css";
 @import "~bootstrap-daterangepicker/daterangepicker.css";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 /** Internal assets */
 @import "../assets/metronic/src/vendors/flaticon/css/flaticon.css";
 @import "../assets/metronic/src/vendors/line-awesome/css/line-awesome.css";
 
 .fullscreen {
-    &, .page-content-wrapper, .page-content {
-        height: 100vh!important;
+    &,
+    .page-content-wrapper,
+    .page-content {
+        height: 100vh !important;
     }
 }
 
 .toolbar-hidden .fullscreen .page-container {
-    &, .page-content-wrapper, .page-content {
-        height: 100%!important;
+    &,
+    .page-content-wrapper,
+    .page-content {
+        height: 100% !important;
         .fullscreen .main-component-view {
             height: 100vh !important;
         }
@@ -36,7 +43,9 @@
         }
     }
 
-    &, .page-content-wrapper, .page-content {
+    &,
+    .page-content-wrapper,
+    .page-content {
         &.show-top-bar {
             height: calc(100vh - 75px);
         }
@@ -75,14 +84,14 @@
     &.subscription-bar-visible {
         margin-top: 45px;
         ::ng-deep ng-component .main-component-view {
-            height: calc(100vh - 256px)!important;
+            height: calc(100vh - 256px) !important;
         }
     }
 }
 
 .advice-period[module^="cfo"] {
     .clipboard-holder > i.save-to-clipboard {
-        display: none!important;
+        display: none !important;
     }
 }
 

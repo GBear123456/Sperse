@@ -18,7 +18,7 @@
                 .vertical-delimiter::before {
                     height: 78px;
                 }
-    
+
                 button {
                     height: 44px;
                     &#addEntity {
@@ -27,18 +27,6 @@
                             top: 20px;
                         }
                     }
-                }
-            }
-
-            .avatar {
-                position: relative;
-                top: 0;
-                left: 0;
-                .photo-area {
-                    margin: 40px auto 10px auto;
-                }
-                .active {
-                    right: 95px;
                 }
             }
 
@@ -52,7 +40,7 @@
                     line-height: 27px;
                     letter-spacing: -0.04em;
                     text-align: center;
-                    color:#10213A;
+                    color: #10213a;
                 }
 
                 ::ng-deep inplace-edit {
@@ -148,7 +136,7 @@
             ::ng-deep .inplace-edit-view-mode {
                 .placeholder {
                     font-size: 24px;
-                    opacity: .6;
+                    opacity: 0.6;
                 }
                 span {
                     max-width: 92%;
@@ -166,7 +154,7 @@
         width: 110px;
         height: 110px;
         cursor: pointer;
-        background-color: #F4F4F4;
+        background-color: #f4f4f4;
         z-index: 9999999;
         border-radius: 50%;
         background-size: cover;
@@ -174,7 +162,7 @@
         &:before {
             display: block;
             width: 10px;
-            background-color: #DBDCDD;
+            background-color: #dbdcdd;
             height: 40px;
             top: 35px;
             left: 50px;
@@ -183,7 +171,7 @@
         &:after {
             display: block;
             width: 40px;
-            background-color: #DBDCDD;
+            background-color: #dbdcdd;
             height: 10px;
             top: 10px;
             left: 35px;
@@ -262,8 +250,12 @@
         align-items: center;
         cursor: pointer;
 
-        &.left { margin-right: 2px; }
-        &.right { margin-left: 2px; }
+        &.left {
+            margin-right: 2px;
+        }
+        &.right {
+            margin-left: 2px;
+        }
     }
 
     .user-card-content {
@@ -333,59 +325,6 @@
             margin-left: 18px; // extra space before dropdown
         }
     }
-    
-    .organization_info {
-        ::ng-deep inplace-edit {
-            .inplace-edit-view-mode {
-                height: auto;
-            }
-            i.dx-icon {
-                font-size: 14px !important;
-            }
-            i.edit {
-                display: none !important;
-            }
-            span {
-                display: inline-block;
-                white-space: nowrap;
-                @media (max-width: 1366px) {
-                    max-width: 260px;
-                }
-            }
-            input {
-                font-size: 16px !important;
-            }
-        }
-    }
-
-    .vertical-delimiter {
-        width: 30px;
-        height: 0;
-        position: relative;
-        display: inline-block;
-        vertical-align: top;
-        align-self: flex-start;
-        &:before {
-            content: '';
-            position: absolute;
-            border-left: 1px solid #dfdfdf;
-            display: block;
-            height: 82px;
-            left: 15px;
-            top: -15px;
-        }
-    }
-
-    .refresh-button {
-        width: 44px;
-        height: 44px;
-        margin: 5px;
-        outline: none;
-        border: none;
-        cursor: pointer;
-        vertical-align: bottom;
-        background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
-    }
 
     .organization_info {
         ::ng-deep inplace-edit {
@@ -419,7 +358,7 @@
         vertical-align: top;
         align-self: flex-start;
         &:before {
-            content: '';
+            content: "";
             position: absolute;
             border-left: 1px solid #dfdfdf;
             display: block;
@@ -437,7 +376,62 @@
         border: none;
         cursor: pointer;
         vertical-align: bottom;
-        background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
+        background: url("../../../../assets/common/icons/refresh-btn.svg")
+            no-repeat center;
+    }
+
+    .organization_info {
+        ::ng-deep inplace-edit {
+            .inplace-edit-view-mode {
+                height: auto;
+            }
+            i.dx-icon {
+                font-size: 14px !important;
+            }
+            i.edit {
+                display: none !important;
+            }
+            span {
+                display: inline-block;
+                white-space: nowrap;
+                @media (max-width: 1366px) {
+                    max-width: 260px;
+                }
+            }
+            input {
+                font-size: 16px !important;
+            }
+        }
+    }
+
+    .vertical-delimiter {
+        width: 30px;
+        height: 0;
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        align-self: flex-start;
+        &:before {
+            content: "";
+            position: absolute;
+            border-left: 1px solid #dfdfdf;
+            display: block;
+            height: 82px;
+            left: 15px;
+            top: -15px;
+        }
+    }
+
+    .refresh-button {
+        width: 44px;
+        height: 44px;
+        margin: 5px;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        vertical-align: bottom;
+        background: url("../../../../assets/common/icons/refresh-btn.svg")
+            no-repeat center;
     }
 
     .organization_info {
@@ -536,7 +530,7 @@
             ::ng-deep inplace-edit {
                 vertical-align: middle;
             }
-            
+
             margin-bottom: 0;
             font-size: 12px;
             font-weight: 400;
@@ -563,13 +557,14 @@
             position: relative;
         }
 
-        h2, h3 {
+        h2,
+        h3 {
             ::ng-deep inplace-edit {
                 .inplace-edit-edit-mode {
                     width: 93%;
                 }
             }
-            
+
             .actions {
                 top: 0;
                 bottom: 0;
@@ -698,17 +693,16 @@
         width: 16px;
         left: -9px;
         border: 2px solid #00aeef;
-        border-left-color: rgba(255, 255, 255, .2);
-        border-bottom-color: rgba(255, 255, 255, .2);
+        border-left-color: rgba(255, 255, 255, 0.2);
+        border-bottom-color: rgba(255, 255, 255, 0.2);
         border-radius: 50%;
         position: relative;
-        -webkit-animation: rotation .6s infinite linear;
-        -moz-animation: rotation .6s infinite linear;
-        -o-animation: rotation .6s infinite linear;
-        animation: rotation .6s infinite linear;
+        -webkit-animation: rotation 0.6s infinite linear;
+        -moz-animation: rotation 0.6s infinite linear;
+        -o-animation: rotation 0.6s infinite linear;
+        animation: rotation 0.6s infinite linear;
     }
 }
-
 
 .details-header-bar {
     display: flex;
