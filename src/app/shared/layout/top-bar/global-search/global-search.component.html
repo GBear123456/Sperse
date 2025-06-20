@@ -1,55 +1,120 @@
-<dx-select-box *ngIf="showSearchMode"
+<dx-select-box
+    *ngIf="showSearchMode"
     width="260px"
     height="51px"
     placeholder=""
     [disabled]="isLoading"
     [(value)]="selectedSearchMode"
-    [items]="[globalSearchPlaceholder, localSearchPlaceholder]"    
+    [items]="[globalSearchPlaceholder, localSearchPlaceholder]"
 ></dx-select-box>
-<div *ngIf="showSearchMode" class="drop-down-icon" (click)="openModeSelector(searchModeSelect)"></div>
+<div
+    *ngIf="showSearchMode"
+    class="drop-down-icon"
+    (click)="openModeSelector(searchModeSelect)"
+></div>
 <div class="global-search-container">
-    <dx-text-box mode="search"
-                width="100%"
-                height="51px"
-                [ngClass]="{loading: isLoading}"
-                [placeholder]="!layoutService.showLeftBar || (!showSearchMode && isCRMModule) ? globalSearchPlaceholder : (showSearchMode ? selectedSearchMode : localSearchPlaceholder)"
-                (onFocusIn)="onFocusIn($event)"
-                (onFocusOut)="onFocusOut()"
-                (onEnterKey)="search($event)"
-                (onValueChanged)="valueChanged($event)"
-                (onOptionChanged)="clearSearch($event)"
-                [elementAttr]="{ id: 'global-search-textbox' }">
+    <dx-text-box
+        mode="search"
+        width="100%"
+        height="51px"
+        [ngClass]="{ loading: isLoading }"
+        [placeholder]="
+            !layoutService.showLeftBar || (!showSearchMode && isCRMModule)
+                ? globalSearchPlaceholder
+                : showSearchMode
+                ? selectedSearchMode
+                : localSearchPlaceholder
+        "
+        (onFocusIn)="onFocusIn($event)"
+        (onFocusOut)="onFocusOut()"
+        (onEnterKey)="search($event)"
+        (onValueChanged)="valueChanged($event)"
+        (onOptionChanged)="clearSearch($event)"
+        [elementAttr]="{ id: 'global-search-textbox' }"
+    >
     </dx-text-box>
-    <dx-tooltip #dropdown
-                [(visible)]="isTooltipVisible"
-                accessKey="global-search-tooltip"
-                [closeOnOutsideClick]="true"
-                width="437px"
-                height="auto"
-                maxHeight="calc(100vh - 75px)"
-                target="#global-search-textbox"
-                [wrapperAttr]="{ id: 'global-search-tooltip' }"
-                (onContentReady)="tooltipReady($event)">
-        <dxo-position my="center top" at="center bottom" of="#global-search-textbox"></dxo-position>
-        <div *dxTemplate="let data = data of 'content'">
+    <dx-tooltip
+        #dropdown
+        [(visible)]="isTooltipVisible"
+        accessKey="global-search-tooltip"
+        [closeOnOutsideClick]="true"
+        width="437px"
+        height="auto"
+        maxHeight="calc(100vh - 75px)"
+        target="#global-search-textbox"
+        [wrapperAttr]="{ id: 'global-search-tooltip' }"
+        (onContentReady)="tooltipReady($event)"
+    >
+        <dxo-position
+            my="center top"
+            at="center bottom"
+            of="#global-search-textbox"
+        ></dxo-position>
+        <div *dxTemplate="let data = data; of: 'content'">
             <dx-scroll-view>
                 <div class="global-search-tooltip-container">
                     <ng-container *ngFor="let group of searchGroups">
-                        <div class="group" *ngIf="group.entities && group.entities.length">
+                        <div
+                            class="group"
+                            *ngIf="group.entities && group.entities.length"
+                        >
                             <header>
                                 <h4>{{ group.name }}</h4>
-                                <a *ngIf="group.entities && group.entities.length > 2"
-                                   (click)="showAll($event, group.link, group.linkParams)">
-                                    {{ ls.l('ShowAll') }}
+                                <a
+                                    *ngIf="
+                                        group.entities &&
+                                        group.entities.length > 2
+                                    "
+                                    (click)="
+                                        showAll(
+                                            $event,
+                                            group.link,
+                                            group.linkParams
+                                        )
+                                    "
+                                >
+                                    {{ ls.l("ShowAll") }}
                                 </a>
                             </header>
-                            <ul *ngFor="let entity of group.entities; let i = index">
+                            <ul
+                                *ngFor="
+                                    let entity of group.entities;
+                                    let i = index
+                                "
+                            >
                                 <ng-container *ngIf="i <= 1">
-                                    <li class="entity" (click)="moveToEntityDetails($event, entity, group.link)">
-                                        <img [src]="getContactPhotoUrl(entity.PhotoPublicId)">
+                                    <li
+                                        class="entity"
+                                        (click)="
+                                            moveToEntityDetails(
+                                                $event,
+                                                entity,
+                                                group.link
+                                            )
+                                        "
+                                    >
+                                        <img
+                                            [src]="
+                                                getContactPhotoUrl(
+                                                    entity.PhotoPublicId
+                                                )
+                                            "
+                                        />
                                         <div>
-                                            <a>{{ entity.FullName || entity.Name || ( (entity.FirstName || '') + ' ' + (this.entity.LastName || '') )}}</a>
-                                            <p>{{ entity.Email || entity.EmailAddress }}</p>
+                                            <a>{{
+                                                entity.FullName ||
+                                                    entity.Name ||
+                                                    (entity.FirstName || "") +
+                                                        " " +
+                                                        (this.entity.LastName ||
+                                                            "")
+                                            }}</a>
+                                            <p>
+                                                {{
+                                                    entity.Email ||
+                                                        entity.EmailAddress
+                                                }}
+                                            </p>
                                         </div>
                                     </li>
                                 </ng-container>

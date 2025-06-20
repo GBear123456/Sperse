@@ -1,144 +1,266 @@
 <span class="close" (click)="close()"></span>
 <mat-dialog-content>
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onSelectedTabChange($event)">
+    <mat-tab-group
+        [(selectedIndex)]="selectedTabIndex"
+        (selectedTabChange)="onSelectedTabChange($event)"
+    >
         <mat-tab [label]="ls.l('PersonalSettings.General')">
-            <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight()">
+            <dx-scroll-view
+                showScrollbar="onHover"
+                [height]="getTabContentHeight()"
+            >
                 <div class="general-tab">
                     <mat-accordion displayMode="flat" [multi]="true">
-                        <mat-expansion-panel *ngIf="hasCreditsFeature && hasCreditsViewPermission" class="credit-balance" [expanded]="true">
+                        <mat-expansion-panel
+                            *ngIf="hasCreditsFeature && hasCreditsViewPermission"
+                            class="credit-balance"
+                            [expanded]="true"
+                        >
                             <mat-expansion-panel-header>
-                                <mat-panel-title>{{ ls.l('ContactCredit') }} {{ ls.l('Balance') }}</mat-panel-title>
-                                <span class="dx-icon-clock history-icon" (click)="showCreditBalanceHistory($event)" [title]="ls.l('ContactCredits') + ' ' + ls.l('BalanceHistory')"></span>
+                                <mat-panel-title
+                                    >{{ ls.l('ContactCredit') }} {{
+                                    ls.l('Balance') }}</mat-panel-title
+                                >
+                                <span
+                                    class="dx-icon-clock history-icon"
+                                    (click)="showCreditBalanceHistory($event)"
+                                    [title]="ls.l('ContactCredits') + ' ' + ls.l('BalanceHistory')"
+                                ></span>
                             </mat-expansion-panel-header>
                             <div class="field">
                                 <label>{{ ls.l('AvailableBalance') }}:</label>
-                                <span>{{contactInfo?.creditsBalance || 0}}<i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo?.creditsBalance)"></i></span>
+                                <span
+                                    >{{contactInfo?.creditsBalance || 0}}<i
+                                        class="save-to-clipboard"
+                                        (click)="saveToClipboard($event, contactInfo?.creditsBalance)"
+                                    ></i
+                                ></span>
                             </div>
                             <hr />
                             <div *ngIf="contactInfo?.creditsTier" class="field">
                                 <label>{{ ls.l('CurrentPlan') }}:</label>
-                                <span>{{contactInfo?.creditsTier}}<i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo?.creditsTier)"></i></span>
+                                <span
+                                    >{{contactInfo?.creditsTier}}<i
+                                        class="save-to-clipboard"
+                                        (click)="saveToClipboard($event, contactInfo?.creditsTier)"
+                                    ></i
+                                ></span>
                             </div>
                             <hr />
-                            <div *ngIf="hasCreditsManagePermission && manageAllowed" class="field credit-balance-actions">
-                                <span (click)="showCreditsUpdateDialog(true)">{{ ls.l('TopUp') }} +</span>
-                                <span (click)="showCreditsUpdateDialog(false)">{{ ls.l('Deduct') }} -</span>
+                            <div
+                                *ngIf="hasCreditsManagePermission && manageAllowed"
+                                class="field credit-balance-actions"
+                            >
+                                <span (click)="showCreditsUpdateDialog(true)"
+                                    >{{ ls.l('TopUp') }} +</span
+                                >
+                                <span (click)="showCreditsUpdateDialog(false)"
+                                    >{{ ls.l('Deduct') }} -</span
+                                >
                             </div>
                         </mat-expansion-panel>
-                        <mat-expansion-panel class="affiliate-info" [expanded]="true">
+                        <mat-expansion-panel
+                            class="affiliate-info"
+                            [expanded]="true"
+                        >
                             <mat-expansion-panel-header>
-                                <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
-                                <span class="dx-icon-clock history-icon" (click)="showAffiliateHistory($event)" [title]="ls.l('AffiliateHistory')"></span>
+                                <mat-panel-title
+                                    >{{ ls.l('AffiliateInfo')
+                                    }}</mat-panel-title
+                                >
+                                <span
+                                    class="dx-icon-clock history-icon"
+                                    (click)="showAffiliateHistory($event)"
+                                    [title]="ls.l('AffiliateHistory')"
+                                ></span>
                             </mat-expansion-panel-header>
-                            <div class="field affiliate-code {{contactInfo?.affiliateServiceStatus}}">
-                                <inplace-edit *ngFor="let affiliateCodeInfo of contactInfo?.affiliateCodes || [];  let i = index"
-                                              [id]="affiliateCodeInfo.id"
-                                              lEntityName="Name"
-                                              [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
-                                              [value]="affiliateCodeInfo.affiliateCode"
-                                              [showInlineEditButton]="true"
-                                              [isEditEnabled]="!affiliateCodeInfo.id"
-                                              [isDeleteEnabled]="true"
-                                              [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
-                                              [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
-                                              [validationRules]="affiliateValidationRules"
-                                              [isReadOnlyField]="!affiliateManageAllowed"
-                                              (valueChanged)="updateAffiliateCode($event, i)"
-                                              (itemDeleted)="deleteAffiliateCode(i)">
+                            <div
+                                class="field affiliate-code {{contactInfo?.affiliateServiceStatus}}"
+                            >
+                                <inplace-edit
+                                    *ngFor="let affiliateCodeInfo of contactInfo?.affiliateCodes || [];  let i = index"
+                                    [id]="affiliateCodeInfo.id"
+                                    lEntityName="Name"
+                                    [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
+                                    [value]="affiliateCodeInfo.affiliateCode"
+                                    [showInlineEditButton]="true"
+                                    [isEditEnabled]="!affiliateCodeInfo.id"
+                                    [isDeleteEnabled]="true"
+                                    [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
+                                    [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
+                                    [validationRules]="affiliateValidationRules"
+                                    [isReadOnlyField]="!affiliateManageAllowed"
+                                    (valueChanged)="updateAffiliateCode($event, i)"
+                                    (itemDeleted)="deleteAffiliateCode(i)"
+                                >
                                 </inplace-edit>
-                                <span class="add-affiliateCode" (click)="addEmptyAffiliateCode()">Add +</span>
+                                <span
+                                    class="add-affiliateCode"
+                                    (click)="addEmptyAffiliateCode()"
+                                    >Add +</span
+                                >
                             </div>
-                            <div class="field isAdvisor" *ngIf="hasBankCodeFeature">
-                                <dx-check-box [disabled]="!affiliateManageAllowed || !contactInfo?.personContactInfo.userId"
-                                              [value]="isAdvisor$ | async"
-                                              [text]="':' + ls.l('IsAdvisor')"
-                                              rtlEnabled="true"
-                                              (onValueChanged)="updateIsAdvisor($event)">
+                            <div
+                                class="field isAdvisor"
+                                *ngIf="hasBankCodeFeature"
+                            >
+                                <dx-check-box
+                                    [disabled]="!affiliateManageAllowed || !contactInfo?.personContactInfo.userId"
+                                    [value]="isAdvisor$ | async"
+                                    [text]="':' + ls.l('IsAdvisor')"
+                                    rtlEnabled="true"
+                                    (onValueChanged)="updateIsAdvisor($event)"
+                                >
                                 </dx-check-box>
                             </div>
-                            <div class="field tier" *ngIf="hasCommissionsFeature">
+                            <div
+                                class="field tier"
+                                *ngIf="hasCommissionsFeature"
+                            >
                                 <label>{{ ls.l('AffiliateRateTier1') }}:</label>
-                                <inplace-edit [id]="contactInfo?.id"
-                                              lEntityName="Name"
-                                              [editPlaceholder]="defaultAffiliateRateStr !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRateStr : ''"
-                                              [displayValue]="affiliateRate === null ? '' : formatPercentValue(affiliateRate, 'en-US', '1.0-2')"
-                                              [value]="affiliateRate"
-                                              format="#0.##%"
-                                              [showInlineEditButton]="hasCommissionsManagePermission"
-                                              [isDeleteEnabled]="hasCommissionsManagePermission"
-                                              [validationRules]="affiliateRateValidationRules"
-                                              [isReadOnlyField]="!hasCommissionsManagePermission || !manageAllowed"
-                                              (valueChanged)="updateAffiliateRate($event, 'affiliateRate', 'affiliateRateInitil', CommissionTier.Tier1)"
-                                              (itemDeleted)="deleteItem(ls.l('AffiliateRate'))">
+                                <inplace-edit
+                                    [id]="contactInfo?.id"
+                                    lEntityName="Name"
+                                    [editPlaceholder]="defaultAffiliateRateStr !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRateStr : ''"
+                                    [displayValue]="affiliateRate === null ? '' : formatPercentValue(affiliateRate, 'en-US', '1.0-2')"
+                                    [value]="affiliateRate"
+                                    format="#0.##%"
+                                    [showInlineEditButton]="hasCommissionsManagePermission"
+                                    [isDeleteEnabled]="hasCommissionsManagePermission"
+                                    [validationRules]="affiliateRateValidationRules"
+                                    [isReadOnlyField]="!hasCommissionsManagePermission || !manageAllowed"
+                                    (valueChanged)="updateAffiliateRate($event, 'affiliateRate', 'affiliateRateInitil', CommissionTier.Tier1)"
+                                    (itemDeleted)="deleteItem(ls.l('AffiliateRate'))"
+                                >
                                 </inplace-edit>
                             </div>
-                            <div class="field tier" *ngIf="hasCommissionsFeature">
+                            <div
+                                class="field tier"
+                                *ngIf="hasCommissionsFeature"
+                            >
                                 <label>{{ ls.l('AffiliateRateTier2') }}:</label>
-                                <inplace-edit [id]="contactInfo?.id"
-                                              [editPlaceholder]="defaultAffiliateRateTier2Str !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRateTier2Str : ''"
-                                              [displayValue]="affiliateRate2 === null ? '' : formatPercentValue(affiliateRate2, 'en-US', '1.0-2')"
-                                              [value]="affiliateRate2"
-                                              format="#0.##%"
-                                              [showInlineEditButton]="hasCommissionsManagePermission"
-                                              [isDeleteEnabled]="hasCommissionsManagePermission"
-                                              [validationRules]="affiliateRateValidationRules"
-                                              [isReadOnlyField]="!hasCommissionsManagePermission || !manageAllowed"
-                                              (valueChanged)="updateAffiliateRate($event, 'affiliateRate2', 'affiliateRate2Initil', CommissionTier.Tier2)"
-                                              (itemDeleted)="deleteItem(ls.l('AffiliateRateTier2'))">
+                                <inplace-edit
+                                    [id]="contactInfo?.id"
+                                    [editPlaceholder]="defaultAffiliateRateTier2Str !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRateTier2Str : ''"
+                                    [displayValue]="affiliateRate2 === null ? '' : formatPercentValue(affiliateRate2, 'en-US', '1.0-2')"
+                                    [value]="affiliateRate2"
+                                    format="#0.##%"
+                                    [showInlineEditButton]="hasCommissionsManagePermission"
+                                    [isDeleteEnabled]="hasCommissionsManagePermission"
+                                    [validationRules]="affiliateRateValidationRules"
+                                    [isReadOnlyField]="!hasCommissionsManagePermission || !manageAllowed"
+                                    (valueChanged)="updateAffiliateRate($event, 'affiliateRate2', 'affiliateRate2Initil', CommissionTier.Tier2)"
+                                    (itemDeleted)="deleteItem(ls.l('AffiliateRateTier2'))"
+                                >
                                 </inplace-edit>
                             </div>
                         </mat-expansion-panel>
-                        <mat-expansion-panel class="source-info" [expanded]="true">
+                        <mat-expansion-panel
+                            class="source-info"
+                            [expanded]="true"
+                        >
                             <mat-expansion-panel-header>
-                                <mat-panel-title>{{ ls.l('SourceInfo') }}</mat-panel-title>
+                                <mat-panel-title
+                                    >{{ ls.l('SourceInfo') }}</mat-panel-title
+                                >
                             </mat-expansion-panel-header>
-                            <ng-container *ngIf="sourceContactInfo$ | async as sourceContactInfo">
+                            <ng-container
+                                *ngIf="sourceContactInfo$ | async as sourceContactInfo"
+                            >
                                 <div class="field">
-                                    <source-contact-list [selectedKey]="sourceContactInfo.sourceContactLevel1?.id"
-                                                         [targetSelector]="'#affiliateContactLink'"
-                                                         (onItemSelected)="onSourceContactChanged($event)">
+                                    <source-contact-list
+                                        [selectedKey]="sourceContactInfo.sourceContactLevel1?.id"
+                                        [targetSelector]="'#affiliateContactLink'"
+                                        (onItemSelected)="onSourceContactChanged($event)"
+                                    >
                                     </source-contact-list>
-                                    <label>{{ ls.l('PersonalSettings.Contact1') }}:</label>
+                                    <label
+                                        >{{ ls.l('PersonalSettings.Contact1')
+                                        }}:</label
+                                    >
                                     <div>
                                         <div class="thumbnail">
-                                            <img [src]="getThumbnailSrc(sourceContactInfo?.sourceContactLevel1?.photoPublicId)" />
+                                            <img
+                                                [src]="getThumbnailSrc(sourceContactInfo?.sourceContactLevel1?.photoPublicId)"
+                                            />
                                         </div>
                                         <div class="field-info">
-                                            <a [ngClass]="{empty: !sourceContactInfo?.sourceContactLevel1}" (click)="openContactDetails(sourceContactInfo?.sourceContactLevel1?.id)">
-                                                {{ sourceContactInfo?.sourceContactLevel1 ? (sourceContactInfo?.sourceContactLevel1?.name || NoName) : (ls.l('Set') + ' ' + ls.l('PersonalSettings.Contact1')) }}
-                                                <i *ngIf="affiliateManageAllowed" id="affiliateContactLink" class="edit fa fa-pencil"
-                                                   (click)="openSourceContactList($event)">
+                                            <a
+                                                [ngClass]="{empty: !sourceContactInfo?.sourceContactLevel1}"
+                                                (click)="openContactDetails(sourceContactInfo?.sourceContactLevel1?.id)"
+                                            >
+                                                {{
+                                                sourceContactInfo?.sourceContactLevel1
+                                                ?
+                                                (sourceContactInfo?.sourceContactLevel1?.name
+                                                || NoName) : (ls.l('Set') + ' '
+                                                +
+                                                ls.l('PersonalSettings.Contact1'))
+                                                }}
+                                                <i
+                                                    *ngIf="affiliateManageAllowed"
+                                                    id="affiliateContactLink"
+                                                    class="edit fa fa-pencil"
+                                                    (click)="openSourceContactList($event)"
+                                                >
                                                 </i>
-                                                <ng-container *ngIf="sourceContactInfo?.sourceContactLevel1">
-                                                    <i *ngIf="affiliateManageAllowed" class="remove fa fa-times"
-                                                       (click)="removeSourceContact($event)">
+                                                <ng-container
+                                                    *ngIf="sourceContactInfo?.sourceContactLevel1"
+                                                >
+                                                    <i
+                                                        *ngIf="affiliateManageAllowed"
+                                                        class="remove fa fa-times"
+                                                        (click)="removeSourceContact($event)"
+                                                    >
                                                     </i>
-                                                    <i class="save-to-clipboard"
-                                                       (click)="saveToClipboard($event, sourceContactInfo?.sourceContactLevel1?.name)">
+                                                    <i
+                                                        class="save-to-clipboard"
+                                                        (click)="saveToClipboard($event, sourceContactInfo?.sourceContactLevel1?.name)"
+                                                    >
                                                     </i>
                                                 </ng-container>
                                             </a>
-                                            <div *ngIf="sourceContactInfo?.sourceContactLevel1?.affiliateCode as affiliateCode" class="additional-info">
-                                                <span>{{ ls.l('AffiliateCode') }}: </span>
-                                                <span class="bold">{{ affiliateCode }}</span>
+                                            <div
+                                                *ngIf="sourceContactInfo?.sourceContactLevel1?.affiliateCode as affiliateCode"
+                                                class="additional-info"
+                                            >
+                                                <span
+                                                    >{{ ls.l('AffiliateCode')
+                                                    }}:
+                                                </span>
+                                                <span class="bold"
+                                                    >{{ affiliateCode }}</span
+                                                >
                                             </div>
                                             <hr />
                                         </div>
                                     </div>
                                 </div>
-                                <div *ngIf="(appService.isHostTenant || (appSession.tenant && appSession.tenant.tenancyName === 'BankCode' || appSession.tenant.tenancyName === 'performancepartners'))
+                                <div
+                                    *ngIf="(appService.isHostTenant || (appSession.tenant && appSession.tenant.tenancyName === 'BankCode' || appSession.tenant.tenancyName === 'performancepartners'))
                                             && sourceContactInfo.sourceContactLevel2 as sourceContactLevel2"
-                                     class="field">
-                                    <label>{{ ls.l('PersonalSettings.Contact2') }}:</label>
+                                    class="field"
+                                >
+                                    <label
+                                        >{{ ls.l('PersonalSettings.Contact2')
+                                        }}:</label
+                                    >
                                     <div>
                                         <div class="thumbnail">
-                                            <img [src]="getThumbnailSrc(sourceContactLevel2.photoPublicId)" />
+                                            <img
+                                                [src]="getThumbnailSrc(sourceContactLevel2.photoPublicId)"
+                                            />
                                         </div>
                                         <div class="field-info">
-                                            <a (click)="openContactDetails(sourceContactLevel2.id)">
-                                                {{ sourceContactLevel2.name || NoName }}
-                                                <i class="save-to-clipboard"
-                                                   (click)="saveToClipboard($event, sourceContactLevel2.name)">
+                                            <a
+                                                (click)="openContactDetails(sourceContactLevel2.id)"
+                                            >
+                                                {{ sourceContactLevel2.name ||
+                                                NoName }}
+                                                <i
+                                                    class="save-to-clipboard"
+                                                    (click)="saveToClipboard($event, sourceContactLevel2.name)"
+                                                >
                                                 </i>
                                             </a>
                                             <hr />
@@ -146,17 +268,29 @@
                                     </div>
                                 </div>
                             </ng-container>
-                            <div *ngIf="contactInfo?.assignedUserName as assignedUserName" class="field">
-                                <label>{{ ls.l('PersonalSettings.AssignedTo') }}:</label>
+                            <div
+                                *ngIf="contactInfo?.assignedUserName as assignedUserName"
+                                class="field"
+                            >
+                                <label
+                                    >{{ ls.l('PersonalSettings.AssignedTo')
+                                    }}:</label
+                                >
                                 <div>
                                     <div class="thumbnail">
-                                        <img [src]="getThumbnailSrc(contactInfo?.assignedUserPicturePublicId)" />
+                                        <img
+                                            [src]="getThumbnailSrc(contactInfo?.assignedUserPicturePublicId)"
+                                        />
                                     </div>
                                     <div class="field-info">
-                                        <a (click)="openContactDetails(contactInfo?.assignedContactId)">
+                                        <a
+                                            (click)="openContactDetails(contactInfo?.assignedContactId)"
+                                        >
                                             {{assignedUserName}}
-                                            <i class="save-to-clipboard"
-                                               (click)="saveToClipboard($event, assignedUserName)">
+                                            <i
+                                                class="save-to-clipboard"
+                                                (click)="saveToClipboard($event, assignedUserName)"
+                                            >
                                             </i>
                                         </a>
                                         <hr />
@@ -167,44 +301,80 @@
                                 <label>{{ ls.l('CreatedBy') }}:</label>
                                 <div>
                                     <div class="thumbnail">
-                                        <img [src]="getThumbnailSrc(contactInfo?.creatorUserPicturePublicId)" />
+                                        <img
+                                            [src]="getThumbnailSrc(contactInfo?.creatorUserPicturePublicId)"
+                                        />
                                     </div>
                                     <div class="field-info">
-                                        <a *ngIf="contactInfo?.creatorUserName as creatorUserName" (click)="openContactDetails(contactInfo?.creatorContactId)">
+                                        <a
+                                            *ngIf="contactInfo?.creatorUserName as creatorUserName"
+                                            (click)="openContactDetails(contactInfo?.creatorContactId)"
+                                        >
                                             {{creatorUserName}}
-                                            <i class="save-to-clipboard"
-                                               (click)="saveToClipboard($event, creatorUserName)">
+                                            <i
+                                                class="save-to-clipboard"
+                                                (click)="saveToClipboard($event, creatorUserName)"
+                                            >
                                             </i>
                                         </a>
                                         <div class="additional-info">
-                                            <ng-container *ngIf="leadInfo?.channelCode as channelCode">
-                                                <span class="channel-code">{{leadInfo?.channelCode}}</span>, on
+                                            <ng-container
+                                                *ngIf="leadInfo?.channelCode as channelCode"
+                                            >
+                                                <span class="channel-code"
+                                                    >{{leadInfo?.channelCode}}</span
+                                                >, on
                                             </ng-container>
-                                            <span>{{contactInfo?.contactDate | datetime: formatting.dateTimeMoment}}</span>
+                                            <span
+                                                >{{contactInfo?.contactDate |
+                                                datetime:
+                                                formatting.dateTimeMoment}}</span
+                                            >
                                         </div>
                                         <hr />
                                     </div>
                                 </div>
                             </div>
-                            <div class="field" *ngIf="lastModificationInfo?.date">
+                            <div
+                                class="field"
+                                *ngIf="lastModificationInfo?.date"
+                            >
                                 <label>{{ ls.l('LastUpdatedBy') }}:</label>
                                 <div>
                                     <div class="thumbnail">
-                                        <img [src]="getThumbnailSrc(lastModificationInfo.photoPublicId)" alt="Profile image" />
+                                        <img
+                                            [src]="getThumbnailSrc(lastModificationInfo.photoPublicId)"
+                                            alt="Profile image"
+                                        />
                                     </div>
                                     <div class="field-info">
-                                        <a *ngIf="lastModificationInfo.userName as updatedByUserName; else system" (click)="openContactDetails(lastModificationInfo?.contactId)">
+                                        <a
+                                            *ngIf="lastModificationInfo.userName as updatedByUserName; else system"
+                                            (click)="openContactDetails(lastModificationInfo?.contactId)"
+                                        >
                                             {{updatedByUserName}}
-                                            <i class="save-to-clipboard"
-                                               (click)="saveToClipboard($event, updatedByUserName)">
+                                            <i
+                                                class="save-to-clipboard"
+                                                (click)="saveToClipboard($event, updatedByUserName)"
+                                            >
                                             </i>
                                         </a>
                                         <ng-template #system>
                                             {{ ls.l('System') }}
                                         </ng-template>
-                                        <div *ngIf="lastModificationInfo.date as lastModificationTime" class="additional-info">
-                                            <span>on {{lastModificationTime | datetime: formatting.dateTimeMoment}} </span>
-                                            <span class="date-ago">({{ lastModificationTime | timeAgo}})</span>
+                                        <div
+                                            *ngIf="lastModificationInfo.date as lastModificationTime"
+                                            class="additional-info"
+                                        >
+                                            <span
+                                                >on {{lastModificationTime |
+                                                datetime:
+                                                formatting.dateTimeMoment}}
+                                            </span>
+                                            <span class="date-ago"
+                                                >({{ lastModificationTime |
+                                                timeAgo}})</span
+                                            >
                                         </div>
                                     </div>
                                 </div>
@@ -212,83 +382,135 @@
                         </mat-expansion-panel>
                         <mat-expansion-panel [expanded]="true">
                             <mat-expansion-panel-header>
-                                <mat-panel-title>{{ ls.l('ContactDetails') }}</mat-panel-title>
+                                <mat-panel-title
+                                    >{{ ls.l('ContactDetails')
+                                    }}</mat-panel-title
+                                >
                             </mat-expansion-panel-header>
                             <div class="field" *ngIf="leadInfo?.stage as stage">
                                 <label>{{ ls.l('LeadStage') }}</label>
-                                <span><span *ngIf="stageColor" class="status-icon" [ngStyle]="{ backgroundColor: stageColor }"></span>{{ stage }}</span>
+                                <span
+                                    ><span
+                                        *ngIf="stageColor"
+                                        class="status-icon"
+                                        [ngStyle]="{ backgroundColor: stageColor }"
+                                    ></span
+                                    >{{ stage }}</span
+                                >
                             </div>
                             <hr />
                             <div class="field">
                                 <label>{{ ls.l('ContactID') }}:</label>
-                                <span>{{contactInfo?.id}}<i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo?.id)"></i></span>
+                                <span
+                                    >{{contactInfo?.id}}<i
+                                        class="save-to-clipboard"
+                                        (click)="saveToClipboard($event, contactInfo?.id)"
+                                    ></i
+                                ></span>
                             </div>
                             <hr />
                             <div class="field">
                                 <label>{{ ls.l('RecentLeadID') }}:</label>
-                                <span>{{leadInfo?.id}}<i class="save-to-clipboard" (click)="saveToClipboard($event, leadInfo?.id)"></i></span>
+                                <span
+                                    >{{leadInfo?.id}}<i
+                                        class="save-to-clipboard"
+                                        (click)="saveToClipboard($event, leadInfo?.id)"
+                                    ></i
+                                ></span>
                             </div>
                             <hr />
                             <div class="field">
                                 <label>{{ ls.l('Xref') }}:</label>
                                 <div>
-                                    <inplace-edit *ngFor="let xref of contactInfo?.personContactInfo.xrefs || []; let i = index"
-                                                  [id]="xref"
-                                                  lEntityName="Name"
-                                                  [editPlaceholder]="ls.l('Xref')"
-                                                  [value]="xref"
-                                                  [isOptional]="true"
-                                                  [showInlineEditButton]="true"
-                                                  [isDeleteEnabled]="true"
-                                                  [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
-                                                  [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
-                                                  [validationRules]="xrefValidationRules"
-                                                  [isReadOnlyField]="!manageAllowed"
-                                                  (valueChanged)="updateXref($event, i)"
-                                                  (itemDeleted)="updateXref('', i)">
+                                    <inplace-edit
+                                        *ngFor="let xref of contactInfo?.personContactInfo.xrefs || []; let i = index"
+                                        [id]="xref"
+                                        lEntityName="Name"
+                                        [editPlaceholder]="ls.l('Xref')"
+                                        [value]="xref"
+                                        [isOptional]="true"
+                                        [showInlineEditButton]="true"
+                                        [isDeleteEnabled]="true"
+                                        [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
+                                        [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
+                                        [validationRules]="xrefValidationRules"
+                                        [isReadOnlyField]="!manageAllowed"
+                                        (valueChanged)="updateXref($event, i)"
+                                        (itemDeleted)="updateXref('', i)"
+                                    >
                                     </inplace-edit>
-                                    <span class="add-xref" (click)="contactInfo.personContactInfo.xrefs.push('')">Add +</span>
+                                    <span
+                                        class="add-xref"
+                                        (click)="contactInfo.personContactInfo.xrefs.push('')"
+                                        >Add +</span
+                                    >
                                 </div>
                             </div>
                             <hr />
-                            <div class="field stripe" *ngIf="contactInfo?.personContactInfo.stripeCustomerId" [title]="ls.l('StripeCustomerID')">
+                            <div
+                                class="field stripe"
+                                *ngIf="contactInfo?.personContactInfo.stripeCustomerId"
+                                [title]="ls.l('StripeCustomerID')"
+                            >
                                 <label>{{ ls.l('StripeID') }}:</label>
                                 <span>
                                     {{contactInfo.personContactInfo.stripeCustomerId}}
-                                    <i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo.personContactInfo.stripeCustomerId)"></i>
+                                    <i
+                                        class="save-to-clipboard"
+                                        (click)="saveToClipboard($event, contactInfo.personContactInfo.stripeCustomerId)"
+                                    ></i>
                                 </span>
                             </div>
                             <hr />
-                            <div class="field stripe" *ngIf="contactInfo?.personContactInfo.person.discordUserId" [title]="ls.l('Discord User Id')">
+                            <div
+                                class="field stripe"
+                                *ngIf="contactInfo?.personContactInfo.person.discordUserId"
+                                [title]="ls.l('Discord User Id')"
+                            >
                                 <label>{{ ls.l('Discord User Id') }}:</label>
                                 <span>
                                     {{contactInfo.personContactInfo.person.discordUserId}}
-                                    <i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo.personContactInfo.person.discordUserId)"></i>
+                                    <i
+                                        class="save-to-clipboard"
+                                        (click)="saveToClipboard($event, contactInfo.personContactInfo.person.discordUserId)"
+                                    ></i>
                                 </span>
                             </div>
-                            <div class="field stripe" *ngIf="contactInfo?.personContactInfo.person.discordUserName" [title]="ls.l('Discord User Name')">
+                            <div
+                                class="field stripe"
+                                *ngIf="contactInfo?.personContactInfo.person.discordUserName"
+                                [title]="ls.l('Discord User Name')"
+                            >
                                 <label>{{ ls.l('Discord Name') }}:</label>
                                 <span>
                                     {{contactInfo.personContactInfo.person.discordUserName}}
-                                    <i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo.personContactInfo.person.discordUserName)"></i>
+                                    <i
+                                        class="save-to-clipboard"
+                                        (click)="saveToClipboard($event, contactInfo.personContactInfo.person.discordUserName)"
+                                    ></i>
                                 </span>
                             </div>
                             <hr />
                             <ng-container *ngFor="let n of [1,2,3,4,5]">
                                 <div class="field">
-                                    <label>{{ ls.l('Contact_CustomField' + n) }}:</label>
-                                    <inplace-edit [id]="'Contact_CustomField' + n"
-                                                  lEntityName="Name"
-                                                  [editPlaceholder]="ls.l('Contact_CustomField' + n)"
-                                                  [value]="contactInfo?.personContactInfo['customField' + n]"
-                                                  [isOptional]="true"
-                                                  [showInlineEditButton]="true"
-                                                  [isDeleteEnabled]="true"
-                                                  [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Contact_CustomField' + n))"
-                                                  [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Contact_CustomField' + n))"
-                                                  [isReadOnlyField]="!manageAllowed"
-                                                  (valueChanged)="updateCustomField($event, 'customField' + n)"
-                                                  (itemDeleted)="updateCustomField(null, 'customField' + n)">
+                                    <label
+                                        >{{ ls.l('Contact_CustomField' + n)
+                                        }}:</label
+                                    >
+                                    <inplace-edit
+                                        [id]="'Contact_CustomField' + n"
+                                        lEntityName="Name"
+                                        [editPlaceholder]="ls.l('Contact_CustomField' + n)"
+                                        [value]="contactInfo?.personContactInfo['customField' + n]"
+                                        [isOptional]="true"
+                                        [showInlineEditButton]="true"
+                                        [isDeleteEnabled]="true"
+                                        [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Contact_CustomField' + n))"
+                                        [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Contact_CustomField' + n))"
+                                        [isReadOnlyField]="!manageAllowed"
+                                        (valueChanged)="updateCustomField($event, 'customField' + n)"
+                                        (itemDeleted)="updateCustomField(null, 'customField' + n)"
+                                    >
                                     </inplace-edit>
                                 </div>
                                 <hr />
@@ -301,34 +523,69 @@
         <mat-tab [label]="ls.l('Overview')" *ngIf="showOverviewTab">
             <span class="gear-icon" (click)="toggleConfigMode()"></span>
             <dx-scroll-view showScrollbar="onHover">
-                <div class="overview-content" [ngClass]="{'config-mode': configMode}">
-                    <div class="right-panel-block" [hidden]="!configMode && !overviewPanelSetting?.clientScores">
-                        <input *ngIf="configMode" type="checkbox"
-                               (click)="toggleSectionVisibility($event, 'clientScores')"
-                               class="cb-visible-section" [checked]="overviewPanelSetting?.clientScores">
+                <div
+                    class="overview-content"
+                    [ngClass]="{'config-mode': configMode}"
+                >
+                    <div
+                        class="right-panel-block"
+                        [hidden]="!configMode && !overviewPanelSetting?.clientScores"
+                    >
+                        <input
+                            *ngIf="configMode"
+                            type="checkbox"
+                            (click)="toggleSectionVisibility($event, 'clientScores')"
+                            class="cb-visible-section"
+                            [checked]="overviewPanelSetting?.clientScores"
+                        />
                         <client-scores></client-scores>
                     </div>
-                    <div class="right-panel-block" [hidden]="!configMode && !overviewPanelSetting?.totalApproved">
-                        <input *ngIf="configMode" type="checkbox"
-                               (click)="toggleSectionVisibility($event, 'totalApproved')"
-                               class="cb-visible-section" [checked]="overviewPanelSetting?.totalApproved">
+                    <div
+                        class="right-panel-block"
+                        [hidden]="!configMode && !overviewPanelSetting?.totalApproved"
+                    >
+                        <input
+                            *ngIf="configMode"
+                            type="checkbox"
+                            (click)="toggleSectionVisibility($event, 'totalApproved')"
+                            class="cb-visible-section"
+                            [checked]="overviewPanelSetting?.totalApproved"
+                        />
                         <total-approved></total-approved>
                     </div>
                     <!-- credit-lines></credit-lines -->
-                    <div class="right-panel-block" [hidden]="!configMode && !overviewPanelSetting?.verification">
-                        <input *ngIf="configMode" type="checkbox"
-                               (click)="toggleSectionVisibility($event, 'verification')"
-                               class="cb-visible-section" [checked]="overviewPanelSetting?.verification">
-                        <verification-checklist [data]="verificationChecklist"></verification-checklist>
+                    <div
+                        class="right-panel-block"
+                        [hidden]="!configMode && !overviewPanelSetting?.verification"
+                    >
+                        <input
+                            *ngIf="configMode"
+                            type="checkbox"
+                            (click)="toggleSectionVisibility($event, 'verification')"
+                            class="cb-visible-section"
+                            [checked]="overviewPanelSetting?.verification"
+                        />
+                        <verification-checklist
+                            [data]="verificationChecklist"
+                        ></verification-checklist>
                     </div>
                     <!-- required-documents></required-documents -->
                 </div>
             </dx-scroll-view>
         </mat-tab>
-        <mat-tab *ngIf="showChecklistTab" [label]="ls.l('Checklist')" [disabled]="!checklistSources?.length">
-            <dx-scroll-view showScrollbar="onHover" #checklistScroll [height]="getTabContentHeight()">
+        <mat-tab
+            *ngIf="showChecklistTab"
+            [label]="ls.l('Checklist')"
+            [disabled]="!checklistSources?.length"
+        >
+            <dx-scroll-view
+                showScrollbar="onHover"
+                #checklistScroll
+                [height]="getTabContentHeight()"
+            >
                 <div *ngFor="let source of checklistSources; let i = index">
-                    <dx-select-box *ngIf="i ? checklistSources[0]?.checklistId: source?.contactDataSource"
+                    <dx-select-box
+                        *ngIf="i ? checklistSources[0]?.checklistId: source?.contactDataSource"
                         valueExpr="Id"
                         displayExpr="Name"
                         [width]="'370px'"
@@ -343,7 +600,8 @@
                         (onSelectionChanged)="source?.onChange($event)"
                         (onInitialized)="onSelectInitialized($event)"
                         (onContentReady)="onContentReady($event)"
-                        [dataSource]="source?.contactDataSource">
+                        [dataSource]="source?.contactDataSource"
+                    >
                         <div *dxTemplate="let cell of 'cell'">
                             <dx-text-box
                                 [readOnly]="true"
@@ -351,28 +609,57 @@
                                 [focusStateEnabled]="false"
                                 [hoverStateEnabled]="false"
                                 hint="{{cell?.Number || cell?.Id}}, {{cell?.Stage}} ({{(cell?.LeadDate || cell?.OrderDate) | date}})"
-                                value="{{cell?.Number || cell?.Id}}, {{cell?.Stage}} ({{(cell?.LeadDate || cell?.OrderDate) | date}})">
+                                value="{{cell?.Number || cell?.Id}}, {{cell?.Stage}} ({{(cell?.LeadDate || cell?.OrderDate) | date}})"
+                            >
                             </dx-text-box>
                         </div>
                     </dx-select-box>
-                    <div [hidden]="!source?.checklistId || !source?.checklistDataSource[0]?.total">
-                        <div class="progress-wrapper" *ngIf="source?.checklistDataSource && source?.checklistDataSource[0] as data">
+                    <div
+                        [hidden]="!source?.checklistId || !source?.checklistDataSource[0]?.total"
+                    >
+                        <div
+                            class="progress-wrapper"
+                            *ngIf="source?.checklistDataSource && source?.checklistDataSource[0] as data"
+                        >
                             <svg width="28" height="28" class="progress">
-                                <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
-                                <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
-                                    class="ring" stroke="#37d749" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
+                                <circle
+                                    stroke="#e5e9ec"
+                                    stroke-width="3"
+                                    fill="transparent"
+                                    r="12"
+                                    cx="14"
+                                    cy="14"
+                                />
+                                <circle
+                                    [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
+                                    class="ring"
+                                    stroke="#37d749"
+                                    stroke-width="3"
+                                    fill="transparent"
+                                    r="12"
+                                    cx="14"
+                                    cy="14"
+                                />
                             </svg>
                             <span>{{data.progress}} / {{data.total}}</span>
                         </div>
-                        <dx-tree-view *ngIf="source?.checklistDataSource && source?.checklistDataSource[0]?.total"
+                        <dx-tree-view
+                            *ngIf="source?.checklistDataSource && source?.checklistDataSource[0]?.total"
                             [height]="'100%'"
                             itemTemplate="cell"
                             showCheckBoxesMode="normal"
                             [selectNodesRecursive]="false"
                             [dataSource]="source?.checklistDataSource"
-                            (onItemSelectionChanged)="onChecklistChanged($event, i)">
-                            <div *dxTemplate="let cell of 'cell'" class="data-item">
-                                <span>{{cell.text}}</span><span class="time-ago" *ngIf="cell.date">{{cell.date | timeAgo}}</span>
+                            (onItemSelectionChanged)="onChecklistChanged($event, i)"
+                        >
+                            <div
+                                *dxTemplate="let cell of 'cell'"
+                                class="data-item"
+                            >
+                                <span>{{cell.text}}</span
+                                ><span class="time-ago" *ngIf="cell.date"
+                                    >{{cell.date | timeAgo}}</span
+                                >
                             </div>
                         </dx-tree-view>
                     </div>
@@ -383,9 +670,13 @@
             <dx-date-box
                 [useMaskBehavior]="true"
                 [openOnFieldClick]="true"
-                [(value)]="scheduleDate">
+                [(value)]="scheduleDate"
+            >
             </dx-date-box>
-            <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight(56)">
+            <dx-scroll-view
+                showScrollbar="onHover"
+                [height]="getTabContentHeight(56)"
+            >
                 <ng-container *ngIf="contactInfo?.personContactInfo?.userId">
                     <span class="title">{{ls.l('User Activities')}}</span>
                     <dx-scheduler
@@ -416,21 +707,57 @@
                         appointmentTooltipTemplate="appointmentTooltipTemplate"
                         startDateTimeZoneExpr="fieldTimeZone"
                         endDateTimeZoneExpr="fieldTimeZone"
-                        (onAppointmentFormOpening)="onAppointmentFormOpening($event)">
-                        <div *dxTemplate="let appointment of 'appointmentTemplate'">
-                          <div class="showtime-preview" *ngIf="appointment?.appointmentData as item">
-                            <div>{{ item?.title }}</div>
-                            <div class="dropdown-appointment-dates">
-                                {{item?.allDay ? ls.l('All Day') : (getDateWithTimezone(item?.startDate) | date: (isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a')) + ' - ' + (getDateWithTimezone(item?.endDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a')}}
+                        (onAppointmentFormOpening)="onAppointmentFormOpening($event)"
+                    >
+                        <div
+                            *dxTemplate="let appointment of 'appointmentTemplate'"
+                        >
+                            <div
+                                class="showtime-preview"
+                                *ngIf="appointment?.appointmentData as item"
+                            >
+                                <div>{{ item?.title }}</div>
+                                <div class="dropdown-appointment-dates">
+                                    {{item?.allDay ? ls.l('All Day') :
+                                    (getDateWithTimezone(item?.startDate) |
+                                    date: (isSameDate(item?.startDate,
+                                    item?.endDate) ? 'shortTime' : 'MMM d, h:mm
+                                    a')) + ' - ' +
+                                    (getDateWithTimezone(item?.endDate) | date:
+                                    isSameDate(item?.startDate, item?.endDate) ?
+                                    'shortTime' : 'MMM d, h:mm a')}}
+                                </div>
                             </div>
-                          </div>
                         </div>
-                        <div *dxTemplate="let appointment of 'appointmentTooltipTemplate'">
-                            <div class="appointment-content" *ngIf="appointment?.appointmentData as item">
-                                <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.type[0]}}</div>
-                                <div class="appointment-text">{{item?.title}}</div>
+                        <div
+                            *dxTemplate="let appointment of 'appointmentTooltipTemplate'"
+                        >
+                            <div
+                                class="appointment-content"
+                                *ngIf="appointment?.appointmentData as item"
+                            >
+                                <div
+                                    class="appointment-badge"
+                                    [ngStyle]="{ backgroundColor: appointment?.appointmentData?.type == activityTypes.Event ? '#727bd2': '#32c9ed' }"
+                                >
+                                    {{appointment?.appointmentData?.type[0]}}
+                                </div>
+                                <div class="appointment-text">
+                                    {{item?.title}}
+                                </div>
                                 <div class="appointment-dates">
-                                    {{(isSameDate(item?.startDate, item?.endDate) ? (getDateWithTimezone(item?.startDate) | date : 'MMM d') + ' , ' : '') + (item?.allDay ? ls.l('All Day') : (getDateWithTimezone(item?.startDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a') + ' - ' + (getDateWithTimezone(item?.endDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a'))}}
+                                    {{(isSameDate(item?.startDate,
+                                    item?.endDate) ?
+                                    (getDateWithTimezone(item?.startDate) | date
+                                    : 'MMM d') + ' , ' : '') + (item?.allDay ?
+                                    ls.l('All Day') :
+                                    (getDateWithTimezone(item?.startDate) |
+                                    date: isSameDate(item?.startDate,
+                                    item?.endDate) ? 'shortTime' : 'MMM d, h:mm
+                                    a') + ' - ' +
+                                    (getDateWithTimezone(item?.endDate) | date:
+                                    isSameDate(item?.startDate, item?.endDate) ?
+                                    'shortTime' : 'MMM d, h:mm a'))}}
                                 </div>
                             </div>
                         </div>
@@ -465,21 +792,50 @@
                     appointmentTooltipTemplate="appointmentTooltipTemplate"
                     startDateTimeZoneExpr="fieldTimeZone"
                     endDateTimeZoneExpr="fieldTimeZone"
-                    (onAppointmentFormOpening)="onAppointmentFormOpening($event)">
+                    (onAppointmentFormOpening)="onAppointmentFormOpening($event)"
+                >
                     <div *dxTemplate="let appointment of 'appointmentTemplate'">
-                      <div class="showtime-preview" *ngIf="appointment?.appointmentData as item">
-                        <div>{{ item?.title }}</div>
-                        <div class="dropdown-appointment-dates">
-                            {{item?.allDay ? ls.l('All Day') : (getDateWithTimezone(item?.startDate) | date: (isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a')) + ' - ' + (getDateWithTimezone(item?.endDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a')}}
+                        <div
+                            class="showtime-preview"
+                            *ngIf="appointment?.appointmentData as item"
+                        >
+                            <div>{{ item?.title }}</div>
+                            <div class="dropdown-appointment-dates">
+                                {{item?.allDay ? ls.l('All Day') :
+                                (getDateWithTimezone(item?.startDate) | date:
+                                (isSameDate(item?.startDate, item?.endDate) ?
+                                'shortTime' : 'MMM d, h:mm a')) + ' - ' +
+                                (getDateWithTimezone(item?.endDate) | date:
+                                isSameDate(item?.startDate, item?.endDate) ?
+                                'shortTime' : 'MMM d, h:mm a')}}
+                            </div>
                         </div>
-                      </div>
                     </div>
-                    <div *dxTemplate="let appointment of 'appointmentTooltipTemplate'">
-                        <div class="appointment-content" *ngIf="appointment?.appointmentData as item">
-                            <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment?.appointmentData?.type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment?.appointmentData?.type[0]}}</div>
+                    <div
+                        *dxTemplate="let appointment of 'appointmentTooltipTemplate'"
+                    >
+                        <div
+                            class="appointment-content"
+                            *ngIf="appointment?.appointmentData as item"
+                        >
+                            <div
+                                class="appointment-badge"
+                                [ngStyle]="{ backgroundColor: appointment?.appointmentData?.type == activityTypes.Event ? '#727bd2': '#32c9ed' }"
+                            >
+                                {{appointment?.appointmentData?.type[0]}}
+                            </div>
                             <div class="appointment-text">{{item?.title}}</div>
                             <div class="appointment-dates">
-                                {{(isSameDate(item?.startDate, item?.endDate) ? (getDateWithTimezone(item?.startDate) | date : 'MMM d') + ' , ' : '') + (item?.allDay ? ls.l('All Day') : (getDateWithTimezone(item?.startDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a') + ' - ' + (getDateWithTimezone(item?.endDate) | date: isSameDate(item?.startDate, item?.endDate) ? 'shortTime' : 'MMM d, h:mm a'))}}
+                                {{(isSameDate(item?.startDate, item?.endDate) ?
+                                (getDateWithTimezone(item?.startDate) | date :
+                                'MMM d') + ' , ' : '') + (item?.allDay ?
+                                ls.l('All Day') :
+                                (getDateWithTimezone(item?.startDate) | date:
+                                isSameDate(item?.startDate, item?.endDate) ?
+                                'shortTime' : 'MMM d, h:mm a') + ' - ' +
+                                (getDateWithTimezone(item?.endDate) | date:
+                                isSameDate(item?.startDate, item?.endDate) ?
+                                'shortTime' : 'MMM d, h:mm a'))}}
                             </div>
                         </div>
                     </div>

@@ -1,33 +1,72 @@
 <ng-content select="[topHeader]"></ng-content>
 <div class="close-button" (click)="close()"></div>
+
 <div class="box-shadow-wrapper">
-    <div class="under-header">
-        <ng-content select="[underHeader]"></ng-content>
-    </div>
-    <mat-sidenav-container [ngStyle]="rightPanelWidth ? { marginRight: rightPanelWidth } : null">
-        <mat-sidenav mode="side" [opened]="true" [disableClose]="true" position="start">
-            <ng-content select="[aboveNavigation]"></ng-content>
-            <dx-scroll-view showScrollbar="onHover" height="calc(100% - {{showModernLayout ? '240px': '50px'}})">
-                <nav mat-tab-nav-bar>
-                    <ng-container *ngFor="let link of navLinks">
-                        <a *ngIf="isVisible(link) | async" mat-tab-link [disabled]="link.disabled"
-                           [routerLink]="link.route" routerLinkActive="active" [queryParams]="queryParams"
-                           (click)="navChanged(link)">
-                           <svg-icon *ngIf="showModernLayout && link.icon" src="./assets/common/icons/{{link.icon}}.svg" class="nav-icon"></svg-icon>{{ getLabel(link) | async }}
-                        </a>
-                    </ng-container>
-                </nav>
-            </dx-scroll-view>
+    <mat-sidenav-container
+        [ngStyle]="rightPanelWidth ? { marginRight: rightPanelWidth } : null"
+    >
+        <mat-sidenav
+            mode="side"
+            [opened]="true"
+            [disableClose]="true"
+            position="start"
+        >
+            <!-- <ng-content select="[aboveNavigation]"></ng-content> -->
+
+            <!-- <dx-scroll-view
+                showScrollbar="onHover"
+                height="calc(100% - {{ showModernLayout ? '240px' : '50px' }})"
+            > -->
+            <!-- <div class="user-info">
+                    <div class="avatar">
+                        <div class="active"></div>
+                        <div class="photo-area"></div>
+                    </div>
+                    <p>James Smith</p>
+                    <p>New England Software Consulting, LLC</p>
+                </div> -->
+            <nav mat-tab-nav-bar>
+                <ng-container *ngFor="let link of navLinks">
+                    <a
+                        *ngIf="isVisible(link) | async"
+                        mat-tab-link
+                        [disabled]="link.disabled"
+                        [routerLink]="link.route"
+                        routerLinkActive="active"
+                        [queryParams]="queryParams"
+                        (click)="navChanged(link)"
+                    >
+                        <svg-icon
+                            *ngIf="link.icon"
+                            src="./assets/common/icons/{{ link.icon }}.svg"
+                            class="nav-icon"
+                        ></svg-icon
+                        >{{ getLabel(link) | async }}
+                    </a>
+                </ng-container>
+            </nav>
+            <!-- </dx-scroll-view> -->
         </mat-sidenav>
-        <div class="main-content" [ngClass]="{ 'right-side-opened' : rightSideVisible && rightPanelOpened }">
+        <div
+            class="main-content"
+            [ngClass]="{
+                'right-side-opened': true
+            }"
+        >
             <ng-content select="[mainContent]"></ng-content>
             <router-outlet></router-outlet>
         </div>
-        <mat-sidenav class="right_sidenav"
-                     [ngStyle]="rightPanelWidth ? { width: rightPanelWidth } : null"
-                     mode="side"
-                     position="end"
-                     [opened]="rightSideVisible && rightPanelOpened">
+        <mat-sidenav
+            class="right_sidenav"
+            [ngStyle]="
+                rightPanelWidth
+                    ? { width: rightPanelWidth }
+                    : { width: rightPanelWidth }
+            "
+            mode="side"
+            position="end"
+            [opened]="true"
+        >
             <ng-content select="[rightPanel]"></ng-content>
         </mat-sidenav>
     </mat-sidenav-container>
