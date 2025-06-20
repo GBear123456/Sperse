@@ -107,7 +107,8 @@ export class InvoiceGridMenuComponent {
             InvoiceStatus.Final, InvoiceStatus.Canceled, InvoiceStatus.Sent
         ].indexOf(invoiceData.Status) < 0;
         this.resendInvoiceDisabled = !isSendEmailAllowed || this.markAsSendInvoiceDisabled;
-        this.refundDisabled = isOrder || !this.permission.isGranted(AppPermissions.CRMOrdersInvoicesRefund) || ![InvoiceStatus.PartiallyPaid, InvoiceStatus.Paid, InvoiceStatus.PartiallyRefunded].includes(invoiceData.Status);
+        this.refundDisabled = isOrder || !this.permission.isGranted(AppPermissions.CRMOrdersInvoicesRefund) || invoiceData.Amount <=0 ||
+            ![InvoiceStatus.PartiallyPaid, InvoiceStatus.Paid, InvoiceStatus.PartiallyRefunded].includes(invoiceData.Status);
         this.markAsCancelledDisabled = isOrder || invoiceData.Status != InvoiceStatus.Sent;
         this.deleteDisabled = isOrder || [
             InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled
@@ -156,11 +157,10 @@ export class InvoiceGridMenuComponent {
                     this.invoiceProxy.refundInvoice(refundInvoiceInput).pipe(
                         finalize(() => this.loadingService.finishLoading())
                     ).subscribe((res) => {
-                        if (res.failedAmount) 
-                            this.message.warn(`Failed to refund ${res.failedAmount.toFixed(2)} ${this.invoiceData.CurrencyId}`);
+                        if (res.errorMessages)
+                            this.message.warn(res.errorMessages.join('\n'));
 
-                        if (res.refundedAmount)
-                            this.onRefresh.emit();
+                        this.onRefresh.emit();
                     });
                 }
             }
