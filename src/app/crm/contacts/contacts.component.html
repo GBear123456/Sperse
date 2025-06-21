@@ -1,75 +1,13 @@
 <item-details-layout
     [navLinks]="navLinks"
     [queryParams]="queryParams"
-    [rightPanelOpened]="
-        showModernLayout ? contactsService?.settingsDialogOpened?.value : false
-    "
-    [showModernLayout]="showModernLayout"
+    [rightPanelOpened]="contactsService?.settingsDialogOpened?.value"
+    [showModernLayout]="true"
     (onClose)="close()"
     (onChanged)="updateContextType($event)"
 >
-    <ng-container topHeader *ngIf="!showModernLayout">
-        <details-header
-            [data]="contactInfo"
-            [contactGroupId]="contactGroupId$ | async"
-            [personContactInfo]="personContactInfo"
-            [ratingId]="contactInfo.ratingId"
-            (onInvalidate)="reloadCurrentSection($event)"
-        >
-        </details-header>
-    </ng-container>
-    <ng-container underHeader *ngIf="!showModernLayout">
-        <div class="general-links">
-            <a
-                (click)="
-                    contactsService
-                        .showEmailDialog({ contact: contactInfo })
-                        .subscribe()
-                "
-                [class.disabled]="!isSendSmsAndEmailAllowed"
-            >
-                <i class="inbox-icon" aria-hidden="true"></i>
-            </a>
-            <a
-                [class.disabled]="!manageAllowed"
-                (click)="contactsService.showNoteAddDialog()"
-            >
-                <i class="note-icon" aria-hidden="true"></i>
-            </a>
-            <a
-                *ngIf="isInboundOutboundSMSAllowed"
-                (click)="
-                    contactsService.showSMSDialog({ contact: contactInfo })
-                "
-                [class.disabled]="
-                    !isSendSmsAndEmailAllowed || isSMSIntegrationDisabled
-                "
-            >
-                <i class="sms-icon fa fa-commenting-o"></i>
-            </a>
-        </div>
-        <operations-widget
-            [enabled]="contactInfo && showToolbar"
-            [customerType]="contactGroupId$ | async"
-            [leadId]="leadId"
-            [contactInfo]="contactInfo"
-            [selectedPipelineId]="leadInfo?.pipelineId"
-            [pipelineDataSource]="allPipelines"
-            [selectedStageId]="leadInfo?.stageId"
-            [partnerTypes]="partnerTypes"
-            [selectedPartnerTypeId]="partnerTypeId"
-            (print)="printMainArea()"
-            (onUpdateStatus)="updateStatus($event)"
-            (onDelete)="deleteContact()"
-            [getProxyService]="getProxyService"
-            [assignedUsersSelector]="assignedUsersSelector"
-            [getAssignmentsPermissionKey]="getAssignmentsPermissionKey"
-        >
-        </operations-widget>
-    </ng-container>
     <ng-container aboveNavigation>
         <details-header
-            *ngIf="showModernLayout"
             [data]="contactInfo"
             [contactGroupId]="contactGroupId$ | async"
             [personContactInfo]="personContactInfo"

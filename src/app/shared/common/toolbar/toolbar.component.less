@@ -15,11 +15,12 @@
         &.dx-state-hover,
         &.dx-state-active,
         &.dx-state-focused {
-            background-color: #FFF !important;
+            background-color: #fff !important;
             color: #424c56 !important;
         }
-        &.desc:after, &.asc:after {
-            content: '';
+        &.desc:after,
+        &.asc:after {
+            content: "";
             width: 15px;
             height: 15px;
             top: 0;
@@ -28,7 +29,8 @@
             right: 5px;
             display: block;
             position: absolute;
-            background: url('../../../../assets/common/icons/arrow-up-icon.svg') center no-repeat;
+            background: url("../../../../assets/common/icons/arrow-up-icon.svg")
+                center no-repeat;
         }
         &.desc:after {
             transform: rotate(180deg);
@@ -53,29 +55,32 @@
                 opacity: 1;
                 transform: scale(1);
             }
-            &:not(:checked) + label, &:checked + label {
+            &:not(:checked) + label,
+            &:checked + label {
                 position: relative;
                 padding-left: 1.95em;
                 cursor: pointer;
                 &:before {
-                    content: '';
+                    content: "";
                     position: absolute;
-                    left: 0; top: 0;
+                    left: 0;
+                    top: 0;
                     width: 1.25em;
                     height: 1.25em;
-                    border: 0 solid #FFF;
+                    border: 0 solid #fff;
                     background: #fff;
                     border-radius: 4px;
-                    box-shadow: inset 0 1px 3px rgba(0,0,0,.1);
+                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
                 }
                 &:after {
-                    content: '';
+                    content: "";
                     position: absolute;
                     left: 1px;
                     top: 2px;
                     width: 14px;
                     height: 14px;
-                    background: url('~assets/common/icons/check.svg') center/100% no-repeat;
+                    background: url("~assets/common/icons/check.svg")
+                        center/100% no-repeat;
                 }
             }
         }
@@ -109,7 +114,7 @@
         }
         &.icon {
             &:before {
-                content: '';
+                content: "";
                 border-radius: 50%;
                 width: 10px;
                 height: 10px;
@@ -132,7 +137,12 @@
                 background-image: linear-gradient(221deg, #91f7c8, #0cab2a);
             }
             &.hub-icon:before {
-                background-image: linear-gradient(to bottom, rgba(0, 255, 255, 0), rgba(0, 255, 255, 0)), linear-gradient(222deg, #2beccf, #34aee0);
+                background-image: linear-gradient(
+                        to bottom,
+                        rgba(0, 255, 255, 0),
+                        rgba(0, 255, 255, 0)
+                    ),
+                    linear-gradient(222deg, #2beccf, #34aee0);
             }
         }
     }
@@ -167,7 +177,7 @@
             }
             [type="radio"]:checked + label:after,
             [type="radio"]:not(:checked) + label:after {
-                content: '';
+                content: "";
                 width: 6px;
                 height: 6px;
                 background: #00aeef;
@@ -338,7 +348,8 @@
             position: relative;
             padding: 0 20px;
 
-            &:before, &:after {
+            &:before,
+            &:after {
                 font-family: var(--app-font-family);
                 letter-spacing: 0.3px;
                 padding-right: 5px;
@@ -370,7 +381,7 @@
                 padding: 0 !important;
 
                 &:after {
-                    background: url('../../../../assets/common/icons/dark-down-arrow-icon.svg') !important;
+                    background: url("../../../../assets/common/icons/dark-down-arrow-icon.svg") !important;
                     right: 0 !important;
                 }
 
@@ -393,7 +404,8 @@
 
             &[accesskey="flag"] {
                 .dx-button-content {
-                    background: url('../../../../assets/common/icons/flag-icon.svg') 17px center no-repeat;
+                    background: url("../../../../assets/common/icons/flag-icon.svg")
+                        17px center no-repeat;
 
                     &::after {
                         right: 12px;
@@ -403,7 +415,8 @@
 
             &[accesskey="pen"] {
                 .dx-button-content {
-                    background: url('../../../../assets/common/icons/pen.svg') 14px center no-repeat;
+                    background: url("../../../../assets/common/icons/pen.svg")
+                        14px center no-repeat;
 
                     &::after {
                         right: 12px;
@@ -417,7 +430,7 @@
                     padding: 6px 11px;
 
                     &::before {
-                        content: 'More';
+                        content: "More";
                         font-weight: 300;
                         font-size: 13px;
                         line-height: 1.85;
@@ -441,13 +454,14 @@
                     padding: 6px 20px 6px 11px;
 
                     &::before {
-                        content: 'Status';
+                        content: "Status";
                         font-weight: 300;
                         font-size: 13px;
                         line-height: 1.85;
                         letter-spacing: 0.3px;
                         padding-left: 28px;
-                        background: url('../../../../assets/common/icons/flag-icon.svg') left center no-repeat;
+                        background: url("../../../../assets/common/icons/flag-icon.svg")
+                            left center no-repeat;
                         color: #677380;
                         display: inline-block;
                         font-family: var(--app-font-family);
@@ -462,7 +476,7 @@
             &[accesskey="stage"] {
                 .dx-button-content {
                     &::before {
-                        content: 'Stage';
+                        content: "Stage";
                     }
                 }
             }
@@ -470,7 +484,7 @@
             &[accesskey="groups"] {
                 .dx-button-content {
                     &::before {
-                        content: 'Groups';
+                        content: "Groups";
                     }
                 }
             }
@@ -490,16 +504,17 @@
                     letter-spacing: 0.3px;
                     color: #677380;
                     display: inline-block;
-                    background: url('../../../../assets/common/icons/expand-rows-icon.svg') left center no-repeat;
+                    background: url("../../../../assets/common/icons/expand-rows-icon.svg")
+                        left center no-repeat;
                     padding-left: 28px;
                     padding-right: 10px;
                     font-family: var(--app-font-family);
                 }
 
                 &::after {
-                    content: '';
+                    content: "";
                     display: block;
-                    background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                    background: url("../../../../assets/common/icons/down-arrow-icon.svg");
                     position: absolute;
                     width: 8px;
                     height: 4px;
@@ -514,7 +529,8 @@
                         content: none;
                     }
 
-                    background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
+                    background: url("../../../../assets/common/icons/download-icon.svg")
+                        no-repeat center;
                 }
             }
 
@@ -533,7 +549,8 @@
                     letter-spacing: 0.3px;
                     color: #677380;
                     display: inline-block;
-                    background: url('../../../../assets/common/icons/sort-icon-down.svg') left center no-repeat;
+                    background: url("../../../../assets/common/icons/sort-icon-down.svg")
+                        left center no-repeat;
                     padding-left: 22px;
                     padding-right: 0;
                     font-family: var(--app-font-family);
@@ -546,7 +563,8 @@
                         content: none;
                     }
 
-                    background: url('../../../../assets/common/icons/follow-icon.svg') no-repeat center;
+                    background: url("../../../../assets/common/icons/follow-icon.svg")
+                        no-repeat center;
                 }
             }
 
@@ -566,7 +584,8 @@
                     letter-spacing: 0.3px;
                     color: #677380;
                     display: inline-block;
-                    background: url('../../../../assets/common/icons/expand-tree-icon.svg') left center no-repeat;
+                    background: url("../../../../assets/common/icons/expand-tree-icon.svg")
+                        left center no-repeat;
                     padding-left: 28px;
                     font-family: var(--app-font-family);
                 }
@@ -658,9 +677,9 @@
 
             .dx-button-content {
                 &::after {
-                    content: '';
+                    content: "";
                     display: block;
-                    background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                    background: url("../../../../assets/common/icons/down-arrow-icon.svg");
                     position: absolute;
                     width: 8px;
                     height: 4px;
@@ -676,7 +695,8 @@
 
         [accesskey="download"] {
             .dx-button-content {
-                background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
+                background: url("../../../../assets/common/icons/download-icon.svg")
+                    no-repeat center;
 
                 i {
                     display: none;
@@ -698,7 +718,7 @@
                 font-weight: 400 !important;
                 border-radius: 15px;
                 padding: 0 0 0 10px;
-                font-family: 'var(--app-font-family)',sans-serif;
+                font-family: "var(--app-font-family)", sans-serif;
                 font-size: 12px;
                 border: solid 1px #dddddd;
                 //cursor: pointer;
@@ -707,7 +727,7 @@
                 &::before {
                     width: 8px;
                     height: 8px;
-                    content: '';
+                    content: "";
                     display: block;
                     position: absolute;
                     left: 10px;
@@ -753,32 +773,36 @@
 
         [accesskey="filters"] {
             img {
-                display: none
+                display: none;
             }
 
             .dx-button-content {
-                background: url('../../../../assets/common/icons/funnel-icon.svg') no-repeat center;
+                background: url("../../../../assets/common/icons/funnel-icon.svg")
+                    no-repeat center;
             }
 
             &[button-pressed="true"] {
                 .dx-button-content {
-                    background: url('../../../../assets/common/icons/funnel-blue-icon.svg') no-repeat center;
+                    background: url("../../../../assets/common/icons/funnel-blue-icon.svg")
+                        no-repeat center;
                 }
             }
         }
 
         [accesskey="row-filter"] {
             img {
-                display: none
+                display: none;
             }
 
             .dx-button-content {
-                background: url('../../../../assets/common/icons/find-icon.svg') no-repeat center;
+                background: url("../../../../assets/common/icons/find-icon.svg")
+                    no-repeat center;
             }
 
             &[button-pressed="true"] {
                 .dx-button-content {
-                    background: url('../../../../assets/common/icons/find-blue-icon.svg') no-repeat center;
+                    background: url("../../../../assets/common/icons/find-blue-icon.svg")
+                        no-repeat center;
                 }
             }
         }
@@ -786,7 +810,7 @@
         [filter-selected="true"],
         .filter-selected {
             &::after {
-                content: '';
+                content: "";
                 position: absolute;
                 display: block;
                 width: 5px;
@@ -820,29 +844,21 @@
         [accesskey="box"] {
             &[button-pressed="true"] {
                 .dx-button-content {
-                    background: url('../../../../assets/common/icons/box-blue-icon.svg') no-repeat center;
+                    background: url("../../../../assets/common/icons/box-blue-icon.svg")
+                        no-repeat center;
                 }
             }
         }
 
         [accesskey="settings"] {
-            &:after {
-                display: none;
-            }
-
-            &[button-pressed="true"] {
-                background-color: rgba(0, 174, 239, 0.04);
-
-                .dx-button-content {
-                    background: url('../../../../assets/common/icons/profile-gear-blue.svg') no-repeat 15px;
-                }
-            }
+            display: none;
         }
 
         [accesskey="pipeline"] {
             &[button-pressed="true"] {
                 .dx-button-content {
-                    background: url('../../../../assets/common/icons/funnel-blue-icon.svg') no-repeat center;
+                    background: url("../../../../assets/common/icons/funnel-blue-icon.svg")
+                        no-repeat center;
                 }
             }
         }
@@ -850,7 +866,8 @@
         [accesskey="grid"] {
             &[button-pressed="true"] {
                 .dx-button-content {
-                    background: url('../../../../assets/common/icons/table-blue-icon.svg') no-repeat center;
+                    background: url("../../../../assets/common/icons/table-blue-icon.svg")
+                        no-repeat center;
                 }
             }
         }
@@ -873,7 +890,8 @@
             padding: 0;
         }
 
-        .dx-button, .dx-dropdownbutton {
+        .dx-button,
+        .dx-dropdownbutton {
             min-width: 50px;
             position: relative;
             width: stretch;
@@ -925,7 +943,8 @@
                 border-radius: 0;
                 border-left: 1px solid transparent;
 
-                &:hover, &.dx-state-focused {
+                &:hover,
+                &.dx-state-focused {
                     border-left: 1px solid #bebebe;
                 }
 
@@ -959,14 +978,16 @@
             }
 
             &[group-item-position="last"] {
-                &, .dx-buttongroup-item {
+                &,
+                .dx-buttongroup-item {
                     margin-right: 12px;
                     border-top-left-radius: 0;
                     border-bottom-left-radius: 0;
                     border-left: 1px solid transparent;
                 }
 
-                &:hover, &.dx-state-focused {
+                &:hover,
+                &.dx-state-focused {
                     border-left: 1px solid #bebebe;
                 }
             }
@@ -998,9 +1019,9 @@
                 }
 
                 &:before {
-                    content: '';
+                    content: "";
                     display: block;
-                    background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                    background: url("../../../../assets/common/icons/down-arrow-icon.svg");
                     position: absolute;
                     width: 8px;
                     height: 4px;
@@ -1098,7 +1119,8 @@
             font-weight: 500;
             line-height: 1.71;
             color: #212c36;
-            background: url("../../../../assets/common/icons/arrow-down-blue.svg") right center no-repeat;
+            background: url("../../../../assets/common/icons/arrow-down-blue.svg")
+                right center no-repeat;
             white-space: nowrap;
         }
     }
@@ -1130,7 +1152,8 @@
         justify-content: center;
         position: relative;
 
-        &:before, &:after {
+        &:before,
+        &:after {
             font-family: var(--app-font-family);
             letter-spacing: 0.3px;
             padding-right: 5px;
@@ -1162,7 +1185,7 @@
             padding: 0 !important;
 
             &:after {
-                background: url('../../../../assets/common/icons/dark-down-arrow-icon.svg') !important;
+                background: url("../../../../assets/common/icons/dark-down-arrow-icon.svg") !important;
                 right: 0 !important;
             }
 
@@ -1175,7 +1198,8 @@
     .dx-dropdownmenu.dx-dropdownmenu-button {
         &[accesskey="flag"] {
             .dx-button-content {
-                background: url('../../../../assets/common/icons/flag-icon.svg') 17px center no-repeat;
+                background: url("../../../../assets/common/icons/flag-icon.svg")
+                    17px center no-repeat;
 
                 &::after {
                     right: 12px;
@@ -1185,7 +1209,8 @@
 
         &[accesskey="pen"] {
             .dx-button-content {
-                background: url('../../../../assets/common/icons/pen.svg') 14px center no-repeat;
+                background: url("../../../../assets/common/icons/pen.svg") 14px
+                    center no-repeat;
 
                 &::after {
                     right: 12px;
@@ -1199,7 +1224,7 @@
                 padding: 6px 11px;
 
                 &::before {
-                    content: 'More';
+                    content: "More";
                     font-weight: 300;
                     font-size: 13px;
                     line-height: 1.85;
@@ -1223,13 +1248,14 @@
                 padding: 6px 20px 6px 11px;
 
                 &::before {
-                    content: 'Status';
+                    content: "Status";
                     font-weight: 300;
                     font-size: 13px;
                     line-height: 1.85;
                     letter-spacing: 0.3px;
                     padding-left: 28px;
-                    background: url('../../../../assets/common/icons/flag-icon.svg') left center no-repeat;
+                    background: url("../../../../assets/common/icons/flag-icon.svg")
+                        left center no-repeat;
                     color: #677380;
                     display: inline-block;
                     font-family: var(--app-font-family);
@@ -1244,7 +1270,7 @@
         &[accesskey="stage"] {
             .dx-button-content {
                 &::before {
-                    content: 'Stage';
+                    content: "Stage";
                 }
             }
         }
@@ -1252,7 +1278,7 @@
         &[accesskey="groups"] {
             .dx-button-content {
                 &::before {
-                    content: 'Groups';
+                    content: "Groups";
                 }
             }
         }
@@ -1272,16 +1298,17 @@
                 letter-spacing: 0.3px;
                 color: #677380;
                 display: inline-block;
-                background: url('../../../../assets/common/icons/expand-rows-icon.svg') left center no-repeat;
+                background: url("../../../../assets/common/icons/expand-rows-icon.svg")
+                    left center no-repeat;
                 padding-left: 28px;
                 padding-right: 10px;
                 font-family: var(--app-font-family);
             }
 
             &::after {
-                content: '';
+                content: "";
                 display: block;
-                background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                background: url("../../../../assets/common/icons/down-arrow-icon.svg");
                 position: absolute;
                 width: 8px;
                 height: 4px;
@@ -1296,7 +1323,8 @@
                     content: none;
                 }
 
-                background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
+                background: url("../../../../assets/common/icons/download-icon.svg")
+                    no-repeat center;
             }
         }
 
@@ -1315,7 +1343,8 @@
                 letter-spacing: 0.3px;
                 color: #677380;
                 display: inline-block;
-                background: url('../../../../assets/common/icons/sort-icon-down.svg') left center no-repeat;
+                background: url("../../../../assets/common/icons/sort-icon-down.svg")
+                    left center no-repeat;
                 padding-left: 22px;
                 padding-right: 0;
                 font-family: var(--app-font-family);
@@ -1328,7 +1357,8 @@
                     content: none;
                 }
 
-                background: url('../../../../assets/common/icons/follow-icon.svg') no-repeat center;
+                background: url("../../../../assets/common/icons/follow-icon.svg")
+                    no-repeat center;
             }
         }
 
@@ -1348,7 +1378,8 @@
                 letter-spacing: 0.3px;
                 color: #677380;
                 display: inline-block;
-                background: url('../../../../assets/common/icons/expand-tree-icon.svg') left center no-repeat;
+                background: url("../../../../assets/common/icons/expand-tree-icon.svg")
+                    left center no-repeat;
                 padding-left: 28px;
                 font-family: var(--app-font-family);
             }
@@ -1377,9 +1408,9 @@
 
         .dx-button-content {
             &::after {
-                content: '';
+                content: "";
                 display: block;
-                background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                background: url("../../../../assets/common/icons/down-arrow-icon.svg");
                 position: absolute;
                 width: 8px;
                 height: 4px;
@@ -1395,7 +1426,8 @@
 
     [accesskey="download"] {
         .dx-button-content {
-            background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
+            background: url("../../../../assets/common/icons/download-icon.svg")
+                no-repeat center;
 
             i {
                 display: none;
@@ -1405,23 +1437,25 @@
 
     [accesskey="filters"] {
         img {
-            display: none
+            display: none;
         }
 
         .dx-button-content {
-            background: url('../../../../assets/common/icons/funnel-icon.svg') no-repeat center;
+            background: url("../../../../assets/common/icons/funnel-icon.svg")
+                no-repeat center;
         }
 
         &[button-pressed="true"] {
             .dx-button-content {
-                background: url('../../../../assets/common/icons/funnel-blue-icon.svg') no-repeat center;
+                background: url("../../../../assets/common/icons/funnel-blue-icon.svg")
+                    no-repeat center;
             }
         }
     }
 
     [filter-selected="true"] {
         &::after {
-            content: '';
+            content: "";
             position: absolute;
             display: block;
             width: 5px;
@@ -1455,7 +1489,8 @@
     [accesskey="box"] {
         &[button-pressed="true"] {
             .dx-button-content {
-                background: url('../../../../assets/common/icons/box-blue-icon.svg') no-repeat center;
+                background: url("../../../../assets/common/icons/box-blue-icon.svg")
+                    no-repeat center;
             }
         }
     }
@@ -1463,7 +1498,8 @@
     [accesskey="pipeline"] {
         &[button-pressed="true"] {
             .dx-button-content {
-                background: url('../../../../assets/common/icons/funnel-blue-icon.svg') no-repeat center;
+                background: url("../../../../assets/common/icons/funnel-blue-icon.svg")
+                    no-repeat center;
             }
         }
     }
@@ -1471,7 +1507,8 @@
     [accesskey="grid"] {
         &[button-pressed="true"] {
             .dx-button-content {
-                background: url('../../../../assets/common/icons/table-blue-icon.svg') no-repeat center;
+                background: url("../../../../assets/common/icons/table-blue-icon.svg")
+                    no-repeat center;
             }
         }
     }
@@ -1545,7 +1582,8 @@
             border-radius: 0;
             border-left: 1px solid transparent;
 
-            &:hover, &.dx-state-focused {
+            &:hover,
+            &.dx-state-focused {
                 border-left: 1px solid #bebebe;
             }
 
@@ -1584,7 +1622,8 @@
             border-bottom-left-radius: 0;
             border-left: 1px solid transparent;
 
-            &:hover, &.dx-state-focused {
+            &:hover,
+            &.dx-state-focused {
                 border-left: 1px solid #bebebe;
             }
         }
@@ -1606,9 +1645,9 @@
             }
 
             &:before {
-                content: '';
+                content: "";
                 display: block;
-                background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                background: url("../../../../assets/common/icons/down-arrow-icon.svg");
                 position: absolute;
                 width: 8px;
                 height: 4px;
