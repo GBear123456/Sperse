@@ -68,7 +68,7 @@ import { CreditBalanceHistoryDialogComponent } from './credit-balance-history-di
     ]
 })
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
-    @HostBinding('class.modern') showModernLayout = this.appService.layoutService.showModernLayout;
+    @HostBinding('class.modern') showModernLayout = true;
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild('checklistScroll') checklistScroll: DxScrollViewComponent;
     @ViewChild(MatTabGroup) tabGroup: MatTabGroup;  
@@ -324,7 +324,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     ngAfterViewInit() {
-        let topAdjustment = this.appService.layoutService.showModernLayout ? '75px' : '218px'; 
+        let topAdjustment =  '75px'; 
         setTimeout(() => {
             if (this.dialogRef) {
                 this.slider.classList.remove('hide');
@@ -591,7 +591,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     getTabContentHeight(subtract = 0) {
-        return innerHeight - (this.appService.layoutService.showModernLayout ? 150 : 290) - subtract + 'px';
+        return innerHeight - 150- subtract + 'px';
     }
 
     initVerificationChecklist(): void {

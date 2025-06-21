@@ -404,7 +404,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 items: this.optionButtonConfig ? [this.optionButtonConfig] : []
             };
             this.toolbarConfig = this._enabled ? [
-                (this.layoutService.showModernLayout ? {
+                {
                     location: 'before',
                     locateInMenu: 'auto',
                     items: [
@@ -412,9 +412,9 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             name: 'title'
                         }
                     ]
-                } : {}),
+                },
                 {
-                    location: this.layoutService.showModernLayout ? 'after' : 'before',
+                    location: 'after',
                     locateInMenu: 'auto',
                     items: [
                         {
@@ -466,7 +466,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'delete',
                             action: this.delete.bind(this),
-                            visible: this.layoutService.showModernLayout &&
+                            visible: 
                                 Boolean(this.leadId) && this.permission.checkCGPermission(this.contactInfo.groups) &&
                                 this.route.snapshot.children[0].routeConfig.path == 'contact-information'
                         }
@@ -508,9 +508,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'delete',
                             action: this.delete.bind(this),
-                            visible: !this.layoutService.showModernLayout &&
-                                Boolean(this.leadId) && this.permission.checkCGPermission(this.contactInfo.groups) &&
-                                this.route.snapshot.children[0].routeConfig.path == 'contact-information'
+                            visible: false
                         }
                     ]
                 },
@@ -548,13 +546,13 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 {
                     name: 'prev',
                     action: this.loadPrevItem.bind(this),
-                    visible: !this.layoutService.showModernLayout,
+                    visible: false,
                     disabled: this.contactService.isPrevDisabled
                 },
                 {
                     name: 'next',
                     action: this.loadNextItem.bind(this),
-                    visible: !this.layoutService.showModernLayout,
+                    visible: false,
                     disabled: this.contactService.isNextDisabled
                 }
             ]

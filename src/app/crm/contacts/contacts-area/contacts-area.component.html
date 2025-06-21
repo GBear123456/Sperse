@@ -1,5 +1,14 @@
 <div class="contacts">
     <div *ngIf="showContactType == 'phones'">
+        <div *ngIf="!contactInfoData?.phones?.length">
+            <button
+                class="icon-btn"
+                aria-label="Contact action"
+                (click)="showDialog('phoneNumber', null, $event)"
+            >
+                <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
+            </button>
+        </div>
         <div
             class="phone"
             *ngFor="let phone of contactInfoData?.phones; let i = index"
@@ -79,6 +88,15 @@
         </div>
     </div>
     <div *ngIf="showContactType == 'emails'">
+        <div *ngIf="!contactInfoData?.emails?.length">
+            <button
+                class="icon-btn"
+                aria-label="Contact action"
+                (click)="showDialog('emailAddress', null, $event)"
+            >
+                <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
+            </button>
+        </div>
         <div class="emails" *ngIf="contactInfoData?.emails?.length">
             <ul *ngFor="let email of contactInfoData?.emails; let i = index">
                 <div class="email-row" *ngIf="!email.inplaceEdit">

@@ -3,49 +3,47 @@
     display: block;
     // width: calc(~"100vw - 60px"); width for layout, need add it and fix some styles later
 
-    &.modern {
-        left: 0px;
+    left: 0px;
 
-        mat-sidenav-container {
-            width: 100%;
-            height: calc(~"100vh - 75px");
+    mat-sidenav-container {
+        width: 100%;
+        height: calc(~"100vh - 75px");
 
-            .nav-icon {
+        .nav-icon {
+        }
+    }
+
+    ::ng-deep .mat-sidenav-content {
+        border-left: none;
+    }
+
+    .mat-tab-nav-bar {
+        // margin-bottom: 50px;
+        width: 300px;
+    }
+
+    .mat-tab-link {
+        font-family: Manrope;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 27px;
+        text-align: left;
+        border: 0px;
+        border-radius: 10px;
+        margin-right: 15px;
+
+        &.active {
+            color: #fff;
+            background-color: rgba(0, 168, 237, 1);
+            path {
+                stroke: #fff;
             }
         }
+    }
 
-        ::ng-deep .mat-sidenav-content {
-            border-left: none;
-        }
-
-        .mat-tab-nav-bar {
-            // margin-bottom: 50px;
-            width: 300px;
-        }
-
-        .mat-tab-link {
-            font-family: Manrope;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 27px;
-            text-align: left;
-            border: 0px;
-            border-radius: 10px;
-            margin-right: 15px;
-
-            &.active {
-                color: #fff;
-                background-color: rgba(0, 168, 237, 1);
-                path {
-                    stroke: #fff;
-                }
-            }
-        }
-
-        .main-content {
-            display: flex;
-            flex-direction: column;
-        }
+    .main-content {
+        display: flex;
+        flex-direction: column;
     }
     .user-info {
         position: relative;
@@ -173,11 +171,6 @@
         }
     }
 
-    mat-sidenav-container {
-        width: calc(~"100% - 60px");
-        height: calc(~"100vh - 220px");
-    }
-
     ::ng-deep .mat-tab-links {
         flex-direction: column;
 
@@ -247,6 +240,9 @@
         font-weight: 500;
         background-color: #00a8ed;
         color: white;
+    }
+    .mat-tab-link.active svg path {
+        stroke: white;
     }
     .mat-tab-link.active svg path {
         stroke: white;

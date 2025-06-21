@@ -83,7 +83,7 @@ import { PersonHistoryDialogComponent } from '../personal-details/personal-detai
 export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
     @HostBinding('class.modern') @Input() showModernLayout: boolean = 
-        this.appService.layoutService.showModernLayout;
+        true;
 
     @Input()
     public set data(data: ContactInfoDto) {
