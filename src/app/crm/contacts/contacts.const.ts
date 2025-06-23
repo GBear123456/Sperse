@@ -19,6 +19,7 @@ export enum EmailTags {
     LastName = 'LastName',
     DayOfWeek = 'DayOfWeek',
     LastReferralContact = 'LastReferralContact',
+    CompanyName = 'CompanyName',
     CompanyIndustry = 'CompanyIndustry',
     SenderFullName = 'SenderFullName',
     SenderPhone = 'SenderPhone',
@@ -44,7 +45,7 @@ export enum ProductEmailTags {
     ProductName = 'ProductName',
     ProductDescription = 'ProductDescription',
     ProductQuantity = 'ProductQuantity',
-    ProductSubscriptionOption = 'ProductSubscriptionOption',
+    PriceUnitName = 'PriceUnitName',
     ProductReceiptUrl = 'ProductReceiptUrl',
     ProductInvoiceUrl = 'ProductInvoiceUrl'
 }

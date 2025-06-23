@@ -37,7 +37,7 @@ import { OrganizationUnitsDialogComponent } from '@shared/common/organization-un
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { ContactsService } from '../contacts.service';
 import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
-import { ContactGroup, ContactStatus } from '@root/shared/AppEnums';
+import { ContactGroup } from '@root/shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppRoles } from '@shared/AppRoles';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -47,14 +47,14 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from 'abp-ng2-module';
 import { AppStoreService } from '@app/store/app-store.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { OrganizationUnitsDialogData } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog-data.interface';
+import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
 import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'user-information',
     templateUrl: './user-information.component.html',
     styleUrls: ['./user-information.component.less'],
-    providers: [ PhoneFormatPipe, LifecycleSubjectsService ]
+    providers: [PhoneFormatPipe, LifecycleSubjectsService]
 })
 export class UserInformationComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('emailAddress') emailAddressComponent: DxSelectBoxComponent;
@@ -62,10 +62,10 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
     @ViewChild('inviteValidationGroup') inviteValidationComponent: DxValidationGroupComponent;
     data: any;
 
-    readonly GENERAL_TAB_INDEX        = 0;
-    readonly PERMISSIONS_TAB_INDEX    = 1;
+    readonly GENERAL_TAB_INDEX = 0;
+    readonly PERMISSIONS_TAB_INDEX = 1;
     readonly LOGIN_ATTEMPTS_TAB_INDEX = 2;
-    readonly ORG_UNITS_TAB_INDEX      = 3;
+    readonly ORG_UNITS_TAB_INDEX = 3;
 
     readonly EMAIL_FIELD = 'emailAddress';
     readonly PHONE_FIELD = 'phoneNumber';
@@ -80,7 +80,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
     phoneInplaceEdit = false;
     initialPhoneNumber: any;
     roles: any = [];
-    partnerRoles: AppRoles[] = [ AppRoles.CRMPartner, AppRoles.CFOPartner ];
+    partnerRoles: AppRoles[] = [AppRoles.CRMPartner, AppRoles.CFOPartner];
     checkedByDefaultRoles: AppRoles[];
     emails: any;
     phones: any;
@@ -140,7 +140,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         public dialog: MatDialog,
         public phoneFormatPipe: PhoneFormatPipe,
         public ls: AppLocalizationService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.onResize();
@@ -307,7 +307,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         } else {
             this.selectedOrgUnits = (
                 (this.contactInfoData.contactInfo.personContactInfo
-                && this.contactInfoData.contactInfo.personContactInfo.orgRelations)
+                    && this.contactInfoData.contactInfo.personContactInfo.orgRelations)
                 || []
             ).map(item => {
                 return item.organization && item.organization.rootOrganizationUnitId;
@@ -369,12 +369,34 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         this.update(fieldName, value);
     }
 
-    updatePhoneNumber(isValid) {
-        isValid && this.update(this.PHONE_FIELD,
+    updatePhoneNumber(countryPhoneNumberComponent: CountryPhoneNumberComponent) {
+        if (!countryPhoneNumberComponent.isValid())
+            return;
+
+        if (countryPhoneNumberComponent.isEmpty())
+            this.data.user.phoneNumber = undefined;
+
+        this.update(this.PHONE_FIELD,
             this.data.user.phoneNumber, () => {
                 this.phoneInplaceEdit = false;
             }
         );
+    }
+
+    deletePhoneNumber() {
+        if (this.isEditAllowed) {
+            this.message.confirm('', this.ls.l('DeleteContactMessage', this.ls.l('Phone').toLowerCase()), result => {
+                if (!result)
+                    return;
+
+                this.update(this.PHONE_FIELD,
+                    undefined, () => {
+                        this.data.user.phoneNumber = undefined;
+                        this.phoneInplaceEdit = false;
+                    }
+                );
+            });
+        }
     }
 
     closePhoneInPlaceEdit() {

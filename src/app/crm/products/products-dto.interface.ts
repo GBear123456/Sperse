@@ -1,4 +1,4 @@
-import { CustomPeriodType, ProductType, RecurringPaymentFrequency } from "@shared/service-proxies/service-proxies";
+import { CustomPeriodType, PriceOptionType, ProductMeasurementUnit, ProductType, RecurringPaymentFrequency } from "@shared/service-proxies/service-proxies";
 
 export interface ProductDto {
     Id: number;
@@ -7,21 +7,23 @@ export interface ProductDto {
     Description: string;
     Group: string;
     Type: ProductType;
-    Price: number;
     CurrencyId: number;
-    Unit: string;
     ThumbnailUrl: string;
     PublicName: string;
     CreateUser: boolean;
+    SinglePurchaseAllowed: boolean;
     IsPublished: boolean;
     AllowCoupon: boolean;
     PublishDate: string;
-    ProductSubscriptionOptions: ProductSubscriptionOption[];
+    IsArchived: boolean;
+    PriceOptions: PriceOption[];
 }
 
-export interface ProductSubscriptionOption {
+export interface PriceOption {
+    Type: PriceOptionType;
     SignupFee: number;
     Fee: number;
+    Unit: ProductMeasurementUnit;
     Frequency: RecurringPaymentFrequency;
     TrialDayCount: number;
     CustomPeriodCount: number;

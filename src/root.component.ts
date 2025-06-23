@@ -42,7 +42,7 @@ export class RootComponent implements OnInit, AfterViewInit {
         private hostSettingsProxy: HostSettingsServiceProxy,
         private uiCustomizationService: AppUiCustomizationService,
         private fontService: FontService,
-        @Inject(AppSessionService) private SS,
+        @Inject(AppSessionService) private SS: AppSessionService,
         @Inject(DOCUMENT) private document
     ) {
         let tenant = this.SS.tenant;
@@ -85,7 +85,7 @@ export class RootComponent implements OnInit, AfterViewInit {
         sessionStorage.clear();
         if (abp && abp.setting && abp.setting.values) {
             let mapKey = abp.setting.values['Integrations:Google:MapsJavascriptApiKey'];
-            if (mapKey && this.SS.userId)
+            if (mapKey)
                 DomHelper.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', mapKey));
 
             let fontName = abp.setting.values['App.Appearance.FontName'] || AppConsts.defaultFontName,
@@ -114,23 +114,23 @@ export class RootComponent implements OnInit, AfterViewInit {
         }
 
         //tenant specific custom css
-        let tenant = this.SS.tenant;
-        if (tenant) {
-            let customCss = abp.session.userId ? tenant.customCssId : (
-                UrlHelper.isSignUpUrl() ?  tenant.signUpCustomCssId : tenant.loginCustomCssId
+        let config = this.SS.appearanceConfig;
+        if (config) {
+            let customCss = abp.session.userId ? config.customCssId : (
+                UrlHelper.isSignUpUrl() ? config.signUpCustomCssId : config.loginCustomCssId
             );
             if (customCss)
                 DomHelper.addStyleSheet(`${CustomCssType.Platform}CustomCss`, AppConsts.remoteServiceBaseUrl + 
-                    '/api/TenantCustomization/GetCustomCss/' + customCss + '/' + tenant.id);
+                    '/api/TenantCustomization/GetCustomCss/' + customCss + '/' + (config.id || ''));
 
-            if (tenant.customLayoutType && tenant.customLayoutType !== LayoutType.Default) {
-                let layoutName = kebabCase(tenant.customLayoutType);
+            if (config.customLayoutType && config.customLayoutType !== LayoutType.Default) {
+                let layoutName = kebabCase(config.customLayoutType);
                 this.document.body.classList.add(layoutName);
-                DomHelper.addStyleSheet(tenant.customLayoutType + 'Styles', AppConsts.appBaseHref +
+                DomHelper.addStyleSheet(config.customLayoutType + 'Styles', AppConsts.appBaseHref +
                     'assets/common/styles/custom/' + layoutName + '/style.css');
             }
 
-            this.checkSetGoogleAnalyticsCode(tenant);
+            this.checkSetGoogleAnalyticsCode(config);
         }
     }
 

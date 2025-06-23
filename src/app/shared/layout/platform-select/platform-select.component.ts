@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, HostBinding, ViewChild, Inject } from '@angular/core';
+import { Component, HostBinding, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -84,14 +84,14 @@ export class PlatformSelectComponent {
     enabledPortal = this.feature.isEnabled(AppFeatures.Portal);
     enabledAdminCustomizations = this.feature.isEnabled(AppFeatures.AdminCustomizations);
     appMemberPortalUrl = this.formatUrl(
-        (this.enabledAdminCustomizations && AppConsts.appMemberPortalUrl) 
+        (this.enabledAdminCustomizations && AppConsts.appMemberPortalUrl)
         || (this.enabledPortal && environment.portalUrl)
     );
-    landingPageDomains = this.appSessionService.tenant && 
+    landingPageDomains = this.appSessionService.tenant &&
         this.appSessionService.tenant.landingPageDomains
             .sort((a, b) => a.includes('vercel.app') > b.includes('vercel.app') ? 1 : -1)
             .map(domain => this.getAffiliateLink('https://' + domain));
-    selectedlandingPage = this.landingPageDomains 
+    selectedlandingPage = this.landingPageDomains
         && this.landingPageDomains[0];
 
     moduleItems: string[];
@@ -101,7 +101,7 @@ export class PlatformSelectComponent {
     productUrl: string;
     searchProduct: string;
 
-    productDataSource = new DataSource({ 
+    productDataSource = new DataSource({
         store: new ODataStore({
             key: 'Id',
             deserializeDates: false,
@@ -111,7 +111,7 @@ export class PlatformSelectComponent {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$filter = '(IsPublished eq true) and (PublishDate le ' + (new Date()).toISOString() + ')' +
                     ' and (PublicName ne null)' + (this.searchProduct ? " and startswith(Name,'" + this.searchProduct + "')" : '');
-                request.params.$select = 'Id,ThumbnailUrl,PublicName,Price,Name,Type';
+                request.params.$select = 'Id,ThumbnailUrl,PublicName,Name,Type';
                 request.params.$top = 100;
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             },
@@ -119,6 +119,7 @@ export class PlatformSelectComponent {
                 this.productLinks = data.map(product => this.getProductPublicLink(product.PublicName));
                 if (!this.productUrl)
                     this.productUrl = this.productLinks[0];
+                this.changeDetector.markForCheck();
             },
             errorHandler: (error) => {
                 this.productLinks = [];
@@ -138,6 +139,7 @@ export class PlatformSelectComponent {
         private oDataService: ODataService,
         private appSessionService: AppSessionService,
         private memberSettingsProxy: MemberSettingsServiceProxy,
+        private changeDetector: ChangeDetectorRef,
         public clipboardService: ClipboardService,
         public layoutService: LayoutService,
         public ls: AppLocalizationService,
@@ -203,7 +205,7 @@ export class PlatformSelectComponent {
     }
 
     formatUrl(url: string) {
-        return (url && url[url.length - 1] == '/' ? url.slice(0, -1) : url);        
+        return (url && url[url.length - 1] == '/' ? url.slice(0, -1) : url);
     }
 
     onItemClick(module) {
@@ -217,7 +219,7 @@ export class PlatformSelectComponent {
                 const group = availableSliceLinks.indexOf(lastSegment) > 0 ? lastSegment : 'leads';
                 navigate = this.router.navigate(
                     ['/app/slice/' + group],
-                    { queryParams: { dataLayoutType: DataLayoutType.PivotGrid }}
+                    { queryParams: { dataLayoutType: DataLayoutType.PivotGrid } }
                 );
             } else if (module.name === 'PFM' && module.footerItem) {
                 return window.open(location.origin + '/personal-finance', '_blank');
@@ -279,7 +281,7 @@ export class PlatformSelectComponent {
                     of: this.document.querySelector('app-header')
                 }
             });
-        }        
+        }
     }
 
     onDropDownOpen() {
@@ -301,11 +303,11 @@ export class PlatformSelectComponent {
 
     affiliateCodeChanged(affiliateCode: string) {
         this.memberSettingsProxy.updateAffiliateCode(
-            new UpdateUserAffiliateCodeDto({affiliateCode: affiliateCode})
+            new UpdateUserAffiliateCodeDto({ affiliateCode: affiliateCode })
         ).subscribe(() => {
             this.affiliateRefId = affiliateCode;
             if (this.productLinks) {
-                this.productLinks = this.productDataSource.items().map(product => 
+                this.productLinks = this.productDataSource.items().map(product =>
                     this.getProductPublicLink(product.PublicName)
                 );
                 this.productUrl = this.productLinks[0];
@@ -316,6 +318,8 @@ export class PlatformSelectComponent {
                     item => this.getAffiliateLink(item.split('?')[0]));
                 this.selectedlandingPage = this.landingPageDomains[0];
             }
+
+            this.changeDetector.markForCheck();
         });
     }
 

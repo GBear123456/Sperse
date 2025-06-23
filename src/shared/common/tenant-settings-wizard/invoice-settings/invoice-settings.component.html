@@ -1,6 +1,6 @@
 <h2>{{ ls.l('Invoice') }}</h2>
-<div class="" *ngIf="settings">
-    <dx-scroll-view [height]="450" showScrollbar="onHover">
+<ng-container *ngIf="settings">
+    <dx-scroll-view height="90%" showScrollbar="onHover">
         <div class="form-group email-template">
             <email-template-selector [(templateId)]="settings.defaultTemplateId"
                                      [templateType]="EmailTemplateType.Invoice"
@@ -69,6 +69,12 @@
             </dx-check-box>
         </div>
         <div class="form-group">
+            <dx-check-box [readOnly]="isManageUnallowed"
+                          [text]="ls.l('InvoiceEmail_AttachXMLToPdf')"
+                          [(value)]="settings.attachXMLToPdf">
+            </dx-check-box>
+        </div>
+        <div class="form-group">
             <label>
                 {{ls.l('InvoiceEmail_DueGracePeriod')}}
             </label>
@@ -119,4 +125,4 @@
             </div>
         </div>
     </dx-scroll-view>
-</div>
+</ng-container>

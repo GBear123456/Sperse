@@ -1,10 +1,12 @@
-<div *ngIf="availablePeriods.length > 1" class="state-slider point{{availablePeriods.length}}">
-    <div class="captions">
-        <ng-container *ngFor="let period of availablePeriods; index as i">
-            <div [ngClass]="{ 'active': getActiveStatus(period) }" (click)="toggle(period)">{{ l(billingPeriod[period]) }}</div>
-        </ng-container>
+<dx-tabs *ngIf="priceOptions && priceOptions.length > 1"
+         [dataSource]="priceOptions"
+         [(selectedItem)]="selectedPriceOption"
+         itemTemplate="priceOptionTabTemplate"
+         (onSelectionChanged)="onPriceOptionChanged()"
+         [scrollByContent]="true"
+         [focusStateEnabled]="false"
+         [hoverStateEnabled]="false">
+    <div *dxTemplate="let item of 'priceOptionTabTemplate'">
+        <span>{{ item.name || item.frequency || item.unit }}</span>
     </div>
-    <mat-slider [value]="getSliderValue()"
-                [disabled]="true">
-    </mat-slider>
-</div>
+</dx-tabs>

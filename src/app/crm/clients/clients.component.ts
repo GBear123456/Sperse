@@ -77,14 +77,13 @@ import { FilterContactStatusModel } from '@app/crm/shared/filters/contact-status
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
 import { FilterNullableRadioGroupModel } from '@shared/filters/radio-group/filter-nullable-radio-group.model';
 import {
-    UpdateContactStatusesInput,
     ProductDto,
-    ProductType,
     ProductServiceProxy,
     ContactEmailServiceProxy,
     ContactServiceProxy,
     CreateContactEmailInput,
-    LayoutType
+    LayoutType,
+    PriceOptionType
 } from '@shared/service-proxies/service-proxies';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -179,10 +178,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
     isOrdersInvoicesAllowed = this.isGranted(AppPermissions.CRMOrdersInvoices);
     isOrdersMergeAllowed = this.isGranted(AppPermissions.CRMOrdersManage);
+    isGalleryView = false;
 
     starsLookup = {};
     formatting = AppConsts.formatting;
-    currency: string = SettingsHelper.getCurrency();
+    defaultCurrency: string = SettingsHelper.getCurrency();
     isCfoLinkOrVerifyEnabled = this.appService.isCfoLinkOrVerifyEnabled;
     canSendVerificationRequest = this.appService.canSendVerificationRequest();
     isCFOClientAccessAllowed = this.appService.checkCFOClientAccessPermission();
@@ -381,14 +381,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('LoginAsThisUser'),
                     class: 'login',
-                    checkVisible: (client: ContactDto) => {
-                        return !!client.UserId && (
-                            this.impersonationIsGranted ||
-                            this.permission.checkCGPermission([client.GroupId], 'UserInformation.AutoLogin')
-                        );
-                    },
+                    checkVisible: this.checkUserLoginAllowed.bind(this),
                     action: () => {
-                        this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId);
+                        this.loginUser(this.actionEvent.UserId);
                     }
                 },
                 {
@@ -659,7 +654,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     filterMode: 'All',
                     dataSource$: this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts) ?
                         this.productProxy.getProducts(
-                            ProductType.Subscription, SettingsHelper.getCurrency(), false
+                            PriceOptionType.Subscription, undefined, false, undefined, false
                         ).pipe(
                             map((products: ProductDto[]) => {
                                 let productsWithGroups = products.filter(x => x.group);
@@ -774,6 +769,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 onLoaded: (records) => {
                     if (records instanceof Array) {
                         let userIds = this.getUserIds(records);
+                        this.setRevenueInfo(records);
                         this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
                         this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
                             this.crmService.getUsersWithInstances(userIds).subscribe(() => {
@@ -1098,19 +1094,36 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     }
 
+    setRevenueInfo(data: any[]) {
+        data.forEach(v => {
+            let defaultCurrencyRevenue = 0;
+            let otherCurrenciesRevenue = [];
+            if (v.TotalRevenue && v.TotalRevenue.length) {
+                let item = v.TotalRevenue.find(v => v.CurrencyId == this.defaultCurrency);
+                defaultCurrencyRevenue = item && item.Amount || 0;
+
+                otherCurrenciesRevenue = v.TotalRevenue.filter(v => v.CurrencyId != this.defaultCurrency);
+            }
+            v['DefaultCurrencyRevenue'] = defaultCurrencyRevenue;
+            v['OtherCurrenciesRevenue'] = otherCurrenciesRevenue;
+        });
+    }
+
     showClientOrderInvoices(data: ContactDto) {
         if (!this.isOrdersInvoicesAllowed || !data.Id)
             return;
 
         this.searchClear = false;
-        this._router.navigate(
-            CrmService.getEntityDetailsLink(data.Id, 'invoices', null, data.OrganizationId),
-            {
-                queryParams: {
-                    referrer: 'app/crm/clients'
+        setTimeout(() => {
+            this._router.navigate(
+                CrmService.getEntityDetailsLink(data.Id, 'invoices', null, data.OrganizationId),
+                {
+                    queryParams: {
+                        referrer: 'app/crm/clients'
+                    }
                 }
-            }
-        );
+            );
+        });
     }
 
     initFilterConfig() {
@@ -1560,23 +1573,23 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     },
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
-                                    visible: this.showDataGrid || this.showPivotGrid
+                                    visible: this.showDataGrid || this.showPivotGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportToCSV.bind(this),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportToGoogleSheet.bind(this),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 },
                                 {
                                     type: 'downloadOptions',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 }
                             ]
                         }
@@ -1595,6 +1608,17 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                         options: {
                             checkPressed: () => this.showDataGrid
+                        }
+                    },
+                    {
+                        name: 'gallery',
+                        action: () => {
+                            this.toggleDataLayout(DataLayoutType.DataGrid);
+                            this.isGalleryView = true;
+                            this.changeDetectorRef.detectChanges();
+                        },
+                        options: {
+                            checkPressed: () => this.showGallery
                         }
                     },
                     {
@@ -1686,13 +1710,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.selectedClientKeys = [];
         this.initDataSource();
         this.initToolbarConfig();
-        if (this.showDataGrid) {
+        this.isGalleryView = false;
+        if (this.showDataGrid || this.showGallery) {
             this.repaintDataGrid();
         }
     }
 
     initDataSource() {
-        if (this.showDataGrid) {
+        if (this.showDataGrid || this.showGallery) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
@@ -1720,7 +1745,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     get showDataGrid(): boolean {
-        return this.dataLayoutType.value === DataLayoutType.DataGrid;
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && !this.isGalleryView;
     }
 
     get showPivotGrid(): boolean {
@@ -1735,6 +1760,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         return this.dataLayoutType.value === DataLayoutType.Map;
     }
 
+    get showGallery(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && this.isGalleryView;
+    }
+
     searchValueChange(e: object) {
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
@@ -1745,7 +1774,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     processFilterInternal() {
-        if (this.showDataGrid && this.dataGrid && this.dataGrid.instance || this.showPivotGrid &&
+        if ((this.showDataGrid || this.showGallery) && this.dataGrid && this.dataGrid.instance || this.showPivotGrid &&
             this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
         ) {
             this.dataSource['total'] = this.dataSource['entities'] = undefined;
@@ -1947,6 +1976,30 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         }
         this.onGridOptionChanged(event);
+    }
+
+    onGearClick(contact, event) {
+        ActionMenuService.toggleActionMenu(contact, this.actionEvent).subscribe(actionEvent => {
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, contact.data);
+            this.actionEvent = actionEvent;
+            this.changeDetectorRef.detectChanges();
+        });
+
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    checkUserLoginAllowed(client: ContactDto) {
+        return !!client.UserId && (
+            this.impersonationIsGranted ||
+            this.permission.checkCGPermission([client.GroupId], 'UserInformation.AutoLogin')
+        );
+    }
+
+    loginUser(userId, event?) {
+        this.impersonationService.impersonate(userId, this.appSession.tenantId);
+        if (event)
+            event.stopPropagation();
     }
 
     filterByStatusApply(data) {

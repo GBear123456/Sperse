@@ -8,14 +8,14 @@ export const ProductFields: KeysEnum<ProductDto> = {
     Description: 'Description',
     Group: 'Group',
     Type: 'Type',
-    Price: 'Price',
     CurrencyId: 'CurrencyId',
-    Unit: 'Unit',
     ThumbnailUrl: 'ThumbnailUrl',
     PublicName: 'PublicName',
     CreateUser: 'CreateUser',
+    SinglePurchaseAllowed: 'SinglePurchaseAllowed',
     AllowCoupon: 'AllowCoupon',
     IsPublished: 'IsPublished',
     PublishDate: 'PublishDate',
-    ProductSubscriptionOptions: 'ProductSubscriptionOptions'
+    IsArchived: 'IsArchived',
+    PriceOptions: 'PriceOptions'
 };

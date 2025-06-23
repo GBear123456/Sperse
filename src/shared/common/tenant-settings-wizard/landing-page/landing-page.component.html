@@ -1,6 +1,6 @@
 <h2>{{ ls.l('LandingPage') }}</h2>
 <ng-container *ngIf="settings">
-    <dx-scroll-view [height]="450" showScrollbar="onHover">
+    <dx-scroll-view height="90%" showScrollbar="onHover">
         <div class="form-group">
             <label>{{ls.l('LandingPageContact')}}</label>
             <div class="landing-contact">
@@ -159,7 +159,7 @@
             <dx-text-area height="155px"
                           [placeholder]="ls.l('EditValuePlaceholder')"
                           [(value)]="settings.aboutMe"
-                          [maxLength]="4096">
+                          [maxLength]="50000">
             </dx-text-area>
         </div>
         <div class="form-group">
@@ -169,7 +169,7 @@
             <dx-text-area height="155px"
                           [placeholder]="ls.l('EditValuePlaceholder')"
                           [(value)]="settings.disclaimer"
-                          [maxLength]="4096">
+                          [maxLength]="50000">
             </dx-text-area>
         </div>
         <div class="form-group">
@@ -194,6 +194,47 @@
                       [(wordings)]="settings.tabs"
                       [title]="ls.l('Tabs')">
         </wording-list>
+        <div class="form-group">
+            <label>{{ls.l('CheckoutTheme')}}</label>
+            <dx-select-box [items]="checkoutThemes"
+                           placeholder=""
+                           [(value)]="settings.checkoutTheme">
+            </dx-select-box>
+        </div>
+        <landing-page-list #checkoutFieldComponent
+                           [title]="ls.l('Checkout Fields')"
+                           [list]="settings.checkoutFields"
+                           [itemTemplate]="checkoutFieldsTmpl"
+                           (beforeItemAdd)="$event.isRequired = false"
+                           (beforeItemDelete)="onCheckoutFieldDeleted($event)">
+        </landing-page-list>
+
+        <ng-template #checkoutFieldsTmpl let-data>
+            <div class="checkout-field form-group">
+                <dx-select-box [items]="checkoutFields"
+                               displayExpr="text"
+                               valueExpr="id"
+                               placeholder="Select field..."
+                               [(value)]="data.fieldName"
+                               (onValueChanged)="onCheckoutFieldChanged($event, data)">
+                    <dx-validator>
+                        <dxi-validation-rule type="required"
+                                             [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
+                    </dx-validator>
+                </dx-select-box>
+                <dx-text-box placeholder="Display Name"
+                             [(value)]="data.displayName"
+                             [maxLength]="128">
+                    <dx-validator>
+                        <dxi-validation-rule type="required"
+                                             [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+                <dx-check-box [text]="ls.l('Required')"
+                              [(value)]="data.isRequired">
+                </dx-check-box>
+            </div>
+        </ng-template>
 
         <div class="domains">
             <div class="domains-caption">

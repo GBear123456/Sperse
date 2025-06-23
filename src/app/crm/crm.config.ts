@@ -47,12 +47,12 @@ export class CrmConfig implements ConfigInterface {
                 text: 'Orders',
                 permission: AppPermissions.CRMOrders,
                 route: '/app/crm/orders',
-                params: {contactGroup: '', orderType: 1}
+                params: {orderType: 1}
             }, {
                 text: 'Subscriptions',
                 permission: AppPermissions.CRMOrders,
                 route: '/app/crm/orders',
-                params: {contactGroup: '', orderType: 2}
+                params: {orderType: 2}
             }, {
                 text: 'Invoices',
                 permission: AppPermissions.CRMOrdersInvoices,

@@ -25,7 +25,8 @@ import {
     LandingPageOnlineStatus,
     LandingPageSettingsDomainDto,
     AddVercelDomainInput,
-    LandingPageColorScheme
+    LandingPageColorScheme,
+    LandingPageCheckoutFieldSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -35,6 +36,7 @@ import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { AppConsts } from '@shared/AppConsts';
 import { WordingListComponent } from './wording-list/wording-list.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { LandingPageListComponent } from './landing-page-list/landing-page-list.component';
 
 @Component({
     selector: 'landing-page',
@@ -52,6 +54,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
     @ViewChild('coverLogoUploader') coverLogoUploader: UploaderComponent;
     @ViewChild('faq', { static: false }) faqComponent: WordingListComponent;
     @ViewChild('tabs', { static: false }) tabsComponent: WordingListComponent;
+    @ViewChild('checkoutFieldComponent', { static: false }) checkoutFieldsComponent: LandingPageListComponent;
 
     settings: GetLandingPageSettingsDto;
 
@@ -69,7 +72,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
 
     metaKeywords: string[] = [];
 
-    products$: Observable<DataSource<ProductDto, number>> = this.productProxy.getProducts(undefined, undefined, false)
+    products$: Observable<DataSource<ProductDto, number>> = this.productProxy.getProducts(undefined, undefined, false, undefined, false)
         .pipe(
             map(v => {
                 let data = v.filter(p => p.isPublished == true).map(x => {
@@ -95,6 +98,26 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             text: item
         };
     });
+    checkoutThemes = ['Default', 'Classic', 'Woo','Stripe','Shop','Virtual'];
+
+    checkoutFields = [
+        'FirstName', 'LastName', 'Email', 'PhoneNumber', 'Shipping', 'Billing', 'DateOfBirth', 'Company',
+        'CustomField1', 'CustomField2', 'CustomField3', 'CustomField4', 'CustomField5'
+    ].map(item => {
+        return {
+            id: item,
+            text: item,
+            disabled: false
+        }
+    });
+    checkoutRequiredField = ['FirstName', 'LastName', 'Email', 'PhoneNumber'];
+
+    defaultFieldsConfig: LandingPageCheckoutFieldSettingsDto[] = [
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'FirstName', displayName: this.ls.l('FirstName'), isRequired: true }),
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'LastName', displayName: this.ls.l('LastName'), isRequired: true }),
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'Email', displayName: this.ls.l('Email'), isRequired: true }),
+        new LandingPageCheckoutFieldSettingsDto({ fieldName: 'PhoneNumber', displayName: this.ls.l('PhoneNumber'), isRequired: false })
+    ]
 
     constructor(
         private landingPageProxy: ContactLandingPageServiceProxy,
@@ -112,6 +135,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
                 if (settings.memberSince)
                     settings.memberSince = DateHelper.addTimezoneOffset(new Date(settings.memberSince), true);
                 this.settings = settings;
+                this.initCheckoutFields();
                 this.setMetaKeywords();
                 this.initialLogoId = settings.logoFileObjectId;
                 this.initialCoverLogoId = settings.coverLogoFileObjectId;
@@ -303,11 +327,49 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             });
     }
 
+    initCheckoutFields() {
+        if (!this.settings.checkoutFields.length)
+            this.settings.checkoutFields = this.defaultFieldsConfig;
+        this.settings.checkoutFields.forEach(v => this.setCheckoutFieldDisabled(v.fieldName, true));
+    }
+
+    onCheckoutFieldChanged(event, data) {
+        if (event.previousValue) {
+            this.setCheckoutFieldDisabled(event.previousValue, false)
+        }
+        if (event.value) {
+            this.setCheckoutFieldDisabled(event.value, true);
+            data.displayName = event.value.includes('CustomField') ? null : this.ls.l(event.value);
+        }
+    }
+
+    onCheckoutFieldDeleted(event: LandingPageCheckoutFieldSettingsDto) {
+        this.setCheckoutFieldDisabled(event.fieldName, false);
+    }
+
+    setCheckoutFieldDisabled(field, value) {
+        let checkoutField = this.checkoutFields.find(x => x.id == field);
+        if (checkoutField)
+            checkoutField.disabled = value;
+    }
+
+    validateRequiredCheckoutFields(): boolean {
+        if (!this.settings.checkoutFields.some(v => this.checkoutRequiredField.includes(v.fieldName) && v.isRequired)) {
+            this.notify.warn(`One of Checkout Fields (${this.checkoutRequiredField.join(', ')}) should be added as required`);
+            return false;
+        }
+
+        return true;
+    }
+
     save(): Observable<any> {
-        if (this.isNewDomainAdding || !this.faqComponent.isValid() || !this.tabsComponent.isValid()) {
+        if (this.isNewDomainAdding || !this.faqComponent.isValid() || !this.tabsComponent.isValid() || !this.checkoutFieldsComponent.isValid()) {
             this.notify.warn('Please correct invalid values');
             return throwError('');
         }
+
+        if (!this.validateRequiredCheckoutFields())
+            return throwError('');
 
         let settings = LandingPageSettingsDto.fromJS(this.settings);
         settings.metaKeywords = this.getMetaKeywordsString();
@@ -325,5 +387,10 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             obs = obs.pipe(switchMap(() => this.landingPageProxy.clearCoverLogo()));
 
         return obs;
+    }
+
+    isValid(): boolean {
+        return !(this.isNewDomainAdding || !this.faqComponent.isValid() || !this.tabsComponent.isValid() || !this.checkoutFieldsComponent.isValid()) &&
+            this.validateRequiredCheckoutFields();
     }
 }

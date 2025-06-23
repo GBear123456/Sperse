@@ -98,6 +98,15 @@
                                     <p class="paymentName">{{ paymentMethod.achCustomerInfo.bankName + ' ' + paymentMethod.achCustomerInfo.accountNumber }}</p>
                                 </div>
                             </ng-container>
+                            <ng-container *ngSwitchDefault>
+                                <div [ngClass]="{'active': selectedPayment?.paymentInfoId == paymentMethod.id}" class="paymentMethodIcon">
+                                    <img [src]="'./assets/common/images/payments/card-logo/' + (paymentMethod.type ? paymentMethod.type.toLowerCase() : 'credit-card') + '.svg'"
+                                         onError="this.src='./assets/common/images/payments/card-logo/credit-card.svg'">
+                                </div>
+                                <div>
+                                    <p class="default-name paymentName">{{ paymentMethod.type }}</p>
+                                </div>
+                            </ng-container>
                         </div>
                         <div class="issue" *ngIf="paymentMethod?.issues">
                             <img src="./assets/common/icons/red-warning-icon.svg">

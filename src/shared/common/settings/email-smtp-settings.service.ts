@@ -22,7 +22,7 @@ export class EmailSmtpSettingsService {
 
     public supportedProviders = [{
         name: 'Gmail', 
-        host: 'smtp.gmail.com', 
+        hosts: ['smtp.gmail.com'], 
         port: '465', 
         ssl: true, 
         domain: 'gmail.com', 
@@ -30,15 +30,15 @@ export class EmailSmtpSettingsService {
         imap: {host: 'imap.gmail.com', port: 993, ssl: true}
     }, {
         name: 'HotMail (OutLook)', 
-        host: 'outlook.office365.com', 
+        hosts: ['smtp-mail.outlook.com','outlook.office365.com'], 
         port: '587', 
-        ssl: true, 
+        ssl: false, 
         domain: 'outlook.com', 
         icon: 'outlook.svg',
         imap: {host: 'outlook.office365.com', port: 993, ssl: true}
     }, {
         name: 'Yahoo', 
-        host: 'smtp.mail.yahoo.com', 
+        hosts: ['smtp.mail.yahoo.com'], 
         port: '465', 
         ssl: true, 
         domain: 'yahoo.com',
@@ -46,7 +46,7 @@ export class EmailSmtpSettingsService {
         imap: {host: 'imap.mail.yahoo.com', port: 993, ssl: true}
     }, {
         name: 'Migadu', 
-        host: 'smtp.migadu.com', 
+        hosts: ['smtp.migadu.com'], 
         port: '465', 
         ssl: true, 
         domain: 'migadu.com',
@@ -54,7 +54,7 @@ export class EmailSmtpSettingsService {
         imap: {host: 'imap.migadu.com', port: 993, ssl: true}
     }, {
         name: 'Mandrill', 
-        host: 'smtp.mandrillapp.com', 
+        hosts: ['smtp.mandrillapp.com'], 
         port: '465', 
         ssl: true, 
         domain: 'mandrillapp.com', 
@@ -62,7 +62,7 @@ export class EmailSmtpSettingsService {
         imap: {host: undefined, port: undefined, ssl: false}
     }, {
         name: 'Mailtrap', 
-        host: 'smtp.mailtrap.io', 
+        hosts: ['smtp.mailtrap.io'], 
         port: '465', 
         ssl: true, 
         domain: 'mailtrap.io', 
@@ -70,7 +70,7 @@ export class EmailSmtpSettingsService {
         imap: {host: 'imap.mailtrap.io', port: 993, ssl: true}
     }, {
         name: 'AOL', 
-        host: 'smtp.aol.com', 
+        hosts: ['smtp.aol.com'], 
         port: '465', 
         ssl: true, 
         domain: 'aol.com',
@@ -78,7 +78,7 @@ export class EmailSmtpSettingsService {
         imap: {host: 'imap.aol.com', port: 993, ssl: true}
     }, {
         name: 'ProtonMail', 
-        host: 'smtp.protonmail.com', 
+        hosts: ['smtp.protonmail.com'], 
         port: '465', 
         ssl: true, 
         domain: 'protonmail.com',
@@ -86,7 +86,7 @@ export class EmailSmtpSettingsService {
         imap: {host: 'imap.protonmail.com', port: 993, ssl: true}
     }, {
         name: 'Zoho', 
-        host: 'smtp.zoho.eu', 
+        hosts: ['smtp.zoho.eu', 'smtppro.zoho.com'], 
         port: '465', 
         ssl: true, 
         domain: 'zoho.com', 

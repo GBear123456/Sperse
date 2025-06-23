@@ -28,12 +28,13 @@ export class EmailComponent implements ITenantSettingsStepComponent, AfterViewIn
     supportedProviders: any = [
         {
             name: 'System Options',
-            icon: 'system.svg'
+            icon: 'system.svg',
+            hosts: [undefined]
         },
         ...this.emailSmtpSettingsService.supportedProviders,
         {
-            name: 'Other Mail Provdier', 
-            host: '', 
+            name: 'Other Mail Provider', 
+            hosts: [''], 
             port: '', 
             ssl: false, 
             domain: '', 
@@ -57,7 +58,7 @@ export class EmailComponent implements ITenantSettingsStepComponent, AfterViewIn
     ngAfterViewInit() {
         setTimeout(() => {
             if (this.settings && this.settings.smtpHost) {
-                this.selectedProvider = this.supportedProviders.find(item => item.host == this.settings.smtpHost);
+                this.selectedProvider = this.supportedProviders.find(item => item.hosts.includes(this.settings.smtpHost.toLowerCase()));
 
                 if (!this.selectedProvider)
                     this.selectedProvider = this.supportedProviders[this.supportedProviders.length - 1];
@@ -82,20 +83,24 @@ export class EmailComponent implements ITenantSettingsStepComponent, AfterViewIn
         }, () => this.checkHandlerErrorWarning());
     }
 
-    onProviderChanged() {
+    onProviderChanged(event = null) {
+        if (event && !event.event)
+            return;
+
         this.smtpProviderErrorLink = undefined;
-        if (this.selectedProvider.host) {
+        let providerHost = this.selectedProvider.hosts[0];
+        if (providerHost) {
             this.showCustomSmptSettings = true;
-            this.settings.smtpHost = this.selectedProvider.host;
+            this.settings.smtpHost = providerHost;
             this.settings.smtpPort = this.selectedProvider.port;
             this.settings.smtpEnableSsl = this.selectedProvider.ssl;
             this.settings.smtpDomain = this.selectedProvider.domain;
             this.settings.imapHost = this.selectedProvider.imap.host;
             this.settings.imapPort = this.selectedProvider.imap.port;
             this.settings.imapUseSsl = this.selectedProvider.imap.ssl;
-            this.settings.isImapEnabled = !!this.settings.imapHost;
+            this.settings.isImapEnabled = false;
         } else {
-            this.showCustomSmptSettings = this.selectedProvider.host === '';
+            this.showCustomSmptSettings = providerHost === '';
             this.settings.smtpHost = undefined;
             this.settings.smtpPort = undefined;
             this.settings.smtpEnableSsl = false;
@@ -127,5 +132,9 @@ export class EmailComponent implements ITenantSettingsStepComponent, AfterViewIn
             this.checkHandlerErrorWarning(true);
             return throwError(error);
         }));
+    }
+
+    isValid(): boolean {
+        return true;
     }
 }

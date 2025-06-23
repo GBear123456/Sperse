@@ -49,6 +49,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { AffiliateHistoryDialogComponent } from './affiliate-history-dialog/affiliate-history-dialog.component';
+import { CreditsChangeDialogComponent } from './credits-change-dialog/credits-change-dialog.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ContactPersonsDialogComponent } from '../../contact-persons-dialog/contact-persons-dialog.component';
 import { CrmService } from '@app/crm/crm.service';
@@ -56,6 +57,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { FeatureCheckerService } from 'abp-ng2-module';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { CreditBalanceHistoryDialogComponent } from './credit-balance-history-dialog/credit-balance-history-dialog.component';
 
 @Component({
     selector: 'personal-details-dialog',
@@ -131,8 +133,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     private slider: any;
     private readonly ident = 'PersonalDetailsDialog';
-    private stripeCustomerId: ReplaySubject<string> = new ReplaySubject(1);
-    stripeCustomerId$: Observable<string> = this.stripeCustomerId.asObservable();
     private isAdvisor: ReplaySubject<boolean> = new ReplaySubject(null);
     isAdvisor$: Observable<boolean> = this.isAdvisor.asObservable();
     affiliateValidationRules = [
@@ -185,6 +185,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     affiliateRate2Initil;
     affiliateRate2;
     CommissionTier = CommissionTier;
+    hasCreditsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMContactCredits);
+    hasCreditsViewPermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMContactCredits);
+    hasCreditsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMContactCreditsManage);
+    
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
@@ -253,11 +257,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     contactInfo.affiliateCodes.sort((a, b) => a.id == contactInfo.primaryAffiliateCodeId ? -1 : b.id == contactInfo.primaryAffiliateCodeId ? 1 : 0);
                 if (!contactInfo.personContactInfo.xrefs.length)
                     contactInfo.personContactInfo.xrefs = [''];
-                if (contactInfo.personContactInfo.stripeCustomerId)
-                    this.getCheckStripeSettings().subscribe((isEnabled: boolean) => {
-                        if (isEnabled)
-                            this.stripeCustomerId.next(contactInfo.personContactInfo.stripeCustomerId);
-                    });
                 this.contactProxy.getContactLastModificationInfo(
                     contactInfo.id
                 ).subscribe((lastModificationInfo: ContactLastModificationInfoDto) => {
@@ -360,27 +359,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     showParent() {
         this.contactsService.updateLocation(this.contactInfo.parentId);
-    }
-
-    getCheckStripeSettings(): Observable<boolean> {
-        let storageKey = 'stripeIsConnected' + this.appSession.tenantId,
-            isConnected = sessionStorage.getItem(storageKey);
-        if (isConnected != null)
-            return of(!!isConnected);
-        else if (
-            abp.features.isEnabled(AppFeatures.CRMPayments) && (
-                this.permissionCheckerService.isGranted(AppPermissions.CRMSettingsConfigure) ||
-                this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings) ||
-                this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings)
-            )
-        )
-            return this.tenantPaymentSettingsService.getStripeSettings(false).pipe(map(res => {
-                isConnected = (res.apiKey || res.isConnectedAccountSetUpCompleted ? 'true' : '');
-                sessionStorage.setItem(storageKey, isConnected);
-                return !!isConnected;
-            }));
-        else
-            return of(false);
     }
 
     updateAffiliateRate(value: number, valueProp, valueInitialProp, tier) {
@@ -960,6 +938,36 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     removeSourceContact(event) {
         event.stopPropagation();
         this.onSourceContactChanged();
+    }
+
+    showCreditsUpdateDialog(isTopUp: boolean) {
+        this.dialog.open(CreditsChangeDialogComponent, {
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.contactInfo.id,
+                isTopUp: isTopUp
+            }
+        }).afterClosed().subscribe((data) => {
+            if (data && data.amount && this.contactInfo.id == data.contactId) {
+                if (!isTopUp)
+                    data.amount = -data.amount;
+                this.contactInfo.creditsBalance += data.amount;
+            }
+        });
+    }
+
+    showCreditBalanceHistory(event) {
+        event.stopPropagation();
+        this.dialog.open(CreditBalanceHistoryDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.contactInfo.id
+            }
+        }).afterClosed().subscribe(() => {
+        });
     }
 
     showAffiliateHistory(event) {

@@ -96,7 +96,7 @@ export class InvoiceGridMenuComponent {
             this.previewDisabled =
             this.copyLinkDisabled = isOrder;
         this.addPaymentDisabled = isOrder || [
-            InvoiceStatus.Draft, InvoiceStatus.Canceled
+            InvoiceStatus.Draft, InvoiceStatus.Canceled, InvoiceStatus.Refunded
         ].indexOf(invoiceData.Status) >= 0;
         this.markAsDraftDisabled = isOrder || [
             InvoiceStatus.Final, InvoiceStatus.Canceled

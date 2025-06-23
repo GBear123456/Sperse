@@ -36,6 +36,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { GmailSettingsService } from '@shared/common/settings/gmail-settings.service';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
@@ -49,6 +50,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @ViewChild(MatTabGroup) tabs: MatTabGroup;
+    @ViewChild(CountryPhoneNumberComponent, { static: false }) phoneComponent: CountryPhoneNumberComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     ckConfig: any = {
@@ -114,18 +116,18 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
 
     gmailSettings: GmailSettingsDto = new GmailSettingsDto();
     signatureHtml: string;
-    
+
     smtpProviderErrorLink: string;
-    supportedProviders: any = [
+    supportedProviders = [
         ...this.emailSmtpSettingsService.supportedProviders,
         {
-            name: 'Other Mail Provdier', 
-            host: '', 
-            port: '', 
-            ssl: false, 
-            domain: '', 
+            name: 'Other Mail Provider',
+            hosts: [''],
+            port: '',
+            ssl: false,
+            domain: '',
             icon: 'email.svg',
-            imap: {host: '', port: '', ssl: false}
+            imap: { host: '', port: '', ssl: false }
         }
     ];
     selectedProvider: any;
@@ -160,31 +162,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.modalDialog.startLoading();
         this.profileService.getEmailSettings().subscribe((settings: UserEmailSettings) => {
             this.userEmailSettings = settings;
-
-            if (settings && settings.smtp.host)
-                this.selectedProvider = this.supportedProviders.find(item => item.host == settings.smtp.host);
-            
-            if (!this.selectedProvider)
-                this.selectedProvider = this.supportedProviders[this.supportedProviders.length - 1];
-
-            if (!this.userEmailSettings.isUserSmtpEnabled) {
-                if (!this.userEmailSettings.from || !this.userEmailSettings.from.emailAddress || this.userEmailSettings.from.emailAddress.length == 0) {
-                    this.userEmailSettings.from = new EmailFromSettings({
-                        emailAddress: this.appSessionService.user.emailAddress,
-                        displayName: this.appSessionService.user.name + ' ' + this.appSessionService.user.surname,
-                    });
-                }
-                if (!this.userEmailSettings.smtp || !this.userEmailSettings.smtp.userName || this.userEmailSettings.smtp.userName.length == 0) {
-                    this.userEmailSettings.smtp = new EmailSmtpSettings({
-                        host: undefined,
-                        port: undefined,
-                        enableSsl: true,
-                        domain: undefined,
-                        userName: this.appSessionService.user.emailAddress,
-                        password: undefined
-                    });
-                }
-            }
+            this.initUserEmailControls();
             this._initialEmailSettings = cloneDeep(this.userEmailSettings);
             this.changeDetectorRef.detectChanges();
         });
@@ -214,16 +192,51 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.testEmailAddress = this.appSessionService.user.emailAddress;
     }
 
-    onProviderChanged() {
-        if (this.selectedProvider.host) {
-            this.userEmailSettings.smtp.host = this.selectedProvider.host;
+    initUserEmailControls() {
+        this.selectedProvider = null;
+        if (this.userEmailSettings && this.userEmailSettings.smtp.host)
+            this.selectedProvider = this.supportedProviders.find(item => item.hosts.includes(this.userEmailSettings.smtp.host.toLowerCase()));
+
+        if (!this.selectedProvider) {
+            this.selectedProvider = this.supportedProviders[this.supportedProviders.length - 1];
+            if (!this.userEmailSettings.smtp.host)
+                this.onProviderChanged();
+        }
+
+        if (!this.userEmailSettings.isUserSmtpEnabled) {
+            if (!this.userEmailSettings.from || !this.userEmailSettings.from.emailAddress || this.userEmailSettings.from.emailAddress.length == 0) {
+                this.userEmailSettings.from = new EmailFromSettings({
+                    emailAddress: this.appSessionService.user.emailAddress,
+                    displayName: this.appSessionService.user.name + ' ' + this.appSessionService.user.surname,
+                });
+            }
+            if (!this.userEmailSettings.smtp || !this.userEmailSettings.smtp.userName || this.userEmailSettings.smtp.userName.length == 0) {
+                this.userEmailSettings.smtp = new EmailSmtpSettings({
+                    host: undefined,
+                    port: undefined,
+                    enableSsl: true,
+                    domain: undefined,
+                    userName: this.appSessionService.user.emailAddress,
+                    password: undefined
+                });
+            }
+        }
+    }
+
+    onProviderChanged(event = null) {
+        if (event && !event.event)
+            return;
+
+        var providerHost = this.selectedProvider.hosts[0];
+        if (providerHost) {
+            this.userEmailSettings.smtp.host = providerHost;
             this.userEmailSettings.smtp.port = this.selectedProvider.port;
             this.userEmailSettings.smtp.enableSsl = this.selectedProvider.ssl;
             this.userEmailSettings.smtp.domain = this.selectedProvider.domain;
             this.userEmailSettings.imapHost = this.selectedProvider.imap.host;
             this.userEmailSettings.imapPort = this.selectedProvider.imap.port;
             this.userEmailSettings.imapUseSsl = this.selectedProvider.imap.ssl;
-            this.userEmailSettings.isImapEnabled = !!this.selectedProvider.imap.host;
+            this.userEmailSettings.isImapEnabled = false;
         } else {
             this.userEmailSettings.smtp.host = undefined;
             this.userEmailSettings.smtp.port = undefined;
@@ -236,15 +249,6 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         }
 
         this.changeDetectorRef.detectChanges();
-    }
-
-    onSmtpStateChange(event) {
-        if (event.value) {
-            if (!this.selectedProvider)
-                this.selectedProvider = this.supportedProviders[0];
-
-            this.onProviderChanged();
-        }
     }
 
     updateQrCodeSetupImageUrl(): void {
@@ -289,6 +293,8 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             }));
         }
         else if (this.currentTab == this.ls.l('Profile')) {
+            if (this.phoneComponent && this.phoneComponent.isEmpty())
+                this.user.phoneNumber = undefined;
             saveObs = this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user));
         }
         else if (this.currentTab == this.ls.l('Gmail')) {
@@ -376,6 +382,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                     this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
                         if (isConfirmed) {
                             this.userEmailSettings = cloneDeep(this._initialEmailSettings);
+                            this.initUserEmailControls();
                             this.changeDetectorRef.detectChanges();
                         }
                         resolve(isConfirmed);

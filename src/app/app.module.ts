@@ -11,7 +11,7 @@ import { AppStoreModule } from '@app/store/app-store.module';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { ExportService } from '@shared/common/export/export.service';
 import { ExportGoogleSheetService } from '@shared/common/export/export-google-sheets/export-google-sheets';
-import { AppComponent} from './app.component';
+import { AppComponent } from './app.component';
 import { AppService } from './app.service';
 import { LayoutModule } from './shared/layout/layout.module';
 import { LayoutCommonModule } from './shared/layout/layout-common.module';
@@ -31,13 +31,14 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { SearchTooltipModule } from '@shared/common/dialogs/search-tooltip/search-tooltip.module';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
+import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 
 export class ZendeskConfig extends NgxZendeskWebwidgetConfig {
     override lazyLoad = true;
     accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'] || 'lazyLoad';
     callback(zE) {
-//        zE.setLocale('en');
-//        zE.hide();
+        //        zE.setLocale('en');
+        //        zE.hide();
     }
 }
 
@@ -76,7 +77,8 @@ export class ZendeskConfig extends NgxZendeskWebwidgetConfig {
         CashFlowForecastServiceProxy,
         ItemDetailsService,
         EmailSmtpSettingsService,
-        ToolbarService
+        ToolbarService,
+        CurrencyCRMService
     ]
 })
-export class AppModule {}
+export class AppModule { }

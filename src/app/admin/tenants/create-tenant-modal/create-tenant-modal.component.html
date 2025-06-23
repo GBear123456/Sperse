@@ -92,8 +92,9 @@
                                                 </dx-select-box>
                                             </div>
                                             <div class="col-sm-6">
-                                                <dx-select-box [dataSource]="paymentPeriodTypes"
-                                                            [(value)]="paymentPeriodType"
+                                                <dx-select-box [dataSource]="priceOptions"
+                                                            [(value)]="priceOption"
+                                                            displayExpr="frequency"
                                                             placeholder="Payment type"
                                                             [showClearButton]="true">
                                                 </dx-select-box>
@@ -111,6 +112,20 @@
                             <dx-check-box [text]="ls.l('ShouldChangePasswordOnNextLogin')" [(value)]="tenant.shouldChangePasswordOnNextLogin"></dx-check-box>
                             <dx-check-box [text]="ls.l('SendActivationEmail')" [(value)]="tenant.sendActivationEmail"></dx-check-box>
                             <dx-check-box [text]="ls.l('Active')" [(value)]="tenant.isActive"></dx-check-box>
+                            <p class="custom-reg-date">
+                                {{ls.l('Custom Registration Date')}}: <b *ngIf="tenant.tenantRegistrationDate">
+                                    {{tenant.tenantRegistrationDate | date:'MMM d, y, h:mm a'}}
+                                    <img class="delete" (click)="tenant.tenantRegistrationDate=undefined" src="assets/common/icons/delete-icon.svg">
+                                </b>
+                                <a class="edit" href="javascript:void(0)" (click)="publishDateComponent.instance.open()">Edit</a>
+                                <dx-date-box #publishDateComponent
+                                             type="datetime"
+                                             width="0px"
+                                             height="0px"
+                                             [(value)]="tenant.tenantRegistrationDate"
+                                             (onOpened)="onRegistrationDateOpened()">
+                                </dx-date-box>
+                            </p>
                         </tab>
                         <tab [heading]="ls.l('TenantDatabases')">
                             <div class="form-group form-md-line-input form-md-floating-label no-hint">

@@ -6,23 +6,21 @@ import {
     OnInit,
     ChangeDetectorRef
 } from '@angular/core';
-import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import ODataStore from 'devextreme/data/odata/store';
 import { DataSource } from 'devextreme/data/data_source/data_source';
 import { NgxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, Subject, ReplaySubject, combineLatest, of } from 'rxjs';
-import { finalize, filter, first, takeUntil, map, delay } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { finalize, filter, first, takeUntil } from 'rxjs/operators';
 import { FeatureCheckerService, MessageService } from 'abp-ng2-module';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 /** Application imports */
-import { AppStore } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
 import { ContactGroup } from '@shared/AppEnums';
@@ -32,7 +30,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { ModuleType, LayoutType, StripeSettingsDto, TenantPaymentSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { LayoutType, StripeSettingsDto, TenantPaymentSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -44,7 +42,6 @@ import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/ad
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
-import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { AddCouponDialogComponent } from '../coupons/add-coupon-dialog/add-coupon-dialog.component';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
@@ -159,7 +156,7 @@ export class ShortcutsComponent implements OnInit {
         public dialog: MatDialog
     ) {
         if (this.isZendeskEnabled)
-            this.ngxZendeskWebwidgetService.initZendesk();            
+            this.ngxZendeskWebwidgetService.initZendesk();
     }
 
     ngOnInit() {
@@ -195,8 +192,6 @@ export class ShortcutsComponent implements OnInit {
 
     openProfileTenantSettingsDialog(selectedTab: string) {
         this.dialog.open(TenantSettingsWizardComponent, {
-            width: '960px',
-            height: '700px',
             id: 'tenant-settings',
             panelClass: ['tenant-settings'],
             data: {tab: selectedTab}
@@ -267,24 +262,10 @@ export class ShortcutsComponent implements OnInit {
         );
     }
 
-    openPaymentWizardDialog(showSubscriptions = false, data?) {
-        this.dialog.closeAll();
-        this.dialog.open(PaymentWizardComponent, {
-            height: '800px',
-            width: '1200px',
-            id: 'payment-wizard',
-            panelClass: ['payment-wizard', 'setup'],
-            data: {
-                ...data,
-                showSubscriptions: showSubscriptions
-            }
-        });
-    }
-
     loadSettings() {
         if (this.isPaymentsEnabled) {
             this.loadingService.startLoading();
-            this.tenantPaymentSettingsService.getStripeSettings(false)
+            this.tenantPaymentSettingsService.getStripeSettings()
                 .pipe(
                     finalize(() => this.loadingService.finishLoading())
                 )
@@ -302,7 +283,7 @@ export class ShortcutsComponent implements OnInit {
             if (isConfirmed) {
                 this.loadingService.startLoading();
                 let method = this.stripePaymentSettings.connectedAccountId ?
-                    this.tenantPaymentSettingsService.connectStripeAccount() :
+                    this.tenantPaymentSettingsService.connectStripeAccount(this.stripePaymentSettings.id) :
                     this.tenantPaymentSettingsService.getConnectOAuthAuthorizeUrl();
                 method.pipe(
                     finalize(() => this.loadingService.finishLoading())
@@ -354,7 +335,7 @@ export class ShortcutsComponent implements OnInit {
         this.ui.overflowHidden(true);
         this.appService.isClientSearchDisabled = true;
         this.appService.toolbarIsHidden.next(true);
-        if (this.isZendeskEnabled)
+        if (this.isZendeskEnabled && this.ngxZendeskWebwidgetService.isInitialized)
             this.ngxZendeskWebwidgetService.zE('messenger', 'show');
         this.changeDetectorRef.markForCheck()
     }
@@ -363,7 +344,7 @@ export class ShortcutsComponent implements OnInit {
         this.ui.overflowHidden();        
         this.appService.toolbarIsHidden.next(false);
         this.lifeCycleSubject.deactivate.next();
-        if (this.isZendeskEnabled)
+        if (this.isZendeskEnabled && this.ngxZendeskWebwidgetService.isInitialized)
             this.ngxZendeskWebwidgetService.zE('messenger', 'hide');
         this.dialog.closeAll();
     }

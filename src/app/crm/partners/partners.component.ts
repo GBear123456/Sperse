@@ -179,6 +179,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private subRouteParams: any;
     private dependencyChanged = false;
 
+    isGalleryView = false;
     impersonationIsGranted = this.permission.isGranted(
         AppPermissions.AdministrationUsersImpersonation
     );
@@ -228,10 +229,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     text: this.l('LoginAsThisUser'),
                     class: 'login',
                     checkVisible: (partner: PartnerDto) => {
-                        return !!partner.UserId && (
-                            this.impersonationIsGranted ||
-                            this.permission.checkCGPermission([ContactGroup.Partner], 'UserInformation.AutoLogin')
-                        );
+                        return this.checkUserLoginAllowed(partner);
                     },
                     action: () => {
                         const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
@@ -732,7 +730,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-            filter(() => this.showDataGrid || this.showPivotGrid)
+            filter(() => this.showDataGrid || this.showPivotGrid || this.showGallery)
         ).subscribe(() => {
             if (this.showPivotGrid)
                 this.pivotGridComponent.dataGrid.instance.updateDimensions();
@@ -939,10 +937,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.pipelineService.toggleDataLayoutType(dataLayoutType);
         this.initDataSource();
         this.initToolbarConfig();
+        this.isGalleryView = false;
         if (dataLayoutType != DataLayoutType.Pipeline) {
             if (this.pipelineComponent)
                 this.pipelineComponent.deselectAllCards();
-            if (this.showDataGrid)
+            if (this.showDataGrid || this.showGallery)
                 setTimeout(() => this.repaintDataGrid());
         }
     }
@@ -1431,29 +1430,29 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                                 this.exportService.getFileName(null, 'PivotGrid')
                                             );
                                             this.pivotGridComponent.dataGrid.instance.exportToExcel();
-                                        } else if (this.showDataGrid) {
+                                        } else if (this.showDataGrid || this.showGallery) {
                                             this.exportToXLS(options);
                                         }
                                     },
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
-                                    visible: this.showDataGrid || this.showPivotGrid
+                                    visible: this.showDataGrid || this.showPivotGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportToCSV.bind(this),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 },
                                 {
                                     action: this.exportToGoogleSheet.bind(this),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 },
                                 {
                                     type: 'downloadOptions',
-                                    visible: this.showDataGrid
+                                    visible: this.showDataGrid || this.showGallery
                                 }
                             ]
                         }
@@ -1472,6 +1471,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                         options: {
                             checkPressed: () => this.showDataGrid
+                        }
+                    },
+                    {
+                        name: 'gallery',
+                        action: () => {
+                            this.toggleDataLayout(DataLayoutType.DataGrid);
+                            this.isGalleryView = true;
+                        },
+                        options: {
+                            checkPressed: () => this.showGallery
                         }
                     },
                     {
@@ -1566,7 +1575,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     get showDataGrid(): boolean {
-        return this.dataLayoutType.value === DataLayoutType.DataGrid;
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && !this.isGalleryView;
+    }
+
+    get showGallery(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && this.isGalleryView;
     }
 
     get showPipeline(): boolean {
@@ -1600,7 +1613,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     processFilterInternal() {
-        if (this.showDataGrid || this.showPivotGrid) {
+        if (this.showDataGrid || this.showPivotGrid || this.showGallery) {
             let dataGrid = (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid;
             if (dataGrid) {
                 this.dataSource['entities'] = this.dataSource['total'] = undefined;
@@ -1625,7 +1638,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     };
                     this.pipelineDataSource.exportIgnoreOnLoaded = true;
                 });
-        } else if (this.showDataGrid) {
+        } else if (this.showDataGrid || this.showGallery) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
@@ -1763,6 +1776,28 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.filterModelOrgUnit.items.element.value = filter &&
             (!event || filter[0] == event.id) ? [] : [event.id];
         this.filtersService.change([this.filterModelOrgUnit]);
+    }
+
+    onGearClick(contact, event) {
+        ActionMenuService.toggleActionMenu(contact, this.actionEvent).subscribe((actionRecord) => {
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, contact.data);
+            this.actionEvent = actionRecord;
+        });
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    checkUserLoginAllowed(client: PartnerDto) {
+        return !!client.UserId && (
+            this.impersonationIsGranted ||
+            this.permission.checkCGPermission([ContactGroup.Partner], 'UserInformation.AutoLogin')
+        );
+    }
+
+    loginUser(userId, event?) {
+        this.impersonationService.impersonate(userId, this.appSession.tenantId);
+        if (event)
+            event.stopPropagation();
     }
 
     onDragEnd = e => {

@@ -1,116 +1,104 @@
-<h2>{{ ls.l('Appearance') }}</h2>
-<div class="row">
-    <div class="col">
-        <div class="form-group">
-            <label>{{ls.l('NavigationMenuPosition')}}</label>
-            <dx-select-box [items]="navPositionOptions"
-                           displayExpr="text"
-                           valueExpr="id"
-                           placeholder=""
-                           [(value)]="navPosition">
-            </dx-select-box>
+<h2>{{ ls.l('Platform') + ' ' + ls.l('Appearance') }}</h2>
+<dx-scroll-view height="90%" showScrollbar="onHover">
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>{{ls.l('NavigationMenuPosition')}}</label>
+                <dx-select-box [items]="navPositionOptions"
+                               displayExpr="text"
+                               valueExpr="id"
+                               placeholder=""
+                               [(value)]="navPosition">
+                </dx-select-box>
+            </div>
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="col">
-        <div class="form-group">
-            <label>{{ls.l('Welcome Page Type')}}</label>
-            <dx-select-box [items]="welcomePageOptions"
-                           displayExpr="name"
-                           valueExpr="uri"
-                           placeholder=""
-                           [(value)]="welcomePageUri">
-            </dx-select-box>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>{{ls.l('Welcome Page Type')}}</label>
+                <dx-select-box [items]="welcomePageOptions"
+                               displayExpr="name"
+                               valueExpr="uri"
+                               placeholder=""
+                               [(value)]="welcomePageUri">
+                </dx-select-box>
+            </div>
         </div>
     </div>
-</div>
-<ng-container *ngIf="tenant">
-    <div class="row m-form file-uploads">
-        <div class="col-md-6 app-logo-upload">
-            <uploader #logoUploader
-                      [title]="ls.l('ApplicationLogo')"
-                      [documentId]="tenant.logoId"
-                      [documentLink]="tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId : undefined"
-                      [uploadInfoText]="ls.l('UploadLogo_Info')"
-                      [uploadButtonText]="ls.l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo'"
-                      acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
-                      [maxFileSize]="maxLogoFileSize"
-                      (onDocumentClear)="clearLogo()">
-            </uploader>
+    <ng-container *ngIf="appearanceSetting">
+        <div class="row m-form file-uploads">
+            <div class="col-md-6 app-logo-upload">
+                <uploader #logoUploader
+                          [title]="ls.l('ApplicationLogo')"
+                          [documentId]="filesSettings.lightLogoId"
+                          [documentLink]="filesSettings.lightLogoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + filesSettings.lightLogoId + '&organizationUnitId=' + (orgUnitId || '') : undefined"
+                          [uploadInfoText]="ls.l('UploadLogo_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo?organizationUnitId=' + (orgUnitId || '')"
+                          acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
+                          [maxFileSize]="maxLogoFileSize"
+                          (onDocumentClear)="clearLogo()">
+                </uploader>
+            </div>
+            <div class="col-md-6">
+                <uploader #faviconsUploader
+                          [title]="ls.l('CustomFavicons')"
+                          [documentId]="appearanceSetting.tenantCustomizations.favicons?.length"
+                          [documentLink]="appearanceSetting.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons?organizationUnitId=' + (orgUnitId || '') : undefined"
+                          [uploadInfoText]="ls.l('UploadFavicons_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons?organizationUnitId=' + (orgUnitId || '')"
+                          acceptFileExt=".zip"
+                          (onDocumentClear)="clearFavicons()">
+                </uploader>
+            </div>
         </div>
-        <div class="col-md-6">
-            <uploader #faviconsUploader
-                      [title]="ls.l('CustomFavicons')"
-                      [documentId]="tenant.tenantCustomizations.favicons?.length"
-                      [documentLink]="tenant.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons' : undefined"
-                      [uploadInfoText]="ls.l('UploadFavicons_Info')"
-                      [uploadButtonText]="ls.l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons'"
-                      acceptFileExt=".zip"
-                      (onDocumentClear)="clearFavicons()">
-            </uploader>
+        <div class="row m-form file-uploads">
+            <div class="col-md-6">
+                <uploader #cssUploader
+                          [title]="ls.l('CustomCSS')"
+                          [documentId]="filesSettings.customCssId"
+                          [documentLink]="filesSettings.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.customCssId + '/' + tenantId : undefined"
+                          [documentTemplateLink]="getCustomPlatformStylePath()"
+                          [uploadInfoText]="ls.l('UploadCSS_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform&organizationUnitId=' + (orgUnitId || '')"
+                          acceptFileExt=".css"
+                          [maxFileSize]="maxCssFileSize"
+                          (onDocumentClear)="clearCustomCss(CustomCssType.Platform)">
+                </uploader>
+            </div>
+            <div class="col-md-6">
+                <uploader #loginCssUploader
+                          [title]="ls.l('CustomLoginCSS')"
+                          [documentId]="filesSettings.loginCustomCssId"
+                          [documentLink]="filesSettings.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.loginCustomCssId + '/' + tenantId : undefined"
+                          documentTemplateLink="assets/common/styles/custom/login-custom-style.css"
+                          [uploadInfoText]="ls.l('UploadCSS_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Login&organizationUnitId=' + (orgUnitId || '')"
+                          acceptFileExt=".css"
+                          [maxFileSize]="maxCssFileSize"
+                          (onDocumentClear)="clearCustomCss(CustomCssType.Login)">
+                </uploader>
+            </div>
         </div>
-    </div>
-    <div class="row m-form file-uploads">
-        <div class="col-md-6">
-            <uploader #cssUploader
-                      [title]="ls.l('CustomCSS')"
-                      [documentId]="tenant.customCssId"
-                      [documentLink]="tenant.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id : undefined"
-                      [documentTemplateLink]="getCustomPlatformStylePath()"
-                      [uploadInfoText]="ls.l('UploadCSS_Info')"
-                      [uploadButtonText]="ls.l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform'"
-                      acceptFileExt=".css"
-                      [maxFileSize]="maxCssFileSize"
-                      (onDocumentClear)="clearCustomCss(CustomCssType.Platform)">
-            </uploader>
+        <div class="row m-form" *ngIf="signUpPagesEnabled">
+            <div class="col-md-6">
+                <uploader #signUpCssUploader
+                          [title]="ls.l('CustomSignUpCSS')"
+                          [documentId]="filesSettings.signUpCustomCssId"
+                          [documentLink]="filesSettings.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + filesSettings.signUpCustomCssId + '/' + tenantId : undefined"
+                          documentTemplateLink="assets/common/styles/custom/signup-custom-style.css"
+                          [uploadInfoText]="ls.l('UploadCSS_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=SignUp&organizationUnitId=' + (orgUnitId || '')"
+                          acceptFileExt=".css"
+                          [maxFileSize]="maxCssFileSize"
+                          (onDocumentClear)="clearCustomCss(CustomCssType.SignUp)">
+                </uploader>
+            </div>
         </div>
-        <div class="col-md-6">
-            <uploader #loginCssUploader
-                      [title]="ls.l('CustomLoginCSS')"
-                      [documentId]="tenant.loginCustomCssId"
-                      [documentLink]="tenant.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.loginCustomCssId + '/' + tenant.id : undefined"
-                      documentTemplateLink="assets/common/styles/custom/login-custom-style.css"
-                      [uploadInfoText]="ls.l('UploadCSS_Info')"
-                      [uploadButtonText]="ls.l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Login'"
-                      acceptFileExt=".css"
-                      [maxFileSize]="maxCssFileSize"
-                      (onDocumentClear)="clearCustomCss(CustomCssType.Login)">
-            </uploader>
-        </div>
-        <div class="col-md-6">
-            <uploader #portalCssUploader
-                      [title]="ls.l('CustomPortalCSS')"
-                      [documentId]="tenant.portalCustomCssId"
-                      [documentLink]="tenant.portalCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.portalCustomCssId + '/' + tenant.id : undefined"
-                      documentTemplateLink="assets/common/styles/custom/portal-custom-style.css"
-                      [uploadInfoText]="ls.l('UploadCSS_Info')"
-                      [uploadButtonText]="ls.l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Portal'"
-                      acceptFileExt=".css"
-                      [maxFileSize]="maxCssFileSize"
-                      (onDocumentClear)="clearCustomCss(CustomCssType.Portal)">
-            </uploader>
-        </div>
-    </div>
-    <div class="row m-form" *ngIf="signUpPagesEnabled">
-        <div class="col-md-6">
-            <uploader #signUpCssUploader
-                      [title]="ls.l('CustomSignUpCSS')"
-                      [documentId]="tenant.signUpCustomCssId"
-                      [documentLink]="tenant.signUpCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.signUpCustomCssId + '/' + tenant.id : undefined"
-                      documentTemplateLink="assets/common/styles/custom/signup-custom-style.css"
-                      [uploadInfoText]="ls.l('UploadCSS_Info')"
-                      [uploadButtonText]="ls.l('FileUpload')"
-                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=SignUp'"
-                      acceptFileExt=".css"
-                      [maxFileSize]="maxCssFileSize"
-                      (onDocumentClear)="clearCustomCss(CustomCssType.SignUp)">
-            </uploader>
-        </div>
-    </div>
-</ng-container>
+    </ng-container>
+</dx-scroll-view>

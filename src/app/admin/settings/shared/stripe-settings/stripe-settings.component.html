@@ -1,4 +1,4 @@
-<h2>{{l('Stripe')}} {{l('Settings')}}</h2>
+<h2><img width="90" src="./assets/common/icons/stripe.svg" /></h2>
 
 <div class="form-group">
     <dx-check-box id="StripeIsEnabled"
@@ -6,118 +6,235 @@
                   [(value)]="stripePaymentSettings.isEnabled">
     </dx-check-box>
 </div>
-<ng-container *ngIf="!isHost">
-    <div class="stripe-button-container">
-        <button [disabled]="!stripePaymentSettings.isHostAccountEnabled" class="btn btn-layout stripe-button" (click)="createConnectedAccount()">
-            {{ stripePaymentSettings.isConnectedAccountSetUpCompleted ? l('Connected with') : stripePaymentSettings.connectedAccountId ? l('Finish onboarding with') : l('Connect with') }}
-            <img src="./assets/common/images/stripe.svg" />
-        </button>
-        <!--<ng-container *ngIf="stripePaymentSettings.isConnectedAccountSetUpCompleted">
-            <span class="disconnect" (click)="disconnedConnectedAccount()">{{l("Disconnect")}}</span>
-        </ng-container>-->
-    </div>
-    <div class="payment-methods" *ngIf="stripePaymentSettings.isConnectedAccountSetUpCompleted">
-        <span class="small">Available payment methods: <b>{{availablePaymentMethods}}</b></span>
-        <i class="fa fa-refresh" [ngClass]="{'fa-spin': paymentMethodUpdateInProgress}" (click)="updatePaymentMethods()" title="Refresh payment methods"></i>
-    </div>
-    <hr />
-    <div>
-        <dx-check-box id="ShowAdvancedSettings"
-                      [text]="l('Show advanced settings')"
-                      [(value)]="showAdvancedSettings"
-                      (change)="showAdvancedSettings = !showAdvancedSettings">
-        </dx-check-box>
-        <br />
-    </div>
-</ng-container>
-<ng-container *ngIf="showAdvancedSettings">
-    <div class="form-group">
-        <label for="StripeSecretKey">{{l("Secret key")}}</label>
-        <input id="StripeSecretKey" type="text" name="StripeSecretKey" class="form-control" [(ngModel)]="stripePaymentSettings.apiKey">
-    </div>
-    <p>
-        <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
-    </p>
-    <br />
-    <div class="form-group">
-        <dx-check-box id="StripeIgnoreExternalWebhooks"
-                      [text]="l('Ignore external webhooks')"
-                      [(value)]="stripePaymentSettings.ignoreExternalWebhooks">
-        </dx-check-box>
-    </div>
-    <p>
-        <span class="small">*Skip webhooks that are not intended for <b>{{tenantName}}</b></span>
-    </p>
-    <p>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</p>
-    <div class="form-group">
-        <button [disabled]="stripePaymentSettings.webhookSingingSecret" [title]="stripePaymentSettings.webhookSingingSecret" class="btn btn-layout webhook-button" (click)="createWebhook(false)">
-            {{ stripePaymentSettings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
-        </button>
-        <img *ngIf="stripePaymentSettings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
-    </div>
-    <!--<div class="form-group">
-        <label for="StripeWebhookSecret">{{l("AccountWebhookSigningSecret")}}</label>
-        <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
-    </div>
-    <p>
-        <span class="small" [innerHtml]="l('StripeWebhookSecretHint1')"></span><br />
-        <span class="small">URL - <span class="copy-url"><b>{{getStripeWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
-        <span class="small" [innerHtml]="l('StripeWebhookSecretHint2')"></span>
-    </p>-->
-    <ng-container *ngIf="isHost">
-        <div class="form-group">
-            <label for="OAuthClientId">{{l("OAuth Client Id")}}</label>
-            <input id="OAuthClientId" type="text" name="OAuthClientId" class="form-control" [(ngModel)]="stripePaymentSettings.oAuthClientId">
-        </div>
-        <p>
-            <span class="small">{{l('Used to connect stripe account of Tenant. You can find value in Connected account settings ')}}<a href="https://dashboard.stripe.com/settings/connect" target="_blank">here</a></span><br />
-            <span class="small">{{l('Please enable ')}}<b>OAuth for Standard accounts</b>{{l(' and add the following URL to OAuth redirects')}}</span>
-            <span class="small">URL - <span class="copy-url"><b>{{getStripeOAuthConnectRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
-        </p>
-    </ng-container>
-    <p>Use button below to create <b>Connect</b> webhook and recieve Connect events from Stripe</p>
-    <div class="form-group">
-        <button [disabled]="stripePaymentSettings.connectWebhookSingingSecret" [title]="stripePaymentSettings.connectWebhookSingingSecret" class="btn btn-layout webhook-button" (click)="createWebhook(true)">
-            {{ stripePaymentSettings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
-        </button>
-        <img *ngIf="stripePaymentSettings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
-    </div>
-    <div class="form-group">
-        <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
-                      [text]="l('Ignore external connected accounts')"
-                      [(value)]="stripePaymentSettings.ignoreExternalConnectedAccounts">
-        </dx-check-box>
-    </div>
-    <p>
-        <span class="small">*Skip webhooks from external connected accounts</span>
-    </p>
-    <!--<div class="form-group">
-        <label for="StripeConnectWebhookSecret">{{l("ConnectWebhookSigningSecret")}}</label><span (click)="createWebhook(true)" class="create-webhook">(Create webhook on Stripe)</span>
-        <input id="StripeConnectWebhookSecret" type="text" name="StripeConnectWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.connectWebhookSingingSecret">
-    </div>
-    <p>
-        <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint1')"></span><br />
-        <span class="small">URL - <span class="copy-url"><b>{{getStripeConnectWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
-        <span class="small" [innerHtml]="l('StripeConnectWebhookSecretHint2')"></span>
-    </p>-->
-</ng-container>
-<div class="import-block" *ngIf="showImportSection">
-    <h5>{{l("Import")}}:</h5>
-    <div class="dx-fieldset">
-        <ng-container *ngFor="let importType of importTypes">
-            <div class="dx-field" *ngIf="showImportType(importType)">
-                <div class="dx-field-label">{{l(StripeEntityType[importType])}}</div>
-                <dx-check-box class="dx-field-value"
-                              [value]="getImportTypeValue(importType)"
-                              [disabled]="importInProgress || getImportTypeDisabled(importType)"
-                              (onValueChanged)="onImportTypeChanged($event, importType)">
-                </dx-check-box>
+<mat-tab-group *ngIf="stripePaymentSettings">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <img src="./assets/common/icons/house.svg">
+            <div class="title">STRIPE INTRODUCTION</div>
+        </ng-template>
+        <div class="container-fluid introduction-tab">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <div class="take-payments-header">
+                        <div>
+                            <h3>Take Online Payments</h3>
+                            <span>Connect with the world’s most powerful and easy to use Payment Gateway</span>
+                        </div>
+                        <button *ngIf="stripePaymentSettings.isHostAccountEnabled" class="btn btn-layout stripe-button" (click)="createConnectedAccount()">
+                            {{ l('Connect to Stripe') }}
+                        </button>
+                    </div>
+                    <div class="video-block">
+                        <img src="./assets/common/images/workingman.jpg">
+                        <div class="video-block-text">
+                            <div class="video-block-title">Now your customers can pay by card</div>
+                            <ul>
+                                <li>Take instant online card payments</li>
+                                <li>Get your money quickly and securely</li>
+                                <li>Choose which invoices can be paud this way</li>
+                            </ul>
+                            <div class="video-block-learnmore">
+                                <a target="_blank" href="https://stripe.com/resources/more/card-payments ">Learn more about how card payments work <i class="fa fa-long-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="payments-block">
+                        <h2>Connect to Stripe for super-easy card payments</h2>
+                        <h3>Only pay a small percentage of your invoice total:</h3>
+                        <ul>
+                            <li>Accept all Major Credit Cards</li>
+                            <li>Flexible subsrcriptions and billing terms</li>
+                            <li>Accept SEPA</li>
+                            <li>Accept Apple Pay</li>
+                            <li>Accept iDeal</li>
+                            <li>Fraud prevention tools</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4 faq-block">
+                    <div class="faq-block-title">FAQ</div>
+                    <div class="faq-block-row">
+                        <img src="./assets/common/icons/document-text.svg" />
+                        <a target="_blank" href="https://support.stripe.com/topics/connect">I’ve got a Stripe account, how do I connect it?</a>
+                    </div>
+                    <div class="faq-block-row">
+                        <img src="./assets/common/icons/document-text.svg" />
+                        <a target="_blank" href="https://support.stripe.com/questions/getting-started-with-stripe">What’s Stripe and how do I get started?</a>
+                    </div>
+                </div>
             </div>
-        </ng-container>
-    </div>
-    <button class="btn btn-layout" (click)="import()" [disabled]="selectedImportType == 0 || importInProgress">
-        <i class="icon-la la la-download"></i>
-        {{l('Import')}}
-        <i *ngIf="importInProgress" class="fa fa-spinner fa-spin"></i>
-    </button>
-</div>
+        </div>
+    </mat-tab>
+    <mat-tab *ngIf="!isHost">
+        <ng-template mat-tab-label>
+            <img src="./assets/common/icons/peoples.svg">
+            <div class="title">CONNECTED ACCOUNTS</div>
+        </ng-template>
+        <div class="connected-tab blocks-tab">
+            <div *ngFor="let settings of connectedSettings" class="connected-account block" [class.active]="settings.isActive">
+                <div class="section top-bar">
+                    <i class="fa check-icon" [ngClass]="settings.isActive ? 'fa-check-circle' : 'fa-circle-thin'"></i>
+                    <inplace-edit [id]="settings.id"
+                                  [value]="settings.displayName"
+                                  [maxLength]="256"
+                                  [validationRules]="[ { type: 'required', message: l('ThisFieldIsRequired') } ]"
+                                  lEntityName="DisplayName"
+                                  [editPlaceholder]="l('DisplayName')"
+                                  (valueChanged)="settings.displayName = $event">
+                    </inplace-edit>
+                </div>
+                <div class="section account-info">
+                    <div class="stripe-button-container">
+                        <button [disabled]="!stripePaymentSettings.isHostAccountEnabled" class="btn btn-layout stripe-button" (click)="createConnectedAccount(settings)">
+                            {{ settings.isConnectedAccountSetUpCompleted ? l('Connected with') : settings.connectedAccountId ? l('Finish onboarding with') : l('Connect with') }}
+                            <img src="./assets/common/images/stripe.svg" />
+                        </button>
+                    </div>
+                    <div class="account-details">
+                        <h6>{{l("Connected account info")}}:</h6>
+                        <div class="clipboard-holder"><span>Account Id: </span><b>{{settings.connectedAccountId}}</b><i class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipboard(settings.connectedAccountId)"></i></div>
+                        <div class="clipboard-holder"><span>Account Type: </span><b>{{settings.connectedAccountType}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountType)"></i></div>
+                        <div class="clipboard-holder"><span>Account Name: </span><b>{{settings.connectedAccountName}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountName)"></i></div>
+                        <div class="clipboard-holder"><span>Account Email: </span><b>{{settings.connectedAccountEmail}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(settings.connectedAccountEmail)"></i></div>
+                        <div class="payment-methods" *ngIf="settings.isConnectedAccountSetUpCompleted">
+                            <span>Available Payment Methods: </span><b>{{settings.availablePaymentMethods}}</b>
+                            <i class="fa fa-refresh" [ngClass]="{'fa-spin': settings.paymentMethodUpdateInProgress}" (click)="updatePaymentMethods(settings)" title="Refresh payment methods"></i>
+                        </div>
+                    </div>
+                    <h6 class="tax-settings">Tax Settings</h6>
+                    <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
+                        {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
+                    </button>
+                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
+                    <hr />
+                    <dx-check-box [text]="l('Ignore external webhooks')"
+                                  [(value)]="settings.ignoreExternalWebhooks">
+                    </dx-check-box>
+                    <p>
+                        <span class="small">*Skip webhooks that are not intended for <b>{{tenantName}}</b></span>
+                    </p>
+                </div>
+                <div class="account-actions">
+                    <span *ngIf="!settings.isActive" (click)="setIsActive(settings)"><i class="fa fa-check"></i>Set as active</span>
+                    <span (click)="delete(settings)"><i class="fa fa-trash-o"></i>Delete Connection</span>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <img src="./assets/common/icons/blocks.svg">
+            <div class="title">API KEYS</div>
+        </ng-template>
+        <div class="api-keys-tab blocks-tab">
+            <button *ngIf="apiKeySettings && !apiKeySettings.length" class="btn btn-layout" (click)="addApiKeySettings()">
+                {{ l('Add new API settings') }}
+            </button>
+            <div *ngFor="let settings of apiKeySettings" class="api-key-account block" [class.active]="settings.isActive">
+                <div class="section top-bar">
+                    <i class="fa check-icon" [ngClass]="settings.isActive ? 'fa-check-circle' : 'fa-circle-thin'"></i>
+                    <inplace-edit [id]="settings.id"
+                                  [value]="settings.displayName"
+                                  [maxLength]="256"
+                                  [validationRules]="[ { type: 'required', message: l('ThisFieldIsRequired') } ]"
+                                  showInlineEditButton="true"
+                                  lEntityName="DisplayName"
+                                  [editPlaceholder]="l('DisplayName')"
+                                  (valueChanged)="settings.displayName = $event">
+                    </inplace-edit>
+                </div>
+                <div class="api-key-info" [class.section]="!isHost">
+                    <h6>{{l("Secret key")}}</h6>
+                    <input placeholder="Enter Your Secret Key" [disabled]="settings.id" type="text" [(ngModel)]="settings.apiKey">
+
+                    <h6>{{l("Publishable key")}}</h6>
+                    <input placeholder="Enter Your Secret Key" type="text" [(ngModel)]="settings.publishableKey">
+                    <p>
+                        <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
+                    </p>
+                    <br />
+                    <p>
+                        <dx-check-box id="StripeIgnoreExternalWebhooks"
+                                      [text]="l('Ignore external webhooks')"
+                                      [(value)]="settings.ignoreExternalWebhooks">
+                        </dx-check-box>
+                        <span class="small">*Skip webhooks that are not intended for <b>{{tenantName}}</b></span>
+                    </p>
+                    <div>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</div>
+                    <p>
+                        <button [disabled]="settings.webhookSingingSecret" [title]="settings.webhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, false)">
+                            {{ settings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
+                        </button>
+                        <img *ngIf="settings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
+                    </p>
+                    <div *ngIf="isHost" class="section">
+                        <h6>{{l("OAuth Client Id")}}</h6>
+                        <input type="text" [(ngModel)]="settings.oAuthClientId">
+
+                        <span class="small">{{l('Connects a tenant\'s Stripe account. The value can be found in the ')}}<a href="https://dashboard.stripe.com/settings/connect" target="_blank">settings</a>.</span><br />
+                        <span class="small">{{l('Please enable ')}}<b>OAuth for Standard accounts</b>{{l(' and add the following URL to OAuth redirects')}}</span>
+                        <span class="small">URL - <span class="copy-url"><b>{{getStripeOAuthConnectRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span>
+                    </div>
+                    <div>Use button below to create <b>Connect</b> webhook and recieve Connect events from Stripe</div>
+                    <p>
+                        <button [disabled]="settings.connectWebhookSingingSecret" [title]="settings.connectWebhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, true)">
+                            {{ settings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
+                        </button>
+                        <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
+                    </p>
+                    <p>
+                        <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
+                                      [text]="l('Ignore external connected accounts')"
+                                      [(value)]="settings.ignoreExternalConnectedAccounts">
+                        </dx-check-box>
+                        <span class="small">*Skip webhooks from external connected accounts</span>
+                    </p>
+                    <h6 class="tax-settings">Tax Settings</h6>
+                    <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
+                        {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
+                    </button>
+                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
+                </div>
+                <div *ngIf="!isHost" class="account-actions">
+                    <span *ngIf="!settings.isActive" (click)="setIsActive(settings)"><i class="fa fa-check"></i>Set as active</span>
+                    <span (click)="delete(settings)"><i class="fa fa-trash-o"></i>Delete Connection</span>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <img src="./assets/common/icons/maximize.svg">
+            <div class="title">IMPORT YOUR DATA</div>
+        </ng-template>
+        <div class="import-tab">
+            <h5>{{l("Account")}}:</h5>
+            <dx-select-box #selectBox
+                           [dataSource]="stripePaymentSettings.stripeAccountSettings"
+                           displayExpr="displayName">
+            </dx-select-box>
+            <div *ngIf="selectBox.selectedItem as settingData">
+                <div class="import-block" *ngIf="settingData.showImportSection">
+                    <h5>{{l("Import")}}:</h5>
+                    <div class="dx-fieldset">
+                        <ng-container *ngFor="let importType of importTypes">
+                            <div class="dx-field" *ngIf="showImportType(settingData, importType)">
+                                <div class="dx-field-label">{{l(StripeImportType[importType])}}</div>
+                                <dx-check-box class="dx-field-value"
+                                              [value]="getImportTypeValue(settingData, importType)"
+                                              [disabled]="settingData.hasRunningImport || getImportTypeDisabled(settingData, importType)"
+                                              (onValueChanged)="onImportTypeChanged($event, settingData, importType)">
+                                </dx-check-box>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <button class="btn btn-layout" (click)="import(settingData)" [disabled]="settingData.selectedImportType == 0 || settingData.hasRunningImport">
+                        <i class="icon-la la la-download"></i>
+                        {{l('Import')}}
+                        <i *ngIf="settingData.hasRunningImport" class="fa fa-spinner fa-spin"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

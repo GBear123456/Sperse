@@ -36,6 +36,7 @@ import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
 import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
 import { LandingPageComponent } from '@shared/common/tenant-settings-wizard/landing-page/landing-page.component';
+import { LandingPageListComponent } from '@shared/common/tenant-settings-wizard/landing-page/landing-page-list/landing-page-list.component';
 import { WordingListComponent } from '@shared/common/tenant-settings-wizard/landing-page/wording-list/wording-list.component';
 import { ContactsModule } from '@app/crm/contacts/contacts.module';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
@@ -43,8 +44,10 @@ import { InvoiceSettingsComponent } from './invoice-settings/invoice-settings.co
 import { CommissionsComponent } from './commissions/commissions.component';
 import { BankTransferComponent } from './bank-transfer/bank-transfer.component';
 import { OtherSettingsComponent } from './other-settings/other-settings.component';
+import { CreditsSettingsComponent } from './credits-settings/credits-settings.component';
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
 import { StaticListModule } from '@app/shared/common/static-list/static-list.module'; 
+import { CurrencySelectorModule } from '../currency-selector/currency-selector.module';
 
 @NgModule({
     imports: [
@@ -73,7 +76,8 @@ import { StaticListModule } from '@app/shared/common/static-list/static-list.mod
         ContactsModule,
         CountryPhoneNumberModule,
         SourceContactListModule,
-        StaticListModule
+        StaticListModule,
+        CurrencySelectorModule
     ],
     exports: [TenantSettingsWizardComponent],
     declarations: [
@@ -90,7 +94,9 @@ import { StaticListModule } from '@app/shared/common/static-list/static-list.mod
         CommissionsComponent,
         BankTransferComponent,
         OtherSettingsComponent,
+        CreditsSettingsComponent,
         LandingPageComponent,
+        LandingPageListComponent,
         WordingListComponent
     ],
     entryComponents: [

@@ -40,14 +40,14 @@ export class MarkAsPaidDialogComponent {
         this.model.invoiceId = data.invoice.InvoiceId;
         this.model.invoiceNumber = data.invoice.InvoiceNumber;
         this.model.orderStage = data.invoice.OrderStage;
-        this.model.transactionType = data.invoice.InvoiceStatus == InvoiceStatus.Paid ? PaymentTransactionType.Refund : PaymentTransactionType.Sale;
+        this.model.transactionType = data.invoice.InvoiceStatus == InvoiceStatus.Paid || data.invoice.InvoiceStatus == InvoiceStatus.PartiallyRefunded ? PaymentTransactionType.Refund : PaymentTransactionType.Sale;
     }
 
     initTransactionTypes(invoiceStatus: InvoiceStatus): void {
         this.transactionTypes = [
-            { text: PaymentTransactionType.Sale, disabled: invoiceStatus == InvoiceStatus.Paid },
-            { text: PaymentTransactionType.Refund, disabled: invoiceStatus != InvoiceStatus.Paid && invoiceStatus != InvoiceStatus.PartiallyPaid },
-            { text: PaymentTransactionType.Chargeback, disabled: invoiceStatus != InvoiceStatus.Paid && invoiceStatus != InvoiceStatus.PartiallyPaid }
+            { text: PaymentTransactionType.Sale, disabled: invoiceStatus == InvoiceStatus.Paid || invoiceStatus == InvoiceStatus.PartiallyRefunded },
+            { text: PaymentTransactionType.Refund, disabled: invoiceStatus != InvoiceStatus.Paid && invoiceStatus != InvoiceStatus.PartiallyPaid && invoiceStatus != InvoiceStatus.PartiallyRefunded },
+            { text: PaymentTransactionType.Chargeback, disabled: invoiceStatus != InvoiceStatus.Paid && invoiceStatus != InvoiceStatus.PartiallyPaid && invoiceStatus != InvoiceStatus.PartiallyRefunded }
         ]
     }
 

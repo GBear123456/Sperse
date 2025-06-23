@@ -31,14 +31,12 @@ import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/ad
 import { ShareDialogComponent } from '@app/shared/common/dialogs/share/share-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ProductServiceProxy, ProductType, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
-import { ProductDto, ProductSubscriptionOption } from '@app/crm/products/products-dto.interface';
+import { PriceOptionType, ProductServiceProxy, ProductType, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
+import { ProductDto, PriceOption } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
-import { SettingsHelper } from '@shared/common/settings/settings.helper';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { CurrencyHelper } from '../shared/helpers/currency.helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { CurrencyCRMService } from '../../../store/currencies-crm-store/currency.service';
 
 @Component({
     templateUrl: './products.component.html',
@@ -72,7 +70,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             text: this.l('Add Bookmark'),
             class: 'bookmark',
             disabled: true,
-            action: () => {}
+            action: () => { }
         },
         {
             text: this.l('View'),
@@ -85,7 +83,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             text: this.l('Test'),
             class: 'status',
             disabled: true,
-            action: () => {}
+            action: () => { }
         },
         {
             text: this.l('Edit'),
@@ -98,8 +96,16 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             text: this.l('Duplicate'),
             class: 'copy',
             action: () => {
-                this.editProduct(this.actionEvent.Id, true);                
+                this.editProduct(this.actionEvent.Id, true);
             }
+        },
+        {
+            text: this.l('Archive'),
+            class: 'archive',
+            action: () => {
+                this.archiveProduct(this.actionEvent.Id);
+            },
+            checkVisible: (itemData: ProductDto) => !itemData.IsArchived
         },
         {
             text: this.l('SyncSubscriptionsWithProduct'),
@@ -118,7 +124,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         }
     ];
 
-    currency: string = SettingsHelper.getCurrency();
+    productType = ProductType;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
@@ -129,23 +135,23 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         key: this.productFields.Id,
         deserializeDates: false,
         url: this.getODataUrl(
-            this.dataSourceURI,
-            [FilterHelpers.filterByCurrencyId(this.currency)]
+            this.dataSourceURI
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.params.$select = DataGridService.getSelectFields(
                 this.dataGrid, [
-                    this.productFields.Id, 
+                    this.productFields.Id,
                     this.productFields.PublicName,
                     this.productFields.CreateUser,
                     this.productFields.AllowCoupon,
-                    this.productFields.PublishDate
+                    this.productFields.PublishDate,
+                    this.productFields.IsArchived
                 ],
                 {
-                    Price: [this.productFields.CurrencyId, this.productFields.ProductSubscriptionOptions],
-                    Unit: [this.productFields.ProductSubscriptionOptions]
+                    Price: [this.productFields.CurrencyId, this.productFields.PriceOptions],
+                    Unit: [this.productFields.PriceOptions]
                 }
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -160,6 +166,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         private clipboardService: ClipboardService,
         private filtersService: FiltersService,
         private productProxy: ProductServiceProxy,
+        private currencyService: CurrencyCRMService,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         public appService: AppService,
         public dialog: MatDialog
@@ -167,7 +174,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
         this.isReadOnly = !this.permission.isGranted(this.permissions.CRMProductsManage);
         this.headlineButtons.push({
-            enabled: !this.isReadOnly && 
+            enabled: !this.isReadOnly &&
                 !!appService.getFeatureCount(AppFeatures.CRMMaxProductCount),
             action: () => this.showProductDialog(),
             label: this.l('AddProduct')
@@ -228,20 +235,33 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 if (product.publicName)
                     product.publicName += '2';
                 product.stripeXref = undefined;
+                product.stripeXrefUrl = undefined;
                 product.paypalXref = undefined;
-                if (product.productSubscriptionOptions)
-                    product.productSubscriptionOptions =
-                        product.productSubscriptionOptions.map(sub => {
+                product.hasExternalReference = false;
+                product.hasIncompletedInvoices = false;
+                product.isArchived = false;
+                if (product.priceOptions)
+                    product.priceOptions =
+                        product.priceOptions.map(sub => {
+                            sub.id = undefined;
                             sub.stripeXref = undefined;
+                            sub.stripeXrefUrl = undefined;
                             sub.paypalXref = undefined;
+                            sub.isArchived = false;
                             return sub;
                         });
                 product.imageUrl = undefined;
                 if (product.productResources)
-                    product.productResources = 
+                    product.productResources =
                         product.productResources.filter(res => {
                             res.id = undefined;
                             return !res.fileId;
+                        });
+                if (product.productDonation && product.productDonation.productDonationSuggestedAmounts)
+                    product.productDonation.productDonationSuggestedAmounts =
+                        product.productDonation.productDonationSuggestedAmounts.map(amount => {
+                            amount.id = undefined;
+                            return amount;
                         });
                 if (product.isPublished)
                     product.publishDate = DateHelper.addTimezoneOffset(moment().utcOffset(0, true).toDate());
@@ -249,6 +269,22 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
             this.showProductDialog(product);
         });
+    }
+
+    archiveProduct(id: number) {
+        this.message.confirm('',
+            this.l('ArchiveConfiramtion'),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.startLoading();
+                    this.productProxy.archiveProduct(id).pipe(
+                        finalize(() => this.finishLoading())
+                    ).subscribe(() => {
+                        this.invalidate();
+                    });
+                }
+            }
+        );
     }
 
     syncSubscriptionsWithProduct(id: number) {
@@ -280,7 +316,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         const dialogData = {
             fullHeigth: true,
             product: product,
-            isReadOnly: this.isReadOnly
+            isReadOnly: this.isReadOnly || (product && product.isArchived)
         };
         this.dialog.open(CreateProductDialogComponent, {
             panelClass: 'slider',
@@ -293,9 +329,11 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     showShareDialog(event, product) {
+        let productLink = this.getProductPublicLink(product);
         const dialogData = {
             title: this.l('Product share link options'),
-            linkUrl: this.getProductPublicLink(product)
+            linkUrl: this.getProductPublicLink(product),
+            embedLinkUrl: productLink + '?embeddedCheckout=true'
         };
         this.dialog.open(ShareDialogComponent, {
             panelClass: '',
@@ -350,7 +388,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                     })
                 }
             }),
-            CurrencyHelper.getCurrencyFilter(this.currency)
+            this.currencyService.getCurrencyFilter(undefined)
         ];
     }
 
@@ -518,9 +556,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     onCellClick(event) {
         if (event.rowType == 'data' && event.data) {
             if (event.column.cellTemplate == 'actionTemplate')
-                this.toggleActionsMenu(event);            
+                this.toggleActionsMenu(event);
             else if (event.column.cellTemplate == 'shareTemplate')
-                return ;
+                return;
             else
                 this.editProduct(event.data.Id);
         }
@@ -531,18 +569,22 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             return;
 
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
+            ActionMenuService.prepareActionMenuItems(this.actionMenuGroups, event.data);
             this.actionEvent = actionRecord;
         });
     }
 
-    getUnitColumnText(data: ProductDto) {
-        if (data.Type == ProductType.Subscription)
-            return this.getSubscrOptionDescription(data.ProductSubscriptionOptions[0]);
+    getUnitColumnText(data: PriceOption) {
+        if (!data)
+            return '';
+
+        if (data.Type == PriceOptionType.Subscription)
+            return this.getSubscrOptionDescription(data);
 
         return data.Unit;
     }
 
-    getSubscrOptionDescription(data: ProductSubscriptionOption) {
+    getSubscrOptionDescription(data: PriceOption) {
         if (data.Frequency == RecurringPaymentFrequency.Custom) {
             return this.l('RecurringPaymentFrequency_CustomDescription', data.CustomPeriodCount, this.l('CustomPeriodType_' + data.CustomPeriodType));
         }

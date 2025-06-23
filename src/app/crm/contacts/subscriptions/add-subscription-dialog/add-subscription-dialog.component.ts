@@ -23,9 +23,9 @@ import {
     MemberServiceServiceProxy,
     MemberServiceDto,
     ProductServiceProxy,
-    RecurringPaymentFrequency,
     ProductDto,
-    ProductType
+    ProductPriceOptionDto,
+    PriceOptionType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
@@ -35,7 +35,6 @@ import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dro
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { CreateProductDialogComponent } from './create-product-dialog/create-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './add-member-service-dialog/add-member-service-dialog.component';
 import { BulkProgressDialogComponent } from '@shared/common/dialogs/bulk-progress/bulk-progress-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -62,7 +61,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     readonly addNewItemId = -1;
     products: ProductDto[];
-    paymentPeriodTypes: RecurringPaymentFrequency[] = [];
+    priceOptions: ProductPriceOptionDto[] = [];
     serviceTypes: MemberServiceDto[] = null;
     hasProductManage = this.permission.isGranted(AppPermissions.CRMProductsManage);
 
@@ -82,7 +81,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 amount: this.data.amount
             })
         ],
+        statusId: undefined,
         productId: undefined,
+        priceOptionId: undefined,
         paymentPeriodType: undefined,
         products: undefined,
         hasRecurringBilling: false,
@@ -128,9 +129,8 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             right: '-100vw'
         });
 
-        this.productProxy.getProducts(ProductType.Subscription, this.currency, false).subscribe((products: ProductDto[]) => {
+        this.productProxy.getProducts(PriceOptionType.Subscription, this.currency, false, undefined, true).subscribe((products: ProductDto[]) => {
             this.products = products;
-            this.checkAddManageOption(this.products);
         });
         this.memberServiceProxy.getAll(false).subscribe(result => {
             this.serviceTypes = result;
@@ -165,6 +165,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             const subscriptionInput = new UpdateOrderSubscriptionInput(this.subscription);
             if (this.selectedTabIndex) {
                 subscriptionInput.productId = undefined;
+                subscriptionInput.priceOptionId = undefined;
                 subscriptionInput.paymentPeriodType = undefined;
                 subscriptionInput.subscriptions = subscriptionInput.subscriptions.map((subscription: SubscriptionInput) => {
                     let sub = new SubscriptionInput(subscription);
@@ -225,12 +226,17 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             return;
 
         let selectedItem: ProductDto = event.component.option('selectedItem');
-        if (selectedItem.id == this.addNewItemId)
-            this.showAddProductDialog(event.component, event.previousValue);
-        else {
-            this.subscription.productId = selectedItem.id;
-            this.paymentPeriodTypes = selectedItem.paymentPeriodTypes;
-        }
+        this.subscription.productId = selectedItem.id;
+        this.priceOptions = selectedItem.priceOptions;
+    }
+
+    onPriceOptionChanged(event) {
+        if (!event.value)
+            return;
+
+        let selectedItem: ProductPriceOptionDto = event.component.option('selectedItem');
+        this.subscription.paymentPeriodType = selectedItem.frequency;
+        this.subscription.priceOptionId = selectedItem.id;
     }
 
     onServiceTypeChanged(event, sub: SubscriptionInput) {
@@ -289,24 +295,6 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             } else {
                 component.option('value', previousValue);
             }
-        });
-    }
-
-    showAddProductDialog(component, previousValue: string) {
-        this.dialog.open(CreateProductDialogComponent, {
-            panelClass: ['slider'],
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                title: this.ls.l('EditTemplate'),
-                templateType: 'Contact',
-                saveTitle: this.ls.l('Save'),
-                isReadOnly: !this.hasProductManage
-            }
-        }).afterClosed().subscribe((product: ProductDto) => {
-            if (product)
-                this.products.splice(this.products.length - 1, 0, product);
-            component.option('value', product ? product.id : previousValue);
         });
     }
 

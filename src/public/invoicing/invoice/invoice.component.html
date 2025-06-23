@@ -5,11 +5,13 @@
                 Invoice <b>{{invoiceInfo.invoiceData.number}}</b> <i class="save-to-clipboard" (click)="copyInvoiceNumer()"></i>
             </h3>
             <div class="header-right-side">
-                <ng-container *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent && invoiceInfo.isPaymentsEnabled">
-                    <pay-pal [height]="38" (onApprove)="onPayPalApprove()">
-                    </pay-pal>
+                <ng-container *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent && invoiceInfo.isPaymentsEnabled && invoiceInfo.isQuantityAvailable">
+                    <ng-container *ngIf="!invoiceInfo.invoiceData.isAutoCalculatedTax">
+                        <pay-pal [height]="38" (onApprove)="onPayPalApprove()">
+                        </pay-pal>
+                    </ng-container>
                     <a *ngIf="invoiceInfo.stripePayUrl" role="button" class="btn btn-primary stripe-button" href="{{invoiceInfo.stripePayUrl}}">
-                        Pay with <img src="assets/common/images/stripe.svg"/>
+                        Pay with <img src="assets/common/images/stripe.svg" />
                     </a>
                 </ng-container>
                 <button class="btn btn-secondary actions-button" [matMenuTriggerFor]="actions">
@@ -34,6 +36,9 @@
         </div>
     </div>
     <div class="content content-center">
+        <div *ngIf="!invoiceInfo.isQuantityAvailable" class="out-of-stock-message">
+            <p>The product is currently out of stock. Please contact customer support for further assistance.</p>
+        </div>
         <div *ngIf="showSubsScheduledMessage" class="future-subs-scheduled">
             <span class="timezone-hover-line" title="Your Computer {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a'}}">Subscription is scheduled. Waiting for payment on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a' : 'UTC' }} UTC.</span>
         </div>
@@ -91,18 +96,20 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let lineItem of invoiceInfo.invoiceData.items">
-                    <td>
-                        <span>{{lineItem.description.split('\n').shift()}}</span>
-                        <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">
-                            ({{lineItem.subscriptionPeriod}}<span *ngIf="lineItem.cycles">; {{lineItem.cycles}} billing cycles</span><span class="timezone-hover-line" *ngIf="invoiceInfo.invoiceData.subscriptionStartOn" title="Your Computer {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a'}}">, starting on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a' : 'UTC'}} UTC</span>)
-                        </span>
-                        <pre>{{lineItem.description.split('\n').slice(1).join('\n')}}</pre>
-                    </td>
-                    <td align="right">{{lineItem.quantity | number: '1.0-2'}}</td>
-                    <td align="right">{{lineItem.unitPrice | number: '1.2-2'}}</td>
-                    <td align="right">{{lineItem.amount | number: '1.2-2'}}</td>
-                </tr>
+                <ng-container *ngFor="let lineItem of invoiceInfo.invoiceData.items">
+                    <tr [ngClass]="{'addOn': lineItem.isAddOn}">
+                        <td>
+                            <span>{{lineItem.description.split('\n').shift()}}</span>
+                            <span *ngIf="lineItem.subscriptionPeriod" class="line-subs-period">
+                                ({{lineItem.subscriptionPeriod}}<span *ngIf="lineItem.cycles">; {{lineItem.cycles}} billing cycles</span><span class="timezone-hover-line" *ngIf="invoiceInfo.invoiceData.subscriptionStartOn" title="Your Computer {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a'}}">, starting on {{invoiceInfo.invoiceData.subscriptionStartOn | date: 'dd MMM yyyy h:mm a' : 'UTC'}} UTC</span>)
+                            </span>
+                            <pre>{{lineItem.description.split('\n').slice(1).join('\n')}}</pre>
+                        </td>
+                        <td align="right">{{lineItem.quantity | number: '1.0-2'}}</td>
+                        <td align="right">{{lineItem.unitPrice | number: '1.2-2'}}</td>
+                        <td align="right">{{lineItem.amount | number: '1.2-2'}}</td>
+                    </tr>
+                </ng-container>
 
                 <tr class="footer-row">
                     <td></td>
@@ -122,7 +129,10 @@
                 <tr class="footer-row">
                     <td></td>
                     <td colspan="2"><b>Tax Total {{invoiceInfo.invoiceData.currencyId}}</b></td>
-                    <td><b>{{invoiceInfo.invoiceData.taxTotal | number: '1.2-2'}}</b></td>
+                    <td>
+                        <b>{{invoiceInfo.invoiceData.taxTotal | number: '1.2-2'}}</b>
+                        <i *ngIf="invoiceInfo.invoiceData.IsAutoCalculatedTax" class="fa fa-question-circle" title="Sales Tax is determined by billing information"></i>
+                    </td>
                 </tr>
                 <tr class="footer-row">
                     <td></td>
@@ -233,8 +243,8 @@
             {{currentYear}} &copy; {{hostName}} Platform
         </div>
         <div *ngIf="hasToSOrPolicy" class="links">
-            <a (click)="openConditionsDialog(conditions.Terms)">Terms</a>
-            <a (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
+            <a *ngIf="invoiceInfo.tenantHasTerms" (click)="openConditionsDialog(conditions.Terms)">Terms</a>
+            <a *ngIf="invoiceInfo.tenantHasPrivacyPolicy" (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
         </div>
     </div>
 </div>

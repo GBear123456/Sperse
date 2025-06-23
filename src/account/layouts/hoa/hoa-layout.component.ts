@@ -10,7 +10,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     styleUrls: ['./hoa-layout.component.less']
 })
 export class HoaLayoutComponent implements OnInit {
-    tenantName = AppConsts.defaultTenantName;
+    tenantName = this.appSession.tenantName || AppConsts.defaultTenantName;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     originUrl = location.origin;
 
@@ -19,8 +19,5 @@ export class HoaLayoutComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        let tenant = this.appSession.tenant;
-        if (tenant)
-            this.tenantName = tenant.name || tenant.tenancyName;
     }
 }

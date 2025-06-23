@@ -95,4 +95,8 @@ export class GmailSettingsComponent implements ITenantSettingsStepComponent {
             sessionStorage.removeItem('SupportedFrom' + this.appSession.userId);
         }));
     }
+
+    isValid(): boolean {
+        return true;
+    }
 }

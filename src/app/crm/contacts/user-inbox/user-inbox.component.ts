@@ -784,4 +784,17 @@ export class UserInboxComponent implements OnDestroy {
         this.contactsService.toolbarUpdate();
         this.contactsService.unsubscribe(this.ident);
     }
+
+    getUserNameFirstLatters(name?: string) {
+        if (!name || typeof name !== 'string' || name.trim().length === 0) {
+            return '';
+        }
+
+        const parts = name.trim().split(/\s+/);
+
+        const firstLetter = parts[0] ? parts[0][0] : '';
+        const secondLetter = parts[1] ? parts[1][0] : '';
+
+        return (firstLetter + secondLetter).toUpperCase(); 
+    }
 }

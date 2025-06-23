@@ -1,20 +1,17 @@
 /** Core imports */
 import {
     ChangeDetectionStrategy,
-    Component,    
-    ViewChild,
+    Component,
     OnInit,
     ChangeDetectorRef
 } from '@angular/core';
-import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { NgxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, Subject, ReplaySubject, combineLatest } from 'rxjs';
-import { finalize, filter, first, takeUntil, map, delay } from 'rxjs/operators';
+import { finalize, filter, first, takeUntil } from 'rxjs/operators';
 import { FeatureCheckerService, MessageService } from 'abp-ng2-module';
 
 /** Application imports */
@@ -44,7 +41,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 @Component({
     templateUrl: './welcome.component.html',
     styleUrls: ['./welcome.component.less'],
-    providers: [ LifecycleSubjectsService, TenantPaymentSettingsServiceProxy ],
+    providers: [LifecycleSubjectsService, TenantPaymentSettingsServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WelcomeComponent implements OnInit {
@@ -56,20 +53,20 @@ export class WelcomeComponent implements OnInit {
     calendlyUri = AppConsts.calendlyUri;
     stripePaymentSettings: StripeSettingsDto = new StripeSettingsDto();
     hasTenantPermission = this.permission.isGranted(AppPermissions.AdministrationTenantSettings);
-    hasTenantOrCRMSettings = this.hasTenantPermission || 
+    hasTenantOrCRMSettings = this.hasTenantPermission ||
         this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments) && this.hasTenantOrCRMSettings;
-    showLandingPageSettings = !this.appService.isHostTenant && 
-        this.feature.isEnabled(AppFeatures.CRMTenantLandingPage) && 
+    showLandingPageSettings = !this.appService.isHostTenant &&
+        this.feature.isEnabled(AppFeatures.CRMTenantLandingPage) &&
         this.permission.isGranted(AppPermissions.AdministrationUsers);
-    showInvoiceSettings = this.hasTenantOrCRMSettings && 
-        this.feature.isEnabled(AppFeatures.CRMInvoicesManagement);        
+    showInvoiceSettings = this.hasTenantOrCRMSettings &&
+        this.feature.isEnabled(AppFeatures.CRMInvoicesManagement);
     showImportLeads = this.permission.isGranted(AppPermissions.CRMBulkImport);
     showImportUsersStep = (this.appService.isHostTenant || this.feature.isEnabled(AppFeatures.Admin))
-            && this.permission.isGranted(AppPermissions.AdministrationUsers)
-            && this.permission.isGranted(AppPermissions.AdministrationUsersCreate)
-            && this.permission.isGranted(AppPermissions.AdministrationRoles);
-    showSubscriptionManagement = this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement); 
+        && this.permission.isGranted(AppPermissions.AdministrationUsers)
+        && this.permission.isGranted(AppPermissions.AdministrationUsersCreate)
+        && this.permission.isGranted(AppPermissions.AdministrationRoles);
+    showSubscriptionManagement = this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);
     showCommissions = this.feature.isEnabled(AppFeatures.CRMCommissions) &&
         this.permission.isGranted(AppPermissions.CRMAffiliatesCommissions);
     showCommissionsSettings = this.feature.isEnabled(AppFeatures.CRMCommissions) &&
@@ -79,7 +76,7 @@ export class WelcomeComponent implements OnInit {
     isGrantedCRMFileStorage = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);
     isGrantedCRMProductsManage = this.permission.isGranted(AppPermissions.CRMProductsManage);
     isGrantedCRMProducts = this.permission.isGranted(AppPermissions.CRMProducts);
-    hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();    
+    hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();
     showZapier = location.href.includes(AppConsts.defaultDomain) &&
         this.permission.isGranted(AppPermissions.CRM);
 
@@ -113,7 +110,7 @@ export class WelcomeComponent implements OnInit {
 
 
         if (this.isZendeskEnabled)
-            this.ngxZendeskWebwidgetService.initZendesk();            
+            this.ngxZendeskWebwidgetService.initZendesk();
     }
 
     ngOnInit() {
@@ -156,11 +153,9 @@ export class WelcomeComponent implements OnInit {
     openProfileTenantSettingsDialog(selectedTab: string) {
         if (this.hasTenantOrCRMSettings)
             this.dialog.open(TenantSettingsWizardComponent, {
-                width: '960px',
-                height: '700px',
                 id: 'tenant-settings',
                 panelClass: ['tenant-settings'],
-                data: {tab: selectedTab}
+                data: { tab: selectedTab }
             });
     }
 
@@ -190,7 +185,7 @@ export class WelcomeComponent implements OnInit {
             disableClose: true,
             closeOnNavigation: false,
             data: dialogData
-        }).afterClosed().subscribe(() => {});
+        }).afterClosed().subscribe(() => { });
     }
 
     openProductDialog() {
@@ -207,7 +202,7 @@ export class WelcomeComponent implements OnInit {
         }).afterClosed().subscribe(product => {
             if (product)
                 this.router.navigate(['app/crm/products'])
-        });        
+        });
     }
 
     openCouponDialog() {
@@ -245,12 +240,12 @@ export class WelcomeComponent implements OnInit {
     loadSettings() {
         if (this.isPaymentsEnabled) {
             this.loadingService.startLoading();
-            this.tenantPaymentSettingsService.getStripeSettings(false)
+            this.tenantPaymentSettingsService.getStripeSettings()
                 .pipe(
                     finalize(() => this.loadingService.finishLoading())
                 )
                 .subscribe(res => {
-                    this.stripePaymentSettings = res;                    
+                    this.stripePaymentSettings = res;
                 })
         }
     }
@@ -263,7 +258,7 @@ export class WelcomeComponent implements OnInit {
             if (isConfirmed) {
                 this.loadingService.startLoading();
                 let method = this.stripePaymentSettings.connectedAccountId ?
-                    this.tenantPaymentSettingsService.connectStripeAccount() :
+                    this.tenantPaymentSettingsService.connectStripeAccount(this.stripePaymentSettings.id) :
                     this.tenantPaymentSettingsService.getConnectOAuthAuthorizeUrl();
                 method.pipe(
                     finalize(() => this.loadingService.finishLoading())
@@ -286,16 +281,16 @@ export class WelcomeComponent implements OnInit {
         this.ui.overflowHidden(true);
         this.appService.isClientSearchDisabled = true;
         this.appService.toolbarIsHidden.next(true);
-        if (this.isZendeskEnabled)
+        if (this.isZendeskEnabled && this.ngxZendeskWebwidgetService.isInitialized)
             this.ngxZendeskWebwidgetService.zE('messenger', 'show');
         this.changeDetectorRef.markForCheck()
     }
 
     deactivate() {
-        this.ui.overflowHidden();        
+        this.ui.overflowHidden();
         this.appService.toolbarIsHidden.next(false);
         this.lifeCycleSubject.deactivate.next();
-        if (this.isZendeskEnabled)
+        if (this.isZendeskEnabled && this.ngxZendeskWebwidgetService.isInitialized)
             this.ngxZendeskWebwidgetService.zE('messenger', 'hide');
         this.dialog.closeAll();
     }

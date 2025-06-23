@@ -8,13 +8,13 @@
         </div>
         <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
             <div class="logo">
-                <ng-container *ngIf="appSession.tenant && appSession.tenant.isWhiteLabel; else defaultTemplate">
+                <ng-container *ngIf="appSession.appearanceConfig && appSession.appearanceConfig.isWhiteLabel; else defaultTemplate">
                     <a href="javascript:void(0);">
-                        <img *ngIf="appSession.tenant.logoId"
-                             [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
-                             [alt]="appSession.tenant.name"
+                        <img *ngIf="appSession.appearanceConfig.logoId"
+                             [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.appearanceConfig.logoId"
+                             [alt]="appSession.appearanceConfig.name"
                              width="auto" height="60" />
-                        <img *ngIf="!appSession.tenant.logoId"
+                        <img *ngIf="!appSession.appearanceConfig.logoId"
                              src="./assets/common/images/bank-code/CodebreakerWideLogo.png"
                              alt="Codebreaker Teach" />
                     </a>

@@ -51,6 +51,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { LeftMenuComponent } from '../shared/common/left-menu/left-menu.component';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
+import { SettingsHelper } from '../../../shared/common/settings/settings.helper';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -132,6 +134,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
             })
         }
     });
+    filterCurrency = this.currencyService.getCurrencyFilter(SettingsHelper.getCurrency(), false, true);
 
     private filters: FilterModel[] = this.getFilters();
 
@@ -151,6 +154,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         private activatedRoute: ActivatedRoute,
         private leftMenuService: LeftMenuService,
         private filtersService: FiltersService,
+        private currencyService: CurrencyCRMService,
         public layoutService: LayoutService,
         public ui: AppUiCustomizationService,
         public permission: AppPermissionService,
@@ -183,6 +187,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 this.dashboardWidgetsService.totalsData$,
                 this.dashboardWidgetsService.contactGroupId$,
                 this.dashboardWidgetsService.sourceOrgUnitIds$,
+                this.dashboardWidgetsService.currencyId$,
                 this.dashboardWidgetsService.refresh$
             ).pipe(
                 delay(300), first()
@@ -198,7 +203,8 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         return [
             this.filterModelContactGroup,
             this.filterModelOrgUnit,
-            this.filterModelSource
+            this.filterModelSource,
+            this.filterCurrency
         ];
     }
 
@@ -223,6 +229,8 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 else if (filter.caption == 'ContactGroup') 
                     this.dashboardWidgetsService.setGroupIdForTotals(
                         filter.items.element.value || ContactGroup.Client);
+                else if (filter.caption == 'Currency')
+                    this.dashboardWidgetsService.setCurrencyIdForTotals(this.currencyService.getSelectedCurrencies(filter)[0]);
             });
 
             if (this.leftMenu) {

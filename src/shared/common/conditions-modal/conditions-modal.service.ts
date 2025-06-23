@@ -39,19 +39,17 @@ export class ConditionsModalService {
     ) { }
 
     openModal(config: MatDialogConfig<ContditionsModalData>) {
-        if (!config.data.bodyUrl && !this.isDocumentAvailable(config.data.type, config.data.onlyHost))
+        if (!config.data.bodyUrl && !config.data.hasOwnDocument && !this.isDocumentAvailable(config.data.type))
             return;
 
         if (!config.data.title)
             config.data.title = this.conditionsOptions[config.data.type].title;
 
         if (!config.data.bodyUrl)
-            config.data.bodyUrl = this.getHtmlUrl(config.data.type);
+            config.data.bodyUrl = this.getHtmlUrl(config.data.type, config.data.tenantId);
 
         if (!config.data.downloadLink)
-            config.data.downloadLink = this.appSession.tenantId
-                ? this.getApiLink(config.data.type, 'downloadLink', this.appSession.tenantId)
-                : this.getDefaultLink(config.data.type, 'hostDownloadLink');
+            config.data.downloadLink = this.getApiLink(config.data.type, 'downloadLink', this.appSession.tenantId);
 
         this.dialog.open<ConditionsModalComponent, ContditionsModalData>(
             ConditionsModalComponent,
@@ -59,29 +57,28 @@ export class ConditionsModalService {
         );
     }
 
-    hasTermsOrPolicy(hostOnly: boolean = false): boolean {
-        return this.isDocumentAvailable(ConditionsType.Terms, hostOnly) ||
-            this.isDocumentAvailable(ConditionsType.Policies, hostOnly);
+    hasTermsOrPolicy(): boolean {
+        return this.isDocumentAvailable(ConditionsType.Terms) ||
+            this.isDocumentAvailable(ConditionsType.Policies);
     }
 
-    isDocumentAvailable(type: ConditionsType, hostOnly: boolean = false): boolean {
-        if (!this.appSession.tenantId || hostOnly) {
-            return AppConsts.isSperseHost;
-        }
-
-        return this.appSession.tenant[this.conditionsOptions[type].tenantProperty];
+    isDocumentAvailable(type: ConditionsType): boolean {
+        return this.getDocumentId(type);
     }
 
     getHtmlUrl(type: ConditionsType, tenantId: number = undefined): string {
-        if (tenantId == undefined)
+        if (tenantId === undefined)
             tenantId = this.appSession.tenantId;
-        return tenantId
-            ? this.getApiLink(type, 'apiBodyLink', tenantId)
-            : this.getDefaultLink(type, 'hostBodyLink');
+
+        return this.getApiLink(type, 'apiBodyLink', tenantId);
+    }
+
+    private getDocumentId(type: ConditionsType) {
+        return this.appSession.appearanceConfig[this.conditionsOptions[type].tenantProperty];
     }
 
     private getApiLink(type: ConditionsType, link: string, tenantId: number): string {
-        return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/' + this.conditionsOptions[type][link] + '?tenantId=' + tenantId;
+        return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/' + this.conditionsOptions[type][link] + '?tenantId=' + (tenantId || '');
     }
 
     private getDefaultLink(type: ConditionsType, link: string): string {

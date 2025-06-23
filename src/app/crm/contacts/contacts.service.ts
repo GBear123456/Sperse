@@ -378,7 +378,8 @@ export class ContactsService {
         switch (templateType) {
             case EmailTemplateType.Contact:
                 return [
-                    EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName, EmailTags.DayOfWeek, EmailTags.LastReferralContact, EmailTags.CompanyIndustry,
+                    EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName, EmailTags.DayOfWeek, EmailTags.LastReferralContact,
+                    EmailTags.CompanyName, EmailTags.CompanyIndustry,
                     EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite1,
                     EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany,
                     EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone,
@@ -400,7 +401,7 @@ export class ContactsService {
                 ];
             case EmailTemplateType.ProductPaid:
                 return [
-                    ProductEmailTags.ClientFullName, ProductEmailTags.ProductName, ProductEmailTags.ProductDescription, ProductEmailTags.ProductQuantity, ProductEmailTags.ProductSubscriptionOption,
+                    ProductEmailTags.ClientFullName, ProductEmailTags.ProductName, ProductEmailTags.ProductDescription, ProductEmailTags.ProductQuantity, ProductEmailTags.PriceUnitName,
                     ProductEmailTags.ProductInvoiceUrl, ProductEmailTags.ProductReceiptUrl
                 ];
             default:

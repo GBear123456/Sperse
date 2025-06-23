@@ -3,6 +3,7 @@ import { PaymentPeriodType } from '@shared/service-proxies/service-proxies';
 export interface PaymentOptions {
     productId: number;
     productName: string;
+    priceOptionId: number;
     currencyId: string;
     currencySymbol: string;
     paymentPeriodType: PaymentPeriodType;

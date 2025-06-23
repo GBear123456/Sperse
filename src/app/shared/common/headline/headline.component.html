@@ -35,7 +35,7 @@
     <div class="toggle-button-container" [ngClass]="toggleButtonPosition" *ngIf="showHeadlineMenuToggleButton">
         <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons()"></button>
         <ul *ngIf="showHeadlineButtons" class="buttons">
-            <li *ngIf="isAdminCustomizations" (click)="switchNavBar()">
+            <li *ngIf="hasCustomizationsSettings" (click)="switchNavBar()">
                 <div>
                     <i class="icon {{settingService.get('App.Appearance.NavPosition') == 'Vertical' ? 'top' : 'left'}}-bar"></i>
                 </div>

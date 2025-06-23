@@ -90,8 +90,7 @@ export class UserManagementSettingsComponent extends SettingsComponentBase {
     }
 
     afterSave() {
-        if (this.initialSignUpPageEnabled !== this.tenantSettings.isSignUpPageEnabled
-        ) {
+        if (!this.isHost && this.initialSignUpPageEnabled !== this.tenantSettings.isSignUpPageEnabled) {
             this.message.info(this.l('SettingsChangedRefreshPageNotification', this.l('General'))).done(function () {
                 window.location.reload();
             });

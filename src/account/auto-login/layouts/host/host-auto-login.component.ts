@@ -29,9 +29,7 @@ import {
 export class HostAutoLoginComponent {
     conditions = ConditionsType;
     detectedTenancies: TenantModel[] = [];
-    tenantName = this.appSession.tenant
-        ? this.appSession.tenant.name
-        : AppConsts.defaultTenantName;
+    tenantName = this.appSession.appearanceConfig.name || AppConsts.defaultTenantName;
     isLoggedIn: boolean = false;
     isExtLogin: boolean = false;
     isLinkSent: boolean = false;

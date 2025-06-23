@@ -129,7 +129,7 @@
 
     function handleGetCurrentLoginInformations(response) {
         var loginInformations = window.loginInfo = response;
-        tenant = loginInformations && loginInformations.tenant;
+        tenant = loginInformations && (loginInformations.tenant || loginInformations.host);
         if (tenant && tenant.customLayoutType != 'Default') {
             window.loginPageHandler = undefined;
             appBootstrap && appBootstrap.call(appContext);
@@ -315,7 +315,7 @@
         createMetatag("og:url", location.origin);
         createMetatag("og:image", !tenant || !tenant.logoId ?
             window.location.origin + '/assets/common/images/app-logo-on-light.png' :
-            remoteServiceUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
+            remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId);
     }
 
     function checkSetLogoLink(logoImage) {
@@ -408,10 +408,10 @@
             updateCurrentYear();
             if (tenant) {
                 if (tenant.customPrivacyPolicyDocumentId)
-                    $('#privacy .download').attr('href', remoteServiceUrl + '/api/TenantCustomization/DownloadPrivacyPolicyPdf?tenantId=' + tenant.Id);
+                    $('#privacy .download').attr('href', remoteServiceUrl + '/api/TenantCustomization/DownloadPrivacyPolicyPdf?tenantId=' + (tenant.Id || ''));
 
                 if (tenant.customToSDocumentId)
-                    $('#terms .download').attr('href', remoteServiceUrl + '/api/TenantCustomization/DownloadTermsOfServicePdf?tenantId=' + tenant.Id);
+                    $('#terms .download').attr('href', remoteServiceUrl + '/api/TenantCustomization/DownloadTermsOfServicePdf?tenantId=' + (tenant.Id || ''));
             }
             $('.agree-rights').show();
 
@@ -422,7 +422,7 @@
                     .find('.modal-body')
                     .html('loading...')
                     .load(tenant && tenant.customToSDocumentId ?
-                        remoteServiceUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + tenant.Id:
+                        remoteServiceUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + (tenant.Id || ''):
                         './assets/documents/terms.html', function() {
                             privacy
                                 .removeClass('modal-scrollfix')
@@ -437,7 +437,7 @@
                     .find('.modal-body')
                     .html('loading...')
                     .load(tenant && tenant.customPrivacyPolicyDocumentId ?
-                        remoteServiceUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + tenant.Id:
+                        remoteServiceUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + (tenant.Id || ''):
                         './assets/documents/privacy.html', function() {
                             terms
                                 .removeClass('modal-scrollfix')

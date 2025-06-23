@@ -45,12 +45,16 @@
         }
 
         ::ng-deep mat-vertical-stepper {
+            height: 100%;
+            overflow: auto;
+
             .mat-step {
                 mat-step-header {
                     display: none;
                 }
 
                 .mat-vertical-content-container {
+                    height: 100%;
                     margin-left: 0;
 
                     &:before {
@@ -58,6 +62,7 @@
                     }
 
                     .mat-vertical-stepper-content {
+                        height: 100%;
                         overflow: initial;
 
                         .mat-vertical-content {

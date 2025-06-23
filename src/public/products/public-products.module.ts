@@ -14,12 +14,18 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { PaypalModule } from '@shared/common/paypal/paypal.module';
 
 import { SingleProductComponent } from './single-product/single-product.component';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxTabsModule } from 'devextreme-angular/ui/tabs';
 
 import {
+    ExternalUserDataServiceProxy,
     LeadServiceProxy,
     PublicProductServiceProxy,
     TenantSubscriptionServiceProxy
 } from '@root/shared/service-proxies/service-proxies';
+import { ProductOptionSelectorModule } from '@app/crm/shared/product-option-selector/product-option-selector.module';
 
 @NgModule({
     imports: [
@@ -28,9 +34,14 @@ import {
         CommonModule,
         PublicProductsRoutingModule,
         CountryPhoneNumberModule,
+        ProductOptionSelectorModule,
         UtilsModule,
         MatSliderModule,
-        PaypalModule
+        PaypalModule,
+        GooglePlaceModule,
+        DxSelectBoxModule,
+        DxTextBoxModule,
+        DxTabsModule
     ],
     exports: [],
     declarations: [
@@ -39,7 +50,8 @@ import {
     providers: [
         PublicProductServiceProxy,
         LeadServiceProxy,
-        TenantSubscriptionServiceProxy
+        TenantSubscriptionServiceProxy,
+        ExternalUserDataServiceProxy
     ]
 })
 export class PublicProductsModule { }

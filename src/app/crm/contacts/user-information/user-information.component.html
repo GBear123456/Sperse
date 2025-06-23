@@ -132,12 +132,16 @@
                             <div class="item-edit-label">{{ls.l("PhoneNumber")}}:</div>
                             <ul *ngIf="!phoneInplaceEdit">
                                 <li (dblclick)="phoneInPlaceEdit()">
-                                    {{ data?.user?.phoneNumber | phone }}<i class="edit-phone fa fa-pencil" *ngIf="isEditAllowed" (click)="phoneInPlaceEdit()"></i><i class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipbord(data?.user?.phoneNumber)"></i>
+                                    <ng-container *ngIf="!isEditAllowed || data?.user?.phoneNumber else noPhone">{{ data?.user?.phoneNumber | phone }}</ng-container>
+                                    <ng-template #noPhone><span class="no-phone" (click)="phoneInPlaceEdit()">{{ls.l('EditValuePlaceholder')}}</span></ng-template>
+                                    <i class="edit-phone fa fa-pencil" *ngIf="isEditAllowed" (click)="phoneInPlaceEdit()"></i>
+                                    <i class="copy save-to-clipboard" *ngIf="data?.user?.phoneNumber" aria-hidden="true" (click)="copyToClipbord(data?.user?.phoneNumber)"></i>
+                                    <i class="delete-phone fa fa-times" *ngIf="isEditAllowed && data?.user?.phoneNumber" (click)="deletePhoneNumber()"></i>
                                 </li>
                             </ul>
                             <div class="inplace-edit-wrapper" *ngIf="phoneInplaceEdit">
-                                <country-phone-number [(phoneNumber)]="data.user.phoneNumber" #countryPhoneNumber></country-phone-number>
-                                <dx-button class="update" icon="todo" (onClick)="updatePhoneNumber(countryPhoneNumber.isValid())"></dx-button>
+                                <country-phone-number [(phoneNumber)]="data.user.phoneNumber" [required]="false" #countryPhoneNumber></country-phone-number>
+                                <dx-button class="update" icon="todo" (onClick)="updatePhoneNumber(countryPhoneNumber)"></dx-button>
                                 <dx-button class="exit" icon="refresh" (onClick)="closePhoneInPlaceEdit()"></dx-button>
                             </div>
                         </div>

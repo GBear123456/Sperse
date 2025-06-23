@@ -352,6 +352,9 @@
                 &, & .span {
                     white-space: nowrap;
                 }
+                span {
+                    padding-right: 0;
+                }
             }
 
             ::ng-deep inplace-edit {
@@ -362,6 +365,12 @@
 
             .add-xref {
                 cursor: pointer;
+            }
+
+            &.credit-balance-actions {
+                span {
+                    cursor: pointer;
+                }
             }
         }
 
@@ -409,20 +418,17 @@
                 }
             }
 
-            .history-icon {
-                font-size: 18px;
-                float: right;
-                padding: 0;
+            .mat-expansion-panel-body {
+                padding-bottom: 0 !important;
             }
 
-            .affiliate-code {
-                &.Available inplace-edit .inplace-edit-view-mode{
-                    dx-text-box input, .link a {
-                        background-color: rgba(209, 172, 0, 0.2);
-                        border: solid 1px #d1ac00 ;
-                        color: #d1ac00 !important;
-                    }
+            .Available inplace-edit {
+                dx-text-box input, .link a {
+                    background-color: rgba(209, 172, 0, 0.2) !important;
+                    border: solid 1px #d1ac00 !important;
+                    color: #d1ac00 !important;
                 }
+            }
 
                 &.Unavailable inplace-edit .inplace-edit-view-mode{
                     dx-text-box input, .link a {
@@ -579,6 +585,11 @@
     ::ng-deep mat-accordion {
         .mat-expansion-panel {
             box-shadow: initial;
+
+            .history-icon {
+                font-size: 18px;
+                padding: 0 !important;
+            }
         }
 
         .mat-expansion-indicator {

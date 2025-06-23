@@ -21,11 +21,14 @@ import { NgxFileDropEntry } from 'ngx-file-drop';
 import { CacheService } from 'ng2-cache-service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { DxTextAreaComponent, DxValidationGroupComponent } from 'devextreme-angular';
+import DataSource from 'devextreme/data/data_source';
 import { Observable, of, zip } from 'rxjs';
 import * as moment from 'moment';
-import { map, switchMap, finalize, first, filter } from 'rxjs/operators';
+import { map, switchMap, finalize, first, filter, publishReplay, refCount, tap } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 import { findIana } from 'windows-iana';
+import * as QRCodeStyling from 'qr-code-styling-new';
+import { BrainCircuit, Calendar, ChevronDown, CreditCard, FileText, GraduationCap, Heart, Image, Key, Link2, Mail, MessageSquare, Package, Phone, Plus, Send, Truck, Video, Webhook } from 'lucide-angular';
 
 /** Application imports */
 import {
@@ -41,7 +44,7 @@ import {
     ProductType,
     UpdateProductInput,
     RecurringPaymentFrequency,
-    ProductSubscriptionOptionInfo,
+    PriceOptionInfo,
     ProductMeasurementUnit,
     SetProductImageInput,
     ProductUpgradeAssignmentInfo,
@@ -53,10 +56,25 @@ import {
     ProductEventLocation,
     LanguageDto,
     TimingServiceProxy,
-    EmailTemplateType
+    EmailTemplateType,
+    ProductDonationDto,
+    ProductDonationSuggestedAmountDto,
+    TenantPaymentSettingsServiceProxy,
+    RecommendedProductInfo,
+    ProductInventoryInfo,
+    AddInventoryTopupInput,
+    PriceOptionType,
+    ProductAddOnDto,
+    ProductAddOnOptionDto,
+    ProductDeliverableTypes,
+    CommunicationDeliverableInfo,
+    ProductDeliverablesData,
+    HostSettingsServiceProxy,
+    GetProductInfoOutput,
+    ProductDeliverableInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from 'abp-ng2-module';
+import { MessageService, NotifyService, PermissionCheckerService } from 'abp-ng2-module';
 import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -75,11 +93,18 @@ import { AppConsts } from '@shared/AppConsts';
 import { LanguagesStoreSelectors, RootStore, LanguagesStoreActions } from '@root/store';
 import { EditAddressDialog } from '../../../edit-address-dialog/edit-address-dialog.component';
 import { EventDurationTypes, EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
+import { round } from 'lodash';
+import { AppPermissions } from '../../../../../../shared/AppPermissions';
 
 @Pipe({ name: 'FilterAssignments' })
 export class FilterAssignmentsPipe implements PipeTransform {
-    transform(products: ProductDto[], excludeIds: number[]) {
-        return products && products.filter(product => excludeIds.indexOf(product.id) == -1);
+    transform(products: ProductDto[], excludeIds: number[], type: ProductType, excludeType: ProductType, excludeAddOnsRequired: boolean) {
+        return products && products.filter(product =>
+            excludeIds.indexOf(product.id) == -1 &&
+            (!type || product.type == type) &&
+            (!excludeType || product.type != excludeType) &&
+            (!excludeAddOnsRequired || !product.hasRequiredAddOns)
+        );
     }
 }
 
@@ -87,6 +112,7 @@ export class FilterAssignmentsPipe implements PipeTransform {
     selector: 'create-product-dialog',
     templateUrl: './create-product-dialog.component.html',
     styleUrls: [
+        '../../subscriptions-base.less',
         '../../../../../../shared/common/styles/close-button.less',
         '../../../../../shared/common/styles/form.less',
         './create-product-dialog.component.less'
@@ -97,15 +123,37 @@ export class FilterAssignmentsPipe implements PipeTransform {
         ProductGroupServiceProxy,
         MemberServiceServiceProxy,
         DocumentTemplatesServiceProxy,
-        ProductResourceServiceProxy
+        ProductResourceServiceProxy,
+        TenantPaymentSettingsServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(DxTextAreaComponent) descriptionHtmlComponent: DxTextAreaComponent;
+    @ViewChild("canvas", { static: true }) canvas: ElementRef;
 
-    isFreePriceType = false;
+    readonly Plus = Plus;
+    readonly Link2 = Link2;
+    readonly CreditCard = CreditCard;
+    readonly FileText = FileText;
+    readonly Key = Key;
+    readonly GraduationCap = GraduationCap;
+    readonly Image = Image;
+    readonly Video = Video;
+    readonly MessageSquare = MessageSquare;
+    readonly Send = Send;
+    readonly Phone = Phone;
+    readonly Calendar = Calendar;
+    readonly Mail = Mail;
+    readonly Webhook = Webhook;
+    readonly BrainCircuit = BrainCircuit;
+    readonly Heart = Heart;
+    readonly Truck = Truck;
+    readonly Package = Package;
+    readonly ChevronIcon = ChevronDown;
+
+
     baseUrl = AppConsts.remoteServiceBaseUrl;
 
     publishDate: Date;
@@ -126,7 +174,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     tenantId = abp.session.tenantId || 0;
     defaultProductUri = '';
 
+    qrCode;
+
     enableCommissions: boolean = true;
+    isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
+    isProductDiscordFeatureEnabled = this.feature.isEnabled(AppFeatures.CRMProductDiscordIntegration);
+    hostDiscordClientId: string;
+
     isReadOnly = !!this.data.isReadOnly;
     saveButtonId = 'saveProductOptions';
     selectedOption: ContextMenuItem;
@@ -163,25 +217,500 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
     ];
 
+    tabs = {
+        options: [
+            {
+                type: 'Product',
+                name: this.ls.l('Product')
+            }, {
+                type: 'Deliverables',
+                name: this.ls.l('Deliverables')
+            }
+        ],
+        toggleTab: this.toggleTab.bind(this),
+    }
+
+    selectedTab = this.tabs.options[0].type;
+
+    toggleTab(selected) {
+        if (this.validationGroup.instance.validate().isValid) {
+            this.selectedTab = selected;
+            this.changeDetection.detectChanges();
+        }
+    }
+
+    onToggleItem(id) {
+        if (id === 'Event') {
+            this.initEventProps();
+        }
+    }
+
+    fulfillmentGroups: any[] = [
+        {
+            title: "Digital Access",
+            items: [
+                {
+                    id: "subscription",
+                    label: "Access Subscription Features",
+                    description: "Configure subscription-based access to content or features",
+                    icon: Link2,
+                    color: "#2563EB",
+                    component: 'subscription-feature',
+                },
+                {
+                    id: "credits",
+                    label: "User Credits",
+                    hidden: true,
+                    description: "Manage user credit system for content access",
+                    icon: CreditCard,
+                    color: "#059669",
+                    fields: [
+                        {
+                            id: "creditAmount",
+                            label: "Credit Amount",
+                            type: "number",
+                            className: "col-span-1",
+                        },
+                        {
+                            id: "creditExpiry",
+                            label: "Credit Expiration",
+                            type: "select",
+                            className: "col-span-1",
+                            options: [
+                                { value: "never", label: "Never" },
+                                { value: "daily", label: "Every Day" },
+                                { value: "weekly", label: "Every Week" },
+                                { value: "monthly", label: "Every Month" },
+                                { value: "yearly", label: "Every Year" },
+                            ],
+                            defaultValue: "never",
+                        },
+                    ],
+                    gridCols: "grid-cols-2 gap-4"
+                },
+                {
+                    id: "digital",
+                    label: "Digital Downloadable Product",
+                    description: "Provide access to downloadable digital content",
+                    icon: FileText,
+                    color: "#2DD4BF",
+                    component: 'digital-upload',
+                },
+                {
+                    id: "license",
+                    label: "License Key Delivery",
+                    hidden: true,
+                    description: "Generate and deliver software license keys",
+                    icon: Key,
+                    color: "#DC2626",
+                    fields: [
+                        { id: "licenseFormat", label: "License Format", type: "text" },
+                        { id: "licenseRules", label: "License Rules", type: "textarea" },
+                    ],
+                },
+                {
+                    id: "course",
+                    label: "Digital Course",
+                    hidden: true,
+                    description: "Grant access to online courses",
+                    icon: GraduationCap,
+                    color: "#FF6B6B",
+                    fields: [
+                        { id: "coursePlatformUrl", label: "Platform URL", type: "url" },
+                        { id: "courseId", label: "Course ID", type: "text" },
+                    ],
+                },
+                {
+                    id: "feedAccess",
+                    label: "Access to Feed Content",
+                    hidden: true,
+                    description: "Grant access to exclusive feed content including pictures, polls, and discussions",
+                    icon: Image,
+                    color: "#8B5CF6",
+                    fields: [
+                        { id: "feedUrl", label: "Feed URL", type: "url" },
+                        {
+                            id: "feedAccessLevel",
+                            label: "Access Level",
+                            type: "select",
+                            options: [
+                                { value: "basic", label: "Basic" },
+                                { value: "premium", label: "Premium" },
+                                { value: "vip", label: "VIP" },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id: "videoAccess",
+                    label: "Access to Video Content or Live Stream",
+                    hidden: true,
+                    description: "Provide access to exclusive video content or live streams",
+                    icon: Video,
+                    color: "#EF4444",
+                    fields: [
+                        {
+                            id: "contentType",
+                            label: "Content Type",
+                            type: "select",
+                            options: [
+                                { value: "preRecorded", label: "Pre-recorded Videos" },
+                                { value: "liveStream", label: "Live Stream" },
+                                { value: "both", label: "Both Pre-recorded and Live" },
+                            ],
+                        },
+                        {
+                            id: "videoLibraryUrl",
+                            label: "Video Library URL",
+                            type: "url",
+                            showWhen: "contentType",
+                            showWhenValue: ["preRecorded", "both"],
+                        },
+                        {
+                            id: "liveStreamUrl",
+                            label: "Live Stream URL",
+                            type: "url",
+                            showWhen: "contentType",
+                            showWhenValue: ["liveStream", "both"],
+                        },
+                        {
+                            id: "videoAccessDuration",
+                            label: "Access Duration",
+                            type: "select",
+                            options: [
+                                { value: "1month", label: "1 Month" },
+                                { value: "3months", label: "3 Months" },
+                                { value: "6months", label: "6 Months" },
+                                { value: "1year", label: "1 Year" },
+                                { value: "lifetime", label: "Lifetime" },
+                            ],
+                        },
+                        {
+                            id: "scheduleInfo",
+                            label: "Live Stream Schedule",
+                            type: "textarea",
+                            showWhen: "contentType",
+                            showWhenValue: ["liveStream", "both"],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            title: "Community Access",
+            items: [
+                {
+                    id: "discord",
+                    hidden: !this.isProductDiscordFeatureEnabled,
+                    label: "Discord Member Roles",
+                    description: "Manage Discord roles and server access",
+                    icon: MessageSquare,
+                    color: "#5865F2",
+                    hoverColor: "rgb(71 82 196)",
+                    component: 'discord-roles-selector',
+                },
+                {
+                    id: "telegram",
+                    hidden: true,
+                    label: "Telegram Channel Access",
+                    description: "Grant access to Telegram channels",
+                    icon: Send,
+                    color: "#229ED9",
+                    hoverColor: "rgb(26 141 195)",
+                    component: 'telegram-channel-selector',
+                },
+                {
+                    id: "slack",
+                    hidden: true,
+                    label: "Slack Channel Access",
+                    description: "Grant access to Slack channels",
+                    icon: MessageSquare,
+                    color: "#E01E5A",
+                    hoverColor: "rgb(201 28 80)",
+                    component: 'slack-channel-selector',
+                },
+                {
+                    id: "whatsapp",
+                    hidden: true,
+                    label: "WhatsApp",
+                    description: "Send automated WhatsApp messages",
+                    icon: Phone,
+                    color: "#25D366",
+                    fields: [
+                        { id: "whatsappNumber", label: "Business Number", type: "text" },
+                        { id: "whatsappApiKey", label: "API Key", type: "password" },
+                    ],
+                },
+            ],
+        },
+        {
+            title: "Event and Meeting Access",
+            hidden: true,
+            items: [
+                {
+                    id: "event",
+                    label: "Event Ticketing",
+                    description: "Manage event registration and access",
+                    icon: Calendar,
+                    color: "#F59E0B",
+                    fields: [
+                        {
+                            id: "location",
+                            label: "Location",
+                            type: "section",
+                            description: "Help people in the area discover your event and let attendees know where to show up.",
+                            fields: [
+                                {
+                                    id: "locationType",
+                                    type: "radio",
+                                    options: [
+                                        { value: ProductEventLocation.Online, label: "Online" },
+                                        { value: ProductEventLocation.InPerson, label: "In-Person" },
+                                        { value: ProductEventLocation.ToBeAnnounced, label: "To be announced" },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            id: "address",
+                            label: "Venue Location",
+                            type: "address",
+                        },
+                        {
+                            id: "dateAndTime",
+                            label: "Date and time",
+                            type: "section",
+                            description: "Tell event-goers when your event starts and ends so they can make plans to attend.",
+                            fields: [
+                                {
+                                    id: "eventType",
+                                    type: "radio",
+                                    options: [
+                                        { value: "single", label: "Single Event" },
+                                        { value: "recurring", label: "Recurring Event" },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            id: "duration",
+                            type: "duration",
+                            columns: 4,
+                            description: "Single event happens once and can last multiple days",
+                            fields: [
+                                {
+                                    id: "date",
+                                    label: "Date",
+                                    type: "date",
+                                },
+                                {
+                                    id: "time",
+                                    label: "Time",
+                                    type: "time",
+                                },
+                                {
+                                    id: "duration",
+                                    label: "Duration",
+                                    type: "number",
+                                },
+                                {
+                                    id: "durationType",
+                                    label: "",
+                                    type: "select",
+                                },
+                            ]
+                        },
+                        {
+                            id: "settings",
+                            type: "grid",
+                            columns: 2,
+                            fields: [
+                                {
+                                    id: "timezone",
+                                    label: "Time Zone",
+                                    type: "select",
+                                    options: [],
+                                },
+                                {
+                                    id: "language",
+                                    label: "Event Page Language",
+                                    type: "select",
+                                    options: [],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id: "meeting",
+                    label: "Online Meeting Link",
+                    description: "Configure video meeting access",
+                    icon: Video,
+                    color: "#2563EB",
+                    fields: [
+                        {
+                            id: "settings",
+                            type: "grid",
+                            columns: 2,
+                            fields: [
+                                {
+                                    id: "platform",
+                                    label: "Platform",
+                                    type: "select",
+                                    options: [
+                                        { value: "zoom", label: "Zoom" },
+                                        { value: "meet", label: "Google Meet" },
+                                        { value: "teams", label: "Microsoft Teams" },
+                                        { value: "custom", label: "Custom" },
+                                    ],
+                                },
+                                {
+                                    id: "meetingLink",
+                                    label: "Meeting Link",
+                                    type: "url",
+                                },
+                                {
+                                    id: "meetingId",
+                                    label: "Meeting ID",
+                                    type: "text",
+                                },
+                                {
+                                    id: "meetingPassword",
+                                    label: "Meeting Password",
+                                    type: "password",
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            title: "Additional Options",
+            hidden: true,
+            items: [
+                {
+                    id: "mailchimp",
+                    label: "MailChimp Audience",
+                    description: "Add customers to MailChimp audiences",
+                    icon: Mail,
+                    color: "#FFE01B",
+                    fields: [{ id: "mailchimpAudienceId", label: "Audience ID", type: "text" }],
+                },
+                {
+                    id: "webhook",
+                    label: "Webhook Actions",
+                    description: "Send data to external systems via webhooks",
+                    icon: Webhook,
+                    color: "#6B7280",
+                    fields: [
+                        { id: "successWebhookUrl", label: "Success Webhook URL", type: "url" },
+                        { id: "failureWebhookUrl", label: "Failure Webhook URL", type: "url" },
+                    ],
+                },
+                {
+                    id: "redirect",
+                    label: "Redirect Link",
+                    description: "Configure URL redirections",
+                    icon: Link2,
+                    color: "#4A4A4A",
+                    fields: [
+                        { id: "destinationUrl", label: "Destination URL", type: "url" },
+                        { id: "trackClicks", label: "Track Clicks", type: "switch" },
+                    ],
+                },
+                {
+                    id: "gpt",
+                    label: "GPT Access",
+                    description: "Configure AI model access",
+                    icon: BrainCircuit,
+                    color: "#10A37F",
+                    fields: [
+                        { id: "gptModelId", label: "Model ID", type: "text" },
+                        { id: "gptApiKey", label: "API Key", type: "password" },
+                        { id: "gptSystemPrompt", label: "System Prompt", type: "textarea" },
+                    ],
+                },
+                {
+                    id: "donation",
+                    label: "Donation Support",
+                    description: "Configure donation options",
+                    icon: Heart,
+                    color: "#EC4899",
+                    fields: [
+                        { id: "suggestedAmount", label: "Suggested Amount", type: "number" },
+                        { id: "allowRecurring", label: "Allow Recurring", type: "switch" },
+                    ],
+                },
+            ],
+        },
+        {
+            title: "Physical Product Delivery",
+            hidden: true,
+            items: [
+                {
+                    id: "standardDelivery",
+                    label: "Standard Delivery",
+                    description: "Delivered within 3-5 business days",
+                    icon: Truck,
+                    color: "#4ade80",
+                    fields: [
+                        { id: "price", label: "Price", type: "number" },
+                        { id: "estimatedDays", label: "Estimated Days", type: "number" },
+                    ],
+                },
+                {
+                    id: "expressDelivery",
+                    label: "Express Delivery",
+                    description: "Delivered within 1-2 business days",
+                    icon: Package,
+                    color: "#f472b6",
+                    fields: [
+                        { id: "price", label: "Price", type: "number" },
+                        { id: "estimatedDays", label: "Estimated Days", type: "number" },
+                    ],
+                },
+            ],
+        },
+    ]
+    visibleDeliverablesGroups = this.fulfillmentGroups.filter(v => !v.hidden).map(v => {
+        v.items = v.items.filter(x => !x.hidden);
+        return v;
+    }).filter(v => v.items.length);
+
+    deliverablesData: any = {
+        isActiveData: {}
+    };
+
+    handleChange = (field: string, value: any) => {
+        this.deliverablesData[field] = value;
+    }
+
     isHostTenant = !abp.session.tenantId;
     product: CreateProductInput | UpdateProductInput;
-    currency = SettingsHelper.getCurrency();
-    amountFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,##0.##';
-    amountNullableFormat: string = getCurrencySymbol(this.currency, 'narrow') + ' #,###.##';
-    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.Subscription, this.currency, false).pipe(
-        map((products: ProductDto[]) => {
-            return this.data.product && this.data.product.id ?
-                products.filter((product: ProductDto) => product.id != this.data.product.id) : products
-        })
-    );
+
+    amountFormat: string = '';
+    amountNullableFormat: string = '';
+    products$: Observable<ProductDto[]> = null;
+    suspendCurrencyChanged = false;
     readonly addNewItemId = -1;
     isPublicProductsEnabled = this.feature.isEnabled(AppFeatures.CRMPublicProducts);
+    isProductAddOnsEnabled = this.feature.isEnabled(AppFeatures.CRMProductAddOns);
     isSubscriptionManagementEnabled = this.feature.isEnabled(AppFeatures.CRMSubscriptionManagementSystem);
+    showDowngrade = this.isHostTenant;
+    hasViewCredits = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCredits);
+    hasManageCredits = this.feature.isEnabled(AppFeatures.CRMContactCredits) && this.permission.isGranted(AppPermissions.CRMContactCreditsManage);
+    enableCreditTopUpBySubscription = this.setting.getBoolean('CRM.ContactCredits.EnableTopUpBySubscription');
     productTypes: string[] = Object.keys(ProductType).filter(item => item == 'Subscription' ? this.isSubscriptionManagementEnabled : true);
     defaultProductType = this.isSubscriptionManagementEnabled ? ProductType.Subscription : ProductType.General;
     productType = ProductType;
+    priceOptionType = PriceOptionType;
     productGroups: ProductGroupInfo[];
     services: MemberServiceDto[];
+
+    priceOptionTabs: any[] = [];
+    selectedTabIndex = 0;
+
     productUnits = Object.keys(ProductMeasurementUnit).map(
         key => this.ls.l('ProductMeasurementUnit_' + key)
     );
@@ -192,9 +721,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         { key: false, displayValue: this.ls.l('Forever') },
         { key: true, displayValue: this.ls.l('Limited') }
     ];
+    addOnSelectionTypes = [
+        { key: false, displayValue: this.ls.l('Single Option') },
+        { key: true, displayValue: this.ls.l('Multiple Options') }
+    ];
     gracePeriodDefaultValue: number;
     customGroup: string;
-    isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
+
     title: string;
     image: string = null;
     imageChanged: boolean = false;
@@ -211,6 +744,21 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     eventDate: Date;
     eventTime: Date;
 
+    storedCurrentQuantity: number = undefined;
+    topupQuantity: number;
+
+    productTaxCodeDataSource: DataSource = new DataSource({
+        pageSize: 10,
+        byKey: (key) => {
+            return this.productProxy.getStripeProductTaxCode(key).toPromise();
+        },
+        load: (loadOptions) => {
+            return loadOptions.hasOwnProperty('searchValue') ?
+                this.productProxy.getStripeProductTaxCodes(loadOptions.searchValue || '', loadOptions.take, loadOptions.skip).toPromise() :
+                Promise.resolve([]);
+        }
+    });
+
     constructor(
         private elementRef: ElementRef,
         private store$: Store<RootStore.State>,
@@ -218,6 +766,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         private productProxy: ProductServiceProxy,
         productGroupProxy: ProductGroupServiceProxy,
         private notify: NotifyService,
+        private message: MessageService,
         private clipboard: Clipboard,
         private changeDetection: ChangeDetectorRef,
         memberServiceProxy: MemberServiceServiceProxy,
@@ -226,10 +775,13 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         public dialogRef: MatDialogRef<CreateProductDialogComponent>,
         private productResourceProxy: ProductResourceServiceProxy,
         private documentProxy: DocumentTemplatesServiceProxy,
+        private tenantPaymentSettings: TenantPaymentSettingsServiceProxy,
+        private hostSettingsProxy: HostSettingsServiceProxy,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         private setting: SettingService,
         private feature: FeatureCheckerService,
+        private permission: PermissionCheckerService,
         private cacheHelper: CacheHelper,
         private cacheService: CacheService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -239,25 +791,30 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         if (data.product && data.product.id) {
             this.image = data.product.imageUrl;
             this.product = new UpdateProductInput(data.product);
-            let options = data.product.productSubscriptionOptions;
             this.defaultProductUri = this.product.publicName;
-            if (options && options[0]) {
-                this.isFreePriceType = !options[0].fee;
-                this.onFrequencyChanged({ value: options[0].frequency }, options[0]);
-            } else
-                this.isFreePriceType = !data.product.price;
-            if (!this.product.productUpgradeAssignments || !this.product.productUpgradeAssignments.length)
-                this.addUpgradeToProduct();
+            this.initPriceOptions(this.product.priceOptions);
+            this.isOneTime = this.product.priceOptions.some(v => v.frequency == RecurringPaymentFrequency.OneTime);
+            this.initCollections();
         } else {
             this.product = new CreateProductInput(data.product);
+            this.product.priceOptions = this.product.priceOptions || [];
             if (!this.product.type) {
                 this.product.type = this.defaultProductType;
                 if (this.isPublicProductsEnabled)
                     this.product.publicName = this.defaultProductUri;
                 this.addUpgradeToProduct();
+                this.addRecommendedProduct();
             }
+            if (!this.product.currencyId)
+                this.product.currencyId = SettingsHelper.getCurrency();
+
             this.initEventProps();
+            this.initDonationProps();
         }
+
+        this.initDeliverables(data.product?.productDeliverablesData);
+        this.initProductInventory();
+        this.initCurrencyFields();
 
         if (this.product.publishDate)
             this.publishDate = DateHelper.addTimezoneOffset(new Date(this.product.publishDate), true);
@@ -265,7 +822,6 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.initProductResources();
         this.initProductEvent();
 
-        this.product.currencyId = this.currency;
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
             this.detectChanges();
@@ -277,19 +833,79 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             this.detectChanges();
         });
 
+        if (!this.isHostTenant && this.isSubscriptionManagementEnabled) {
+            this.tenantPaymentSettings.getSubscriptionSettings().subscribe(result => {
+                this.showDowngrade = result.enableClientSubscriptionAutomaticCancel;
+                this.detectChanges();
+            });
+        }
+
+        if (this.isProductDiscordFeatureEnabled) {
+            this.hostSettingsProxy.getDiscordCientId().subscribe(result => {
+                this.hostDiscordClientId = result;
+                this.detectChanges();
+            })
+        }
+
         this.gracePeriodDefaultValue = this.setting.getInt('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount');
         this.initEventDataSources();
     }
 
     ngOnInit() {
-        if (!this.data.product || !this.product.productSubscriptionOptions)
-            this.addNewPaymentPeriod();
-
         let contextMenu = this.buttons[0].contextMenu;
         if (this.cacheService.exists(contextMenu.cacheKey))
             this.selectedOption = contextMenu.items[this.cacheService.get(contextMenu.cacheKey)];
         else
             this.selectedOption = contextMenu.items[contextMenu.defaultIndex];
+
+        this.generateQr();
+    }
+
+    initCurrencyFields() {
+        this.amountFormat = getCurrencySymbol(this.product.currencyId, 'narrow') + ' #,##0.##';
+        this.amountNullableFormat = getCurrencySymbol(this.product.currencyId, 'narrow') + ' #,###.##';
+        this.products$ = this.productProxy.getProducts(undefined, this.product.currencyId, false, undefined, false).pipe(
+            publishReplay(),
+            refCount(),
+            map((products: ProductDto[]) => {
+                return this.data.product && this.data.product.id ?
+                    products.filter((product: ProductDto) => product.id != this.data.product.id) : products
+            })
+        );
+    }
+
+    initCollections() {
+        this.initCollection(this.product.productUpgradeAssignments, () => this.addUpgradeToProduct());
+        this.initCollection(this.product.recommendedProducts, () => this.addRecommendedProduct());
+    }
+
+    initCollection(collection: any[], initMethod: () => void) {
+        if (!collection || !collection.length)
+            initMethod();
+    }
+
+    initPriceOptions(priceOptions: PriceOptionInfo[]) {
+        this.priceOptionTabs = [];
+
+        priceOptions.sort((a, b) => Number(a.isArchived) - Number(b.isArchived)).forEach((option, index) => {
+            this.priceOptionTabs.push({
+                id: option.id
+            });
+            this.updatePriceOptionTabName(option, index);
+            if (option.type == PriceOptionType.Subscription) {
+                option['gracePeriodEnabled'] = !!option.gracePeriodDayCount;
+                option['trialEnabled'] = !!option.trialDayCount;
+                option['billingCyclesEnabled'] = !!option.cycles;
+            }
+            if (!option.fee && !option.customerChoosesPrice) {
+                option['isFreePriceType'] = true;
+            }
+        });
+
+        setTimeout(() => {
+            this.selectedTabIndex = 0;
+            this.detectChanges();
+        });
     }
 
     initProductResources() {
@@ -332,15 +948,50 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
     }
 
+    initDeliverables(data: ProductDeliverablesData) {
+        let discordData = data?.discord.length ? data.discord : [];
+        this.deliverablesData.discord = discordData;
+
+        this.deliverablesData.isActiveData.subscription = !!this.product.productServices?.length;
+        this.deliverablesData.isActiveData.digital = !!this.product.productResources?.length;
+        this.deliverablesData.isActiveData.discord = discordData.some(v => v.isActive);
+    }
+
     initEventProps() {
-        if (this.product.productEvent)
+        if (!this.product.productEvent) {
+            this.product.productEvent = new ProductEventDto();
+            this.product.productEvent.location = ProductEventLocation.Online;
+            this.product.productEvent.timezone = this.setting.get('Abp.Timing.TimeZone');
+            this.product.productEvent.languageId = 'en';
+            this.product.productEvent.address = new AddressInfoDto();
+        }
+
+        this.deliverablesData.event = this.product.productEvent;
+        this.deliverablesData.event_address = this.product.productEvent.address;
+        this.deliverablesData.event_locationType = this.product.productEvent.location;
+        this.deliverablesData.event_eventType = 'single';
+        this.deliverablesData.event_timezone = this.product.productEvent.timezone;
+        this.deliverablesData.event_language = this.product.productEvent.languageId;
+    }
+
+    initDonationProps() {
+        if (this.product.productDonation)
             return;
 
-        this.product.productEvent = new ProductEventDto();
-        this.product.productEvent.location = ProductEventLocation.Online;
-        this.product.productEvent.timezone = this.setting.get('Abp.Timing.TimeZone');
-        this.product.productEvent.languageId = 'en';
-        this.product.productEvent.address = new AddressInfoDto();
+        this.product.productDonation = new ProductDonationDto();
+        this.product.productDonation.productDonationSuggestedAmounts = [];
+    }
+
+    clearNotRelatedDontaionProps(priceOption: PriceOptionInfo) {
+        priceOption['trialEnabled'] = false;
+        priceOption.trialDayCount = null;
+        priceOption['gracePeriodEnabled'] = false;
+        priceOption.gracePeriodDayCount = undefined;
+        priceOption.credits = null;
+        priceOption.signupFee = null;
+        priceOption.commissionableFeeAmount = null;
+        priceOption.commissionableSignupFeeAmount = null;
+        priceOption.signUpCredits = null;
     }
 
     initEventDataSources() {
@@ -356,6 +1007,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             first()
         ).subscribe(languages => {
             this.languages = languages;
+            this.fulfillmentGroups[2].items[0].fields[4].fields[1].options = languages
             this.changeDetection.markForCheck();
         });
     }
@@ -364,6 +1016,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.timingService.getTimezones(AppTimezoneScope.Application).subscribe(res => {
             res.items.splice(0, 1);
             this.timezones = res.items;
+            this.fulfillmentGroups[2].items[0].fields[4].fields[0].options = res.items
             this.changeDetection.markForCheck();
         });
     }
@@ -378,34 +1031,33 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
     }
 
+    initProductInventory() {
+        if (!this.product.productInventory) {
+            this.product.productInventory = new ProductInventoryInfo(
+                {
+                    isActive: false,
+                    canSellOutOfStock: false,
+                    initialQuantity: null
+                });
+        }
+
+        this.storedCurrentQuantity = this.product.productInventory['currentQuantity'];
+    }
+
     ngAfterViewInit() {
         setTimeout(() => this.descriptionHtmlComponent.instance.repaint());
     }
 
     saveProduct() {
-        if (this.product.type != ProductType.Digital) {
-            this.productFiles = [];
-            this.productLinks = [];
-            this.productTemplates = [];
-        }
-
+        if (!this.product.priceOptions || !this.product.priceOptions.length)
+            return this.notify.error(this.ls.l('PriceOptionsAreRequired'));
         if (this.product.type == ProductType.Subscription) {
-            let options = this.product.productSubscriptionOptions;
-            if (!options || !options.length)
-                return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
-            this.product.unit = undefined;
-            this.product.price = undefined;
-
+            this.product.productAddOns = undefined;
         } else {
             this.product.productServices = undefined;
-            this.product.productSubscriptionOptions = undefined;
             this.product.productUpgradeAssignments = undefined;
             this.product.downgradeProductId = undefined;
-
-            if (this.isFreePriceType) {
-                this.product.price = 0;
-                this.detectChanges();
-            }
+            this.product.creditsTopUpProductId = undefined;
         }
 
         this.resourceLinkUrl = '';
@@ -414,27 +1066,35 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                 if (!this.product.groupId)
                     this.product.groupName = this.customGroup;
 
-                if (this.product.productSubscriptionOptions)
-                    this.product.productSubscriptionOptions.forEach(item => {
-                        if (item.trialDayCount == null || isNaN(item.trialDayCount))
-                            item.trialDayCount = 0;
-                    });
+                if (this.product.type != ProductType.Subscription) {
+                    if (this.product.productAddOns) {
+                        if (this.product.productAddOns.some(v => !v.productAddOnOptions || !v.productAddOnOptions.length))
+                            return this.notify.error(this.ls.l('Add-On must have at least one option'));
 
+                        if (this.product.priceOptions.some(v => v.customerChoosesPrice) && this.product.productAddOns.length)
+                            return this.notify.error(this.ls.l('Add-On are not supported for products with \'Customer chooses price\' prices'));
+                    }
+                }
+
+                this.product.productResources = this.productTemplates.concat(this.productFiles, this.productLinks).map((item: any) => {
+                    if (item.fileId)
+                        item.url = undefined;
+                    return new ProductResourceDto(item);
+                });
+
+                if (this.product.type == ProductType.Digital && (!this.product.productResources || !this.product.productResources.length))
+                    return this.notify.error(this.ls.l('DigitalProductError'));
+
+                this.product.productDeliverables = this.getDeliverables();
                 this.product.publishDate = this.publishDate ? DateHelper.removeTimezoneOffset(new Date(this.publishDate), true, '') : undefined;
 
                 let upgradeProducts = this.product.productUpgradeAssignments;
                 if (upgradeProducts && upgradeProducts.length == 1 && !upgradeProducts[0].upgradeProductId)
                     this.product.productUpgradeAssignments = undefined;
 
-                if (this.productTemplates.length || this.productFiles.length || this.productLinks.length)
-                    this.product.productResources = this.productTemplates.concat(this.productFiles, this.productLinks).map((item: any) => {
-                        if (item.fileId)
-                            item.url = undefined;
-                        return new ProductResourceDto(item);
-                    });
-
-                if (this.product.type == ProductType.Digital && (!this.product.productResources || !this.product.productResources.length))
-                    return this.notify.error(this.ls.l('DigitalProductError'));
+                let recommendedProducts = this.product.recommendedProducts;
+                if (recommendedProducts && recommendedProducts.length == 1 && !recommendedProducts[0].recommendedProductId)
+                    this.product.recommendedProducts = undefined;
 
                 if (this.product.type != ProductType.Event)
                     this.product.productEvent = undefined;
@@ -463,6 +1123,30 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     this.product.productEvent.durationMinutes = this.eventDuration ? this.eventDuration * this.eventDurationType : undefined;
                 }
 
+                if (this.product.type == ProductType.Donation) {
+                    this.product.priceOptions.forEach(v => this.clearNotRelatedDontaionProps(v));
+                    this.product.maxCommissionRate = null;
+                    this.product.maxCommissionRateTier2 = null;
+
+                    this.product.productInventory.isActive = false;
+                    this.product.productInventory.initialQuantity = null;
+                } else {
+                    this.product.productDonation = null;
+
+                    if (this.product.type != ProductType.General)
+                        this.product.productInventory.initialQuantity = round(this.product.productInventory.initialQuantity, 0);
+                }
+
+                this.product.priceOptions.forEach(v => {
+                    if (v.type == PriceOptionType.Subscription && (v.trialDayCount == null || isNaN(v.trialDayCount)))
+                        v.trialDayCount = 0;
+
+                    if (!v.customerChoosesPrice) {
+                        v.minCustomerPrice = null;
+                        v.maxCustomerPrice = null;
+                    }
+                });
+
                 if (this.product instanceof UpdateProductInput) {
                     this.productProxy.updateProduct(this.product).pipe(
                         switchMap(() => this.getUpdateProductImageObservable((<any>this.product).id))
@@ -470,6 +1154,11 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                         this.notify.info(this.ls.l('SavedSuccessfully'));
                         if (this.selectedOption.data.close)
                             this.dialogRef.close();
+                        else
+                            this.productProxy.getProductInfo((<any>this.product).id).subscribe((product: any) => {
+                                this.product = new UpdateProductInput({ id: (<any>this.product).id, ...product });
+                                this.afterSave(product);
+                            });
                     });
                 }
                 else {
@@ -478,26 +1167,60 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
                     ).subscribe(([res,]) => {
                         this.notify.info(this.ls.l('SavedSuccessfully'));
                         if (this.selectedOption.data.close)
-                            this.dialogRef.close(new ProductDto({
-                                id: res.productId,
-                                group: this.product.groupName,
-                                name: this.product.name,
-                                code: this.product.code,
-                                type: this.product.type,
-                                isPublished: this.product.isPublished,
-                                paymentPeriodTypes: this.product.productSubscriptionOptions &&
-                                    this.product.productSubscriptionOptions.map(item => item.frequency)
-                            }));
+                            this.dialogRef.close();
                         else
                             this.productProxy.getProductInfo(res.productId).subscribe((product: any) => {
                                 this.product = new UpdateProductInput({ id: res.productId, ...product });
-                                this.initProductResources();
-                                this.detectChanges();
+                                this.afterSave(product);
                             });
                     });
                 }
             }
         });
+    }
+
+    afterSave(product: GetProductInfoOutput) {
+        this.initPriceOptions(this.product.priceOptions);
+        this.initProductInventory();
+        this.initProductResources();
+        this.initCollections();
+        this.initDeliverables(product.productDeliverablesData);
+        this.detectChanges();
+    }
+
+    getDeliverables(): ProductDeliverableInfo[] {
+        let discordDeliverables: CommunicationDeliverableInfo[] = this.deliverablesData.discord.filter(v => !!v.serverId);
+        discordDeliverables.forEach(v => v.isActive = this.deliverablesData.isActiveData.discord);
+        return discordDeliverables;
+    }
+
+    onCurrencyChanged(event) {
+        if (this.suspendCurrencyChanged) {
+            this.suspendCurrencyChanged = false;
+            return;
+        }
+
+        if (this.product.downgradeProductId || this.product.creditsTopUpProductId ||
+            this.product.recommendedProducts.some(v => !!v.recommendedProductId) ||
+            this.product.productUpgradeAssignments.some(v => !!v.upgradeProductId)) {
+            this.message.confirm('Changing currency will clear recommended, upgrade, downgrade, topup products', '', (isConfirmed) => {
+                if (isConfirmed) {
+                    this.initCurrencyFields();
+                    this.product.downgradeProductId = null;
+                    this.product.creditsTopUpProductId = null;
+                    this.product.recommendedProducts = [new RecommendedProductInfo()];
+                    this.product.productUpgradeAssignments = [new ProductUpgradeAssignmentInfo()];
+                    this.detectChanges();
+                } else {
+                    this.suspendCurrencyChanged = true;
+                    this.product.currencyId = event.previousValue;
+                    this.detectChanges();
+                }
+            });
+        }
+        else {
+            this.initCurrencyFields();
+        }
     }
 
     getUpdateProductImageObservable(productId: number) {
@@ -527,14 +1250,48 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.detectChanges();
     }
 
-    addNewPaymentPeriod() {
-        if (!this.product.productSubscriptionOptions)
-            this.product.productSubscriptionOptions = [];
-        if (this.product.productSubscriptionOptions.some(item => !item.frequency))
-            return;
-        this.product.productSubscriptionOptions.push(
-            new ProductSubscriptionOptionInfo()
-        );
+    addNewAddOn() {
+        if (!this.product.productAddOns)
+            this.product.productAddOns = [];
+        var newAddOn = new ProductAddOnDto();
+        newAddOn.multiselect = false;
+        var newAddOnOption = new ProductAddOnOptionDto();
+        newAddOn.productAddOnOptions.push(newAddOnOption);
+        this.product.productAddOns.push(newAddOn);
+    }
+
+    addNewAddOnOption(addOn: ProductAddOnDto) {
+        var newAddOnOption = new ProductAddOnOptionDto();
+        addOn.productAddOnOptions.push(newAddOnOption);
+    }
+
+    removeAddOn(index: number) {
+        this.product.productAddOns.splice(index, 1);
+        this.detectChanges();
+    }
+
+    removeAddOnOption(addOn: ProductAddOnDto, index: number) {
+        addOn.productAddOnOptions.splice(index, 1);
+        this.detectChanges();
+    }
+
+    addNewPriceOption(type: PriceOptionType) {
+        let option = new PriceOptionInfo();
+        option.type = type;
+
+        if (type == PriceOptionType.Subscription) {
+            option['gracePeriodEnabled'] = false;
+            option['trialEnabled'] = false;
+            option['billingCyclesEnabled'] = false;
+        } else {
+            option.unit = ProductMeasurementUnit.Unit;
+        }
+
+        this.product.priceOptions.push(option);
+        this.priceOptionTabs.push({
+            text: type == PriceOptionType.OneTime ? ProductMeasurementUnit.Unit.toString() : 'New Option'
+        })
+        this.selectedTabIndex = this.priceOptionTabs.length - 1;
     }
 
     addUpgradeToProduct() {
@@ -547,12 +1304,42 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         );
     }
 
-    removePaymentPeriod(index) {
-        this.product.productSubscriptionOptions.splice(index, 1);
-        if (this.isOneTime && !this.product.productSubscriptionOptions.length) {
-            this.isOneTime = false;
+    addRecommendedProduct() {
+        if (!this.product.recommendedProducts)
+            this.product.recommendedProducts = [];
+        if (this.product.recommendedProducts.some(item => !item.recommendedProductId))
+            return;
+        this.product.recommendedProducts.push(
+            new RecommendedProductInfo()
+        );
+    }
+
+    toggelPriceOptionArchived(priceOption: PriceOptionInfo) {
+        let message = priceOption.isArchived ? '' : this.ls.l('ArchiveConfiramtion');
+        this.message.confirm(null, message, (res) => {
+            if (!res)
+                return;
+
+            priceOption.isArchived = !priceOption.isArchived;
             this.detectChanges();
-        }
+        });
+    }
+
+    removePriceOption(index) {
+        this.message.confirm(null, this.ls.l('DeleteConfiramtion'), (res) => {
+            if (!res)
+                return;
+
+            this.product.priceOptions.splice(index, 1);
+            this.priceOptionTabs.splice(index, 1);
+            if (this.selectedTabIndex > 0)
+                this.selectedTabIndex--;
+
+            if (this.isOneTime && !this.product.priceOptions.length) {
+                this.isOneTime = false;
+            }
+            this.detectChanges();
+        });
     }
 
     removeUpgradeToProduct(index, option) {
@@ -563,35 +1350,49 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.detectChanges();
     }
 
+    removeRecommendedProduct(index, option) {
+        if (index)
+            this.product.recommendedProducts.splice(index, 1);
+        else
+            option.recommendedProductId = undefined;
+        this.detectChanges();
+    }
+
     getServiceLevels(serviceId) {
         let service = (this.services || []).find(item => item.id == serviceId);
         return service ? service.memberServiceLevels : [];
     }
 
-    getFrequencies(selected, index) {
-        let options = this.product.productSubscriptionOptions,
-            frequencies = options ? this.frequencies.filter(item => {
-                return selected.frequency == item ||
-                    !options.some(option => option.frequency == item);
-            }) : this.frequencies;
+    getFrequencies(isFreePriceType: boolean) {
+        let frequencies = this.frequencies;
 
-        if (!index && this.isFreePriceType)
-            return frequencies.filter(item =>
+        if (this.product.priceOptions.length > 1)
+            frequencies = this.frequencies.filter(item => item != RecurringPaymentFrequency.OneTime);
+
+        if (isFreePriceType)
+            frequencies = frequencies.filter(item =>
                 [RecurringPaymentFrequency.LifeTime, RecurringPaymentFrequency.OneTime].includes(RecurringPaymentFrequency[item]));
-
-        if (options.length > 1)
-            return frequencies.filter(item => item != RecurringPaymentFrequency.OneTime);
 
         return frequencies;
     }
 
-    onFrequencyChanged(event, option: ProductSubscriptionOptionInfo, customPeriodValidator?) {
+    priceOptionNameChanged(priceOption, index, value) {
+        priceOption.name = value;
+        this.updatePriceOptionTabName(priceOption, index);
+    }
+
+    updatePriceOptionTabName(priceOption: PriceOptionInfo, index: number) {
+        this.priceOptionTabs[index].text = priceOption.name || priceOption.frequency || priceOption.unit || 'New Option';
+    }
+
+    onFrequencyChanged(event, option: PriceOptionInfo, customPeriodValidator?, index?) {
         this.isOneTime = event.value == RecurringPaymentFrequency.OneTime;
 
         if (this.isOneTime) {
             option.commissionableSignupFeeAmount = undefined;
             option.trialDayCount = undefined;
             option.signupFee = undefined;
+            option.signUpCredits = undefined;
             option.customPeriodType = CustomPeriodType.Days;
         } else if (customPeriodValidator) {
             if (event.value == RecurringPaymentFrequency.Custom) {
@@ -608,6 +1409,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             option.cycles = undefined;
         }
 
+        this.updatePriceOptionTabName(option, index);
         this.detectChanges();
     }
 
@@ -677,7 +1479,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             };
     }
 
-    validatePeriodDayCount(option: ProductSubscriptionOptionInfo) {
+    validatePeriodDayCount(option: PriceOptionInfo) {
         return (event) => {
             if (this.isOneTime || (option.frequency && option.frequency == RecurringPaymentFrequency.Custom))
                 return event.value && event.value > 0;
@@ -685,7 +1487,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         };
     }
 
-    validateCustomPeriodDayCount(option: ProductSubscriptionOptionInfo) {
+    validateCustomPeriodDayCount(option: PriceOptionInfo) {
         return (event) => {
             if (this.isOneTime || (option.frequency && option.frequency == RecurringPaymentFrequency.Custom)) {
                 let isPeriodValid = true;
@@ -712,8 +1514,39 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         };
     }
 
-    validateFee(option) {
+    validateGeneralPrice(priceOption: PriceOptionInfo) {
         return (event) => {
+            if (priceOption.customerChoosesPrice) {
+                if (event.value) {
+                    if (priceOption.minCustomerPrice > 0 && event.value < priceOption.minCustomerPrice)
+                        return false;
+                    if (priceOption.maxCustomerPrice > 0 && event.value > priceOption.maxCustomerPrice)
+                        return false;
+
+                    return event.value > 0;
+                }
+
+                return true;
+            }
+            return (priceOption['isFreePriceType'] && !event.value) || event.value > 0;
+        }
+    }
+
+    validateFee(option: PriceOptionInfo) {
+        return (event) => {
+            if (option.customerChoosesPrice) {
+                if (event.value) {
+                    if (option.minCustomerPrice > 0 && event.value < option.minCustomerPrice)
+                        return false;
+                    if (option.maxCustomerPrice > 0 && event.value > option.maxCustomerPrice)
+                        return false;
+
+                    return event.value > 0;
+                }
+
+                return true;
+            }
+
             return option.frequency == RecurringPaymentFrequency.OneTime
                 || option.frequency == RecurringPaymentFrequency.LifeTime
                 || event.value && event.value > 0;
@@ -755,13 +1588,19 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         });
     }
 
-    checkShowAmountChangeWarrning() {
-        let product = this.data.product,
-            message = '';
-        if (product && product.hasExternalReference)
+    checkShowAmountChangeWarrning(priceOption?: PriceOptionInfo) {
+        let product = this.data.product;
+        if (!product)
+            return;
+
+        if (priceOption && !priceOption.id)
+            return;
+
+        let message = '';
+        if (product.hasExternalReference)
             message = this.ls.l('ExternalRefferenceWarning') + '\n';
 
-        if (product && product.hasIncompletedInvoices)
+        if (product.hasIncompletedInvoices)
             message += '\n' + this.ls.l('IncompletedInvoicesWarning');
 
         if (message)
@@ -772,6 +1611,15 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         if (this.product && this.product.productUpgradeAssignments)
             return this.product.productUpgradeAssignments.map(
                 item => option.upgradeProductId == item.upgradeProductId ? undefined : item.upgradeProductId
+            ).filter(Boolean);
+        else
+            return [];
+    }
+
+    getRecommendedIds(option): number[] {
+        if (this.product && this.product.recommendedProducts)
+            return this.product.recommendedProducts.map(
+                item => option.recommendedProductId == item.recommendedProductId ? undefined : item.recommendedProductId
             ).filter(Boolean);
         else
             return [];
@@ -793,9 +1641,57 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         this.saveProduct();
     }
 
+    getQrCodeStyling(width?: number, height?: number, margin?: number) {
+        return new QRCodeStyling.default({
+            width: width,
+            height: height,
+            margin: margin,
+            data: this.baseUrl + '/p/' + this.tenantId + '/' + (this.product.publicName || ''),
+            //image: './assets/common/icons/publishedProfile/SperserLogoForQr.png',
+            dotsOptions: {
+                //gradient: {
+                //    colorStops: [{ offset: 0, color: '#7631ab' }, { offset: 1, color: 'black' }],
+                //    rotation: 90,
+                //    type: 'linear'
+                //},
+                type: 'square'
+            },
+            cornersDotOptions: {
+                type: 'square'
+            },
+            imageOptions: {
+                hideBackgroundDots: false,
+                crossOrigin: 'anonymous',
+                margin: 1
+            }
+        });
+    }
+
+    generateQr() {
+        while (this.canvas?.nativeElement.firstChild) {
+            this.canvas?.nativeElement.removeChild(this.canvas?.nativeElement.lastChild);
+        }
+
+        if (!QRCodeStyling || !this.product.publicName) {
+            return;
+        }
+
+        this.qrCode = this.getQrCodeStyling(75, 75, 0);
+        this.qrCode.append(this.canvas?.nativeElement);
+    }
+
+    downloadQr() {
+        if (this.qrCode) {
+            let qr = this.getQrCodeStyling(300, 300, 5);
+            qr.download({ name: 'qr-' + this.product.publicName, extension: 'png' });
+        }
+    }
+
     updateProductUrl(value) {
-        if (this.isPublicProductsEnabled)
+        if (this.isPublicProductsEnabled) {
             this.defaultProductUri = this.product.publicName = value;
+            this.generateQr();
+        }
     }
 
     disabledValidationCallback() {
@@ -803,8 +1699,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     onProductCodeChanged(event) {
-        if (this.isPublicProductsEnabled && !this.defaultProductUri && (!this.data.product || !this.data.product.id))
+        if (this.isPublicProductsEnabled && !this.defaultProductUri && (!this.data.product || !this.data.product.id)) {
             this.product.publicName = event.value.replace(/[^a-zA-Z0-9-._~]+/gim, '');
+            this.generateQr();
+        }
     }
 
     fileSelected($event) {
@@ -901,29 +1799,35 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     addExternalLogo() {
-        if (this.uploadFileUrl)
+        if (!this.isReadOnly && this.uploadFileUrl)
             this.openImageSelector();
     }
 
-    togglePriceType() {
-        if (this.isFreePriceType = !this.isFreePriceType) {
-            this.product.price = undefined;
-            let options = this.product.productSubscriptionOptions;
-            if (options && options[0]) {
-                options[0].fee = undefined;
-                options[0].commissionableFeeAmount = undefined;
-                options[0].trialDayCount = undefined;
-                options[0].signupFee = undefined;
-                options[0].commissionableSignupFeeAmount = undefined;
-            }
+    togglePriceType(priceOption) {
+        if (this.isReadOnly || priceOption.isArchived)
+            return;
+
+        if (priceOption.isFreePriceType = !priceOption.isFreePriceType) {
+            priceOption.fee = 0;
+            priceOption.customerChoosesPrice = false;
+            priceOption.minCustomerPrice = undefined;
+            priceOption.maxCustomerPrice = undefined;
+            priceOption.commissionableFeeAmount = undefined;
+            priceOption.trialDayCount = undefined;
+            priceOption.signupFee = undefined;
+            priceOption.signUpCredits = undefined;
+            priceOption.commissionableSignupFeeAmount = undefined;
         }
     }
 
-    getSliderValue() {
-        return Number(!this.isFreePriceType) * 50;
+    getSliderValue(priceOption) {
+        return Number(!priceOption.isFreePriceType) * 50;
     }
 
     showDocumentsDialog() {
+        if (this.isReadOnly)
+            return;
+
         if (this.productFiles.length + this.productTemplates.length >= this.maxFilesCount) {
             this.notify.warn(`Exceeded ${this.maxFilesCount} file limit`);
             return;
@@ -952,18 +1856,24 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     onProductTypeChanged(productType: ProductType) {
-        let options = this.product.productSubscriptionOptions;
         switch (productType) {
             case ProductType.Subscription:
-                if (!options || !options.length)
-                    this.addNewPaymentPeriod();
-                break;
-            case ProductType.Digital:
-                this.product.unit = ProductMeasurementUnit.Unit;
+                if (this.product.priceOptions.some(v => v.type == PriceOptionType.OneTime)) {
+                    this.notify.info('One Time prices are not supported on Subscription product type');
+                    return;
+                }
                 break;
             case ProductType.Event:
-                this.product.unit = ProductMeasurementUnit.Unit;
                 this.initEventProps();
+                break;
+            case ProductType.Donation:
+                if (this.product.priceOptions.some(v => v['isFreePriceType'])) {
+                    this.notify.info('Free prices are not supported on Donation product type');
+                    return;
+                }
+                this.product.priceOptions.forEach(v => this.clearNotRelatedDontaionProps(v));
+
+                this.initDonationProps();
                 break;
         }
 
@@ -1045,6 +1955,10 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
         }
     }
 
+    formatUrl(url: string): string {
+        return url.startsWith('http') ? url : `https://${url}`;
+    }
+
     removeLink(index) {
         if (index != undefined) {
             this.productLinks.splice(index, 1);
@@ -1074,7 +1988,7 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
             showNeighborhood: false,
             editDialogTitle: 'Update address',
             formattedAddress: '',
-            isEditAllowed: true,
+            isEditAllowed: !this.isReadOnly,
             disableDragging: true,
             hideComment: true,
             hideCheckboxes: true
@@ -1121,6 +2035,32 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
 
         let addr = this.product.productEvent.address;
         this.eventAddress = [addr.streetAddress, addr.city, addr.stateName, addr.countryName, addr.zip].filter(x => !!x).join(', ');
+    }
+
+    addNewSuggestedAmountFields() {
+        this.product.productDonation.productDonationSuggestedAmounts.push(
+            new ProductDonationSuggestedAmountDto()
+        );
+    }
+
+    removeSuggestedAmountFields(index) {
+        this.product.productDonation.productDonationSuggestedAmounts.splice(index, 1);
+        this.detectChanges();
+    }
+
+    addInventoryTopup() {
+        if (this.topupQuantity && this.product instanceof UpdateProductInput) {
+            let productId = (<any>this.product).id;
+            this.productProxy.addInventoryTopup(new AddInventoryTopupInput({ productId: productId, quantity: this.topupQuantity }))
+                .subscribe(() => {
+                    this.notify.info(this.ls.l('SavedSuccessfully'));
+                    this.topupQuantity = undefined;
+                    this.productProxy.getProductInfo(productId).subscribe((product: any) => {
+                        this.storedCurrentQuantity = product.productInventory.currentQuantity;
+                        this.detectChanges();
+                    });
+                });
+        }
     }
 
     copyTextToClipboard(text) {

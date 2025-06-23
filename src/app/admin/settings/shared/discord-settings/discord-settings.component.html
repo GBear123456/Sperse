@@ -23,6 +23,12 @@
             <input id="DiscordAppSecret" type="text" name="DiscordAppSecret" class="form-control" [(ngModel)]="discordSettings.settings.appSecret">
         </div>
     </div>
+    <div *ngIf="isHost">
+        <div class="form-group">
+            <label for="BotToken">{{l("Bot Token")}}</label>
+            <input id="BotToken" type="text" name="BotToken" class="form-control" [(ngModel)]="discordSettings.settings.botToken">
+        </div>
+    </div>
     <div>
         <span>URLs for redirect: </span>
         <ul>

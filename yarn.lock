@@ -2905,13 +2905,13 @@ circular-dependency-plugin@5.2.2:
   resolved "https://registry.yarnpkg.com/circular-dependency-plugin/-/circular-dependency-plugin-5.2.2.tgz#39e836079db1d3cf2f988dc48c5188a44058b600"
   integrity sha512-g38K9Cm5WRwlaH6g03B9OEz/0qRizI+2I7n+Gz+L5DxXJAPAiWQvwlYNm1V1jkdpUv95bOe/ASm2vfi/G560jQ==
 
-ckeditor4-angular@^2.1.0:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/ckeditor4-angular/-/ckeditor4-angular-2.4.1.tgz#3a81adcf0d6b6a19eae42802908cad9d1f9da198"
-  integrity sha512-jABhAs3okG4hZoJrvoikae+4ZVRFSpERGiUNjV5o1OGuEip62Tvh+kqW77/WtVuQC6sKkuSck/jKYrrkRGXYMw==
+ckeditor4-angular@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/ckeditor4-angular/-/ckeditor4-angular-4.0.1.tgz#fb8e3cd815be2fa6ec3aaa20c9970ee5ce5c5247"
+  integrity sha512-oiPQ9pCBhXhLpja8TGRiVn9puQJ21em6A3+H9Z1uZ8gJRHCptPfdumCvjFqD76Pog8KymbvHl24GBee67nhqMw==
   dependencies:
     ckeditor4-integrations-common "^1.0.0"
-    tslib "^2.2.0"
+    tslib "^2.3.0"
 
 ckeditor4-integrations-common@^1.0.0:
   version "1.0.0"
@@ -6632,6 +6632,13 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
+lucide-angular@^0.479.0:
+  version "0.479.0"
+  resolved "https://registry.yarnpkg.com/lucide-angular/-/lucide-angular-0.479.0.tgz#409c1f4f90d5c97010c247fbf6cfe3472b5f52a0"
+  integrity sha512-deXRpmhOMQ1O9LOeuNSskwui65/KRTe027fAzxkENtyqe8FEAkcR1/N0qPz7KFyrwwkIeNPbUHr2jnQSir9IYQ==
+  dependencies:
+    tslib "^2.3.0"
+
 luxon@^1.21.3, luxon@^1.27.0:
   version "1.28.0"
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.28.0.tgz#e7f96daad3938c06a62de0fb027115d251251fbf"
@@ -8793,6 +8800,18 @@ qjobs@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/qjobs/-/qjobs-1.2.0.tgz#c45e9c61800bd087ef88d7e256423bdd49e5d071"
   integrity sha512-8YOJEHtxpySA3fFDyCRxA+UUV+fA+rTWnuWvylOK/NCjhY+b4ocCtmu8TtsWb+mYeU+GCHf/S66KZF/AsteKHg==
+
+qr-code-styling-new@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/qr-code-styling-new/-/qr-code-styling-new-1.6.1.tgz#f31c492723f051e9ac9351f4eb27acd92817925d"
+  integrity sha512-SBhtLz2XzqMRrcWXc8RFcay0jI/bgUNyXe2upFvQWfDLcg/PKwtrBgCoov637uOnjSYkjglW4EcBdwLW3WsF3A==
+  dependencies:
+    qrcode-generator "^1.4.3"
+
+qrcode-generator@^1.4.3, qrcode-generator@^1.4.4:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/qrcode-generator/-/qrcode-generator-1.4.4.tgz#63f771224854759329a99048806a53ed278740e7"
+  integrity sha512-HM7yY8O2ilqhmULxGMpcHSF1EhJJ9yBj8gvDEuZ6M+KGJ0YY2hKpnXvRD+hZPLrDVck3ExIGhmPtSdcjC+guuw==
 
 qs@6.10.3:
   version "6.10.3"

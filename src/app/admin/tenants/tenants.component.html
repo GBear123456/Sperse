@@ -57,7 +57,7 @@
                             <dxi-column [caption]="l('TenancyCodeName')" dataField="tenancyName" cssClass="clipboard-holder" width="25%"></dxi-column>
                             <dxi-column [caption]="l('Name')" dataField="name" cssClass="clipboard-holder"></dxi-column>
                             <dxi-column [caption]="l('Active')" cellTemplate="isActiveTemplate"></dxi-column>
-                            <dxi-column [caption]="l('CreationTime')" dataField="creationTime" dataType="date" sortOrder="desc" sortIndex="0" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column [caption]="l('RegistrationDate')" dataField="registrationDate" dataType="date" sortOrder="desc" sortIndex="0" cssClass="clipboard-holder"></dxi-column>
                             <ng-container *dxTemplate="let cell of 'isActiveTemplate'">
                                 <span class="status" [ngClass]="cell.data.isActive ? 'success' : 'danger'">{{cell.data.isActive ? 'Yes' : 'No'}}</span>
                             </ng-container>

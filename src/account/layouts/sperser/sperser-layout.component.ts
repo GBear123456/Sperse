@@ -13,7 +13,7 @@ import { ConditionsModalService } from '@shared/common/conditions-modal/conditio
     encapsulation: ViewEncapsulation.None
 })
 export class SperserLayoutComponent implements OnInit {
-    tenantName = AppConsts.defaultTenantName;
+    tenantName = this.appSession.tenantName || AppConsts.defaultTenantName;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     originUrl = location.origin;
     conditions = ConditionsType;
@@ -24,9 +24,6 @@ export class SperserLayoutComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        let tenant = this.appSession.tenant;
-        if (tenant)
-            this.tenantName = tenant.name || tenant.tenancyName;
     }
 
     openConditionsDialog(type: ConditionsType) {

@@ -21,7 +21,7 @@ import {
     LeadServiceProxy, TenantProductInfo, PaymentPeriodType, RecurringPaymentFrequency,
     PasswordComplexitySetting, SubmitTenancyRequestOutput, TenantSubscriptionServiceProxy, CompleteTenantRegistrationOutput,
     ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput, ProfileServiceProxy,
-    ExternalUserDataServiceProxy, GetExternalUserDataOutput, GetExternalUserDataInput, ProductSubscriptionOptionInfo, PublicProductSubscriptionOptionInfo
+    ExternalUserDataServiceProxy, GetExternalUserDataOutput, GetExternalUserDataInput, PriceOptionInfo, PublicPriceOptionInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -66,7 +66,7 @@ export class HostSignupFormComponent {
     tenancyRequestModel = new SubmitTenancyRequestInput();
     tenantRegistrationModel = new CompleteTenantRegistrationInput();
     signUpProduct: ProductInfo;
-    selectedSubscriptionOption: PublicProductSubscriptionOptionInfo;
+    selectedSubscriptionOption: PublicPriceOptionInfo;
     descriptionHtml: SafeHtml;
     currencySymbol = '$';
     buttonText = '';
@@ -112,7 +112,7 @@ export class HostSignupFormComponent {
                 this.loginReferer = '';
         });
 
-        this.productProxy.getSubscriptionProductsByGroupName('Main').subscribe(products => {
+        this.productProxy.getSubscriptionProductsByGroupName('Main', true, false).subscribe(products => {
             this.signUpProduct = products.sort((prev, next) => {
                 let prevOption = this.getProductMonthlyOrFirstOption(prev),
                     nextOption = this.getProductMonthlyOrFirstOption(next);
@@ -180,10 +180,12 @@ export class HostSignupFormComponent {
             if (providerName == ExternalLoginProvider.DISCORD.toLowerCase())
                 options['IncludeUserGuilds'] = true;
             return this.externalUserDataService.getUserData(new GetExternalUserDataInput({
+                tenantId: undefined,
                 provider: providerName,
                 exchangeCode: exchangeCode,
                 loginReturnUrl: this.loginService.getRedirectUrl(providerName),
-                options: options
+                options: options,
+                vault: false
             }));
         }
     }
@@ -205,13 +207,13 @@ export class HostSignupFormComponent {
         this.showPasswordComplexity = true;
     }
 
-    getProductMonthlyOrFirstOption(product: ProductInfo): ProductSubscriptionOptionInfo {
-        let monthly = product.productSubscriptionOptions.filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
-        return monthly || product.productSubscriptionOptions[0];
+    getProductMonthlyOrFirstOption(product: ProductInfo): PriceOptionInfo {
+        let monthly = product.priceOptions.filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
+        return monthly || product.priceOptions[0];
     }
 
-    onProductOptionSelect(event: { period, option: PublicProductSubscriptionOptionInfo }) {
-        this.selectedSubscriptionOption = event.option;
+    onProductOptionSelect(event: PublicPriceOptionInfo) {
+        this.selectedSubscriptionOption = event;
 
         let buttonText = 'Start ';
         if (this.selectedSubscriptionOption.trialDayCount) {
@@ -262,6 +264,7 @@ export class HostSignupFormComponent {
         this.tenancyRequestModel.firstName = this.tenancyRequestModel.firstName.trim();
         this.tenancyRequestModel.products = [new TenantProductInfo({
             productId: this.signUpProduct.id,
+            priceOptionId: this.selectedSubscriptionOption.id,
             paymentPeriodType: PaymentPeriodType[this.selectedSubscriptionOption.frequency],
             quantity: 1,
         })];

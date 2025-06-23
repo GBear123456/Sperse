@@ -355,6 +355,8 @@
 
     ::ng-deep inplace-edit {
         display: inline-block;
+        max-width: 255px;
+
         .inplace-edit-view-mode {
             display: flex;
             min-height: 30px;
@@ -384,6 +386,7 @@
                 letter-spacing: -0.02em;
                 color: rgba(128, 131, 150, 1);
                 padding-left: 0;
+                padding-right: 25px;
             }
             .dx-placeholder {
                 font-size: 15px;
@@ -417,6 +420,11 @@
                 }
             }
             span {
+                display: inline-block;
+                max-width: 80%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 font-size: 15px;
                 font-weight: 500;
                 letter-spacing: -0.02em;

@@ -7,6 +7,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostSignupFormComponent } from './layouts/host/host-signup-form.component';
 import { BankCodeSignupFormComponent } from './layouts/bank-code/bank-code-signup-form.component';
 import { MemberSignupFormComponent } from './layouts/member/member-signup-form.component';
+import { TitleService } from '@shared/common/title/title.service';
 
 type SignupFormComponent = HostSignupFormComponent | BankCodeSignupFormComponent | MemberSignupFormComponent;
 
@@ -31,10 +32,12 @@ export class SignupComponent {
 
     constructor(
         private appSession: AppSessionService,
-        private componentFactoryResolver: ComponentFactoryResolver
+        private componentFactoryResolver: ComponentFactoryResolver,
+        private titleService: TitleService
     ) {}
 
     ngOnInit(): void {
+        this.titleService.setTitle('SignUp');
         this.loadLayoutComponent(
             this.getLayoutComponent(this.appSession.tenant)
         );

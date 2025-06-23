@@ -1,7 +1,10 @@
 <div *ngIf="showNotFound" class="not-found-block">
     Product link is not valid
 </div>
-<div *ngIf="productInfo" class="box">
+<div id="stripe-checkout" class="stripe-checkout" [class.visible]="showCheckout">
+    <i *ngIf="showCheckout" class="back-icon" (click)="returnFromStripeCheckout()">←</i>
+</div>
+<div *ngIf="productInfo && !showCheckout" class="box">
     <div class="title">
         <h1 class="title title--h1"> {{productInfo.name}}</h1>
     </div>
@@ -15,42 +18,71 @@
                     </span>
                 </span>
             </div>
-            <ng-container *ngIf="productInfo.type == productType.Subscription else generalProduct">
-                <div class="subscription-price">
-                    <div *ngIf="availablePeriods.length > 1" class="state-slider point{{availablePeriods.length}}">
-                        <div class="captions">
-                            <ng-container *ngFor="let period of availablePeriods; index as i">
-                                <div [ngClass]="{ 'active': getActiveStatus(period) }" (click)="toggle(period)">{{ ls.l(billingPeriod[period]) }}</div>
-                            </ng-container>
+            <div *ngIf="productInfo.type == productType.Donation && productInfo.productDonation.goalAmount" class="donation-status">
+                <div class="donation-data">
+                    <div>
+                        <div class="data">{{currencySymbol}}{{productInfo.productDonation.raisedAmount | currency: productInfo.data.currency : '' : '1.0-2'}}</div>
+                        <div class="gray">
+                            {{ls.l('Raised of')}} {{currencySymbol}}{{productInfo.productDonation.goalAmount | currency: productInfo.data.currency : '' : '1.0-2'}}
                         </div>
-                        <mat-slider [value]="getSliderValue()"
-                                    [disabled]="true">
-                        </mat-slider>
                     </div>
+                    <div>
+                        <div class="data">{{productInfo.productDonation.donationsCount}}</div>
+                        <div class="gray">{{ls.l('Donations')}}</div>
+                    </div>
+                </div>
+                <div class="donation-progress">
+                    <div class="donation-progress-bar" [style.width.%]="productInfo.productDonation.raisedAmount / productInfo.productDonation.goalAmount * 100">
+                    </div>
+                </div>
+            </div>
+            <product-option-selector [productPriceOptions]="productInfo.priceOptions"
+                                     (onSelect)="onPriceOptionChanged($event)">
+            </product-option-selector>
+            <ng-container *ngIf="selectedPriceOption.type == priceOptionType.Subscription else generalProduct">
+                <div class="subscription-price">
                     <div class="price-wrapper">
-                        <div class="trial-day-count" *ngIf="selectedSubscriptionOption.trialDayCount || selectedSubscriptionOption.signupFee">
-                            <ng-container *ngIf="selectedSubscriptionOption.trialDayCount; else signupBlock">
-                                <span *ngIf="selectedSubscriptionOption.signupFee; else free">
+                        <div class="trial-day-count" *ngIf="selectedPriceOption.trialDayCount || selectedPriceOption.signupFee">
+                            <ng-container *ngIf="selectedPriceOption.trialDayCount; else signupBlock">
+                                <span *ngIf="selectedPriceOption.signupFee; else free">
                                     {{ currencySymbol }}{{getSignUpFee(true) | customNumber: '1.0-2' | currency: productInfo.data.currency : '' : '1.0-2'}}
                                 </span>
                                 <ng-template #free>{{ls.l('Free')}}</ng-template>
-                                for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
+                                for {{selectedPriceOption.trialDayCount}}* day(s) then
                             </ng-container>
                             <ng-template #signupBlock>
                                 <span>{{ currencySymbol }}{{getSignUpFee(true) | customNumber: '1.0-2' | currency: productInfo.data.currency : '' : '1.0-2'}}</span> signup fee
                             </ng-template>
                         </div>
                         <div class="amountPerMonth">
-                            <ng-container *ngIf="!isFreeProductSelected else freeOption">
-                                <span class="currency-symbol">{{ currencySymbol }}</span>
-                                <span class="number">
-                                    {{ getSubscriptionPrice(true) | customNumber: '1.0-0' | currency: productInfo.data.currency : '' : '1.0-0' }}
-                                </span>
-                                <div class="number-info">
-                                    <span class="decimal">{{ getSubscriptionPrice(true) | customNumber: '0.2-2' }}</span>
-                                    <span>/{{ getPriceDescription() }}</span>
+                            <ng-container *ngIf="customerPriceEditMode else plainOptionFee">
+                                <div>
+                                    <input class="customer-price-input" #customerPriceInput="ngModel" #customerPriceElement type="number" [(ngModel)]="selectedPriceOption.fee"
+                                           (focusout)="customerPriceFocusOut($event, customerPriceInput)" [ngModelOptions]="{updateOn: 'blur'}"
+                                           [pattern]="customerPriceRegexp" [min]="selectedPriceOption.minCustomerPrice" [max]="selectedPriceOption.maxCustomerPrice" required>
+                                    <validation-messages [formCtrl]="customerPriceInput"
+                                                         [errorDefs]="customerPriceInputErrorDefs">
+                                    </validation-messages>
                                 </div>
                             </ng-container>
+                            <ng-template #plainOptionFee>
+                                <ng-container *ngIf="!isFreeProductSelected else freeOption">
+                                    <span class="currency-symbol">{{ currencySymbol }}</span>
+                                    <span class="number">
+                                        <ng-container *ngIf="selectedPriceOption.fee else noOptionFee">
+                                            {{ getSubscriptionPrice(true) | customNumber: '1.0-0' | currency: productInfo.data.currency : '' : '1.0-0' }}
+                                        </ng-container>
+                                        <ng-template #noOptionFee>
+                                            <i>Enter Fee</i>
+                                        </ng-template>
+                                    </span>
+                                    <div class="number-info" *ngIf="selectedPriceOption.fee">
+                                        <span class="decimal">{{ getSubscriptionPrice(true) | customNumber: '0.2-2' }}</span>
+                                        <span>/{{ getPriceDescription() }}</span>
+                                    </div>
+                                    <i *ngIf="selectedPriceOption.customerChoosesPrice" class="fa fa-pencil customer-price-edit" (click)="showCustomerPriceInput()"></i>
+                                </ng-container>
+                            </ng-template>
                             <ng-template #freeOption>
                                 <span class="number">{{ls.l('Free')}}</span>
                             </ng-template>
@@ -59,38 +91,105 @@
                             <div>Coupon applied</div>
                             <div class="save-line">You saved: {{currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
                         </div>
-                        <div class="trial-period-note" *ngIf="selectedSubscriptionOption.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
+                        <div class="trial-period-note" *ngIf="selectedPriceOption.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
                     </div>
                 </div>
             </ng-container>
             <ng-template #generalProduct>
                 <div class="price">
-                    <ng-container *ngIf="!isFreeProductSelected else freeProduct">
-                        <div class="quantity" *ngIf="productInfo.type != productType.Digital && productInfo.type != productType.Event">
-                            <div class="quantity-title">Quantity</div>
-                            <div class="quantity-controls">
-                                <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>
-                                <span class="value">{{requestInfo.quantity}}</span>
-                                <span (click)="changeQuantity(requestInfo.quantity + 1)">+</span>
-                            </div>
-                        </div>
-                        <div class="price__new">
+                    <ng-container *ngIf="selectedPriceOption.customerChoosesPrice else generalPrice">
+                        <div class="price__new" *ngIf="!customerPriceEditMode">
                             <span [attr.data-currency]="currencySymbol">{{ getGeneralPrice(true) | number : '1.0-2'}}</span>
+                            <i class="fa fa-pencil customer-price-edit" (click)="showCustomerPriceInput()"></i>
                         </div>
-                        <div *ngIf="couponInfo" class="discount-info">
-                            <div>Coupon applied</div>
-                            <div class="save-line">You saved: {{currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
+                        <div *ngIf="customerPriceEditMode">
+                            <input class="customer-price-input" #customerPriceInput="ngModel" #customerPriceElement type="number" [(ngModel)]="selectedPriceOption.fee"
+                                   (focusout)="customerPriceFocusOut($event, customerPriceInput)" [ngModelOptions]="{updateOn: 'blur'}"
+                                   [pattern]="customerPriceRegexp" [min]="selectedPriceOption.minCustomerPrice" [max]="selectedPriceOption.maxCustomerPrice" required>
+                            <validation-messages [formCtrl]="customerPriceInput"
+                                                 [errorDefs]="customerPriceInputErrorDefs">
+                            </validation-messages>
                         </div>
                     </ng-container>
-                    <ng-template #freeProduct>
-                        <div class="free-product">{{ls.l('Free')}}</div>
+                    <ng-template #generalPrice>
+                        <ng-container *ngIf="!isFreeProductSelected else freeProduct">
+                            <div class="quantity" *ngIf="productInfo.type != productType.Donation">
+                                <div class="quantity-title">Quantity</div>
+                                <div class="quantity-controls">
+                                    <span [style.visibility]="productInput.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(productInput.quantity - 1)">-</span>
+                                    <span class="value" [ngClass]="(productInfo.stock != null && productInfo.stock - productInput.quantity < 0) ? 'invalid' : ''">
+                                        {{productInput.quantity}}
+                                    </span>
+                                    <span (click)="changeQuantity(productInput.quantity + 1)">+</span>
+                                </div>
+                            </div>
+                            <div class="price__new">
+                                <span [attr.data-currency]="currencySymbol">{{ getGeneralPrice(true) | number : '1.0-2'}}</span>
+                            </div>
+                            <div *ngIf="couponInfo" class="discount-info">
+                                <div>Coupon applied</div>
+                                <div class="save-line">You saved: {{currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
+                            </div>
+                        </ng-container>
+                        <ng-template #freeProduct>
+                            <div class="free-product">{{ls.l('Free')}}</div>
+                        </ng-template>
                     </ng-template>
                 </div>
             </ng-template>
+            <div class="addOns" *ngIf="selectedPriceOption.type == priceOptionType.OneTime && !selectedPriceOption.customerChoosesPrice && productInfo.productAddOns && productInfo.productAddOns.length">
+                <div class="addOn" *ngFor="let addOn of productInfo.productAddOns">
+                    <div class="addOn-header"><span>{{ addOn.name }}</span><span *ngIf="addOn.required" class="required">*required</span></div>
+                    <div class="addOn-options">
+                        <div class="addOn-option" *ngFor="let addOnOption of addOn.productAddOnOptions">
+                            <label class="check_wrap">
+                                <input class="check_wrap__input" type="checkbox" [(ngModel)]="addOnOption.selected" (ngModelChange)="onAddOnChange(addOn, addOnOption, $event)" [ngModelOptions]="{standalone: true}">
+                                <span class="check_wrap__style"></span>
+                            </label>
+                            <div class="addOn-option-name">{{ addOnOption.name }}</div>
+                            <div class="addOn-option-price">+{{ currencySymbol }}{{addOnOption.price | currency: productInfo.data.currency : '' : '1.0-2'}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tax" *ngIf="productInfo.data.isStripeTaxationEnabled">
+                <div class="tax-row">
+                    <span>Estimated Taxes</span>
+                    <div class="amount">
+                        <span *ngIf="taxCalculation" [attr.data-currency]="currencySymbol">{{ taxCalculation.taxAmountExclusive | number : '1.0-2'}}</span>
+                        <span *ngIf="!taxCalculation"> - </span>
+                    </div>
+                </div>
+                <div class="tax-row tax-total">
+                    <span>TOTAL</span>
+                    <div class="amount">
+                        <span *ngIf="taxCalculation" [attr.data-currency]="currencySymbol">{{ taxCalculation.amountTotal | number : '1.0-2'}}</span>
+                        <span *ngIf="!taxCalculation"> - </span>
+                    </div>
+                </div>
+            </div>
+            <div class="invalid" *ngIf="!isInStock || (productInfo.stock != null && productInfo.stock - productInput.quantity < 0)">
+                <p>Unfortunately, the quantity that you selected is out-of-stock.</p>
+            </div>
+            <div *ngIf="productInfo.productDonation && productInfo.productDonation.productDonationSuggestedAmounts" class="donation-suggestions">
+                <div *ngFor="let suggestedAmount of getDonationSuggestedAmounts()"
+                     class="suggested-amount"
+                     [ngClass]="{ active: selectedPriceOption.fee == suggestedAmount.amount }"
+                     (click)="selectSuggestedAmount(suggestedAmount)">
+                    <div class="amount">{{ currencySymbol }}{{suggestedAmount.amount | currency: productInfo.data.currency : '' : '1.0-2'}}</div>
+                    <div class="text">{{suggestedAmount.text}}</div>
+                </div>
+            </div>
             <div *ngIf="descriptionHtml" class="description-html" [innerHtml]="descriptionHtml"></div>
         </div>
         <div class="box__right box__item">
             <form id="firstStepForm" #firstStepForm="ngForm" novalidate>
+                <div class="social_login" *ngIf="productInfo.data.hasDiscordService && productInfo.data.discordAppId">
+                    <button type="button" class="button_global button_global_blue2" (click)="discordOAuth()" [disabled]="discordPopup">
+                        <span class="discord-icon">Authorize Discord</span>
+                    </button>
+                    <p *ngIf="requestInfo.discordUserName">Authorized Discord user: <b>{{requestInfo.discordUserName}}</b>&nbsp;<i>({{requestInfo.discordUserId}})</i></p>
+                </div>
                 <div class="name">
                     <div class="input name__input">
                         <label>
@@ -115,9 +214,9 @@
                     <span class="phone__label">Phone</span>
                     <div>
                         <country-phone-number #phoneNumber
-                            [required]="false"
-                            [(phoneNumber)]="requestInfo.phone"
-                            (onInitialized)="onPhoneFieldInitialize($event)">
+                                              [required]="false"
+                                              [(phoneNumber)]="requestInfo.phone"
+                                              (onInitialized)="onPhoneFieldInitialize($event)">
                         </country-phone-number>
                     </div>
                 </div>
@@ -126,6 +225,84 @@
                         Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="requestInfo.email" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="emailRegexp" required>
                         <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
                     </label>
+                </div>
+                <div *ngIf="productInfo.data.isStripeTaxationEnabled" class="input address">
+                    <label class="">
+                        {{ls.l('Billing Address')}}
+                        <dx-text-box *ngIf="!googleAutoComplete" name="address"
+                                     [placeholder]=""
+                                     [(value)]="billingAddress.streetAddress">
+                        </dx-text-box>
+
+                        <input *ngIf="googleAutoComplete"
+                               #addressInput
+                               type="text"
+                               name="Address"
+                               placeholder=""
+                               [(value)]="address.address"
+                               class="dx-texteditor-input"
+                               (onAddressChange)="onAddressChanged($event)"
+                               ngx-google-places-autocomplete />
+                    </label>
+                </div>
+                <div *ngIf="productInfo.data.isStripeTaxationEnabled" class="address name">
+                    <div class="input name__input">
+                        <label class="">
+                            City
+                        </label>
+                        <dx-text-box name="city"
+                                     maxLength="50"
+                                     [(value)]="billingAddress.city">
+                        </dx-text-box>
+                    </div>
+                    <div class="input name__input">
+                        <label>
+                            State
+                        </label>
+                        <dx-select-box [acceptCustomValue]="true"
+                                       [dataSource]="getCountryStates() | async"
+                                       displayExpr="name"
+                                       valueExpr="name"
+                                       name="state"
+                                       [activeStateEnabled]="false"
+                                       [focusStateEnabled]="false"
+                                       [hoverStateEnabled]="false"
+                                       [placeholder]="''"
+                                       [searchEnabled]="true"
+                                       [(value)]="billingAddress.stateName"
+                                       (onValueChanged)="stateChanged($event)"
+                                       (onCustomItemCreating)="onCustomStateCreate($event)">
+                        </dx-select-box>
+                    </div>
+                </div>
+                <div *ngIf="productInfo.data.isStripeTaxationEnabled" class="address name">
+                    <div class="input name__input">
+                        <label class="">
+                            Zip
+                        </label>
+                        <dx-text-box name="zip"
+                                     maxLength="10"
+                                     [(value)]="billingAddress.zip"
+                                     (onValueChanged)="calculateTax()">
+                        </dx-text-box>
+                    </div>
+                    <div class="input name__input">
+                        <label>
+                            Country
+                        </label>
+                        <dx-select-box [dataSource]="countries"
+                                       displayExpr="name"
+                                       valueExpr="name"
+                                       name="country"
+                                       [activeStateEnabled]="false"
+                                       [focusStateEnabled]="false"
+                                       [hoverStateEnabled]="false"
+                                       [placeholder]="''"
+                                       [searchEnabled]="true"
+                                       [(value)]="address.countryName"
+                                       (onValueChanged)="onCountryChange($event)">
+                        </dx-select-box>
+                    </div>
                 </div>
                 <div class="input" *ngIf="productInfo.data.hasTenantService && passwordComplexitySetting">
                     <label>
@@ -201,7 +378,7 @@
                         </ng-container>
                     </div>
                 </div>
-                <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected">
+                <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected && !selectedPriceOption.customerChoosesPrice">
                     <label class="coupon">
                         Coupon
                     </label>
@@ -237,7 +414,7 @@
                     <ng-container *ngIf="!productInfo.data.hasTenantService else tenantSubmit">
                         <div [style.display]="showSubmitButton() ? 'block' : 'none'">
                             <button class="button_global button_global_green" [ngClass]="{disabled: !isFormValid()}" (click)="submitFreeRequest()">
-                                {{ productInfo.type == productType.Subscription ? 'Subscribe' : 'Purchase' }}
+                                {{ selectedPriceOption.type == priceOptionType.Subscription ? 'Subscribe' : 'Purchase' }}
                             </button>
                         </div>
                         <div class="gateways" [style.display]="!showSubmitButton() ? 'flex' : 'none'">
@@ -265,8 +442,18 @@
                 </div>
             </form>
         </div>
+        <div *ngIf="isDonationGoalReached && !productInfo.productDonation.keepActiveIfGoalReached" class="goal-reached-message">
+            <p>Thank you for your interest in supporting our cause.</p>
+            <p>We wanted to inform you that our donation campaign has now closed as we have successfully reached our goal.<br /> We deeply appreciate your willingness to contribute and make a difference.</p>
+        </div>
+        <div *ngIf="!isInStock" class="goal-reached-message">
+            <p>The product is currently out of stock. Please check back later or contact customer support for further assistance.</p>
+        </div>
     </div>
     <div class="footer">
         {{currentYear}} &copy; {{hostName}} Platform
     </div>
 </div>
+<app-tracking-scripts *ngIf="productInfo && productInfo.data"
+                      [config]="productInfo.data.trackingTools">
+</app-tracking-scripts>

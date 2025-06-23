@@ -48,7 +48,7 @@ export class PaymentService {
 
     getPackagesConfig(group: string): Observable<ProductInfo[]> {
         return this.productServiceProxy.getSubscriptionProductsByGroupName(
-            group
+            group, true, true
         ).pipe(
             publishReplay(),
             refCount()
@@ -64,14 +64,16 @@ export class PaymentService {
         );
     }
 
-    static getBillingPeriod(paymentPeriodType: PaymentPeriodType): BillingPeriod {
+    static getRecurringFrequencyByPaymentPeriodType(paymentPeriodType: PaymentPeriodType): RecurringPaymentFrequency {
         switch (paymentPeriodType) {
             case PaymentPeriodType.Monthly:
-                return BillingPeriod.Monthly;
+                return RecurringPaymentFrequency.Monthly;
             case PaymentPeriodType.Annual:
-                return BillingPeriod.Yearly;
+                return RecurringPaymentFrequency.Annual;
             case PaymentPeriodType.LifeTime:
-                return BillingPeriod.LifeTime;
+                return RecurringPaymentFrequency.LifeTime;
+            case PaymentPeriodType.Custom:
+                return RecurringPaymentFrequency.Custom;
             default:
                 return undefined;
         }
@@ -111,17 +113,17 @@ export class PaymentService {
         }
     }
 
-    static getPaymentPeriodType(billingType: BillingPeriod): PaymentPeriodType {
-        switch (billingType) {
-            case BillingPeriod.Monthly:
+    static getPaymentPeriodType(frequency: RecurringPaymentFrequency): PaymentPeriodType {
+        switch (frequency) {
+            case RecurringPaymentFrequency.Monthly:
                 return PaymentPeriodType.Monthly;
-            case BillingPeriod.Yearly:
+            case RecurringPaymentFrequency.Annual:
                 return PaymentPeriodType.Annual;
-            case BillingPeriod.LifeTime:
+            case RecurringPaymentFrequency.LifeTime:
                 return PaymentPeriodType.LifeTime;
-            case BillingPeriod.OneTime:
+            case RecurringPaymentFrequency.OneTime:
                 return PaymentPeriodType.OneTime;
-            case BillingPeriod.Custom:
+            case RecurringPaymentFrequency.Custom:
                 return PaymentPeriodType.Custom;
             default:
                 return undefined;
