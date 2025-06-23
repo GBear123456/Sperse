@@ -1,47 +1,32 @@
+<<<<<<< HEAD
 <div class="contacts">
-    <div *ngIf="showContactType == 'phones'">
-        <div *ngIf="!contactInfoData?.phones?.length">
-            <button
-                class="icon-btn"
-                aria-label="Contact action"
-                (click)="showDialog('phoneNumber', null, $event)"
-            >
-                <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
-            </button>
-        </div>
+    <div *ngIf="showContactType == 'phones'" class="flex items-center">
+        <button
+            class="icon-btn"
+            aria-label="Contact action"
+            (click)="showDialog('phoneNumber', null, $event)"
+        >
+            <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
+        </button>
         <div
             class="phone"
             *ngFor="let phone of contactInfoData?.phones; let i = index"
         >
-            <ul *ngIf="!phone.inplaceEdit">
+            <ul *ngIf="!phone.inplaceEdit" class="mb-0">
                 <div class="email-row">
-                    <div class="flex items-center gap-[5px]">
-                        <button
-                            class="icon-btn"
-                            aria-label="Contact action"
-                            (click)="showDialog('emailAddress', null, $event)"
+                    <span
+                        class="email-address !flex gap-[10px] items-center"
+                        (click)="inPlaceEdit('phoneNumber', phone, $event, i)"
+                    >
+                        {{ phone.phoneNumber | phone }}
+                        <span *ngIf="phone.phoneExtension" class="phoneExt"
+                            >Ext. {{ phone.phoneExtension }}</span
                         >
-                            <img
-                                src="./assets/common/icons/contact/plus.svg"
-                                alt="icon"
-                            />
-                        </button>
-                        <span
-                            class="email-address flex items-center gap-[5px]"
-                            (click)="
-                                inPlaceEdit('phoneNumber', phone, $event, i)
-                            "
-                        >
-                            {{ phone.phoneNumber | phone }}
-                            <span *ngIf="phone.phoneExtension" class="phoneExt"
-                                >Ext. {{ phone.phoneExtension }}</span
-                            >
-                            <img
-                                src="./assets/common/icons/contact/call-calling.svg"
-                                alt="send"
-                            />
-                        </span>
-                    </div>
+                        <img
+                            src="./assets/common/icons/contact/call-calling.svg"
+                            alt="send"
+                        />
+                    </span>
 
                     <div
                         class="actions"
@@ -50,110 +35,132 @@
                     >
                         <span
                             *ngIf="isEditAllowed"
-                            class="send-icon p-2"
+                            class="send-icon"
                             (click)="showDialog('phoneNumber', null, $event)"
                         >
                             <img
                                 src="./assets/common/icons/contact/send_icon.svg"
                                 alt="send"
                             />
-                            Send
+                            send
                         </span>
-                        <i
-                            class="copy save-to-clipboard"
-                            aria-hidden="true"
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/document-copy.svg"
+                            alt="send"
                             (click)="copyToClipbord(phone.phoneNumber)"
-                        ></i>
-                        <i
-                            class="edit fa fa-pencil"
                             aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/edit-2.svg"
+                            alt="send"
                             (click)="
                                 showDialog('phoneNumber', phone, $event, i)
                             "
-                        ></i>
-                        <i
-                            class="delete fa fa-times"
                             aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/cancel.svg"
+                            alt="send"
+                            aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/trash.svg"
+                            alt="send"
                             (click)="deletePhoneNumber(phone, $event, i)"
-                        ></i>
+                            aria-hidden="true"
+                        />
                     </div>
                 </div>
             </ul>
-            <!-- <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
-                <country-phone-number [(phoneNumber)]="phone.phoneNumber" #countryPhoneNumber></country-phone-number>
-                <dx-button class="update" icon="todo"
-                           (onClick)="updatePhoneNumber(countryPhoneNumber.isValid(), phone, $event)"></dx-button>
-                <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('phoneNumber', phone)"></dx-button>
-            </div> -->
+            <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
+                <country-phone-number
+                    [(phoneNumber)]="phone.phoneNumber"
+                    #countryPhoneNumber
+                ></country-phone-number>
+                <dx-button
+                    class="update"
+                    icon="todo"
+                    (onClick)="
+                        updatePhoneNumber(
+                            countryPhoneNumber.isValid(),
+                            phone,
+                            $event
+                        )
+                    "
+                ></dx-button>
+                <dx-button
+                    class="exit"
+                    icon="refresh"
+                    (onClick)="closeInPlaceEdit('phoneNumber', phone)"
+                ></dx-button>
+            </div>
         </div>
     </div>
-    <div *ngIf="showContactType == 'emails'">
-        <div *ngIf="!contactInfoData?.emails?.length">
-            <button
-                class="icon-btn"
-                aria-label="Contact action"
-                (click)="showDialog('emailAddress', null, $event)"
-            >
-                <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
-            </button>
-        </div>
+    <div *ngIf="showContactType == 'emails'" class="flex items-center">
+        <button
+            class="icon-btn"
+            aria-label="Contact action"
+            (click)="showDialog('emailAddress', null, $event)"
+        >
+            <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
+        </button>
         <div class="emails" *ngIf="contactInfoData?.emails?.length">
-            <ul *ngFor="let email of contactInfoData?.emails; let i = index">
+            <ul
+                *ngFor="let email of contactInfoData?.emails; let i = index"
+                class="mb-0"
+            >
                 <div class="email-row" *ngIf="!email.inplaceEdit">
-                    <div class="flex items-center gap-[5px]">
-                        <button
-                            class="icon-btn"
-                            aria-label="Contact action"
-                            (click)="showDialog('emailAddress', null, $event)"
-                        >
-                            <img
-                                src="./assets/common/icons/contact/plus.svg"
-                                alt="icon"
-                            />
-                        </button>
-                        <span
-                            class="email-address"
-                            (click)="
-                                inPlaceEdit('emailAddress', email, $event, i)
-                            "
-                            >{{ email.emailAddress }}</span
-                        >
-                    </div>
+                    <span
+                        class="email-address"
+                        (click)="inPlaceEdit('emailAddress', email, $event, i)"
+                        >{{ email.emailAddress }}</span
+                    >
 
                     <div
                         class="actions"
                         *ngIf="isEditAllowed"
                         [class.visible]="hovered"
                     >
-                        <span class="send-icon p-2">
+                        <span class="send-icon">
                             <img
                                 src="./assets/common/icons/contact/send_icon.svg"
                                 alt="send"
                             />
-                            Send
+                            send
                         </span>
-                        <i
-                            class="copy fa fa-copy"
-                            aria-hidden="true"
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/document-copy.svg"
+                            alt="send"
                             (click)="copyToClipbord(email.emailAddress)"
-                        ></i>
-                        <i
-                            *ngIf="checkEditEmailAllowed(email)"
-                            class="edit fa fa-pencil"
                             aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            *ngIf="checkEditEmailAllowed(email)"
+                            src="./assets/common/icons/contact/edit-2.svg"
+                            alt="send"
                             (click)="editEmailAddress(email, $event, i)"
-                        ></i>
-                        <i
-                            *ngIf="checkEditEmailAllowed(email)"
-                            class="delete fa fa-times"
                             aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/cancel.svg"
+                            alt="send"
+                            aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            *ngIf="checkEditEmailAllowed(email)"
+                            src="./assets/common/icons/contact/trash.svg"
+                            alt="send"
                             (click)="deleteEmailAddress(email, $event, i)"
-                        ></i>
-                        <i
-                            *ngIf="!checkEditEmailAllowed(email)"
-                            class="edit-info"
-                            [title]="ls.l('EmailEditForbidden')"
-                        ></i>
+                            aria-hidden="true"
+                        />
                     </div>
                 </div>
                 <div *ngIf="email.inplaceEdit" class="inplace-edit-wrapper">
@@ -195,3 +202,208 @@
         </div>
     </div>
 </div>
+=======
+<div class="contacts">
+    <div *ngIf="showContactType == 'phones'" class="flex items-center">
+        <button
+            class="icon-btn"
+            aria-label="Contact action"
+            (click)="showDialog('phoneNumber', null, $event)"
+        >
+            <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
+        </button>
+        <div
+            class="phone"
+            *ngFor="let phone of contactInfoData?.phones; let i = index"
+        >
+            <ul *ngIf="!phone.inplaceEdit" class="mb-0">
+                <div class="email-row">
+                    <span
+                        class="email-address !flex gap-[10px] items-center"
+                        (click)="inPlaceEdit('phoneNumber', phone, $event, i)"
+                    >
+                        {{ phone.phoneNumber | phone }}
+                        <span *ngIf="phone.phoneExtension" class="phoneExt"
+                            >Ext. {{ phone.phoneExtension }}</span
+                        >
+                        <img
+                            src="./assets/common/icons/contact/call-calling.svg"
+                            alt="send"
+                        />
+                    </span>
+
+                    <div
+                        class="actions"
+                        *ngIf="isEditAllowed"
+                        [class.visible]="hovered"
+                    >
+                        <span
+                            *ngIf="isEditAllowed"
+                            class="send-icon"
+                            (click)="showDialog('phoneNumber', null, $event)"
+                        >
+                            <img
+                                src="./assets/common/icons/contact/send_icon.svg"
+                                alt="send"
+                            />
+                            send
+                        </span>
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/document-copy.svg"
+                            alt="send"
+                            (click)="copyToClipbord(phone.phoneNumber)"
+                            aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/edit-2.svg"
+                            alt="send"
+                            (click)="
+                                showDialog('phoneNumber', phone, $event, i)
+                            "
+                            aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/cancel.svg"
+                            alt="send"
+                            aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/trash.svg"
+                            alt="send"
+                            (click)="deletePhoneNumber(phone, $event, i)"
+                            aria-hidden="true"
+                        />
+                    </div>
+                </div>
+            </ul>
+            <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
+                <country-phone-number
+                    [(phoneNumber)]="phone.phoneNumber"
+                    #countryPhoneNumber
+                ></country-phone-number>
+                <dx-button
+                    class="update"
+                    icon="todo"
+                    (onClick)="
+                        updatePhoneNumber(
+                            countryPhoneNumber.isValid(),
+                            phone,
+                            $event
+                        )
+                    "
+                ></dx-button>
+                <dx-button
+                    class="exit"
+                    icon="refresh"
+                    (onClick)="closeInPlaceEdit('phoneNumber', phone)"
+                ></dx-button>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="showContactType == 'emails'" class="flex items-center">
+        <button
+            class="icon-btn"
+            aria-label="Contact action"
+            (click)="showDialog('emailAddress', null, $event)"
+        >
+            <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
+        </button>
+        <div class="emails" *ngIf="contactInfoData?.emails?.length">
+            <ul
+                *ngFor="let email of contactInfoData?.emails; let i = index"
+                class="mb-0"
+            >
+                <div class="email-row" *ngIf="!email.inplaceEdit">
+                    <span
+                        class="email-address"
+                        (click)="inPlaceEdit('emailAddress', email, $event, i)"
+                        >{{ email.emailAddress }}</span
+                    >
+
+                    <div
+                        class="actions"
+                        *ngIf="isEditAllowed"
+                        [class.visible]="hovered"
+                    >
+                        <span class="send-icon">
+                            <img
+                                src="./assets/common/icons/contact/send_icon.svg"
+                                alt="send"
+                            />
+                            send
+                        </span>
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/document-copy.svg"
+                            alt="send"
+                            (click)="copyToClipbord(email.emailAddress)"
+                            aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            *ngIf="checkEditEmailAllowed(email)"
+                            src="./assets/common/icons/contact/edit-2.svg"
+                            alt="send"
+                            (click)="editEmailAddress(email, $event, i)"
+                            aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            src="./assets/common/icons/contact/cancel.svg"
+                            alt="send"
+                            aria-hidden="true"
+                        />
+                        <img
+                            class="icon-button"
+                            *ngIf="checkEditEmailAllowed(email)"
+                            src="./assets/common/icons/contact/trash.svg"
+                            alt="send"
+                            (click)="deleteEmailAddress(email, $event, i)"
+                            aria-hidden="true"
+                        />
+                    </div>
+                </div>
+                <div *ngIf="email.inplaceEdit" class="inplace-edit-wrapper">
+                    <dx-validation-group>
+                        <dx-text-box
+                            placeholder=""
+                            [(value)]="email.emailAddress"
+                            (onValueChanged)="
+                                itemValueChanged('emailAddress', email)
+                            "
+                        >
+                            <dx-validator>
+                                <dxi-validation-rule
+                                    type="required"
+                                    message="{{ ls.l('EmailIsRequired') }}."
+                                ></dxi-validation-rule>
+                                <dxi-validation-rule
+                                    type="pattern"
+                                    [pattern]="emailRegEx"
+                                    message="{{ ls.l('EmailIsNotValid') }}."
+                                ></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                        <dx-button
+                            class="update"
+                            icon="todo"
+                            (onClick)="
+                                updateItem('emailAddress', email, $event)
+                            "
+                        ></dx-button>
+                        <dx-button
+                            class="exit"
+                            icon="refresh"
+                            (onClick)="closeInPlaceEdit('emailAddress', email)"
+                        ></dx-button>
+                    </dx-validation-group>
+                </div>
+            </ul>
+        </div>
+    </div>
+</div>
+>>>>>>> f999b481882149d107812286d0979872df712626

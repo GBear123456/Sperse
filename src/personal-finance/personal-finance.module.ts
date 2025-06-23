@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /** Core imports */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -14,7 +15,6 @@ import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/per
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { OffersWizardModule } from '@shared/offers-wizard/offers-wizard.module';
-import { LayoutModule } from '@app/shared/layout/layout.module';
 
 @NgModule({
     declarations: [
@@ -27,7 +27,6 @@ import { LayoutModule } from '@app/shared/layout/layout.module';
         MatDialogModule,
         PersonalFinanceRoutingModule,
         OffersWizardModule,
-        LayoutModule,
         PersonalFinanceCommonModule.forRoot()
     ],
     providers: [
@@ -39,3 +38,44 @@ import { LayoutModule } from '@app/shared/layout/layout.module';
     ]
 })
 export class PersonalFinanceModule {}
+=======
+/** Core imports */
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+/** Third party imports */
+import { MatDialogModule } from '@angular/material/dialog';
+
+/** Application imports */
+import { PersonalFinanceCommonModule } from './shared/common/personal-finance-common.module';
+import { PersonalFinanceRoutingModule } from './personal-finance-routing.module';
+import { PersonalFinanceComponent } from './personal-finance.component';
+import { PackageIdService } from './shared/common/packages/package-id.service';
+import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/personal-finance-layout.module';
+import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
+import { OffersWizardModule } from '@shared/offers-wizard/offers-wizard.module';
+
+@NgModule({
+    declarations: [
+        PersonalFinanceComponent,
+        ApplyOfferDialogComponent
+    ],
+    imports: [
+        PersonalFinanceLayoutModule,
+        CommonModule,
+        MatDialogModule,
+        PersonalFinanceRoutingModule,
+        OffersWizardModule,
+        PersonalFinanceCommonModule.forRoot()
+    ],
+    providers: [
+        PackageIdService,
+        InstanceServiceProxy
+    ],
+    entryComponents: [
+        ApplyOfferDialogComponent
+    ]
+})
+export class PersonalFinanceModule {}
+>>>>>>> f999b481882149d107812286d0979872df712626

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /** Application imports */
 import {
     Component,
@@ -139,13 +140,12 @@ export class PaymentWizardComponent implements AfterViewInit {
             })
         ).subscribe((product: ProductInfo) => {
             let selectedOption = product &&
-                product.priceOptions.find(x => x.frequency == 
+                product.productSubscriptionOptions.find(x => x.frequency == 
                     RecurringPaymentFrequency[this.data.subscription.paymentPeriodType]);
 
             this.changePlan({
                 productId: this.data.subscription.productId,
                 productName: this.data.subscription.productName,
-                priceOptionId: selectedOption ? selectedOption.id : undefined,
                 paymentPeriodType: this.data.subscription.paymentPeriodType,
                 total: selectedOption ? selectedOption.fee : 0
             });
@@ -183,4 +183,190 @@ export class PaymentWizardComponent implements AfterViewInit {
         this.dialogRef.disableClose = false;
         this.changeDetectorRef.detectChanges();
     }
+=======
+/** Application imports */
+import {
+    Component,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    ViewChild,
+    ViewEncapsulation,
+    Inject,
+    ElementRef,
+    AfterViewInit
+} from '@angular/core';
+
+/** Third party imports */
+import * as moment from 'moment-timezone';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
+import { Observable, of } from 'rxjs';
+import { first, finalize, switchMap } from 'rxjs/operators';
+import { AbpSessionService } from 'abp-ng2-module';
+
+/** Application imports */
+import { AppService } from '@app/app.service';
+import { AppAuthService } from 'shared/common/auth/app-auth.service';
+import { ImpersonationService } from '@app/admin/users/impersonation.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
+import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
+import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
+import { ModuleType, PackageServiceProxy, RecurringPaymentFrequency, PaymentPeriodType,
+    TenantSubscriptionServiceProxy, ProductInfo, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
+import { StatusInfo } from './models/status-info';
+import { AppPermissions } from '@shared/AppPermissions';
+import { PermissionCheckerService } from 'abp-ng2-module';
+import { AppLocalizationService } from '../localization/app-localization.service';
+import { MessageService } from 'abp-ng2-module';
+import { AppConsts } from '@shared/AppConsts';
+import { PaymentsInfoService } from '../payments-info/payments-info.service';
+import { PaymentWizardPaymentsInfoService } from './payments-info/payments-info.service';
+
+@Component({
+    selector: 'payment-wizard',
+    templateUrl: './payment-wizard.component.html',
+    styleUrls: ['./payment-wizard.component.less'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [PaymentService, PackageServiceProxy, ProductServiceProxy, TenantSubscriptionServiceProxy, { provide: PaymentsInfoService, useClass: PaymentWizardPaymentsInfoService } ],
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class PaymentWizardComponent implements AfterViewInit {
+    @ViewChild('stepper') stepper: MatStepper;
+    @ViewChild('wizard') wizardRef: ElementRef;
+    plan$: Observable<PaymentOptions> = this.paymentService.plan$;
+    packagesConfig$: Observable<ProductInfo[]> = this.paymentService.packagesConfig$;
+    paymentStatus: PaymentStatusEnum;
+    paymentStatusData: StatusInfo;
+    refreshAfterClose = false;
+
+    isImpersonatedLogin = this.abpSessionService.impersonatorUserId > 0;
+    subscriptionIsDraft: boolean = this.data.subscription && this.data.subscription.statusId == 'D';
+    subscriptionIsFree: boolean = this.appService.checkSubscriptionIsFree();
+    subscriptionIsTrialExpired: boolean = this.data.subscription && this.data.subscription.statusId == 'A' &&
+        this.data.subscription.isTrial && !this.appService.hasModuleSubscription();
+    subscriptionIsActiveExpired: boolean = this.data.subscription && !this.data.subscription.isTrial &&
+        this.data.subscription.statusId == 'A' && !this.appService.hasModuleSubscription() &&
+        this.data.subscription.paymentPeriodType != PaymentPeriodType.OneTime;
+    tenantName = this.appSessionService.tenantName;
+    productName = this.data.subscription && this.data.subscription.productName;
+    cancellationDayCount = this.data.subscription && this.data.subscription.endDate ? 
+        this.appService.getGracePeriodDayCountBySubscription(this.data.subscription) : 0;
+    isSubscriptionManagementAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);
+    isSubscriptionPaymentsAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagementPayments);
+    trackingCode: string;
+    selectedUpgradeProductId: number;
+    productsGroupName: string;
+    selectedTab: number;
+    tooltipMenuVisible = false;
+
+    constructor(
+        private appService: AppService,
+        private authService: AppAuthService,
+        private appSessionService: AppSessionService,
+        private impersonationService: ImpersonationService,
+        public dialogRef: MatDialogRef<PaymentWizardComponent>,
+        private paymentService: PaymentService,
+        private abpSessionService: AbpSessionService,
+        private tenantSubscriptionService: TenantSubscriptionServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
+        private permissionChecker: PermissionCheckerService,
+        private messageService: MessageService,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: any
+    ) {
+        this.selectedUpgradeProductId = data && data.upgrade ? data.productId : null;
+        this.selectedTab = Number(data ? data.showPaymentsTab : null);
+    }
+    
+    ngAfterViewInit() {
+        if (this.data.upgrade)
+            this.showSubscriptionProducts(this.data);
+    }
+
+    backToMyAccount() {
+        this.impersonationService.backToImpersonator();
+    }
+
+    logout() {
+        this.authService.logout(true);
+    }
+
+    moveToPaymentOptionsStep() {
+        if (this.isSubscriptionManagementAllowed)
+            this.stepper.next();
+        else
+            this.messageService.info(this.ls.l('SubscriptionManagementPermissionRequired'));
+    }
+
+    changePlan(e) {
+        this.paymentService._plan.next(e);
+    }
+
+    changeStatus(statusInfo: StatusInfo) {
+        this.dialogRef.disableClose = statusInfo.status == PaymentStatusEnum.BeingConfirmed;
+        this.paymentStatusData = statusInfo;
+    }
+
+    showWebInvoice() {
+        let draftSubscription = this.appService.moduleSubscriptions[0];
+        let publicId = draftSubscription.invoicePublicId;
+        window.location.href = location.origin + `/invoicing/invoice/0/${publicId}`;
+    }
+
+    activateSubscription() {
+        this.packagesConfig$.pipe(
+            first(),
+            switchMap((products: ProductInfo[]) => {
+                let product = products.find(item => item.id == this.data.subscription.productId);
+                if (product)
+                    return of(product);
+                return this.paymentService.getProductInfo(this.data.subscription.productId);
+            })
+        ).subscribe((product: ProductInfo) => {
+            let selectedOption = product &&
+                product.productSubscriptionOptions.find(x => x.frequency == 
+                    RecurringPaymentFrequency[this.data.subscription.paymentPeriodType]);
+
+            this.changePlan({
+                productId: this.data.subscription.productId,
+                productName: this.data.subscription.productName,
+                paymentPeriodType: this.data.subscription.paymentPeriodType,
+                total: selectedOption ? selectedOption.fee : 0
+            });
+            setTimeout(() => this.moveToPaymentOptionsStep());
+        });
+    }
+
+    showSubscriptionProducts(data) {
+        this.selectedUpgradeProductId = data && data.upgrade ? data.productId : null;
+        this.productsGroupName = data && data.productsGroupName || AppConsts.PRODUCT_GROUP_MAIN;
+
+        this.data.showSubscriptions = false;
+        this.changeDetectorRef.detectChanges();
+    }
+
+    setRefreshAfterClose() {
+        this.refreshAfterClose = true;
+        this.dialogRef.afterClosed().subscribe(() => {
+            this.reloadAfterClosed();
+        });
+    }
+
+    reloadAfterClosed() {
+        window.location.href = window.location.origin;
+    }
+
+    close() {
+        this.refreshAfterClose
+            ? this.reloadAfterClosed()
+            : this.dialogRef.close();
+    }
+
+    showSubscriptions() {
+        this.data.showSubscriptions = true;
+        this.dialogRef.disableClose = false;
+        this.changeDetectorRef.detectChanges();
+    }
+>>>>>>> f999b481882149d107812286d0979872df712626
 }

@@ -1,105 +1,206 @@
+<<<<<<< HEAD
 <h2>{{ ls.l('GeneralSettings') }}</h2>
 <ng-container *ngIf="settings">
-    <dx-scroll-view height="90%" showScrollbar="onHover">
-        <ng-container *ngIf="isRenameTenantEnabled">
-            <div class="form-group">
-                <label for="tenantName">{{ls.l("Tenant Name")}}</label>
-                <input #tenantNameModel="ngModel"
-                       id="tenantName"
-                       type="text"
-                       name="tenantName"
-                       class="form-control"
-                       [(ngModel)]="tenantName"
-                       maxlength="128">
+    <div class="form-group flag-settings">
+        <label for="DefaultCountry">{{ls.l("Country")}}</label>
+        <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings?.defaultCountryCode?.toLowerCase()}}.svg" width="19px" height="auto">
+        <dx-select-box
+            width="380px"
+            valueExpr="code"
+            displayExpr="name"
+            [searchExpr]="['code', 'name']"
+            [searchEnabled]="true"
+            [placeholder]="Search"
+            [(value)]="settings.defaultCountryCode"
+            [dataSource]="supportedCountries"
+            (onValueChanged)="onCountryChanged($event)">
+            <div *dxTemplate="let item of 'item'" class="flag-row">
+                <img class="flag-icon" src="assets/common/icons/flags/{{item?.code?.toLowerCase()}}.svg" width="auto" height="38px"><div><span class="currency-name">{{item.name}}</span><br><b class="currency-id">{{item.code}}</b></div>
             </div>
-        </ng-container>
-        <div class="form-group flag-settings">
-            <label for="DefaultCountry">{{ls.l("Country")}}</label>
-            <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings?.defaultCountryCode?.toLowerCase()}}.svg" width="19px" height="auto">
-            <dx-select-box width="100%"
-                           valueExpr="code"
-                           displayExpr="name"
-                           [searchExpr]="['code', 'name']"
-                           [searchEnabled]="true"
-                           [placeholder]="Search"
-                           [(value)]="settings.defaultCountryCode"
-                           [dataSource]="supportedCountries"
-                           (onValueChanged)="onCountryChanged($event)">
+        </dx-select-box>
+    </div>
+    <div class="form-group" *ngIf="showTimezoneSelection">
+        <label for="Timezone">{{ls.l("Timezone")}}</label>
+        <timezone-combo id="Timezone"
+            [(selectedTimeZone)]="settings.timezone"
+            [defaultTimezoneScope]="defaultTimezoneScope">
+        </timezone-combo>
+    </div>
+    <div class="form-group flag-settings">
+            <label for="Currency">{{ls.l("Currency")}}</label>
+            <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings?.currency?.toLowerCase()}}.svg" width="19px" height="auto">
+            <dx-select-box
+                width="380px"
+                valueExpr="id"
+                displayExpr="displayName"
+                [searchExpr]="['id', 'displayName']"
+                [searchEnabled]="true"
+                [placeholder]="Search"
+                [(value)]="settings.currency"
+                [dataSource]="currencies$ | async">
                 <div *dxTemplate="let item of 'item'" class="flag-row">
-                    <img class="flag-icon" src="assets/common/icons/flags/{{item?.code?.toLowerCase()}}.svg" width="auto" height="38px"><div><span class="currency-name">{{item.name}}</span><br><b class="currency-id">{{item.code}}</b></div>
+                    <img class="flag-icon" src="assets/common/icons/flags/{{item?.id?.toLowerCase()}}.svg" width="52px" height="38px"><div><span class="currency-name">{{item.displayName}}</span><br><b class="currency-id">{{item.id}}</b></div>
                 </div>
             </dx-select-box>
+    </div>
+    <ng-container *ngIf="tenant">
+        <div class="form-group">
+            <label for="PublicPhone">{{ls.l("PublicPhone")}}</label>
+            <country-phone-number #publicPhoneNumber
+                                  [phoneNumber]="settings.publicPhone"
+                                  [required]="false"
+                                  (phoneNumberChange)="onPhoneNumberChange($event, publicPhoneNumber)">
+            </country-phone-number>
         </div>
-        <div class="form-group" *ngIf="showTimezoneSelection">
-            <label for="Timezone">{{ls.l("Timezone")}}</label>
-            <timezone-combo id="Timezone"
-                            [(selectedTimeZone)]="settings.timezone"
-                            [defaultTimezoneScope]="defaultTimezoneScope">
-            </timezone-combo>
+        <div class="form-group">
+            <label for="PublicSiteUrl">{{ls.l("PublicSiteUrl")}}</label>
+            <input #publicSiteUrl="ngModel"
+                   id="PublicSiteUrl"
+                   type="url"
+                   name="PublicSiteUrl"
+                   class="form-control"
+                   [(ngModel)]="settings.publicSiteUrl"
+                   maxlength="128"
+                   [pattern]="siteUrlRegexPattern.source"
+                   (change)="onUrlPaste($event)"
+                   (paste)="onUrlPaste($event)">
         </div>
-        <div class="form-group flag-settings">
-            <label for="Currency">{{ls.l("Currency")}}</label>
-            <currency-selector [(currency)]="settings.currency">
-            </currency-selector>
+        <div *ngIf="!publicSiteUrl.valid && !publicSiteUrl.pristine">
+            <span class="help-block text-danger">
+                {{ls.l("Invalid_PublicSiteUrl")}}
+            </span>
         </div>
-        <ng-container *ngIf="tenant">
-            <div class="form-group">
-                <label for="PublicPhone">{{ls.l("PublicPhone")}}</label>
-                <country-phone-number #publicPhoneNumber
-                                      [phoneNumber]="settings.publicPhone"
-                                      [required]="false"
-                                      (phoneNumberChange)="onPhoneNumberChange($event, publicPhoneNumber)">
-                </country-phone-number>
-            </div>
-            <div class="form-group">
-                <label for="PublicSiteUrl">{{ls.l("PublicSiteUrl")}}</label>
-                <input #publicSiteUrl="ngModel"
-                       id="PublicSiteUrl"
-                       type="url"
-                       name="PublicSiteUrl"
-                       class="form-control"
-                       [(ngModel)]="settings.publicSiteUrl"
-                       maxlength="128"
-                       [pattern]="siteUrlRegexPattern.source"
-                       (change)="onUrlPaste($event)"
-                       (paste)="onUrlPaste($event)">
-            </div>
-            <div *ngIf="!publicSiteUrl.valid && !publicSiteUrl.pristine">
-                <span class="help-block text-danger">
-                    {{ls.l("Invalid_PublicSiteUrl")}}
-                </span>
-            </div>
-            <div class="form-group zendesk">
-                <label for="ZendeskAccountUrl">{{ls.l("ZendeskAccountUrl")}}</label>
-                <input id="ZendeskAccountUrl"
-                       type="text"
-                       name="ZendeskAccountUrl"
-                       class="form-control"
-                       [(ngModel)]="settings.zendeskAccountUrl"
-                       maxlength="128">
-            </div>
-        </ng-container>
-        <div class="row m-form file-uploads" *ngIf="isAdminCustomizations">
+        <div class="form-group zendesk">
+            <label for="ZendeskAccountUrl">{{ls.l("ZendeskAccountUrl")}}</label>
+            <input id="ZendeskAccountUrl"
+                   type="text"
+                   name="ZendeskAccountUrl"
+                   class="form-control"
+                   [(ngModel)]="settings.zendeskAccountUrl"
+                   maxlength="128">
+        </div>
+        <div class="row m-form file-uploads" *ngIf="tenant && isAdminCustomizations">
             <div class="col-md-6">
                 <uploader #privacyPolicyUploader
                           [title]="ls.l('PrivacyPolicy')"
-                          [documentId]="appearanceConfig.customPrivacyPolicyDocumentId"
-                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + (appearanceConfig.id || '')"
+                          [documentId]="tenant.customPrivacyPolicyDocumentId"
+                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + tenant.id"
                           [uploadButtonText]="ls.l('UploadPrivacyPolicy')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomPrivacyPolicyDocument'"
-                          (onDocumentClear)="clearConditions(conditions.Policies)">
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomPrivacyPolicyDocument'">
                 </uploader>
             </div>
             <div class="col-md-6">
                 <uploader #tosUploader
                           [title]="ls.l('TermsOfService')"
-                          [documentId]="appearanceConfig.customToSDocumentId"
-                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + (appearanceConfig.id || '')"
+                          [documentId]="tenant.customToSDocumentId"
+                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + tenant.id"
                           [uploadButtonText]="ls.l('UploadTermsOfService')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomToSDocument'"
-                          (onDocumentClear)="clearConditions(conditions.Terms)">
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomToSDocument'">
                 </uploader>
             </div>
         </div>
-    </dx-scroll-view>
+    </ng-container>
+=======
+<h2>{{ ls.l('GeneralSettings') }}</h2>
+<ng-container *ngIf="settings">
+    <div class="form-group flag-settings">
+        <label for="DefaultCountry">{{ls.l("Country")}}</label>
+        <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings?.defaultCountryCode?.toLowerCase()}}.svg" width="19px" height="auto">
+        <dx-select-box
+            width="380px"
+            valueExpr="code"
+            displayExpr="name"
+            [searchExpr]="['code', 'name']"
+            [searchEnabled]="true"
+            [placeholder]="Search"
+            [(value)]="settings.defaultCountryCode"
+            [dataSource]="supportedCountries"
+            (onValueChanged)="onCountryChanged($event)">
+            <div *dxTemplate="let item of 'item'" class="flag-row">
+                <img class="flag-icon" src="assets/common/icons/flags/{{item?.code?.toLowerCase()}}.svg" width="auto" height="38px"><div><span class="currency-name">{{item.name}}</span><br><b class="currency-id">{{item.code}}</b></div>
+            </div>
+        </dx-select-box>
+    </div>
+    <div class="form-group" *ngIf="showTimezoneSelection">
+        <label for="Timezone">{{ls.l("Timezone")}}</label>
+        <timezone-combo id="Timezone"
+            [(selectedTimeZone)]="settings.timezone"
+            [defaultTimezoneScope]="defaultTimezoneScope">
+        </timezone-combo>
+    </div>
+    <div class="form-group flag-settings">
+            <label for="Currency">{{ls.l("Currency")}}</label>
+            <img class="selected-flag-icon" src="assets/common/icons/flags/{{settings?.currency?.toLowerCase()}}.svg" width="19px" height="auto">
+            <dx-select-box
+                width="380px"
+                valueExpr="id"
+                displayExpr="displayName"
+                [searchExpr]="['id', 'displayName']"
+                [searchEnabled]="true"
+                [placeholder]="Search"
+                [(value)]="settings.currency"
+                [dataSource]="currencies$ | async">
+                <div *dxTemplate="let item of 'item'" class="flag-row">
+                    <img class="flag-icon" src="assets/common/icons/flags/{{item?.id?.toLowerCase()}}.svg" width="52px" height="38px"><div><span class="currency-name">{{item.displayName}}</span><br><b class="currency-id">{{item.id}}</b></div>
+                </div>
+            </dx-select-box>
+    </div>
+    <ng-container *ngIf="tenant">
+        <div class="form-group">
+            <label for="PublicPhone">{{ls.l("PublicPhone")}}</label>
+            <country-phone-number #publicPhoneNumber
+                                  [phoneNumber]="settings.publicPhone"
+                                  [required]="false"
+                                  (phoneNumberChange)="onPhoneNumberChange($event, publicPhoneNumber)">
+            </country-phone-number>
+        </div>
+        <div class="form-group">
+            <label for="PublicSiteUrl">{{ls.l("PublicSiteUrl")}}</label>
+            <input #publicSiteUrl="ngModel"
+                   id="PublicSiteUrl"
+                   type="url"
+                   name="PublicSiteUrl"
+                   class="form-control"
+                   [(ngModel)]="settings.publicSiteUrl"
+                   maxlength="128"
+                   [pattern]="siteUrlRegexPattern.source"
+                   (change)="onUrlPaste($event)"
+                   (paste)="onUrlPaste($event)">
+        </div>
+        <div *ngIf="!publicSiteUrl.valid && !publicSiteUrl.pristine">
+            <span class="help-block text-danger">
+                {{ls.l("Invalid_PublicSiteUrl")}}
+            </span>
+        </div>
+        <div class="form-group zendesk">
+            <label for="ZendeskAccountUrl">{{ls.l("ZendeskAccountUrl")}}</label>
+            <input id="ZendeskAccountUrl"
+                   type="text"
+                   name="ZendeskAccountUrl"
+                   class="form-control"
+                   [(ngModel)]="settings.zendeskAccountUrl"
+                   maxlength="128">
+        </div>
+        <div class="row m-form file-uploads" *ngIf="tenant && isAdminCustomizations">
+            <div class="col-md-6">
+                <uploader #privacyPolicyUploader
+                          [title]="ls.l('PrivacyPolicy')"
+                          [documentId]="tenant.customPrivacyPolicyDocumentId"
+                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + tenant.id"
+                          [uploadButtonText]="ls.l('UploadPrivacyPolicy')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomPrivacyPolicyDocument'">
+                </uploader>
+            </div>
+            <div class="col-md-6">
+                <uploader #tosUploader
+                          [title]="ls.l('TermsOfService')"
+                          [documentId]="tenant.customToSDocumentId"
+                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + tenant.id"
+                          [uploadButtonText]="ls.l('UploadTermsOfService')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomToSDocument'">
+                </uploader>
+            </div>
+        </div>
+    </ng-container>
+>>>>>>> f999b481882149d107812286d0979872df712626
 </ng-container>

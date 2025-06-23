@@ -61,7 +61,8 @@
                     <mat-tab [label]="ls.l('SMTP')">
                         <dx-check-box class="is-user-smtp-enabled" 
                             [text]="ls.l('AllowToSendFromYourEmailAddress')" 
-                            [(value)]="userEmailSettings.isUserSmtpEnabled">
+                            [(value)]="userEmailSettings.isUserSmtpEnabled"
+                            (onValueChanged)="onSmtpStateChange($event)">
                         </dx-check-box>
 
                         <ng-container *ngIf="userEmailSettings.isUserSmtpEnabled">
@@ -69,7 +70,7 @@
                                 <div class="block" *ngIf="selectedProvider?.domain == 'gmail.com'">
                                     Gmail requires using an app-specific password for third-party apps, instead of your regular password for your security. Your Google account requires 2FA turned on to use this feature.
                                     <br><br>
-                                    <a target="blank" href="https://myaccount.google.com/apppasswords"><b>Generate an app-specific password</b></a>
+                                    <a href="https://myaccount.google.com/apppasswords"><b>Generate an app-specific password</b></a>
                                     <br>
                                     <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('gmail.com')">Provider recommendations</a>
                                     <br>
@@ -93,7 +94,7 @@
                                         displayExpr="name"
                                         fieldTemplate="field"
                                         [(value)]="selectedProvider"
-                                        (onValueChanged)="onProviderChanged($event)">
+                                        (onValueChanged)="onProviderChanged()">
                                         <div class="provider-select-item" *dxTemplate="let data of 'item'">
                                             <div class="provider-icon" [ngStyle]="{'background-image': 'url(assets/common/icons/smtp/' + data?.icon + ')'}"></div>{{data?.name}}
                                         </div>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div>
     <app-headline [names]="[ l('Settings') ]"
                   [buttons]="headlineButtons">
@@ -15,143 +16,296 @@
             </dx-list>
         </div>
         <div class="content" *ngIf="visibleSettings.length">
-            <mat-vertical-stepper #stepper>
-                <mat-step #generalSettingsStep>
-                    <ng-container *ngIf="stepper.selected === null || stepper.selected === generalSettingsStep">
-                        <general-settings></general-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="appService.isHostTenant && hasHostPermission" #tenantManagementStep>
-                    <ng-container *ngIf="stepper.selected === tenantManagementStep">
-                        <tenant-management-settings></tenant-management-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="isAdminCustomizations" #appearanceStep>
-                    <ng-container *ngIf="stepper.selected === appearanceStep">
-                        <appearance-settings></appearance-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step #trackingToolsStep>
-                    <ng-container *ngIf="stepper.selected === trackingToolsStep">
-                        <tracking-tools-settings></tracking-tools-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step #userManagementStep>
-                    <ng-container *ngIf="stepper.selected === userManagementStep">
-                        <user-management-settings></user-management-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step #securityStep>
-                    <ng-container *ngIf="stepper.selected === securityStep">
-                        <security-settings></security-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="isAdminCustomizations && isTenantHosts" #domainStep>
-                    <ng-container *ngIf="stepper.selected === domainStep">
-                        <domain-settings></domain-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="!appService.isHostTenant && isAdminCustomizations" #memberPortalStep>
-                    <ng-container *ngIf="stepper.selected === memberPortalStep">
-                        <member-portal-settings></member-portal-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step #emailStep>
-                    <ng-container *ngIf="stepper.selected === emailStep">
-                        <email-settings></email-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step #gmailStep>
-                    <ng-container *ngIf="stepper.selected === gmailStep">
-                        <gmail-settings></gmail-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="!appService.isHostTenant" #sendgridStep>
-                    <ng-container *ngIf="stepper.selected === sendgridStep">
-                        <sendgrid-settings></sendgrid-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step #mailchimpStep>
-                    <ng-container *ngIf="stepper.selected === mailchimpStep">
-                        <mailchimp-settings></mailchimp-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="!appService.isHostTenant" #klaviyoStep>
-                    <ng-container *ngIf="stepper.selected === klaviyoStep">
-                        <klaviyo-settings></klaviyo-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="isInboundOutboundSMSEnabled" #ytelStep>
-                    <ng-container *ngIf="stepper.selected === ytelStep">
-                        <ytel-settings></ytel-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="appService.isHostTenant" #bugsnagStep>
-                    <ng-container *ngIf="stepper.selected === bugsnagStep">
-                        <bugsnag-settings></bugsnag-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="isPaymentsEnabled" #paypalStep>
-                    <ng-container *ngIf="stepper.selected === paypalStep">
-                        <paypal-settings></paypal-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="isPaymentsEnabled" #stripeStep>
-                    <ng-container *ngIf="stepper.selected === stripeStep">
-                        <stripe-settings></stripe-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #epcvipLinkStep>
-                    <ng-container *ngIf="stepper.selected === epcvipLinkStep">
-                        <epcvip-link-settings></epcvip-link-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #epcvipEmailStep>
-                    <ng-container *ngIf="stepper.selected === epcvipEmailStep">
-                        <epcvip-email-settings></epcvip-email-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #iAgeStep>
-                    <ng-container *ngIf="stepper.selected === iAgeStep">
-                        <iage-settings></iage-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #ongageStep>
-                    <ng-container *ngIf="stepper.selected === ongageStep">
-                        <ongage-settings></ongage-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="isRapidTenantLayout" #rapidStep>
-                    <ng-container *ngIf="stepper.selected === rapidStep">
-                        <rapid-settings></rapid-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="!appService.isHostTenant && isSalesTalkEnabled" #salesTalkStep>
-                    <ng-container *ngIf="stepper.selected === salesTalkStep">
-                        <sales-talk-settings></sales-talk-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="isSocialLoginEnabled('LinkedIn')" #linkedInStep>
-                    <ng-container *ngIf="stepper.selected === linkedInStep">
-                        <linkedin-settings></linkedin-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="isSocialLoginEnabled('Facebook')" #facebookStep>
-                    <ng-container *ngIf="stepper.selected === facebookStep">
-                        <facebook-settings></facebook-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="isSocialLoginEnabled('Google')" #googleStep>
-                    <ng-container *ngIf="stepper.selected === googleStep">
-                        <google-settings></google-settings>
-                    </ng-container>
-                </mat-step>
-                <mat-step *ngIf="isSocialLoginEnabled('Discord')" #discordStep>
-                    <ng-container *ngIf="stepper.selected === discordStep">
-                        <discord-settings></discord-settings>
-                    </ng-container>
-                </mat-step>
-            </mat-vertical-stepper>
+            <dx-scroll-view>
+                <mat-vertical-stepper #stepper>
+                    <mat-step #generalSettingsStep>
+                        <ng-container *ngIf="stepper.selected === null || stepper.selected === generalSettingsStep">
+                            <general-settings></general-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="appService.isHostTenant && hasHostPermission" #tenantManagementStep>
+                        <ng-container *ngIf="stepper.selected === tenantManagementStep">
+                            <tenant-management-settings></tenant-management-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isAdminCustomizations" #appearanceStep>
+                        <ng-container *ngIf="stepper.selected === appearanceStep">
+                            <appearance-settings></appearance-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step #userManagementStep>
+                        <ng-container *ngIf="stepper.selected === userManagementStep">
+                            <user-management-settings></user-management-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step #securityStep>
+                        <ng-container *ngIf="stepper.selected === securityStep">
+                            <security-settings></security-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isAdminCustomizations && isTenantHosts" #domainStep>
+                        <ng-container *ngIf="stepper.selected === domainStep">
+                            <domain-settings></domain-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isAdminCustomizations" #memberPortalStep>
+                        <ng-container *ngIf="stepper.selected === memberPortalStep">
+                            <member-portal-settings></member-portal-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step #emailStep>
+                        <ng-container *ngIf="stepper.selected === emailStep">
+                            <email-settings></email-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step #gmailStep>
+                        <ng-container *ngIf="stepper.selected === gmailStep">
+                            <gmail-settings></gmail-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant" #sendgridStep>
+                        <ng-container *ngIf="stepper.selected === sendgridStep">
+                            <sendgrid-settings></sendgrid-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step #mailchimpStep>
+                        <ng-container *ngIf="stepper.selected === mailchimpStep">
+                            <mailchimp-settings></mailchimp-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant" #klaviyoStep>
+                        <ng-container *ngIf="stepper.selected === klaviyoStep">
+                            <klaviyo-settings></klaviyo-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isInboundOutboundSMSEnabled" #ytelStep>
+                        <ng-container *ngIf="stepper.selected === ytelStep">
+                            <ytel-settings></ytel-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="appService.isHostTenant" #bugsnagStep>
+                        <ng-container *ngIf="stepper.selected === bugsnagStep">
+                            <bugsnag-settings></bugsnag-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isPaymentsEnabled" #paypalStep>
+                        <ng-container *ngIf="stepper.selected === paypalStep">
+                            <paypal-settings></paypal-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isPaymentsEnabled" #stripeStep>
+                        <ng-container *ngIf="stepper.selected === stripeStep">
+                            <stripe-settings></stripe-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #epcvipLinkStep>
+                        <ng-container *ngIf="stepper.selected === epcvipLinkStep">
+                            <epcvip-link-settings></epcvip-link-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #epcvipEmailStep>
+                        <ng-container *ngIf="stepper.selected === epcvipEmailStep">
+                            <epcvip-email-settings></epcvip-email-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #iAgeStep>
+                        <ng-container *ngIf="stepper.selected === iAgeStep">
+                            <iage-settings></iage-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #ongageStep>
+                        <ng-container *ngIf="stepper.selected === ongageStep">
+                            <ongage-settings></ongage-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isRapidTenantLayout" #rapidStep>
+                        <ng-container *ngIf="stepper.selected === rapidStep">
+                            <rapid-settings></rapid-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isSalesTalkEnabled" #salesTalkStep>
+                        <ng-container *ngIf="stepper.selected === salesTalkStep">
+                            <sales-talk-settings></sales-talk-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isSocialLoginEnabled('LinkedIn')" #linkedInStep>
+                        <ng-container *ngIf="stepper.selected === linkedInStep">
+                            <linkedin-settings></linkedin-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isSocialLoginEnabled('Facebook')" #facebookStep>
+                        <ng-container *ngIf="stepper.selected === facebookStep">
+                            <facebook-settings></facebook-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isSocialLoginEnabled('Google')" #googleStep>
+                        <ng-container *ngIf="stepper.selected === googleStep">
+                            <google-settings></google-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isSocialLoginEnabled('Discord')" #discordStep>
+                        <ng-container *ngIf="stepper.selected === discordStep">
+                            <discord-settings></discord-settings>
+                        </ng-container>
+                    </mat-step>
+                </mat-vertical-stepper>
+            </dx-scroll-view>
         </div>
     </div>
 </div>
+=======
+<div>
+    <app-headline [names]="[ l('Settings') ]"
+                  [buttons]="headlineButtons">
+    </app-headline>
+
+    <div class="wrapper">
+        <div class="left-menu">
+            <dx-list [dataSource]="visibleSettings"
+                     [selectionMode]="'single'"
+                     [activeStateEnabled]="false"
+                     (onSelectionChanged)="onMenuSelect($event)">
+                <div *dxTemplate="let data of 'item'">
+                    <div>{{ l(data.key) }}</div>
+                </div>
+            </dx-list>
+        </div>
+        <div class="content" *ngIf="visibleSettings.length">
+            <dx-scroll-view>
+                <mat-vertical-stepper #stepper>
+                    <mat-step #generalSettingsStep>
+                        <ng-container *ngIf="stepper.selected === null || stepper.selected === generalSettingsStep">
+                            <general-settings></general-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="appService.isHostTenant && hasHostPermission" #tenantManagementStep>
+                        <ng-container *ngIf="stepper.selected === tenantManagementStep">
+                            <tenant-management-settings></tenant-management-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isAdminCustomizations" #appearanceStep>
+                        <ng-container *ngIf="stepper.selected === appearanceStep">
+                            <appearance-settings></appearance-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step #userManagementStep>
+                        <ng-container *ngIf="stepper.selected === userManagementStep">
+                            <user-management-settings></user-management-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step #securityStep>
+                        <ng-container *ngIf="stepper.selected === securityStep">
+                            <security-settings></security-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isAdminCustomizations && isTenantHosts" #domainStep>
+                        <ng-container *ngIf="stepper.selected === domainStep">
+                            <domain-settings></domain-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isAdminCustomizations" #memberPortalStep>
+                        <ng-container *ngIf="stepper.selected === memberPortalStep">
+                            <member-portal-settings></member-portal-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step #emailStep>
+                        <ng-container *ngIf="stepper.selected === emailStep">
+                            <email-settings></email-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step #gmailStep>
+                        <ng-container *ngIf="stepper.selected === gmailStep">
+                            <gmail-settings></gmail-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant" #sendgridStep>
+                        <ng-container *ngIf="stepper.selected === sendgridStep">
+                            <sendgrid-settings></sendgrid-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step #mailchimpStep>
+                        <ng-container *ngIf="stepper.selected === mailchimpStep">
+                            <mailchimp-settings></mailchimp-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant" #klaviyoStep>
+                        <ng-container *ngIf="stepper.selected === klaviyoStep">
+                            <klaviyo-settings></klaviyo-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isInboundOutboundSMSEnabled" #ytelStep>
+                        <ng-container *ngIf="stepper.selected === ytelStep">
+                            <ytel-settings></ytel-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="appService.isHostTenant" #bugsnagStep>
+                        <ng-container *ngIf="stepper.selected === bugsnagStep">
+                            <bugsnag-settings></bugsnag-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isPaymentsEnabled" #paypalStep>
+                        <ng-container *ngIf="stepper.selected === paypalStep">
+                            <paypal-settings></paypal-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isPaymentsEnabled" #stripeStep>
+                        <ng-container *ngIf="stepper.selected === stripeStep">
+                            <stripe-settings></stripe-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #epcvipLinkStep>
+                        <ng-container *ngIf="stepper.selected === epcvipLinkStep">
+                            <epcvip-link-settings></epcvip-link-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #epcvipEmailStep>
+                        <ng-container *ngIf="stepper.selected === epcvipEmailStep">
+                            <epcvip-email-settings></epcvip-email-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #iAgeStep>
+                        <ng-container *ngIf="stepper.selected === iAgeStep">
+                            <iage-settings></iage-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isPFMApplicationsFeatureEnabled" #ongageStep>
+                        <ng-container *ngIf="stepper.selected === ongageStep">
+                            <ongage-settings></ongage-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isRapidTenantLayout" #rapidStep>
+                        <ng-container *ngIf="stepper.selected === rapidStep">
+                            <rapid-settings></rapid-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="!appService.isHostTenant && isSalesTalkEnabled" #salesTalkStep>
+                        <ng-container *ngIf="stepper.selected === salesTalkStep">
+                            <sales-talk-settings></sales-talk-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isSocialLoginEnabled('LinkedIn')" #linkedInStep>
+                        <ng-container *ngIf="stepper.selected === linkedInStep">
+                            <linkedin-settings></linkedin-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isSocialLoginEnabled('Facebook')" #facebookStep>
+                        <ng-container *ngIf="stepper.selected === facebookStep">
+                            <facebook-settings></facebook-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isSocialLoginEnabled('Google')" #googleStep>
+                        <ng-container *ngIf="stepper.selected === googleStep">
+                            <google-settings></google-settings>
+                        </ng-container>
+                    </mat-step>
+                    <mat-step *ngIf="isSocialLoginEnabled('Discord')" #discordStep>
+                        <ng-container *ngIf="stepper.selected === discordStep">
+                            <discord-settings></discord-settings>
+                        </ng-container>
+                    </mat-step>
+                </mat-vertical-stepper>
+            </dx-scroll-view>
+        </div>
+    </div>
+</div>
+>>>>>>> f999b481882149d107812286d0979872df712626

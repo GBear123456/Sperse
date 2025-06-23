@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /** Core imports */
 import {
     ChangeDetectionStrategy,
@@ -8,13 +9,13 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import { DxValidationGroupComponent } from 'devextreme-angular/ui/validation-group';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     LandingPageWordingSettingsDto
 } from '@shared/service-proxies/service-proxies';
-import { LandingPageListComponent } from '../landing-page-list/landing-page-list.component';
 
 @Component({
     selector: 'wording-list',
@@ -26,7 +27,7 @@ import { LandingPageListComponent } from '../landing-page-list/landing-page-list
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WordingListComponent {
-    @ViewChild(LandingPageListComponent, { static: false }) landingPageList: LandingPageListComponent;
+    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent
 
     @Input() title: string;
     @Input() wordings: LandingPageWordingSettingsDto[];
@@ -39,7 +40,69 @@ export class WordingListComponent {
     ) {
     }
 
-    isValid(): boolean {
-        return this.landingPageList.isValid();
+    addWording(): void {
+        this.wordings.push(new LandingPageWordingSettingsDto());
     }
+
+    removeWording(index: number): void {
+        this.wordings.splice(index, 1);
+    }
+
+    isValid(): boolean {
+        return this.validationGroup.instance.validate().isValid;
+    }
+=======
+/** Core imports */
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ViewChild,
+    Input
+} from '@angular/core';
+
+/** Third party imports */
+import { DxValidationGroupComponent } from 'devextreme-angular/ui/validation-group';
+
+/** Application imports */
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import {
+    LandingPageWordingSettingsDto
+} from '@shared/service-proxies/service-proxies';
+
+@Component({
+    selector: 'wording-list',
+    templateUrl: 'wording-list.component.html',
+    styleUrls: [
+        '../../shared/styles/common.less',
+        'wording-list.component.less'
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class WordingListComponent {
+    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent
+
+    @Input() title: string;
+    @Input() wordings: LandingPageWordingSettingsDto[];
+    @Input() itemTitle: string = 'Title';
+    @Input() textTitle: string = 'Text';
+
+    constructor(
+        public changeDetectorRef: ChangeDetectorRef,
+        public ls: AppLocalizationService
+    ) {
+    }
+
+    addWording(): void {
+        this.wordings.push(new LandingPageWordingSettingsDto());
+    }
+
+    removeWording(index: number): void {
+        this.wordings.splice(index, 1);
+    }
+
+    isValid(): boolean {
+        return this.validationGroup.instance.validate().isValid;
+    }
+>>>>>>> f999b481882149d107812286d0979872df712626
 }

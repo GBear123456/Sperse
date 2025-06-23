@@ -12,7 +12,6 @@ export class FilterCheckBoxesModel extends FilterItemModel {
     recursive?: boolean;
     templateFunc?: (itemData) => string;
     selectedItems: any[];
-    singleSelection: boolean;
 
     public constructor(init?: Partial<FilterCheckBoxesModel>) {
         super(init, true);
@@ -20,45 +19,29 @@ export class FilterCheckBoxesModel extends FilterItemModel {
 
     getDisplayElements(): DisplayElement[] {
         let result: DisplayElement[] = [];
-        let values = this.value && this.value.sort ? this.value.sort() : [this.value];
+        let values = this.value && this.value.sort ? this.value.sort() : [ this.value ];
         values.forEach(id => {
-            let parentId;
-            let data;
-            if (this.dataSource) {
-                if (this.itemsExpr) {
-                    data = this.dataSource.reduce((result, item) => {
-                        if (result && result[this.keyExpr] === id)
-                            return result;
-                        else if (item[this.keyExpr] === id)
-                            return item;
-                        else if (item[this.itemsExpr]) {
-                            let child = item[this.itemsExpr].find(el => el[this.keyExpr] == id);
-                            if (child) parentId = item[this.keyExpr];
-                            return child;
-                        }
-                    }, null);
-                } else {
-                    data = this.dataSource.find((val: any) => val[this.keyExpr] == id);
-                }
-            }
+            let parentId, data = this.dataSource && (this.itemsExpr ?
+                this.dataSource.reduce((result, item) => {
+                    if (result && result[this.keyExpr] === id)
+                        return result;
+                    else if (item[this.keyExpr] === id)
+                        return item;
+                    else if (item[this.itemsExpr]) {
+                        let child = item[this.itemsExpr].find(el => el[this.keyExpr] == id);
+                        if (child) parentId = item[this.keyExpr];
+                        return child;
+                    }
+                }, null) : this.dataSource.find((val: any) => val[this.keyExpr] == id)
+            );
 
-            if (data) {
-                result.push(<DisplayElement>{
-                    item: this,
-                    displayValue: data.name || data.displayName,
-                    args: id,
-                    parentCode: this.itemsExpr ? parentId : data[this.parentExpr],
-                    sortField: id
-                });
-            } else {
-                result.push(<DisplayElement>{
-                    item: this,
-                    displayValue: id,
-                    args: id,
-                    parentCode: undefined,
-                    sortField: id
-                });
-            }
+            data && result.push(<DisplayElement>{
+                item: this,
+                displayValue: data.name || data.displayName,
+                args: id,
+                parentCode: this.itemsExpr ? parentId : data[this.parentExpr],
+                sortField: id
+            });
         });
 
         result = this.generateParents(result);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 :host {
     display: inline-block;
     position: relative;
@@ -34,31 +35,134 @@
     }
 }
 
-::ng-deep .related-contacts mat-dialog-container {
-    overflow: visible;
-    box-shadow: 3px 3px 12px -1px rgba(0,0,0,0.4);
-    border: 1px solid #e5e9ec;
+::ng-deep .related-contacts {
+    &.modern {
+        mat-dialog-container {
+            &::before {
+                right: -10px;
+                left: auto;
+                border-left: 10px solid #e5e9ec;
+                border-right: none;
+            }
+            &::after {
+                right: -8px;
+                left: auto;
+                border-left: 8px solid #fff;
+                border-right: none;
+            }
+        }
+    }
+
+    mat-dialog-container {
+        overflow: visible;
+        box-shadow: 3px 3px 12px -1px rgba(0,0,0,0.4);
+        border: 1px solid #e5e9ec;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 75px;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid #e5e9ec;
+            display: block;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 77px;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #fff;
+            display: block;
+        }
+    }
+=======
+:host {
+    display: inline-block;
     position: relative;
+    width: 100%;
 
-    &::before {
-        content: '';
-        position: absolute;
-        left: -10px;
-        top: 75px;
-        border-top: 10px solid transparent;
-        border-bottom: 10px solid transparent;
-        border-right: 10px solid #e5e9ec;
-        display: block;
+    ::ng-deep mat-progress-bar {
+        width: 88px;
+        height: 3px;
+
+        .mat-progress-bar-fill:after {
+            background-color: #00aeef;
+        }
     }
 
-    &::after {
-        content: '';
-        position: absolute;
-        left: -8px;
-        top: 77px;
-        border-top: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-        border-right: 8px solid #fff;
-        display: block;
+    .rating {
+        display: flex;
+        bottom: 2px;
+        align-items: center;
+        position: relative;
+        justify-content: flex-start;
+
+        & > * {
+            max-width: 50%;
+        }
+
+        mat-progress-bar {
+            margin-right: 10px;
+        }
+
+        &_int {
+            font-size: 12px;
+            font-weight: 600;
+        }
     }
+}
+
+::ng-deep .related-contacts {
+    &.modern {
+        mat-dialog-container {
+            &::before {
+                right: -10px;
+                left: auto;
+                border-left: 10px solid #e5e9ec;
+                border-right: none;
+            }
+            &::after {
+                right: -8px;
+                left: auto;
+                border-left: 8px solid #fff;
+                border-right: none;
+            }
+        }
+    }
+
+    mat-dialog-container {
+        overflow: visible;
+        box-shadow: 3px 3px 12px -1px rgba(0,0,0,0.4);
+        border: 1px solid #e5e9ec;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 75px;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid #e5e9ec;
+            display: block;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 77px;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #fff;
+            display: block;
+        }
+    }
+>>>>>>> f999b481882149d107812286d0979872df712626
 }

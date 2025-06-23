@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ::ng-deep .hide {
     display: none;
 }
@@ -181,36 +182,190 @@
             white-space: nowrap;
         }
     }
+}
+=======
+::ng-deep .hide {
+    display: none;
+}
 
-    .toggle-button {
+:host {
+    position: relative;
+    display: block;
+    height: 100%;
+
+    .close-button {
+        top: 25px;
+    }
+
+    .mat-dialog-header {
         display: flex;
-        width: 100%;
-        min-width: 300px;
-        border-radius: 20px;
-        background-color: rgb(34 197 94);
+        align-items: center;
+        height: 82px;
+        padding: 0 10px;
+        justify-content: space-between;
+        background-color: #F3F7FA;
+        border-bottom: 1px solid #dadee1;
 
-        @media (min-width: 768px) {
-            width: fit-content;;
+        input {
+            outline: none;
+            font-size: 22px;
+            font-weight: 500;
+            line-height: 1.09;
+            letter-spacing: 0.4px;
+            padding-left: 17px;
+            border: none;
+            background: transparent;
         }
 
-        button {
-            flex: 1;
-            width: 100px;
-            padding: 6px;
-            border-radius: 20px;
+        ::ng-deep dx-text-box[name="title"] {
+            width: 440px;
+            height: 100%;
             border: none;
-            outline: none;
-            cursor: pointer;
-            font-weight: bold;
-            border: 3px solid rgb(34 197 94);
-            background: rgb(34 197 94);
-            color: white;
-            transition: all 0.3s;
-            
-            &.is-active {
-                background: white;
-                color: #333;
+
+            &.dx-state-readonly {
+                .dx-texteditor-container:after {
+                    display: none;
+                }
+            }
+
+            &.dx-invalid {
+                .dx-texteditor-container:after {
+                    background-color: #d9534f !important;
+                }
+
+                .dx-placeholder {
+                    color: #d9534f !important;
+                }
+            }
+
+            .dx-texteditor-container:after {
+                content: '';
+                top: 55px !important;
+                margin-top: 0 !important;
+                left: 15px;
+                width: 442px;
+                height: 1px;
+                bottom: 18px;
+                position: absolute;
+                display: inline-block;
+                background-color: #dadee1;
+            }
+
+            input {
+                &, &:read-only {
+                    font-size: 22px;
+                    font-weight: 500;
+                    line-height: 1.09;
+                    letter-spacing: 0.4px;
+                    color: #202b35;
+                    padding-left: 17px;
+                    background-color: #F3F7FA;
+                    border: none;
+                    border-radius: 0;
+                }
             }
         }
     }
+
+    .title-wrapper {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        position: relative;
+        flex-grow: 1;
+        .title-label {
+            position: absolute;
+            padding-left: 17px;
+            margin-bottom: 0;
+            top: 8px;
+            z-index: 1;
+            font-size: 12px;
+            color: #677380;
+        }
+    }
+
+    ::ng-deep mat-dialog-content {
+        height: 100%;
+        overflow: hidden;
+        max-height: calc(~"100% - 82px");
+        margin: 0;
+        padding: 0;
+    }
+
+    ::ng-deep mat-dialog-actions {
+        height: 100%;
+        margin: 0;
+
+        .mat-dialog-buttons {
+            height: 46px;
+            align-self: center;
+            display: flex;
+
+            button {
+                cursor: pointer;
+                outline: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+
+                &.button-icon {
+                    position: relative;
+                    padding: 0 15px;
+                    height: 36px;
+                    transition: .2s;
+                    border-radius: initial;
+                    margin: auto;
+                    border: 1px solid #eaeef0;
+                    background: #fff;
+
+                    &:hover {
+                        background: #fff;
+                    }
+                }
+            }
+        }
+
+        .mat-dialog-options {
+            padding: 0 15px 0 30px;
+            align-self: center;
+
+            .mat-dialog-option {
+                font-size: 13px;
+            }
+        }
+    }
+
+    ::ng-deep.tab-content {
+        padding: 15px;
+    }
+
+    ::ng-deep .dx-checkbox {
+        margin: 5px 0;
+
+        .dx-checkbox-icon {
+            background-color: #FFF;
+            border: 1px solid #DADEE1 !important;
+            border-radius: 3px;
+        }
+
+        &.dx-checkbox-checked {
+            .dx-checkbox-icon {
+                color: #FFF;
+                font-size: 8px;
+                font-weight: bold;
+                background-color: #00AEEF;
+                border-color: #00AEEF !important;
+            }
+        }
+
+        .dx-checkbox-text {
+            white-space: nowrap;
+        }
+    }
 }
+>>>>>>> f999b481882149d107812286d0979872df712626

@@ -152,8 +152,9 @@
                                     </dxi-group-item>
                                     <dxi-group-item [column]="orderFields.Amount"
                                                     summaryType="sum"
-                                                    [customizeText]="customizeAmountSummary"
-                                                    [alignByColumn]="true">
+                                                    [customizeText]="customizeAmountCell"
+                                                    [alignByColumn]="true"
+                                                    [displayFormat]="l('Total') + ': {0}'">
                                     </dxi-group-item>
                                     <dxi-total-item [column]="orderFields.Name"
                                                     summaryType="count"
@@ -286,12 +287,14 @@
                         <dxi-group-item [column]="subscriptionFields.Fee"
                                         summaryType="sum"
                                         [alignByColumn]="true"
-                                        [customizeText]="customizeAmountCell">
+                                        [customizeText]="customizeAmountCell"
+                                        displayFormat="Total: {0}">
                         </dxi-group-item>
                         <dxi-group-item [column]="subscriptionFields.OrderAmount"
                                         summaryType="sum"
                                         [customizeText]="customizeAmountCell"
-                                        [alignByColumn]="true">
+                                        [alignByColumn]="true"
+                                        displayFormat="Total: {0}">
                         </dxi-group-item>
                         <dxi-total-item [column]="subscriptionFields.FullName"
                                         summaryType="count"

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { InvoiceStatus } from "@shared/service-proxies/service-proxies";
 
 export interface InvoiceDto {
@@ -32,8 +33,7 @@ export enum InvoiceStatusQuickFitler {
     Paid = 'Paid',
     Unpaid = 'Unpaid',
     Due = 'Due',
-    Overdue = 'Overdue',
-    Refund = 'Refund'
+    Overdue = 'Overdue'
 }
 
 export enum InvoiceDueStatus {
@@ -41,4 +41,48 @@ export enum InvoiceDueStatus {
     Due = 'Due',
     Overdue = 'Overdue',
     Pending = 'Pending'
+=======
+import { InvoiceStatus } from "@shared/service-proxies/service-proxies";
+
+export interface InvoiceDto {
+    Id: number;
+    Status: InvoiceStatus;
+    Number: string;
+    GrandTotal: number;
+    CurrencyId: string;
+    Date: string;
+    DueDate: string;
+    Description: string;
+    Coupon: string;
+    PublicId: string;
+    FutureSubscriptionIsSetUp: boolean;
+
+    LastPaymentDate: string;
+    LastPaymentGateway: string;
+    LastPaymentType: string;
+
+    ContactId: number;
+    FullName: string;
+    EmailAddress: string;
+    PhotoPublicId: string;
+    AffiliateContactName: string;
+    OrderId: number;
+    OrderStageName: string;
+}
+
+export enum InvoiceStatusQuickFitler {
+    All = 'All',
+    Draft = 'Draft',
+    Paid = 'Paid',
+    Unpaid = 'Unpaid',
+    Due = 'Due',
+    Overdue = 'Overdue'
+}
+
+export enum InvoiceDueStatus {
+    InTime = 'InTime',
+    Due = 'Due',
+    Overdue = 'Overdue',
+    Pending = 'Pending'
+>>>>>>> f999b481882149d107812286d0979872df712626
 }

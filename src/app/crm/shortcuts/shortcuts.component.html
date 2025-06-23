@@ -76,10 +76,10 @@
                                 <label><img width="18px" height="21px" style="margin-right: 5px;" src="./assets/common/icons/mailchimp-freddie-icon.svg"> Mailchimp</label><button [disabled]="!hasTenantOrCRMSettings" (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'Mailchimp' } })"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
                             </div>
                             <div class="detail-item">
-                                <label><img width="21px" height="21px" style="margin-right: 2px;" src="./assets/common/icons/pngwing.svg"> Google Analytics</label><button (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'TrackingTools' } })"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                                <label><img width="21px" height="21px" style="margin-right: 2px;" src="./assets/common/icons/pngwing.svg"> Google Analytics</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
                             </div>
                             <div class="detail-item">
-                                <label><img width="27px" height="18px" style="margin-left: -3px;" src="./assets/common/icons/meta.svg"> Meta</label><button (click)="router.navigate(['app/admin/settings'], { queryParams: { tab: 'TrackingTools' } })"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
+                                <label><img width="27px" height="18px" style="margin-left: -3px;" src="./assets/common/icons/meta.svg"> Meta</label><button disabled><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>
                             </div>
                             <div class="detail-item">
                                 <label><img width="17px" height="17px" style="margin: 0 3px;" src="./assets/common/icons/zapier-icon.svg"> Zapier</label><button [disabled]="!showZapier" (click)="router.navigate(['/app/crm/zapier'])"><img width="13px" height="13px" src="./assets/common/icons/link3.svg"> Link</button>

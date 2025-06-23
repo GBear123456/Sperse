@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <app-pages-header *ngIf="!showDefaultHeader"></app-pages-header>
 <div class="top-headline">
     <div class="container d-flex justify-content-between align-items-center" *ngIf="applicationCompleteIsRequired$ | async">
@@ -10,7 +11,7 @@
 <div class="page-header navbar navbar-fixed-top navbar-light container" [ngClass]="{'pfm-app': hasPfmAppFeature}" *ngIf="showDefaultHeader">
     <div class="page-logo">
         <a href="javascript:void(0);" (click)="logoClick($event)">
-            <img [src]="yellowTheme ? './assets/common/images/lend-space-dark/logo-top-dark.svg' : appSession.appearanceConfig && appSession.appearanceConfig.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.appearanceConfig.logoId: './assets/common/images/app-logo-on-light.png'" alt="logo" class="logo-default" width="200" />
+            <img [src]="yellowTheme ? './assets/common/images/lend-space-dark/logo-top-dark.svg' : appSession.tenant && appSession.tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId: './assets/common/images/app-logo-on-light.png'" alt="logo" class="logo-default" width="200" />
         </a>
     </div>
 
@@ -39,3 +40,46 @@
     </ng-template> -->
 
 </div>
+=======
+<app-pages-header *ngIf="!showDefaultHeader"></app-pages-header>
+<div class="top-headline">
+    <div class="container d-flex justify-content-between align-items-center" *ngIf="applicationCompleteIsRequired$ | async">
+        <a href="//lendspace.com" class="url">www.lendspace.com</a>
+        <a class="get-free-score" (click)="registerComponent.showRegisterPopup()">Your application is incomplete. Click here to continue...</a>
+        <p class="date">{{currentDate | date:'longDate' : userTimezone}}</p>
+        <register #registerComponent></register>
+    </div>
+</div>
+<div class="page-header navbar navbar-fixed-top navbar-light container" [ngClass]="{'pfm-app': hasPfmAppFeature}" *ngIf="showDefaultHeader">
+    <div class="page-logo">
+        <a href="javascript:void(0);" (click)="logoClick($event)">
+            <img [src]="yellowTheme ? './assets/common/images/lend-space-dark/logo-top-dark.svg' : appSession.tenant && appSession.tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId: './assets/common/images/app-logo-on-light.png'" alt="logo" class="logo-default" width="200" />
+        </a>
+    </div>
+
+    <ng-template ad-header-host></ng-template>
+
+    <ng-container *ngIf="!appSession.isLendspaceDemoUser">
+        <area-navigation *ngIf="hasPfmAppFeature; else memberNav"
+                             id="header-app-menu"
+                             [memberAreaLinks]="appAreaLinks"
+                             [actionsButtons]="actionsButtons">
+        </area-navigation>
+
+        <ng-template #memberNav>
+            <area-navigation
+                id="header-app-menu"
+                [memberAreaLinks]="memberAreaLinks">
+            </area-navigation>
+        </ng-template>
+    </ng-container>
+<!--
+    <ng-template #memberNav>
+        <member-area-navigation
+            id="header-menu"
+            [memberAreaLinks]="memberAreaLinks">
+        </member-area-navigation>
+    </ng-template> -->
+
+</div>
+>>>>>>> f999b481882149d107812286d0979872df712626

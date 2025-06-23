@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div class="email-template-selector">
     <h5>{{title}}</h5>
     <dx-select-box width="380px"
@@ -5,12 +6,27 @@
                    valueExpr="id"
                    [(value)]="internalTemplateId"
                    [dataSource]="templates$ | async"
-                   (onValueChanged)="onTemplateChanged($event)"
-                   [disabled]="disabled">
+                   (onValueChanged)="onTemplateChanged($event)">
     </dx-select-box>
-    <div *ngIf="!disabled" class="buttons">
+    <div class="buttons">
         <i class="create-template" [title]="ls.l('CreateTemplate')" (click)="showEmailTemplateDialog(true)"></i>
         <i *ngIf="templateId" [title]="ls.l('EditTemplate')" class="edit-template fa fa-pencil" (click)="showEmailTemplateDialog()"></i>
         <i *ngIf="showCloneButton" [title]="ls.l('CloneTemplate')" class="clone-template fa fa-clone" (click)="cloneEmailTemplate()"></i>
     </div>
+=======
+<div class="email-template-selector">
+    <h5>{{title}}</h5>
+    <dx-select-box width="380px"
+                   displayExpr="name"
+                   valueExpr="id"
+                   [(value)]="internalTemplateId"
+                   [dataSource]="templates$ | async"
+                   (onValueChanged)="onTemplateChanged($event)">
+    </dx-select-box>
+    <div class="buttons">
+        <i class="create-template" [title]="ls.l('CreateTemplate')" (click)="showEmailTemplateDialog(true)"></i>
+        <i *ngIf="templateId" [title]="ls.l('EditTemplate')" class="edit-template fa fa-pencil" (click)="showEmailTemplateDialog()"></i>
+        <i *ngIf="showCloneButton" [title]="ls.l('CloneTemplate')" class="clone-template fa fa-clone" (click)="cloneEmailTemplate()"></i>
+    </div>
+>>>>>>> f999b481882149d107812286d0979872df712626
 </div>

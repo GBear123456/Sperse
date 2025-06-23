@@ -1,6 +1,7 @@
+<<<<<<< HEAD
 <h2>{{ ls.l('LandingPage') }}</h2>
 <ng-container *ngIf="settings">
-    <dx-scroll-view height="90%" showScrollbar="onHover">
+    <dx-scroll-view [height]="450" showScrollbar="onHover">
         <div class="form-group">
             <label>{{ls.l('LandingPageContact')}}</label>
             <div class="landing-contact">
@@ -159,7 +160,7 @@
             <dx-text-area height="155px"
                           [placeholder]="ls.l('EditValuePlaceholder')"
                           [(value)]="settings.aboutMe"
-                          [maxLength]="50000">
+                          [maxLength]="4096">
             </dx-text-area>
         </div>
         <div class="form-group">
@@ -169,7 +170,7 @@
             <dx-text-area height="155px"
                           [placeholder]="ls.l('EditValuePlaceholder')"
                           [(value)]="settings.disclaimer"
-                          [maxLength]="50000">
+                          [maxLength]="4096">
             </dx-text-area>
         </div>
         <div class="form-group">
@@ -194,47 +195,6 @@
                       [(wordings)]="settings.tabs"
                       [title]="ls.l('Tabs')">
         </wording-list>
-        <div class="form-group">
-            <label>{{ls.l('CheckoutTheme')}}</label>
-            <dx-select-box [items]="checkoutThemes"
-                           placeholder=""
-                           [(value)]="settings.checkoutTheme">
-            </dx-select-box>
-        </div>
-        <landing-page-list #checkoutFieldComponent
-                           [title]="ls.l('Checkout Fields')"
-                           [list]="settings.checkoutFields"
-                           [itemTemplate]="checkoutFieldsTmpl"
-                           (beforeItemAdd)="$event.isRequired = false"
-                           (beforeItemDelete)="onCheckoutFieldDeleted($event)">
-        </landing-page-list>
-
-        <ng-template #checkoutFieldsTmpl let-data>
-            <div class="checkout-field form-group">
-                <dx-select-box [items]="checkoutFields"
-                               displayExpr="text"
-                               valueExpr="id"
-                               placeholder="Select field..."
-                               [(value)]="data.fieldName"
-                               (onValueChanged)="onCheckoutFieldChanged($event, data)">
-                    <dx-validator>
-                        <dxi-validation-rule type="required"
-                                             [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
-                    </dx-validator>
-                </dx-select-box>
-                <dx-text-box placeholder="Display Name"
-                             [(value)]="data.displayName"
-                             [maxLength]="128">
-                    <dx-validator>
-                        <dxi-validation-rule type="required"
-                                             [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
-                    </dx-validator>
-                </dx-text-box>
-                <dx-check-box [text]="ls.l('Required')"
-                              [(value)]="data.isRequired">
-                </dx-check-box>
-            </div>
-        </ng-template>
 
         <div class="domains">
             <div class="domains-caption">
@@ -305,3 +265,271 @@
         </app-static-list>
     </dx-scroll-view>
 </ng-container>
+=======
+<h2>{{ ls.l('LandingPage') }}</h2>
+<ng-container *ngIf="settings">
+    <dx-scroll-view [height]="450" showScrollbar="onHover">
+        <div class="form-group">
+            <label>{{ls.l('LandingPageContact')}}</label>
+            <div class="landing-contact">
+                <img [src]="profileService.getContactPhotoUrl(settings.contactPhotoId, true)" onerror="this.src='assets/common/images/no-photo.png';" alt="Person Photo">
+                <span *ngIf="settings.contactId else noContact">
+                    <span class="contact-name" (click)="openContactLink()">{{settings.contactFullName}}</span>
+                </span>
+                <ng-template #noContact>
+                    <span class="empty">{{(ls.l('Set') + ' ' + ls.l('LandingPageContact'))}}</span>
+                </ng-template>
+                <i class="fa fa-pencil" (click)="toggleContactLists()"></i>
+                <i *ngIf="settings.contactId" class="remove fa fa-times" (click)="removeContact()"></i>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('DefaultColorScheme')}}</label>
+            <dx-select-box [items]="defaultSchemeOptions"
+                           displayExpr="text"
+                           valueExpr="id"
+                           placeholder=""
+                           [(value)]="settings.defaultColorScheme">
+            </dx-select-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('SenjaPrivateAPIKey')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.senjaPrivateAPIKey"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('SenjaReviewsWidgetID')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.senjaReviewsWidgetID"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('SenjaAverageScoreID')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.senjaAverageScoreID"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('YoutubeWidgetLink')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.youtubeWidgetLink"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('DiscordJoinLink')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.discordJoinLink"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('TelegramJoinLink')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.telegramJoinLink"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('WhatsAppJoinLink')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.whatsAppJoinLink"
+                         [maxLength]="512">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('ShareWidgetSuggestedCopy')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.shareWidgetSuggestedCopy"
+                         [maxLength]="260">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('ShareWidgetOpenAIKey')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.shareWidgetOpenAIKey"
+                         [maxLength]="256">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('HtmlTitle')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.htmlTitle"
+                         [maxLength]="200">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('MetaKeywords')}}</label>
+            <dx-tag-box [placeholder]="ls.l('EditValuePlaceholder')"
+                        [openOnFieldClick]="false"
+                        [acceptCustomValue]="true"
+                        [(value)]="metaKeywords"
+                        [maxLength]="30"
+                        (onKeyDown)="metaKeywordKeyDown($event)"
+                        (onValueChanged)="metaKeywordChanged($event)">
+            </dx-tag-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('MetaDescription')}}</label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.metaDescription"
+                         [maxLength]="200">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('OnlineStatus')}}</label>
+            <dx-select-box [items]="onlineStatusOptions"
+                           displayExpr="text"
+                           valueExpr="id"
+                           placeholder=""
+                           [(value)]="settings.onlineStatus">
+            </dx-select-box>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('MemberSince')}}</label>
+            <dx-date-box type="date"
+                         [acceptCustomValue]="false"
+                         [openOnFieldClick]="true"
+                         [showClearButton]="true"
+                         [(value)]="settings.memberSince">
+            </dx-date-box>
+        </div>
+        <uploader #logoUploader
+                  [title]="ls.l('Icon')"
+                  [documentId]="settings.logoFileObjectId"
+                  [documentLink]="settings.logoFileObjectId ? remoteServiceBaseUrl + '/api/ContactLandingPage/GetLogo?tenantId=' +  tenantIdString : undefined"
+                  [uploadInfoText]="ls.l('LandingPageLogo_Info', 5)"
+                  [uploadButtonText]="ls.l('FileUpload')"
+                  [uploadUrl]="remoteServiceBaseUrl + '/api/ContactLandingPage/UploadLogo'"
+                  acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
+                  [maxFileSize]="logoMaxSize"
+                  (onDocumentClear)="clearLogo()">
+        </uploader>
+        <uploader #coverLogoUploader
+                  [title]="ls.l('CoverLogo')"
+                  [documentId]="settings.coverLogoFileObjectId"
+                  [documentLink]="settings.coverLogoFileObjectId ? remoteServiceBaseUrl + '/api/ContactLandingPage/GetCoverPhoto?tenantId=' +  tenantIdString : undefined"
+                  [uploadInfoText]="ls.l('LandingPageLogo_Info', 10)"
+                  [uploadButtonText]="ls.l('FileUpload')"
+                  [uploadUrl]="remoteServiceBaseUrl + '/api/ContactLandingPage/UploadCoverPhoto'"
+                  acceptFileExt=".jpg,.jpeg,.png,.gif,.avif,.webp"
+                  [maxFileSize]="coverLogoMaxSize"
+                  (onDocumentClear)="clearCoverLogo()">
+        </uploader>
+        <div class="form-group">
+            <label>
+                {{ls.l('About Me')}}
+            </label>
+            <dx-text-area height="155px"
+                          [placeholder]="ls.l('EditValuePlaceholder')"
+                          [(value)]="settings.aboutMe"
+                          [maxLength]="4096">
+            </dx-text-area>
+        </div>
+        <div class="form-group">
+            <label>
+                {{ls.l('Disclaimer')}}
+            </label>
+            <dx-text-area height="155px"
+                          [placeholder]="ls.l('EditValuePlaceholder')"
+                          [(value)]="settings.disclaimer"
+                          [maxLength]="4096">
+            </dx-text-area>
+        </div>
+        <div class="form-group">
+            <label>{{ls.l('Products')}}</label>
+            <dx-tag-box [dataSource]="products$ | async"
+                        displayExpr="name"
+                        valueExpr="id"
+                        [grouped]="true"
+                        [searchEnabled]="true"
+                        [showDropDownButton]="true"
+                        [(value)]="settings.productIds">
+            </dx-tag-box>
+        </div>
+
+        <wording-list #faq
+                      [(wordings)]="settings.faq"
+                      [title]="ls.l('FAQ')"
+                      [itemTitle]="ls.l('Question')"
+                      [textTitle]="ls.l('Answer')">
+        </wording-list>
+        <wording-list #tabs
+                      [(wordings)]="settings.tabs"
+                      [title]="ls.l('Tabs')">
+        </wording-list>
+
+        <div class="domains">
+            <div class="domains-caption">
+                <h5>{{ls.l("Domains")}}</h5>
+                <span *ngIf="!settings.landingPageDomains.length && !isNewDomainAdding" class="generate-domain" (click)="generateDomain()">{{ls.l('Generate +')}}</span>
+            </div>
+            <div class="new-domain">
+                <dx-text-box #newDomain
+                             valueChangeEvent="keyup"
+                             placeholder="Domain name">
+                </dx-text-box>
+                <button class="btn btn-layout" [disabled]="!newDomain.value" (click)="addDomain(newDomain)">
+                    Add <i [ngClass]="{ 'fa fa-spinner fa-spin': isNewDomainAdding }"></i>
+                </button>
+            </div>
+            <div *ngFor="let domain of settings.landingPageDomains; index as i" class="domain">
+                <div class="domain-info">
+                    <div class="domain-name">
+                        <ng-container *ngIf="domain.isValid else invalidDomain">
+                            <a href="https://{{domain.name}}" target="_blank">{{domain.name}}</a>
+                            <i class="fa fa-check"></i>
+                        </ng-container>
+                        <ng-template #invalidDomain>
+                            {{domain.name}} <i class="fa fa-times"></i>
+                        </ng-template>
+                    </div>
+                    <div class="buttons">
+                        <span *ngIf="!domain.isValid" class="verify" (click)="verifyDomain(domain)">
+                            Verify <i [ngClass]="{ 'fa fa-spinner fa-spin': domain.isValidating }"></i>
+                        </span>
+                        <span class="delete" (click)="deleteDomain(domain, i)">
+                            Delete <i [ngClass]="{ 'fa fa-spinner fa-spin': domain.isDeleting }"></i>
+                        </span>
+                    </div>
+                </div>
+                <div *ngIf="!domain.isVaid && domain.configRecords && domain.configRecords.length" class="domain-dns-info">
+                    <div>Set the following record on your DNS provider to continue:</div>
+                    <div class="container">
+                        <div class="row header-row">
+                            <div class="col-2">Type</div>
+                            <div class="col-4">Name</div>
+                            <div class="col-6">Value</div>
+                        </div>
+                        <div *ngFor="let dnsRecord of domain.configRecords" class="row">
+                            <div class="col-2">{{dnsRecord.type}}</div>
+                            <div class="col-4">{{dnsRecord.name}}</div>
+                            <div class="col-6">{{dnsRecord.value}}</div>
+                        </div>
+                    </div>
+                    <div>Depending on your provider, it might take some time for the DNS records to apply.</div>
+                </div>
+            </div>
+        </div>
+
+        <app-static-list #contactsList
+                         [width]="'330px'"
+                         [height]="440"
+                         [targetSelector]="'.landing-contact'"
+                         [title]="ls.l('Contacts')"
+                         [showConfirmation]="false"
+                         [highlightSelected]="true"
+                         [selectedKeys]="[settings.contactId]"
+                         [searchEnabled]="true"
+                         [customSearchEnabled]="true"
+                         (onItemSelected)="onContactSelected($event)"
+                         (onListFiltered)="onListFiltered($event)"
+                         [list]="contacts">
+        </app-static-list>
+    </dx-scroll-view>
+</ng-container>
+>>>>>>> f999b481882149d107812286d0979872df712626

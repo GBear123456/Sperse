@@ -1,13 +1,12 @@
+<<<<<<< HEAD
 <div class="packageHeader">
     <ng-container *ngIf="packagesConfig$ | async">
         <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ productsGroupName == PRODUCT_GROUP_ADD_ON ? ls.l('ChooseAddOnPackage'): widgettitle }}</h2>
         <h3 class="subtitle">{{ subtitle }}</h3>
         <div *ngIf="packages && packages.length; else noproducts" class="state-slider point{{availablePeriods.length}}">
             <div class="captions">
-                <ng-container *ngFor="let frequency of availablePeriods; index as i">
-                    <div [ngClass]="{ 'active': getActiveStatus(frequency) }" (click)="toggle(frequency)">
-                        {{ ls.ls(crmLocalizationSourceName, 'RecurringPaymentFrequency_' + recurringPaymentFrequency[frequency]) }}
-                    </div>
+                <ng-container *ngFor="let period of availablePeriods; index as i">
+                    <div [ngClass]="{ 'active': getActiveStatus(period) }" (click)="toggle(period)">{{ ls.l(billingPeriod[period]) }}</div>
                 </ng-container>
             </div>
             <mat-slider [value]="getSliderValue()"
@@ -24,22 +23,20 @@
         <dx-scroll-view showScrollbar="onHover" [direction]="productsGroupName == PRODUCT_GROUP_ADD_ON ? 'vertical' : 'horizontal'">
             <div class="packages" [ngStyle]="{'flex-flow': productsGroupName == PRODUCT_GROUP_ADD_ON ? 'wrap' : 'inherit'}">
                 <ng-container *ngFor="let package of packages; let i = index;">
-                    <ng-container *ngFor="let priceOption of package.priceOptions; let j = index;">
-                        <package-card #priceCard
-                                      [productInfo]="package"
-                                      [priceOptionInfo]="priceOption"
-                                      [paymentFrequency]="selectedPaymentFrequency"
-                                      [isActive]="currentPriceOptionId == undefined || currentPriceOptionId == priceOption.id"
-                                      [background]="backgroundColors[i]"
-                                      (click)="selectPriceOption(priceOption.id)"
-                                      [ngClass]="{
-                                        'selected' : selectedPriceOptionId === priceOption.id,
-                                        'large' : maxFrequencyCount < 3,
-                                        'heightFitContent' : maxFrequencyCount > 2,
-                                        'purchased': isProductPurchased(priceOption.id)
-                                      }">
-                        </package-card>
-                    </ng-container>
+                    <package-card
+                        [productInfo]="package"
+                        [billingPeriod]="selectedBillingPeriod"
+                        [isActive]="currentProductId == undefined || currentProductId == package.id"
+                        [background]="backgroundColors[i]"
+                        [ngClass]="{
+                            'selected': selectedPackageIndex === i,
+                            'large': packages.length < 3,
+                            'last': i === packages.length - 1,
+                            'heightFitContent' : packages.length > 2,
+                            'purchased': isProductPurchased(package)
+                        }"
+                        (click)="selectPackage(i)">
+                    </package-card>
                 </ng-container>
             </div>
         </dx-scroll-view>
@@ -48,4 +45,52 @@
             <button [disabled]="nextButtonDisabled" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
         </div>
     </ng-container>
+=======
+<div class="packageHeader">
+    <ng-container *ngIf="packagesConfig$ | async">
+        <h2 class="title" [ngClass]="{long: !!widgettitle?.length}">{{ productsGroupName == PRODUCT_GROUP_ADD_ON ? ls.l('ChooseAddOnPackage'): widgettitle }}</h2>
+        <h3 class="subtitle">{{ subtitle }}</h3>
+        <div *ngIf="packages && packages.length; else noproducts" class="state-slider point{{availablePeriods.length}}">
+            <div class="captions">
+                <ng-container *ngFor="let period of availablePeriods; index as i">
+                    <div [ngClass]="{ 'active': getActiveStatus(period) }" (click)="toggle(period)">{{ ls.l(billingPeriod[period]) }}</div>
+                </ng-container>
+            </div>
+            <mat-slider [value]="getSliderValue()"
+                        [disabled]="true">
+            </mat-slider>
+        </div>
+        <ng-template #noproducts>
+            <h3>{{ ls.l('Your subscription cannot be upgraded') }}</h3>
+        </ng-template>
+    </ng-container>
+</div>
+<ng-container *ngIf="packagesConfig$ | async">
+    <ng-container *ngIf="packages && packages.length">
+        <dx-scroll-view showScrollbar="onHover" [direction]="productsGroupName == PRODUCT_GROUP_ADD_ON ? 'vertical' : 'horizontal'">
+            <div class="packages" [ngStyle]="{'flex-flow': productsGroupName == PRODUCT_GROUP_ADD_ON ? 'wrap' : 'inherit'}">
+                <ng-container *ngFor="let package of packages; let i = index;">
+                    <package-card
+                        [productInfo]="package"
+                        [billingPeriod]="selectedBillingPeriod"
+                        [isActive]="currentProductId == undefined || currentProductId == package.id"
+                        [background]="backgroundColors[i]"
+                        [ngClass]="{
+                            'selected': selectedPackageIndex === i,
+                            'large': packages.length < 3,
+                            'last': i === packages.length - 1,
+                            'heightFitContent' : packages.length > 2,
+                            'purchased': isProductPurchased(package)
+                        }"
+                        (click)="selectPackage(i)">
+                    </package-card>
+                </ng-container>
+            </div>
+        </dx-scroll-view>
+
+        <div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
+            <button [disabled]="nextButtonDisabled" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
+        </div>
+    </ng-container>
+>>>>>>> f999b481882149d107812286d0979872df712626
 </ng-container>

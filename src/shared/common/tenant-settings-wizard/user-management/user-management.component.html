@@ -1,77 +1,150 @@
+<<<<<<< HEAD
 <h2>{{ ls.l('UserManagement') }}</h2>
-<dx-scroll-view height="90%" showScrollbar="onHover">
-    <ng-container *ngIf="tenantSettings">
-        <div class="m-form">
-            <h5>{{ls.l("FormBasedRegistration")}}</h5>
-            <div class="m-checkbox-list">
-                <div class="form-group">
-                    <dx-check-box id="Setting_AllowSelfRegistration"
-                                  [text]="ls.l('AllowUsersToRegisterThemselves')"
-                                  [(value)]="tenantSettings.allowSelfRegistration">
-                    </dx-check-box>
-                    <span class="m-form__help">{{ls.l("AllowUsersToRegisterThemselves_Hint")}}</span>
-                </div>
-                <div class="form-group">
-                    <dx-check-box id="Setting_IsNewRegisteredUserActiveByDefault"
-                                  [text]="ls.l('NewRegisteredUsersIsActiveByDefault')"
-                                  [(value)]="tenantSettings.isNewRegisteredUserActiveByDefault">
-                    </dx-check-box>
-                    <span class="m-form__help">{{ls.l("NewRegisteredUsersIsActiveByDefault_Hint")}}</span>
-                </div>
-                <div class="form-group" [hidden]="!tenantSettings.allowSelfRegistration">
-                    <dx-check-box id="Setting_UseCaptchaOnRegistration"
-                                  [text]="ls.l('UseCaptchaOnRegistration')"
-                                  [(value)]="tenantSettings.useCaptchaOnRegistration">
-                    </dx-check-box>
-                </div>
+<ng-container *ngIf="tenantSettings">
+    <div class="m-form">
+        <h5>{{ls.l("FormBasedRegistration")}}</h5>
+        <div class="m-checkbox-list">
+            <div class="form-group">
+                <dx-check-box id="Setting_AllowSelfRegistration"
+                              [text]="ls.l('AllowUsersToRegisterThemselves')"
+                              [(value)]="tenantSettings.allowSelfRegistration">
+                </dx-check-box>
+                <span class="m-form__help">{{ls.l("AllowUsersToRegisterThemselves_Hint")}}</span>
+            </div>
+            <div class="form-group">
+                <dx-check-box id="Setting_IsNewRegisteredUserActiveByDefault"
+                              [text]="ls.l('NewRegisteredUsersIsActiveByDefault')"
+                              [(value)]="tenantSettings.isNewRegisteredUserActiveByDefault">
+                </dx-check-box>
+                <span class="m-form__help">{{ls.l("NewRegisteredUsersIsActiveByDefault_Hint")}}</span>
+            </div>
+            <div class="form-group" [hidden]="!tenantSettings.allowSelfRegistration">
+                <dx-check-box id="Setting_UseCaptchaOnRegistration"
+                              [text]="ls.l('UseCaptchaOnRegistration')"
+                              [(value)]="tenantSettings.useCaptchaOnRegistration">
+                </dx-check-box>
             </div>
         </div>
-        <div class="form-group">
-            <h5 class="margin-top-20">{{ls.l("OtherSettings")}}</h5>
-            <dx-check-box id="Setting_IsEmailConfirmationRequiredForLogin"
-                          [text]="ls.l('EmailConfirmationRequiredForLogin')"
-                          [(value)]="tenantSettings.isEmailConfirmationRequiredForLogin">
-            </dx-check-box>
+    </div>
+    <div class="form-group">
+        <h5 class="margin-top-20">{{ls.l("OtherSettings")}}</h5>
+        <dx-check-box id="Setting_IsEmailConfirmationRequiredForLogin"
+                      [text]="ls.l('EmailConfirmationRequiredForLogin')"
+                      [(value)]="tenantSettings.isEmailConfirmationRequiredForLogin">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <dx-check-box id="Setting_EnableSignUpPage"
+                      [text]="ls.l('EnableSignUpPage')"
+                      [(value)]="tenantSettings.isSignUpPageEnabled"
+                      (onInitialized)="initSignUpPageEnabled()">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <contact-group-templates [title]="ls.l('UserRegistrationEmail')"
+                                 [(customTemplates)]="tenantSettings.customWelcomeEmailTemplates"
+                                 [templateType]="EmailTemplateType.WelcomeEmail">
+        </contact-group-templates>
+    </div>
+</ng-container>
+<ng-container *ngIf="hostSettings">
+    <div class="form-group">
+        <dx-check-box id="Settings_IsEmailConfirmationRequiredForLogin"
+                      [text]="ls.l('EmailConfirmationRequiredForLogin')"
+                      [(value)]="hostSettings.isEmailConfirmationRequiredForLogin">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <dx-check-box id="Settings_SmsVerificationEnabled"
+                      [text]="ls.l('SmsVerificationEnabled')"
+                      [(value)]="hostSettings.smsVerificationEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <dx-check-box id="Setting_EnableSignUpPage"
+                      [text]="ls.l('EnableSignUpPage')"
+                      [(value)]="hostSettings.isSignUpPageEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <contact-group-templates [title]="ls.l('UserRegistrationEmail')"
+                                 [(customTemplates)]="hostSettings.customWelcomeEmailTemplates"
+                                 [templateType]="EmailTemplateType.WelcomeEmail">
+        </contact-group-templates>
+    </div>
+=======
+<h2>{{ ls.l('UserManagement') }}</h2>
+<ng-container *ngIf="tenantSettings">
+    <div class="m-form">
+        <h5>{{ls.l("FormBasedRegistration")}}</h5>
+        <div class="m-checkbox-list">
+            <div class="form-group">
+                <dx-check-box id="Setting_AllowSelfRegistration"
+                              [text]="ls.l('AllowUsersToRegisterThemselves')"
+                              [(value)]="tenantSettings.allowSelfRegistration">
+                </dx-check-box>
+                <span class="m-form__help">{{ls.l("AllowUsersToRegisterThemselves_Hint")}}</span>
+            </div>
+            <div class="form-group">
+                <dx-check-box id="Setting_IsNewRegisteredUserActiveByDefault"
+                              [text]="ls.l('NewRegisteredUsersIsActiveByDefault')"
+                              [(value)]="tenantSettings.isNewRegisteredUserActiveByDefault">
+                </dx-check-box>
+                <span class="m-form__help">{{ls.l("NewRegisteredUsersIsActiveByDefault_Hint")}}</span>
+            </div>
+            <div class="form-group" [hidden]="!tenantSettings.allowSelfRegistration">
+                <dx-check-box id="Setting_UseCaptchaOnRegistration"
+                              [text]="ls.l('UseCaptchaOnRegistration')"
+                              [(value)]="tenantSettings.useCaptchaOnRegistration">
+                </dx-check-box>
+            </div>
         </div>
-        <div class="form-group">
-            <dx-check-box id="Setting_EnableSignUpPage"
-                          [text]="ls.l('EnableSignUpPage')"
-                          [(value)]="tenantSettings.isSignUpPageEnabled"
-                          (onInitialized)="initSignUpPageEnabled()">
-            </dx-check-box>
-        </div>
-        <div class="form-group">
-            <contact-group-templates [title]="ls.l('UserRegistrationEmail')"
-                                     [(customTemplates)]="tenantSettings.customWelcomeEmailTemplates"
-                                     [templateType]="EmailTemplateType.WelcomeEmail">
-            </contact-group-templates>
-        </div>
-    </ng-container>
-    <ng-container *ngIf="hostSettings">
-        <div class="form-group">
-            <dx-check-box id="Settings_IsEmailConfirmationRequiredForLogin"
-                          [text]="ls.l('EmailConfirmationRequiredForLogin')"
-                          [(value)]="hostSettings.isEmailConfirmationRequiredForLogin">
-            </dx-check-box>
-        </div>
-        <div class="form-group">
-            <dx-check-box id="Settings_SmsVerificationEnabled"
-                          [text]="ls.l('SmsVerificationEnabled')"
-                          [(value)]="hostSettings.smsVerificationEnabled"
-                          [disabled]="true">
-            </dx-check-box>
-        </div>
-        <div class="form-group">
-            <dx-check-box id="Setting_EnableSignUpPage"
-                          [text]="ls.l('EnableSignUpPage')"
-                          [(value)]="hostSettings.isSignUpPageEnabled">
-            </dx-check-box>
-        </div>
-        <div class="form-group">
-            <contact-group-templates [title]="ls.l('UserRegistrationEmail')"
-                                     [(customTemplates)]="hostSettings.customWelcomeEmailTemplates"
-                                     [templateType]="EmailTemplateType.WelcomeEmail">
-            </contact-group-templates>
-        </div>
-    </ng-container>
-</dx-scroll-view>
+    </div>
+    <div class="form-group">
+        <h5 class="margin-top-20">{{ls.l("OtherSettings")}}</h5>
+        <dx-check-box id="Setting_IsEmailConfirmationRequiredForLogin"
+                      [text]="ls.l('EmailConfirmationRequiredForLogin')"
+                      [(value)]="tenantSettings.isEmailConfirmationRequiredForLogin">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <dx-check-box id="Setting_EnableSignUpPage"
+                      [text]="ls.l('EnableSignUpPage')"
+                      [(value)]="tenantSettings.isSignUpPageEnabled"
+                      (onInitialized)="initSignUpPageEnabled()">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <contact-group-templates [title]="ls.l('UserRegistrationEmail')"
+                                 [(customTemplates)]="tenantSettings.customWelcomeEmailTemplates"
+                                 [templateType]="EmailTemplateType.WelcomeEmail">
+        </contact-group-templates>
+    </div>
+</ng-container>
+<ng-container *ngIf="hostSettings">
+    <div class="form-group">
+        <dx-check-box id="Settings_IsEmailConfirmationRequiredForLogin"
+                      [text]="ls.l('EmailConfirmationRequiredForLogin')"
+                      [(value)]="hostSettings.isEmailConfirmationRequiredForLogin">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <dx-check-box id="Settings_SmsVerificationEnabled"
+                      [text]="ls.l('SmsVerificationEnabled')"
+                      [(value)]="hostSettings.smsVerificationEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <dx-check-box id="Setting_EnableSignUpPage"
+                      [text]="ls.l('EnableSignUpPage')"
+                      [(value)]="hostSettings.isSignUpPageEnabled">
+        </dx-check-box>
+    </div>
+    <div class="form-group">
+        <contact-group-templates [title]="ls.l('UserRegistrationEmail')"
+                                 [(customTemplates)]="hostSettings.customWelcomeEmailTemplates"
+                                 [templateType]="EmailTemplateType.WelcomeEmail">
+        </contact-group-templates>
+    </div>
+>>>>>>> f999b481882149d107812286d0979872df712626
+</ng-container>

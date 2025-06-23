@@ -1,6 +1,6 @@
+<<<<<<< HEAD
 <h2 mat-dialog-title>
-    <div *ngIf="data && data.paymentType == 'PayPal'">{{ls.l('PayWithPayPal')}}</div>
-    <div *ngIf="data && data.paymentType == 'Stripe'">{{ls.l('PayWithStripe')}}</div>
+    <div>{{ls.l('ConfirmPayPalWithdrawals')}}</div>
 </h2>
 <mat-dialog-content>
     <dx-scroll-view showScrollbar="onHover">
@@ -25,4 +25,32 @@
 <mat-dialog-actions>
     <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
     <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Confirm')}}</button>
+=======
+<h2 mat-dialog-title>
+    <div>{{ls.l('ConfirmPayPalWithdrawals')}}</div>
+</h2>
+<mat-dialog-content>
+    <dx-scroll-view showScrollbar="onHover">
+        <dx-number-box
+            [readOnly]="true"
+            [placeholder]="ls.l('TotalAmount')"
+            [format]="{ style: 'currency', currency: currency, useGrouping: true }"
+            [value]="totalAmount">
+        </dx-number-box>
+        <dx-date-box 
+            type="date" 
+            [readOnly]="true"
+            [placeholder]="ls.l('PayDate')"
+            [(value)]="payDate">
+        </dx-date-box>
+        <dx-text-area 
+            [placeholder]="ls.l('Note')"
+            [(value)]="paymentNote">
+        </dx-text-area>
+    </dx-scroll-view>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Confirm')}}</button>
+>>>>>>> f999b481882149d107812286d0979872df712626
 </mat-dialog-actions>

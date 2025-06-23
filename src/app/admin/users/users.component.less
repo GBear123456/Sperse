@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 :host {
     position: relative;
     height: 100%;
@@ -17,6 +18,125 @@
             overflow: hidden;
             vertical-align: bottom;
             text-align: left!important;
+        }
+
+        &.gallery-view {
+            .dx-datagrid-rowsview {
+                .dx-datagrid-table {
+                    display: flex;
+                    flex-wrap: wrap;
+                    padding: 0 40px;
+
+                    colgroup, 
+                    .dx-freespace-row, 
+                    .dx-virtual-row {
+                        display: none!important;
+                    }
+                }
+                .dx-column-lines {
+                    width: 260px;
+                    overflow: hidden;
+
+                    &:not(.dx-freespace-row),
+                    &:not(.dx-virtual-row) {
+                        display: inline-block;
+                        margin: auto;
+                    }
+
+                    &:hover {
+                        .active-block {
+                            display: block;
+                        }
+                        .role-container.top {
+                            visibility: hidden!important;
+                        }
+                    }
+
+                    .active-block {
+                        display: none;
+                        background: #F7FCFF;
+                        border-radius: 8px;
+                        padding: 10px;
+                        text-align: center;
+                        position: absolute;
+                        bottom: 0px;
+                        margin: 0 10px;
+                        width: 240px;
+                        h3 {
+                            font-family: Manrope;
+                            font-size: 17px;
+                            font-weight: 600;
+                            line-height: 27px;
+                            letter-spacing: -0.02em;
+                            text-align: center;
+                            color: #08295B;
+                        }
+                        span {
+                            font-family: Manrope;
+                            font-size: 13px;
+                            font-weight: 400;
+                            line-height: 27px;
+                            letter-spacing: -0.01em;
+                            text-align: center;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            display: block !important;
+                            max-width: 100%;
+                        }
+                        p {
+                            font-family: Manrope;
+                            font-size: 12px;
+                            font-weight: 400;
+                            line-height: 27px;
+                            letter-spacing: -0.02em;
+                            text-align: center;
+                            color: #10213A;
+                        }        
+                        .actions {
+                            img {
+                                float: left;
+                                position: relative;
+                                top: 5px;
+                            }
+                            a {
+                                float: right;
+                                color: #08295B;
+                                font-family: Manrope;
+                                font-size: 13px;
+                                font-weight: 500;
+                                line-height: 27px;
+                                letter-spacing: -0.02em;
+                                text-align: center;
+                            }
+                        }
+                    }
+
+                    .dx-template-wrapper {
+                        position: relative;
+                    }
+
+                    .role-container {
+                        display: block!important;
+                        text-align: center!important;
+                        padding-top: 10px;
+                        height: 30px;
+                        width: 260px;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                    }
+
+                    h3 {
+                        text-align: center;
+                        padding: 10px 0 0;
+                    }
+
+        
+                }
+                .galery-image {
+                    border-radius: 20px;
+                    margin: 40px 10px 0;
+                }
+            }
         }
 
         .dx-datagrid-rowsview {
@@ -61,3 +181,187 @@
         display: none;
     }
 }
+=======
+:host {
+    position: relative;
+    height: 100%;
+
+    ::ng-deep dx-data-grid {
+
+        td.dx-command-edit {
+            & + td::before {
+                display: none !important;
+            }
+        }
+
+        .role-container {
+            width: 95%;
+            text-overflow: ellipsis;
+            display: inline-block!important;
+            overflow: hidden;
+            vertical-align: bottom;
+            text-align: left!important;
+        }
+
+        &.gallery-view {
+            .dx-datagrid-rowsview {
+                .dx-datagrid-table {
+                    display: flex;
+                    flex-wrap: wrap;
+                    padding: 0 40px;
+
+                    colgroup, 
+                    .dx-freespace-row, 
+                    .dx-virtual-row {
+                        display: none!important;
+                    }
+                }
+                .dx-column-lines {
+                    width: 260px;
+                    overflow: hidden;
+
+                    &:not(.dx-freespace-row),
+                    &:not(.dx-virtual-row) {
+                        display: inline-block;
+                        margin: auto;
+                    }
+
+                    &:hover {
+                        .active-block {
+                            display: block;
+                        }
+                        .role-container.top {
+                            visibility: hidden!important;
+                        }
+                    }
+
+                    .active-block {
+                        display: none;
+                        background: #F7FCFF;
+                        border-radius: 8px;
+                        padding: 10px;
+                        text-align: center;
+                        position: absolute;
+                        bottom: 0px;
+                        margin: 0 10px;
+                        width: 240px;
+                        h3 {
+                            font-family: Manrope;
+                            font-size: 17px;
+                            font-weight: 600;
+                            line-height: 27px;
+                            letter-spacing: -0.02em;
+                            text-align: center;
+                            color: #08295B;
+                        }
+                        span {
+                            font-family: Manrope;
+                            font-size: 13px;
+                            font-weight: 400;
+                            line-height: 27px;
+                            letter-spacing: -0.01em;
+                            text-align: center;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            display: block !important;
+                            max-width: 100%;
+                        }
+                        p {
+                            font-family: Manrope;
+                            font-size: 12px;
+                            font-weight: 400;
+                            line-height: 27px;
+                            letter-spacing: -0.02em;
+                            text-align: center;
+                            color: #10213A;
+                        }        
+                        .actions {
+                            img {
+                                float: left;
+                                position: relative;
+                                top: 5px;
+                            }
+                            a {
+                                float: right;
+                                color: #08295B;
+                                font-family: Manrope;
+                                font-size: 13px;
+                                font-weight: 500;
+                                line-height: 27px;
+                                letter-spacing: -0.02em;
+                                text-align: center;
+                            }
+                        }
+                    }
+
+                    .dx-template-wrapper {
+                        position: relative;
+                    }
+
+                    .role-container {
+                        display: block!important;
+                        text-align: center!important;
+                        padding-top: 10px;
+                        height: 30px;
+                        width: 260px;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                    }
+
+                    h3 {
+                        text-align: center;
+                        padding: 10px 0 0;
+                    }
+
+        
+                }
+                .galery-image {
+                    border-radius: 20px;
+                    margin: 40px 10px 0;
+                }
+            }
+        }
+
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                cursor: pointer;
+
+                & > td {
+                    span {
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+
+    ::ng-deep .dx-searchbox {
+        @media (max-width: 767px) {
+            width: 215px !important;
+        }
+        @media (max-width: 350px) {
+            width: 160px !important;
+        }
+    }
+}
+
+::ng-deep [custaccesskey="search-container"] {
+    &[filter-selected="true"] {
+        border: 0;
+
+        .dx-button-text {
+            font-size: 14px !important;
+            letter-spacing: 0.3px !important;
+            color: #00AEEF !important;
+
+            &:hover {
+                color: lighten(#00AEEF, 20%) !important;
+            }
+        }
+    }
+
+    &[filter-selected="false"] {
+        display: none;
+    }
+}
+>>>>>>> f999b481882149d107812286d0979872df712626

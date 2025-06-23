@@ -1,6 +1,7 @@
+<<<<<<< HEAD
 <div class="close-button" (click)="close(true)"></div>
 <div class="mat-dialog-header">
-    <div class="title-wrapper" [style.flex-grow]="isTabAvailable ? 0 : 1">
+    <div class="title-wrapper">
         <label *ngIf="titleLabel" class="title-label">{{ titleLabel }}</label>
         <dx-text-box #titleComponent
             *ngIf="title != undefined"
@@ -19,11 +20,6 @@
             </dx-validator>
         </dx-text-box>
         <ng-content select="[headerContent]"></ng-content>
-    </div>
-    <div *ngIf="isTabAvailable" class="toggle-button">
-        <button *ngFor="let tab of tabs.options" [class.is-active]="selectedTab === tab.type" (click)="tabs.toggleTab(tab.type)">
-            {{tab.name}}
-        </button>
     </div>
     <mat-dialog-actions>
         <div class="mat-dialog-options" *ngIf="options">
@@ -64,3 +60,66 @@
 <mat-dialog-content>
     <ng-content></ng-content>
 </mat-dialog-content>
+=======
+<div class="close-button" (click)="close(true)"></div>
+<div class="mat-dialog-header">
+    <div class="title-wrapper">
+        <label *ngIf="titleLabel" class="title-label">{{ titleLabel }}</label>
+        <dx-text-box #titleComponent
+            *ngIf="title != undefined"
+            name="title"
+            [readOnly]="!editTitle"
+            [showClearButton]="titleClearButton"
+            [placeholder]="placeholder"
+            [value]="title"
+            [isValid]="isTitleValid == undefined || isTitleValid"
+            (onInput)="titleChanged($event)"
+            (onKeyUp)="titleKeyUp($event)">
+            <dx-validator>
+                <dxi-validation-rule type="required"
+                                     [message]="ls.l('ThisFieldIsRequired')">
+                </dxi-validation-rule>
+            </dx-validator>
+        </dx-text-box>
+        <ng-content select="[headerContent]"></ng-content>
+    </div>
+    <mat-dialog-actions>
+        <div class="mat-dialog-options" *ngIf="options">
+            <ng-template ngFor let-option [ngForOf]="options" let-i="index">
+                <dx-check-box class="mat-dialog-option pull-right"
+                              [text]="option.text"
+                              [(value)]="option.value"
+                              (onValueChanged)="option.onValueChanged && option.onValueChanged($event)">
+                </dx-check-box>
+            </ng-template>
+        </div>
+        <div class="mat-dialog-buttons" *ngIf="buttons">
+            <ng-container *ngFor="let button of buttons; let i = index">
+                <button mat-button
+                        [id]="button?.id"
+                        [disabled]="button?.disabled"
+                        [title]="button.hint ? button.hint : ''"
+                        class="button-layout button-{{button.class}}"
+                        [ngClass]="{ menu: showContextMenu(button) }"
+                        (click)="buttonClick($event, button)">
+                    <span *ngIf="!!button.title">{{ ls.l(button.title) }}</span>
+                    <img *ngIf="!!button.iconName" [src]="'./assets/common/icons/' + button.iconName" />
+                </button>
+                <dx-context-menu
+                        *ngIf="showContextMenu(button)"
+                        [selectByClick]="true"
+                        selectionMode="single"
+                        [dataSource]="button.contextMenu.items"
+                        [position]="{ my: 'top right', at: 'bottom right' }"
+                        target="#{{button?.id}}"
+                        (onSelectionChanged)="contextMenuItemChanged($event, button)"
+                        (onItemClick)="onContextMenuItemClick($event)">
+                </dx-context-menu>
+            </ng-container>
+        </div>
+    </mat-dialog-actions>
+</div>
+<mat-dialog-content>
+    <ng-content></ng-content>
+</mat-dialog-content>
+>>>>>>> f999b481882149d107812286d0979872df712626
