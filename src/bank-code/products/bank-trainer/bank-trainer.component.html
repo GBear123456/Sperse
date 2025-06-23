@@ -1,6 +1,0 @@
-<section class="iframe">
-    <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
-    <ng-container *ngIf="environmentLink$ | async as environmentLink">
-        <iframe [src]="environmentLink" frameborder="0" (load)="onIframeLoad($event)"></iframe>
-    </ng-container>
-</section>
