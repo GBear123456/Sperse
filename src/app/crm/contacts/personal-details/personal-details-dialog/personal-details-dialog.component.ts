@@ -70,7 +70,8 @@ import { CreditBalanceHistoryDialogComponent } from './credit-balance-history-di
 })
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @HostBinding('class.modern') get showModernLayout(): boolean {
-        return this.appService.layoutService.showModernLayout;
+        // return this.appService.layoutService.showModernLayout;
+        return true
     }
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild('checklistScroll') checklistScroll: DxScrollViewComponent;

@@ -92,6 +92,8 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
 
     ngOnInit() {
         this.data = this.contactService['data'];
+        this.layoutService.showTopBar = false;
+        this.layoutService.showContactDetailsDialog = true;
     }
 
     ngAfterViewInit() {
@@ -151,5 +153,7 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
         this.personalDetailsService.togglePersonalDetailsDialog(
             this.settingsDialogId, false);
         this.lifeCycleService.destroy.next();
+        this.layoutService.showTopBar = !this.layoutService.showLeftBar;
+        this.layoutService.showContactDetailsDialog = false;
     }
 }

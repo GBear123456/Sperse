@@ -15,9 +15,11 @@ export class LayoutService {
     public showTopBar = true;
     public showLeftBar = false;
     public isWideView = false;
+    public showContactDetailsDialog = false;
 
     get showModernLayout(): boolean {
-        return this.showLeftBar;
+        // return this.showLeftBar;
+        return true
     }
 
     defaultHeaderBgColor: string = AppConsts.defaultHeaderBgColor;
@@ -112,12 +114,22 @@ export class LayoutService {
     checkSetModuleSettings(moduleName: string) {
         if (this.supportLeftNavigationModules.includes(moduleName.toUpperCase())) {
             let navPosition = abp.setting.get('App.Appearance.NavPosition');
-            this.showTopBar = !navPosition || navPosition == NavPosition.Horizontal;        
-            this.showLeftBar = !this.showTopBar;
+            if (this.showContactDetailsDialog) {
+                this.showTopBar = false;
+                this.showLeftBar = false;
+            } else {
+                this.showTopBar = !navPosition || navPosition == NavPosition.Horizontal;        
+                this.showLeftBar = !this.showTopBar;                
+            }
         } else {
-            this.showTopBar = true;
-            this.showLeftBar = false;
-        }        
+            if (this.showContactDetailsDialog) {
+                this.showTopBar = false;
+                this.showLeftBar = false;
+            } else {
+                this.showTopBar = true;
+                this.showLeftBar = false;
+            }
+        }
     }
 
     getWelcomePageUri(): string {

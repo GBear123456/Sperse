@@ -47,9 +47,12 @@ export class HeaderComponent implements OnInit {
     dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
     isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
     get showGlobalSearch(): boolean {
-        return this.layoutService.showLeftBar &&
-            (this.toolbarService.isSearchBoxEnabled || this.appService.getModule() == 'crm') &&
-            !location.href.includes(this.layoutService.getWelcomePageUri());
+        return (
+            this.layoutService.showLeftBar ||
+            this.layoutService.showContactDetailsDialog
+        ) &&
+        (this.toolbarService.isSearchBoxEnabled || this.appService.getModule() == 'crm') &&
+        !location.href.includes(this.layoutService.getWelcomePageUri());
     }; 
     
     constructor(

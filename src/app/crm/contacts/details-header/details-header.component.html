@@ -108,7 +108,7 @@
             </ng-template>
         </ng-template>
     </div>
-    <div class="user-card-container">
+    <!-- <div class="user-card-container">
         <button class="icon-btn nav-btn"
                 [disabled]="!contactIds || contactIds.indexOf(currentContactId) <= 0"
                 (click)="goToPrevClient()">
@@ -135,7 +135,7 @@
                 (click)="goToNextClient()">
             <img src="assets/common/icons/contact/header-angle-right.svg" alt="Next" />
         </button>
-    </div>
+    </div> -->
     <div class="header_buttons">
         <button id="addEntity" *ngIf="manageAllowed && addContextMenuItems.length" class="button-layout button-primary menu" (click)="addEntity($event)">
             <img src="./assets/common/icons/contact/add.svg"> {{addButtonTitle}}

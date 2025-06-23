@@ -79,7 +79,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
     @ViewChild(DetailsHeaderComponent) detailsHeaderComponent: DetailsHeaderComponent;
     @HostBinding('class.modern') get showModernLayout(): boolean {
-        return this.layoutService.showModernLayout
+        // return this.layoutService.showModernLayout
+        return true
     };
 
     readonly RP_DEFAULT_ID   = RP_DEFAULT_ID;
