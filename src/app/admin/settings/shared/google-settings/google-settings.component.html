@@ -1,0 +1,26 @@
+<h2>{{l('Google')}} {{l('Settings')}}</h2>
+<div *ngIf="googleSettings">
+    <div *ngIf="!isHost">
+        <div *ngIf="googleSettings.isHostSettingsEnabled">
+            <external-auth-info></external-auth-info>
+        </div>
+        <div class="form-group">
+            <dx-check-box id="GoogleIsDeactivated"
+                          [text]="l('Deactivate')"
+                          [(value)]="googleSettings.isDeactivated">
+            </dx-check-box>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label for="GoogleClientId">{{l("ClientId")}}</label>
+            <input id="GoogleClientId" type="text" name="GoogleClientId" class="form-control" [(ngModel)]="googleSettings.settings.clientId" maxlength="128">
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label for="GoogleClientSecret">{{l("ClientSecret")}}</label>
+            <input id="GoogleClientSecret" type="text" name="GoogleClientSecret" class="form-control" [(ngModel)]="googleSettings.settings.clientSecret" maxlength="128">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+:host {
+    max-width: 80vw;
+    display: block;
+    height: 100%;
+    #content {
+        padding: 15px 25px 35px;
+        overflow-y: scroll;
+        height: 100%;
+    }
+    ::ng-deep .mat-dialog-header {
+        height: 82px !important;
+        flex-direction: row !important;
+
+        button {
+            border-radius: 5px!important;
+            margin-right: 10px!important;
+        }
+
+        .dx-texteditor {
+            &.dx-state-focused,
+            &.dx-state-hover {
+                border: none;
+            }
+        }
+    }
+}
+
+::ng-deep .footer-slider dx-text-box[name="title"] {
+    height: auto !important;
+
+    * {
+        outline: none !important;
+    }
+}

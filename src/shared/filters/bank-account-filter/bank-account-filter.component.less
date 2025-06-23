@@ -1,0 +1,86 @@
+:host {
+    .wrapper {
+        padding-bottom: 90px;
+
+        ::ng-deep .dx-treelist {
+            .dx-treelist-rowsview {
+                border-top: none;
+            }
+        }
+
+        ::ng-deep bank-accounts-widget {
+
+            .header .row {
+
+                .left-header,
+                .right-header {
+                    flex-basis: 100% !important;
+                    max-width: 100% !important;
+                }
+
+                .left-header {
+                    order: 1;
+                    .entities .dx-checkbox {
+                        margin-left: 0 !important;
+                    }
+                }
+
+                .connections,
+                .accounts {
+                    flex-basis: 50% !important;
+                    max-width: 50% !important;
+                }
+
+                .entities {
+                    flex-basis: 47% !important;
+                    max-width: 47% !important;
+                }
+
+                .types {
+                    flex-basis: 39% !important;
+                    max-width: 39% !important;
+                }
+                .is-active-filter {
+                    flex-basis: 14% !important;
+                    max-width: 14% !important;
+                }
+
+                .current-balance,
+                .is-active-filter selection-filter {
+                    display: none;
+                }
+            }
+
+            .filter-actions .filter-by-types ::ng-deep .dx-tab .dx-tab-text {
+                font-size: 13px;
+            }
+
+            #gridContainer table.dx-datagrid-table {
+                .account-status {
+                    text-align: left;
+                    max-width: 112px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    padding-left: 18px;
+
+                    &::before {
+                        left: 7px;
+                    }
+                }
+
+                .dx-row.dx-data-row td.checkbox {
+                    padding-left: 8px !important;
+                }
+            }
+
+            .dx-scrollable-wrapper {
+                .dx-scrollable-content {
+                    padding-right: 8px !important;
+                }
+                .dx-scrollable-scrollbar.dx-scrollbar-horizontal {
+                    display: none;
+                }
+            }
+        }
+    }
+}

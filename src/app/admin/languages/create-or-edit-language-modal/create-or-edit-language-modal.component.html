@@ -1,0 +1,45 @@
+<modal-dialog [buttons]="buttons" [title]="title">
+    <dx-scroll-view showScrollbar="onHover">
+        <form #editForm="ngForm" novalidate (ngSubmit)="save()">
+            <div class="modal-body" *ngIf="selectBoxData">
+                <div class="form-group">
+                    <dx-select-box
+                        [items]="languageNames"
+                        displayExpr="displayText"
+                        valueExpr="value"
+                        [(value)]="language.name"
+                        [searchEnabled]="true">
+                    </dx-select-box>
+                </div>
+                <div class="form-group">
+                    <dx-select-box
+                        [items]="flags"
+                        displayExpr="displayText"
+                        valueExpr="displayText"
+                        [searchEnabled]="true"
+                        [value]="language.name ? language.name : flags[0]?.displayText"
+                        fieldTemplate="field">
+                        <div *dxTemplate="let field of 'field'">
+                            <div class="custom-field">
+                                <i [className]="field.value"></i>
+                                <dx-text-box class="langulage-code"
+                                             [(value)]="field.displayText"
+                                             [readOnly]="true">
+                                </dx-text-box>
+                            </div>
+                        </div>
+                        <div *dxTemplate="let item of 'item'">
+                            <div class="custom-item">
+                                <i [className]="item.value"></i>
+                                <div class="language-name">
+                                    {{item.displayText}}
+                                </div>
+                            </div>
+                        </div>
+                    </dx-select-box>
+                </div>
+                <dx-check-box [text]="ls.l('IsEnabled')" [(value)]="language.isEnabled"></dx-check-box>
+            </div>
+        </form>
+    </dx-scroll-view>
+</modal-dialog>

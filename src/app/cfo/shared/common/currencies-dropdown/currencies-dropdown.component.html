@@ -1,0 +1,11 @@
+<dx-select-box [items]="currencies$ | async"
+               [displayExpr]="displayExpr"
+               valueExpr="id"
+               width="90px"
+               [value]="selectedCurrencyId$ | async"
+               (onOpened)="changeOptionsPopupWidth($event)"
+               (onValueChanged)="changeSelectedCurrency($event)">
+    <div *dxTemplate="let data of 'item'">
+        {{ data.text }}
+    </div>
+</dx-select-box>

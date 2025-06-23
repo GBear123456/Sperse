@@ -1,0 +1,104 @@
+.my-subscriptions-header {
+    .mat-tab-label {
+        height: 75px;
+        font-size: 25px;
+    }
+}
+
+#paymentWizardComponent {
+    height: 800px;
+
+    @media all and (max-width: 768px) {
+        height: auto;
+        min-height: 100%;
+    }
+
+    .mat-dialog-content {
+        padding: 0;
+        margin: 0;
+        max-height: initial;
+        height: 100%;
+        line-height: 100%;
+
+        .rejectSubscriptionBlock {
+            display: flex;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+            text-align: center;
+
+            h2 {
+                font-size: 36px;
+                font-weight: 600;
+                color: #424c56;
+                margin-bottom: 10px;
+                margin-top: 0;
+            }
+
+            h3 {
+                padding: 10px 130px;
+            }
+
+            span {
+                bottom: 30px;
+                position: absolute;
+            }
+        }
+
+        .mat-stepper-horizontal {
+            height: 100%;
+
+            .mat-horizontal-stepper-header-container {
+                display: none;
+            }
+
+            .mat-horizontal-content-container {
+                padding: 0;
+                height: 100%;
+
+                .mat-horizontal-stepper-content[aria-expanded=true] {
+                    height: 100%;
+                }
+            }
+        }
+    }
+}
+
+#payment-wizard {
+    padding: 0;
+    position: relative;
+    box-sizing: content-box;
+    border-radius: 23px;
+
+    .gear-menu {        
+        position: absolute;
+        background-image: url(../../../../assets/common/icons/gear-icon.svg);
+        background-repeat: no-repeat;
+        background-position: center;
+        cursor: pointer;
+        z-index: 1;
+        width: 20px;
+        height: 20px;
+        top: 20px;
+        right: 20px;
+    }
+}
+
+#paymentWizzardTooltipMenu {
+    ul {
+        margin: 0;
+        padding: 0;
+        li {
+            margin: 15px 5px;
+            cursor: pointer;
+            text-align: left;
+            list-style-type: none;
+
+            img {
+                margin-right: 10px;
+            }
+        }
+    }
+}

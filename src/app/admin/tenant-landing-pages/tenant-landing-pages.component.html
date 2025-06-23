@@ -1,0 +1,65 @@
+<div>
+    <app-headline [names]="[ l('Sites') ]"
+                  [buttons]="headlineButtons"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="true"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="true"
+                  [showStateResetButton]="true"
+                  (onToggleToolbar)="repaintDataGrid()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onReload)="invalidate()"
+                  (onStateReset)="dataGrid.instance.state(null)"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+    </app-headline>
+    <ng-template #titleTemplate>
+        <app-headline-title
+            [names]="[ l('Sites') ]">
+        </app-headline-title>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate"
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
+    <div class="main-wrapper">
+        <action-menu [items]="actionMenuItems"
+                     width="220px"
+                     [visible]="!!actionRecord"
+                     (onItemClick)="onMenuItemClick($event)">
+        </action-menu>
+        <div class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div>
+                    <div id="tenantLandingPagesGrid">
+                        <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                        <dx-data-grid id="gridContainer"
+                                      class="main-component-view"
+                                      [remoteOperations]="true"
+                                      [allowColumnReordering]="true"
+                                      [columnAutoWidth]="true"
+                                      [allowColumnResizing]="true"
+                                      [hoverStateEnabled]="true"
+                                      [pager]="defaultGridPagerConfig"
+                                      [loadPanel]="{ enabled: false }"
+                                      (onOptionChanged)="onGridOptionChanged($event)"
+                                      (onInitialized)="onInitialized($event)"
+                                      (onContentReady)="setGridDataLoaded()"
+                                      (onCellClick)="editLandingPage($event)"
+                                      (onEditingStart)="toggleActionsMenu($event)"
+                                      [dataSource]="dataSource">
+                            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                            <dxo-editing mode="popup" [allowUpdating]="true" [texts]="{editRow: ''}"></dxo-editing>
+                            <dxi-column [caption]="l('Name')" [dataField]="tenantLandingPageFields.TenantName" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column [caption]="l('Domain')" [dataField]="tenantLandingPageFields.FirstDomain" sortOrder="desc" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column [caption]="l('Verified')" [dataField]="tenantLandingPageFields.Verified" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column [caption]="l('Disabled')" [dataField]="tenantLandingPageFields.Disabled" cssClass="clipboard-holder"></dxi-column>
+                        </dx-data-grid>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

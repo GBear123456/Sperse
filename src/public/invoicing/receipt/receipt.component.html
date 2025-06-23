@@ -1,0 +1,119 @@
+<div *ngIf="loading; else mainContainer" class="loading-container">
+    <div *ngIf="!failedToLoad; else failBlock" class="wait-message">
+        Waiting for payment information
+    </div>
+    <ng-template #failBlock>
+        <div>{{failMessage}}</div>
+    </ng-template>
+</div>
+<ng-template #mainContainer>
+    <div class="main-container">
+        <div class="header">
+            <img src="{{invoiceInfo.tenantLogo}}">
+        </div>
+        <div class="content">
+            <div class="summary">
+                <div class="icon">
+                    <img src="assets/common/images/success.png">
+                </div>
+                <div class="top">Thank You</div>
+                <div class="bottom">Your payment is complete</div>
+            </div>
+            <div class="approved">
+                <img src="assets/common/images/approved.png">
+                <div class="amount">
+                    <p>Invoice paid</p>
+                    <span>{{invoiceInfo.invoiceAmount | currency:invoiceInfo.currencyId:'symbol':'1.2-2'}}</span>
+                </div>
+            </div>
+            <div class="details">
+                <div class="row">
+                    <div class="col-6 gray caption">Invoice number</div>
+                    <div class="col-6 text-right text-overflow gray value" title="{{invoiceInfo.invoiceNumber}}">{{invoiceInfo.invoiceNumber}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-6 gray caption">Payment date</div>
+                    <div class="col-6 text-right gray value">{{invoiceInfo.paymentDate | date}}</div>
+                </div>
+                <div class="row" *ngIf="invoiceInfo.paymentCardNumber">
+                    <div class="col-6 gray caption">Payment method</div>
+                    <div class="col-6 text-right gray value">
+                        <span class="card-network">{{invoiceInfo.paymentCardNetwork?.toUpperCase()}}</span>
+                        {{invoiceInfo.paymentCardNumber}}
+                    </div>
+                </div>
+                <div class="row top-indent">
+                    <div class="col-6">
+                        <a role="button" class="btn btn-secondary" href="{{invoiceInfo.downloadInvoiceUrl}}" target="_blank">
+                            <img src="assets/common/icons/clipboard-import.png">Download invoice
+                        </a>
+                    </div>
+                    <div class="col-6 text-right">
+                        <a role="button" class="btn btn-secondary" href="{{invoiceInfo.downloadReceiptUrl}}" [ngClass]="{'disabled':!invoiceInfo.downloadReceiptUrl}" target="_blank">
+                            <img src="assets/common/icons/clipboard-import.png">Download receipt
+                        </a>
+                    </div>
+                </div>
+                <div class="sms-row"><img src="assets/common/icons/sms.png">Check your email for your account details</div>
+                <div *ngIf="returnText" class="row top-indent login-row">
+                    <a (click)="returnLinkClick()">{{returnText}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="downloads" *ngIf="invoiceInfo.resources && invoiceInfo.resources.length">
+            <h1>Downloads</h1>
+            <div *ngFor="let resource of invoiceInfo.resources; let i = index" class="resource">
+                <img src="assets/common/icons/{{resource.url ? 'link.png' : 'files.svg'}}"><a target="_blank" [href]="resource.url" class="{{resource.url ? 'link' : 'file'}}">{{resource.name || resource.url}}</a><button (click)="resourceClick($event, resource)"><img src="assets/common/icons/{{resource.url ? 'copy-reciept' : 'download'}}.png">{{resource.url ? 'Copy' : 'Download'}}</button>
+            </div>
+        </div>
+        <div class="events" *ngIf="invoiceInfo.events && invoiceInfo.events.length">
+            <h1>Events</h1>
+            <div *ngFor="let resource of invoiceInfo.events; let i = index" class="event">
+                <div class="row header-row">
+                    <div class="col-11 event-name">{{resource.productName}}</div>
+                    <div class="col-1 text-right copy-event-data"><i title="Copy event data" class="fa fa-clone" (click)="copyEventData(resource)"></i></div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-4 caption"><i class="fa fa-map-marker"></i>Location</div>
+                    <div class="col-8 text">{{ls.l('ProductEventLocation_' + resource.location)}}</div>
+                </div>
+                <div *ngIf="resource.dateStr" class="row">
+                    <div class="col-3 caption"><i class="fa fa-calendar"></i>Date</div>
+                    <div class="col-9 text" [title]="resource.time ? 'Computer: ' + resource.dateStrLocal : ''">{{resource.dateStr}} <span *ngIf="resource.time">({{resource.timezone}})</span></div>
+                </div>
+                <div *ngIf="resource.link" class="row">
+                    <div class="col-4 caption"><i class="fa fa-external-link"></i>Link</div>
+                    <div class="col-8 text nowrap" [title]="resource.link"><a [href]="resource.link" target="_blank">{{resource.link}}</a></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 caption"><i class="fa fa-building-o"></i>Address</div>
+                    <div class="col-8 text">
+                        <div *ngIf="resource.address.streetAddress">{{resource.address.streetAddress}}</div>
+                        <div *ngIf="resource.address.city">{{resource.address.city}}</div>
+                        <div *ngIf="resource.address.stateName">{{resource.address.stateName}}</div>
+                        <div *ngIf="resource.address.countryName">{{resource.address.countryName}}</div>
+                        <div *ngIf="resource.address.zip">{{resource.address.zip}}</div>
+                    </div>
+                </div>
+                <div *ngIf="resource.durationStr" class="row">
+                    <div class="col-4 caption"><i class="fa fa-clock-o"></i>Duration</div>
+                    <div class="col-8 text">{{resource.durationStr}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-4 caption"><i class="fa fa-globe"></i>Language</div>
+                    <div class="col-8 text">{{resource.languageName}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="footer gray">
+            <div class="powered-by">
+                {{currentYear}} &copy; {{hostName}} Platform
+            </div>
+            <div *ngIf="hasToSOrPolicy" class="links">
+                <a (click)="openConditionsDialog(conditions.Terms)">Terms</a>
+                <a (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
+            </div>
+        </div>
+    </div>
+</ng-template>

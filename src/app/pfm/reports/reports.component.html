@@ -1,0 +1,36 @@
+<div>
+    <app-headline [names]="[ l('Reports') ]"
+                  [buttons]="headlineButtons"
+                  [showToggleToolbarButton]="true"
+                  [showToggleColumnSelectorButton]="section !== 'clicks' && !cfoService.hasStaticInstance"
+                  [showToggleLeftMenuButton]="true"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+        <dx-select-box *ngIf="section == 'clicks'"
+            [items]="years"
+            [(value)]="clickStatsYear"
+            (selectionChanged)="yearSelectionChanged()">
+        </dx-select-box>
+    </app-headline>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <div class="wrapper portlet light">
+        <left-menu [items]="leftMenuItems"
+                   [selectedItemIndex]="0"
+                   headerTitle="">
+        </left-menu>
+        <div #rightSection>
+            <div [hidden]="section != 'clicks'">
+                <pfm-click-stats [campaignId]="undefined"
+                                 [year]="clickStatsYear"
+                                 [refresh$]="refresh$"
+                                 (onStatsClick)="onStatsClick($event)">
+                </pfm-click-stats>
+            </div>
+            <div [hidden]="section !== 'offers'">
+                <pfm-offer-stats (onOfferClicksClick)="offerClicksClick($event)"></pfm-offer-stats>
+            </div>
+            <div [hidden]="section !== 'visitors'">
+                <pfm-visitors-stats></pfm-visitors-stats>
+            </div>
+        </div>
+    </div>
+</div>

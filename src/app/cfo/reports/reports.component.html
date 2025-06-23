@@ -1,0 +1,109 @@
+<app-headline [names]="[ l('REPORTS') ]"
+              iconSrc="assets/common/icons/credit-card-icon.svg"
+              [buttons]="headlineButtons"
+              [showToggleToolbarButton]="true"
+              [showToggleLeftMenuButton]="true"
+              [showToggleCompactViewButton]="showToggleCompactViewButton"
+              [showStateResetButton]="true"
+              (onToggleCompactView)="toggleCompactView()"
+              (onStateReset)="dataGrid.instance.state(null)"
+              (onToggleLeftMenu)="onLeftMenuToggle()">
+    <synch-progress class="synch-progress"></synch-progress>
+</app-headline>
+<ng-template #titleTemplate>
+    <app-headline-title
+        [names]="[ l('REPORTS') ]">
+    </app-headline-title>
+</ng-template>
+<app-toolbar 
+    [config]="toolbarConfig"
+    [titleTemplate]="titleTemplate"
+    [hidden]="appService.toolbarIsHidden$ | async">
+</app-toolbar>
+<div class="wrapper" [ngClass]="{ leftMenuOpened: !leftMenu.collapsed }">
+    <cfo-left-menu #leftMenu
+                   [items]="menuItems"
+                   [selectedItemIndex]="selectedPeriodIndex"
+                   headerTitle="">
+    </cfo-left-menu>
+    <action-menu [items]="actionMenuItems"
+                 (onItemClick)="onMenuItemClick($event)">
+    </action-menu>
+    <div [hidden]="openReportMode" class="reports">
+        <ghost-list [hidden]="isDataLoaded"></ghost-list>
+        <dx-data-grid class="main-component-view"
+                      [dataSource]="dataSource"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="true"
+                      [loadPanel]="{ enabled: false }"
+                      [hoverStateEnabled]="true"
+                      [pager]="defaultGridPagerConfig"
+                      (onOptionChanged)="onGridOptionChanged($event)"
+                      (onCellClick)="onCellClick($event)"
+                      (onInitialized)="onDataGridInit()"
+                      (onContentReady)="setGridDataLoaded()"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+            <dxi-column alignment="center"
+                        width="45px"
+                        [showInColumnChooser]="false"
+                        [allowExporting]="false"
+                        cellTemplate="actionsCellTemplate"
+                        headerCellTemplate="actionsCellTemplate">
+            </dxi-column>
+            <dxi-column [dataField]="reportsFields.FileName" [caption]="l('Reports_FileName')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="reportsFields.Type" [caption]="l('Reports_Type')" cellTemplate="typeCell" [allowSearch]="false">
+                <dxo-header-filter [dataSource]="typeHeaderFilter" width="330px"></dxo-header-filter>
+            </dxi-column>
+            <dxi-column [dataField]="reportsFields.Template" [caption]="l('Reports_Template')" cellTemplate="templateCell" [allowSearch]="false">
+                <dxo-header-filter [dataSource]="templateHeaderFilter"></dxo-header-filter>
+            </dxi-column>
+            <dxi-column [dataField]="reportsFields.Departments" [visible]="hasDepartmentsFeature" [showInColumnChooser]="hasDepartmentsFeature" [caption]="l('Reports_Departments')" cellTemplate="deptCell" [allowSearch]="false" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column [dataField]="reportsFields.From" [caption]="l('Reports_PeriodFrom')" cssClass="tabular" cellTemplate="noTimeDateCell" width="120px" [allowSearch]="false"></dxi-column>
+            <dxi-column [dataField]="reportsFields.To" [caption]="l('Reports_PeriodTo')" cssClass="tabular" cellTemplate="noTimeDateCell" width="120px" [allowSearch]="false"></dxi-column>
+            <dxi-column [dataField]="reportsFields.CreationTime" [caption]="l('Reports_Created')" cssClass="tabular" cellTemplate="dateCell" width="165px" [allowSearch]="false" sortOrder="desc"></dxi-column>
+            <dxi-column [dataField]="reportsFields.Size" [calculateSortValue]="numerizeFileSizeSortValue" [caption]="l('Reports_Size')" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false" [allowFiltering]="false" cssClass="clipboard-holder"></dxi-column>
+
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
+
+            <div *dxTemplate="let cellData of 'typeCell'" class="clipboard-holder">
+                {{ l('ReportTypes_' + cellData.value) }}
+            </div>
+            <div *dxTemplate="let cellData of 'templateCell'" class="clipboard-holder">
+                {{ cellData.value && l('ReportTemplates_' + cellData.value) }}
+            </div>
+            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                {{ cellData.value | datetime: formatting.dateMoment }}
+            </div>
+            <div *dxTemplate="let cellData of 'noTimeDateCell'" class="clipboard-holder">
+                {{ cellData.value | date : formatting.date }}
+            </div>
+            <div *dxTemplate="let cellData of 'deptCell'" class="deptCell clipboard-holder" [title]="formatDepartments(cellData.value)">
+                {{ formatDepartments(cellData.value) }}
+            </div>
+            <dxo-sorting mode="single"></dxo-sorting>
+            <dxo-group-panel [visible]="false"></dxo-group-panel>
+        </dx-data-grid>
+    </div>
+
+    <div *ngIf="openReportMode" class="report-viewer-wrapper">
+        <app-toolbar [config]="viewerToolbarConfig"></app-toolbar>
+        <div class="reportView" *ngIf="currentReportInfo?.FileName.endsWith('pdf'); else nopreview">
+            <app-image-viewer
+                [images]="[previewContent]"
+                [idContainer]="'imageViewer'"
+                [loadOnInit]="true">
+            </app-image-viewer>
+        </div>
+        <ng-template #nopreview>
+            <app-no-data [showLink]="false"
+                         [title]="l('NoPreviewFile')"></app-no-data>
+        </ng-template>
+    </div>
+
+    <ng-template #nodata>
+        <app-no-data [showLink]="false"></app-no-data>
+    </ng-template>
+</div>

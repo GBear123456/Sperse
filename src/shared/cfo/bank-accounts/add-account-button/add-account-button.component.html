@@ -1,0 +1,8 @@
+<a id="add-account"
+    *ngIf="isInstanceAdmin || isMemberAccessManage"
+    (click)="openAddAccountDialog()"
+    class="add-link"
+    [ngClass]="{'disabled': !createAccountAvailable}" >
+     + {{l('Add_account')}}
+</a>
+<i *ngIf="!createAccountAvailable" class="dx-icon-info" [title]="l('YouHaveReachedLimit')"></i>

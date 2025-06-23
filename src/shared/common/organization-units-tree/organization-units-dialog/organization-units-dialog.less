@@ -1,0 +1,60 @@
+::ng-deep .hide {
+    display: none;
+}
+:host {
+    display: block;
+    position: relative;
+    min-width: 400px;
+    padding: 20px;
+
+    .headline {
+        span.optional {
+            color: #adadad;
+            padding: 0 5px;
+        }
+    }
+
+    h2 {
+        text-transform: uppercase;
+        display: inline-block;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .close {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 15px;
+        right: 15px;
+        cursor: pointer;
+        display: block;
+        background-color: #FFF;
+        &:after, &:before {
+            position: absolute;
+            top: 0;
+            left: 9px;
+            content: ' ';
+            height: 20px;
+            width: 2px;
+            background-color: #202b35;
+        }
+        &:before {
+            transform: rotate(45deg);
+        }
+        &:after {
+            transform: rotate(-45deg);
+        }
+    }
+
+    mat-dialog-content {
+        overflow: hidden;
+        max-height: 100%!important;
+        min-height: 300px;
+        margin: 0;
+        padding: 0;
+        organization-units-tree {
+            padding: 0;
+        }
+    }
+}

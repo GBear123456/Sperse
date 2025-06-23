@@ -1,0 +1,21 @@
+<div class="wrapper">
+    <dx-tree-list [dataSource]="items.element.dataSource"                                         
+                  [keyExpr]="items.element.keyExpr"
+                  [parentIdExpr]="items.element.parentExpr"
+                  [dataStructure]="items.element.dataStructure"
+                  [itemsExpr]="items.element.itemsExpr"
+                  [showColumnHeaders]="false"
+                  [autoExpandAll]="true"
+                  height="calc(100vh - 172px)"
+                  [scrolling]="{ preloadEnabled: true, rowRenderingMode: 'virtual' }"
+                  [selectedRowKeys]="items.element.value"
+                  (onInitialized)="onInitialized($event)"
+                  (onDisposing)="onDisposing($event)"
+                  (onSelectionChanged)="onSelectionChanged($event)">
+        <dxo-selection [allowSelectAll]="true" mode="multiple" [recursive]="true"></dxo-selection>
+        <dxi-column [dataField]="items.element.nameField" [cellTemplate]="items.element.templateFunc ? 'checkBoxTemplate' : null"></dxi-column>
+        <div *dxTemplate="let cell of 'checkBoxTemplate'">
+            <div [innerHTML]="items.element.templateFunc(cell.data)"></div>
+        </div>
+    </dx-tree-list>
+</div>

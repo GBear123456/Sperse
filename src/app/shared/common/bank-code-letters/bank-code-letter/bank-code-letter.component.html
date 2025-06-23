@@ -1,0 +1,27 @@
+<span #spanLetter
+    [class]="letter === letters.Empty ? 'empty' : key + letter"
+    [ngStyle]="getStylesByLetter(letter)"
+    (click)="click($event)"
+    (mouseenter)="toggleTooltip()"
+    (mouseleave)="toggleTooltip()">
+    {{ letter }}
+</span>
+<dx-tooltip *ngIf="showDescriptionOnHover"
+    [target]="spanLetter"
+    [(visible)]="showTooltip">
+    <div *dxTemplate="let data = data of 'content'">
+        <img width="600px" height="500px" src="./assets/common/images/bank-code/{{letter}}_SalesTips.jpg">
+    </div>
+</dx-tooltip>
+
+<dx-popup *ngIf="showDescriptionOnClick"
+    width="640px" height="540px"
+    [closeOnOutsideClick]="true"
+    [showCloseButton]="false"
+    [dragEnabled]="false"
+    [showTitle]="false"
+    [(visible)]="showPopup">
+    <div *dxTemplate="let data = data of 'content'">
+        <img width="600px" height="500px" src="./assets/common/images/bank-code/{{letter}}_SalesTips.jpg">
+    </div>
+</dx-popup>

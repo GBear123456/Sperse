@@ -1,0 +1,294 @@
+<div>
+    <app-headline [names]="[ l('Partners') ]"
+                  icon="people"
+                  [buttons]="headlineButtons"
+                  [showToggleCompactViewButton]="showDataGrid"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="ui.showReload"
+                  [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="showDataGrid || showPivotGrid"
+                  [showStateResetButton]="showDataGrid"
+                  [showTotalCount]="true"
+                  [totalCount]="totalCount"
+                  [totalErrorMsg]="totalErrorMsg"
+                  (onToggleToolbar)="toggleToolbar()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onReload)="invalidate()"
+                  (onStateReset)="dataGrid.instance.state(null)"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+        <import-progress-bar></import-progress-bar>
+    </app-headline>
+    <ng-template #titleTemplate>
+        <app-headline-title
+            [names]="[ l('Partners') ]"
+            [showTotalCount]="true"
+            [totalErrorMsg]="totalErrorMsg"
+            [totalCount]="totalCount">
+        </app-headline-title>
+    </ng-template>
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate"
+        [hidden]="appService.toolbarIsHidden$ | async">
+    </app-toolbar>
+    <div class="main-wrapper">
+        <action-menu [items]="actionMenuGroups"
+                     [visible]="!!actionEvent"
+                     class="grouped-action-menu"
+                     width="300px"
+                     [grouped]="true"
+                     (onItemClick)="onMenuItemClick($event)">
+        </action-menu>
+        <source-contact-list #sourceList
+            targetSelector=".dx-button.referred-by"
+            [showOrgUnits]="true"
+            [filterModel]="filterModelSource"
+            [selectedLeads]="[]"
+            [filterModelOrgUnit]="filterModelOrgUnit"
+            [selectedKeys]="[]"
+            [relatedItemsKeys]="[]"
+            (onOwnerFilterApply)="onOwnerFilterApply($event)">
+        </source-contact-list>
+        <app-static-list #statusesList
+                         [width]="'180px'"
+                         [title]="l('Status')"
+                         [showConfirmation]="false"
+                         [relatedItemsKeys]="selectedPartnerKeys"
+                         [highlightSelected]="true"
+                         [hideButtons]="true"
+                         [filterModel]="filterModelStatus"
+                         targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
+                         [list]="statuses"
+                         (onItemSelected)="updatePartnerStatuses($event)">
+        </app-static-list>
+        <types-list [selectedKeys]="selectedPartnerKeys"
+                    [bulkUpdateMode]="true"
+                    [filterModel]="filterModelTypes">
+        </types-list>
+        <tags-list [selectedKeys]="selectedPartnerKeys"
+                   [bulkUpdateMode]="true"
+                   [filterModel]="filterModelTags"
+                   [managePermission]="permissions.CRMPartnersManage">
+        </tags-list>
+        <lists-list [selectedKeys]="selectedPartnerKeys"
+                    [bulkUpdateMode]="true"
+                    [filterModel]="filterModelLists"
+                    [managePermission]="permissions.CRMPartnersManage">
+        </lists-list>
+        <user-assignment-list [selectedKeys]="selectedPartnerKeys"
+                                  [bulkUpdateMode]="true"
+                                  [filterModel]="filterModelAssignment"
+                                  [proxyService]="contactProxy"
+                                  [permissionKey]="permissions.CRMPartnersManageAssignments"
+                                  [assignedUsersSelector]="assignedUsersSelector">
+        </user-assignment-list>
+        <rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating" [managePermission]="permissions.CRMPartnersManage"></rating>
+        <crm-stars-list [selectedKeys]="selectedPartnerKeys"
+                        [bulkUpdateMode]="true"
+                        [filterModel]="filterModelStar"
+                        [managePermission]="permissions.CRMPartnersManage"
+                        [hideButtons]="isBankCodeLayoutType"
+                        (onUpdated)="invalidate()">
+        </crm-stars-list>
+
+        <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div id="ClientsTable">
+                    <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                    <dx-data-grid class="main-component-view limitedPagerTotal"
+                                  accesskey="narrowHeaderPanel"
+                                  [rowDragging]="{
+                                      cursorOffset: {x: 30},
+                                      allowDropInsideItem: isMergeAllowed,
+                                      showDragIcons: false,
+                                      onDragEnd: onDragEnd
+                                  }"
+                                  [renderAsync]="true"
+                                  [dataSource]="dataSource"
+                                  [allowColumnReordering]="true"
+                                  [columnAutoWidth]="true"
+                                  [allowColumnResizing]="true"
+                                  [hoverStateEnabled]="true"
+                                  [columnChooser]="{
+                                    height: rowsViewHeight
+                                  }"
+                                  [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
+                                  [loadPanel]="{ enabled: false }"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
+                                  (onContentReady)="onContentReady($event)"
+                                  (onCellClick)="onCellClick($event)"
+                                  (onEditingStart)="toggleActionsMenu($event)"
+                                  (onSelectionChanged)="onSelectionChanged($event)"
+                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                        <dxo-pager [visible]="true"></dxo-pager>
+                        <dxo-selection selectAllMode="page"
+                                       showCheckBoxesMode="always"
+                                       mode="multiple">
+                        </dxo-selection>
+                        <dxo-editing mode="popup"
+                                     [texts]="{ editRow: '' }"
+                                     [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                                     [allowUpdating]="true">
+                        </dxo-editing>
+                        <dxo-scrolling mode="infinite"></dxo-scrolling>
+                        <dxi-column caption=""
+                                    width="40px"
+                                    cssClass="stars"
+                                    cellTemplate="starCell"
+                                    [dataField]="partnerFields.StarId"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false">
+                        </dxi-column>
+                        <dxi-column [dataField]="partnerFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.PhotoPublicId" caption="" cellTemplate="photoTemplate"
+                                    [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
+                                    [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                        <div *dxTemplate="let data of 'photoTemplate'">
+                            <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
+                        </div>
+                        <dxi-column [dataField]="partnerFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Email" [caption]="l('Contact.Email')" cellTemplate="emailCell" cssClass="tabular"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                        <dxi-column *ngIf="isBankCodeLayoutType" [dataField]="partnerFields.StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
+                        <ng-container *ngIf="tenantHasBankCodeFeature">
+                            <dxi-column dataField="BankCode"
+                                        cellTemplate="bankCodeCell"
+                                        [renderAsync]="true"
+                                        [caption]="l('BankCode')"
+                                        [visible]="tenantHasBankCodeFeature"
+                                        [showInColumnChooser]="tenantHasBankCodeFeature">
+                            </dxi-column>
+                        </ng-container>
+                        <dxi-column [dataField]="partnerFields.IsActive" [caption]="l('Active')" dataType="boolean"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.IsProspective" [caption]="l('Prospective')" dataType="boolean" [visible]="false"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.PartnerType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
+                        <div *dxTemplate="let cellData of 'statusCell'">
+                            <div [class]="'client-status ' + cellData.value | lowercase">
+                                {{cellData.value}}
+                            </div>
+                        </div>
+                        <dxi-column [dataField]="partnerFields.ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Xrefs" [caption]="l('Xref')" [visible]="false" width="200" cellTemplate="arrayCell"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.AffiliateContactName"
+                                    [caption]="l('AffiliateContactName')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="partnerFields.AffiliateContactEmailAddress"
+                                    [caption]="l('AffiliateContactEmailAddress')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="partnerFields.AffiliateContactAffiliateCode"
+                                    [caption]="l('AffiliateContactAffiliateCode')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="partnerFields.AffiliateRate"
+                                    [caption]="l('AffiliateRate')"
+                                    format="percent"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <ng-container *dxTemplate="let cellData of 'starCell'">
+                            <div class="star star-{{starsLookup[cellData.value] ? starsLookup[cellData.value].colorType.toLowerCase() : 'default'}}"></div>
+                        </ng-container>
+                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                            {{cellData.value | datetime: formatting.dateTimeMoment}}
+                        </div>
+                        <div *dxTemplate="let cellData of 'emailCell'" class="clipboard-holder">
+                            <span style="font-family: var(--app-font-family) !important;">
+                                {{cellData.value}}
+                                <span *ngIf="!cellData.data.IsSubscribedToEmails" id="unsubscribedStatus{{cellData.data.Id}}" class="unsubscribed-status">
+                                    <dx-tooltip position="bottom"
+                                                target="#unsubscribedStatus{{cellData.data.Id}}"
+                                                showEvent="dxhoverstart"
+                                                hideEvent="dxhoverend">
+                                        <div>{{ l('ContactIsUnsubscribedFromEmails') }}</div>
+                                    </dx-tooltip>
+                                </span>
+                            </span>
+                        </div>
+                        <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
+                            {{cellData.value | phone}}
+                        </div>
+                        <div *dxTemplate="let cellData of 'bankCodeCell'">
+                            <bank-code-letters [bankCode]="cellData.value"
+                                               [showDescriptionsOnClick]="true"
+                                               [showReportLink]="true">
+                            </bank-code-letters>
+                        </div>
+                        <div *dxTemplate="let cellData of 'arrayCell'" class="clipboard-holder">
+                            {{cellData.data.Xrefs && cellData.data.Xrefs.join(', ')}}
+                        </div>
+                        <dxo-sorting mode="multiple"></dxo-sorting>
+                        <dxo-group-panel [visible]="true"></dxo-group-panel>
+                        <dxo-summary>
+                            <dxi-group-item [column]="partnerFields.Id"
+                                            summaryType="count"
+                                            [displayFormat]="'{0} ' + l('Partners').toLocaleLowerCase()">
+                            </dxi-group-item>
+                        </dxo-summary>
+                    </dx-data-grid>
+                </div>
+            </div>
+        </div>
+        <div [hidden]="hidePipeline$ | async" class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div class="funnel-wrapper main-component-view">
+                    <app-pipeline
+                            totalsURI="PartnerCount"
+                            dragulaName="partnerStages"
+                            [source]="pipelineDataSource"
+                            [selectFields]="pipelineSelectFields"
+                            [pipelinePurposeId]="pipelinePurposeId"
+                            [(selectedEntities)]="selectedPartners"
+                            [dateField]="dateField"
+                            [contactGroupId]="partnerContactGroup"
+                            [moveDisabled]="manageDisabled"
+                            (onEntityStageChanged)="onStageChanged($event)"
+                            (onCardClick)="onCardClick($event)">
+                        Loading...
+                    </app-pipeline>
+                </div>
+            </div>
+        </div>
+        <div [hidden]="hidePivotGrid$ | async">
+            <slice-pivot-grid [storageKey]="sliceStorageKey"
+                              [isLoading]="pivotGridDataIsLoading"
+                              [height]="contentHeight$ | async">
+            </slice-pivot-grid>
+        </div>
+        <div [hidden]="hideChart$ | async">
+            <slice-chart [width]="contentWidth$ | async"
+                         [height]="contentHeight$ | async"
+                         [infoItems]="chartInfoItems"
+                         [itemsName]="l('Partners')"
+                         [title]="l('PartnersNumber')"
+                         argumentField="creationDate"
+                         valueField="count">
+            </slice-chart>
+        </div>
+        <div [hidden]="hideMap$ | async">
+            <slice-info [items]="mapInfoItems$ | async"></slice-info>
+            <slice-map [width]="contentWidth$ | async"
+                       [height]="mapHeight$ | async"
+                       [contactGroupText]="l('Partners').toLowerCase()"
+                       [dataIsLoading]="mapDataIsLoading"
+                       areaClickLink="app/crm/partners"
+                       [data]="mapData$ | async"
+                       (onMapItemClick)="mapItemClick($event)">
+            </slice-map>
+        </div>
+    </div>
+</div>
+
+<app-no-data
+    [hidden]="!isDataLoaded || totalRowCount"
+    [showLink]="false">
+</app-no-data>

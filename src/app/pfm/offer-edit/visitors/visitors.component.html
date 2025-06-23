@@ -1,0 +1,44 @@
+<div class="wrapper">
+    <div class="toolbar-view">
+        <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    </div>
+    <div class="grid-view">
+        <dx-data-grid id="gridContainer"
+                    height="100%"
+                    [dataSource]="dataSource"
+                    [allowColumnReordering]="true"
+                    [columnAutoWidth]="true"
+                    [allowColumnResizing]="true"
+                    [hoverStateEnabled]="true"
+                    [pager]="defaultGridPagerConfig"
+                    (onCellClick)="onCellClick($event)"
+                    (onInitialized)="onDataGridInit()"
+                    (onContentReady)="onContentReady()"
+                    (onOptionChanged)="onGridOptionChanged($event)"
+                    (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxo-selection selectAllMode="page"
+                           showCheckBoxesMode="always"
+                           mode="multiple">
+            </dxo-selection>
+
+            <dxi-column [caption]="l('Name')" name="name" cellTemplate="nameCell"></dxi-column>
+            <dxi-column [dataField]="visitorFields.StateCode" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="visitorFields.Email" [caption]="l('Email')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="visitorFields.PhoneNumber" [caption]="l('PhoneNumber')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="visitorFields.Date" [caption]="l('Created')" cellTemplate="dateCell"></dxi-column>
+            <dxi-column [dataField]="visitorFields.DoB" [caption]="l('Birthday')" dataType="date" format="dd/MM/yyyy" cssClass="clipboard-holder"></dxi-column>
+
+            <div *dxTemplate="let cellData of 'nameCell'" class="clipboard-holder">
+                {{ cellData.data.FirstName }} {{ cellData.data.LastName }}
+            </div>
+
+            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                {{ cellData.value | datetime: formatting.dateTimeMoment }}
+            </div>
+
+            <dxo-group-panel [visible]="false"></dxo-group-panel>
+            <dxo-load-panel [enabled]="false"></dxo-load-panel>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+        </dx-data-grid>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>
+    <div>{{ls.l('CompleteWithdrawals')}}</div>
+</h2>
+<mat-dialog-content>
+    <dx-scroll-view showScrollbar="onHover">
+        <dx-select-box
+            valueExpr="id"
+            displayExpr="text"
+            [placeholder]="ls.l('PaymentSystem')"
+            [dataSource]="paymentSystems"
+            [(value)]="paymentSystem">
+        </dx-select-box>
+        <dx-date-box 
+            type="date" 
+            [placeholder]="ls.l('PayDate')"
+            [(value)]="payDate" 
+            [max]="today"
+            [min]="minDate">
+        </dx-date-box>
+    </dx-scroll-view>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Complete')}}</button>
+</mat-dialog-actions>

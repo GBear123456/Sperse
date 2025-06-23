@@ -1,0 +1,92 @@
+<div class="field addr">
+    <div class="drop-down-box-wrapper" *ngIf="addressTypes && addressTypes.length">
+        <dx-select-box
+                width="380px"
+                name="addressType"
+                [placeholder]="ls.l('Type')"
+                [dataSource]="addressTypes"
+                displayExpr="name"
+                valueExpr="id"
+                [(value)]="address.type"
+                itemTemplate="addressTypeItemTemplate"
+                (onValueChanged)="addressTypeChanged($event)">
+            <div *dxTemplate="let data of 'addressTypeItemTemplate'">
+                <div class="usage-type-item">
+                    <span>{{data.name}}</span>
+                    <span>{{ls.l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span>
+                </div>
+            </div>
+        </dx-select-box>
+    </div>
+    <input *ngIf="!googleAutoComplete" type="text"
+           name="Address"
+           [placeholder]="ls.l('Street')"
+           [(ngModel)]="address.address"
+           class="dx-texteditor-input"
+           [ngClass]="{wide: !addressTypes}"/>
+    <input *ngIf="googleAutoComplete" type="text"
+           #addressInput
+           name="Address"
+           [placeholder]="ls.l('Street')"
+           [(ngModel)]="address.address"
+           class="dx-texteditor-input"
+           [ngClass]="{wide: !addressTypes}"
+           (onAddressChange)="changeAddress($event)"
+           ngx-google-places-autocomplete/>
+    <span [class]="showClearButton" (click)="removeAddress()"><i class="minus-icon"></i></span>
+</div>
+<div *ngIf="showNeighborhood" class="field addr">
+    <dx-text-box
+            name="neighborhood"
+            maxLength="128"
+            [placeholder]="ls.l('Neighborhood')"
+            width="570px"
+            [(value)]="address.neighborhood"
+            valueChangeEvent="keyup">
+    </dx-text-box>
+</div>
+<div class="field addr">
+    <dx-text-box
+            name="city"
+            maxLength="50"
+            [placeholder]="ls.l('City')"
+            width="270px"
+            [(value)]="address.city"
+            valueChangeEvent="keyup"
+            (onValueChanged)="changeCity()">
+    </dx-text-box>
+    <dx-select-box
+            [acceptCustomValue]="true"
+            [dataSource]="getCountryStates(address.countryCode) | async"
+            displayExpr="name"
+            name="state"
+            valueExpr="code"
+            [placeholder]="ls.l('State')"
+            width="270px"
+            [searchEnabled]="true"
+            [value]="address?.state?.code"
+            (onValueChanged)="changeState($event)"
+            (onCustomItemCreating)="createCustomState($event)">
+    </dx-select-box>
+</div>
+<div class="field addr" style="padding-bottom: 10px;">
+    <dx-text-box
+            maxLength="10"
+            [placeholder]="ls.l('ZipCode')"
+            width="270px"
+            [(value)]="address.zip"
+            valueChangeEvent="keyup"
+            (onValueChanged)="changeZip()">
+    </dx-text-box>
+    <dx-select-box
+            [dataSource]="countries$ | async"
+            displayExpr="name"
+            valueExpr="code"
+            name="country"
+            [placeholder]="ls.l('Country')"
+            width="270px"
+            [searchEnabled]="true"
+            [(value)]="address.countryCode"
+            (onValueChanged)="changeCountry($event)">
+    </dx-select-box>
+</div>

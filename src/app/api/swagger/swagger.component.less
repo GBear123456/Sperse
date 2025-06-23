@@ -1,0 +1,28 @@
+:host {
+    position: relative;
+
+    .content {
+        display: flex;
+    }
+
+    ::ng-deep .left-menu .items-progress:before {
+        border-left: 3px solid #00aeef;
+    }
+
+    iframe {
+        height: calc(~"100vh - 150px");
+        position: relative;
+        @media (min-width: 1200px) {
+            width: calc(~"100% - 320px");
+        }
+        &.wide {
+            width: 100%;
+        }
+    }
+
+    &.showLeftBar {
+        iframe {
+            height: calc(~"100vh - 75px");
+        }
+    }
+}

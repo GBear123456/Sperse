@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>
+    <div>{{ls.l('RequestWithdrawal')}}</div>
+</h2>
+<mat-dialog-content>
+    <dx-scroll-view showScrollbar="onHover">
+        <dx-select-box
+            height="47px"
+            [placeholder]="ls.l('Contact')"
+            [searchEnabled]="true"
+            [dataSource]="dataSource"
+            [(value)]="selectedContact"
+            itemTemplate="commonView"
+            fieldTemplate="commonView"
+            (onSelectionChanged)="onSelectionChanged($event)">
+            <div *dxTemplate="let cell of 'commonView'" class="contact-field-template">
+                <dx-text-box
+                    width="230px"
+                    height="47px"
+                    [hint]="cell?.FullName"
+                    valueChangeEvent="keyup"
+                    [placeholder]="ls.l('Contact')"
+                    [activeStateEnabled]="false"
+                    [focusStateEnabled]="false"
+                    [hoverStateEnabled]="false"
+                    (onKeyUp)="onKeyUp($event)"
+                    [value]="cell?.FullName">
+                </dx-text-box>
+                <div>{{cell?.AvailableBalance | currency: currency}}</div>                
+            </div>
+        </dx-select-box>
+        <dx-number-box
+            [min]="1" 
+            [placeholder]="ls.l('Amount')" 
+            [format]="{ style: 'currency', currency: currency, useGrouping: true }"
+            [(value)]="withdrawalAmount">
+        </dx-number-box>
+        <dx-date-box type="date" [(value)]="date" [max]="today"></dx-date-box>
+    </dx-scroll-view>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Create')}}</button>
+</mat-dialog-actions>

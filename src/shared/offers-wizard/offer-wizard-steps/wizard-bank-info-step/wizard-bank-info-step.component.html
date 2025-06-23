@@ -1,0 +1,108 @@
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('bank_account_type')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
+    <div class="dx-field-value">
+        <dx-select-box
+            [items]="offersWizardService.bankAccountType"
+            valueExpr="key"
+            displayExpr="text"
+            [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankAccountType"
+            placeholder="Choose Bank Account Type">
+            <dx-validator>
+                <dxi-validation-rule type="custom"
+                                     [validationCallback]="offersWizardService.validateRequiredField"
+                                     [message]="ls.l('ThisFieldIsRequired')">
+                </dxi-validation-rule>
+            </dx-validator>
+        </dx-select-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('bank_name')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
+    <div class="dx-field-value">
+        <dx-text-box placeholder="Enter bank name"
+                     [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankName">
+            <dx-validator>
+                <dxi-validation-rule type="custom"
+                                     [validationCallback]="offersWizardService.validateRequiredField"
+                                     [message]="ls.l('ThisFieldIsRequired')">
+                </dxi-validation-rule>
+            </dx-validator>
+        </dx-text-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('bank_account_number')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
+    <div class="dx-field-value">
+        <dx-text-box placeholder="Enter bank account number"
+                     [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankAccountNumber">
+            <dx-validator>
+                <dxi-validation-rule type="custom"
+                                     [validationCallback]="offersWizardService.validateRequiredField"
+                                     [message]="ls.l('ThisFieldIsRequired')">
+                </dxi-validation-rule>
+            </dx-validator>
+        </dx-text-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('bank_aba')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
+    <div class="dx-field-value">
+        <dx-text-box placeholder="Enter bank ABA"
+                     [maxLength]="9"
+                     [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankABA">
+            <dx-validator>
+                <dxi-validation-rule type="custom"
+                                     [validationCallback]="offersWizardService.validateRequiredField"
+                                     [message]="ls.l('ThisFieldIsRequired')">
+                </dxi-validation-rule>
+            </dx-validator>
+        </dx-text-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('BankPhone')}}</div>
+    <div class="dx-field-value">
+        <dx-text-box name="phone"
+                     (onContentReady)="inputStatusesService.setMask($event)"
+                     (onFocusIn)="inputStatusesService.focusInput($event)"
+                     (onFocusOut)="inputStatusesService.blurInput($event)"
+                     [maskRules]="offersWizardService.rules"
+                     [useMaskedValue]="true"
+                     [value]="bankPhone"
+                     (onValueChanged)="mobileChange($event)">
+        </dx-text-box>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('MonthsAtBank')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter month in bank"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.monthsAtBank">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('direct_deposit')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
+            <div class="dx-field-value">
+                <dx-radio-group
+                    [items]="offersWizardService.radioGroup"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.isDirectDeposit"
+                    displayExpr="text"
+                    valueExpr="value"
+                    validationMessageMode="always"
+                    layout="horizontal">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
+                                             [message]="ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
+                </dx-radio-group>
+            </div>
+        </div>
+    </div>
+</div>

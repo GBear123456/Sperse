@@ -1,0 +1,13 @@
+<app-pages-footer *ngIf="!showDefaultFooter"></app-pages-footer>
+<div class="page-footer-inner" *ngIf="showDefaultFooter">
+    <div class="container">
+        <p class="copyright">
+            © {{appSession?.tenant?.name}} {{ currentYear }}, all rights reserved
+        </p>
+        <ul class="footer-menu">
+            <li><a href="/" onclick="return false">Support</a></li>
+            <li *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)"><a (click)="openConditionsDialog(conditions.Policies)">Privacy policy</a></li>
+            <li *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)"><a (click)="openConditionsDialog(conditions.Terms)">Terms and Conditions</a></li>
+        </ul>
+    </div>
+</div>

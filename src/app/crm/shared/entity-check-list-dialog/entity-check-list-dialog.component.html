@@ -1,0 +1,31 @@
+<h2 mat-dialog-title *ngIf="data.entity as entity">{{ls.l('Checklist') + (entity?.Name || entity?.Email || entity?.CompanyName || entity?.Phone ? ' (' + (entity?.Name || entity?.Email || entity?.CompanyName || entity?.Phone) + ')' : '')}}<span class="close" (click)="close()"></span></h2>
+<div mat-dialog-content>
+    <hr>
+    <dx-data-grid 
+        [dataSource]="dataSource"
+        [columnChooser]="{enabled: false}"
+        [toolbar]="{disabled: true}"
+        [showColumnHeaders]="false"
+        [showColumnLines]="false">
+        <dxi-column dataField="id" dataType="number" [visible]="false"></dxi-column>
+        <dxi-column dataField="isDone" dataType="string" cellTemplate="doneCell" width="30px"></dxi-column>
+        <dxi-column dataField="sortOrder" dataType="number" [visible]="false" sortOrder="asc"></dxi-column>
+        <dxi-column dataField="name" dataType="string"></dxi-column>
+        <dxi-column dataField="completionTime" dataType="string" cellTemplate="dateCell" width="140px"></dxi-column>
+        <div *dxTemplate="let cell of 'doneCell'">
+            <dx-check-box 
+                width="20px"
+                [value]="cell.value"
+                (onValueChanged)="onValueChanged($event, cell)">
+            </dx-check-box>
+        </div>
+        <div *dxTemplate="let cell of 'dateCell'">
+            <div *ngIf="!cell.value; else completion" class="pending">
+                {{ls.l('Pending') | uppercase}}
+            </div>
+            <ng-template #completion>
+                {{cell.value | timeAgo}}
+            </ng-template>
+        </div>
+    </dx-data-grid>
+</div>

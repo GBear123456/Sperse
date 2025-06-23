@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>{{ls.l('Rule remove confirmation')}}</h2>
+<mat-dialog-content>
+    <dx-check-box [(value)]="data.reclassify" [text]="ls.l('Reclassify related transactions')" [width]="300"></dx-check-box>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+  <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Confirm')}}</button>
+</mat-dialog-actions>

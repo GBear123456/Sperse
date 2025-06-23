@@ -1,0 +1,74 @@
+.recomendation-list {
+    padding-left: 0;
+    margin: 0;
+    list-style-type: none;
+
+    .recomendation-item {
+        padding-left: 34px;
+        margin-bottom: 10px;
+        box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+        background: transparent url('/assets/images/credit-report/tick-icon.svg') 17px 17px no-repeat;
+
+        &.negative {
+            background-image: url('/assets/images/credit-report/negative-score-factor-icon.svg');
+        }
+
+        .card-header {
+            border: 0;
+            padding: 0;
+            background-color: transparent;
+
+            .card-title {
+                margin-bottom: 0;
+
+                a {
+                    color: rgb(18, 21, 22);
+                    &:hover {
+                        text-decoration: none;
+                    }
+                }
+            }
+        }
+
+        .card-body {
+            border: 0;
+            padding: 0 15px;
+        }
+
+        h4, p {
+            font-family: "lato", sans-serif;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1.4;
+            color: #121516;
+            margin-bottom: 4px;
+
+            a {
+                padding: 15px;
+                display: block;
+
+                i {
+                    line-height: 20px;
+                }
+
+                &.collapsed {
+                    i {
+                        &::before {
+                            content: '\f107';
+                        }
+                    }
+                }
+            }
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.47;
+            color: #8a969b;
+            margin-top: 0;
+        }
+    }
+}

@@ -1,0 +1,123 @@
+<h2>{{ ls.l('EmailSmtp') }}</h2>
+<ng-container *ngIf="settings">
+    <dx-scroll-view [height]="smtpProviderErrorLink ? '360px' : '469px'">
+        <div class="information" *ngIf="['gmail.com', 'outlook.com'].includes(selectedProvider?.domain)" [ngClass]="{error: smtpProviderErrorLink}">
+            <div class="block" *ngIf="selectedProvider?.domain == 'gmail.com'">
+                Gmail requires using an app-specific password for third-party apps, instead of your regular password for your security. Your Google account requires 2FA turned on to use this feature.
+                <br><br>
+                <a href="https://myaccount.google.com/apppasswords"><b>Generate an app-specific password</b></a>
+                <br>
+                <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('gmail.com')">Provider recommendations</a>
+                <br>
+                <a target="blank" href="https://support.google.com/mail/answer/185833">How to generate App Password</a>
+            </div>
+            <div class="block" *ngIf="selectedProvider?.domain == 'outlook.com'">
+                If you face with any troubles on connecting your account check the link below.
+                <br><br>
+                <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('office365.com')">Provider recommendations</a>
+            </div>
+        </div>
+
+        <div class="settings">
+            <div class="flex-2 providers">
+                <h3><img src="assets/common/icons/smtp/step1.svg">&nbsp;&nbsp;&nbsp;Select Mail Provider</h3>
+                <dx-select-box
+                    width="96%"
+                    height="53px"
+                    [showClearButton]="true"
+                    [dataSource]="supportedProviders"
+                    displayExpr="name"
+                    [(value)]="selectedProvider"
+                    fieldTemplate="field"
+                    (onValueChanged)="onProviderChanged()">
+                    <div class="provider-select-item" *dxTemplate="let data of 'item'">
+                        <div class="provider-icon" [ngStyle]="{'background-image': 'url(assets/common/icons/smtp/' + data?.icon + ')'}"></div>{{data?.name}}
+                    </div>
+                    <div class="provider-select-item" *dxTemplate="let data of 'field'">
+                        <div *ngIf="data" class="provider-icon" [ngStyle]="{'background-image': 'url(assets/common/icons/smtp/' + data?.icon + ')'}"></div>{{data?.name}}
+                        <dx-text-box [visible]="false"></dx-text-box>
+                    </div>
+                </dx-select-box>
+            </div>
+            <div class="flex-2">
+                <div class="credentials">
+                    <h3><img src="assets/common/icons/smtp/step2.svg">&nbsp;&nbsp;&nbsp;Enter Credentials</h3>
+                    <div class="form-group">
+                        <label for="SmtpUserName">{{ls.l("UserName")}}</label>
+                        <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control"
+                               [ngClass]="{'edited': settings.smtpUserName}"
+                               [(ngModel)]="settings.smtpUserName" maxlength="128" placeholder="Enter your user name">
+                    </div>
+                    <div class="form-group">
+                        <label for="SmtpPassword">{{ls.l("Password")}}</label>
+                        <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control"
+                               [ngClass]="{'edited':settings.smtpPassword}" [(ngModel)]="settings.smtpPassword"
+                               maxlength="128" autocomplete="off" placeholder="Enter your password">
+                    </div>
+                </div>
+            </div>
+            <div class="flex-2">
+                <div class="servers" *ngIf="showCustomSmptSettings">
+                    <h3><img src="assets/common/icons/smtp/step3.svg">&nbsp;&nbsp;&nbsp;Manually Edit Incoming & Outgoing Servers</h3>
+                    <div class="columns">
+                        <div class="outgoing">
+                            <div class="outgoing-field"><img src="assets/common/icons/smtp/outgoing.svg">&nbsp;&nbsp;&nbsp;OUTGOING SERVER</div>
+                            <div class="form-group">
+                                <label for="SmtpHost">{{ls.l("SmtpHost")}}</label>
+                                <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':settings.smtpHost}"
+                                       [(ngModel)]="settings.smtpHost"
+                                       maxlength="64" placeholder="Enter smtl host">
+                            </div>
+                            <div class="form-group port">
+                                <label for="SmtpPort">{{ls.l("SmtpPort")}}</label>
+                                <input id="SmtpPort" type="number" name="SmtpPort" class="form-control"
+                                       [ngClass]="{'edited':settings.smtpPort}" [(ngModel)]="settings.smtpPort"
+                                       maxlength="5" placeholder="Enter smtp port">
+                            </div>
+                            <dx-switch class="tls" switchedOffText="" switchedOnText="" [(value)]="settings.smtpEnableSsl"></dx-switch>TLS
+                        </div>
+                        <div class="ingoing">
+                            <div class="ingoing-field"><img src="assets/common/icons/smtp/incoming.svg">&nbsp;&nbsp;&nbsp;INCOMING IMAP SERVER <dx-switch switchedOffText="" switchedOnText="" [(value)]="settings.isImapEnabled"></dx-switch></div>
+                            <div class="form-group" [ngClass]="{disabled: !settings.isImapEnabled}">
+                                <label for="ImapHost">{{ls.l("ImapHost")}}</label>
+                                <input id="ImapHost" type="text" name="ImapHost" class="form-control" [ngClass]="{'edited':settings.imapHost}" [(ngModel)]="settings.imapHost" maxlength="128">
+                            </div>
+                            <div class="form-group port" [ngClass]="{disabled: !settings.isImapEnabled}">
+                                <label for="ImapPort">{{ls.l("ImapPort")}}</label>
+                                <input id="ImapPort" type="number" name="ImapPort" class="form-control" [ngClass]="{'edited':settings.imapPort}" [(ngModel)]="settings.imapPort" maxlength="5">
+                            </div>
+                            <dx-switch class="tls" switchedOffText="" switchedOnText="" [disabled]="!settings.isImapEnabled" [(value)]="settings.imapUseSsl"></dx-switch>TLS
+                        </div>
+                    </div>
+                </div>
+                <div class="default" [ngStyle]="{'margin-top': showCustomSmptSettings ? '20px' : '0'}">
+                    <h3><img src="assets/common/icons/smtp/step{{showCustomSmptSettings ? 4 : 3}}.svg">&nbsp;&nbsp;&nbsp;Modify {{showCustomSmptSettings ? 'and Test Your Connection' : 'Email Settings'}}</h3>
+                    <div class="form-group">
+                        <label for="DefaultFromAddress">{{ls.l("DefaultFromAddress")}}</label>
+                        <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control"
+                               [ngClass]="{'edited':settings.defaultFromAddress}"
+                               [(ngModel)]="settings.defaultFromAddress" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultFromDisplayName">{{ls.l("DefaultFromDisplayName")}}</label>
+                        <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control"
+                               [ngClass]="{'edited':settings.defaultFromDisplayName}"
+                               [(ngModel)]="settings.defaultFromDisplayName" maxlength="100">
+                    </div>
+                    <div class="form-group test-email" *ngIf="showCustomSmptSettings">
+                        <label for="TestEmail">Enter any email to receive a test email</label>
+                        <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+                        <button class="btn btn-layout" type="button" (click)="sendTestEmail()"><img src="assets/common/icons/smtp/send.svg">&nbsp;&nbsp;&nbsp;{{ls.l("SendTestEmail")}}</button>
+                    </div>
+                    <div *ngIf="!isHost && !showCustomSmptSettings" class="form-group">
+                        <label for="DefaultReplyTo">{{ls.l("DefaultReplyTo")}}</label>
+                        <input id="DefaultReplyTo" type="text" name="DefaultReplyTo"
+                               class="form-control" [ngClass]="{'edited':settings.defaultReplyTo}"
+                               [(ngModel)]="settings.defaultReplyTo" maxlength="100" [attr.disabled]="showCustomSmptSettings ? '' : null">
+                        <span class="info">* "Default Reply-To" email is not used when SMTP settings are configured</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dx-scroll-view>
+</ng-container>

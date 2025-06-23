@@ -1,0 +1,62 @@
+<modal-dialog [title]="ls.l('AffiliateHistory')"
+              [editTitle]="false"
+              [titleClearButton]="false">
+    <dx-scroll-view showScrollbar="onHover">
+        <ng-template #affiliateTemplate let-affiliate="affiliate">
+            <div class="row">
+                <label class="control-label col-sm-2">{{ls.l('PersonalSettings.Contact1')}}:</label>
+                <p class="form-control-static" [title]="affiliate.affiliateContactName || ''">
+                    <img *ngIf="affiliate.affiliateContactName" [src]="profileService.getContactPhotoUrl(affiliate.affiliateContactPhotoPublicId, false)" class="m--img-rounded m--marginless m--img-centered" width="20px" height="20px">
+                    {{affiliate.affiliateContactName}}
+                </p>
+            </div>
+            <div class="row">
+                <label class="control-label col-sm-2">{{ls.l('Time')}}:</label>
+                <p class="form-control-static login-attempt-date" [title]="getAffiliateTime(affiliate)">
+                    {{getAffiliateTime(affiliate)}}
+                </p>
+            </div>
+        </ng-template>
+        <div class="content">
+            <div *ngFor="let affiliate of affiliateHistory">
+                <div class="m-alert m-alert--icon m-alert--icon-solid m-alert--outline alert alert-info" [ngClass]="{'undefined': affiliate.affiliateRate === null, 'zero': affiliate.affiliateRate == 0}" role="alert">
+                    <div id="code-color" class="m-alert__icon">
+                        <img [src]="profileService.getContactPhotoUrl(affiliate.userPhotoPublicId, false)"
+                             [title]="affiliate.userName || ''" 
+                             class="m--img-rounded m--marginless m--img-centered" 
+                             width="50" height="50">
+                        <p [title]="affiliate.userName || ''">{{affiliate.userName || ''}}</p>
+                    </div>
+                    <div class="m-alert__text">
+                        <div class="row">
+                            <label class="control-label col-sm-2 left-side">{{ls.l('AffiliateCode')}}:</label>
+                            <p class="form-control-static" [ngClass]="{code: hasCommissionsFeature}" [title]="affiliate.affiliateCode || ''">
+                                {{affiliate.affiliateCode}}
+                            </p>
+                        </div>
+                        <ng-container *ngIf="hasCommissionsFeature; else contact"> 
+                            <div class="row">
+                                <label class="control-label col-sm-2 left-side">{{ls.l('AffiliateRateTier1')}}:</label>
+                                <p class="form-control-static">
+                                    {{affiliate.affiliateRate === null ? '' : (affiliate.affiliateRate * 100).toFixed(2) + '%'}}
+                                </p>
+                            </div>
+                            <div class="row">
+                                <label class="control-label col-sm-2 left-side">{{ls.l('AffiliateRateTier2')}}:</label>
+                                <p class="form-control-static">
+                                    {{affiliate.affiliateRateTier2 === null ? '' : (affiliate.affiliateRateTier2 * 100).toFixed(2) + '%'}}
+                                </p>
+                            </div>
+                        </ng-container>
+                        <ng-template #contact>
+                            <ng-container *ngTemplateOutlet="affiliateTemplate;context:{affiliate: affiliate}"></ng-container>
+                        </ng-template>
+                    </div>
+                    <div class="m-alert__text" *ngIf="hasCommissionsFeature">
+                        <ng-container *ngTemplateOutlet="affiliateTemplate;context:{affiliate: affiliate}"></ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>

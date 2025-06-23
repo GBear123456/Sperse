@@ -1,0 +1,64 @@
+:host {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    .data-item {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        padding-left: 22px;
+        margin-right: 20px;
+        line-height: 24px;
+        .label {
+            font-size: 13px;
+            letter-spacing: 0.26px;
+            color: #677380;
+        }
+        .value {
+            font-size: 19px;
+            font-weight: 600;
+            color: #212c36;
+        }
+        &:first-child {
+            margin-right: auto;
+            .value {
+                font-size: 24px;
+            }
+        }
+        &:before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: solid 2px #00aeef;
+            background-color: #cef2ff;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            left: 0;
+        }
+        &:nth-child(2):before {
+            border-color: #fbad52;
+            background-color: #fff1e1;
+        }
+        &:nth-child(3):before {
+            border-color: #f14811;
+            background-color: #f8dbd2;
+        }
+        &:nth-child(4):before {
+            border-color: #8bc22c;
+            background-color: #e2efcc;
+        }
+        &:nth-child(5):before {
+            border-color: #a16fd9;
+            background-color: #ddcdee;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+        @media (min-width: 1200px) {
+            margin-right: 84px;
+        }
+    }
+}

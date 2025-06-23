@@ -1,0 +1,272 @@
+<div *ngIf="showNotFound" class="not-found-block">
+    Product link is not valid
+</div>
+<div *ngIf="productInfo" class="box">
+    <div class="title">
+        <h1 class="title title--h1"> {{productInfo.name}}</h1>
+    </div>
+    <p class="subtitle">{{productInfo.description}}</p>
+    <div class="box__inner">
+        <div class="box__left box__item">
+            <div class="plan">
+                <span class="wrapper">
+                    <span>
+                        <img *ngIf="productInfo.imageUrl" aria-hidden="true" [src]="productInfo.imageUrl">
+                    </span>
+                </span>
+            </div>
+            <ng-container *ngIf="productInfo.type == productType.Subscription else generalProduct">
+                <div class="subscription-price">
+                    <div *ngIf="availablePeriods.length > 1" class="state-slider point{{availablePeriods.length}}">
+                        <div class="captions">
+                            <ng-container *ngFor="let period of availablePeriods; index as i">
+                                <div [ngClass]="{ 'active': getActiveStatus(period) }" (click)="toggle(period)">{{ ls.l(billingPeriod[period]) }}</div>
+                            </ng-container>
+                        </div>
+                        <mat-slider [value]="getSliderValue()"
+                                    [disabled]="true">
+                        </mat-slider>
+                    </div>
+                    <div class="price-wrapper">
+                        <div class="trial-day-count" *ngIf="selectedSubscriptionOption.trialDayCount || selectedSubscriptionOption.signupFee">
+                            <ng-container *ngIf="selectedSubscriptionOption.trialDayCount; else signupBlock">
+                                <span *ngIf="selectedSubscriptionOption.signupFee; else free">
+                                    {{ currencySymbol }}{{getSignUpFee(true) | customNumber: '1.0-2' | currency: productInfo.data.currency : '' : '1.0-2'}}
+                                </span>
+                                <ng-template #free>{{ls.l('Free')}}</ng-template>
+                                for {{selectedSubscriptionOption.trialDayCount}}* day(s) then
+                            </ng-container>
+                            <ng-template #signupBlock>
+                                <span>{{ currencySymbol }}{{getSignUpFee(true) | customNumber: '1.0-2' | currency: productInfo.data.currency : '' : '1.0-2'}}</span> signup fee
+                            </ng-template>
+                        </div>
+                        <div class="amountPerMonth">
+                            <ng-container *ngIf="!isFreeProductSelected else freeOption">
+                                <span class="currency-symbol">{{ currencySymbol }}</span>
+                                <span class="number">
+                                    {{ getSubscriptionPrice(true) | customNumber: '1.0-0' | currency: productInfo.data.currency : '' : '1.0-0' }}
+                                </span>
+                                <div class="number-info">
+                                    <span class="decimal">{{ getSubscriptionPrice(true) | customNumber: '0.2-2' }}</span>
+                                    <span>/{{ getPriceDescription() }}</span>
+                                </div>
+                            </ng-container>
+                            <ng-template #freeOption>
+                                <span class="number">{{ls.l('Free')}}</span>
+                            </ng-template>
+                        </div>
+                        <div class="coupon-info" *ngIf="couponInfo && !isFreeProductSelected">
+                            <div>Coupon applied</div>
+                            <div class="save-line">You saved: {{currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
+                        </div>
+                        <div class="trial-period-note" *ngIf="selectedSubscriptionOption.trialDayCount">{{ls.l('* The Trial period is applied after the first purchase only.')}}</div>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-template #generalProduct>
+                <div class="price">
+                    <ng-container *ngIf="!isFreeProductSelected else freeProduct">
+                        <div class="quantity" *ngIf="productInfo.type != productType.Digital && productInfo.type != productType.Event">
+                            <div class="quantity-title">Quantity</div>
+                            <div class="quantity-controls">
+                                <span [style.visibility]="requestInfo.quantity > 1 ? 'visible' : 'hidden'" (click)="changeQuantity(requestInfo.quantity - 1)">-</span>
+                                <span class="value">{{requestInfo.quantity}}</span>
+                                <span (click)="changeQuantity(requestInfo.quantity + 1)">+</span>
+                            </div>
+                        </div>
+                        <div class="price__new">
+                            <span [attr.data-currency]="currencySymbol">{{ getGeneralPrice(true) | number : '1.0-2'}}</span>
+                        </div>
+                        <div *ngIf="couponInfo" class="discount-info">
+                            <div>Coupon applied</div>
+                            <div class="save-line">You saved: {{currencySymbol}}{{getDiscount() | number : '1.0-2'}}</div>
+                        </div>
+                    </ng-container>
+                    <ng-template #freeProduct>
+                        <div class="free-product">{{ls.l('Free')}}</div>
+                    </ng-template>
+                </div>
+            </ng-template>
+            <div *ngIf="descriptionHtml" class="description-html" [innerHtml]="descriptionHtml"></div>
+        </div>
+        <div class="box__right box__item">
+            <form id="firstStepForm" #firstStepForm="ngForm" novalidate>
+                <div class="name">
+                    <div class="input name__input">
+                        <label>
+                            First Name <input #firstNameInput="ngModel" type="text" placeholder="" name="firstName" [(ngModel)]="requestInfo.firstName" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="nameRegexp" required>
+                            <validation-messages [formCtrl]="firstNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('FirstName'))}]"></validation-messages>
+                        </label>
+                    </div>
+                    <div class="input name__input">
+                        <label>
+                            Last Name <input #lastNameInput="ngModel" type="text" placeholder="" name="lastName" [(ngModel)]="requestInfo.lastName" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="nameRegexp" required>
+                            <validation-messages [formCtrl]="lastNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('LastName'))}]"></validation-messages>
+                        </label>
+                    </div>
+                </div>
+                <div class="input" *ngIf="productInfo.data.hasTenantService">
+                    <label class="company">
+                        Company <input #businessNameInput="ngModel" type="text" name="businessName" [(ngModel)]="tenantRegistrationModel.tenantName" [ngModelOptions]="{updateOn: 'blur'}" autoComplete="off" required>
+                        <validation-messages [formCtrl]="businessNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('BusinessName'))}]"></validation-messages>
+                    </label>
+                </div>
+                <div class="phone">
+                    <span class="phone__label">Phone</span>
+                    <div>
+                        <country-phone-number #phoneNumber
+                            [required]="false"
+                            [(phoneNumber)]="requestInfo.phone"
+                            (onInitialized)="onPhoneFieldInitialize($event)">
+                        </country-phone-number>
+                    </div>
+                </div>
+                <div class="input">
+                    <label class="email">
+                        Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="requestInfo.email" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="emailRegexp" required>
+                        <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
+                    </label>
+                </div>
+                <div class="input" *ngIf="productInfo.data.hasTenantService && passwordComplexitySetting">
+                    <label>
+                        Choose your password
+                    </label>
+                    <div class="password-row">
+                        <div>
+                            <input #passwordInput="ngModel"
+                                   [requireDigit]="passwordComplexitySetting.requireDigit"
+                                   [requireLowercase]="passwordComplexitySetting.requireLowercase"
+                                   [requireUppercase]="passwordComplexitySetting.requireUppercase"
+                                   [requireNonAlphanumeric]="passwordComplexitySetting.requireNonAlphanumeric"
+                                   [requiredLength]="passwordComplexitySetting.requiredLength"
+                                   [type]="showPassword ? 'text' : 'password'"
+                                   name="password"
+                                   [(ngModel)]="tenantRegistrationModel.adminPassword"
+                                   reverse="true"
+                                   autoComplete="off"
+                                   required>
+                            <span class="pass" (click)="showPassword = !showPassword">{{ls.l(showPassword ? 'hide' : 'show')}}</span>
+                            <validation-messages [formCtrl]="passwordInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('Password'))}]"></validation-messages>
+                        </div>
+                        <ng-container *ngIf="passwordInput.errors && passwordInput.value">
+                            <div id="message" class="entrance-page__form-validator is-active">
+                                <div class="message-inner">
+                                    <p id="letter"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireLowercase"
+                                       [ngClass]="{
+                                        'invalid': (passwordInput?.errors && passwordInput?.errors?.requireLowercase) || !passwordInput.value,
+                                        'valid': !passwordInput?.errors?.requireLowercase
+                                        }">
+                                        {{ls.l('PasswordComplexity_RequireLowercase_Hint')}}
+                                    </p>
+                                    <p id="capital"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireUppercase"
+                                       [ngClass]="{
+                                        'invalid': (passwordInput?.errors && passwordInput?.errors?.requireUppercase) || !passwordInput.value,
+                                        'valid': !passwordInput?.errors?.requireUppercase
+                                       }">
+                                        {{ls.l('PasswordComplexity_RequireUppercase_Hint')}}
+                                    </p>
+                                    <p id="number"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireDigit"
+                                       [ngClass]="{
+                                        'invalid': (passwordInput?.errors && passwordInput?.errors?.requireDigit) || !passwordInput.value,
+                                        'valid': !passwordInput?.errors?.requireDigit
+                                       }">
+                                        {{ls.l('PasswordComplexity_RequireDigit_Hint')}}
+                                    </p>
+                                    <p id="length"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requiredLength"
+                                       [ngClass]="{
+                                        'invalid': (passwordInput?.errors && passwordInput?.errors?.requiredLength) || !passwordInput.value,
+                                        'valid': !passwordInput?.errors?.requiredLength
+                                       }">
+                                        {{ls.l('PasswordComplexity_RequiredLength_Hint', passwordComplexitySetting.requiredLength)}}
+                                    </p>
+                                    <p id="special"
+                                       class="validator-rule"
+                                       *ngIf="passwordComplexitySetting.requireNonAlphanumeric"
+                                       [ngClass]="{
+                                        'invalid': (passwordInput?.errors && passwordInput?.errors?.requireNonAlphanumeric) || !passwordInput.value,
+                                        'valid': !passwordInput?.errors?.requireNonAlphanumeric
+                                        }">
+                                        {{ls.l('PasswordComplexity_RequireNonAlphanumeric_Hint')}}
+                                    </p>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+                <div class="input name__input" *ngIf="productInfo.publicAllowCoupon && !isFreeProductSelected">
+                    <label class="coupon">
+                        Coupon
+                    </label>
+                    <div class="coupon-row">
+                        <div class="coupon-input">
+                            <input type="text" placeholder="" name="coupon" maxlength="36" [(ngModel)]="requestInfo.couponCode"
+                                   (change)="couponChange()" [attr.disabled]="couponLoading || couponInfo ? true : null">
+                            <i *ngIf="couponInfo" class="fa fa-close" (click)="clearCoupon()"></i>
+                        </div>
+                        <i *ngIf="couponLoading" class="fa fa-spinner fa-spin"></i>
+                        <button class="button_global button_global_green" [ngClass]="{disabled: !requestInfo.couponCode || couponLoading}" (click)="loadCouponInfo()">Apply</button>
+                    </div>
+                    <div *ngIf="couponInfo">Applied {{couponInfo['description']}}</div>
+                    <div *ngIf="showCouponError" class="error">Coupon is invalid</div>
+                </div>
+                <div *ngIf="hasToSOrPolicy" class="actions">
+                    <div>
+                        <label class="check_wrap">
+                            <input class="check_wrap__input" type="checkbox" [(ngModel)]="agreedTermsAndServices" [ngModelOptions]="{standalone: true}">
+                            <span class="check_wrap__style"></span>
+                            <div>
+                                By using this page, you agree to
+                                <ng-container *ngIf="productInfo.data.tenantHasTerms">
+                                    <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">Terms of Service</a>
+                                    <span *ngIf="productInfo.data.tenantHasPrivacyPolicy"> and </span>
+                                </ng-container>
+                                <a *ngIf="productInfo.data.tenantHasPrivacyPolicy" href="javascript:void(0);" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="login_btn">
+                    <ng-container *ngIf="!productInfo.data.hasTenantService else tenantSubmit">
+                        <div [style.display]="showSubmitButton() ? 'block' : 'none'">
+                            <button class="button_global button_global_green" [ngClass]="{disabled: !isFormValid()}" (click)="submitFreeRequest()">
+                                {{ productInfo.type == productType.Subscription ? 'Subscribe' : 'Purchase' }}
+                            </button>
+                        </div>
+                        <div class="gateways" [style.display]="!showSubmitButton() ? 'flex' : 'none'">
+                            <button *ngIf="showStripeButton()" class="button_global button_global_purple" [ngClass]="{disabled: !isFormValid()}" (click)="submitStripeRequest()">
+                                Pay with <img src="assets/common/images/stripe.svg" />
+                            </button>
+                            <pay-pal [style.display]="showPayPalButton() ? 'block' : 'none'"
+                                     [height]="55"
+                                     [showButtonType]="paypalButtonType"
+                                     [disabled]="!isFormValid()"
+                                     (onApprove)="onPayPalApprove()">
+                            </pay-pal>
+                            <div *ngIf="showNoPaymentSystems" class="no-payment-systems">
+                                Payment systems are not configured
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #tenantSubmit>
+                        <div>
+                            <button class="button_global button_global_green" [ngClass]="{disabled: !isFormValid()}" (click)="submitTenant()">
+                                {{getTenantButtonText()}}
+                            </button>
+                        </div>
+                    </ng-template>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="footer">
+        {{currentYear}} &copy; {{hostName}} Platform
+    </div>
+</div>

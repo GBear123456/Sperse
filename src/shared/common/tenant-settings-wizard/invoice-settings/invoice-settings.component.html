@@ -1,0 +1,122 @@
+<h2>{{ ls.l('Invoice') }}</h2>
+<div class="" *ngIf="settings">
+    <dx-scroll-view [height]="450" showScrollbar="onHover">
+        <div class="form-group email-template">
+            <email-template-selector [(templateId)]="settings.defaultTemplateId"
+                                     [templateType]="EmailTemplateType.Invoice"
+                                     [showSystemDefault]="false"
+                                     [title]="ls.l('EmailTemplate')">
+            </email-template-selector>
+        </div>
+        <h5>{{ls.l('Company Info')}}</h5>
+        <div class="form-group">
+            <label>
+                {{ls.l('LegalName')}}
+            </label>
+            <dx-text-box [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.legalName"
+                         [readOnly]="isManageUnallowed"
+                         [maxLength]="150">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>
+                {{ls.l('Tax/VatNo')}}
+            </label>
+            <dx-text-box [readOnly]="isManageUnallowed"
+                         [placeholder]="ls.l('EditValuePlaceholder')"
+                         [(value)]="settings.taxVatNo"
+                         [maxLength]="20">
+            </dx-text-box>
+        </div>
+        <div class="form-group">
+            <label>
+                {{ls.l('Address')}}
+            </label>
+            <dx-text-area height="155px"
+                          [placeholder]="ls.l('EditValuePlaceholder')"
+                          [(value)]="settings.address"
+                          [readOnly]="isManageUnallowed"
+                          [maxLength]="500">
+            </dx-text-area>
+        </div>
+        <div class="form-group">
+            <label>
+                {{ls.l('Invoice_DefaultNote')}}
+            </label>
+            <dx-text-area [readOnly]="isManageUnallowed"
+                          [placeholder]="ls.l('EditValuePlaceholder')"
+                          [(value)]="settings.defaultNote">
+            </dx-text-area>
+        </div>
+        <h5>{{ls.l('InvoiceEmail_OtherSettings')}}</h5>
+        <div class="form-group">
+            <dx-check-box [readOnly]="isManageUnallowed"
+                          [text]="ls.l('InvoiceEmail_ShowShippingAddress')"
+                          [(value)]="settings.showShippingAddress">
+            </dx-check-box>
+        </div>
+        <div class="form-group">
+            <dx-check-box [readOnly]="isManageUnallowed"
+                          [text]="ls.l('InvoiceEmail_AttachPDF')"
+                          [(value)]="settings.attachPDF">
+            </dx-check-box>
+        </div>
+        <div class="form-group">
+            <dx-check-box [readOnly]="isManageUnallowed"
+                          [text]="ls.l('InvoiceEmail_DisableProlongingSubscriptionByQuantity')"
+                          [(value)]="settings.disableProlongingSubscriptionByQuantity">
+            </dx-check-box>
+        </div>
+        <div class="form-group">
+            <label>
+                {{ls.l('InvoiceEmail_DueGracePeriod')}}
+            </label>
+            <dx-number-box [min]="1"
+                           mode="number"
+                           [readOnly]="isManageUnallowed"
+                           [placeholder]="ls.l('EditValuePlaceholder')"
+                           [(value)]="settings.dueGracePeriod"
+                           (onFocusOut)="onDueGracePeriodFocusOut()">
+                <dx-validator #dueGraceValidator>
+                    <dxi-validation-rule type="required"
+                                         [message]="ls.l('ThisFieldIsRequired')"></dxi-validation-rule>
+                </dx-validator>
+            </dx-number-box>
+        </div>
+        <ng-container *ngIf="hasBankCodeFeature">
+            <div class="form-group default-advisor">
+                <source-contact-list [selectedKey]="settings?.defaultAdvisorContactId"
+                                     [targetSelector]="'#affiliateContactLink'"
+                                     (onItemSelected)="onAdvisorContactChanged($event)">
+                </source-contact-list>
+                <label>{{ ls.l('DefaultAdvisorContact') }}:</label>
+                <div class="advisor-name">
+                    <span [ngClass]="{empty: !settings?.defaultAdvisorContactId}">
+                        {{ settings?.advisorName ? settings?.advisorName : (ls.l('Set') + ' ' + ls.l('DefaultAdvisorContact')) }}
+                        <i id="affiliateContactLink" class="edit fa fa-pencil"
+                           (click)="openAdvisorContactList($event)">
+                        </i>
+                        <ng-container *ngIf="settings?.defaultAdvisorContactId">
+                            <i class="remove fa fa-times"
+                               (click)="removeSourceContact($event)">
+                            </i>
+                        </ng-container>
+                    </span>
+                </div>
+            </div>
+        </ng-container>
+        <div class="payment-methods" *ngIf="settings?.configuredPaymentMethods">
+            <span>{{ls.l('Default')}} {{ls.l('Invoice_PaymentMethods')}}</span>
+            <div>
+                <div *ngFor="let item of paymentMethods">
+                    <dx-check-box [value]="item.checked"
+                                  [text]="item.name"
+                                  [visible]="item.visible"
+                                  (onValueChanged)="paymentMethodChanged($event, item.value)">
+                    </dx-check-box>
+                </div>
+            </div>
+        </div>
+    </dx-scroll-view>
+</div>

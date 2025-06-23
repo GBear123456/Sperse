@@ -1,0 +1,13 @@
+<div class="field">
+    <label [for]="name" [title]="label">{{ label }}</label>
+    <dx-select-box
+        [inputAttr]="{ id: name }"
+        [placeholder]="!readOnly ? ls.l('Select') : ''"
+        displayExpr="name"
+        valueExpr="value"
+        [dataSource]="dataSource"
+        [value]="value"
+        [disabled]="readOnly"
+        (onValueChanged)="valueChange.emit($event.value)">
+    </dx-select-box>
+</div>

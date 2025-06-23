@@ -1,0 +1,247 @@
+:host {
+    header {
+        padding: 0 60px 0 10px;
+        img {
+            max-width: 200px;
+            max-height: 50px;
+            margin-right: 10px;
+        }
+        ::ng-deep inplace-edit {
+            .inplace-edit-view-mode {
+                display: flex;
+                align-items: center;
+                .link {
+                    display: flex;
+                    font-size: 22px;
+                }
+                dx-text-box input {
+                    font-size: 22px;
+                }
+            }
+            .inplace-edit-edit-mode {
+                display: flex;
+                font-size: 22px;
+                background: transparent;
+                .dx-texteditor {
+                    background: transparent;
+                    .dx-texteditor-input {
+                        background: transparent;
+                        font-size: 22px;
+                    }
+                }
+                dx-button {
+                    top: 0;
+                    background: transparent;
+                }
+            }
+        }
+
+        .vertical-delimiter {
+            height: 100%;
+            position: relative;
+            &:before {
+                content: '';
+                position: absolute;
+                border-left: 1px solid #dfdfdf;
+                display: block;
+                height: 100%;
+            }
+        }
+
+        .navigation {
+            margin: 0 20px;
+            ::ng-deep .dx-button {
+                &.prev {
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+                &.next {
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                }
+                .dx-button-content {
+                    height: 37px;
+                    min-width: 50px;
+                    padding: 6px 15px;
+                }
+                &.dx-state-hover,
+                &.dx-state-focused {
+                    background-color: #fff;
+                }
+                &.dx-state-focused {
+                    border-color: #ddd;
+                }
+                &.dx-state-hover {
+                    background-color: #fff;
+                }
+                &.dx-state-hover {
+                    border-color: #9d9d9d;
+                }
+                .dx-icon {
+                    color: #959a9f;
+                }
+            }
+        }
+
+        .filters {
+            margin-left: auto;
+            padding-right: 20px;
+            ::ng-deep .dx-widget {
+                input {
+                    background: #f3f7fa;
+                }
+            }
+        }
+
+        button {
+            margin-right: 20px;
+            cursor: pointer;
+            &.refresh-button {
+                margin: 5px 20px;
+                width: 44px;
+                height: 44px;
+                outline: none;
+                border: none;
+                cursor: pointer;
+                vertical-align: bottom;
+                background: url("../../../assets/common/icons/refresh-btn.svg") no-repeat center;
+            }
+        }
+    }
+    ::ng-deep .mat-sidenav-container {
+        height: calc(100vh - 158px) !important;
+    }
+    ::ng-deep .main-content {
+        padding: 20px;
+        .field {
+            align-items: baseline;
+
+            .dx-state-disabled.dx-widget, .dx-state-disabled .dx-widget {
+                & .dx-texteditor-input, input.form-control {
+                    border-bottom: 0;
+                }
+                .dx-texteditor-buttons-container {
+                    display: none;
+                }
+            }
+
+            .dx-widget  {
+                .dx-texteditor-input {
+                    font-size: 15px;
+                    font-weight: 400;
+                    color: #424c56;
+                    padding: 0;
+                    letter-spacing: .3px;
+                }
+                .dx-placeholder {
+                    font-size: 15px;
+                    font-weight: 400;
+                    letter-spacing: .3px;
+                    color: #8a969b;
+                    transition: .2s;
+                }
+                &.dx-state-focused .dx-placeholder {
+                    top: -30px;
+                }
+                &.dx-numberbox {
+                    width: 100%;
+                }
+            }
+
+            .detailItem {
+                display: flex;
+                align-items: center;
+                position: relative;
+                .mat-form-field {
+                    width: 100%;
+                }
+            }
+
+            span.clear-contact {
+                top: -2px;
+                position: absolute;
+                left: initial;
+                right: -30px;
+                bottom: 0;
+                margin: auto !important;
+                width: 16px;
+                height: 16px;
+            }
+            .numberBox {
+                display: flex;
+                span {
+                    cursor: default;
+                }
+            }
+
+            ::ng-deep stars-rating {
+                align-self: center;
+            }
+        }
+
+        .field label,
+        .groupLabel {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202b35;
+            flex: 1;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            & + * {
+                &.dx-checkbox {
+                    margin-top: 10px;
+                }
+                &:not(.dx-checkbox) {
+                    flex: 1;
+                }
+            }
+        }
+        .groupLabel {
+            display: flex;
+            align-items: center;
+            height: 34px;
+        }
+
+        .fa {
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .leftAlignment {
+            label + * {
+                flex: 1;
+            }
+        }
+
+        .center {
+            label {
+                flex: initial;
+                width: 120px;
+                margin-right: 0;
+                & + *:not(.dx-checkbox) {
+                    flex: auto;
+                }
+            }
+        }
+
+        .valuesBelow {
+            .field {
+                flex-direction: column;
+                .add-new-button {
+                    margin-left: 0;
+                    padding-top: 0;
+                    span {
+                        margin-left: 0;
+                    }
+                }
+                label + *,
+                .dx-widget {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+}

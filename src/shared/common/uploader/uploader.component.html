@@ -1,0 +1,19 @@
+<h5>{{ title }}</h5>
+<p>
+    <a *ngIf="documentTemplateLink && !documentId" [href]="documentTemplateLink" target="_blank">{{ls.l('DownloadTemplate')}}</a>
+    <a *ngIf="documentId || !documentTemplateLink" [ngClass]="{disabled: !documentId}" [href]="documentLink" target="_blank">{{ls.l('Download')}}</a>&nbsp;&nbsp;&nbsp;
+    <a href="javascript:void(0)" *ngIf="documentId && onDocumentClear?.observers?.length" (click)="clear()">{{ls.l('Clear')}}</a>
+    <span *ngIf="uploadInfoText" class="m-form__help">{{uploadInfoText}}</span>
+</p>
+<form #privacyPolicyUploadForm>
+    <div class="form-group">
+        <ngx-file-drop [accept]="acceptFileExt" [multiple]="false" (onFileDrop)="fileDropped($event)">
+            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                <a href="javascript:void(0);" class="attach-link" (click)="openFileSelector()">
+                    {{showPlusSign ? '+' : ''}} {{ uploadButtonText }}
+                </a>
+            </ng-template>
+        </ngx-file-drop>
+    </div>
+    <div *ngIf="file">{{ file.fileEntry.name }}</div>
+</form>

@@ -1,0 +1,73 @@
+<modal-dialog [buttons]="buttons">
+    <ng-container headerContent>
+        <label class="header-title">{{title}}</label>
+        <dx-calendar *ngIf="currentStep == uploadBudgetSteps.Upload"
+            zoomLevel="year" 
+            maxZoomLevel="year"
+            minZoomLevel="year"
+            (onOptionChanged)="onCalendarOptionChanged($event)">
+        </dx-calendar>
+    </ng-container>
+
+    <dx-scroll-view showScrollbar="onHover">
+        <div *ngIf="currentStep == uploadBudgetSteps.BusinessEntities" class="businessEntities-container">
+            <dx-tree-list keyExpr="id"
+                          parentIdExpr="parentId"
+                          [autoExpandAll]="true"
+                          [scrolling]="{ showScrollbar: 'never' }"
+                          [selectedRowKeys]="selectedBusinessEntityIds"
+                          [dataSource]="bankAccountsService.sortedBusinessEntities$ | async"
+                          (onSelectionChanged)="onSelectionChanged($event)">
+                <dxo-selection [allowSelectAll]="false" [recursive]="false" mode="multiple"></dxo-selection>
+                <dxi-column dataField="name" [caption]="ls.l('BusinessEntityName') | uppercase"></dxi-column>
+                <dxo-scrolling mode="virtual"></dxo-scrolling>
+            </dx-tree-list>
+        </div>
+        <div *ngIf="currentStep == uploadBudgetSteps.Upload" class="upload-container">
+            <div class="download">
+                <a target="_blank"
+                   [href]="budgetTemplateLink">
+                    {{ls.l('Download Excel Template')}}
+                </a><br>
+                {{ls.l('for your Budget')}}
+            </div>
+            <div class="drop-down" *ngIf="!totalCount">
+                <ngx-file-drop [ngClass]="{'full-height': data.fullHeight}" accept=".xlsx" [multiple]="false"
+                               (onFileDrop)="data.dropFiles ? data.dropFiles($event) : fileDropped($event)">
+                    <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                        <img src="./assets/common/icons/upload-file.svg">
+                        <p>{{ls.l('DragAndDrop')}}</p>
+                        <p style="color: #677380;">{{ls.l('or')}}</p>
+                        <p class="alter-text">
+                            <a href="javascript:void(0);" (click)="openFileSelector()">{{ls.l('SelectFileFrom')}}</a>
+                        </p>
+                    </ng-template>
+                </ngx-file-drop>
+            </div>
+            <div class="uploading" *ngIf="totalCount > 0">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="wrapper">
+                        <img src="./assets/common/icons/upload-file.svg">
+                        <h3>{{ls.l('Selected')}}</h3>
+                        <ng-container *ngFor="let file of files; let i = index">
+                            <div class="file-progress-wrapper"
+                                [ngStyle]="{ background: 'linear-gradient(to right, #00aeef21 ' + file.progress + '%, #f3f7fa 0%)' }">
+                                <img width="16px" height="16px"
+                                     src="./assets/common/icons/file-types/{{file.type}}.svg"
+                                     onError="this.src='./assets/common/icons/files.svg';">
+                                <span class="file-name">{{file.name}}</span>
+                                <span [ngClass]="{ cancel: file.progress < 100, completed: file.progress >= 100 }"
+                                      (click)="cancelUpload()">
+                                </span>
+                            </div>
+                        </ng-container>
+                    </div>
+                </dx-scroll-view>
+            </div>
+            <div class="info-text">
+                <dx-check-box width="100px" [text]="ls.l('Override')" [(value)]="overrideAccounts" class="override-checkbox"> </dx-check-box>
+                {{ls.l('OverrideChartOfAccounts')}}
+            </div>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>

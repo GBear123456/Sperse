@@ -1,0 +1,248 @@
+@mainFont: inherit;
+
+::ng-deep .wizard-right mat-dialog-container {
+    background: #E7E7E7 url(../../../assets/images/hero.jpg) bottom 0 left 0 no-repeat;
+    padding-bottom: 0;
+    position: relative;
+    
+    @media all and (max-width: 768px) {
+        background-image: none;
+    }
+    
+    .hide-on-right-wizard {
+        display: none !important;
+    }
+}
+
+::ng-deep .scroll-zone {
+    max-height: 400px;
+    height: auto;
+    overflow: auto;
+    
+    p {
+        font-size: 14px;
+        margin-bottom: 4px;
+        text-align: left;
+    }
+}
+
+:host {
+    display: block;
+    height: 100%;
+    
+    .container {
+        padding: 20px 15px;
+    }
+    
+    .link {
+        color: #58a3dc;
+        transition: .3s;
+        
+        &:hover {
+            text-decoration: underline;
+            color: darken(#58a3dc, 10%);
+        }
+    }
+    
+    .right-info {
+        display: block;
+        margin: 15px 0;
+    }
+    
+    ::ng-deep .step-item {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        
+        
+        .header {
+            height: 9%;
+            padding: 11px 52px 11px 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            position: relative;
+            z-index: 5;
+            color: #2C2C2C;
+            
+            @media all and (min-width: 992px) {
+                padding-left: calc(~"35% + 30px");
+                justify-content: unset;
+            }
+            
+            @media all and (max-width: 768px) {
+                font-size: 20px;
+            }
+        }
+        
+        h2 {
+            font-family: @mainFont;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .header {
+            padding-left: 0;
+        }
+        
+        p {
+            font-family: @mainFont;
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: 0.7px;
+            color: #ffffff;
+            margin-top: -12px;
+        }
+        
+        .row {
+            margin-bottom: 10px;
+        }
+    }
+    
+    ::ng-deep .mat-dialog-content {
+        height: 100%;
+        min-height: 100%;
+        position: relative;
+    }
+    
+    ::ng-deep .dx-field {
+        align-items: center;
+        width: 100%;
+        
+        .dx-field-label {
+            width: 100%;
+            float: right;
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 700;
+            padding-bottom: 4px;
+            color: #fff;
+    
+            @media all and (max-width: 768px) {
+                font-size: 11px;
+                font-weight: 400;
+            }
+        }
+        
+        .dx-field-value {
+            width: 100% !important;
+        }
+        
+        .dx-texteditor-input {
+            background-color: #fff;
+            border-radius: 4px;
+            
+            @media all and (max-width: 768px) {
+                padding: 5px 8px;
+                font-size: 14px;
+                font-weight: 500;
+            }
+        }
+        
+        .dx-placeholder {
+            font-weight: 400;
+            color: #aaa;
+            transition: 0.2s;
+    
+            @media all and (max-width: 768px) {
+                font-size: 14px;
+            }
+        }
+    
+        .right-info {
+            margin-top: 15px;
+        }
+        
+        @media all and (max-width: 768px) {
+            .dx-texteditor-empty.dx-state-focused {
+                .dx-placeholder {
+                    top: -30px;
+                }
+            }
+        }
+    }
+    
+    ::ng-deep .dx-radiobutton-checked {
+        .dx-radiobutton-icon {
+            &::before {
+                background-color: transparent;
+            }
+            
+            .dx-radiobutton-icon-dot {
+                background: #f0d500;
+            }
+        }
+    }
+    
+    ::ng-deep .dx-state-focused {
+        border-color: #f0d500;
+    }
+    
+    ::ng-deep .mat-tab-group {
+        .mat-tab-header {
+            border-bottom-color: rgba(255, 255, 255, .8);
+            
+            @media all and (max-width: 660px) {
+                .mat-tab-label-container {
+                    position: relative;
+                    padding-left: 32px;
+                }
+            }
+            
+            .mat-tab-header-pagination {
+                background: rgba(255, 255, 255, .8);
+                
+                @media all and (max-width: 660px) {
+                    position: absolute;
+                    left: 0;
+                    right: auto;
+                    top: 0;
+                    height: 100%;
+                    width: 32px;
+    
+                    &-after {
+                        right: 0;
+                        left: auto;
+                        top: 0;
+                    }
+                }
+            }
+    
+            .mat-tab-label {
+                color: rgba(255, 255, 255, .8);
+                background-color: transparent !important;
+                
+                @media all and (max-width: 660px) {
+                    width: 260px;
+                    min-width: 260px;
+                    padding: 0 !important;
+                    
+                    &:last-child {
+                        margin-right: 64px;
+                    }
+                }
+            }
+            
+            .mat-tab-label-active {
+                opacity: 1;
+            }
+            
+            .mat-ink-bar {
+                background-color: rgba(255, 255, 255, .8);
+            }
+        }
+    }
+    
+    ::ng-deep dx-validation-group {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+    }
+}

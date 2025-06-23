@@ -1,0 +1,60 @@
+<div>
+    <app-headline [names]="[ l('Setup_Title'), l('SetupStep_Chart') ]"
+                  [showToggleLeftMenuButton]="true"
+                  iconSrc="assets/common/icons/magic-stick-icon.svg">
+    </app-headline>
+    <div class="content-wrap">
+        <cfo-left-menu #leftMenu [selectedItemIndex]="2"></cfo-left-menu>
+        <div class="grid-wrapper" [ngStyle]="{ flex: isInstanceAdmin ? 'unset': 1 }">
+            <categorization [width]="'calc(100vw - ' + (leftMenu.collapsed || isMobile ? (layoutService.showLeftBar ? 510 : 420) : (layoutService.showLeftBar ? 851 : 744)) + 'px)'"
+                            [height]="'calc(100vh - ' + (layoutService.showLeftBar ? 160 : 218) + 'px)'"
+                            [showTitle]="false"
+                            [showHeader]="true"
+                            [showCloseButton]="false"
+                            [showClearSelection]="false"
+                            [showFilterIcon]="false"
+                            [showAddEntity]="true"
+                            [includeNonCashflowNodes]="true">
+            </categorization>
+        </div>
+        <div class="right-actions" *ngIf="isInstanceAdmin">
+            <div>
+                <p class="title">{{l('CustomCharts_Title')}}</p>
+                <ng-container *ngIf="environment.releaseStage != 'production'">
+                    <div class="links-wrap">
+                        <i class="arrow-icon"></i>
+                        <import-chart-of-accounts-button (onComplete)="refresh()" [override]="override"
+                            [syncTypeId]="syncTypeIds.QuickBook"></import-chart-of-accounts-button>
+                    </div>
+                    <hr style="width: calc(100% - 70px); margin-left: 70px;" />
+                </ng-container>
+                <div class="links-wrap">
+                    <i class="arrow-icon"></i>
+                    <import-chart-of-accounts-button (onComplete)="refresh()" [override]="override" [syncTypeId]="syncTypeIds.XeroOAuth2"></import-chart-of-accounts-button>
+                </div>
+            </div>
+
+            <div>
+                <div class="text-center" (click)="downloadExcel()">
+                    <p class="links">
+                        {{l('CustomCharts_DownloadExcel')}}
+                    </p>
+                </div>
+                <div class="file">
+                    <label class="file-upload links">
+                        + {{l('CustomCharts_UploadFile')}}
+                        <input type="file" (change)="uploadExcel($event)" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="+ Upload file" class="no-display" />
+                    </label>
+                </div>
+                <div class="info-text">
+                    <dx-check-box text="Override" [(value)]="override" class="override-checkbox"> </dx-check-box>
+                    {{l('CustomCharts_InfoText')}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <dx-data-grid id="gridForExcelContainer" class="hidden-grid" [dataSource]="categorizationComponent.excelData">
+        <dxo-export [enabled]="true"></dxo-export>
+    </dx-data-grid>
+</div>

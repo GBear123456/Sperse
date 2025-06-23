@@ -1,0 +1,17 @@
+<div class="wizard" [class.wizard-portrait]="(defaults.orientation == 'portrait')">
+
+    <div class="wizard-content">
+        <ng-content></ng-content>
+    </div>
+
+    <nav *ngIf="!defaults.hiddenTabs" class="bottom-control">
+        <hr>
+        <ul class="wizard-nav">
+            <li *ngFor="let ws of wizardSteps; let i = index"
+                [ngClass]="{enable: !defaults.disableTabs && !inArray(defaults.disableSteps, i), disabled: inArray(defaults.disableSteps, i), active: ws.isActive, hidden: (defaults.hiddenDisableSteps && inArray(defaults.disableSteps, i))}"
+                [innerHTML]="ws.tabName">
+            </li>
+        </ul>
+    </nav>
+
+</div>

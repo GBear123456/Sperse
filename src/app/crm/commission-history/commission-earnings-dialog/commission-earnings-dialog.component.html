@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>
+    <div>{{ls.l('AddNewEarnings')}}</div>
+</h2>
+<mat-dialog-content>
+    <dx-scroll-view showScrollbar="onHover" height="500px">
+        <dx-drop-down-box *ngIf="contacts$ | async as contacts"
+                          [fieldTemplate]="'field'"
+                          [items]="contacts"
+                          [value]="selectedContactIds">
+            <div *dxTemplate="let data of 'content'" class="accounts-dropdown">
+                <dx-list style="padding-bottom: 20px"
+                         [dataSource]="contacts"
+                         [searchEnabled]="true"             
+                         [searchExpr]="['name', 'affiliateCode', 'email']"
+                         [(selectedItemKeys)]="selectedContactIds"
+                         [showSelectionControls]="true"
+                         selectionMode="all"
+                         selectAllMode="allPages"
+                         keyExpr="id">
+                    <div *dxTemplate="let contact of 'item'" class="affiliates-list-item-content"> 
+                        <div *ngIf="contact?.name" class="name" [title]="contact?.name">{{ contact?.name }}</div>
+                        <div *ngIf="contact?.affiliateCode" class="affiliate-code" [title]="contact?.affiliateCode">{{ contact?.affiliateCode }}</div>
+                    </div>
+                </dx-list>
+            </div>
+            <div *dxTemplate="let contactId of 'field'">
+                <dx-text-box
+                    [readOnly]="true"
+                    [placeholder]="ls.l('AllAffiliates')"
+                    [value]="getSelectedName(contacts)">
+                </dx-text-box>
+            </div>
+        </dx-drop-down-box>
+        <calendar [values]="dateRange" [options]="calendarOptions"></calendar>
+    </dx-scroll-view>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Add')}}</button>
+</mat-dialog-actions>

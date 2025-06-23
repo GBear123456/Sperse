@@ -1,0 +1,121 @@
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('FirstName')}}*</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter first name"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.firstName"
+                             (keydown)="offersWizardService.validateName($event)">
+                    <dx-validator>
+                        <dxi-validation-rule type="required"
+                                             [message]="ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('MiddleName')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter middle name"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.middleName"
+                             (keydown)="offersWizardService.validateName($event)">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('LastName')}}*</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter last name"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.lastName"
+                             (keydown)="offersWizardService.validateName($event)">
+                    <dx-validator>
+                        <dxi-validation-rule type="required"
+                                             [message]="ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('Gender')}}</div>
+            <div class="dx-field-value">
+                <dx-select-box
+                    [items]="offersWizardService.gender"
+                    valueExpr="key"
+                    displayExpr="text"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.gender"
+                    placeholder="Choose gender">
+                </dx-select-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('dob')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
+            <div class="dx-field-value">
+                <dx-date-box
+                    [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.doB"
+                    type="date">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
+                                             [message]="ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
+                </dx-date-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">SSN<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
+            <div class="dx-field-value">
+                <dx-text-box name="ssn"
+                             showMaskMode="onfocus"
+                             (onContentReady)="inputStatusesService.setMask($event)"
+                             (onFocusIn)="inputStatusesService.focusInput($event)"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.ssn">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
+                                             [message]="ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('Email')}}*</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter email"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.email">
+                    <dx-validator>
+                        <dxi-validation-rule type="required"
+                                             [message]="ls.l('EmailIsRequired')">
+                        </dxi-validation-rule>
+                        <dxi-validation-rule type="pattern"
+                                             [pattern]="offersWizardService.emailRegEx"
+                                             [message]="ls.l('InvalidEmailAddress')">
+                        </dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>

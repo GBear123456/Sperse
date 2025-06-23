@@ -1,0 +1,13 @@
+<h2>{{l('Rapid')}} {{l('Settings')}}</h2>
+<div>
+    <div class="form-group">
+        <label for="RapidUsername">{{l("RapidUsername")}}</label>
+        <input id="RapidUsername" type="text" name="RapidUsername" class="form-control" [(ngModel)]="rapidSettings.username" maxlength="128">
+    </div>
+</div>
+<div>
+    <div class="form-group">
+        <label for="RapidPassword">{{l("RapidPassword")}}</label>
+        <input id="RapidPassword" type="text" name="RapidPassword" class="form-control" [(ngModel)]="rapidSettings.password" maxlength="128">
+    </div>
+</div>

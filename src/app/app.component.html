@@ -1,0 +1,37 @@
+<app-header
+    [hidden]="isFullscreenMode"
+    [ngClass]="{ withContactInfo: appService.showContactInfoPanel$ | async }">
+</app-header>
+
+<left-bar *ngIf="layoutService.showLeftBar && !layoutService.isWideView" 
+    [ngClass]="{
+        fullscreen: isFullscreenMode
+    }">
+</left-bar>
+
+<search-tooltip
+    target="app-header" 
+    [disabled]="true"
+    (onDisplay)="appService.clientSearchToggle.next($event)"
+    (onSearch)="onClientSearch($event)">
+</search-tooltip>
+
+<div class="clearfix"></div>
+<div class="page-container" [ngClass]="{'show-top-bar': layoutService.showTopBar, 'show-left-bar': layoutService.showLeftBar && !layoutService.isWideView, 'expanded': layoutService.expandedLeftBarSubject.value}">
+    <div class="page-sidebar-wrapper" [ngClass]="{'show-sidebar-wrapper': filtersService.enabled}">
+        <side-bar [ngClass]="{
+            fullscreen: isFullscreenMode,
+            'show-left-bar': layoutService.showLeftBar,
+            toolbarIsHidden: appService.toolbarIsHidden$ | async
+        }">
+        </side-bar>
+    </div>
+
+    <div class="page-content-wrapper">
+        <div class="page-content"
+            [ngClass]="{'fixed-filters': appService.narrowingPageContentWhenFixedFilter && filtersService.fixed}">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
+<chat-bar *ngIf="isChatEnabled"></chat-bar>

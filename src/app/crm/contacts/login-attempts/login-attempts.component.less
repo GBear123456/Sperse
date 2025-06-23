@@ -1,0 +1,25 @@
+:host {
+    h3 {
+        padding: 12px;
+    }
+
+    #gridContainer {
+        height: calc(~"100% - 5px");
+
+        ::ng-deep .success-row {
+            background-color: #eaffed;
+
+            i {
+                color: green;
+            }
+        }
+
+        ::ng-deep .failed-row {
+            background-color: #ffeaea;
+
+            i {
+                color: red;
+            }
+        }
+    }
+}

@@ -1,0 +1,30 @@
+:host {
+    display: block;
+    position: relative;
+    height: 100%;
+
+    ::ng-deep #gridContainer {
+        .dx-datagrid .dx-link.dx-link-edit {
+            width: 18px!important;
+        }
+        td.dx-command-edit {
+            & + td::before {
+                display: none !important;
+            }
+        }
+        .role-container {
+            display: inline!important;
+        }
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                cursor: pointer;
+                & > td {
+                    span {
+                        text-align: center;
+                        display: inherit;
+                    }
+                }
+            }
+        }
+    }
+}

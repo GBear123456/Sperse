@@ -1,0 +1,75 @@
+@import url(_settings);
+:host {
+    z-index: 1;
+    
+    &:not(.default) {
+        display: block;
+        border-top: 1px solid rgba(209, 208, 208, 0.5);
+    }
+
+    .page-footer-inner {
+        &::after {
+            visibility: hidden;
+            display: block;
+            font-size: 0;
+            content: " ";
+            clear: both;
+            height: 0;
+        }
+        min-height: 70px;
+        padding: 0 32px;
+        font-size: 16px;
+        line-height: 24px;
+        // background: @footer-color;
+        background: #97f6f7 linear-gradient(178deg, #0dc1c3, #97f6f7);
+
+        @media all and (max-height: 870px) {
+            position: static;
+        }
+        @media all and (max-width: 1024px) {
+            font-size: 13px;
+        }
+        .copyright {
+            float: left;
+            color:rgba(255,255,255,0.7);
+            max-width: 44%;
+            padding: 23px 0;
+            margin: 0;
+        }
+        .footer-menu {
+            float: right;
+            max-width: 54%;
+            list-style-type: none;
+            margin: 0;
+            li {
+                display: inline-block;
+                a {
+                    display: block;
+                    color: #fff;
+                    padding: 23px 20px;
+                }
+                &:last-child {
+                    a {
+                        padding-right: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media all and (max-width: 600px) {
+    ::ng-deep body.finance-page {
+        .footer-menu-block_menu,
+        .footer-menu-block_secure {
+            display: none;
+        }
+    }
+}
+
+::ng-deep body.finance-page .default {
+    .page-footer-inner {
+        margin-top: 15px;
+        background: #949a9d;
+    }
+}

@@ -1,0 +1,378 @@
+:host {
+    width: 900px;
+    display: block;
+    position: relative;
+
+    ::ng-deep .mat-dialog-actions {
+        width: 200px;
+        .mat-dialog-buttons {
+            height: 50px!important;
+        }
+        #saveInvoiceOptions {
+            width: 190px;
+        }
+    }
+
+    ::ng-deep .mat-dialog-header {
+        .title-wrapper {
+            width: 900px;
+        }
+        dx-text-box {
+            background: transparent;
+            input {
+                &, &:read-only {
+                    border: none;
+                    color: #212c36;
+                    font-size: 22px;
+                    font-weight: normal;
+                    font-stretch: normal;
+                    font-style: normal;
+                    line-height: 1.09;
+                    letter-spacing: 0.44px;
+                }
+            }
+        }
+    }
+
+    .description {
+        height: 76px;
+        color: #424c56;
+        padding-top: 17px;
+        padding-left: 58px;
+        position: relative;
+        background-color: #FFFBF3;
+        border: 1px solid #feb636;
+        &:before {
+            left: 26px;
+            top: 26px;
+            position: absolute;
+            content: url(../../../../assets/common/icons/info-icon-orange.svg);
+        }
+        b {
+            font-size: 16px;
+            letter-spacing: 0.32px;
+        }
+        p {
+            font-size: 14px;
+            letter-spacing: 0.28px;
+        }
+    }
+
+    .header {
+        width: 860px;
+        margin: auto;
+        height: 90px;
+        font-size: 16px;
+        font-weight: 500;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.5;
+        letter-spacing: 0.32px;
+        text-align: left;
+        color: #424c56;
+        display: flex;
+        margin-top: 10px;
+        justify-content: space-between;
+        border-bottom: 1px solid #e5e9ec;
+        .photo-area {
+            min-width: 64px;
+            width: 64px;
+            height: 64px;
+            margin-left: 20px;
+            margin-right: 10px;
+            background-color: #F4F4F4;
+            border-radius: 50%;
+            background-size: cover;
+
+            &:before {
+                top: 21px;
+                right: 37px;
+                display: block;
+                width: 29px;
+                content: url(../../../../assets/common/icons/arrows-left.png);
+                height: 21px;
+                position: relative;
+            }
+        }
+        .fields {
+            width: 13%;
+            border-right: 1px solid #e5e9ec;
+        }
+        .result {
+            width: 29%;
+            border-right: 1px solid #e5e9ec;
+            .photo-area:before {
+                display: none;
+            }
+        }
+        .target {
+            border-right: 1px solid #e5e9ec;
+            &:after {
+                content: url(../../../../assets/common/icons/check-green-filled.svg);
+            }
+        }
+        .source:after {
+            content: url(../../../../assets/common/icons/remove-red-filled.svg);
+        }
+        .source, .target, .result {
+            display: flex;
+            position: relative;
+            align-items: center;
+            padding-right: 12px;
+            padding-top: 12px;
+            .name-wrapper {
+                width: 140px;
+            }
+            span {
+                display: block;
+                overflow: hidden;
+                max-height: 50px;
+                line-height: 19px;
+                text-overflow: ellipsis;
+                &.nowrap {
+                    white-space: nowrap;
+                }
+            }
+            p {
+                position: absolute;
+                font-size: 10px;
+                top: 3px;
+                left: 20px;
+            }
+            i {
+                overflow: hidden;
+                white-space: nowrap;
+                display: block;
+                text-overflow: ellipsis;
+                font-size: 10px;
+            }
+        }
+        .target, .source {
+            width: 29%;
+            &:after {
+                position: absolute;
+                top: 0px;
+                right: 5px;
+                display: block;
+                width: 20px;
+                height: 20px;
+            }
+        }
+    }
+
+    .table-view {
+        width: 100%;
+        padding: 0 20px 10px 20px;
+        .contact-field {
+            display: flex;
+            min-height: 40px;
+            justify-content: space-between;
+            &.mergeOptions, &.xrefs {
+                border-top: 1px solid #e5e9ec;
+            }
+            &.sourceContactName {
+                .fields > p {
+                    width: 105px;
+                }
+            }
+        }
+        .fields {
+            width: 13%;
+            border-right: 1px solid #e5e9ec;
+            p {
+                margin-top: 10px;
+                margin-bottom: 0px;
+            }
+            span {
+                margin-top: 35px;
+                margin-left: 10px;
+                display: inline-block;
+            }
+        }
+        .contact-field {
+            .stage {
+                .field-wrapper p {
+                    padding-left: 25px;
+                }
+            }
+
+            &.contactAddresses,
+            &.contactEmails,
+            &.contactPhones {
+                i {
+                    position: absolute;
+                    left: 40px;
+                    width: 18px;
+                    height: 18px;
+                    top: 4px;
+
+                    &.dt {
+                        background: url(../../../../assets/common/icons/contact-icon.svg) no-repeat center;
+                        background-size: auto 18px!important;
+                    }
+                }
+            }
+
+            &.contactEmails {
+                i {
+                    background: url("../../../../assets/common/icons/email.svg") no-repeat center;
+                    background-size: 17px auto;
+                }
+            }
+
+            &.contactPhones {
+                i {
+                    background-size: auto 18px!important;
+                }
+                i.H, i.P {
+                    background: url("../../../../assets/common/icons/phone.svg") no-repeat center;
+                }
+
+                i.W {
+                    background: url("../../../../assets/common/icons/phone-work.svg") no-repeat center;
+                }
+
+                i.M {
+                    background: url("../../../../assets/common/icons/phone-mobile.svg") no-repeat center;
+                }
+            }
+
+            &.contactAddresses {
+                i {
+                    background-size: auto 18px!important;
+                }
+                i.C {
+                    background: url("../../../../assets/common/icons/address-company.svg") no-repeat center;
+                }
+                i.O {
+                    background: url("../../../../assets/common/icons/address-other.svg") no-repeat center;
+                }
+                i.H {
+                    background: url("../../../../assets/common/icons/address-home.svg") no-repeat center;
+                }
+                i.P, i.W {
+                    background: url("../../../../assets/common/icons/address-work.svg") no-repeat center;
+                }
+                i.S {
+                    background-size: 18px 15px!important;
+                    background: url("../../../../assets/common/icons/address-shipping.svg") no-repeat center;
+                }
+                i.B {
+                    background: url("../../../../assets/common/icons/address-billing.svg") no-repeat center;
+                }
+            }
+        }
+        .result {
+            width: 29%;
+            border-right: 1px solid #e5e9ec;
+            .field-wrapper {
+                .set-primary {
+                    width: 16px;
+                    height: 16px;
+                    right: 8px;
+                    top: 0;
+                    display: none;
+                    cursor: pointer;
+                    position: absolute;
+                    background: url(../../../../assets/common/icons/check-green.svg) no-repeat center;
+                }
+                &:hover {
+                    .set-primary {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+        .target {
+            width: 29%;
+            border-right: 1px solid #e5e9ec;
+        }
+        .source {
+            width: 29%;
+        }
+        .source, .target, .result {
+            .field-wrapper {
+                position: relative;
+                display: flex;
+                & > p {
+                    margin-top: 10px;
+                    padding-left: 15px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    i {
+                        width: 10px;
+                        height: 10px;
+                        display: inline-block;
+                        border-radius: 5px;
+                        margin-right: 5px;
+                    }
+                    .user-last-login {
+                        font-style: italic;
+                        opacity: 0.5;
+                    }
+                }
+            }
+        }
+        .bank-code {
+            margin-left: 8px;
+            display: flex;
+            align-items: center;
+            .bank-code-date {
+                margin-left: 5px;
+            }
+        }
+        ::ng-deep dx-check-box {
+            margin: 2px 15px;
+            display: inline-block;
+            &.dx-state-disabled {
+                .dx-checkbox-icon,
+                .dx-checkbox-text {
+                    opacity: 1;
+                }
+            }
+            &.bankCode {
+                display: inline-block;
+                margin: 10px 0 10px 15px;                
+            }
+            &.contactAddresses,
+            &.contactEmails,
+            &.contactPhones {
+                .dx-checkbox-text {
+                    padding-left: 30px;
+                }
+            }
+            &.primary {
+                .dx-checkbox-text {
+                    font-weight: 500;
+                }
+            }
+            &.contactAddresses, &.mergeOptions {
+                .dx-checkbox-text {
+                    display: block;
+                    float: right;
+                    white-space: break-spaces;
+                }
+            }
+            &.dx-checkbox-checked {
+                .dx-checkbox-text {
+                    color: #59626b;
+                }
+            }
+            .dx-checkbox-container {
+                display: inline-block;
+                width: 100%;
+                height: auto;
+            }
+            .dx-checkbox-icon {
+                display: inline-block;
+                vertical-align: bottom;                
+                border-radius: 10px;
+            }
+            .dx-checkbox-text {
+                padding-right: 5px;
+                color: #8795a2;
+            }
+        }
+    }
+}

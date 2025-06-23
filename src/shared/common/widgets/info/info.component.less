@@ -1,0 +1,47 @@
+:host {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & > div {
+        margin-left: 10px;
+        .value {
+            color: #212C36;
+            font-size: 22px;
+            font-weight: 500;
+            cursor: pointer;
+            overflow: hidden;
+            display: block;
+            padding-right: 20px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .description {
+            color: #677380;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 0.2px;
+            line-height: 20px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            .filtered {
+                color: red;
+            }
+        }
+
+        @media (max-width: 768px) {
+            margin-left: 2px;
+            .value {
+                font-size: 16px;
+            }
+            .description {
+                font-size: 10px;
+            }
+        }
+    }
+
+}

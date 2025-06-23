@@ -1,0 +1,21 @@
+<dx-select-box [text]="ls.l('Sort')"
+               [hint]="ls.l('Sort')"
+               placeholder=""
+               [items]="items"
+               displayExpr="text"
+               valueExpr="text"
+               fieldTemplate="selectTemplate"
+               itemTemplate="itemTemplate"
+               width="90px"
+               (onOpened)="changeOptionsPopupWidth($event)"
+               (onItemClick)="changeSorting($event)">
+    <div *dxTemplate="let data of 'selectTemplate'">
+        <span>{{ ls.l('Sort') }}</span>
+        <dx-text-box [visible]="false"></dx-text-box>
+    </div>
+    <div *dxTemplate="let item of 'itemTemplate'">
+        <div class="dx-dropdownmenu-popup">
+            <div class="dx-item" [ngClass]="item.direction">{{ item.text }}</div>
+        </div>
+    </div>
+</dx-select-box>

@@ -1,0 +1,67 @@
+<div class="accounts-list">
+    <div class="account-item networth" #networth>
+        <dx-tooltip
+            target="#valueTotal"
+            showEvent="dxhoverstart"
+            hideEvent="dxhoverend">
+            <div *dxTemplate="let data = data of 'content'">
+                <div class="tooltip-wrap" *ngIf="accountsData$ | async as accountsData">
+                    <div>{{l('Accounts_BalanceToolTip_WithoutPendingTransactions')}}: <span>{{accountsData.totalNetWorth - accountsData.totalPending | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
+                    <div>{{l('Accounts_BalanceToolTip_PendingTransactions')}}: <span>{{accountsData.totalPending | currency: cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
+                    <hr/>
+                    <div class="total">{{l('Accounts_BalanceToolTip_WithPendingTransactions')}}: <span>{{accountsData.totalNetWorth | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
+                </div>
+            </div>
+        </dx-tooltip>
+        <img class="icon" src="assets/common/icons/coins-icon.svg">
+        <div>
+            <div class="value" id="valueTotal" *ngIf="bankAccountsService.accountsDataTotalNetWorthWithApply$ | async as accountsTotalNetWorth">
+                {{ accountsTotalNetWorth | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
+                <span>.{{ accountsTotalNetWorth | customNumber:'0.2-2'}}</span>
+            </div>
+            <div class="name">{{l('Current_Balance')}}</div>
+        </div>
+    </div>
+    <div class="account-item dailyStats" #dailyStats>
+        <div class="row">
+            <div class="col-8">
+                <dx-tooltip
+                     target="#valueDaily"
+                     showEvent="dxhoverstart"
+                     hideEvent="dxhoverend">
+                     <div *dxTemplate="let data = data of 'content'">
+                         {{ dailyStatsAmount$ | async | currency: cfoPreferencesService.selectedCurrencyId : 'symbol' : '1.2-2'}}
+                     </div>
+                 </dx-tooltip>
+                <div class="icon" inlineSVG="assets/common/icons/coins-icon-2.svg"></div>
+                <div>
+                    <div class="value" id="valueDaily">
+                        {{ dailyStatsAmount$ | async | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}<span>.{{ dailyStatsAmount$ | async | customNumber : '0.2-2' }}</span>
+                    </div>
+                    <div class="name">{{ dailyStatsText$ | async }}</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <ul>
+                    <li *ngFor="let item of dailyStatsToggleValues; let i = index" (click)="changeDailyStatsToggleValue(i)" [class.selected]='i == dailyStatsSliderSelected.value'>
+                        {{item}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="account-item total-accounts" id="totalaccounts" (click)="totalAccountsMouseEnter()">
+        <a class="view-details">{{l('Select')}}</a>
+        <div class="icon" inlineSVG="assets/common/icons/total-icon.svg"></div>
+        <div>
+            <div class="value">{{ bankAccountsService.accountsAmountWithApply$ | async }}</div>
+            <div class="name">
+                {{ bankAccountsService.filteredBankAccountsStatus$ | async }}
+                {{l(((bankAccountsService.filteredBankAccounts$ | async)?.length ? '' : 'Total_') + 'Accounts')}}
+                <ng-container *ngIf="(bankAccountsService.filteredBankAccounts$ | async)?.length">
+                    <span class="filtered">*</span>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

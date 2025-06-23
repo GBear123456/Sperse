@@ -1,0 +1,15 @@
+<div class="inplace-select-edit-mode">
+    <dx-select-box
+        [acceptCustomValue]="true"
+        [width]="width"
+        [height]="height"
+        [dataSource]="data.options"
+        displayExpr="name"
+        valueExpr="id"
+        [name]="data.name"
+        [searchEnabled]="true"
+        [(value)]="data.value"
+        (onValueChanged)="updateValue($event)"
+        (onCustomItemCreating)="onCustomItemCreating($event)">
+    </dx-select-box>
+</div>

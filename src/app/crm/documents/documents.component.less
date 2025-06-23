@@ -1,0 +1,33 @@
+:host {
+    display: block;
+    position: relative;
+
+    .wrapper {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        ::ng-deep dx-file-manager {
+            .dx-filemanager-thumbnails-item.dx-state-focused {
+                border: none!important;
+            }
+            .dx-datagrid-rowsview .dx-row-focused.dx-data-row > td {
+                border-bottom: 1px solid #ddd;
+            }
+            .dx-datagrid-rowsview .dx-row-focused.dx-data-row > td:not(.dx-focused) {
+                color: #424c56 !important;
+            }
+            .dx-list-item-icon-container {
+                display: block !important;             
+            }
+            .dx-filemanager-toolbar {
+                height: 50px;
+            }
+            .dx-icon-overflow {
+                display: none;
+            }
+            .dx-drawer-panel-content {
+                z-index: 1;
+            }
+        }
+    }
+}

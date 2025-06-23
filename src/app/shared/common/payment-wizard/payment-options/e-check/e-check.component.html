@@ -1,0 +1,47 @@
+<div class="description ">
+    <img class="info-icon" src="./assets/common/icons/information-button.svg">
+    <p>{{ descriptionText }}</p>
+</div>
+<form id="echeckForm" [formGroup]="echeckForm">
+    <div class="paymentDetails">
+        <div class="shortDetails">
+            <mat-form-field floatLabel="always">
+                <mat-label>{{ ls.l('PayToTheOrderOf') }}</mat-label>
+                <input matInput formControlName="paymentReceiver">
+            </mat-form-field>
+            <mat-form-field floatLabel="always">
+                <mat-label>{{ ls.l('Amount').toUpperCase() }}</mat-label>
+                <input matInput disabled [value]="getTextPrice(price)">
+            </mat-form-field>
+        </div>
+        <div>
+            <div class="date">{{ currentDate.format('MMMM D, YYYY') }}</div>
+            <div class="price">{{ currencySymbol + (price | number : '1.2-2')}}</div>
+        </div>
+    </div>
+    <div class="memo">
+        <mat-form-field floatLabel="always">
+            <mat-label>{{ ls.l('echeckMemo') }}</mat-label>
+            <input matInput formControlName="paymentDescription">
+        </mat-form-field>
+    </div>
+    <div class="paymentsNumbers">
+        <mat-form-field floatLabel="always">
+            <mat-label>
+                <span>{{ ls.l('routingNumberTitle') }}</span>
+            </mat-label>
+            <img class="info-icon" src="./assets/common/icons/information-button.svg" [matTooltip]="ls.l('routingNumberDescription')" >
+            <input matInput formControlName="routingNumber" (keypress)="onKeyPress($event)" minlength="9" maxlength="9">
+            <mat-error *ngIf="echeckForm.controls['routingNumber'].touched && echeckForm.controls['routingNumber']?.invalid">{{ ls.l('routingNumberValidationMessage') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field floatLabel="always">
+            <mat-label>
+                <span>{{ ls.l('bankAccountNumberTitle') }}</span>
+            </mat-label>
+            <img class="info-icon" [matTooltip]="ls.l('bankAccountNumberDescription')" src="./assets/common/icons/information-button.svg">
+            <input matInput formControlName="bankAccountNumber" (keypress)="onKeyPress($event)" minlength="4" maxlength="17">
+            <mat-error *ngIf="echeckForm.controls['bankAccountNumber'].touched && echeckForm.controls['bankAccountNumber']?.invalid">{{ ls.l('bankAccountNumberValidationMessage') }}</mat-error>
+        </mat-form-field>
+    </div>
+</form>
+<payment-options-footer (onSubmit)="submit()" [submitButtonText]="ls.l('SendCheck')" [submitButtonDisabled]="!echeckForm.touched || !echeckForm.valid"></payment-options-footer>

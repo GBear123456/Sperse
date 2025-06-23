@@ -1,0 +1,52 @@
+:host {
+    position: relative;
+
+    @media(min-height: 600px) {
+        top: 65px;
+    }
+
+    .content {
+        display: flex;
+    }
+    .video-wrapper {
+        width: 100%;
+        max-width: 95%;
+        margin: 10px auto;
+    }
+
+    .cashflow-setup {
+        flex: 1;
+        text-align: center;
+        height: calc(~"100vh - 150px");
+        border: none;
+
+        .welcome-cfo {
+            color: #202B35;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .text-cfo {
+            color: #677380;
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 22px;
+            max-width: 650px;
+            margin: 20px auto 20px;
+        }
+    }
+
+    .btn-layout {
+        padding: 18px 68px 21px 66px !important;
+        height: 52px;
+        text-transform: none !important;
+        line-height: 0 !important;
+        border-radius: 26px !important;
+        font-size: 16px !important;
+        font-weight: 500 !important;
+
+        &:after {
+            content: none;
+        }
+    }
+}

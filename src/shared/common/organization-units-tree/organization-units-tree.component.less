@@ -1,0 +1,42 @@
+:host {
+    display: block;
+    padding: 0 20px;
+    .clipboard-holder {
+        display: flex;
+        .save-to-clipboard {
+            display: none;
+        }
+        &:hover {
+            .save-to-clipboard {
+                display: inline-block;
+            }
+        }
+        span {
+            max-width: 80%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .filter-icon {
+            position: absolute;
+            right: 0;
+            width: 30px;
+            background: url('../../../assets/common/icons/filter.svg') no-repeat center;
+            cursor: pointer;
+        }
+    }
+
+    ::ng-deep {
+        .dx-treeview-node-container {
+            .dx-treeview-node.dx-treeview-item-without-checkbox {
+                &.dx-state-selected {
+                    .dx-item {
+                        color: #333;
+                        background: #effafe;
+                        padding: 7px 6px 5px;
+                    }
+                }
+            }
+        }
+
+    }
+}

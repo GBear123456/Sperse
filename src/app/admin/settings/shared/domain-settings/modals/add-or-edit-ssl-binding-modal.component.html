@@ -1,0 +1,72 @@
+<modal-dialog [title]="titleText" [buttons]="buttons">
+    <dx-scroll-view showScrollbar="onHover">
+        <div class="content">
+            <form #clientForm="ngForm" novalidate>
+                <div class="modal-body">
+                    <div class="dx-field">
+                        <dx-select-box [(value)]="model.tenantHostType"
+                                       [dataSource]="data.hostTypes"
+                                       [placeholder]="ls.l('Type')"
+                                       [readOnly]="editing"
+                                       (onValueChanged)="onHostTypeChanged()"
+                                       valueExpr="id" displayExpr="name">
+                        </dx-select-box>
+                    </div>
+
+                    <div class="dx-field">
+                        <p *ngIf="model.tenantHostType == HostType_PlatformApp">
+                            {{ls.l('MapHostNameDNS')}}<br><br>
+                            <b>TXT</b> {{ls.l('record')}} <i><b>asuid.</b>custom.mysite.com</i> with domain verification id <br><b>{{envHost.asuid}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.asuid)"></i><br><br>
+                            <b>A</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.ip}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.ip)"></i><br>
+                            OR<br>
+                            <b>CNAME</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.host}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(envHost.host)"></i><br><br>
+                            {{ls.l('CheckCorrectMapping')}} <a target="_blank" href="https://mxtoolbox.com/DnsLookup.aspx">{{ls.l('DNSLookup')}}</a>
+                        </p>
+                        <dx-text-box #DomainName 
+                                     [placeholder]="ls.l('HostName') + ' (custom.mysite.com)'"
+                                     [maxLength]="256" 
+                                     [readOnly]="editing"
+                                     [(value)]="model.domainName"
+                                     (onInput)="onValueChanged($event)">
+                                     <dx-validator>
+                                         <dxi-validation-rule 
+                                             type="required" 
+                                             message="{{ls.l('ThisFieldIsRequired')}}.">
+                                         </dxi-validation-rule>
+                                         <dxi-validation-rule 
+                                             type="pattern"
+                                             [pattern]="regexPatterns.url"
+                                             [message]="ls.l('LetsEncrypt_FailedToValidateDomain')">
+                                         </dxi-validation-rule>
+                                         <dxi-validation-rule 
+                                             type="async" 
+                                             [message]="ls.l('HostName_NotMapped')" 
+                                             [validationCallback]="checkHostNameDnsMapping">
+                                          </dxi-validation-rule>
+                                     </dx-validator>
+                        </dx-text-box>
+                    </div>
+
+                    <div class="dx-field" *ngIf="model.tenantHostType == HostType_PlatformApp"> 
+                        <dx-select-box [(value)]="model.sslCertificateId"
+                                       [dataSource]="sslCertificates"
+                                       [placeholder]="ls.l('SSLCertificate')"
+                                       valueExpr="id"
+                                       displayExpr="hostNames">
+                        </dx-select-box>
+                    </div>
+
+                    <div class="dx-field">
+                        <dx-select-box [(value)]="model.organizationUnitId"
+                                       [dataSource]="orgUnits"
+                                       [placeholder]="ls.l('OrganizationUnit')"
+                                       valueExpr="id"
+                                       displayExpr="displayName"
+                                       [showClearButton]="true">
+                        </dx-select-box>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>

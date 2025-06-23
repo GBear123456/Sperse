@@ -1,0 +1,441 @@
+::ng-deep .product-payment-details {
+    display: flex;
+    flex-direction: column;
+    h3 {
+        color: #000;
+        font-weight: 500;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+    div {
+        display: flex;
+        min-width: 200px;
+        justify-content: space-between;
+        &.initial {
+            label, span {
+                color: #36b37e!important;
+            }
+        }
+        &.installment {
+            label, span {
+                color: #00b8d9!important;
+            }    
+        }
+        &.refund {
+            label, span {
+                color: #ff5630!important;
+            }
+        }
+        &.chargeback {
+            label, span {
+                color: #ff5630!important;
+            }
+        }
+        &.recurring {
+            label, span {
+                color: #97a0af!important;
+            }
+        }
+    }
+    label {
+        font-size: 13px;
+        color: #92999D;
+    }
+    span {
+        font-size: 13px;
+        color: #151617;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+:host {
+    position: relative;
+    h2 {
+        margin: 0;
+        z-index: 1;
+        color: #151617;
+        width: calc(100vw - 351px);
+        height: 80px;
+        padding: 24px 20px;
+        position: absolute;
+        font-size: 23px;
+        span {
+            font-size: 16px;
+            line-height: 40px;
+        }
+    }
+
+    .btn-link {
+        box-shadow: none;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .history-button {
+        border: 1px solid #ddd;
+        padding: 0 10px;
+        border-radius: 5px;
+    }
+
+    .billing-actions a {
+        text-decoration: underline;
+        color: #00aeef;
+        cursor: pointer;
+    }
+
+    ::ng-deep .main-component-view {
+        height: calc(~'100vh - 220px');
+        ::ng-deep dx-date-box {
+            background: transparent;
+            display: inline-block;
+            input {
+                width: 0px;                
+                border: none;
+            }
+            .dx-placeholder {
+                display: none;
+            }
+        }
+        .dx-data-row.expanded {
+            background: #F9FBFC !important;            
+            td {
+                border-bottom: none !important;
+                position: relative;
+                &:after {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    height: 1px;
+                    background: #dedede;
+                    width: 100%;
+                    bottom: 1px;
+                    left: 0;
+                }
+                &:first-child {
+                    &:after {
+                        left: 100px;
+                    }        
+                }
+            }
+            .dx-link.dx-link-edit.action {
+                visibility: visible;
+            }
+            .time {
+                display: block;
+                color: #777E84;
+                font-size: 14px;
+            }
+            .date-hidden {
+                color: #F9FBFC;
+            }
+        }
+        .dx-master-detail-row {
+            position: relative;
+            .show-more {
+                position: absolute;
+                z-index: 1;
+                bottom: 12px;
+                left: 20px;
+                cursor: pointer;
+                color: #00aeef;
+            }
+            .dx-datagrid-rowsview {
+                border: none !important;
+                tr:not(:last-child):not(:first-child) td {
+                    border-bottom: none;
+                    border-top: 1px solid transparent;
+                    position: relative;
+                    &:after {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        height: 1px;
+                        background: #dedede;
+                        width: 100%;
+                        top: 0;
+                        left: 0;
+                    }
+                }
+                tr:first-child td {
+                    border-bottom: none;
+                }
+                tr:not(:last-child) td:first-child {
+                    &:after {
+                        margin-left: 100px;
+                    }
+                }
+                tr:nth-last-child(2) td, tr:last-child td {
+                    border-bottom: 1px solid #dedede!important;
+                }
+                .tabular {
+                    color: #777E84;
+                    font-size: 14px;
+                }
+            }
+            .dx-gridbase-container {
+                background: #F9FBFC !important;
+                .dx-datagrid-scroll-container {
+                    border: 0;
+                }
+            }
+            .dx-datagrid-headers {
+                border: none !important;
+                tr, td {
+                    border: none !important;
+                }
+                .dx-datagrid-text-content {
+                    color: #959595;
+                    font-size: 14px;
+                    font-weight: 400;
+                }
+            }
+        }
+        .dx-master-detail-cell {
+            padding: 0!important;
+            border: none!important;
+            .dx-datagrid-rowsview td {
+                height: 50px!important;
+            }
+            .dx-datagrid-headers {
+                tr, td {
+                    height: 20px!important;
+                }
+            }
+        }
+        .dx-datagrid-focus-overlay.dx-pointer-events-target {
+            display: none;
+        }
+        .date-time {
+            display: inline-block;
+            color: #777E84;
+            font-size: 14px;
+        }
+        .dx-datagrid-expand:before {
+            content: none!important;
+        }
+        .dx-datagrid-headers {
+            td[aria-colindex="1"] div {
+                padding-left: 15px;
+            }
+            td[aria-colindex="7"] {
+                padding-right: 30px;
+            }
+            .dx-header-row:first-child {
+                border-bottom: 1px solid #dedede;
+                td:first-child {
+                    height: 80px;
+                }
+            }
+            .dx-header-row:last-child {
+                height: 60px;
+            }
+            .header-top {
+                position: relative;
+                &:before {
+                    content: "";
+                    position: absolute;
+                    left: 5px;
+                    bottom: 0;
+                    height: 1px;
+                    width: 280px;
+                    border-bottom: 1px solid #151617;
+                }
+                &.second:before {
+                    width: 234px;
+                }
+                & > div {
+                    text-align: center;
+                    width: 280px;    
+                }
+                &.second > div {
+                    width: 230px;
+                }
+                color: #151617;
+                font-weight: 500;
+            }
+            td.dx-command-edit + td:before {
+                content: none!important;
+            }
+        }
+        .dx-datagrid-pager {
+            border-top: none;
+        }
+        .dx-datagrid-pager {
+            .dx-pages .dx-page,
+            .dx-page-sizes .dx-page-size.dx-selection {
+                padding: 4px 15px 4px!important;
+                color: #fff!important;
+                background-color: #80cfed!important;
+            }
+        }
+        dx-date-box {
+            .dx-dropdowneditor-icon {
+                background: url(../../../../assets/common/icons/calendar2.svg) no-repeat center;
+                &:before {
+                    content: ''!important;
+                }
+            }
+        }
+        .product-name-wrapper {
+            display: flex;
+            vertical-align: middle;
+        }
+        .product-name {
+            font-weight: 500;
+            color: #00aeef;
+            font-size: 14px;
+            margin: auto;
+            b {
+                color: #000;
+                font-size: 14px;
+                margin-right: 10px;
+            }
+            &:hover {
+                cursor: pointer;
+                text-decoration: underline;
+            }
+        }
+        .product-icon-wrapper {
+            display: flex;
+            text-align: center;
+            padding: 4px 15px;
+            height: 72px;
+            width: 100px;
+            img {
+                max-width: 64px;
+                max-height: 64px;
+                cursor: pointer;
+                margin: auto;
+
+                &.default {
+                    opacity: 0.6;
+                }
+            }
+        }          
+        .amount {
+            color: #151617;
+            font-size: 14px;
+            font-weight: 500;
+            &:hover {                
+                cursor: pointer;
+                text-decoration: underline;
+            }
+        }
+        .field-product-name {
+            display: flex;
+            justify-content: space-between;
+        }
+        .date-box {
+            dx-date-box {
+                height: 22px;
+                top: 5px;
+            }
+        }        
+        .date-hidden {
+            width: 0px;
+            color: #fff;
+            display: inline-block;
+        }
+        .time {
+            display: none;
+        }
+        .installment {
+            padding-left: 95px;
+            .invoice {
+                color: #777E84;
+                cursor: pointer;
+                font-size: 14px;
+                &:hover {
+                    color: #00aeef;
+                    text-decoration: underline;
+                }
+            }
+        }
+        .dx-link.dx-link-edit.action {
+            margin-top: 20px;
+            display: inline-block;
+            visibility: hidden;
+        }
+        .dx-column-lines:hover {
+            .dx-link.dx-link-edit.action {
+                visibility: visible;
+            }
+        }
+        .services {
+            font-size: 13px;
+            color: #777E84;
+            margin: auto;
+        }
+        .status {
+            background: #f3f7fa;
+            color: #424c56;
+            text-transform: uppercase;
+            text-align: center;
+            width: 100px;
+            position: relative;
+            border: 0;
+            font-weight: 400 !important;
+            border-radius: 15px;
+            padding: 4px 0 4px 10px;
+            font-family: var(--app-font-family),sans-serif;
+            font-size: 12px;
+            &::before {
+                width: 8px;
+                height: 8px;
+                content: '';
+                display: block;
+                position: absolute;
+                left: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                border-radius: 50%;
+            }
+            &.current::before,
+            &.active::before {
+                background: #37d749;
+            }
+            &.canceled::before {
+                background: red;
+            }
+
+            &.active::after, 
+            &.pending::after, 
+            &.approved::after, 
+            &.declined::after,
+            &.upgraded::after,
+            &.canceled.show-tooltip::after, 
+            &.current.show-tooltip::after {
+                content: 'i';
+                display: block;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #F3F7FA;
+                color: #80cfed;
+                position: absolute;
+                right: -24px;
+                top: 3px;
+                text-transform: lowercase;
+                font-weight: 600;
+                font-size: 14px;
+            }
+            &.valid::before {
+                background: #00aeef;
+            }
+            &.approved::before {
+                background: #36b37e;
+            }
+            &.pending::before {
+                background: #dedede;
+            }
+            &.upgraded::before {
+                background: orange;
+            }
+            &.failed::before,
+            &.declined::before {
+                background: #5EB912;
+            }
+        }
+    }
+}

@@ -1,0 +1,309 @@
+@border-color: #e5e9ec;
+
+:host {
+    position: relative;
+    &.fullscreen {
+        dx-scroll-view {
+            background: #fff
+        }
+    }
+
+    .wo-animation {
+        transition: 0s !important;
+    }
+
+    .operations {
+        display: flex;
+        overflow-x: hidden;
+        border-bottom: 1px solid @border-color;
+
+        .toolbar {
+            width: 100%;
+        }
+    }
+
+    .main-wrapper {
+        overflow: visible !important;
+    }
+
+    .mainStatsView {
+        display: flex;
+        background: #fff;
+        position: relative;
+        height: calc(100% + 62px);
+
+        ::ng-deep .dxc-labels {
+            rect {
+                rx: 5
+            }
+
+            text {
+                letter-spacing: 0.2px;
+            }
+        }
+
+        ::ng-deep .dxc-arg-elements {
+            text {
+                letter-spacing: 0.2px;
+            }
+        }
+
+        .charts {
+            padding: 10px 10px 0;
+
+            .header {
+
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                flex: 1 auto;
+
+                h2 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #212c36;
+                    margin: 0;
+                    line-height: 1;
+                }
+
+                .legend {
+                    display: flex;
+                    flex-flow: column wrap;
+                    margin: 0 15px 0 auto;
+
+                    .legend-list {
+                        padding-left: 0;
+                        margin-bottom: 0;
+
+                        .legend-item {
+                            display: inline-block;
+                            font-weight: 400;
+                            font-size: 12px;
+                            margin-right: 15px;
+                            // line-height: 34px;
+
+                            &::before {
+                                content: '';
+                                width: 8px;
+                                height: 8px;
+                                background: #00aeef;
+                                display: inline-block;
+                                margin-right: 5px;
+                                position: relative;
+                                top: -1px;
+                            }
+
+                            &.outflows {
+                                &::before {
+                                    background: #f05b2a;
+                                }
+                            }
+
+                            &.net-change {
+                                &::before {
+                                    background: #fab800;
+                                }
+                            }
+                            &.forecast {
+                                &::before {
+                                    background: #a9e3f9;
+                                }
+                                &.outflows {
+                                    &::before {
+                                        background: #fec6b3;
+                                    }
+                                }
+
+                                &.net-change {
+                                    &::before {
+                                        background: #a82aba;
+                                    }
+                                }
+                            }
+
+                            &.label {
+                                width: 60px;
+                                &::before{
+                                    content: none;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .btn-setion {
+                    margin-left: auto;
+                    display: flex;
+                    align-items: center;
+
+                    .title {
+                        display: inline-block;
+                        margin-bottom: 0;
+                    }
+
+                    button {
+                        padding: 2px 0 2px 50px;
+                        background: #71D460;
+                        border-radius: 15px;
+                        border: 0;
+                        margin-left: 10px;
+                        margin-right: 15px;
+                        outline: none;
+                        display: flex;
+                        align-items: center;
+
+                        i {
+                            color: #71D460;
+                            background: #fff;
+                            border-radius: 50%;
+                            width: 22px;
+                            height: 22px;
+                            font-size: 22px;
+                            line-height: 21px;
+                            margin-right: 3px;
+
+                            &::before {
+                                position: relative;
+                                right: -1px;
+                            }
+                        }
+                    }
+                }
+            }
+
+            dx-chart {
+                position: relative;
+                color: red;
+                font-size: 60px;
+                color: rgba(99, 107, 114, .08);
+                font-weight: 700;
+
+                @media screen and (max-width: 1024px) {
+                    font-size: 30px
+                }
+
+                .yearArgument {
+                    font-size: 10px;
+                }
+            }
+
+            @media (min-width: 768px) {
+                padding: 25px 25px 0;
+            }
+        }
+
+        source-data {
+            width: 500px;
+            right: -500px;
+            position: absolute;
+            top: -137px;
+            height: calc(100% + 160px);
+            transition-duration: 0.3s;
+
+            &.showen {
+                right: 0;
+            }
+        }
+    }
+
+    &.toolbar-is-hidden .mainStatsView source-data {
+        top: 0;
+        height: calc(100% + 22px);
+    }
+
+    ::ng-deep .dx-gallery.dx-widget[accesskey='statsForecastSwitcher'] {
+        border: 1px solid #ddd;
+        vertical-align: middle;
+        border-radius: 4px;
+        color: #677380;
+        font-size: 13px;
+        line-height: 1.85;
+        padding: 7px;
+        letter-spacing: 0.3px;
+        display: inline-block;
+        font-weight: 400;
+
+        .dx-widget {
+            &:before {
+                top: 9px;
+                margin: 0 auto;
+                font-size: 29px;
+                width: 8px;
+                height: 15px;
+            }
+
+            &:after {
+                background: none
+            }
+        }
+    }
+
+    ::ng-deep .dx-scrollable-content {
+        height: 100%;
+
+        .dx-scrollview-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+    }
+}
+
+// filter by periods
+::ng-deep .dx-popup-content {
+    white-space: normal !important;
+}
+.report-period-tooltip-container {
+    font-size: 15px;
+    width: 300px;
+
+    .report-period-title {
+        width: 100%;
+        display: inline-block;
+    }
+
+    .title {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .start, .end {
+        border: 1px solid #ddd;
+        padding: 0 10px;
+        font-size: 30px;
+        color: #000;
+        margin: 0 10px;
+    }
+
+    .actions {
+        width: 100%;
+        display: inline-block;
+    }
+
+    dx-range-slider {
+        margin-top: 15px;
+    }
+
+    .filter-apply, .filter-clear {
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: #00AEEF;
+        padding: 10px 5px;
+        float: right;
+
+        &:hover {
+            color: lighten(#00AEEF, 20%);
+        }
+    }
+
+    ::ng-deep .dx-slider-bar {
+        height: 2px;
+
+        .dx-slider-handle {
+            width: 9px;
+        }
+    }
+}

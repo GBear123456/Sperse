@@ -1,0 +1,746 @@
+/** Core imports */
+import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild, HostBinding } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
+import { DxChartComponent } from 'devextreme-angular/ui/chart';
+import { getMarkup } from 'devextreme/viz/export';
+import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
+import { catchError, finalize, first, filter, switchMap, tap, takeUntil, mapTo, withLatestFrom } from 'rxjs/operators';
+import * as moment from 'moment';
+import { Store, select } from '@ngrx/store';
+
+/** Application imports */
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { AppService } from '@app/app.service';
+import { StatsService } from '@app/cfo/shared/helpers/stats.service';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
+import { AppConsts } from '@shared/AppConsts';
+import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import {
+    StatsFilter,
+    BankAccountsServiceProxy,
+    BankAccountDailyStatDto,
+    GroupByPeriod,
+    CashFlowForecastServiceProxy,
+    InstanceType,
+    ForecastModelDto
+} from '@shared/service-proxies/service-proxies';
+import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
+import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
+import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
+import { CfoStore, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
+import { RootStore, CurrenciesStoreSelectors } from '@root/store';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { LeftMenuComponent } from '@app/cfo/shared/common/left-menu/left-menu.component';
+import { ImageFormat } from '@shared/common/export/image-format.enum';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
+
+@Component({
+    'selector': 'app-stats',
+    'providers': [ BankAccountsServiceProxy, CashFlowForecastServiceProxy, StatsService, CurrencyPipe, LifecycleSubjectsService ],
+    'templateUrl': './stats.component.html',
+    'styleUrls': ['./stats.component.less']
+})
+export class StatsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild('linearChart') private linearChart: DxChartComponent;
+    @ViewChild('barChart') private barChart: DxChartComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(LeftMenuComponent, { static: true }) leftMenuComponent: LeftMenuComponent;
+    @HostBinding('class.toolbar-is-hidden') toolbarIsHidden = false;
+    statsData: Array<BankAccountDailyStatDto>;
+    historicalSourceData: Array<BankAccountDailyStatDto> = [];
+    forecastSourceData: Array<BankAccountDailyStatDto> = [];
+    headlineButtons: HeadlineButton[] = this.getHeadlineButtons();
+    axisDateFormat = 'month';
+    labelPositiveBackgroundColor = '#626b73';
+    labelNegativeBackgroundColor = '#f05b2a';
+    historicalEndingBalanceColor = '#00aeef';
+    forecastEndingBalanceColor = '#f9ba4e';
+    historicalCreditColor = '#00aeef';
+    historicalDebitColor = '#f05b2a';
+    forecastCreditColor = '#a9e3f9';
+    forecastDebitColor = '#fec6b3';
+    historicalShadowStartedColor = 'rgba(0, 174, 239, .5)';
+    forecastShadowStartedColor = 'rgba(249, 186, 78, .5)';
+    historicalNetChangeColor = '#fab800';
+    forecastNetChangeColor = '#a82aba';
+    maxLabelCount = 0;
+    labelWidth = 45;
+    showSourceData = false;
+    loadingFinished = false;
+    chartsHeight = 400;
+    chartsWidth;
+    isForecast = false;
+    bankAccountsCount: string;
+    barChartTooltipFields = [
+        {
+            'name': 'startingBalance',
+            'label': this.l('Stats_startingBalance')
+        },
+        {
+            'name': 'startingBalanceAdjustments',
+            'label': this.l('Stats_Starting_Balance_Adjustments')
+        },
+        {
+            'name': 'adjustments',
+            'label': this.l('Adjustments')
+        },
+        {
+            'name': 'credit',
+            'label': this.l('Stats_Inflows')
+        },
+        {
+            'name': 'debit',
+            'label': this.l('Stats_Outflows')
+        },
+        {
+            'name': 'netChange',
+            'label': this.ls('Platform', 'Net_Change')
+        },
+        {
+            'name': 'endingBalance',
+            'label': this.l('Stats_endingBalance')
+        },
+        {
+            'name': 'forecastStartingBalance',
+            'label': this.l('Stats_startingBalance')
+        },
+        {
+            'name': 'forecastStartingBalanceAdjustments',
+            'label': this.l('Stats_Starting_Balance_Adjustments')
+        },
+        {
+            'name': 'forecastAdjustments',
+            'label': this.l('Forecast_Adjustments')
+        },
+        {
+            'name': 'forecastCredit',
+            'label': this.l('Stats_Forecast_Inflows')
+        },
+        {
+            'name': 'forecastDebit',
+            'label': this.l('Stats_Forecast_Outflows')
+        },
+        {
+            'name': 'forecastNetChange',
+            'label': this.l('Stats_Forecast_Net_Change')
+        },
+        {
+            'name': 'forecastEndingBalance',
+            'label': this.l('Stats_endingBalance')
+        }
+    ];
+    leftSideBarItems: LeftMenuItem[] = [
+        {
+            caption: this.l('SetupStep_leftSideBarMonthlyTrendCharts'),
+            disabled: true,
+            iconSrc: './assets/common/icons/stats/monthly-trend-charts.svg'
+        },
+        {
+            caption: this.l('SetupStep_leftSideBarDailyTrendCharts'),
+            disabled: true,
+            iconSrc: './assets/common/icons/stats/daily-trend-charts.svg'
+        },
+        {
+            caption: this.l('SetupStep_leftKeyMetricsKPI'),
+            disabled: true,
+            iconSrc: './assets/common/icons/stats/summaries&kpis.svg'
+        }
+    ];
+    private rootComponent: any;
+    private filters: FilterModel[] = new Array<FilterModel>();
+    defaultRequestFilter = new StatsFilter({
+        currencyId: this.cfoPreferencesService.selectedCurrencyId,
+        startDate: moment().utc().subtract(2, 'year'),
+        endDate: moment().utc().add(1, 'year')
+    } as any);
+    private requestFilter: Subject<StatsFilter> = new Subject<StatsFilter>();
+    requestFilter$: Observable<StatsFilter> = this.requestFilter.asObservable();
+    private syncAccounts: any;
+    private forecastModels$ = this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean));
+    private selectedForecastModelIndex$ = this.cfoStore$.pipe(
+        select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(i => i !== null))
+    );
+    private selectedForecastModelId$ = this.cfoStore$.pipe(
+        select(ForecastModelsStoreSelectors.getSelectedForecastModelId),
+        filter(Boolean),
+    );
+    private currencyId$ = this.rootStore$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId), filter(Boolean));
+    private selectedBankAccountIds$ = this.bankAccountsService.selectedBankAccountsIds$;
+    private refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+    refresh$: Observable<null> = this.refresh.asObservable();
+    private dateFilter = new FilterModel({
+        component: FilterCalendarComponent,
+        caption: 'Date',
+        items: {from: new FilterItemModel(), to: new FilterItemModel()},
+        options: {
+            allowFutureDates: true,
+            endDate: moment(new Date()).add(10, 'years').toDate()
+        }
+    });
+    toolbarConfig: ToolbarGroupModel[];
+
+    constructor(
+        injector: Injector,
+        private appService: AppService,
+        private bankAccountService: BankAccountsServiceProxy,
+        private cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+        private statsService: StatsService,
+        private dialog: MatDialog,
+        private lifecycleService: LifecycleSubjectsService,
+        private cfoStore$: Store<CfoStore.State>,
+        private rootStore$: Store<RootStore.State>,
+        private calendarService: CalendarService,
+        public filtersService: FiltersService,
+        public bankAccountsService: BankAccountsService,
+        public cfoPreferencesService: CfoPreferencesService,
+        public layoutService: LayoutService
+    ) {
+        super(injector);
+    }
+
+    ngOnInit() {
+        this.appService.toolbarIsHidden$.pipe(takeUntil(this.destroy$)).subscribe((toolbarIsHidden: boolean) => {
+            this.toolbarIsHidden = toolbarIsHidden;
+        });
+
+        this.cfoStore$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
+        this.bankAccountsService.accountsAmountWithApply$.subscribe(amount => {
+            this.bankAccountsCount = amount;
+            this.initToolbarConfig();
+        });
+
+        this.calendarService.dateRange$.pipe(
+            takeUntil(this.destroy$),
+            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+        ).subscribe((dateRange: CalendarValuesModel) => {
+            this.dateFilter.items = {
+                from: new FilterItemModel(dateRange.from.value),
+                to: new FilterItemModel(dateRange.to.value)
+            };
+            this.filtersService.change([this.dateFilter]);
+        });
+
+        combineLatest(
+            this.currencyId$,
+            this.selectedForecastModelId$,
+            !this._cfoService.hasStaticInstance ? this.requestFilter$ : of(new StatsFilter()),
+            this.refresh$
+        ).pipe(
+            takeUntil(this.destroy$),
+            switchMap((data) => this.componentIsActivated ? of(data) : this.lifecycleService.activate$.pipe(first(), mapTo(data))),
+            tap(() => abp.ui.setBusy()),
+            switchMap(([currencyId, forecastModelId, requestFilter, ]: [string, number, StatsFilter, null]) => {
+                return this.bankAccountService.getStats(
+                    InstanceType[this.instanceType],
+                    this.instanceId,
+                    currencyId,
+                    forecastModelId,
+                    requestFilter.accountIds,
+                    requestFilter.startDate,
+                    requestFilter.endDate || requestFilter.startDate,
+                    GroupByPeriod.Monthly
+                ).pipe(
+                    catchError(() => of([])),
+                    finalize(() => abp.ui.clearBusy())
+                );
+            })
+        ).subscribe((result: BankAccountDailyStatDto[]) => {
+            if (result && result.length) {
+                let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
+                    minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
+                this.statsData = result.map(statsItem => {
+                    statsItem.date.add(statsItem.date.toDate().getTimezoneOffset(), 'minutes');
+                    Object.defineProperties(statsItem, {
+                        'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
+                        'minRange': { value: minRange, enumerable: true }
+                    });
+                    if (statsItem.isForecast) {
+                        this.isForecast = true;
+                        for (let prop in statsItem) {
+                            if (statsItem.hasOwnProperty(prop) && prop !== 'date' && prop !== 'isForecast') {
+                                statsItem['forecast' + this.capitalize(prop)] = statsItem[prop];
+                                const desc = Object.getOwnPropertyDescriptor(statsItem, prop) || {};
+                                if (Boolean(desc.writable))
+                                    delete statsItem[prop];
+                            }
+                        }
+                    }
+                    return statsItem;
+                });
+                this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
+            } else {
+                this.statsData = null;
+            }
+            this.headlineButtons = this.getHeadlineButtons();
+            this.loadingFinished = true;
+        });
+
+        this.bankAccountsService.load()
+            .subscribe(([syncAccounts]) => {
+                this.syncAccounts = syncAccounts;
+
+                /** Initial data handling */
+                this.handleCashFlowInitialResult();
+
+                this.initToolbarConfig();
+
+                this.initFiltering();
+
+                /** After selected accounts change */
+                this.selectedBankAccountIds$.pipe(
+                    takeUntil(this.destroy$),
+                    switchMap(() => this.componentIsActivated ? of(null) : this.lifecycleService.activate$.pipe(first()))
+                ).subscribe(() => {
+                    this.setBankAccountsFilter(true);
+                });
+
+            });
+
+        this.calculateChartsSize();
+    }
+
+    ngAfterViewInit(): void {
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+
+    private getHeadlineButtons() {
+        return [
+            {
+                enabled: !AppConsts.isMobile && !!(this.statsData && this.statsData.length),
+                action: this.showSourceDataWidget.bind(this),
+                label: this.l('Show source data')
+            }
+        ];
+    }
+
+    initToolbarConfig() {
+        if (this.componentIsActivated) {
+            this.selectedForecastModelIndex$.pipe(
+                withLatestFrom(this.forecastModels$),
+                first()
+            ).subscribe(([selectedForecastModelIndex, forecastModels]: [number, ForecastModelDto[]]) => {
+                /** Get currencies list and selected currency index */
+                this.toolbarConfig = [
+                    {
+                        location: 'before',
+                        items: [
+                            {
+                                name: 'filters',
+                                visible: !this.isAdvicePeriod && !this._cfoService.hasStaticInstance,
+                                action: () => {                                    
+                                    this.filtersService.fixed = !this.filtersService.fixed;
+                                    this.calculateChartsSize();
+                                },
+                                options: {
+                                    checkPressed: () => {
+                                        return this.filtersService.fixed;
+                                    },
+                                    mouseover: () => {
+                                        this.filtersService.enable();
+                                    },
+                                    mouseout: () => {
+                                        if (!this.filtersService.fixed)
+                                            this.filtersService.disable();
+                                    }
+                                },
+                                attr: {
+                                    'filter-selected': this.filtersService.hasFilterSelected
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        location: 'before',
+                        items: [
+                            {
+                                name: 'title'
+                            }
+                        ]
+                    },
+                    {
+                        location: 'before',
+                        items: [
+                            {
+                                name: 'select-box',
+                                text: '',
+                                widget: 'dxDropDownMenu',
+                                accessKey: 'statsForecastSwitcher',
+                                options: {
+                                    hint: this.l('Scenario'),
+                                    accessKey: 'statsForecastSwitcher',
+                                    items: forecastModels,
+                                    selectedIndex: selectedForecastModelIndex,
+                                    height: 39,
+                                    width: AppConsts.isMobile ? 150 : 243,
+                                    onSelectionChanged: (e) => {
+                                        if (e) {
+                                            this.cfoStore$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(e.itemData.id));
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        location: 'before',
+                        locateInMenu: 'auto',
+                        items: [
+                            {
+                                name: 'bankAccountSelect',
+                                widget: 'dxButton',
+                                action: this.openBankAccountsSelectDialog.bind(this),
+                                options: {
+                                    id: 'bankAccountSelect',
+                                    text: this.l('Accounts'),
+                                    icon: './assets/common/icons/accounts.svg'
+                                },
+                                attr: {
+                                    'custaccesskey': 'bankAccountSelect',
+                                    'accountCount': this.bankAccountsCount
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        location: 'after',
+                        locateInMenu: 'auto',
+                        items: [
+                            {
+                                name: 'download',
+                                widget: 'dxDropDownMenu',
+                                options: {
+                                    hint: this.l('Download'),
+                                    items: [
+                                        {
+                                            action: this.download.bind(this, ImageFormat.PDF),
+                                            text: this.l('SaveAs', ImageFormat.PDF),
+                                            icon: 'pdf',
+                                        },
+                                        {
+                                            action: this.download.bind(this, ImageFormat.PNG),
+                                            text: this.l('SaveAs', ImageFormat.PNG),
+                                            icon: 'png',
+                                        },
+                                        {
+                                            action: this.download.bind(this, ImageFormat.JPEG),
+                                            text: this.l('SaveAs', ImageFormat.JPEG),
+                                            icon: 'jpg',
+                                        },
+                                        {
+                                            action: this.download.bind(this, ImageFormat.SVG),
+                                            text: this.l('SaveAs', ImageFormat.SVG),
+                                            icon: 'svg',
+                                        },
+                                        {
+                                            action: this.download.bind(this, ImageFormat.GIF),
+                                            text: this.l('SaveAs', ImageFormat.GIF),
+                                            icon: 'gif',
+                                        }
+                                    ]
+                                }
+                            },
+                            {name: 'print', action: this.print.bind(this)}
+                        ]
+                    },
+                    {
+                        location: 'after',
+                        locateInMenu: 'auto',
+                        items: [
+                            {
+                                name: 'fullscreen',
+                                visible: !this._cfoService.hasStaticInstance,
+                                action: () => this.fullScreenService.toggleFullscreen(document.documentElement)
+                            }
+                        ]
+                    }
+                ];
+            });
+        }
+    }
+
+    reload() {
+        this.getUpdatedDataSource();
+    }
+
+    toggleToolbar() {
+        this.filtersService.fixed = false;
+        this.filtersService.disable();
+        this.calculateChartsScrolableHeight();
+        this.initToolbarConfig();
+    }
+
+    initFiltering() {
+        this.filtersService.apply(() => {
+            let requestFilter = this.defaultRequestFilter;
+            for (let filter of this.filters) {
+                if (filter.caption.toLowerCase() === 'account')
+                    this.bankAccountsService.applyFilter();
+
+                let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
+                if (filterMethod)
+                    filterMethod(filter, requestFilter);
+                else
+                    requestFilter[filter.field] = undefined;
+            }
+            this.requestFilter.next(requestFilter);
+            this.initToolbarConfig();
+        });
+    }
+
+    /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
+    calculateChartsSize() {
+        let chartsHeight = window.innerHeight - 390;
+        this.chartsHeight = chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
+        this.chartsWidth = window.innerWidth - (
+            window.innerWidth < 768 || (this.leftMenuComponent.collapsed && !this.filtersService.fixed)
+                ? (this.layoutService.showLeftBar ? 130 : 40) : (this.layoutService.showLeftBar ? 461 : 371)
+        );
+
+        setTimeout(() => {
+            this.linearChart.instance.render();
+            this.barChart.instance.render();
+        }, 600);
+    }
+
+    /** Calculates the height of the charts scrollable height after resizing */
+    calculateChartsScrolableHeight() {
+        return this.toolbarIsHidden ? window.innerHeight - 199 : window.innerHeight - 260;
+    }
+
+    handleCashFlowInitialResult() {
+        this.setupFilters();
+    }
+
+    setupFilters() {
+        if (this.filters.length) {
+            this.filtersService.setup(this.filters);
+        } else {
+            this.filtersService.setup(
+                this.filters = [
+                    this.dateFilter,
+                    new FilterModel({
+                        field: 'accountIds',
+                        component: BankAccountFilterComponent,
+                        caption: 'Account',
+                        items: {
+                            element: new BankAccountFilterModel(
+                                {
+                                    dataSource$: this.bankAccountsService.syncAccounts$.pipe(takeUntil(this.destroy$)),
+                                    selectedKeys$: this.bankAccountsService.selectedBankAccountsIds$.pipe(takeUntil(this.destroy$)),
+                                    nameField: 'name',
+                                    keyExpr: 'syncId'
+                                })
+                        }
+                    })
+                ]
+            );
+        }
+    }
+
+    getUpdatedDataSource() {
+        this.refresh.next(null);
+        this.bankAccountsService.load(true, false);
+    }
+
+    /** Calculates the max amount of the labels for displaying to not clutter the screen */
+    calcMaxLabelCount(labelWidth) {
+        let screenWidth = window.innerWidth;
+        return Math.floor(screenWidth / labelWidth);
+    }
+
+    showSourceDataWidget() {
+        this.forecastSourceData = [];
+        this.historicalSourceData = [];
+        this.statsData.forEach(statsDataItem => {
+            statsDataItem.isForecast ? this.forecastSourceData.push(statsDataItem) : this.historicalSourceData.push(statsDataItem);
+        });
+        this.showSourceData = true;
+    }
+
+    hideSourceDataWidget() {
+        this.showSourceData = false;
+    }
+
+    customizeBottomAxis(elem) {
+        return `${elem.value.toString().split(' ')[1].toUpperCase()}<br/><div class="yearArgument">${elem.value.getFullYear().toString().substr(-2)}</div>`;
+    }
+
+    setBankAccountsFilter(emitFilterChange = false) {
+        this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
+    }
+
+    openBankAccountsSelectDialog() {
+        this.dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+        }).componentInstance.onApply.subscribe(() => {
+            this.setBankAccountsFilter(true);
+        });
+    }
+
+    /** Different styles for labels for positive and negative values */
+    customizeLabel = (arg: any) => {
+        if (arg.series.type !== 'rangearea' && arg.value < 0) {
+            return {
+                backgroundColor: this.labelNegativeBackgroundColor,
+                visible: this.maxLabelCount >= this.statsData.length,
+                customizeText: (e: any) => {
+                    return this.statsService.replaceMinusWithBrackets(e.valueText, this.cfoPreferencesService.selectedCurrencySymbol);
+                }
+            };
+        }
+    }
+
+    /** Replace minus for the brackets */
+    customizeAxisValues = (arg: any) => {
+        return arg.value < 0 ? this.statsService.replaceMinusWithBrackets(arg.valueText, this.cfoPreferencesService.selectedCurrencySymbol) : arg.valueText.replace('$', this.cfoPreferencesService.selectedCurrencySymbol);
+    }
+
+    customizePoint = (arg: any) => {
+        if (arg.series.type !== 'rangearea' && arg.value < 0) {
+            return {
+                color: this.labelNegativeBackgroundColor,
+                size: 0.01,
+                border: {
+                    width: 8,
+                    color: 'rgba(240, 91, 42, .2)',
+                    visible: true
+                }
+            };
+        }
+    }
+
+    onDone(event) {
+        /** Added the Historical and forecast text block to the charts */
+        this.addTextBlocks(event);
+    }
+
+    /**
+     * Creates div text block
+     * @param {{[p: string]: any}} options
+     */
+    createDivTextBlock(options: { [key: string ]: any } = { 'text': '', 'class': '', 'styles': {} }) {
+        let stylesStr = Object.keys(options.styles).reduce((styleString, key) => (
+            styleString + key + ':' + options.styles[key] + ';'
+        ), '');
+        return `<div class="${options.class}" style="${stylesStr}">${options.text}</div>`;
+    }
+
+    /**
+     * Added the text blocks to the charts
+     * @param event
+     */
+    addTextBlocks(event) {
+        ['historical', 'forecast'].forEach(period => {
+            /** Add the historical and forecast big texts above the charts */
+            let chartSeries = event.component.getSeriesByName(period),
+                series = event.component.getSeriesByName(period),
+                points = series ? series.getVisiblePoints() : [];
+            if (chartSeries && points.length && !event.element.querySelector(`.${period}Label`)) {
+                let x = points[0].vx || points[0].x || 0,
+                    left = x / window.outerWidth * 100,
+                    y = 25,
+                    firstPoint = points[0],
+                    lastPoint = points[points.length - 1],
+                    seriesWidth = lastPoint.vx - firstPoint.vx;
+                event.element.insertAdjacentHTML('beforeEnd', this.createDivTextBlock({
+                    'text': period === 'historical' ? this.l('Periods_Historical') : this.l('Periods_Forecast'),
+                    'class': `${period}Label`,
+                    'styles': {
+                        'left': left + '%',
+                        'top': y + 'px',
+                        'position': 'absolute',
+                        'pointer-events': 'none'
+                    }
+                }));
+                let textBlockElement = <HTMLElement>document.querySelector(`.${period}Label`),
+                    elementTextWidth = textBlockElement.clientWidth,
+                    newLeft = elementTextWidth > seriesWidth ?
+                        x - (elementTextWidth - seriesWidth) / 2 :
+                        x + (seriesWidth / 2) - (elementTextWidth / 2);
+                    newLeft = newLeft / window.outerWidth * 100;
+                textBlockElement.style.left = newLeft > 0 ? newLeft + '%' : '0';
+            }
+        });
+    }
+
+    /** Open the print window to print the charts */
+    print() {
+        let vizWindow = window.open(),
+            chartsMarkup = this.getChartsMarkup();
+        vizWindow.document.open();
+        vizWindow.document.write(chartsMarkup);
+        vizWindow.document.close();
+        vizWindow.print();
+        vizWindow.close();
+    }
+
+    /**
+     * Download the charts into file
+     * @param ImageFormat format
+     */
+    download(format: ImageFormat) {
+        let lineChartSize = this.linearChart.instance.getSize(),
+            barChartSize = this.barChart.instance.getSize(),
+            markup = this.getChartsMarkup();
+        this.exportService.exportIntoImage(format, markup, lineChartSize.width, lineChartSize.height + barChartSize.height);
+    }
+
+    /**
+     * Get the markup using devextreme getMarkup method and replacing linear gradient url with the simple color
+     * @return {string}
+     */
+    getChartsMarkup() {
+        return getMarkup([this.linearChart.instance, this.barChart.instance])
+                    .replace(new RegExp('url\\(#historical-linear-gradient\\)', 'g'), this.historicalShadowStartedColor)
+                    .replace(new RegExp('url\\(#forecast-linear-gradient\\)', 'g'), this.forecastShadowStartedColor);
+    }
+
+    customizeBarTooltip = pointInfo => {
+        return {
+            html: (pointInfo.seriesName !== 'historicalGradient' && pointInfo.seriesName !== 'forecastGradient') ?
+                  this.statsService.getTooltipInfoHtml(this.statsData, this.barChartTooltipFields, pointInfo) : ''
+        };
+    }
+
+    activate() {
+        this.initToolbarConfig();
+        this.setupFilters();
+        this.initFiltering();
+
+        this.appService.isClientSearchDisabled = true;
+        /** Load sync accounts (if something change - subscription in ngOnInit fires) */
+        this.bankAccountsService.load();
+        this.lifecycleService.activate.next();
+        this.synchProgressComponent.activate();
+        this.rootComponent.overflowHidden(true);
+        setTimeout(() => this.calculateChartsSize());
+    }
+
+    deactivate() {
+        this.dialog.closeAll();
+        this.filtersService.unsubscribe();
+        this.synchProgressComponent.deactivate();
+        this.rootComponent.overflowHidden();
+    }
+
+    ngOnDestroy() {
+        this.filtersService.unsubscribe();
+        this.rootComponent.overflowHidden();
+        super.ngOnDestroy();
+    }
+}

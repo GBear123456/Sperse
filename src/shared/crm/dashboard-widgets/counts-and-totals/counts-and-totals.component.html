@@ -1,0 +1,19 @@
+<div class="totals-list row" *ngIf="data">
+    <div *ngFor="let field of fields" class="col-lg-4">
+        <div *ngIf="field.visible" class="total-item {{ field.class }}">
+            <div class="chart-head">
+                <span>{{ls.l('Total') + ' ' + ls.l(field.title)}}</span>
+                <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'currency'">
+                    {{ data[field.name] | currency:currency:'symbol' }}
+                </span>
+                <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'number'">
+                    {{ data[field.name] | number }}
+                </span>
+            </div>
+            <div class="chart-line"><div [ngStyle]="{width: field.percent, 'background-color': field.color}"></div></div>
+            <!--<div class="chart-progress"><span>{{ls.l('Progress')}}</span><span>{{ field.percent }}</span></div>-->
+        </div>
+    </div>
+</div>
+
+

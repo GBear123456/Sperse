@@ -1,0 +1,73 @@
+<div class="wrapper">
+    <h3>
+        Invite Your Team Members <br/>
+        With Assigned Roles
+    </h3>
+    <div class="invite-list">
+        <dx-scroll-view [height]="scrollHeight" showScrollbar="onHover">
+            <div style="position:relative">
+                <dx-validation-group *ngFor="let user of importUsers; let i = index"
+                                     (onInitialized)="onInviteUserValidationGroupInitialized($event)">
+                    <div class="row import-user-row" [attr.index]="i">
+                        <dx-text-box [(value)]="user.email"
+                                     placeholder="Email"
+                                     (onKeyPress)="onEmailKeyPress(i)"
+                                     (onValueChanged)="validateUsers(true)"
+                                     class="col-sm-4">
+                            <dx-validator>
+                                <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
+                                                     message="{{ls.l('EmailIsRequired')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="custom" [validationCallback]="validateDuplicatedEmails" [reevaluate]="true"
+                                                     message="{{ls.l('EmailIsDuplicated')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="stringLength" [max]="64"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                        <dx-text-box [(value)]="user.fullName"
+                                     placeholder="Full name"
+                                     (onValueChanged)="validateInviteUserGroup(i)"
+                                     class="col-sm-4">
+                            <dx-validator>
+                                <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
+                                                     message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="custom" [validationCallback]="validateFullName"
+                                                     message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="stringLength" [max]="32"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                        <dx-tag-box [dataSource]="roles$ | async"
+                                    valueExpr="name"
+                                    displayExpr="displayName"
+                                    placeholder="Role"
+                                    [(value)]="user.roleNames"
+                                    tagTemplate="customTagTemplate"
+                                    [showSelectionControls]="true"
+                                    [maxDisplayedTags]="0"
+                                    [showMultiTagOnly]="true"
+                                    (onMultiTagPreparing)="onMultiTagPreparing($event)"
+                                    (onValueChanged)="validateInviteUserGroup(i)"
+                                    class="col-sm-4">
+                            <div *dxTemplate="let tag of 'customTagTemplate'">
+                                <span class="tag-value">{{tag}}</span>
+                            </div>
+                            <dx-validator>
+                                <dxi-validation-rule type="custom"
+                                                     [validationCallback]="validateInviteUserRow"
+                                                     [reevaluate]="true"
+                                                     [message]="ls.l('RequiredField', ls.l('Role'))">
+                                </dxi-validation-rule>
+                            </dx-validator>
+                        </dx-tag-box>
+                        <div *ngIf="i > 2"
+                             class="remove-import-user"
+                             [ngStyle]="{ display: isMobile ? 'block' : 'none' }"
+                             (click)="removeImportUser(i)">
+                            <i class="fa fa-minus"></i>
+                        </div>
+                    </div>
+                </dx-validation-group>
+                <div class="add-import-user" (click)="addImportUser()" *ngIf="maxAvailableUserCount > 0">+ADD</div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</div>

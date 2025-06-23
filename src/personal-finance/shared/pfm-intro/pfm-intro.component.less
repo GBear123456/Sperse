@@ -1,0 +1,181 @@
+@import '../../../assets/common/styles/custom/lend-space/colors';
+
+:host {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+
+    * {
+        font-family: Poppins, sans-serif;
+    }
+
+    .close-button {
+        border: none;
+        box-shadow: none;
+        left: initial;
+        right: 7px;
+        top: 3%;
+        background: none;
+    }
+
+    // section
+    ::ng-deep .step-item {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        font-family: Poppins, sans-serif;
+
+        .header {
+            align-self: center;
+            margin-top: 40px;
+            img {
+                width: 175px;
+                height: 25px;
+            }
+        }
+
+        .main {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 22px 81px 0 rgba(37, 41, 66, 0.1);
+            margin: 0 15px;
+            padding: 10px;
+            flex-direction: column;
+
+            @media (min-width: 992px) {
+                margin: 0 85px;
+                padding: 40px 60px;
+                flex-direction: initial;
+            }
+
+            img {
+                margin-right: 39px;
+            }
+
+            h3 {
+                font-size: 22px;
+                font-weight: 700;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: normal;
+                letter-spacing: normal;
+                color: #000000;
+            }
+
+            p {
+                font-size: 14px;
+                font-weight: normal;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.86;
+                letter-spacing: normal;
+                color: #4a4a4a;
+            }
+
+            h3,
+            p {
+                text-align: left;
+            }
+        }
+
+        .banks-logos {
+            ul {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 0px 15px;
+                @media (min-width: 992px) {
+                    padding: 0 110px;
+                }
+                li {
+                    border-radius: 3.8px;
+                    border: 1px solid #dfdfdf;
+                    margin: 4.75px;
+                    height: 56.6px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: calc(100% * (1/2) - 9.5px);
+                    img {
+                        max-width: 100%;
+                    }
+                    @media (min-width: 992px) {
+                        width: calc(100% * (1/5) - 9.5px);
+                    }
+                }
+            }
+        }
+
+        .footer {
+            max-width: 100%;
+            display: flex;
+            height: 15%;
+            justify-content: flex-end;
+            padding: 0 35px;
+            .btn-layout {
+                background: @lend-space-main-color;
+                font-size: 17px !important;
+                text-align: center;
+                color: #000;
+                background: #ffcc00;
+                align-self: safe;
+                align-content: flex-end;
+                border-radius: 0 !important;
+                width: 137px;
+                height: 44px;
+                font-weight: 700 !important;
+                margin-right: 0;
+                &:hover {
+                    background: @lend-space-hover-color;
+                }
+            }
+
+        }
+    }
+
+    ::ng-deep mat-horizontal-stepper {
+        background: #fff url(../../../assets/common/images/pfm-intro/intro-header-background.svg) 50% -10px no-repeat;
+        background-size: contain;
+
+        .mat-stepper-horizontal-line,
+        .mat-horizontal-stepper-header:first-child {
+            display: none !important;
+        }
+        .mat-horizontal-content-container {
+            padding: 0;
+            height: 100%;
+            .mat-horizontal-stepper-content {
+                opacity: 0;
+                &[aria-expanded="true"] {
+                    opacity: 1;
+                    transition: opacity 1.2s !important;
+                }
+            }
+        }
+
+        .mat-horizontal-stepper-content[aria-expanded="true"] {
+            height: 100%;
+        }
+    }
+}
+
+//::ng-deep .cdk-overlay-backdrop {
+//    filter: blur(3px);
+//    backdrop-filter: blur(3px);
+//    background-color: rgba(0, 0, 0, 0.75) !important;
+//}
+
+.mat-dialog-content {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    max-height: 100%;
+    z-index: 9999999;
+}
+.mat-stepper-horizontal {
+    height: 100%;
+}

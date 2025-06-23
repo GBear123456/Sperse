@@ -1,0 +1,6 @@
+<div>
+    <setup *ngIf="_cfoService.initialized === false"
+           (onOpenIntro)="openDialog()">
+    </setup>
+    <ng-template ad-dashboard-host></ng-template>
+</div>

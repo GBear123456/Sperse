@@ -1,0 +1,100 @@
+:host {
+    .headline-title {
+        font-size: 24px;
+        line-height: 1;
+        color: #212c36;
+        display: flex;
+        align-items: center;
+
+        &.total-invisible {
+            padding-right: 25px;            
+        }
+
+        .total-count {
+            font-size: 24px;
+            font-weight: 600;
+            margin-right: auto;
+            margin-left: 0;
+            padding-left: 5px;
+            padding-right: 25px;
+            &.error {
+                color: red;
+            }
+        }
+
+        .title-icon {
+            margin-right: 10px;
+        }
+
+        span, small, .transclude {
+            display: inline-block;
+        }
+
+        @media (max-width: 767px) {
+            margin-left: 0;
+            img {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            small {
+                display: none;
+            }
+        }
+        @media (max-width: 430px) {
+            .transclude {
+                display: none;
+            }
+        }
+
+        .header-names {
+            font-size: 24px;
+            font-weight: 600;
+            color: #202b35;
+            vertical-align: middle;
+            display: inline-flex;
+            align-items: center;
+
+            @media (max-width: 1400px) {
+                max-width: 400px;
+            }
+
+            .header-name {
+                white-space: nowrap;
+            }
+
+            .right-arrow {
+                border: solid #b3b9bf;
+                border-width: 0 2px 2px 0;
+                display: inline-block;
+                width: 9px;
+                height: 9px;
+                transform: rotate(-45deg);
+                -webkit-transform: rotate(-45deg);
+                margin: 0 10px;
+                position: relative;
+                top: -2px;
+            }
+
+            span:last-child {
+                display: none;
+            }
+
+            @media (max-width: 992px) {
+                flex-direction: column;
+                .right-arrow {
+                    display: none;
+                }
+            }
+
+            @media (max-width: 768px) {
+                margin-left: 10px;
+                .header-name {
+                    font-size: 12px;
+                    margin-bottom: 3px;
+                }
+            }
+        }
+    }
+}

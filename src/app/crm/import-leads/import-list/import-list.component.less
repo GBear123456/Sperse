@@ -1,0 +1,35 @@
+:host {
+    position: relative;
+    display: block;
+    height: calc(~"100vh - 210px");
+
+    .margin-left {
+        margin-top: 1px;
+        @media(min-width: 1200px) {
+            margin-left: 341px;
+            &.expanded {
+                margin-left: 0;
+            }
+        }
+    }
+
+    ::ng-deep app-headline {
+        .headline-content {
+            justify-content: center!important;
+        }
+    }
+
+    ::ng-deep dx-data-grid {
+        .dx-datagrid-table {
+            tr td:nth-child(3) {
+                cursor: pointer;
+                color: #424de4!important;
+                text-decoration: underline;
+            }
+        }
+    }
+
+    ::ng-deep crm-left-menu .left-menu {
+        height: calc(100vh - 75px) !important;
+    }
+}

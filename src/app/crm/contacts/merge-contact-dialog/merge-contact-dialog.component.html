@@ -1,0 +1,100 @@
+<modal-dialog
+    [title]="ls.l('Merge records')"
+    [titleClearButton]="false"
+    [buttons]="buttons"
+    [editTitle]="false">
+    <div class="form-content">
+        <div class="description">
+            <b>{{ls.l('ContactMerge_InfoHeader')}}</b>
+            <p>{{ls.l('ContactMerge_InfoMessage')}}</p>
+        </div>
+        <div class="header">
+            <div class="fields">
+                <span></span>
+            </div>
+            <div class="result">
+                <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(getResultPhotoId()) + ')' }"></div>
+                <div class="name-wrapper">
+                    <span [title]="getResultFullName()" [ngClass]="{nowrap: !!(mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName)}">{{getResultFullName()}}</span>
+                    <i [title]="mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName">
+                        {{mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName}}
+                    </i>
+                    <i [title]="mergeInfo?.targetContactInfo?.companyName ? mergeInfo?.targetContactInfo?.jobTitle : mergeInfo?.contactInfo?.jobTitle">
+                        {{mergeInfo?.targetContactInfo?.companyName ? mergeInfo?.targetContactInfo?.jobTitle : mergeInfo?.contactInfo?.jobTitle}}
+                    </i>
+                </div>
+                <p>{{ls.l('FinalRecordView')}}</p>
+            </div>
+            <div class="target">
+                <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.targetContactInfo?.photoPublicId) + ')' }"></div>
+                <div class="name-wrapper">
+                    <span [title]="mergeInfo?.targetContactInfo?.fullName" [ngClass]="{nowrap: !!mergeInfo?.targetContactInfo?.companyName}">{{mergeInfo?.targetContactInfo?.fullName}}</span>
+                    <i [title]="mergeInfo?.targetContactInfo?.companyName">{{mergeInfo?.targetContactInfo?.companyName}}</i>
+                    <i [title]="mergeInfo?.targetContactInfo?.jobTitle">{{mergeInfo?.targetContactInfo?.jobTitle}}</i>
+                </div>
+                <p>{{ls.l('MainRecordUpdate')}}</p>
+            </div>
+            <div class="source">
+                <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.contactInfo?.photoPublicId) + ')' }"></div>
+                <div class="name-wrapper">
+                    <span [title]="mergeInfo?.contactInfo?.fullName" [ngClass]="{nowrap: !!mergeInfo?.contactInfo?.companyName}">{{mergeInfo?.contactInfo?.fullName}}</span>
+                    <i [title]="mergeInfo?.contactInfo?.companyName">{{mergeInfo?.contactInfo?.companyName}}</i>
+                    <i [title]="mergeInfo?.contactInfo?.jobTitle">{{mergeInfo?.contactInfo?.jobTitle}}</i>
+                </div>
+                <p>{{ls.l('DuplicateRecordDelete')}}</p>
+            </div>
+        </div>
+        <dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 260px)'">
+            <div class="table-view" #table>
+                <ng-container *ngFor="let field of fields">
+                    <div *ngIf="!field.hidden" [class]="'contact-field ' + field.name">
+                        <div class="fields">
+                            <p>{{field.caption}}</p>
+                            <p *ngIf="field?.result?.values?.length > 1" [class]="field.name" [ngStyle]="{'margin-top': field.name == CONTACT_ADDRESSES_FIELD ? getAltCaptionTop(table) : '10px'}">{{field.alt}}</p>
+                        </div>
+                        <ng-container *ngFor="let column of [COLUMN_RESULT_FIELD, COLUMN_TARGET_FIELD, COLUMN_SOURCE_FIELD]">
+                            <div class="{{column}}">
+                                <div *ngFor="let value of field[column]?.values; let i = index" class="field-wrapper">
+                                    <p *ngIf="field.disabled" [title]="value.text">
+                                        <ng-container [ngSwitch]="field.name">
+                                             <ng-container *ngSwitchCase="ASSIGNED_USER_EMAIL">
+                                                 <i [ngStyle]="{'background-color': checkUserActive(column) ? 'green' : 'red'}" 
+                                                    [title]="checkUserActive(column) ? ls.l('Active') : ls.l('Inactive')"></i>{{getActiveUserEmail(value, column)}}
+                                                 <div class="user-last-login" [title]="ls.l('LastLoginTime')" *ngIf="getUserLastLoginTime(column) as userLastLoginTime">({{userLastLoginTime | timeAgo}})</div>
+                                             </ng-container>
+                                             <ng-container *ngSwitchCase="LEAD_STAGE_FIELD">
+                                                 <i [ngStyle]="{'background-color': getStageColorByName(value.text)}"></i>{{value.text}}
+                                             </ng-container>
+                                             <ng-container *ngSwitchDefault>
+                                                {{value.text}}
+                                             </ng-container>
+                                        </ng-container>
+                                    </p>
+                                    <dx-check-box
+                                        [width]="field.name == 'bankCode' ? '' : '95%'"
+                                        [hint]="value.text"
+                                        [text]="field.name == 'bankCode' ? '' : value.text"
+                                        [class]="field.name"
+                                        [(value)]="value.selected"
+                                        [disabled]="value.disabled"
+                                        [visible]="!field.disabled && (!value.isHidden || !value.isHidden())"
+                                        [ngClass]="{ primary: value.isPrimary }"
+                                        (click)="onSelectChange(field, value)">
+                                    </dx-check-box>
+                                    <div *ngIf="field.name == 'bankCode'" class="bank-code">
+                                        <bank-code-letters [bankCode]="value.text"></bank-code-letters>
+                                        <div class="bank-code-date">
+                                            ({{getBankCodeDate(column) | timeAgo}})
+                                        </div>
+                                    </div>
+                                    <i *ngIf="value.hasOwnProperty('usageTypeId')" [class]="value.usageTypeId || 'dt'" [title]="usageTypes[field.name] && usageTypes[field.name][value.usageTypeId || 'dt']"></i>
+                                    <span *ngIf="column == 'result' && value.id && !value.isPrimary" [title]="ls.l('SetAsPrimary')" class="set-primary" (click)="setAsPrimary(field, value)"></span>        
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </div>
+        </dx-scroll-view>
+    </div>
+</modal-dialog>

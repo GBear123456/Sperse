@@ -1,0 +1,446 @@
+<app-headline icon="briefcase"
+              [showToggleToolbarButton]="true"
+              [showToggleCompactViewButton]="true"
+              [showReloadButton]="ui.showReload"
+              [showToggleColumnSelectorButton]="true"
+              [showStateResetButton]="isDataGrid"
+              (onToggleCompactView)="toggleContactView()"
+              (onToggleToolbar)="toggleToolbar()"
+              (onReload)="refresh()"
+              (onStateReset)="resetGridState()"
+              (onToggleColumnSelector)="toggleColumnChooser()">
+    <types-dropdown [items]="reportTypes"
+                    [showTotalCount]="selectedReportType != reportTypesEnum.SalesReport"
+                    [showLoading]="true"
+                    [totalErrorMsg]="totalErrorMsg"
+                    [totalCount]="totalCount"
+                    [(value)]="selectedReportType"
+                    (onValueChanged)="onReportTypeChanged($event)">
+    </types-dropdown>
+    <import-progress-bar></import-progress-bar>
+    <calendar-button *ngIf="selectedReportType == reportTypesEnum.SalesReport"
+                     [showAllDatesIfEmpty]="true">
+    </calendar-button>
+</app-headline>
+<app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+<app-static-tree-view #sourceOrganizationUnits
+                      [width]="'265px'"
+                      [title]="ls.l('Owner')"
+                      [targetSelector]="'[accessKey=SourceOrganizationUnits]'"
+                      [list]="staticListOrganizationUnits$ | async"
+                      [hideButtons]="false"
+                      [hideApplyForEmpty]="false"
+                      showCheckBoxesMode="normal"
+                      [filterModel]="salesOrgUnitFilter">
+</app-static-tree-view>
+<app-static-list #transactionTypes
+                 [width]="'265px'"
+                 [title]="ls.l('TransactionTypes')"
+                 [showConfirmation]="false"
+                 [targetSelector]="'[accessKey=TransactionTypes]'"
+                 [funnelStyling]="true"
+                 [list]="transactionTypes$ | async"
+                 [highlightSelected]="true"
+                 selectionMode="multiple"
+                 [hideButtons]="false"
+                 [hideApplyForEmpty]="false"
+                 [showSelectionControls]="true"
+                 (onApply)="onSaleReportFilterApply('TransactionType', $event)">
+</app-static-list>
+<app-static-list #paymentProviders
+                 [width]="'265px'"
+                 [title]="ls.l('PaymentProviders')"
+                 [showConfirmation]="false"
+                 [targetSelector]="'[accessKey=PaymentProviders]'"
+                 [funnelStyling]="true"
+                 [list]="paymentProviders$ | async"
+                 [highlightSelected]="true"
+                 selectionMode="multiple"
+                 [hideButtons]="false"
+                 [hideApplyForEmpty]="false"
+                 [showSelectionControls]="true"
+                 (onApply)="onSaleReportFilterApply('PaymentProvider', $event)">
+</app-static-list>
+<crm-stars-list [bulkUpdateMode]="true"
+                [filterModel]="starsFilterModel"
+                [hideButtons]="true">
+</crm-stars-list>
+<div class="main-wrapper" [ngStyle]="{ height: 'calc(100% - ' + (appService.toolbarIsHidden.value ? '75px' : '136px' ) + ')' }">
+    <ghost-list *ngIf="!isDataLoaded"></ghost-list>
+    <div [hidden]="selectedReportType !== reportTypesEnum.Subscribers">
+        <dx-data-grid #subscribersDataGrid
+                      id="gridContainer"
+                      class="main-component-view"
+                      accesskey="narrowHeaderPanel"
+                      [renderAsync]="true"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="true"
+                      [hoverStateEnabled]="true"
+                      [loadPanel]="{ enabled: false }"
+                      [pager]="defaultGridPagerConfig"
+                      [height]="crmService.contentHeight$ | async"
+                      (onContentReady)="onContentReady(true)"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxo-selection selectAllMode="page"
+                           showCheckBoxesMode="always"
+                           mode="multiple">
+            </dxo-selection>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-group-panel [visible]="true"></dxo-group-panel>
+            <dxo-scrolling mode="infinite"></dxo-scrolling>
+            <dxo-paging [pageSize]="20"></dxo-paging>
+
+            <dxi-column dataField="Name" [caption]="ls.l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="Email" [caption]="ls.l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="Phone" [caption]="ls.l('Contact.Phone')" [calculateDisplayValue]="customizePhoneCell" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="City" [caption]="ls.l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="Status" [caption]="ls.l('Status')" [calculateDisplayValue]="customizeStatusCell" cellTemplate="statusCell"></dxi-column>
+            <dxi-column dataField="BankCode"
+                        [renderAsync]="true"
+                        cellTemplate="bankCodeCell"
+                        [caption]="ls.l('BankCode')">
+            </dxi-column>
+            <dxi-column dataField="Date"
+                        sortOrder="desc"
+                        [caption]="ls.l('Created')"
+                        [calculateDisplayValue]="customizeCreatedDateCell"
+                        calculateSortValue="Date"
+                        cssClass="clipboard-holder">
+            </dxi-column>
+            <dxi-column dataField="BankPassFee"
+                        [caption]="ls.l('BankPassFee')"
+                        cssClass="clipboard-holder"
+                        calculateSortValue="bankPassFee"
+                        [calculateDisplayValue]="customizeBankPassFeeCell">
+            </dxi-column>
+            <dxi-column dataField="BankVaultFee"
+                        [caption]="ls.l('BankVaultFee')"
+                        cssClass="clipboard-holder"
+                        calculateSortValue="bankVaultFee"
+                        [calculateDisplayValue]="customizeBankVaultFeeCell">
+            </dxi-column>
+            <dxi-column dataField="WtbFee"
+                        [caption]="ls.l('WtbFee')"
+                        cssClass="clipboard-holder"
+                        calculateSortValue="wtbFee"
+                        [calculateDisplayValue]="customizeWtbFeeCell">
+            </dxi-column>
+            <dxi-column [caption]="ls.l('TotalFee')"
+                        cssClass="clipboard-holder"
+                        calculateSortValue="totalFee"
+                        [calculateDisplayValue]="customizeTotalFeeCell">
+            </dxi-column>
+            <div *dxTemplate="let cellData of 'bankCodeCell'">
+                <bank-code-letters [bankCode]="cellData.value"
+                                   [showDescriptionsOnClick]="true"
+                                   [showReportLink]="true">
+                </bank-code-letters>
+            </div>
+            <div *dxTemplate="let cellData of 'statusCell'">
+                <div [class]="'client-status ' + cellData.value | lowercase">
+                    {{ cellData.displayValue }}
+                </div>
+            </div>
+            <dxo-summary>
+                <dxi-group-item column="Name"
+                                summaryType="count"
+                                [displayFormat]="'{0} ' + ls.l('Subscribers')">
+                </dxi-group-item>
+                <dxi-group-item column="BankPassFee"
+                                summaryType="sum"
+                                [alignByColumn]="true"
+                                [customizeText]="customizeGroupAmountCell"
+                                displayFormat="Total: {0}">
+                </dxi-group-item>
+                <dxi-group-item column="BankVaultFee"
+                                summaryType="sum"
+                                [customizeText]="customizeGroupAmountCell"
+                                [alignByColumn]="true"
+                                displayFormat="Total: {0}">
+                </dxi-group-item>
+                <dxi-group-item column="WtbFee"
+                                summaryType="sum"
+                                [customizeText]="customizeGroupAmountCell"
+                                [alignByColumn]="true"
+                                displayFormat="Total: {0}">
+                </dxi-group-item>
+                <dxi-group-item column="TotalFee"
+                                summaryType="sum"
+                                [customizeText]="customizeGroupAmountCell"
+                                [alignByColumn]="true"
+                                displayFormat="Total: {0}">
+                </dxi-group-item>
+            </dxo-summary>
+        </dx-data-grid>
+    </div>
+    <div [hidden]="totalCount <= 0 || selectedReportType !== reportTypesEnum.SubscribersStats">
+        <dx-data-grid #statsDataGrid
+                      id="gridContainer"
+                      class="main-component-view subscribers-stats-grid"
+                      accesskey="narrowHeaderPanel"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="true"
+                      [hoverStateEnabled]="true"
+                      [showBorders]="true"
+                      [loadPanel]="{ enabled: false }"
+                      [remoteOperations]="{ filtering: false }"
+                      [pager]="defaultGridPagerConfig"
+                      [height]="crmService.contentHeight$ | async"
+                      (onContentReady)="onContentReady()"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxo-selection selectAllMode="page"
+                           showCheckBoxesMode="always"
+                           mode="multiple">
+            </dxo-selection>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-paging [pageSize]="20"></dxo-paging>
+            <dxi-column width="120px"
+                        alignment="center"
+                        dataField="date"
+                        sortOrder="desc"
+                        dataType="date"
+                        [caption]="ls.l('Date')"
+                        [calculateDisplayValue]="customizeDateCell"
+                        cssClass="subscribers-date clipboard-holder">
+            </dxi-column>
+            <dxi-column [caption]="ls.l('Contacts')" alignment="center">
+                <dxi-column alignment="center"
+                            dataField="leadCount"
+                            [caption]="ls.l('Leads')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="clientCount"
+                            [caption]="ls.l('Clients')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+            </dxi-column>
+            <dxi-column [caption]="ls.l('Subscribers')" alignment="center">
+                <dxi-column alignment="center"
+                            dataField="bankConnectCount"
+                            [caption]="ls.l('Connect')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="bankBeyondCount"
+                            [caption]="ls.l('Beyond')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="starterKitCount"
+                            [caption]="ls.l('StarterKit')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="totalCount"
+                            [caption]="ls.l('Total')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+            </dxi-column>
+            <dxi-column [caption]="ls.l('GrossSales')" alignment="center">
+                <dxi-column alignment="center"
+                            dataField="bankConnectAmount"
+                            [caption]="ls.l('Connect')"
+                            [calculateDisplayValue]="customizeBankConnectAmountCell"
+                            calculateSortValue="bankConnectAmount"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="bankBeyondAmount"
+                            [caption]="ls.l('Beyond')"
+                            [calculateDisplayValue]="customizeBankBeyondAmountCell"
+                            calculateSortValue="bankBeyondAmount"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="starterKitAmount"
+                            [caption]="ls.l('StarterKit')"
+                            [calculateDisplayValue]="customizeStarterKitAmountCell"
+                            calculateSortValue="starterKitAmount"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="totalAmount"
+                            [caption]="ls.l('Total')"
+                            [calculateDisplayValue]="customizeTotalAmountCell"
+                            calculateSortValue="totalAmount"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+            </dxi-column>
+            <dxo-summary>
+                <dxo-texts sum="{0}"></dxo-texts>
+                <dxi-total-item alignment="center"
+                                column="date"
+                                [customizeText]="getTotalText">
+                </dxi-total-item>
+                <dxi-total-item alignment="center"
+                                column="leadCount"
+                                summaryType="sum">
+                </dxi-total-item>
+                <dxi-total-item alignment="center"
+                                column="clientCount"
+                                summaryType="sum">
+                </dxi-total-item>
+                <dxi-total-item alignment="center"
+                                column="bankConnectCount"
+                                summaryType="sum">
+                </dxi-total-item>
+                <dxi-total-item alignment="center"
+                                column="bankBeyondCount"
+                                summaryType="sum">
+                </dxi-total-item>
+                <dxi-total-item alignment="center"
+                                column="starterKitCount"
+                                summaryType="sum">
+                </dxi-total-item>
+                <dxi-total-item alignment="center"
+                                column="totalCount"
+                                summaryType="sum">
+                </dxi-total-item>
+                <dxi-total-item [customizeText]="customizeAmountSummary"
+                                alignment="center"
+                                column="bankConnectAmount"
+                                summaryType="sum">
+                </dxi-total-item>
+                <dxi-total-item [customizeText]="customizeAmountSummary"
+                                alignment="center"
+                                column="bankBeyondAmount"
+                                summaryType="sum">
+                </dxi-total-item>
+                <dxi-total-item [customizeText]="customizeAmountSummary"
+                                alignment="center"
+                                column="starterKitAmount"
+                                summaryType="sum">
+                </dxi-total-item>
+                <dxi-total-item [customizeText]="customizeAmountSummary"
+                                alignment="center"
+                                column="totalAmount"
+                                summaryType="sum">
+                </dxi-total-item>
+            </dxo-summary>
+        </dx-data-grid>
+    </div>
+    <div [hidden]="totalCount <=0 || selectedReportType !== reportTypesEnum.SubscriptionTracker">
+        <dx-data-grid #subscriptionTrackerGrid
+                      class="main-component-view subscription-tracker-grid"
+                      [allowColumnReordering]="true"
+                      [allowColumnResizing]="true"
+                      [columnAutoWidth]="true"
+                      [hoverStateEnabled]="true"
+                      [showBorders]="true"
+                      [loadPanel]="{ enabled: false }"
+                      [pager]="defaultGridPagerConfig"
+                      [height]="crmService.contentHeight$ | async"
+                      (onCellClick)="trackerGridCellClick($event)"
+                      (onContentReady)="onContentReady(true)"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxi-column alignment="right"
+                        [calculateCellValue]="getFullName"
+                        [caption]="ls.l('BuyerInfo')"
+                        [dataField]="subscriptionTrackerFields.FullName"
+                        headerCellTemplate="headerCellTemplate"
+                        name="buyerInfo">
+                <dxi-column [dataField]="subscriptionTrackerFields.FullName"
+                            [visible]="subscriptionTrackerColumnsVisibility.buyerInfo">
+                </dxi-column>
+                <dxi-column [dataField]="subscriptionTrackerFields.AffiliateCode"
+                            [caption]="ls.l('AffiliateCode')"
+                            [visible]="subscriptionTrackerColumnsVisibility.buyerInfo">
+                </dxi-column>
+                <dxi-column [dataField]="subscriptionTrackerFields.ContactId"
+                            [visible]="false"
+                            width="75px">
+                </dxi-column>
+                <dxi-column [dataField]="subscriptionTrackerFields.Email"
+                            [visible]="false">
+                </dxi-column>
+            </dxi-column>
+            <dxi-column alignment="right"
+                        [calculateCellValue]="getTotalRevenue"
+                        [caption]="ls.l('Revenue')"
+                        [dataField]="subscriptionTrackerFields.TotalRevenue"
+                        minWidth="120px"
+                        headerCellTemplate="headerCellTemplate"
+                        name="revenue">
+                <dxi-column *ngFor="let month of transactionMonths"
+                            alignment="right"
+                            [allowSorting]="false"
+                            [caption]="month"
+                            [customizeText]="getMonthValue"
+                            [dataField]="'TransactionRevenues.' + month"
+                            [visible]="subscriptionTrackerColumnsVisibility.revenue">
+                </dxi-column>
+                <dxi-column alignment="right"
+                            [allowSorting]="false"
+                            [calculateCellValue]="getTotalRevenue"
+                            [caption]="ls.l('Totals')"
+                            [visible]="subscriptionTrackerColumnsVisibility.revenue"
+                            [dataField]="subscriptionTrackerFields.TotalRevenue">
+                </dxi-column>
+            </dxi-column>
+            <dxi-column alignment="right"
+                        [calculateCellValue]="getTotalRefunds"
+                        [caption]="ls.l('Refunds')"
+                        [dataField]="subscriptionTrackerFields.TotalRefunds"
+                        minWidth="120px"
+                        headerCellTemplate="headerCellTemplate"
+                        name="refunds">
+                <dxi-column *ngFor="let month of transactionMonths"
+                            alignment="right"
+                            [allowSorting]="false"
+                            [caption]="month"
+                            [customizeText]="getMonthValue"
+                            [dataField]="'TransactionRefunds.' + month"
+                            [visible]="subscriptionTrackerColumnsVisibility.refunds">
+                </dxi-column>
+                <dxi-column alignment="right"
+                            [allowSorting]="false"
+                            [calculateCellValue]="getTotalRefunds"
+                            [caption]="ls.l('Totals')"
+                            [dataField]="subscriptionTrackerFields.TotalRefunds"
+                            [visible]="subscriptionTrackerColumnsVisibility.refunds">
+                </dxi-column>
+            </dxi-column>
+            <dxi-column alignment="right"
+                        [calculateCellValue]="getNetCollected"
+                        [caption]="ls.l('NetCollected')"
+                        minWidth="120px"
+                        headerCellTemplate="headerCellTemplate"
+                        name="netCollected">
+                <dxi-column *ngFor="let month of transactionMonths"
+                            [allowSorting]="false"
+                            alignment="right"
+                            [visible]="subscriptionTrackerColumnsVisibility.netCollected"
+                            [caption]="month"
+                            [dataField]="'TransactionNetCollected.' + month"
+                            [customizeText]="getMonthValue">
+                </dxi-column>
+                <dxi-column alignment="right"
+                            [allowSorting]="false"
+                            [caption]="ls.l('Totals')"
+                            [calculateCellValue]="getNetCollected"
+                            [visible]="subscriptionTrackerColumnsVisibility.netCollected">
+                </dxi-column>
+            </dxi-column>
+            <div *dxTemplate="let cell of 'headerCellTemplate'">
+                <span>{{ cell.column.caption }}</span>
+                <i class="toggle-button fa fa-{{ subscriptionTrackerColumnsVisibility[cell.column.name] ? 'minus' : 'plus' }}"></i>
+            </div>
+        </dx-data-grid>
+    </div>
+    <div [hidden]="selectedReportType !== reportTypesEnum.SalesReport">
+        <slice-pivot-grid [storageKey]="sliceStorageKey"
+                          [isLoading]="!isDataLoaded"
+                          showTotalsPrior="both"
+                          [showColumnTotals]="false"
+                          [height]="crmService.contentHeight$ | async"
+                          (onContentReady)="onSalesReportContentReady($event)"
+                          (onCellPrepared)="onSalesReportCellPrepared($event)">
+        </slice-pivot-grid>
+    </div>
+    <app-no-data [hidden]="!isDataLoaded || totalCount || selectedReportType == reportTypesEnum.SalesReport"
+                 [showLink]="false">
+    </app-no-data>
+</div>

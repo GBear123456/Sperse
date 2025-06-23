@@ -1,0 +1,196 @@
+<modal-dialog [title]="title"
+              [buttons]="buttons">
+    <dx-scroll-view showScrollbar="onHover">
+        <div *ngIf="currentStep == generateReportSteps.ReportTemplate" class="reportTemplate-container">
+            <dx-tree-list #templatesTreeList
+                          id="reportTemplateItems"
+                          [dataSource]="reportTemplateItems"
+                          itemsExpr="items"
+                          dataStructure="tree"
+                          [showColumnHeaders]="false"
+                          keyExpr="id"
+                          [filterValue]="['hidden', '<>', true]"
+                          [expandNodesOnFiltering]="false"
+                          (onRowPrepared)="onReportTemplateRowPrepared($event)">
+                <dxi-column dataField="text" caption="" cellTemplate="itemTemplate"></dxi-column>
+                <dxi-column dataField="hidden" [visible]="false"></dxi-column>
+                <div *dxTemplate="let item of 'itemTemplate'">
+                    <div *ngIf="item.data.isReadOnly; else radio" class="report-template-header" (click)="onReportTemplateRowClick(item)">
+                        <img *ngIf="item.data.fileType" [attr.src]="getImageSrc(item.data.fileType)" /><span>{{item.data.text}}</span>
+                    </div>
+                    <ng-template #radio>
+                        <dx-radio-group [items]="[item.data]"
+                                        [value]="item.data.id == selectedReportTemplate?.id ? item.data : null"
+                                        (onValueChanged)="onTemplateRadioButtonClick($event, item.data)">
+                            <div *dxTemplate="let radioItem of 'item'">
+                                <img *ngIf="radioItem.fileType" [attr.src]="getImageSrc(radioItem.fileType)" /><span>{{radioItem.text}}</span>
+                            </div>
+                        </dx-radio-group>
+                    </ng-template>
+                </div>
+            </dx-tree-list>
+        </div>
+        <div *ngIf="currentStep == generateReportSteps.BusinessEntities" class="businessEntities-container">
+            <dx-tree-list #beTreeList
+                          keyExpr="id"
+                          parentIdExpr="parentId"
+                          [autoExpandAll]="true"
+                          [scrolling]="{ showScrollbar: 'never' }"
+                          [selectedRowKeys]="selectedBusinessEntityIds"
+                          [dataSource]="bankAccountsService.sortedBusinessEntities$ | async"
+                          (onContentReady)="onBEContentReady($event)"
+                          (onSelectionChanged)="onBESelectionChanged($event)"
+                          (onInitialized)="onInitialized($event)"
+                          (onCellClick)="onBECellClick($event)"
+                          (onRowClick)="onBERowClick($event)">
+                <dxo-selection [allowSelectAll]="currentConfig.allowMultipleBE" mode="multiple" [recursive]="currentConfig.allowMultipleBE"></dxo-selection>
+                <dxi-column dataField="name" [caption]="currentConfig.allowMultipleBE ? ls.l('SelectAll') : ''" [allowSorting]="false"></dxi-column>
+                <dxo-scrolling mode="virtual"></dxo-scrolling>
+            </dx-tree-list>
+        </div>
+        <div *ngIf="currentStep == generateReportSteps.Departments" class="departments-container">
+            <dx-list width="100%"
+                     selectionMode="multiple"
+                     selectAllMode="allPages"
+                     [(selectedItems)]="selectedDepartments"
+                     [showSelectionControls]="true"
+                     [items]="departmentsEntities"
+                     (onInitialized)="onInitialized($event)">
+            </dx-list>
+        </div>
+        <div *ngIf="currentStep == generateReportSteps.Calendar" class="calendar-container">
+            <dx-calendar *ngIf="currentConfig.showSingleDateCalendar"
+                         [(value)]="calendarData.to.value">
+            </dx-calendar>
+            <dx-calendar *ngIf="currentConfig.showYearCalendar"
+                         accessKey="year"
+                         zoomLevel="year"
+                         maxZoomLevel="year"
+                         minZoomLevel="year"
+                         [value]="budgetReportDate"
+                         (onOptionChanged)="onCalendarOptionChanged($event)">
+            </dx-calendar>
+            <calendar *ngIf="!currentConfig.showYearCalendar && !currentConfig.showSingleDateCalendar"
+                      [values]="calendarData"
+                      [options]="calendarData.options">
+            </calendar>
+        </div>
+        <div *ngIf="currentStep == generateReportSteps.Final" class="final-container">
+            <div class="container">
+                <div *ngIf="currentConfig.allowMultipleBE" class="row">
+                    <div class="text-left">{{ ls.l('Reports_ReportsGrouping') }}</div>
+                    <div class="custom-radio-2-btn">
+                        <dx-radio-group [dataSource]="radioGroupGrouping"
+                                        [disabled]="generatingStarted"
+                                        displayExpr="text"
+                                        valueExpr="value"
+                                        layout="horizontal"
+                                        name="isSeparateGrouping"
+                                        [(value)]="isSeparateGrouping">
+                        </dx-radio-group>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="text-left">{{ ls.l('Reports_Template') }}</div>
+                    <div class="text-right">
+                        {{ selectedReportTemplate.template ? ls.l('ReportTemplates_' + selectedReportTemplate.template) + ' ' : ''}}{{ ls.l('ReportTypes_' + selectedReportTemplate.type)}}
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.ReportTemplate)" [class.disabled]="generatingStarted">&nbsp;</i>
+                    </div>
+                </div>
+                <div class="row date-range">
+                    <div class="text-left">{{ currentConfig.showYearCalendar ? ls.l('Selected') + ' ' + ls.l('Year') : (currentConfig.showSingleDateCalendar ? ls.l('Date') : ls.l('Reports_DateRange')) }}</div>
+                    <div *ngIf="currentConfig.showYearCalendar" class="text-right">
+                        <span class="date">{{budgetReportDate | date : 'yyyy' : 'UTC' }}</span>
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
+                    </div>
+                    <div *ngIf="currentConfig.showSingleDateCalendar" class="text-right">
+                        <span class="date">{{dateTo | date : 'MM/dd/yyyy' : 'UTC' }}</span>
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
+                    </div>
+                    <div *ngIf="!currentConfig.showSingleDateCalendar && !currentConfig.showYearCalendar" class="text-right">
+                        <dx-date-box width="140px"
+                                     height="30px"
+                                     [max]="calendarData.to.value"
+                                     displayFormat="MM/dd/yyyy"
+                                     [(value)]="calendarData.from.value"
+                                     [acceptCustomValue]="false"
+                                     (onValueChanged)="applyDateRange()">
+                        </dx-date-box>
+                        <img class="arrow" src="./assets/common/icons/date-arrow-right.svg">
+                        <dx-date-box width="140px"
+                                     height="30px"
+                                     [min]="calendarData.from.value"
+                                     displayFormat="MM/dd/yyyy"
+                                     [(value)]="calendarData.to.value"
+                                     [acceptCustomValue]="false"
+                                     (onValueChanged)="applyDateRange()">
+                        </dx-date-box>
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
+                    </div>
+                </div>
+                <div class="row business-entities">
+                    <div class="text-left">{{ ls.l('BusinessEntities') }}</div>
+                    <div class="text-right">
+                        <ul *ngIf="(bankAccountsService.businessEntitiesAmount$ | async) !== (selectedBusinessEntities$ | async).length; else all">
+                            <li *ngFor="let entity of selectedBusinessEntities$ | async">{{ entity.name }}</li>
+                        </ul>
+                        <ng-template #all>{{ ls.l('All') }}</ng-template>
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.BusinessEntities)" [class.disabled]="generatingStarted">&nbsp;</i>
+                    </div>
+                </div>
+                <div class="row business-entities" *ngIf="departmentsEntities.length > 1">
+                    <div class="text-left">{{ ls.l('Departments') }}</div>
+                    <div class="text-right">
+                        <ul *ngIf="selectedDepartments.length; else all">
+                            <li *ngFor="let entity of selectedDepartments">{{ entity }}</li>
+                        </ul>
+                        <ng-template #all>{{ ls.l('All') }}</ng-template>
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Departments)" [class.disabled]="generatingStarted">&nbsp;</i>
+                    </div>
+                </div>
+                <ng-container>
+                    <div class="row notificationEmail">
+                        <div class="text-left">
+                            <dx-check-box [(value)]="sendEmailNotification"
+                                          [disabled]="generatingStarted"
+                                          [text]="ls.l('Reports_SendEmailNotificationTo')">
+                            </dx-check-box>
+                        </div>
+                        <div class="text-right">
+                            <dx-text-box name="email"
+                                         [(value)]="notificationToEmail"
+                                         [disabled]="generatingStarted || !sendEmailNotification"
+                                         #notificationToEmailTextBox>
+                                <dx-validator>
+                                    <dxi-validation-rule type="pattern"
+                                                         [pattern]="emailRegEx"
+                                                         [message]="ls.l('Reports_EmailIsNotValid')">
+                                    </dxi-validation-rule>
+                                    <dxi-validation-rule type="required"
+                                                         [message]="ls.l('ThisFieldIsRequired')">
+                                    </dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                    </div>
+                    <div class="row checkbox">
+                        <dx-check-box [(value)]="sendReportInAttachments"
+                                      [disabled]="!sendEmailNotification || !emailIsValidAndNotEmpty || generatingStarted"
+                                      [text]="ls.l('Reports_SendAsAttachment')">
+                        </dx-check-box>
+                    </div>
+                </ng-container>
+                <div class="row run-report-button">
+                    <div class="col-12 text-center">
+                        <button (click)="generateReport()"
+                                [disabled]="submitButtonDisabled"
+                                [ngClass]="{ disabled: submitButtonDisabled, progress: generatingStarted }"
+                                class="btn send-btn">
+                            {{ls.l('Reports_RunReportGenerator')}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>

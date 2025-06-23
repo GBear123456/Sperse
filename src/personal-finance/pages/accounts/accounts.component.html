@@ -1,0 +1,30 @@
+<ng-container *ngIf="appSession.userId">
+    <div [class.content-wrap]="!featureCheckerService.isEnabled(features.PFMApplications)"
+         class="container accountsContainer" *ngIf="isInstanceInfoLoaded">
+        <div class="row">
+            <ng-container *ngIf="cfoService.initialized; else notInitialized">
+                <aside class="sidebar col-3">
+                    <ul class="left-navigation">
+                        <!-- need check this menu -->
+                        <li class="left-navigation-item" *ngFor="let item of menuItems;" [class.active]="(sectionName$ | async) === item.sectionName">
+                            <a pageScroll class="left-navigation-link">
+                                <span class="menu-icon"></span> {{ l(item.name) }}
+                            </a>
+                        </li>
+                    </ul>
+                </aside>
+                <div class="p-content col-9" #content></div>
+            </ng-container>
+            <ng-template #notInitialized>
+                <div class="not-initialized-content default-finance col-12">
+                    <p class="welcome-text">{{ l('Accounts_Welcome') }}</p>
+                    <p class="body-text">{{ l('Accounts_BodyText') }}</p>
+                    <button (click)="onStart()" class="btn btn-layout" [disabled]="isStartDisabled">{{ l('GetStarted') }}</button>
+                </div>
+                <pfm-finance-page class="lend-space-finance"
+                                  [isStartDisabled]="isStartDisabled"
+                                  (onButtonClicked)="openPfmIntro()"></pfm-finance-page>
+            </ng-template>
+        </div>
+    </div>
+</ng-container>

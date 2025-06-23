@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>
+    <div>{{ls.l('UpdateCommissionableAmount')}}</div>
+</h2>
+<mat-dialog-content>
+    <dx-number-box
+        [min]="0" 
+        [placeholder]="ls.l('Amount')" 
+        [format]="{ style: 'currency', currency: currency, useGrouping: true }"
+        [(value)]="amount">
+    </dx-number-box>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Update')}}</button>
+</mat-dialog-actions>

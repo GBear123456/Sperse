@@ -1,0 +1,131 @@
+:host {
+    display: block;
+    min-width: 350px;
+
+    position: relative;
+
+    &:before {
+        content: "";
+        position: absolute;
+        top: 220px;
+        left: -34px;
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid #FFF;
+    }
+
+    input {
+        width: 240px;
+        height: 48px;
+
+        &:disabled {
+            opacity: 0.5;
+            color: #333;
+        }
+
+        &[name="Address"] {
+            width: 340px;
+            padding-left: 100px;
+        }
+    }
+
+    label {
+        right: -4px;
+        width: 90px;
+        height: 48px;
+        position: relative;
+        color: #BDC6C7;
+        line-height: 46px;
+        vertical-align: top;
+        border-bottom: 1px solid #dfdfdf;
+        margin-bottom: 0px;
+        padding-bottom: 0px;
+        font-size: 12px;
+        &.address {
+            position:absolute;
+            left: 0px;
+        }
+    }
+
+    h2 {
+        font-weight: 500;
+        line-height: 1.71;
+        letter-spacing: 0.6px;
+        cursor: move;
+    }
+
+    ::ng-deep .dx-texteditor-container {
+        width: 240px;
+    }
+
+    ::ng-deep dx-validation-group > div {
+        display: flex;
+    }
+
+    dx-select-box,
+    dx-text-box,
+    dx-number-box {
+        display: inline-block;
+
+        ::ng-deep input {
+            height: 48px;
+        }
+    }
+
+    mat-dialog-actions {
+        justify-content: flex-end;
+    }
+
+    mat-dialog-content {
+        min-height: 160px;
+    }
+
+    .type-item-wrapper {
+        ::ng-deep input {
+            padding-left: 40px;
+            background-repeat: no-repeat;
+            background-position: 10px 15px;
+        }
+
+        ::ng-deep input[value=""] {
+            background-image: none !important;
+        }
+    }
+
+    .addressType {
+        &.type-O ::ng-deep input {
+            background-image: url("../../../../assets/common/icons/address-other.svg");
+        }
+
+        &.type-P, &.type-H {
+            ::ng-deep input {
+                background-image: url("../../../../assets/common/icons/address-home.svg");
+                background-position: 10px 12px;
+            }
+        }
+
+        &.type-S ::ng-deep input {
+            background-image: url("../../../../assets/common/icons/address-shipping.svg");
+            background-position: 10px 12px;
+        }
+
+        &.type-W {
+            ::ng-deep input {
+                background-image: url("../../../../assets/common/icons/address-work.svg");
+                background-position: 10px 12px;
+            }
+        }
+
+        &.type-B ::ng-deep input {
+            background-image: url("../../../../assets/common/icons/address-billing.svg");
+            background-size: 23px;
+        }
+    }
+
+    dx-check-box {
+        font-size: 12px;
+        margin-top: 11px;
+    }
+}

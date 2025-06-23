@@ -1,0 +1,54 @@
+.alerts-list {
+  padding-left: 0;
+  list-style-type: none;
+}
+.alert-item {
+  position: relative;
+  font-size: 15px;
+  padding-left: 36px;
+  background: url('/assets/images/credit-report/alert-chart-top-icon.svg') 0 5px no-repeat;
+  &.negative {
+    background-image: url('/assets/images/credit-report/alert-chart-down-icon.svg');
+  }
+  &.warning {
+    background-image: none;
+    &::before{
+        position: absolute;
+        left: 1px;
+        top: 3px;
+        content: "";
+        background-image: url(/assets/images/credit-report/exclamation-mark.svg);
+        width: 20px;
+        height: 20px;
+    }
+  }
+  b {
+    color: #121516;
+  }
+  p {
+    margin-top: 0;
+    color: #8a969b;
+  }
+  .alert-bureau {
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #5d666a;
+    margin-left: 10px;
+  }
+}
+hr {
+  border-width: 2px;
+  border-color: #dfdfdf;
+}
+a {
+  font-family: "lato", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  color: #3baed8;
+}

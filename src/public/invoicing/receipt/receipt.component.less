@@ -1,0 +1,378 @@
+body > .blockUI.blockOverlay {
+    top: 0px !important;
+}
+
+public-receipt {
+    background: rgba(216, 237, 254, 1);
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+
+    .loading-container {
+        align-self: center;
+        margin: 0 auto;
+
+        .wait-message {
+            padding-top: 100px;
+        }
+    }
+
+    .main-container {
+        width: 378px;
+        margin: auto;
+        padding: 20px 0 0;
+
+        .header {
+            display: flex;
+            margin-bottom: 32px;
+            justify-content: center;
+
+            img {
+                max-width: 150px;
+                max-height: 32px;
+                border-radius: 5px;
+            }
+
+            .tenant-name {
+                font-size: 20px;
+                margin-left: 12px;
+            }
+        }
+
+        .content {
+            background-color: white;
+            border-radius: 20px;
+            padding: 33px 23px;
+
+            .approved {
+                display: flex;
+                margin-bottom: 30px;
+
+                .amount {
+                    margin: 0 15px;
+
+                    p {
+                        margin: 0;
+                        font-family: Poppins;
+                        font-size: 14px;
+                        font-weight: 400;
+                        line-height: 21px;
+                        letter-spacing: -0.02em;
+                        color: rgba(130, 130, 130, 1);
+                    }
+
+                    span {
+                        font-family: Poppins;
+                        font-size: 27px;
+                        font-weight: 500;
+                        line-height: 41px;
+                        letter-spacing: -0.02em;
+                        color: rgba(7, 13, 68, 1);
+                    }
+                }
+            }
+
+            .summary {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 37px;
+
+                .icon {
+                    position: relative;
+                    margin-bottom: 16px;
+                }
+
+                .amount {
+                    font-size: 36px;
+                    font-weight: 500;
+                }
+
+                .top {
+                    font-family: Poppins;
+                    font-size: 29px;
+                    font-weight: 600;
+                    line-height: 44px;
+                    letter-spacing: -0.02em;
+                    text-align: center;
+                    color: rgba(7, 13, 68, 1);
+                }
+
+                .bottom {
+                    font-family: Poppins;
+                    font-size: 15px;
+                    font-weight: 500;
+                    line-height: 23px;
+                    letter-spacing: -0.02em;
+                    text-align: center;
+                    color: rgba(7, 13, 68, 1);
+                }
+            }
+
+            .details {
+                .row {
+                    margin-bottom: 20px;
+                    line-height: 21px;
+
+                    .caption, .value {
+                        font-family: Poppins;
+                        font-size: 14px;
+                        font-weight: 400;
+                        line-height: 21px;
+                        letter-spacing: -0.02em;
+                    }
+
+                    .card-network {
+                        margin-right: 12px;
+                    }
+
+                    .text-overflow {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
+
+                .top-indent {
+                    margin-top: 15px;
+                    margin-bottom: 0;
+
+                    a {
+                        border-radius: 6px;
+                        font-family: Poppins;
+                        font-size: 12px;
+                        font-weight: 500;
+                        line-height: 18px;
+                        letter-spacing: -0.02em;
+                        color: rgba(91, 101, 113, 1);
+                    }
+
+                    img {
+                        vertical-align: text-bottom;
+                        margin-right: 6px;
+                    }
+                }
+
+                .login-row {
+                    margin-top: 26px;
+
+                    a {
+                        margin: 0 auto;
+                        width: 332px;
+                        height: 52px;
+                        background: rgba(54, 188, 112, 1);
+                        border-radius: 25px;
+                        text-align: center;
+                        padding: 15px;
+                        font-family: Poppins;
+                        font-size: 15px;
+                        font-weight: 500;
+                        line-height: 23px;
+                        letter-spacing: -0.02em;
+                        color: rgba(255, 255, 255, 1);
+                    }
+                }
+
+                .sms-row {
+                    margin: 26px 0 0;
+                    font-family: Poppins;
+                    font-size: 13px;
+                    font-weight: 400;
+                    line-height: 20px;
+                    letter-spacing: -0.02em;
+
+                    img {
+                        margin-right: 9px;
+                    }
+                }
+            }
+        }
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            font-size: 12px;
+
+            .powered-by {
+                text-align: right;
+                padding-right: 15px;
+            }
+
+            .links {
+                padding-left: 15px;
+
+                a {
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+
+    .downloads {
+        width: 100%;
+        padding: 23px;
+        margin: 10px 0;
+        background: #fff;
+        border-radius: 20px;
+
+        h1 {
+            font-family: Poppins;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 27px;
+            letter-spacing: -0.02em;
+            color: rgba(7, 13, 68, 1);
+        }
+
+        .resource {
+            height: 44px;
+            padding: 0 5px;
+            border: 1px solid rgba(235, 237, 243, 1);
+            margin: 5px 0;
+            border-radius: 5px;
+
+            .link {
+                width: 55%;
+                display: inline-block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                vertical-align: middle;
+                font-family: Poppins;
+                font-size: 13px;
+                font-weight: 400;
+                line-height: 44px;
+                letter-spacing: -0.02em;
+                color: rgba(0, 0, 0, 1);
+            }
+
+            & > img {
+                margin-right: 12px;
+                margin-left: 8px;
+            }
+        }
+
+        .file {
+            width: 55%;
+            color: #000;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: middle;
+            text-decoration: none;
+            pointer-events: none;
+            font-family: Poppins;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 40px;
+            letter-spacing: -0.02em;
+        }
+
+        button {
+            border: 1px solid #EBEDF3;
+            font-family: Poppins;
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 17px;
+            letter-spacing: -0.02em;
+            color: rgba(91, 101, 113, 1);
+            background: rgba(235, 237, 243, 0.22);
+            border-radius: 5px;
+            float: right;
+            width: 104px;
+            height: 34px;
+            margin: 4px 0;
+            cursor: pointer;
+            outline: none;
+
+            img {
+                margin-right: 5px;
+            }
+        }
+    }
+
+    .events {
+        width: 100%;
+        padding: 23px;
+        margin: 10px 0;
+        background: #fff;
+        border-radius: 20px;
+        letter-spacing: -0.02em;
+
+        div, h1, span {
+            font-family: Poppins !important;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 27px;
+            color: rgba(7, 13, 68, 1);
+            margin-bottom: 23px;
+        }
+
+        .event {
+            padding: 26px 15px 0;
+            margin-bottom: 12px;
+            background-color: #F1F6F9;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 400;
+            color: #79848c;
+            line-height: 21px;
+
+            .header-row {
+                padding-bottom: 0 !important;
+
+                .event-name {
+                    font-size: 16px;
+                    font-weight: 500;
+                    color: #000;
+                }
+
+                .copy-event-data {
+                    color: #b7c4cd;
+                    padding-left: 0;
+
+                    i {
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            hr {
+                border-color: #D7DFE4;
+                margin: 16px 0;
+            }
+
+            .row {
+                padding-bottom: 23px;
+
+                .fa {
+                    margin-right: 8px;
+                }
+
+                .caption {
+                    color: #070d44;
+                    font-weight: 400;
+                    padding-right: 0;
+                }
+
+                .text {
+                    text-align: right;
+
+                    &.nowrap {
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        white-space: nowrap;
+                    }
+                }
+            }
+        }
+    }
+
+    .gray {
+        color: rgba(121, 132, 140, 1);
+    }
+}

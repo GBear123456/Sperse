@@ -1,0 +1,11 @@
+<div *ngIf="bankCodeEnabled">
+    <p class="logo"><span class="bank">{{ls.l('BANK')}}</span><span class="code">{{ls.l('CODE')}}<sup>&reg;</sup></span></p>
+    <div *ngIf="bankCode">
+        <bank-code-letters [showDescriptionsOnHover]="true" [bankCode]="bankCode"></bank-code-letters>
+        <img class="small-decode" src="assets/images/icons/decode.png" [title]="ls.l('DECODE')" (click)="decode($event)">
+    </div>
+    <button class="button-decode" *ngIf="!bankCode" (click)="decode($event)">{{ls.l('DECODE')}}</button>
+    <span class="text-key-code" *ngIf="bankCode" [ngStyle]="{visibility: bankCode ? 'visible' : 'hidden', color: bankCode ? bankCodeService.getBackgroundColorByLetter(bankCode[0]) : ''}">
+        {{ bankCode && bankCodeService.getBankCodeDefinition(bankCode[0]) | uppercase }}
+    </span>
+</div>

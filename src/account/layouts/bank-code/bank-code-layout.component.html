@@ -1,0 +1,46 @@
+<!--<bank-code-header></bank-code-header>-->
+<div class="login">
+    <main class="main-content">
+        <div class="account-forms">
+            <div class="row">
+                <div [ngClass]="{'col-lg-5': !(isExtPage$ | async)}" class="col-md-12 col-xs-12 text-center form-wrapper">
+                    <router-outlet></router-outlet>
+                </div>
+
+                <div *ngIf="!(isExtPage$ | async)" class="col-lg-7 col-md-12 col-xs-12 text-center crack-code">
+                    <div class="division"></div>
+                    <h1 class="slogan">
+                        <span>Discover your</span>
+                        <span><b>TRUE personality</b></span>
+                        <span  class="fz-85">in 90 seconds</span>
+                        <span  class="fz-85">or less</span>
+                    </h1>
+
+                    <div class="crack-logo">
+                        <a href="https://crackmycode.com">
+                            <img src="./assets/common/images/bank-code/crack-my-code.png" alt="Crack My Code">
+                        </a>
+                    </div>
+
+                    <div class="button-wrap">
+                        <a href="https://crackmycode.com" class="crack-code-btn">
+                            <span class="row">
+                                <span class="col-10 text">
+                                    <span class="uppercase">crack my code</span>
+                                    <span class="small">Click here to start now</span>
+                                </span>
+                                <span class="col-2 arrow">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                </span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!--<div class="footer">
+        <bank-code-footer></bank-code-footer>
+    </div>-->
+</div>

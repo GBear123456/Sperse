@@ -1,0 +1,101 @@
+.sperse-spinner {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    position: absolute;
+    top: 0;
+}
+
+.sperse-spinner .rotate {
+    transform-origin: center;
+    animation: rotate 1.6s linear 0s infinite;
+}
+
+.sperse-spinner .cells path:not(.rotate) {
+    opacity: 0.3;
+    animation: cell-anim 1.6s linear 0s infinite;
+}
+
+.sperse-spinner #path24, 
+.sperse-spinner #path26, 
+.sperse-spinner #path28, 
+.sperse-spinner #path36, 
+.sperse-spinner #path60 {
+    animation-delay: 0.0s;
+}
+.sperse-spinner #path42, 
+.sperse-spinner #path58, 
+.sperse-spinner #path54, 
+.sperse-spinner #path68, 
+.sperse-spinner #path56, 
+.sperse-spinner #path52, 
+.sperse-spinner #path20 {
+    animation-delay: 0.2s;
+}
+.sperse-spinner #path44, 
+.sperse-spinner #path46, 
+.sperse-spinner #path18 {
+    animation-delay: 0.4s;
+}
+.sperse-spinner #path40, 
+.sperse-spinner #path66, 
+.sperse-spinner #path38, 
+.sperse-spinner #path30, 
+.sperse-spinner #path31 {
+    animation-delay: 0.6s;
+}
+.sperse-spinner #path50, 
+.sperse-spinner #path70, 
+.sperse-spinner #path31 {
+    animation-delay: 0.8s;
+}
+.sperse-spinner #path48, 
+.sperse-spinner #path34 {
+    animation-delay: 1s;
+}
+.sperse-spinner #path14, 
+.sperse-spinner #path62, 
+.sperse-spinner #path64, 
+.sperse-spinner #path32, 
+.sperse-spinner #path16 {
+    animation-delay: 1.2s;
+}
+.sperse-spinner #path22 {
+    animation-delay: 1.4s;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+        transform-origin: 50% 51%;
+    }
+    50%
+    {
+        transform-origin: 50.5% 50%;
+    }
+
+    100% {
+        transform: rotate(360deg);
+        transform-origin: 51% 48%;
+    }
+}
+
+@keyframes cell-anim {
+    0% {
+        opacity: 0.3;
+    }
+    10% {
+        opacity: 1;
+    }
+    50%
+    {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}

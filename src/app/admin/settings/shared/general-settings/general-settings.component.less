@@ -1,0 +1,51 @@
+:host {
+    display: block;
+
+    ::ng-deep country-phone-number {
+        .wrapper {
+            width: 100% !important;
+
+            .flagInput {
+                align-self: center;
+            }
+        }
+    }
+}
+
+::ng-deep .flag-field {
+    background-color: #fff;
+    border: 1px solid #ebedf2;
+    padding: 0.65rem 1rem;
+    border-radius: 0.25rem;
+
+    span, b {
+        vertical-align: middle;
+    }
+
+    ::ng-deep dx-text-box {
+        display: inline-block !important;
+        height: 22px;
+        input {
+            border: none;
+            min-height: 20px;
+        }
+    }
+}
+
+::ng-deep .flag-row {
+    border-bottom: 1px solid #E5E8F3;
+    padding: 7px 0px!important;
+    margin: 0 10px;
+    display: flex;
+    width: calc(100% - 20px);
+
+    .flag-icon {
+        border-radius: 10px;
+        border: 1px solid #dedede;
+    }
+    div {
+        display: inline-block;
+        margin: auto 0 auto 10px;
+        white-space: pre-wrap;
+    }
+}

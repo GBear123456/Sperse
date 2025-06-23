@@ -1,0 +1,151 @@
+:host {
+    display: block;
+    min-width: 600px;
+    position: relative;
+    &:before {
+        content: "";
+        position: absolute;
+        top: 220px;
+        left: -34px;
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid #FFF;
+    }
+    label {
+        width: 100px;
+        white-space: nowrap;
+        margin-top: 7px;
+    }
+    h2 {
+        font-weight: 500;
+        line-height: 1.71;
+        letter-spacing: 0.6px;
+        margin: 0 auto 0 0;
+        cursor: move;
+    }
+    input {
+        width: 420px;
+        height: 48px;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.79;
+        letter-spacing: 0.3px;
+        color: #424c56;
+        padding: 0;
+    }
+    .field.addr {
+        padding-left: 140px;
+        & > *:first-child {
+            padding-right: 20px;
+        }
+        ::ng-deep dx-select-box[name="country"]:not(.dx-state-hover) {
+            .dx-dropdowneditor-icon {
+                background-color: #FFFFFF;
+            }
+        }
+    }
+    .phone-container {
+        ::ng-deep country-phone-number {
+            width: 420px;
+            height: 48px;
+            display: inline-block;
+            vertical-align: top;
+
+            input {
+                font-size: 15px;
+                font-weight: 400;
+                line-height: 1.79;
+                letter-spacing: 0.3px;
+                color: #424c56;
+                padding: 0;
+            }
+
+            .input-group {
+                height: 49px;
+            }
+
+            .wrapper {
+                width: 420px!important;
+            }
+
+            .flagInput .dropdown .btn {
+                height: 48px;
+            }
+
+            .flagInput, .flagInput .dropdown .btn span, .dropdown-content .list-group a span {
+                line-height: unset;
+                font-size: 12px;
+                margin: 0;
+                top: 0;
+            }
+
+            .flagInput .dropdown .btn span.arrow-down {
+                margin-top: 5px;
+                margin-left: 2px;
+            }
+
+            .dropdown-content .list-group a span.country-name {
+                margin-left: 6px;
+            }
+
+            .list-group .list-group-item span {
+                vertical-align: middle;
+            }
+        }
+    }
+    dx-select-box, dx-text-box, dx-number-box {
+        display: inline-block;
+        ::ng-deep input {
+            height: 48px;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.79;
+            letter-spacing: 0.3px;
+            color: #424c56;
+            padding: 0;
+        }
+    }
+    dx-text-box[name="firstName"] {
+        margin-right: 20px;
+    }
+    mat-dialog-actions {
+        margin: 0px!important;
+        justify-content: flex-end;
+        background-color: #F3F7FA;
+        border-bottom: 1px solid #dadee1;
+        padding: 10px 20px;
+    }
+    mat-dialog-content {
+        min-height: 160px;
+        padding: 10px 50px 30px;
+    }
+    .type-item-wrapper {
+        ::ng-deep input {
+            padding-left: 40px;
+            background-repeat: no-repeat;
+            background-position: 10px 15px;
+        }
+        ::ng-deep input[value=""] {
+            background-image: none!important;
+        }
+    }
+}
+
+::ng-deep .address-template {
+    position: relative;
+    i {
+        top: 7px;
+    }
+    span {
+        padding-left: 30px;
+    }
+}
+
+::ng-deep mat-dialog-container {
+    &#selectedBillingAddress,   
+    &#selectedShippingAddress {
+        padding: 0;
+    }
+}

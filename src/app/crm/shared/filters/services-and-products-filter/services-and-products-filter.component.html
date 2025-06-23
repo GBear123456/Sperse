@@ -1,0 +1,36 @@
+<div class="wrapper">
+    <dx-tabs *ngIf="showFilterTabs"
+        width="310px"
+        [dataSource]="filterTabs"
+        [selectedIndex]="selectedTabIndex"
+        (onItemClick)="onTabClick($event)">
+    </dx-tabs>
+    <dx-tree-list *ngIf="filterTabs[selectedTabIndex].field as field"
+                  [dataSource]="items[field].dataSource"
+                  [keyExpr]="items[field].keyExpr"
+                  [parentIdExpr]="items[field].parentExpr"
+                  [dataStructure]="items[field].dataStructure"
+                  [itemsExpr]="items[field].itemsExpr"
+                  [showColumnHeaders]="false"
+                  [autoExpandAll]="true"
+                  height="calc(100vh - 172px)"
+                  [scrolling]="{ preloadEnabled: true, rowRenderingMode: 'virtual' }"
+                  [selectedRowKeys]="items[field].value"
+                  (onInitialized)="onInitialized()"
+                  (onContentReady)="onContentReady()"
+                  (onDisposing)="onDisposing()"
+                  (onSelectionChanged)="onSelectionChanged($event)">
+        <dxo-search-panel [visible]="true" width="100%"></dxo-search-panel>
+        <dxo-selection [allowSelectAll]="true" mode="multiple" [recursive]="true"></dxo-selection>
+        <dxi-column [dataField]="items[field].nameField" [cellTemplate]="items[field].templateFunc ? 'checkBoxTemplate' : 'defaultTemplate'"></dxi-column>
+        <div *dxTemplate="let cell of 'defaultTemplate'">
+            <div class="service-product-name" [title]="getTitle(cell.data)">
+                {{ cell.data[items[field].nameField] }}
+                <small *ngIf="isLoaded && items[field].codeField && cell.data[items[field].codeField]">({{ cell.data[items[field].codeField] }})</small>
+            </div>
+        </div>
+        <div *dxTemplate="let cell of 'checkBoxTemplate'">
+            <div [innerHTML]="items[field].templateFunc(cell.data)"></div>
+        </div>
+    </dx-tree-list>
+</div>

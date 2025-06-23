@@ -1,0 +1,23 @@
+<section class="iframe">
+    <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
+    <ngx-extended-pdf-viewer
+        *ngIf="hasSubscription$ | async; else noSubscription"
+        [src]="bookSrc"
+        backgroundColor="#ffffff"
+        [height]="'calc(100vh - 70px)'"
+        [delayFirstView]="250"
+        [showDownloadButton]="false"
+        [showOpenFileButton]="false"
+        [showPrintButton]="false"
+        [showBookmarkButton]="false"
+        [showPresentationModeButton]="true"
+        [ignoreResponsiveCSS]="true"
+        [contextMenuAllowed]="false"
+        [useBrowserLocale]="true">
+    </ngx-extended-pdf-viewer>
+    <ng-template #noSubscription>
+        <ng-container *ngIf="environmentLink$ | async as environmentLink">
+            <iframe [src]="environmentLink" frameborder="0" (load)="onIframeLoad($event)"></iframe>
+        </ng-container>
+    </ng-template>
+</section>
