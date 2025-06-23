@@ -1,7 +1,0 @@
-<ul *ngIf="ghosts" [ngStyle]="{ height: height$ | async }">
-    <li *ngFor="let ghost of ghosts"
-        class="ghost"
-        [ngStyle]="{ height: 'calc(100% / ' + itemsCount + ')' }">
-        <div class="lines"><p></p></div>
-    </li>
-</ul>
