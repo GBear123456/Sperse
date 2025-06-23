@@ -133,6 +133,9 @@
                     </mat-tab>
                     <mat-tab *ngIf="spreedlyApplicable" [label]="l('Bank Card')">
                         <div class="stripe-wrap">
+                            <p class="payment-text">
+                                Press the button below to continue your payment process using Bank Card
+                            </p>
                             <spreedly-pay-buttons [environmentKey]="paymentSystemSettings.spreedlyConfiguration.environmentKey"
                                                   [gateways]="paymentSystemSettings.spreedlyConfiguration.spreedlyGateways"
                                                   (onButtonClick)="onSpreedlyClick($event)"

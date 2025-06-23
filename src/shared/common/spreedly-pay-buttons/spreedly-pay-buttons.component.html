@@ -1,6 +1,5 @@
 <button *ngFor="let spreedlyGateway of gateways"
         [ngClass]="{disabled: disabled || !spreedlyJsLoaded}"
-        [title]="spreedlyGateway.value"
         (click)="onClick(spreedlyGateway.key)">
-    {{spreedlyGateway.value}}
+    Pay with Bank Card
 </button>
