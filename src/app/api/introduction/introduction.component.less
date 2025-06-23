@@ -4,16 +4,16 @@
     height: 100%;
 
     ::ng-deep .left-menu {
-        border-right: 1px solid #dfdfdf;
+        border-right: 1px solid var(--border-color);
 
         .items-progress {
             &:before {
-                border-left: 3px solid #f3f6fa !important;
+                border-left: 3px solid var(--headline-bg) !important;
             }
 
             .items-progress-item:after {
-                border: 2px solid #f3f6fa !important;
-                background-color: #f3f6fa !important;
+                border: 2px solid var(--headline-bg) !important;
+                background-color: var(--headline-bg) !important;
             }
         }
     }
@@ -27,8 +27,8 @@
         right: 20px;
         top: 20px;
         font-size: 18px;
-        color: #34aeef;
-        border: 1px solid #34aeef;
+        color: var(--info-color);
+        border: 1px solid var(--info-color);
         display: block;
         width: 24px;
         height: 24px;
@@ -56,7 +56,7 @@
 
         .dx-link {
             text-decoration: underline;
-            color: #337ab7;
+            color: var(--primary-color);
         }
 
         .key-container {
@@ -92,6 +92,7 @@
 
 ::ng-deep .tooltip-data {
     text-align: left;
+    color: var(--text-color);
 
     * {
         white-space: normal;
