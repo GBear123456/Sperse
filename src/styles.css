@@ -590,3 +590,10 @@ i.save-to-clipboard {
     background-color: var(--card-bg) !important;
     color: var(--text-color) !important;
 }
+.swal-text {
+    color: var(--text-color) !important;
+}
+
+.select-header {
+    color: var(--text-color) !important;
+}
