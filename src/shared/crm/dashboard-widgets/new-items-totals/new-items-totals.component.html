@@ -10,7 +10,21 @@
                         {{ls.ls('CRM', 'CRMDashboard_NewAdded', [ls.l(field.title).toLowerCase()])}}
                         <div class="value">
                             <ng-container *ngIf="field.type == 'currency'">
-                                <div [ngStyle]="{'color': field.color}">{{ totalsData[field.name.replace('total', 'new')] | currency: currency : 'symbol' : '1.0-0' }}</div>
+                                <div [ngStyle]="{'color': field.color}">
+                                    {{ totalsData[field.name.replace('total', 'new')] | currency: currency : 'symbol' : '1.0-0' }}
+                                    <ng-container *ngIf="field.showDetails && detailsAvailable(totalsData[field.detailsField.replace('total', 'new')])">
+                                        <img src="assets/common/icons/info-circle.svg" class="info" id="new-field-details" />
+                                        <dx-tooltip target="#new-field-details"
+                                                    showEvent="dxhoverstart"
+                                                    hideEvent="dxhoverend">
+                                            <div *dxTemplate="let data2 = data of 'content'">
+                                                <div *ngFor="let key of Object.keys(totalsData[field.detailsField.replace('total', 'new')])">
+                                                    <span>{{key}}</span>: <b>{{totalsData[field.detailsField.replace('total', 'new')][key] | currency:key:'symbol'}}</b>
+                                                </div>
+                                            </div>
+                                        </dx-tooltip>
+                                    </ng-container>
+                                </div>
                                 <div *ngIf="totalsData[field.name.replace('total', 'new')] != 0">
                                     of {{ totalsData[field.name] | currency : currency : 'symbol' : '1.0-0' }}
                                 </div>

@@ -30,6 +30,8 @@ export class CountsAndTotalsComponent implements AfterViewInit, OnDestroy {
     fields = this.dashboardService.totalsDataFields;
     totalsDataLoading$ = this.dashboardService.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$));
 
+    public Object = Object;
+
     constructor(
         private dashboardService: DashboardWidgetsService,
         private lifeCycleService: LifecycleSubjectsService,
@@ -65,6 +67,11 @@ export class CountsAndTotalsComponent implements AfterViewInit, OnDestroy {
                 ? this.loadingService.startLoading(this.elementRef.nativeElement)
                 : this.loadingService.finishLoading(this.elementRef.nativeElement);
         });
+    }
+
+    detailsAvailable(field): boolean {
+        let detailsData = this.data[field.detailsField];
+        return detailsData && Object.keys(detailsData).length > 1;
     }
 
     ngOnDestroy() {

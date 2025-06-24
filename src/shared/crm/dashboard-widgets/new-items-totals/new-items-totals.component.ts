@@ -26,6 +26,8 @@ export class NewItemsTotalsComponent implements OnDestroy, OnInit {
     totalsDataLoading$ = this.dashboardService.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$));
     currency: string = SettingsHelper.getCurrency();
 
+    public Object = Object;
+
     constructor(
         private lifeCycleService: LifecycleSubjectsService,
         private dashboardService: DashboardWidgetsService,
@@ -47,6 +49,10 @@ export class NewItemsTotalsComponent implements OnDestroy, OnInit {
                 ? this.loadingService.startLoading(this.elementRef.nativeElement)
                 : this.loadingService.finishLoading(this.elementRef.nativeElement);
         });
+    }
+
+    detailsAvailable(detailsData): boolean {
+        return detailsData && Object.keys(detailsData).length > 1;
     }
 
     ngOnDestroy() {
