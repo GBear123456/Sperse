@@ -101,7 +101,7 @@
                         <stripe-settings></stripe-settings>
                     </ng-container>
                 </mat-step>
-                <mat-step *ngIf="isPaymentsEnabled" #paymentProvidersStep>
+                <mat-step *ngIf="isSpreedlyEnabled" #paymentProvidersStep>
                     <ng-container *ngIf="stepper.selected === paymentProvidersStep">
                         <payment-providers-settings></payment-providers-settings>
                     </ng-container>
