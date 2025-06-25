@@ -1,4 +1,5 @@
 :host {
+
     ::ng-deep inplace-edit {
         .inplace-edit-view-mode {
             height: 30px;
@@ -13,8 +14,8 @@
         .inplace-edit-edit-mode {
             dx-text-box {
                 .dx-texteditor-input {
-                    background: #f3f7fa;
-                    color: #202b35;
+                    background: var(--input-bg);
+                    color: var(--text-color);
                     font-size: 28px !important;
                     font-weight: 400;
                 }
@@ -59,7 +60,7 @@
         &:before {
             content: '';
             position: absolute;
-            border-left: 1px solid #dfdfdf;
+            border-left: 1px solid var(--border-color);
             display: block;
             height: 82px;
             left: 15px;
@@ -86,7 +87,7 @@
         max-width: 460px;
 
         h1 {
-            color: #202b35;
+            color: var(--text-color);
             margin-top: -2px;
             margin-bottom: 0;
             font-size: 24px !important;
@@ -115,7 +116,7 @@
         width: 110px;
         height: 110px;
         cursor: pointer;
-        background-color: #F4F4F4;
+        background-color: var(--hover-bg);
         z-index: 9999999;
         border-radius: 50%;
         background-size: cover;
@@ -123,7 +124,7 @@
         &:before {
             display: block;
             width: 10px;
-            background-color: #DBDCDD;
+            background-color: var(--muted-color);
             height: 40px;
             top: 35px;
             left: 50px;
@@ -132,7 +133,7 @@
         &:after {
             display: block;
             width: 40px;
-            background-color: #DBDCDD;
+            background-color: var(--muted-color);
             height: 10px;
             top: 10px;
             left: 35px;
@@ -164,13 +165,13 @@
         border-radius: 50%;
         height: 115px;
         width: 115px;
-        background-color: #fff;
+        background-color: var(--card-bg);
     }
 
     .avatar .active {
-        background: #37d749;
+        background: var(--success-color);
         border-radius: 50%;
-        border: 2px solid #f3f7fa;
+        border: 2px solid var(--card-bg);
         width: 14px;
         height: 14px;
         position: absolute;
@@ -239,9 +240,9 @@
             display: inline-block;
             font-size: 16px;
             text-align: center;
-            border: 1px dashed #cfd6db;
+            border: 1px dashed var(--border-color);
             a {
-                color: #00aeef;
+                color: var(--primary-color);
                 display: block;
                 padding: 10px;
                 font-size: 13px;
@@ -296,11 +297,11 @@
             ::ng-deep inplace-edit {
                 vertical-align: middle;
             }
-            
+
             margin-bottom: 0;
             font-size: 12px;
             font-weight: 400;
-            color: #677380;
+            color: var(--muted-color);
             height: 35px;
             padding-right: 0 !important;
         }
@@ -314,7 +315,7 @@
                 }
             }
 
-            color: #202b35;
+            color: var(--text-color);
             font-size: 16px;
             font-weight: 500;
             letter-spacing: 0.3px;
@@ -329,7 +330,7 @@
                     width: 93%;
                 }
             }
-            
+
             .actions {
                 top: 0;
                 bottom: 0;
@@ -339,16 +340,16 @@
                 display: inline-flex;
                 margin-left: 0;
                 position: absolute;
-                background: #f3f7fa;
+                background: var(--hover-bg);
 
                 i {
-                    color: #00aeef;
+                    color: var(--primary-color);
                     padding: 0 5px;
                     cursor: pointer;
                 }
 
                 i.delete {
-                    color: #f44336;
+                    color: var(--danger-color);
                 }
             }
             &:hover .actions {
@@ -423,7 +424,7 @@
     }
 
     .header_financial_info .approved span {
-        color: #00aeef;
+        color: var(--primary-color);
     }
 
     .header_buttons {
@@ -445,6 +446,8 @@
     }
 
     .contact-persons-info {
+        display: flex;
+        align-items: center;
         cursor: pointer;
         margin: 3px 0 0 15px;
         height: 10px;
@@ -458,7 +461,7 @@
         height: 16px;
         width: 16px;
         left: -9px;
-        border: 2px solid #00aeef;
+        border: 2px solid var(--primary-color);
         border-left-color: rgba(255, 255, 255, .2);
         border-bottom-color: rgba(255, 255, 255, .2);
         border-radius: 50%;

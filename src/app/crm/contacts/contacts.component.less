@@ -12,7 +12,7 @@
         margin: 0 auto;
         min-height: 50px;
         position: relative;
-        border-bottom: 1px solid #e5e9ec;
+        border-bottom: 1px solid var(--border-color);
         display: flex;
         align-items: center;
 
@@ -27,12 +27,13 @@
                 line-height: 1.57;
                 letter-spacing: 0.3px;
                 text-align: left;
-                color: rgb(0, 174, 239);
+                color: var(--primary-color);
                 margin-left: 10px;
                 text-decoration: none;
+                transition: opacity 0.2s ease;
 
                 &:hover {
-                    color: lighten(rgb(0, 174, 239), 5%);
+                    opacity: 0.8;
                 }
             }
             .sub-contacts-info {
@@ -53,9 +54,9 @@
         width: 289px;
         height: 63px;
         text-align: right;
-        background: #FFF;
+        background: var(--card-bg);
         padding-right: 30px;
-        border-right: 1px solid #e5e9ec;
+        border-right: 1px solid var(--border-color);
 
         .disabled {
             opacity: 0.5;
@@ -64,7 +65,7 @@
         }
 
         i {
-            color: #686f76;
+            color: var(--muted-color);
             width: 20px;
             height: 20px;
             margin: 10px 0 0 20px;
@@ -75,13 +76,13 @@
         }
 
         a.general-active-link i {
-            border-bottom: 2px solid #58a3dc;
+            border-bottom: 2px solid var(--primary-color);
         }
 
         i.sms-icon:before {
             bottom: 5px;
             position: relative;
-            color: #686F76;
+            color: var(--muted-color);
             opacity: 0.6;
         }
         i.note-icon {
@@ -115,9 +116,14 @@
     }
 
     .created_owner h4 {
-        color: #b1b5bb;
+        color: var(--muted-color);
         width: 50%;
         display: inline-block;
         font-size: 14px;
+    }
+
+    .contact-persons-info {
+        display: flex;
+        align-items: center;
     }
 }

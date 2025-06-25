@@ -5,9 +5,9 @@
     // width: calc(~"100vw - 60px"); width for layout, need add it and fix some styles later
     ::ng-deep header {
         height: 82px;
-        background: #f3f7fa;
+        background: var(--headline-bg);
         display: flex;
-        border-bottom: 1px solid #e5e9ec;
+        border-bottom: 1px solid var(--border-color);
         box-shadow: -2px 2px 6px 0 rgba(0, 0, 0, 0.1);
         align-items: center;
         justify-content: space-between;
@@ -18,7 +18,7 @@
             margin: 5px 0 5px 0;
 
             ::ng-deep path {
-                stroke: #00aeef;
+                stroke: var(--primary-color);
             }
         }
     }
@@ -36,6 +36,7 @@
         border-right: none;
         padding-bottom: 10px;
         overflow-y: hidden;
+        background: var(--card-bg);
 
         .mat-tab-nav-bar {
             border: none;
@@ -48,9 +49,9 @@
     }
 
     ::ng-deep .mat-sidenav-content {
-        border-left: 1px solid #e5e9ec;
-        border-right: 1px solid #e5e9ec;
-        background: #fff;
+        border-left: 1px solid var(--border-color);
+        border-right: 1px solid var(--border-color);
+        background: var(--card-bg);
         margin-right: inherit !important;
     }
 
@@ -65,15 +66,15 @@
             letter-spacing: 0.5px;
             text-align: left;
             font-weight: 300;
-            color: #7f8790;
+            color: var(--muted-color);
             opacity: 1;
         }
 
         ::ng-deep .mat-tab-label-active {
             border-bottom: none;
-            background: #fff;
+            background: var(--card-bg);
             font-weight: 500;
-            color: #202b35;
+            color: var(--text-color);
         }
     }
 
@@ -127,7 +128,7 @@
         padding-left: 18px;
         margin-left: 14px;
         font-weight: 300;
-        color: #424c56;
+        color: var(--text-color);
         font-size: 14px;
         line-height: 1.71;
         letter-spacing: 0.6px;
@@ -137,9 +138,9 @@
     }
 
     .mat-tab-link.active {
-        color: #212c36;
+        color: var(--headline-title-color);
         font-weight: 500;
-        border-left: 3px solid #00aeef;
+        border-left: 3px solid var(--primary-color);
     }
 
     ::ng-deep h1 {
@@ -147,7 +148,7 @@
     }
 
     ::ng-deep h3.lab {
-        color: #b1b6bc;
+        color: var(--muted-color);
         text-transform: uppercase;
         font-size: 16px;
     }
@@ -161,19 +162,19 @@
     }
 
     ::ng-deep .mat-ink-bar {
-        background-color: #00aeef !important;
+        background-color: var(--primary-color) !important;
     }
 
     ::ng-deep .green {
-        color: #37d749;
+        color: var(--success-color);
     }
 
     ::ng-deep .red {
-        color: #ff6066;
+        color: var(--danger-color);
     }
 
     ::ng-deep .grey {
-        color: #424c56;
+        color: var(--text-color);
     }
 
     ::ng-deep .mat-tab-label {
