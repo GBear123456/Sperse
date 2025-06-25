@@ -10,8 +10,10 @@
             </a>
         </div>
 
-
-        <global-search *ngIf="showGlobalSearch"></global-search>
+        <div class="search-navigation-container">
+            <clients-navigation *ngIf="isContactDetailRoute()"></clients-navigation>
+            <global-search *ngIf="showGlobalSearch"></global-search>
+        </div>
 
         <ng-container *ngIf="layoutService.showTopBar">
             <contact-info-panel *ngIf="appService.showContactInfoPanel$ | async" [data]="appService.contactInfo"></contact-info-panel>
