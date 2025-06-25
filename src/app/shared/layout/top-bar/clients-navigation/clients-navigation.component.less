@@ -55,10 +55,10 @@
         flex: 1;
         min-width: 0;
 
-        .icon {
+        .icon-building {
             color: #1e335c;
             font-size: 18px;
-            margin-right: 6px;
+            margin-right: 10px;
             display: flex;
             align-items: center;
         }
@@ -68,6 +68,9 @@
             align-items: center;
             min-width: 0;
             .name {
+                width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 font-weight: 600;
                 color: #1e335c;
                 font-size: 15px;
@@ -82,7 +85,10 @@
                 display: inline-block;
             }
             .role {
+                width: 70px;
                 color: #1e335c;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 font-weight: 400;
                 font-size: 15px;
                 white-space: nowrap;
