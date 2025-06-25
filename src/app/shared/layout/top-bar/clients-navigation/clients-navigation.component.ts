@@ -42,7 +42,7 @@ export class ClientsNavigationComponent extends AppComponentBase implements OnIn
       store: new ODataStore({
         key: this.clientFields.Id,
         url: this.getODataUrl(
-          'Contact',
+          'Contact'
         ),
         version: AppConsts.ODataVersion,
         deserializeDates: false,
@@ -51,7 +51,8 @@ export class ClientsNavigationComponent extends AppComponentBase implements OnIn
           request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
           request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         }
-      })
+      }),
+      paginate: false
     });
 
     this.contactDropdownDataSource.load().then((contacts: any[]) => {
