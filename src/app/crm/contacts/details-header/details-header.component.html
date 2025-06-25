@@ -47,26 +47,22 @@
                 </p>
             </h1>
         </div>
-        <ng-template #bankCode>
-            <div class="bank-code">
-                <bank-code-letters
-                    [bankCode]="
-                        data?.personContactInfo?.person?.bankCode || '????'
-                    "
-                    [allowAdd]="manageAllowed"
-                    [allowEdit]="manageAllowed"
-                    [personId]="data.id"
-                    key="detailsHeader"
-                    [showDialogOnBottom]="true"
-                    [showDescriptionsOnHover]="true"
-                    [showReportLink]="data?.personContactInfo?.person?.bankCode"
-                    [showHistoryLink]="true"
-                    reportIconName="blue"
-                    (bankCodeChange)="contactsService.invalidate()"
-                >
-                </bank-code-letters>
-            </div>
-        </ng-template>
+        <div *ngIf="isBankCodeLayout" class="bank-code">
+            <bank-code-letters
+                [bankCode]="data?.personContactInfo?.person?.bankCode || '????'"
+                [allowAdd]="manageAllowed"
+                [allowEdit]="manageAllowed"
+                [personId]="data.id"
+                key="detailsHeader"
+                [showDialogOnBottom]="true"
+                [showDescriptionsOnHover]="true"
+                [showReportLink]="data?.personContactInfo?.person?.bankCode"
+                [showHistoryLink]="true"
+                reportIconName="blue"
+                (bankCodeChange)="contactsService.invalidate()"
+            >
+            </bank-code-letters>
+        </div>
     </div>
     <div *ngIf="data && !showModernLayout" class="organization_info">
         <div *ngIf="!data?.primaryOrganizationContactId; else companyInfo">
