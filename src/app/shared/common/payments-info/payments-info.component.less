@@ -18,19 +18,19 @@
     h3 {
         font-size: 17px;
         line-height: 1.41;
-        color: #202b35;
+        color: var(--text-color);
         margin-bottom: 0;
         font-weight: 600;
     }
 
     .warning {
-        background-color: #e7326a;
+        background-color: var(--danger-color);
         font-size: 14px;
         font-weight: 500;
         line-height: 1.14;
         letter-spacing: 0.3px;
         text-align: left;
-        color: #ffffff;
+        color: var(--btn-primary-text);
         padding: 10px 27px 10px 19px;
         display: flex;
         justify-content: space-between;
@@ -46,10 +46,10 @@
 
         button {
             border-radius: 13.5px;
-            background-color: rgba(133, 29, 61, .3);
+            background-color: var(--danger-bg, rgba(133, 29, 61, .3));
             font-size: 12px;
             letter-spacing: 0.5px;
-            color: #ffffff;
+            color: var(--btn-primary-text);
             padding: 5px 17px;
         }
     }
@@ -58,7 +58,7 @@
         padding: 0 24px;
 
         .summary {
-            border-bottom: 1px solid #e5e9ec;
+            border-bottom: 1px solid var(--border-color);
             padding-top: 32px;
             padding-bottom: 24px;
             font-weight: 600;
@@ -71,21 +71,21 @@
                 line-height: 0.63;
                 letter-spacing: normal;
                 text-align: left;
-                color: #202b35;
+                color: var(--text-color);
                 margin-right: 67px;
                 height: 100%;
 
                 h4 {
                     font-size: 13px;
                     line-height: 1.85;
-                    color: #202b35;
+                    color: var(--text-color);
                     font-weight: 600;
                 }
 
                 span:not(:last-child) {
                     padding-right: 10px;
                     margin-right: 10px;
-                    border-right: 3px solid #202b35;
+                    border-right: 3px solid var(--text-color);
                 }
             }
         }
@@ -96,12 +96,12 @@
 
             .transactions {
                 flex-basis: 55%;
-                border-right: 1px solid #e5e9ec;
+                border-right: 1px solid var(--border-color);
                 padding-right: 36px;
                 font-size: 14px;
                 font-weight: 500;
                 line-height: 3.14;
-                color: #424c56;
+                color: var(--text-color);
 
                 h3 {
                     margin-bottom: 11px;
@@ -114,7 +114,7 @@
                         .amount {
                             font-size: 15px;
                             line-height: 2.93;
-                            color: #424c56;
+                            color: var(--text-color);
                         }
 
                         .status-data-column {
@@ -125,7 +125,7 @@
                                 .status {
                                     width: auto;
                                     height: 26px;
-                                    background: #f3f7fa;
+                                    background: var(--card-bg);
                                     padding: 2px 15px;
                                     border-radius: 15px;
                                     font-size: 11px;
@@ -135,7 +135,7 @@
                                     line-height: 2.18;
                                     letter-spacing: 0.88px;
                                     text-transform: uppercase;
-                                    color: #40596b;
+                                    color: var(--text-color);
                                     white-space: nowrap;
 
                                     &:before {
@@ -145,22 +145,22 @@
                                         border-radius: 50%;
                                         display: inline-block;
                                         margin-right: 5px;
-                                        background: #1fb430;
+                                        background: var(--success-color);
                                     }
 
                                     &.authorized:before {
-                                        background: #ffa025;
+                                        background: var(--warning-color);
                                     }
 
                                     &.status-failed:before {
-                                        background: #E75151;
+                                        background: var(--danger-color);
                                     }
                                 }
                             }
                         }
 
                         &.active {
-                            background-color: aliceblue;
+                            background-color: var(--hover-bg);
                             border-radius: 8px;
                         }
 
@@ -175,7 +175,7 @@
                     font-size: 14px;
                     font-weight: 500;
                     line-height: 3.14;
-                    color: #00aeef;
+                    color: var(--info-color);
                     margin-top: 32px;
                 }
             }
@@ -188,7 +188,7 @@
                     font-size: 14px;
                     line-height: 1.71;
                     letter-spacing: 0.3px;
-                    color: #00aeef;
+                    color: var(--info-color);
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
@@ -197,7 +197,7 @@
                         font-size: 14px;
                         line-height: 1.71;
                         letter-spacing: 0.3px;
-                        color: #00aeef;
+                        color: var(--info-color);
                         font-weight: 600;
                     }
                 }
@@ -205,7 +205,7 @@
                 ul.paymentMethodsList {
                     li {
                         padding: 15px 0;
-                        border-bottom: 1px solid #e5e9ec;
+                        border-bottom: 1px solid var(--border-color);
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
@@ -217,8 +217,8 @@
 
                         .paymentMethodIcon {
                             border-radius: 4px;
-                            background-color: rgba(229, 233, 236, .3);
-                            border: solid 1px #e5e9ec;
+                            background-color: var(--hover-bg);
+                            border: solid 1px var(--border-color);
                             width: 58px;
                             height: 40px;
                             position: relative;
@@ -236,8 +236,8 @@
                             }
 
                             &.achPaymentMethodIcon {
-                                background-color: #00aeef;
-                                color: #fff;
+                                background-color: var(--info-color);
+                                color: var(--btn-primary-text);
                                 border: none;
                                 display: flex;
                                 align-items: center;
@@ -254,7 +254,7 @@
                         .paymentName {
                             font-size: 15px;
                             line-height: 1.6;
-                            color: #202b35;
+                            color: var(--text-color);
                             font-weight: 600;
 
                             span {
@@ -263,7 +263,7 @@
 
                             &.default-name {
                                 font-style: italic;
-                                color: #aaa;
+                                color: var(--disabled-color);
                             }
                         }
 
@@ -272,7 +272,7 @@
                             font-weight: 300;
                             line-height: 1.85;
                             letter-spacing: 0.3px;
-                            color: #424c56;
+                            color: var(--muted-color);
                         }
 
                         .issue {
@@ -280,7 +280,7 @@
                             font-weight: 500;
                             line-height: 1.71;
                             letter-spacing: 0.3px;
-                            color: #e7326a;
+                            color: var(--danger-color);
 
                             img {
                                 margin-right: 7px;

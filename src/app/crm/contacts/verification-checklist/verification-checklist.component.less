@@ -2,7 +2,7 @@
     .title {
         h4 {
             padding-left: 25px;
-        }    
+        }
     }
 }
 
@@ -14,12 +14,12 @@
         font-size: 15px;
         line-height: 1.33;
         letter-spacing: 0.3px;
-        color: #202b35;
+        color: var(--text-color);
     }
-    
+
     .title {
         cursor: pointer;
-        border-bottom: 2px solid #f8fafa;
+        border-bottom: 2px solid var(--border-color);
         padding-bottom: 5px;
 
         i {
@@ -31,7 +31,7 @@
             position: relative;
         }
     }
-    
+
     .checklist-data {
         margin-top: 15px;
         li {
@@ -39,7 +39,7 @@
             font-weight: 300;
             line-height: 1.43;
             letter-spacing: 0.3px;
-            color: #677380;
+            color: var(--muted-color);
             padding-bottom: 9px;
 
             span {
@@ -51,24 +51,24 @@
             }
 
             i {
-                border: 2px solid #e7e7e7;
+                border: 2px solid var(--border-color);
                 border-radius: 5px;
                 width: 25px;
                 height: 25px;
                 padding: 4px;
                 padding-right: 15px;
             }
-            
+
             i.fa-check {
-                color: #33e504;
+                color: var(--success-color);
             }
-            
+
             i.fa-times {
-                color: #ff6066;
+                color: var(--danger-color);
             }
-            
+
             i.fa-square {
-                color: #c8c8c8;
+                color: var(--disabled-color);
                 font-size: 12px;
                 padding: 5px;
             }

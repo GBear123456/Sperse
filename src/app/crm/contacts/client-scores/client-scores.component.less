@@ -1,10 +1,12 @@
 :host-context(.config-mode) {
     h4 {
         padding-left: 25px;
-    }    
+    }
 }
 
 :host {
+  color: var(--text-color);
+
   mat-progress-spinner {
       transform: rotate(90deg);
   }
@@ -15,15 +17,15 @@
       height: 33px;
 
       &.experian {
-          background: url("../../../../assets/common/images/logos/Experian.png") no-repeat center;   
+          background: url("../../../../assets/common/images/logos/Experian.png") no-repeat center;
       }
 
       &.equifax {
-          background: url("../../../../assets/common/images/logos/EquiFax.png") no-repeat center;   
+          background: url("../../../../assets/common/images/logos/EquiFax.png") no-repeat center;
       }
 
       &.trans-union  {
-          background: url("../../../../assets/common/images/logos/TransUnion.png") no-repeat center;   
+          background: url("../../../../assets/common/images/logos/TransUnion.png") no-repeat center;
       }
   }
 

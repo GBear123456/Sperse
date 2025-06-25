@@ -7,7 +7,7 @@
         line-height: 1.09;
         letter-spacing: .4px;
         padding: 13px 13px 0;
-        color: #202b35;
+        color: var(--text-color);
     }
     .businessEntities-container, .upload-container {
         height: 100%;
@@ -60,7 +60,7 @@
     .download {
         width: 100%;
         height: 80px;
-        border: 1px dashed #dedede;
+        border: 1px dashed var(--border-color);
         border-radius: 5px;
         margin-bottom: 25px;
         text-align: center;
@@ -75,12 +75,12 @@
             font-weight: 300;
             font-size: 34px;
             padding-bottom: 20px;
-            color: #dedede;
+            color: var(--muted-color);
         }
         ::ng-deep .ngx-file-drop__drop-zone {
             height: calc(~"100vh - 350px");
-            border: 1px dashed #00aeef;
-            background-color: #F5FCFE;
+            border: 1px dashed var(--info-color);
+            background-color: var(--hover-bg) !important;
             border-radius: 5px;
             text-transform: none;
 
@@ -91,7 +91,7 @@
                 flex-flow: column;
             }
             p {
-                color: #333333;
+                color: var(--text-color);
                 padding: 10px 0;
                 font-weight: 500;
                 margin: 0;
@@ -111,7 +111,7 @@
     }
 
     .uploading {
-        border: solid 1px #e5e9ec;
+        border: 1px solid var(--border-color);
 
         .wrapper {
             display: flex;
@@ -131,7 +131,7 @@
                 font-stretch: normal;
                 line-height: 1.56;
                 letter-spacing: normal;
-                color: #424c56;
+                color: var(--text-color);
                 span {
                     float: right;
                     font-size: 14px;
@@ -140,7 +140,7 @@
                     font-stretch: normal;
                     line-height: 1.79;
                     letter-spacing: normal;
-                    color: #677380;
+                    color: var(--muted-color);
                 }
             }
             .file-progress-wrapper {
@@ -159,7 +159,7 @@
                     font-stretch: normal;
                     line-height: 2.1;
                     letter-spacing: 0.3px;
-                    color: #677380;
+                    color: var(--muted-color);
                     &.file-name {
                         max-width: 90%;
                         overflow: hidden!important;
@@ -180,7 +180,7 @@
                             content: ' ';
                             height: 14px;
                             width: 1px;
-                            background-color: #e7326a;
+                            background-color: var(--danger-color);
                         }
                         &:before {
                             transform: rotate(45deg);
@@ -192,7 +192,7 @@
                     &.completed {
                         &:before {
                             content: "\2713";
-                            color: #37d749;
+                            color: var(--success-color);
                             font-size: 20px;
                             position: relative;
                             left: 10px;
@@ -211,7 +211,7 @@
         background-color: var(--background-color);
         font-size: 14px;
         font-weight: 400;
-        color: #677380;
+        color: var(--muted-color);
         line-height: 1.36;
         letter-spacing: 0.3px;
         margin: 25px -25px -25px;
@@ -220,7 +220,7 @@
         .override-checkbox {
             font-size: 14px;
             font-weight: 400;
-            color: #677380;
+            color: var(--muted-color);
             line-height: 1.36;
             letter-spacing: 0.3px;
             width: 100%;

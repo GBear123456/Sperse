@@ -1,4 +1,4 @@
-.socials {  
+.socials {
     margin-bottom: 15px;
 
     h3 {
@@ -6,7 +6,7 @@
       line-height: 1.67;
       letter-spacing: 0.7px;
       text-align: left;
-      color: #677380;
+      color: var(--muted-color);
       font-weight: 400;
     }
 
@@ -18,7 +18,7 @@
       line-height: 1.79;
       letter-spacing: 0.3px;
       text-align: left;
-      color: #00aeef;
+      color: var(--info-color);
       cursor: pointer;
       margin: 0px;
       padding-left: 35px;
@@ -58,7 +58,7 @@
       font-weight: 300;
       line-height: 2;
       text-align: left;
-      color: #424c56;
+      color: var(--text-color);
 
       .actions  {
         position: absolute;
@@ -73,25 +73,25 @@
         }
 
         i.edit {
-          color: #00aeef;
+          color: var(--info-color);
         }
-      
+
         i.delete {
-          color: #f44336;
+          color: var(--danger-color);
         }
       }
 
       &:hover {
         .actions {
           display: block;
-        }      
+        }
       }
     }
 
     ::ng-deep inplace-edit {
         width: 94%;
         display: inline-block;
-        vertical-align: top;        
+        vertical-align: top;
 
         .edit-buttons.right {
             display: inline-block;
@@ -104,7 +104,7 @@
             justify-content: space-between;
 
             &:hover {
-                background-color: #F7FAFA;
+                background-color: var(--hover-bg);
             }
 
             .placeholder {
