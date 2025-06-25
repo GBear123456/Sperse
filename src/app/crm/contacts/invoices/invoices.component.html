@@ -1,192 +1,371 @@
 <div>
     <ng-template #invoicesTemplate let-height="height">
-        <invoice-grid-menu (onRefresh)="invalidate()">
-        </invoice-grid-menu>
-        <source-contact-list *ngIf="affiliateManageAllowed"
-                             (onItemSelected)="onSourceContactChanged($event)">
+        <invoice-grid-menu (onRefresh)="invalidate()"> </invoice-grid-menu>
+        <source-contact-list
+            *ngIf="affiliateManageAllowed"
+            (onItemSelected)="onSourceContactChanged($event)"
+        >
         </source-contact-list>
-        <dx-data-grid #invoicesDataGrid
-                      [height]="height"
-                      accessKey="narrowHeaderPanel"
-                      class="main-component-view"
-                      [dataSource]="dataSource"
-                      [allowColumnReordering]="true"
-                      [columnAutoWidth]="true"
-                      [allowColumnResizing]="true"
-                      [hoverStateEnabled]="true"
-                      [pager]="defaultGridPagerConfig"
-                      (onCellClick)="onCellClick($event)"
-                      (onOptionChanged)="onGridOptionChanged($event)"
-                      (onContentReady)="onContentReady()"
-                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-            <dxi-column alignment="center" width="50px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
-            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
+        <div class="wrapper">
+            <div class="grid-view">
+                <dx-data-grid
+                    #invoicesDataGrid
+                    [height]="height"
+                    accessKey="narrowHeaderPanel"
+                    class="main-component-view"
+                    [dataSource]="dataSource"
+                    [allowColumnReordering]="true"
+                    [columnAutoWidth]="true"
+                    [allowColumnResizing]="true"
+                    [hoverStateEnabled]="true"
+                    [pager]="defaultGridPagerConfig"
+                    (onCellClick)="onCellClick($event)"
+                    (onOptionChanged)="onGridOptionChanged($event)"
+                    (onContentReady)="onContentReady()"
+                    (onDataErrorOccurred)="
+                        httpInterceptor.handleError($event.error)
+                    "
+                >
+                    <dxi-column
+                        alignment="center"
+                        width="50px"
+                        cellTemplate="actionsCellTemplate"
+                        headerCellTemplate="actionsCellTemplate"
+                    ></dxi-column>
+                    <a
+                        class="dx-link dx-link-edit"
+                        *dxTemplate="let cellData of 'actionsCellTemplate'"
+                        >Edit</a
+                    >
 
-            <dxi-column [dataField]="invoiceFields.OrderNumber" [caption]="l('OrderNumber')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column [dataField]="invoiceFields.InvoiceNumber" [caption]="l('Invoice No')"></dxi-column>
-            <dxi-column [dataField]="invoiceFields.Amount" [caption]="l('Amount')" cellTemplate="amountTemplate"></dxi-column>
-            <!--<dxi-column [dataField]="invoiceFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>-->
-            <dxi-column [dataField]="invoiceFields.InvoiceStatus" [caption]="l('Status')" alignment="center" cellTemplate="statusCell"></dxi-column>
-            <dxi-column [dataField]="invoiceFields.OrderStage" [caption]="l('Stage')" name="stage" cellTemplate="stageCell" width="160px"></dxi-column>
-            <dxi-column [dataField]="invoiceFields.Date" [caption]="l('Date')" cellTemplate="datetimeCell"></dxi-column>
-            <dxi-column [dataField]="invoiceFields.InvoiceDueDate" [caption]="l('Due Date')" cellTemplate="dueDateCell"></dxi-column>
-            <dxi-column [dataField]="invoiceFields.AffiliateContactName" [caption]="l('AffiliateContactName')" cellTemplate="affiliateContactCell" width="230px"></dxi-column>
-            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">&nbsp;</a>
+                    <dxi-column
+                        [dataField]="invoiceFields.OrderNumber"
+                        [caption]="l('OrderNumber')"
+                        cssClass="clipboard-holder"
+                    ></dxi-column>
+                    <dxi-column
+                        [dataField]="invoiceFields.InvoiceNumber"
+                        [caption]="l('Invoice No')"
+                    ></dxi-column>
+                    <dxi-column
+                        [dataField]="invoiceFields.Amount"
+                        [caption]="l('Amount')"
+                        cellTemplate="amountTemplate"
+                    ></dxi-column>
+                    <!--<dxi-column [dataField]="invoiceFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>-->
+                    <dxi-column
+                        [dataField]="invoiceFields.InvoiceStatus"
+                        [caption]="l('Status')"
+                        alignment="center"
+                        cellTemplate="statusCell"
+                    ></dxi-column>
+                    <dxi-column
+                        [dataField]="invoiceFields.OrderStage"
+                        [caption]="l('Stage')"
+                        name="stage"
+                        cellTemplate="stageCell"
+                        width="160px"
+                    ></dxi-column>
+                    <dxi-column
+                        [dataField]="invoiceFields.Date"
+                        [caption]="l('Date')"
+                        cellTemplate="datetimeCell"
+                    ></dxi-column>
+                    <dxi-column
+                        [dataField]="invoiceFields.InvoiceDueDate"
+                        [caption]="l('Due Date')"
+                        cellTemplate="dueDateCell"
+                    ></dxi-column>
+                    <dxi-column
+                        [dataField]="invoiceFields.AffiliateContactName"
+                        [caption]="l('AffiliateContactName')"
+                        cellTemplate="affiliateContactCell"
+                        width="230px"
+                    ></dxi-column>
+                    <a
+                        class="dx-link dx-link-edit"
+                        *dxTemplate="let cellData of 'actionsCellTemplate'"
+                        >&nbsp;</a
+                    >
 
-            <div *dxTemplate="let cellData of 'stageCell'">
-                <dx-select-box displayExpr="name"
-                               valueExpr="name"
-                               [disabled]="!hasOrdersManage"
-                               [(value)]="cellData.value"
-                               [dataSource]="stages$ | async"
-                               (onOptionChanged)="onStageOptionChanged(cellData, $event)"
-                               (onValueChanged)="updateOrderStage(cellData)">
-                </dx-select-box>
-            </div>
-            <div *dxTemplate="let cellData of 'affiliateContactCell'">
-                <div *ngIf="cellData.value; else affiliateSelect">{{cellData.value}}</div>
-                <ng-template #affiliateSelect>
-                    <div *ngIf="affiliateManageAllowed" attr.id="affiliateContactLink{{cellData.data.Key}}" class="edit-affiliate"
-                         (click)="openSourceContactList($event, cellData.data)">
-                        <span class="small">{{(l('Set') + ' ' + l('AffiliateContactName'))}}</span>
-                        <i class="edit fa fa-pencil"></i>
+                    <div *dxTemplate="let cellData of 'stageCell'">
+                        <dx-select-box
+                            displayExpr="name"
+                            valueExpr="name"
+                            [disabled]="!hasOrdersManage"
+                            [(value)]="cellData.value"
+                            [dataSource]="stages$ | async"
+                            (onOptionChanged)="
+                                onStageOptionChanged(cellData, $event)
+                            "
+                            (onValueChanged)="updateOrderStage(cellData)"
+                        >
+                        </dx-select-box>
                     </div>
-                </ng-template>
-            </div>
-            <div *dxTemplate="let cellData of 'statusCell'" class="status-wrapper">
-                <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ getStatusDescription(cellData.value) }}</div>
-            </div>
-            <div *dxTemplate="let cellData of 'dueDateCell'" class="clipboard-holder">
-                {{ showFutureSubscriptionMessage(cellData) ? l('DueStatus_Pending_Message') : cellData.value ? (cellData.value | date: formatting.date) : l('Invoice_DueOnReceipt') }}
-            </div>
-            <div *dxTemplate="let cellData of 'datetimeCell'" class="clipboard-holder">
-                {{ cellData.value | date: formatting.date }}
-            </div>
-            <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
-                <span> {{ cell.data.Amount | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
-            </div>
+                    <div *dxTemplate="let cellData of 'affiliateContactCell'">
+                        <div *ngIf="cellData.value; else affiliateSelect">
+                            {{ cellData.value }}
+                        </div>
+                        <ng-template #affiliateSelect>
+                            <div
+                                *ngIf="affiliateManageAllowed"
+                                attr.id="affiliateContactLink{{
+                                    cellData.data.Key
+                                }}"
+                                class="edit-affiliate"
+                                (click)="
+                                    openSourceContactList($event, cellData.data)
+                                "
+                            >
+                                <span class="small">{{
+                                    l("Set") + " " + l("AffiliateContactName")
+                                }}</span>
+                                <i class="edit fa fa-pencil"></i>
+                            </div>
+                        </ng-template>
+                    </div>
+                    <div
+                        *dxTemplate="let cellData of 'statusCell'"
+                        class="status-wrapper"
+                    >
+                        <div
+                            *ngIf="cellData.value"
+                            class="status {{ cellData.value | lowercase }}"
+                        >
+                            {{ getStatusDescription(cellData.value) }}
+                        </div>
+                    </div>
+                    <div
+                        *dxTemplate="let cellData of 'dueDateCell'"
+                        class="clipboard-holder"
+                    >
+                        {{
+                            showFutureSubscriptionMessage(cellData)
+                                ? l("DueStatus_Pending_Message")
+                                : cellData.value
+                                ? (cellData.value | date : formatting.date)
+                                : l("Invoice_DueOnReceipt")
+                        }}
+                    </div>
+                    <div
+                        *dxTemplate="let cellData of 'datetimeCell'"
+                        class="clipboard-holder"
+                    >
+                        {{ cellData.value | date : formatting.date }}
+                    </div>
+                    <div
+                        *dxTemplate="let cell of 'amountTemplate'"
+                        class="clipboard-holder padding-right"
+                    >
+                        <span>
+                            {{
+                                cell.data.Amount
+                                    | currency
+                                        : cell.data.CurrencyId
+                                        : "symbol"
+                                        : "1.2-2"
+                            }}
+                        </span>
+                    </div>
 
-            <dxo-paging [pageSize]="20"></dxo-paging>
-            <dxo-sorting mode="multiple"></dxo-sorting>
-            <dxo-load-panel [enabled]="false"></dxo-load-panel>
-            <dxo-group-panel [visible]="false"></dxo-group-panel>
-            <dxo-selection mode="multiple" showCheckBoxesMode="always"></dxo-selection>
-        </dx-data-grid>
+                    <dxo-paging [pageSize]="20"></dxo-paging>
+                    <dxo-sorting mode="multiple"></dxo-sorting>
+                    <dxo-load-panel [enabled]="false"></dxo-load-panel>
+                    <dxo-group-panel [visible]="false"></dxo-group-panel>
+                    <dxo-selection
+                        mode="multiple"
+                        showCheckBoxesMode="always"
+                    ></dxo-selection>
+                </dx-data-grid>
+            </div>
+        </div>
     </ng-template>
 
-   <ng-template #invoices>
-       <ng-container *ngTemplateOutlet="invoicesTemplate;context:{height: 'calc(100vh - 210px)'}"></ng-container>
-   </ng-template>
+    <ng-template #invoices>
+        <ng-container
+            *ngTemplateOutlet="invoicesTemplate; context: { height: '100%' }"
+        ></ng-container>
+    </ng-template>
 
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex" *ngIf="isCommissionsAllowed; else invoices">
+    <mat-tab-group
+        [(selectedIndex)]="selectedTabIndex"
+        *ngIf="isCommissionsAllowed; else invoices"
+    >
         <mat-tab [label]="l('OrdersAndInvoices')">
-            <ng-container *ngTemplateOutlet="invoicesTemplate;context:{height: 'calc(100vh - 270px)'}"></ng-container>
+            <ng-container
+                *ngTemplateOutlet="
+                    invoicesTemplate;
+                    context: { height: '100%' }
+                "
+            ></ng-container>
         </mat-tab>
         <mat-tab [label]="l('GeneratedCommissions')">
-            <dx-data-grid #generatedCommissionDataGrid
-                          height="calc(100vh - 270px)"
-                          class="main-component-view"
-                          accessKey="narrowHeaderPanel"
-                          noDataText=""
-                          [renderAsync]="true"
-                          [loadPanel]="{enabled: false}"
-                          [dataSource]="generatedCommissionDataSource"
-                          [allowColumnReordering]="true"
-                          [columnAutoWidth]="true"
-                          [cacheEnabled]="false"
-                          [remoteOperations]="{
-                    filtering: false,
-                    grouping: false,
-                    groupPaging: true,
-                    paging: true,
-                    sorting: true,
-                    summary: true
-                }"
-                          [allowColumnResizing]="true"
-                          [hoverStateEnabled]="true"
-                          [pager]="defaultGridPagerConfig"
-                          (onCellClick)="onCellClick($event)"
-                          (onContentReady)="loadingService.finishLoading()"
-                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                <dxo-selection mode="none"></dxo-selection>
-                <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+            <div class="wrapper">
+                <div class="grid-view">
+                    <dx-data-grid
+                        #generatedCommissionDataGrid
+                        height="100%"
+                        class="main-component-view"
+                        accessKey="narrowHeaderPanel"
+                        noDataText=""
+                        [renderAsync]="true"
+                        [loadPanel]="{ enabled: false }"
+                        [dataSource]="generatedCommissionDataSource"
+                        [allowColumnReordering]="true"
+                        [columnAutoWidth]="true"
+                        [cacheEnabled]="false"
+                        [remoteOperations]="{
+                            filtering: false,
+                            grouping: false,
+                            groupPaging: true,
+                            paging: true,
+                            sorting: true,
+                            summary: true
+                        }"
+                        [allowColumnResizing]="true"
+                        [hoverStateEnabled]="true"
+                        [pager]="defaultGridPagerConfig"
+                        (onCellClick)="onCellClick($event)"
+                        (onContentReady)="loadingService.finishLoading()"
+                        (onDataErrorOccurred)="
+                            httpInterceptor.handleError($event.error)
+                        "
+                    >
+                        <dxo-selection mode="none"></dxo-selection>
+                        <dxo-scrolling
+                            rowRenderingMode="virtual"
+                        ></dxo-scrolling>
 
-                <dxi-column [width]="40"
+                        <dxi-column
+                            [width]="40"
                             [showInColumnChooser]="false"
-                            [allowExporting]="false">
-                </dxi-column>
-                <dxi-column width="200px"
+                            [allowExporting]="false"
+                        >
+                        </dxi-column>
+                        <dxi-column
+                            width="200px"
                             cellTemplate="staticWidthCell"
                             dataField="ResellerName"
-                            [caption]="l('ResellerName')">
-                </dxi-column>
-                <dxi-column width="180px"
+                            [caption]="l('ResellerName')"
+                        >
+                        </dxi-column>
+                        <dxi-column
+                            width="180px"
                             dataField="OrderNumber"
                             [caption]="l('OrderNumber')"
-                            cssClass="clipboard-holder">
-                </dxi-column>
-                <dxi-column width="180px"
+                            cssClass="clipboard-holder"
+                        >
+                        </dxi-column>
+                        <dxi-column
+                            width="180px"
                             dataField="EarnedDate"
                             [caption]="l('EarnedDate')"
                             cellTemplate="dateCell"
-                            cssClass="tabular">
-                </dxi-column>
-                <dxi-column width="120px"
+                            cssClass="tabular"
+                        >
+                        </dxi-column>
+                        <dxi-column
+                            width="120px"
                             dataField="ProductAmount"
                             [caption]="l('Price')"
-                            cellTemplate="amountTemplate">
-                </dxi-column>
-                <dxi-column width="100px"
+                            cellTemplate="amountTemplate"
+                        >
+                        </dxi-column>
+                        <dxi-column
+                            width="100px"
                             dataField="Tier"
                             [caption]="l('Tier')"
-                            cellTemplate="tierCell">
-                </dxi-column>
-                <dxi-column width="120px"
+                            cellTemplate="tierCell"
+                        >
+                        </dxi-column>
+                        <dxi-column
+                            width="120px"
                             dataField="CommissionableAmount"
                             [caption]="l('CV')"
-                            cellTemplate="amountTemplate">
-                </dxi-column>
-                <dxi-column width="200px"
+                            cellTemplate="amountTemplate"
+                        >
+                        </dxi-column>
+                        <dxi-column
+                            width="200px"
                             cellTemplate="staticWidthCell"
                             dataField="ProductName"
-                            [caption]="l('ProductName')">
-                </dxi-column>
-                <dxi-column width="100px"
+                            [caption]="l('ProductName')"
+                        >
+                        </dxi-column>
+                        <dxi-column
+                            width="100px"
                             dataField="CommissionRate"
                             [caption]="l('Rate')"
                             format="percent"
-                            cssClass="clipboard-holder padding-right">
-                </dxi-column>
-                <dxi-column width="150px"
+                            cssClass="clipboard-holder padding-right"
+                        >
+                        </dxi-column>
+                        <dxi-column
+                            width="150px"
                             dataField="CommissionAmount"
                             [caption]="l('Commission')"
-                            cellTemplate="amountTemplate">
-                </dxi-column>
-                <dxi-column width="120px"
+                            cellTemplate="amountTemplate"
+                        >
+                        </dxi-column>
+                        <dxi-column
+                            width="120px"
                             dataField="Status"
                             [caption]="l('Status')"
-                            cssClass="clipboard-holder padding-right">
-                </dxi-column>
+                            cssClass="clipboard-holder padding-right"
+                        >
+                        </dxi-column>
 
-                <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
-                    {{cellData.value}}
-                </div>
+                        <div
+                            *dxTemplate="let cellData of 'staticWidthCell'"
+                            class="clipboard-holder fixed-right static-width"
+                            [title]="cellData.value"
+                        >
+                            {{ cellData.value }}
+                        </div>
 
-                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                    {{cellData.value | datetime: formatting.dateTimeMoment}}
+                        <div
+                            *dxTemplate="let cellData of 'dateCell'"
+                            class="clipboard-holder"
+                        >
+                            {{
+                                cellData.value
+                                    | datetime : formatting.dateTimeMoment
+                            }}
+                        </div>
+                        <div
+                            *dxTemplate="let cellData of 'tierCell'"
+                            class="clipboard-holder"
+                        >
+                            {{ l(cellData.value) }}
+                        </div>
+                        <div
+                            *dxTemplate="let cellData of 'dateCell'"
+                            class="clipboard-holder"
+                        >
+                            {{
+                                cellData.value
+                                    | datetime : formatting.dateTimeMoment
+                            }}
+                        </div>
+                        <div
+                            *dxTemplate="let cell of 'amountTemplate'"
+                            class="clipboard-holder padding-right"
+                        >
+                            <span>
+                                {{
+                                    cell.value
+                                        | currency
+                                            : cell.data.CurrencyId
+                                            : "symbol"
+                                            : "1.2-2"
+                                }}
+                            </span>
+                        </div>
+                        <dxo-group-panel [visible]="true"></dxo-group-panel>
+                        <dxo-sorting mode="multiple"></dxo-sorting>
+                    </dx-data-grid>
                 </div>
-                <div *dxTemplate="let cellData of 'tierCell'" class="clipboard-holder">
-                    {{l(cellData.value)}}
-                </div>
-                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                    {{cellData.value | datetime: formatting.dateTimeMoment}}
-                </div>
-                <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder padding-right">
-                    <span> {{ cell.value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
-                </div>
-                <dxo-group-panel [visible]="true"></dxo-group-panel>
-                <dxo-sorting mode="multiple"></dxo-sorting>
-            </dx-data-grid>
+            </div>
         </mat-tab>
     </mat-tab-group>
 </div>
