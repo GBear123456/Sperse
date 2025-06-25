@@ -15,12 +15,13 @@
             border: 1px solid rgba(220, 227, 232, 1);
             border-radius: 10px;
 
-            &::before, &::after {
+            &::before,
+            &::after {
                 top: 13px;
                 left: 19px;
                 height: 13px;
                 width: 1.5px;
-                background-color: rgba(16, 33, 58, 1);                
+                background-color: rgba(16, 33, 58, 1);
             }
         }
 
@@ -37,6 +38,10 @@
             border-left: none;
         }
 
+        ::ng-deep .mat-sidenav-content ng-component {
+            height: 100%;
+        }
+
         .mat-tab-nav-bar {
             margin-bottom: 50px;
         }
@@ -45,17 +50,17 @@
             font-family: Manrope;
             font-size: 14px;
             font-weight: 500;
-            line-height: 27px;            
+            line-height: 27px;
             text-align: left;
             border: 0px;
             border-radius: 10px;
             margin-right: 15px;
 
             &.active {
-                color: #FFF;
+                color: #fff;
                 background-color: rgba(0, 168, 237, 1);
                 path {
-                    stroke: #FFF;
+                    stroke: #fff;
                 }
             }
         }
@@ -142,7 +147,10 @@
         }
 
         &.phone {
-            &.type-H, &.type-P, &.type-C, &.type-U {
+            &.type-H,
+            &.type-P,
+            &.type-C,
+            &.type-U {
                 background-image: url("../../../assets/common/icons/phone.svg");
             }
 
