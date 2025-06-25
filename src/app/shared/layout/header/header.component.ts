@@ -26,12 +26,13 @@ import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management
 import { ChatSignalrService } from '../chat/chat-signalr.service';
 import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
+import { Router } from '@angular/router';
 
 @Component({
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.less'],
     selector: 'app-header',
-    providers: [ CommonUserInfoServiceProxy ]
+    providers: [CommonUserInfoServiceProxy]
 })
 export class HeaderComponent implements OnInit {
     origin = location.origin;
@@ -51,10 +52,10 @@ export class HeaderComponent implements OnInit {
             this.layoutService.showLeftBar ||
             this.layoutService.showContactDetailsDialog
         ) &&
-        (this.toolbarService.isSearchBoxEnabled || this.appService.getModule() == 'crm') &&
-        !location.href.includes(this.layoutService.getWelcomePageUri());
-    }; 
-    
+            (this.toolbarService.isSearchBoxEnabled || this.appService.getModule() == 'crm') &&
+            !location.href.includes(this.layoutService.getWelcomePageUri());
+    };
+
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -70,8 +71,9 @@ export class HeaderComponent implements OnInit {
         public quickSideBarChat: QuickSideBarChat,
         public appService: AppService,
         public layoutService: LayoutService,
-        public ls: AppLocalizationService
-    ) {}
+        public ls: AppLocalizationService,
+        public router: Router
+    ) { }
 
     ngOnInit() {
         this.languages = this.ls.languages.filter((l: abp.localization.ILanguageInfo) => l.isDisabled === false);
@@ -112,7 +114,7 @@ export class HeaderComponent implements OnInit {
 
             window.location.reload();
         });
-    }    
+    }
 
     logoClick() {
         if (AppConsts.appMemberPortalUrl && this.authService.checkCurrentTopDomainByUri()) {
@@ -120,5 +122,9 @@ export class HeaderComponent implements OnInit {
             location.href = AppConsts.appMemberPortalUrl;
         } else
             location.href = origin;
+    }
+
+    isContactDetailRoute(): boolean {
+        return /\/crm\/contact\/\d+\/company\/\d+\/contact-information/.test(this.router.url) || /\/crm\/contact\/\d+\/contact-information/.test(this.router.url);
     }
 }
