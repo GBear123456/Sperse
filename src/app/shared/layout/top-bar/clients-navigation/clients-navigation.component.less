@@ -1,5 +1,5 @@
 :host {
-    margin-left: 30px;
+    margin: 0 30px;
 
     .user-card-container {
         position: relative;
@@ -24,9 +24,10 @@
         align-items: center;
         cursor: pointer;
 
-        &.left { 
+        &.left {
             margin-right: 2px;
-            &::after{
+
+            &::after {
                 content: '';
                 display: block;
                 background-color: white;
@@ -35,9 +36,10 @@
             }
         }
 
-        &.right { 
-            margin-left: 2px; 
-            &::before{
+        &.right {
+            margin-left: 2px;
+
+            &::before {
                 content: '';
                 display: block;
                 background-color: white;
@@ -69,6 +71,7 @@
             display: flex;
             align-items: center;
             min-width: 0;
+
             .name {
                 width: 120px;
                 overflow: hidden;
@@ -79,6 +82,7 @@
                 margin-right: 4px;
                 white-space: nowrap;
             }
+
             .divider {
                 width: 1px;
                 height: 16px;
@@ -86,6 +90,7 @@
                 margin: 0 7px;
                 display: inline-block;
             }
+
             .role {
                 width: 70px;
                 color: #1e335c;
@@ -117,8 +122,63 @@
                 border-radius: 50%;
             }
         }
+
         .dropdown-btn {
             margin-left: 18px; // extra space before dropdown
         }
     }
+
+}
+
+.dropdown-list {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    cursor: pointer;
+    padding: 4px 8px;
+
+    .name {
+        width: 120px;
+        overflow: hidden;
+        word-break: keep-all;
+        text-overflow: ellipsis;
+        font-weight: 600;
+        color: #1e335c;
+        font-size: 15px;
+        margin-right: 4px;
+        white-space: nowrap;
+    }
+
+    .divider {
+        width: 1px;
+        height: 16px;
+        background: #dbeafe;
+        margin: 0 7px;
+        display: inline-block;
+    }
+
+    .role {
+        width: 70px;
+        color: #1e335c;
+        overflow: hidden;
+        word-break: keep-all;
+        text-overflow: ellipsis;
+        font-weight: 400;
+        font-size: 15px;
+        white-space: nowrap;
+    }
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f5f5;
 }

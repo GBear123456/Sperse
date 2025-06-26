@@ -9,7 +9,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { ContactDto } from '@app/crm/clients/contact.dto';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { LifecycleSubjectsService } from '@root/shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { AppComponentBase } from '@root/shared/common/app-component-base';
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
   selector: 'clients-navigation',
@@ -19,11 +19,11 @@ import { AppComponentBase } from '@root/shared/common/app-component-base';
 })
 export class ClientsNavigationComponent extends AppComponentBase implements OnInit {
   readonly clientFields: KeysEnum<ContactDto> = ClientFields;
-  @ViewChild('contactSelectBoxRef', { static: false }) contactSelectBox: any;
-  name = 'John Smith'
-  companyName = 'James'
+  isDropdownVisible = false;
+  @ViewChild('dropdownBtn', { static: false }) dropdownBtn: ElementRef;
+
   contactDropdownDataSource: DataSource;
-  
+
   contacts = [];
   contactIds: number[] = [];
   currentContactId: number = 0;  // Current contact's ID
@@ -95,16 +95,15 @@ export class ClientsNavigationComponent extends AppComponentBase implements OnIn
       queryParams: urlTree.queryParams,
     });
     this.currentContactId = contactId;
+    this.onClose();
   }
 
   toggleDropdown() {
-    if (this.contactSelectBox?.instance) {
-      this.contactSelectBox.instance.open(); // or .close()
-    }
+    this.isDropdownVisible = !this.isDropdownVisible;
   }
 
   onClose() {
-    // Implement close logic (e.g., navigate away or emit an event)Add commentMore actions
+    this.isDropdownVisible = false;
   }
 
 }
