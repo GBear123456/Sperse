@@ -10,10 +10,10 @@
             <span class="divider"></span>
             <span class="role">{{ contacts[contactIds?.indexOf(currentContactId)]?.CompanyName }}</span>
         </span>
-        <button class="dropdown-btn" (click)="toggleDropdown()">
+        <button class="dropdown-btn" #dropdownBtn (click)="toggleDropdown()">
             <img src="assets/common/icons/arrow-down-grey.svg" alt="Select Role" />
         </button>
-        <button class="icon-btn close-btn" (click)="onClose()">
+        <button class="icon-btn close-btn" (click)="onClose()" [disabled]="!isDropdownVisible">
             <img src="assets/common/icons/contact/header-close.svg" alt="Close" />
         </button>
     </div>
@@ -23,3 +23,22 @@
         <img src="assets/common/icons/contact/header-angle-right.svg" alt="Next" />
     </button>
 </div>
+<dx-tooltip
+  [target]="dropdownBtn"
+  [scroll]="true"
+  [visible]="isDropdownVisible"
+  [position]="{ my: 'top center', at: 'bottom center' }"
+  [closeOnOutsideClick]="true"
+  (onHiding)="isDropdownVisible = false"
+  [width]="300"
+>
+    <dx-scroll-view [height]="450">
+        <div class="dropdown-list">
+        <div *ngFor="let contact of contacts" class="dropdown-item" (click)="navigateToContact(contact[clientFields.Id])">
+            <div class="name">{{ contact[clientFields.Name] }}</div>
+            <div class="divider"></div>
+            <div class="role">{{ contact[clientFields.CompanyName] }}</div>
+        </div>
+        </div>
+    </dx-scroll-view>
+</dx-tooltip>

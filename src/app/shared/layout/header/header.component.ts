@@ -125,6 +125,6 @@ export class HeaderComponent implements OnInit {
     }
 
     isContactDetailRoute(): boolean {
-        return /\/crm\/contact\/\d+\/company\/\d+\/contact-information/.test(this.router.url) || /\/crm\/contact\/\d+\/contact-information/.test(this.router.url);
+        return /\/crm\/contact\//.test(this.router.url);
     }
 }

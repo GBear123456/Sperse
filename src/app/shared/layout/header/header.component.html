@@ -11,7 +11,7 @@
         </div>
 
         <clients-navigation *ngIf="isContactDetailRoute()"></clients-navigation>
-        <global-search *ngIf="showGlobalSearch"></global-search>
+        <global-search *ngIf="showGlobalSearch" [ngClass]="{'global-search': !isContactDetailRoute()}"></global-search>
 
         <ng-container *ngIf="layoutService.showTopBar">
             <contact-info-panel *ngIf="appService.showContactInfoPanel$ | async" [data]="appService.contactInfo"></contact-info-panel>
