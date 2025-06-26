@@ -6,7 +6,7 @@
     >
         <img src="./assets/common/icons/contact/plus.svg" alt="plus" />
         {{
-            addresses.length > 0
+            addresses?.length > 0
                 ? ""
                 : (isCompany ? ls.l("Company") : ls.l("Add")) +
                   " " +
