@@ -123,8 +123,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
     isTooltipVisible = false;
     searchConfig: any;
 
-    globalSearchPlaceholder = this.ls.l('Type here to search all sections');
-    localSearchPlaceholder = this.ls.l('Type here to search in this section');
+    globalSearchPlaceholder = this.ls.l('Global Search');
+    localSearchPlaceholder = this.ls.l('Global Search');
     selectedSearchMode = this.localSearchPlaceholder;
 
     constructor(
