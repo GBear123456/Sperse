@@ -1,27 +1,27 @@
-.socials {  
+.socials {
     margin-bottom: 15px;
 
     h3 {
-      font-size: 12px;
-      line-height: 1.67;
-      letter-spacing: 0.7px;
-      text-align: left;
-      color: #677380;
-      font-weight: 400;
+        font-size: 12px;
+        line-height: 1.67;
+        letter-spacing: 0.7px;
+        text-align: left;
+        color: #677380;
+        font-weight: 400;
     }
 
     .add-contact {
-      font-size: 14px;
-      font-weight: 300;
-      font-style: normal;
-      font-stretch: normal;
-      line-height: 1.79;
-      letter-spacing: 0.3px;
-      text-align: left;
-      color: #00aeef;
-      cursor: pointer;
-      margin: 0px;
-      padding-left: 35px;
+        font-size: 14px;
+        font-weight: 300;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.79;
+        letter-spacing: 0.3px;
+        text-align: left;
+        color: #00aeef;
+        cursor: pointer;
+        margin: 0px;
+        padding-left: 35px;
     }
 
     .social {
@@ -39,8 +39,8 @@
             margin-bottom: 0;
 
             li {
-              margin: 0;
-              white-space: nowrap;
+                margin: 0;
+                white-space: nowrap;
             }
 
             img {
@@ -53,45 +53,45 @@
     }
 
     li {
-      position: relative;
-      font-size: 15px;
-      font-weight: 300;
-      line-height: 2;
-      text-align: left;
-      color: #424c56;
+        position: relative;
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 2;
+        text-align: left;
+        color: #424c56;
 
-      .actions  {
-        position: absolute;
-        display: none;
-        right: 18px;
-        top: 4px;
-
-        i {
-          font-size: 18px;
-          padding: 7px;
-          cursor: pointer;
-        }
-
-        i.edit {
-          color: #00aeef;
-        }
-      
-        i.delete {
-          color: #f44336;
-        }
-      }
-
-      &:hover {
         .actions {
-          display: block;
-        }      
-      }
+            position: absolute;
+            display: none;
+            right: 18px;
+            top: 4px;
+
+            i {
+                font-size: 18px;
+                padding: 7px;
+                cursor: pointer;
+            }
+
+            i.edit {
+                color: #00aeef;
+            }
+
+            i.delete {
+                color: #f44336;
+            }
+        }
+
+        &:hover {
+            .actions {
+                display: block;
+            }
+        }
     }
 
     ::ng-deep inplace-edit {
         width: 94%;
         display: inline-block;
-        vertical-align: top;        
+        vertical-align: top;
 
         .edit-buttons.right {
             display: inline-block;
@@ -104,7 +104,7 @@
             justify-content: space-between;
 
             &:hover {
-                background-color: #F7FAFA;
+                background-color: #f7fafa;
             }
 
             .placeholder {
@@ -151,7 +151,7 @@
             }
 
             ::ng-deep dx-button {
-                right: 0!important;
+                right: 0 !important;
                 border: none;
                 position: relative;
                 display: inline-block;
@@ -178,16 +178,16 @@
         height: 24px;
         border: none;
         background-color: #ecf3fa;
-        border-radius: 8px;
+        border-radius: 6px;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 4px;
+        padding: 6px;
         cursor: pointer;
 
         img {
-            width: 16px;
-            height: 16px;
+            width: 12px;
+            height: 12px;
             object-fit: contain;
         }
 
@@ -211,21 +211,20 @@
         margin-right: 8px;
 
         img {
-            width: 12px;
-            height: 12px;
+            width: 9px !important;
+            height: 13px !important;
         }
     }
 
     .link-block {
         display: flex;
         align-items: center;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        padding: 0 8px 0 5px;
+        border: 1px solid #e1e7ed;
+        border-radius: 8px;
+        padding: 9px;
         background: #fff;
         min-width: 0;
         flex: 1;
-        min-height: 32px;
 
         .icon {
             display: flex;
@@ -233,10 +232,15 @@
             margin-right: 6px;
 
             svg {
-                width: 22px;
-                height: 22px;
+                width: 20px;
+                height: 20px;
                 border-radius: 6px;
                 display: block;
+            }
+            img {
+                height: 20px;
+                width: 20px;
+                border-radius: 6px;
             }
         }
 
@@ -252,15 +256,17 @@
         }
 
         .copy-btn {
-            opacity: 0;
-            pointer-events: none;
+            opacity: 1;
+            pointer-events: auto;
             background: transparent;
             border: none;
             border-radius: 50%;
             padding: 3px;
-            margin-left: 2px;
+            margin-right: 9px;
             display: flex;
             align-items: center;
+            height: 18px;
+            width: 18px;
 
             svg {
                 display: block;
@@ -312,12 +318,8 @@
     }
 
     // Show icons on hover
-    &:hover, .link-block:hover {
-        .copy-btn {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
+    &:hover,
+    .link-block:hover {
         + .delete-btn,
         .delete-btn {
             opacity: 1;

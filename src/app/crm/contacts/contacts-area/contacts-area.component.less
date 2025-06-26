@@ -28,11 +28,14 @@
             font-family: var(--app-font-family);
         }
 
-        dx-text-box, dx-button, international-phone-number {
+        dx-text-box,
+        dx-button,
+        international-phone-number {
             display: inline-block;
         }
 
-        dx-text-box, international-phone-number {
+        dx-text-box,
+        international-phone-number {
             min-width: 230px;
             width: 70%;
         }
@@ -72,7 +75,41 @@
         margin: 0;
         padding-left: 35px;
     }
-
+    .emails,
+    .phones {
+        display: flex;
+        align-items: center;
+        ul {
+            width: 100%;
+            margin: 0;
+            li {
+                padding: 0;
+                .edit {
+                    background: url(../../../../assets/common/icons/edit-2.svg)
+                        no-repeat center;
+                    height: 18px;
+                    width: 18px;
+                }
+                .delete {
+                    background: url(../../../../assets/common/icons/cross.svg)
+                        no-repeat center;
+                    height: 18px;
+                    width: 18px;
+                }
+                .trash {
+                    background: url(../../../../assets/common/icons/trash.svg)
+                        no-repeat center;
+                    height: 18px;
+                    width: 18px;
+                }
+            }
+        }
+        .icon-btn {
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+    }
     ul {
         // padding-left: 3px;
         position: relative;
@@ -83,18 +120,26 @@
             justify-content: space-between;
             padding: 5px;
             position: relative;
-            background-color: #fff;            
-            .icon-btn {
-                border: none;
-                background: none;
+            background-color: #fff;
+
+            .verify-icon {
+                margin-right: 3px;
+                width: 19px;
+                height: 19px;
+            }
+            .un-verify-icon {
+                margin-right: 3px;
+                width: 15px;
+                height: 15px;
             }
 
             .actions {
                 display: flex;
                 align-items: center;
-                gap: 5px;
+                gap: 9px;
 
-                i, .send-icon {
+                i,
+                .send-icon {
                     transition: background 0.15s;
                     border-radius: 4px;
                 }
@@ -105,11 +150,14 @@
                 .send-icon {
                     display: flex;
                     align-items: center;
-                    background-color: #ECF3FA;
-                    padding: 3px;
-                    border-radius: 2px;
+                    background-color: #ecf3fa;
+                    padding: 8px;
+                    border-radius: 8px;
                     font-size: 14px;
-                    gap: 4px;
+                    gap: 5px;
+                    line-height: 27px;
+                    font-weight: 500;
+                    cursor: pointer;
 
                     img {
                         width: 16px;
@@ -132,7 +180,8 @@
                 // }
 
                 i.edit-info {
-                    background: url(../../../../assets/common/icons/c-info.svg) no-repeat center;
+                    background: url(../../../../assets/common/icons/c-info.svg)
+                        no-repeat center;
                     background-size: 20px;
                     display: inline-block;
                     width: 25px;
@@ -143,7 +192,7 @@
 
         &:hover {
             li {
-                background-color: #F8FAFC;
+                background-color: #f8fafc;
             }
 
             // .actions {
@@ -162,8 +211,8 @@
         padding: 5px;
         padding-right: 50px;
         font-size: 15px;
-        font-weight: 300;
-        line-height: 1.67;
+        font-weight: 400;
+        line-height: 27px;
         letter-spacing: 0.3px;
         text-align: left;
         color: #424c56;
