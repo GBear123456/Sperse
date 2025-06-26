@@ -1,0 +1,38 @@
+<ng-container *ngIf="show && detailsAvailable()">
+    <img src="assets/common/icons/info-circle.svg" class="info" [id]="targetId" />
+    <dx-tooltip target="#{{targetId}}"
+                showEvent="dxhoverstart"
+                [closeOnOutsideClick]="true">
+        <div *dxTemplate="let d = data of 'content'" class="currency-breakdown-tooltip-template">
+            <div class="header">Currency Breakdown</div>
+            <div class="currency-breakdown">
+                <ng-container *ngFor="let key of Object.keys(data)">
+                    <div *ngIf="key != currency" class="currency-item">
+                        <div class="currency-label">
+                            <img class="currency-flag" src="assets/common/icons/flags/{{key.toLowerCase()}}.svg">
+                            Converted to {{key}}
+                        </div>
+                        <div class="currency-amount clipboard-holder">
+                            {{data[key] | currency:key:'symbol'}}
+                            <i class="save-to-clipboard" (click)="copyToClipboard(data[key])"></i>
+                        </div>
+                    </div>
+                </ng-container>
+                <div class="note">
+                    All amounts shown above are in the converted transaction currencies
+                </div>
+                <div class="divider"></div>
+                <div class="currency-item">
+                    <div class="currency-label">
+                        <img class="currency-flag" src="assets/common/icons/flags/{{currency.toLowerCase()}}.svg">
+                        Remaining in {{currency}}
+                    </div>
+                    <div class="currency-amount clipboard-holder">
+                        {{(data[currency] || 0) | currency:currency:'symbol'}}
+                        <i class="save-to-clipboard" (click)="copyToClipboard(data[currency] || 0)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dx-tooltip>
+</ng-container>

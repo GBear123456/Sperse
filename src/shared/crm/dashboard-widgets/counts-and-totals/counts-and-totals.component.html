@@ -5,18 +5,10 @@
                 <span>{{ls.l('Total') + ' ' + ls.l(field.title)}}</span>
                 <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'currency'">
                     {{ data[field.name] | currency:currency:'symbol' }}
-                    <ng-container *ngIf="field.showDetails && detailsAvailable(field)">
-                        <img src="assets/common/icons/info-circle.svg" class="info" id="field-details" />
-                        <dx-tooltip target="#field-details"
-                                    showEvent="dxhoverstart"
-                                    hideEvent="dxhoverend">
-                            <div *dxTemplate="let data2 = data of 'content'">
-                                <div *ngFor="let key of Object.keys(data[field.detailsField])">
-                                    <span>{{key}}</span>: <b>{{data[field.detailsField][key] | currency:key:'symbol'}}</b>
-                                </div>
-                            </div>
-                        </dx-tooltip>
-                    </ng-container>
+                    <converted-currency-tooltip [show]="field.showDetails"
+                                                [currency]="currency"
+                                                [data]="data[field.detailsField]">
+                    </converted-currency-tooltip>
                 </span>
                 <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'number'">
                     {{ data[field.name] | number }}
