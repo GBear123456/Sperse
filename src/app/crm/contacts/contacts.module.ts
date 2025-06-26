@@ -173,7 +173,8 @@ import { PaymentsInfoService } from '@app/shared/common/payments-info/payments-i
 import { ContactPaymentsInfoService } from './payment-information/payments-info.service';
 import { CurrencySelectorModule } from '../../../shared/common/currency-selector/currency-selector.module';
 import { DeliverableFeatureFieldsComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/deliverable-feature-fields/deliverable-feature-fields.component'
-import { CommunityAccessSelectorComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/community-access/community-access.component'
+import { CommunityAccessSelectorComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/community-access/community-access.component';
+import { TaskInfoComponent } from './task-info/task-info.component'
 @NgModule({
     declarations: [
         NotesComponent,
@@ -246,7 +247,8 @@ import { CommunityAccessSelectorComponent } from './subscriptions/add-subscripti
         ResellerActivityComponent,
         CreateActivityDialogComponent,
         DeliverableFeatureFieldsComponent,
-        CommunityAccessSelectorComponent
+        CommunityAccessSelectorComponent,
+        TaskInfoComponent
     ],
     imports: [
         FormsModule,
