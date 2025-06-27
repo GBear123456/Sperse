@@ -66,7 +66,6 @@
                         }
                     }
                 }
-
             }
         }
 
@@ -82,7 +81,7 @@
             padding: 0 0 0 10px;
 
             &:hover {
-                opacity: 0.5
+                opacity: 0.5;
             }
         }
 
@@ -120,18 +119,18 @@
             }
         }
     }
-
 }
 
 ::ng-deep body.lend-space {
     .page-header .page-top {
         ::ng-deep i[aria-label="Notifications"] {
-            display: inline-block!important;
-            background: url('../../../../assets/common/images/lend-space-dark/notification.svg') no-repeat!important;
-            width: 17px!important;
-            height: 20px!important;
+            display: inline-block !important;
+            background: url("../../../../assets/common/images/lend-space-dark/notification.svg")
+                no-repeat !important;
+            width: 17px !important;
+            height: 20px !important;
             &:before {
-                display: none!important;
+                display: none !important;
             }
         }
 
@@ -141,23 +140,40 @@
             }
 
             .m-nav__link-icon:before {
-                    content: none;
+                content: none;
             }
             .m-nav__link-icon.flaticon-more-v6 {
-                background: url(../../../../assets/common/images/lend-space-dark/icons/lock-open.svg) no-repeat;
+                background: url(../../../../assets/common/images/lend-space-dark/icons/lock-open.svg)
+                    no-repeat;
             }
             .m-nav__link-icon.flaticon-list {
-                background: url(../../../../assets/common/images/lend-space-dark/icons/playlist.svg) no-repeat;
+                background: url(../../../../assets/common/images/lend-space-dark/icons/playlist.svg)
+                    no-repeat;
             }
             .m-nav__link-icon.flaticon-profile-1 {
-                background: url(../../../../assets/common/images/lend-space-dark/icons/user-picture.svg) no-repeat;
+                background: url(../../../../assets/common/images/lend-space-dark/icons/user-picture.svg)
+                    no-repeat;
             }
             .m-nav__link-icon.flaticon-cogwheel {
-                background: url(../../../../assets/common/images/lend-space-dark/icons/settings-gear.svg) no-repeat;
+                background: url(../../../../assets/common/images/lend-space-dark/icons/settings-gear.svg)
+                    no-repeat;
             }
             .m-nav__link-icon.flaticon-info {
-                background: url(../../../../assets/common/images/lend-space-dark/icons/help.svg) no-repeat;
+                background: url(../../../../assets/common/images/lend-space-dark/icons/help.svg)
+                    no-repeat;
             }
         }
+    }
+}
+.contact-info-panel-search {
+    ::ng-deep .dx-texteditor-buttons-container::after {
+        content: "/";
+        height: 24px;
+        width: 24px;
+        color: #fff;
+        background-color: #ccd9e6;
+        text-align: center;
+        line-height: 27px;
+        border-radius: 6px;
     }
 }
