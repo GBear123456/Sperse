@@ -51,6 +51,16 @@ export class SocialsComponent {
 
     LINK_TYPES = {};
     urlRegEx = AppConsts.regexPatterns.url;
+    socialIcons = [
+        { name: 'Add', img: './assets/common/icons/contact/plus_1.svg' },
+        { name: 'Facebook', img: './assets/common/icons/contact/facebook_symbol.svg' },
+        { name: 'X', img: './assets/common/icons/contact/twitter.svg' },
+        { name: 'TikTok', img: './assets/common/icons/contact/tik-tok.svg' },
+        { name: 'YouTube', img: './assets/common/icons/contact/youtube.svg' },
+        { name: 'Instagram', img: './assets/common/icons/contact/instagram.svg' },
+        { name: 'Email', img: './assets/common/icons/contact/inbox.svg' },
+        { name: 'Home', img: './assets/common/icons/contact/home.svg' }
+    ];
 
     constructor(
         private store$: Store<RootStore.State>,

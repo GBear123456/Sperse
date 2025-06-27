@@ -22,6 +22,7 @@
       </a>
     </div>
 
+    <clients-navigation *ngIf="isContactDetailRoute()"></clients-navigation>
     <global-search *ngIf="showGlobalSearch"></global-search>
 
     <ng-container *ngIf="layoutService.showTopBar">

@@ -1,4 +1,4 @@
-@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~font-awesome/css/font-awesome.css";
 @import "shared/metronic/m-toast.less";
 @import "styles/theme.less";
@@ -28,7 +28,12 @@ body {
 .cdk-global-scrollblock {
     overflow: hidden;
 }
-body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
+body,
+html,
+*,
+.btn,
+.dx-texteditor-input,
+.dx-widget .dx-texteditor-input {
     font-family: var(--app-font-family);
 }
 
@@ -36,7 +41,18 @@ a {
     cursor: pointer;
 }
 
-[class^=dx]:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.dx-datagrid-group-opened):not(.dx-datagrid-group-closed):not(.dx-total):not(.tabular):not(.dx-texteditor-input):not([class*="fontName"]):not(.dx-placeholder):not(.dx-button-text):not(.dx-navigate-button):not(.dx-list-reorder-handle), input.form-control {
+[class^="dx"]:not(i):not([class*="icon"]):not(.dx-expand):not(
+        .dx-theme-marker
+    ):not([class^="dx-sort"]):not([class*="fa-"]):not(.dx-header-filter):not(
+        .dx-treeview-toggle-item-visibility
+    ):not(.dx-datagrid-group-opened):not(.dx-datagrid-group-closed):not(
+        .dx-total
+    ):not(.tabular):not(.dx-texteditor-input):not([class*="fontName"]):not(
+        .dx-placeholder
+    ):not(.dx-button-text):not(.dx-navigate-button):not(
+        .dx-list-reorder-handle
+    ),
+input.form-control {
     font-family: var(--app-font-family) !important;
 }
 
@@ -129,8 +145,8 @@ body.overflow-hidden.modal-open,
 
 /* tooltip on chart */
 .tooltip-header {
-    background: #F4F7FA;
-    color: #212C36;
+    background: #f4f7fa;
+    color: #212c36;
     font-size: 16px;
     font-weight: 500;
     line-height: 24px;
@@ -147,7 +163,7 @@ body.overflow-hidden.modal-open,
 .tooltip-item.forecast.outflows::before,
 .tooltip-item.forecast.net::before,
 .tooltip-item .tooltip-item-marker {
-    content: '';
+    content: "";
     width: 8px;
     height: 8px;
     background: #00aeef;
@@ -155,10 +171,10 @@ body.overflow-hidden.modal-open,
     margin-right: 5px;
 }
 .tooltip-item .tooltip-item-value,
-.tooltip-item .tooltip-item-percent{
+.tooltip-item .tooltip-item-percent {
     float: right;
     font-family: Lato;
-    margin-left: 10px
+    margin-left: 10px;
 }
 .tooltip-item.outflows::before {
     background: #f05b2a;
@@ -203,10 +219,10 @@ app-root > ng-component {
 }
 
 i.save-to-clipboard {
-    width: 25px;
-    min-height: 16px;
+    width: 18px;
+    min-height: 18px;
     display: inline-block;
-    background: url(assets/common/icons/copy.svg) center no-repeat;
+    background: url(assets/common/icons/document-copy.svg) center no-repeat;
     cursor: pointer;
 }
 
@@ -243,7 +259,9 @@ i.save-to-clipboard {
     display: inline-block;
 }
 
-.dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item-content.dx-selectbox-popup-horizonal-line-spec {
+.dx-dropdownlist-popup-wrapper
+    .dx-list:not(.dx-list-select-decorator-enabled)
+    .dx-list-item-content.dx-selectbox-popup-horizonal-line-spec {
     border-top: 1px solid hsl(214.3 31.8% 91.4%);
 }
 
@@ -453,4 +471,5 @@ i.save-to-clipboard {
 .select-header {
     color: var(--text-color) !important;
 }
+
 

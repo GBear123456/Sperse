@@ -396,10 +396,14 @@ export class ToolBarComponent implements OnDestroy, OnInit {
         $('.dx-button[accesskey=' + i.name + ']').removeAttr('button-pressed');
       });
 
-    let checkPressed = item.options && item.options['checkPressed'];
-    if (checkPressed)
-      event.element.setAttribute('button-pressed', Boolean(checkPressed.call(this)));
-  }
+        if ((item.options && item.options['checkPressed']) || item['checkVisible']) {
+            this.initToolbarItems();
+            this.changeDetectorRef.detectChanges();
+        }
+        // let checkPressed = item.options && item.options['checkPressed'];
+        // if (checkPressed)
+        //   event.element.setAttribute('button-pressed', Boolean(checkPressed.call(this)));
+    }
 
   getImgURI(name: string) {
     return './assets/common/icons/' + name + '.svg';

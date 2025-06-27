@@ -42,13 +42,15 @@ import { UserManagementModule } from "@shared/common/layout/user-management-list
 import { InplaceEditModule } from "@app/shared/common/inplace-edit/inplace-edit.module";
 
 /** @todo Used for chart bar and dropdown. Reimplement in future */
-import "assets/metronic/src/js/framework/base/util.js";
-import "assets/metronic/src/js/framework/base/app.js";
-import "assets/metronic/src/js/framework/components/general/dropdown.js";
-import "assets/metronic/src/js/framework/components/general/offcanvas.js";
-import { ContactInfoPanelComponent } from "@app/shared/common/contact-info-panel/contact-info-panel.component";
-import { GlobalSearchComponent } from "@app/shared/layout/top-bar/global-search/global-search.component";
-import { NoDataModule } from "@shared/common/widgets/no-data/no-data.module";
+import 'assets/metronic/src/js/framework/base/util.js';
+import 'assets/metronic/src/js/framework/base/app.js';
+import 'assets/metronic/src/js/framework/components/general/dropdown.js';
+import 'assets/metronic/src/js/framework/components/general/offcanvas.js';
+import { ContactInfoPanelComponent } from '@app/shared/common/contact-info-panel/contact-info-panel.component';
+import { GlobalSearchComponent } from '@app/shared/layout/top-bar/global-search/global-search.component';
+import { ClientsNavigationComponent } from '@app/shared/layout/top-bar/clients-navigation/clients-navigation.component';
+
+import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 
 let COMPONENTS = [
     PlatformSelectComponent,
@@ -58,6 +60,7 @@ let COMPONENTS = [
     LeftBarComponent,
     ContactInfoPanelComponent,
     GlobalSearchComponent,
+    ClientsNavigationComponent
 ];
 
 @NgModule({

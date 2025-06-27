@@ -8,6 +8,217 @@
     height: calc(~"100vh - 218px");
     position: relative;
 
+    &.modern {
+        height: calc(~"100vh - 77px");
+
+        ::ng-deep i.save-to-clipboard {
+            background: url('../../../../../assets/common/icons/document-copy.svg') no-repeat;
+            background-size: 16px 16px;
+            background-position: center;
+        }
+
+        ::ng-deep i.fa-times::before {
+            content: url('../../../../../assets/common/icons/document-remove.svg');
+            vertical-align: middle;
+            display: block;
+            height: 18px;
+        }
+
+        ::ng-deep i.fa-pencil::before {
+            content: url('../../../../../assets/common/icons/document-edit.svg');
+            vertical-align: middle;
+            display: block;
+            height: 18px;
+        }
+
+        .source-info .field label + div .field-info hr {
+            left: 0px;
+        }
+
+        ::ng-deep mat-accordion {
+            .mat-expansion-panel-header {
+                .mat-expansion-panel-header-title {
+                    font-family: Manrope;
+                    font-size: 18px;
+                    font-weight: 600;
+                    line-height: 27px;
+                    letter-spacing: -0.02em;
+                    color: rgba(8, 41, 91, 1);
+                    text-transform: none;
+                }
+                .mat-content {
+                    display: block;
+                    mat-panel-title {
+                        display: inline;
+                    }
+                }
+                .history-icon {
+                    float: none !important;
+                    &::before {
+                        content: url('../../../../../assets/common/icons/history.svg');
+                        position: relative;
+                        top: 5px;
+                    }
+                }
+                .mat-expansion-indicator {
+                    right: 22px;
+                    left: auto;
+
+                    &:after {
+                        width: 12px;
+                        height: 9px;
+                        margin-top: 2px;
+                        background: url('../../../../../assets/common/icons/arrow-down-dark.svg') no-repeat;
+                    }
+                }
+            }
+            .mat-expansion-panel-body {
+                margin: 0 24px !important;
+                padding: 0 0 16px 0 !important;
+                border-bottom: 1px solid rgba(222, 231, 236, 1);
+            }
+        }
+
+        ::ng-deep mat-tab-group {
+            mat-tab-header {
+                margin-left: -20px;
+                margin-right: -20px;
+                border: none;
+                .mat-tab-label {
+                    padding: 0 26px;
+                    background: rgba(250, 252, 255, 1);
+                    &:nth-child(2) {
+                        border-right: 1px solid rgba(231, 237, 242, 1);
+                        border-left: 1px solid rgba(231, 237, 242, 1);
+                    }
+                    .mat-tab-label-content {
+                        font-family: Manrope;
+                        font-size: 15px;
+                        font-weight: 500;
+                        line-height: 27px;
+                        text-align: left;
+                        color: rgba(16, 33, 58, 1);
+                        text-transform: none;
+                    }
+                }
+                .mat-tab-label-active {
+                    background: rgba(238, 248, 255, 1)!important;    
+                }
+                .mat-ink-bar {
+                    display: none;
+                }
+            }
+            .mat-tab-body-wrapper {
+                mat-tab-body:nth-child(2) {
+                    & > div {
+                        margin-left: 15px;
+                    }
+                }
+            }
+            .source-info {
+                .field-info {
+                    &, a {
+                        font-family: Manrope;
+                        font-size: 16px;
+                        font-weight: 500;
+                        line-height: 27px;
+                        text-align: left;
+                    }
+                }
+            }
+            .affiliate-code {
+                &.Unavailable, &.Available {
+                    ::ng-deep inplace-edit {
+                        .actions {
+                            right: 6px !important;
+                            bottom: 6px !important;
+                        }
+
+                        .edit-buttons.right {
+                            background: #fff;
+                            height: 47px;
+                            line-height: 0px;
+                            width: 90px;
+                            display: inline-block;
+                            position: absolute;
+                            vertical-align: bottom;
+                            border-top-right-radius: 10px;
+                            border-bottom-right-radius: 10px;
+                            dx-button {
+                                top: 7px !important;
+                            }
+                        }
+
+                        .inplace-edit-edit-mode input,
+                        .inplace-edit-view-mode a {
+                            background-color: #FFF !important;
+                            border-radius: 10px !important;
+                            border: 1px solid transparent !important;
+                            line-height: 47px !important;
+                            height: 47px !important;
+                        }
+                    }
+                }
+            }
+        }
+        
+        &, 
+        ::ng-deep .mat-expansion-panel-header,
+        ::ng-deep .mat-expansion-panel-content {
+            background: rgba(238, 248, 255, 1);
+        }
+    
+        .expand-angle {
+            position: absolute;
+            width: 49px;
+            height: 49px;
+            cursor: pointer;
+            z-index: 2;
+            right: 0px;
+            padding-top: 19px;
+            border-left: 1px solid rgba(231, 237, 242, 1);
+            background: rgba(250, 252, 255, 1);
+            img {
+                margin: auto;
+                display: block;
+                transform: rotate(180deg);
+            }
+        }        
+
+        .add-affiliateCode {
+            width: 100%;
+            display: block;
+            text-align: right;
+            padding-right: 0!important;
+            font-family: Manrope;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 27px;
+            color: rgba(16, 33, 58, 1);
+            cursor: pointer;
+        }
+
+        .add-new-contact,        
+        .similar-contacts-count {
+            font-family: Plus Jakarta Sans;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 27px;
+            letter-spacing: -0.02em;
+            padding-left: 10px;
+            &, img {
+                cursor: pointer;
+            }
+        }
+        .contact-persons-info img {
+            cursor: pointer;
+        }
+        ::ng-deep dx-select-box,
+        ::ng-deep dx-date-box {
+            background: transparent;
+        }
+    }
+
     .close {
         position: absolute;
         z-index: 2;
@@ -62,7 +273,7 @@
         overflow: hidden;
         max-height: 100% !important;
         min-height: 300px;
-        padding-left: 30px;
+        //padding-left: 30px;
 
         .gear-icon {
             z-index: 999;
@@ -141,9 +352,6 @@
                 &, & .span {
                     white-space: nowrap;
                 }
-                span {
-                    padding-right: 0;
-                }
             }
 
             ::ng-deep inplace-edit {
@@ -154,12 +362,6 @@
 
             .add-xref {
                 cursor: pointer;
-            }
-
-            &.credit-balance-actions {
-                span {
-                    cursor: pointer;
-                }
             }
         }
 
@@ -173,6 +375,7 @@
             cursor: pointer;
             color: var(--primary-color);
         }
+
 
         ::ng-deep .affiliate-info {
             overflow: visible;
@@ -206,76 +409,79 @@
                 }
             }
 
-            .mat-expansion-panel-body {
-                padding-bottom: 0 !important;
+            .history-icon {
+                font-size: 18px;
+                float: right;
+                padding: 0;
             }
 
-            .Available inplace-edit {
-                dx-text-box input, .link a {
-                    background-color: rgba(209, 172, 0, 0.2) !important;
-                    border: solid 1px var(--warning-color) !important;
-                    color: var(--warning-color) !important;
-                }
-            }
-
-            .Unavailable inplace-edit {
-                dx-text-box input, .link a {
-                    background-color: var(--disabled-bg) !important;
-                    border: solid 1px var(--muted-color) !important;
-                    color: var(--muted-color) !important;
-                }
-            }
-
-            .affiliate-code > inplace-edit {
-                .inplace-edit-edit-mode {
-                    display: inline-block;
-                    width: 330px !important;
-                    height: auto;
-                    margin-bottom: 5px;
-
-                    dx-text-box input {
-                        border-radius: 3px;
-                        border: solid 1px var(--success-color);
-                        background-color: rgba(55, 215, 73, 0.1);
-                        height: 38px;
-                        line-height: 38px;
-                        padding: 0 60px 0 10px;
-                        font-size: 15px;
-                        font-weight: 400;
-                        font-style: normal;
-                        font-family: var(--app-font-family), Verdana, sans-serif;
-                        letter-spacing: 0.3px;
-                        text-align: left;
-                        color: var(--success-color);
+            .affiliate-code {
+                &.Available inplace-edit .inplace-edit-view-mode{
+                    dx-text-box input, .link a {
+                        background-color: rgba(209, 172, 0, 0.2);
+                        border: solid 1px var(--warning-color) !important;
+                        color: var(--warning-color) !important;
                     }
+                }
 
-                    .dx-placeholder {
-                        top: -34px;
+                &.Unavailable inplace-edit .inplace-edit-view-mode{
+                    dx-text-box input, .link a {
+                        background-color: var(--disabled-bg) !important;
+                        border: solid 1px var(--muted-color) !important;
+                        color: var(--muted-color) !important;
                     }
+                }
 
-                    .edit-buttons {
-                        .dx-button {
-                            background-color: transparent !important;
-                            top: 2px;
+                inplace-edit {
+                    .inplace-edit-edit-mode {
+                        display: inline-block;
+                        width: 330px !important;
+                        height: auto;
+                        margin-bottom: 5px;
 
-                            &.button-update {
-                                right: 33px;
-                            }
+                        dx-text-box input {
+                            border-radius: 3px;
+                            border: solid 1px var(--success-color);
+                            background-color: rgba(55, 215, 73, 0.1);
+                            height: 38px;
+                            line-height: 38px;
+                            padding: 0 60px 0 10px;
+                            font-size: 15px;
+                            font-weight: 400;
+                            font-style: normal;
+                            font-family: var(--app-font-family), Verdana, sans-serif;
+                            letter-spacing: 0.3px;
+                            text-align: left;
+                            color: var(--success-color);
+                        }
 
-                            &.button-exit {
-                                right: 0;
+                        .dx-placeholder {
+                            top: -34px;
+                        }
+
+                        .edit-buttons {
+                            .dx-button {
+                                background-color: transparent !important;
+                                top: 2px;
+
+                                &.button-update {
+                                    right: 33px;
+                                }
+
+                                &.button-exit {
+                                    right: 0;
+                                }
                             }
                         }
                     }
-                }
 
-                .inplace-edit-view-mode {
-                    display: flex;
-                    margin-bottom: 5px;
-                    //padding-bottom: 30px;
-                    span {
-                        flex: 1;
-                    }
+                    .inplace-edit-view-mode {
+                        display: flex;
+                        margin-bottom: 5px;
+                        //padding-bottom: 30px;
+                        span {
+                            flex: 1;
+                        }
 
                     .link a {
                         border-radius: 3px;
@@ -293,18 +499,19 @@
                         color: var(--success-color);
                     }
 
-                    .placeholder {
-                        a {
-                            color: var(--muted-color);
+                        .placeholder {
+                            a {
+                                color: var(--muted-color);
+                            }
                         }
                     }
-                }
 
-                .actions {
-                    position: absolute;
-                    right: -2px;
-                    left: auto;
-                    bottom: 3px;
+                    .actions {
+                        position: absolute;
+                        right: -2px;
+                        left: auto;
+                        bottom: 3px;
+                    }
                 }
             }
         }
@@ -372,11 +579,6 @@
     ::ng-deep mat-accordion {
         .mat-expansion-panel {
             box-shadow: initial;
-
-            .history-icon {
-                font-size: 18px;
-                padding: 0 !important;
-            }
         }
 
         .mat-expansion-indicator {

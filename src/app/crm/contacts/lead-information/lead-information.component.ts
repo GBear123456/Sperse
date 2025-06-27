@@ -38,6 +38,7 @@ import { LayoutSection } from '@app/crm/contacts/lead-information/layout-section
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { OrganizationUnitsDialogData } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog-data.interface';
 import { SettingsHelper } from '@shared/common/settings/settings.helper';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'lead-information',
@@ -166,6 +167,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
         private permissionCheckerService: PermissionCheckerService,
         private currencyPipe: CurrencyPipe,
         private permissionService: AppPermissionService,
+        public layoutService: LayoutService,
         public ls: AppLocalizationService
     ) {
         contactsService.orgUnitsSaveSubscribe((data) => {
@@ -220,13 +222,14 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     initToolbarInfo() {
-        setTimeout(() => this.contactsService.toolbarUpdate({
-            optionButton: {
-                name: 'options',
-                options: { checkPressed: () => this.contactsService.settingsDialogOpened.value },
-                action: () => this.contactsService.toggleSettingsDialog()
-            }
-        }));
+        if (!this.layoutService.showModernLayout) 
+            setTimeout(() => this.contactsService.toolbarUpdate({
+                optionButton: {
+                    name: 'options',
+                    options: { checkPressed: () => this.contactsService.settingsDialogOpened.value },
+                    action: () => this.contactsService.toggleSettingsDialog()
+                }
+            }));
     }
 
     private loadOrganizationUnits() {

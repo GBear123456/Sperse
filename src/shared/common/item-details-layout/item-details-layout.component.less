@@ -3,23 +3,71 @@
     position: relative;
     display: block;
     // width: calc(~"100vw - 60px"); width for layout, need add it and fix some styles later
-    ::ng-deep header {
-        height: 82px;
-        background: var(--headline-bg);
-        display: flex;
-        border-bottom: 1px solid var(--border-color);
-        box-shadow: -2px 2px 6px 0 rgba(0, 0, 0, 0.1);
-        align-items: center;
-        justify-content: space-between;
 
-        mat-progress-spinner {
-            width: 44px;
-            height: 44px;
-            margin: 5px 0 5px 0;
+    &.modern {
+        left: 0px;
 
-            ::ng-deep path {
-                stroke: var(--primary-color);
+        .close-button {
+            top: 15px;
+            left: 15px;
+            z-index: 2;
+            box-shadow: none;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+
+            &::before,
+            &::after {
+                top: 13px;
+                left: 19px;
+                height: 13px;
+                width: 1.5px;
+                background-color: var(--headline-bg);
             }
+        }
+
+        mat-sidenav-container {
+            width: 100%;
+            height: calc(~"100vh - 75px");
+
+            .nav-icon {
+                margin: 14px 9px auto 0;
+            }
+        }
+
+        ::ng-deep .mat-sidenav-content {
+            border-left: none;
+        }
+
+        ::ng-deep .mat-sidenav-content ng-component {
+            height: 100%;
+        }
+
+        .mat-tab-nav-bar {
+            margin-bottom: 50px;
+        }
+
+        .mat-tab-link {
+            font-family: Manrope;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 27px;
+            text-align: left;
+            border: 0px;
+            border-radius: 10px;
+            margin-right: 15px;
+
+            &.active {
+                color: #fff;
+                background-color: rgba(0, 168, 237, 1);
+                path {
+                    stroke: #fff;
+                }
+            }
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
         }
     }
 
@@ -100,7 +148,10 @@
         }
 
         &.phone {
-            &.type-H, &.type-P, &.type-C, &.type-U {
+            &.type-H,
+            &.type-P,
+            &.type-C,
+            &.type-U {
                 background-image: url("../../../assets/common/icons/phone.svg");
             }
 
@@ -224,6 +275,9 @@
         margin: 0;
         width: 100%;
         height: 100%;
+        &.right-side-opened {
+            width: calc(100% - 400px);
+        }
     }
 
     ::ng-deep .dx-scrollbar-vertical {

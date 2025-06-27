@@ -1,5 +1,5 @@
-/** Core imports */
-import { Component, OnInit, ViewChild, AfterViewInit, Inject, ElementRef, OnDestroy } from '@angular/core';
+0/** Core imports */
+import { Component, OnInit, ViewChild, AfterViewInit, Input, Injector, ElementRef, OnDestroy, HostBinding } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { formatPercent } from '@angular/common';
 
@@ -50,6 +50,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { AffiliateHistoryDialogComponent } from './affiliate-history-dialog/affiliate-history-dialog.component';
 import { CreditsChangeDialogComponent } from './credits-change-dialog/credits-change-dialog.component';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { ContactPersonsDialogComponent } from '../../contact-persons-dialog/contact-persons-dialog.component';
 import { CrmService } from '@app/crm/crm.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { FeatureCheckerService } from 'abp-ng2-module';
@@ -58,14 +60,30 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { CreditBalanceHistoryDialogComponent } from './credit-balance-history-dialog/credit-balance-history-dialog.component';
 
 @Component({
+    selector: 'personal-details-dialog',
     templateUrl: 'personal-details-dialog.html',
     styleUrls: ['personal-details-dialog.less'],
-    providers: [ContactAffiliateCodeServiceProxy]
+    providers: [
+        ContactAffiliateCodeServiceProxy, 
+        LifecycleSubjectsService
+    ]
 })
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+    @HostBinding('class.modern') get showModernLayout(): boolean {
+        // return this.appService.layoutService.showModernLayout;
+        return true
+    }
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild('checklistScroll') checklistScroll: DxScrollViewComponent;
-    @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
+    @ViewChild(MatTabGroup) tabGroup: MatTabGroup;  
+    @Input() showContactPersons: Function;
+    @Input() addNewContact: Function;
+    @Input() isModal = true;
+
+    get isUserProfile() {
+        return this.contactsService.contactGroupId.value === ContactGroup.Employee;
+    }
+
     showChecklistTab = !!this.appService.getFeatureCount(AppFeatures.CRMMaxChecklistPointCount);
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
@@ -179,7 +197,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     isCRMGranted = this.permissionCheckerService.isGranted(AppPermissions.CRM);
     formatPercentValue = formatPercent;
 
+    public dialogRef: MatDialogRef<PersonalDetailsDialogComponent>;
+    public data: any;
+
     constructor(
+        private injector: Injector,
         private route: ActivatedRoute,
         private router: Router,
         private leadProxy: LeadServiceProxy,
@@ -201,24 +223,16 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private featureCheckerService: FeatureCheckerService,
         private permissionCheckerService: PermissionCheckerService,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
+        private lifeCycleSubjectsService: LifecycleSubjectsService,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
-        public dialogRef: MatDialogRef<PersonalDetailsDialogComponent>,
         public dialog: MatDialog,
         public appService: AppService,
-        public appSession: AppSessionService,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        public appSession: AppSessionService
     ) {
         if (abp.clock.provider.supportsMultipleTimezone)
             this.timezone = abp.timing.timeZoneInfo.iana.timeZoneId;
-
-        this.dialogRef.beforeClosed().subscribe(() => {
-            this.dialogRef.updatePosition({
-                top: '157px',
-                right: '-100vw'
-            });
-        });
 
         if (this.hasCommissionsFeature) {
             this.tenantPaymentSettingsService.getCommissionSettings().subscribe((res: CommissionSettings) => {
@@ -282,13 +296,27 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     ngOnInit() {
-        this.slider = this.elementRef.nativeElement.closest('.slider');
-        this.slider.classList.add('hide', 'min-width-0', 'without-shadow');
-        this.dialogRef.updateSize('0px', '0px');
-        this.dialogRef.updatePosition({
-            top: '155px',
-            right: '-100vw'
-        });
+        if (this.isModal) {
+            this.dialogRef = this.injector.get(MatDialogRef);
+            this.data = this.injector.get(MAT_DIALOG_DATA);
+
+            this.dialogRef.beforeClosed().subscribe(() => {
+                this.dialogRef.updatePosition({
+                    top: '157px',
+                    right: '-100vw'
+                });
+            });
+        }
+
+        if (this.dialogRef) {
+            this.slider = this.elementRef.nativeElement.closest('.slider');
+            this.slider.classList.add('hide', 'min-width-0', 'without-shadow');
+            this.dialogRef.updateSize('0px', '0px');
+            this.dialogRef.updatePosition({
+                top: '155px',
+                right: '-100vw'
+            });
+        }
 
         this.sourceContactInfo$ = combineLatest(
             this.contactsService.leadInfo$.pipe(
@@ -306,17 +334,32 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     ngAfterViewInit() {
+        let topAdjustment = this.appService.layoutService.showModernLayout ? '75px' : '218px'; 
         setTimeout(() => {
-            this.slider.classList.remove('hide');
-            this.dialogRef.updateSize('425px', 'calc(100vh - 218px)');
-            setTimeout(() => {
-                this.dialogRef.updatePosition({
-                    top: '218px',
-                    right: '0px'
-                });
-            }, 100);
+            if (this.dialogRef) {
+                this.slider.classList.remove('hide');
+                this.dialogRef.updateSize('425px', 'calc(100vh - ' + topAdjustment + ')');
+                setTimeout(() => {
+                    this.dialogRef.updatePosition({
+                        top: topAdjustment,
+                        right: '0px'
+                    });
+                }, 100);
+            }
             (this.tabGroup?._tabHeader as MatTabHeader).updatePagination();
         });
+    }
+
+    closeEditDialogs() {
+        this.dialog.openDialogs.forEach((dialog: MatDialogRef<any>) => {
+            if (!dialog.disableClose) {
+                dialog.close();
+            }
+        });
+    }
+
+    showParent() {
+        this.contactsService.updateLocation(this.contactInfo.parentId);
     }
 
     updateAffiliateRate(value: number, valueProp, valueInitialProp, tier) {
@@ -533,7 +576,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             purposeId, purposeId == AppConsts.PipelinePurposeIds.order ? undefined : contactGroupId
         ).pipe(
             filter(Boolean), first(),
-            takeUntil(this.dialogRef.beforeClosed()),
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
             map((pipeline: PipelineDto) => {
                 let rootItem: any = {
                     id: 'root',
@@ -570,7 +613,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     getTabContentHeight(subtract = 0) {
-        return innerHeight - 290 - subtract + 'px';
+        return innerHeight - (this.appService.layoutService.showModernLayout ? 150 : 290) - subtract + 'px';
     }
 
     initVerificationChecklist(): void {
@@ -642,7 +685,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     addEmptyAffiliateCode() {
-        this.contactInfo.affiliateCodes.push(new ContactAffiliateCodeDto());
+        let codes = this.contactInfo.affiliateCodes;
+        if (codes && codes[codes.length - 1].id)
+            this.contactInfo.affiliateCodes.push(new ContactAffiliateCodeDto());
     }
 
     updateAffiliateCode(value, i) {
@@ -723,7 +768,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     close() {
         this.contactsService.closeSettingsDialog();
-        setTimeout(() => this.dialogRef.close(), 100);
+        if (this.dialogRef)
+            setTimeout(() => this.dialogRef.close(), 100);
     }
 
     getThumbnailSrc(thumbnailId?: string) {
@@ -984,6 +1030,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     ngOnDestroy() {
+        this.lifeCycleSubjectsService.destroy.next();
         this.contactsService.unsubscribe(this.ident);
     }
 }

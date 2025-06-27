@@ -1,0 +1,184 @@
+:host {
+    margin: 0 30px;
+
+    .user-card-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: #f7fafd;
+        border-radius: 8px;
+        // padding: 0 8px;
+        min-height: 46px;
+        font-family: inherit;
+        margin: 0px 10px;
+    }
+
+    .nav-btn {
+        background: transparent;
+        border: none;
+        color: #cbd5e1;
+        padding: 0;
+        font-size: 18px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
+        &.left {
+            margin-right: 2px;
+
+            &::after {
+                content: '';
+                display: block;
+                background-color: white;
+                width: 4px;
+                height: 46px;
+            }
+        }
+
+        &.right {
+            margin-left: 2px;
+
+            &::before {
+                content: '';
+                display: block;
+                background-color: white;
+                width: 4px;
+                height: 46px;
+            }
+        }
+
+    }
+
+    .user-card-content {
+        display: flex;
+        align-items: center;
+        background: none;
+        padding: 2px 8px;
+        border-radius: 6px;
+        flex: 1;
+        min-width: 0;
+
+        .icon-building {
+            color: #1e335c;
+            font-size: 18px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .name-role {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+
+            .name {
+                width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-weight: 600;
+                color: #1e335c;
+                font-size: 15px;
+                margin-right: 4px;
+                white-space: nowrap;
+            }
+
+            .divider {
+                width: 1px;
+                height: 16px;
+                background: #dbeafe;
+                margin: 0 7px;
+                display: inline-block;
+            }
+
+            .role {
+                width: 70px;
+                color: #1e335c;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-weight: 400;
+                font-size: 15px;
+                white-space: nowrap;
+            }
+        }
+
+        .dropdown-btn,
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: #b3b9c4;
+            margin-left: 6px;
+            font-size: 16px;
+            height: 28px;
+            width: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &:hover {
+                color: #1e335c;
+                background: #e5e7eb;
+                border-radius: 50%;
+            }
+        }
+
+        .dropdown-btn {
+            margin-left: 18px; // extra space before dropdown
+        }
+    }
+
+}
+
+.dropdown-list {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    cursor: pointer;
+    padding: 4px 8px;
+
+    .name {
+        width: 120px;
+        overflow: hidden;
+        word-break: keep-all;
+        text-overflow: ellipsis;
+        font-weight: 600;
+        color: #1e335c;
+        font-size: 15px;
+        margin-right: 4px;
+        white-space: nowrap;
+    }
+
+    .divider {
+        width: 1px;
+        height: 16px;
+        background: #dbeafe;
+        margin: 0 7px;
+        display: inline-block;
+    }
+
+    .role {
+        width: 70px;
+        color: #1e335c;
+        overflow: hidden;
+        word-break: keep-all;
+        text-overflow: ellipsis;
+        font-weight: 400;
+        font-size: 15px;
+        white-space: nowrap;
+    }
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f5f5;
+}

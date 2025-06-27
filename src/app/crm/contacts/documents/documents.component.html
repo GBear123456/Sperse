@@ -1,16 +1,19 @@
 <div [hidden]="openDocumentMode" class="wrapper">
-    <action-menu width="150px"
+    <action-menu
+        width="150px"
         [items]="actionMenuItems"
         target=""
-        (onItemClick)="onMenuItemClick($event)">
+        (onItemClick)="onMenuItemClick($event)"
+    >
     </action-menu>
     <div class="grid-view">
-        <dx-data-grid height="100%"
+        <dx-data-grid
+            height="100%"
             class="main-component-view"
             [dataSource]="documents$ | async"
             [allowColumnReordering]="true"
             [columnAutoWidth]="true"
-            [columnChooser]="{enabled: false}"
+            [columnChooser]="{ enabled: false }"
             [allowColumnResizing]="true"
             [hoverStateEnabled]="false"
             [focusStateEnabled]="false"
@@ -19,19 +22,60 @@
             (onCellClick)="onCellClick($event)"
             (onContentReady)="onContentReady()"
             (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
-            (onToolbarPreparing)="onToolbarPreparing($event)">
+            (onToolbarPreparing)="onToolbarPreparing($event)"
+        >
             <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
-            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+            <dxo-header-filter
+                [visible]="true"
+                [allowSearch]="true"
+            ></dxo-header-filter>
 
-            <dxi-column dataField="size" [calculateSortValue]="numerizeFileSizeSortValue" [caption]="l('DocumentSize')" [calculateCellValue]="calculateFileSizeValue" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="creationTime" [caption]="l('Date')" [sortingMethod]="sortCreationDateTime" dataType="datetime" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
-            <dxi-column dataField="typeName" [caption]="l('DocumentType')" cellTemplate="typeCell" [width]="335" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
-            <dxi-column dataField="fileName" cellTemplate="fileNameCell" [caption]="l('FileName')"></dxi-column>
+            <dxi-column
+                dataField="size"
+                [calculateSortValue]="numerizeFileSizeSortValue"
+                [caption]="l('DocumentSize')"
+                [calculateCellValue]="calculateFileSizeValue"
+                cssClass="clipboard-holder"
+            ></dxi-column>
+            <dxi-column
+                dataField="creationTime"
+                [caption]="l('Date')"
+                [sortingMethod]="sortCreationDateTime"
+                dataType="datetime"
+                cssClass="tabular"
+                cellTemplate="dateCell"
+                sortOrder="desc"
+            ></dxi-column>
+            <dxi-column
+                dataField="typeName"
+                [caption]="l('DocumentType')"
+                cellTemplate="typeCell"
+                [width]="335"
+                [allowSorting]="false"
+                [allowFiltering]="false"
+            ></dxi-column>
+            <dxi-column
+                dataField="fileName"
+                cellTemplate="fileNameCell"
+                [caption]="l('FileName')"
+            ></dxi-column>
 
             <div *dxTemplate="let cellData of 'fileNameCell'">
-                <ng-container *ngIf="getFileExtensionByFileName(cellData.value) as extension">
-                    <div [ngClass]="['file-name', extension, getViewerType(extension)]">
-                        <span class="clipboard-holder">{{ cellData.value }}</span>
+                <ng-container
+                    *ngIf="
+                        getFileExtensionByFileName(cellData.value) as extension
+                    "
+                >
+                    <div
+                        [ngClass]="[
+                            'file-name',
+                            extension,
+                            getViewerType(extension)
+                        ]"
+                    >
+                        <span class="clipboard-holder">{{
+                            cellData.value
+                        }}</span>
                     </div>
                 </ng-container>
             </div>
@@ -40,26 +84,57 @@
                 alignment="center"
                 width="90px"
                 cellTemplate="actionsCellTemplate"
-                headerCellTemplate="actionsCellTemplate">
+                headerCellTemplate="actionsCellTemplate"
+            >
             </dxi-column>
 
-            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
+            <a
+                class="dx-link dx-link-edit"
+                *dxTemplate="let cellData of 'actionsCellTemplate'"
+            ></a>
 
-            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                {{ cellData.value | datetime: formatting.dateTimeMoment }}
+            <div
+                *dxTemplate="let cellData of 'dateCell'"
+                class="clipboard-holder"
+            >
+                {{ cellData.value | datetime : formatting.dateTimeMoment }}
             </div>
             <div *dxTemplate="let data of 'title'">
-                <h2 class="title">{{ showPropertyDocuments ? l('PropertyDocuments') : l('Documents')}}</h2>
+                <h2 class="title">
+                    {{
+                        showPropertyDocuments
+                            ? l("PropertyDocuments")
+                            : l("Documents")
+                    }}
+                </h2>
             </div>
             <div class="document-type" *dxTemplate="let data of 'typeCell'">
-                <p *ngIf="data.data.id != clickedCellKey && data.value">{{ data.value }}</p>
-                <p class="choose-document-type" *ngIf="manageAllowed && data.data.id != clickedCellKey && !data.value">{{ l('ChooseDocumentType') }}</p>
+                <p *ngIf="data.data.id != clickedCellKey && data.value">
+                    {{ data.value }}
+                </p>
+                <p
+                    class="choose-document-type"
+                    *ngIf="
+                        manageAllowed &&
+                        data.data.id != clickedCellKey &&
+                        !data.value
+                    "
+                >
+                    {{ l("ChooseDocumentType") }}
+                </p>
                 <span *ngIf="manageAllowed && data.data.id == clickedCellKey">
-                    <crm-document-types-list #documentTypeslist
+                    <crm-document-types-list
+                        #documentTypeslist
                         [selectedItem]="data.data.typeId"
                         [documentTypes]="documentTypes"
-                        (onItemSelected)="onDocumentTypeSelected(documentTypeslist.selectedDocumentTypeId, data.data)"
-                        (onListUpdated)="onTypeListUpdated($event)">
+                        (onItemSelected)="
+                            onDocumentTypeSelected(
+                                documentTypeslist.selectedDocumentTypeId,
+                                data.data
+                            )
+                        "
+                        (onListUpdated)="onTypeListUpdated($event)"
+                    >
                     </crm-document-types-list>
                 </span>
             </div>
@@ -73,26 +148,54 @@
     </div>
 </div>
 <div [hidden]="!openDocumentMode" class="documentView" #documentViewContainer>
-    <form *ngIf="showViewerType == documentViewerTypes.WOPI" id="office_form" name="office_form" target="office_frame" action="{{ wopiUrlsrc }}" method="post">
-        <input name="access_token" value="{{ wopiAccessToken }}" type="hidden" />
-        <input name="access_token_ttl" value="{{ wopiAccessTokenTtl }}" type="hidden" />
+    <form
+        *ngIf="showViewerType == documentViewerTypes.WOPI"
+        id="office_form"
+        name="office_form"
+        target="office_frame"
+        action="{{ wopiUrlsrc }}"
+        method="post"
+    >
+        <input
+            name="access_token"
+            value="{{ wopiAccessToken }}"
+            type="hidden"
+        />
+        <input
+            name="access_token_ttl"
+            value="{{ wopiAccessTokenTtl }}"
+            type="hidden"
+        />
     </form>
-    <span *ngIf="showViewerType == documentViewerTypes.WOPI" #frameHolder class="wopi-frame-holder"></span>
+    <span
+        *ngIf="showViewerType == documentViewerTypes.WOPI"
+        #frameHolder
+        class="wopi-frame-holder"
+    ></span>
 
-    <app-image-viewer *ngIf="showViewerType == documentViewerTypes.IMAGE"
+    <app-image-viewer
+        *ngIf="showViewerType == documentViewerTypes.IMAGE"
         [images]="[previewContent]"
         [idContainer]="'imageViewer'"
-        [loadOnInit]="true">
+        [loadOnInit]="true"
+    >
     </app-image-viewer>
-    <textarea *ngIf="showViewerType == documentViewerTypes.TEXT" readonly>{{previewContent}}</textarea>
+    <textarea *ngIf="showViewerType == documentViewerTypes.TEXT" readonly>{{
+        previewContent
+    }}</textarea>
 
-    <div [hidden]="showViewerType !== documentViewerTypes.XML" class="xmlContainer" #xmlContainer></div>
+    <div
+        [hidden]="showViewerType !== documentViewerTypes.XML"
+        class="xmlContainer"
+        #xmlContainer
+    ></div>
 
-    <div *ngIf="showViewerType === documentViewerTypes.ARCHIVE" class="archiveContainer">
+    <div
+        *ngIf="showViewerType === documentViewerTypes.ARCHIVE"
+        class="archiveContainer"
+    >
         <h3>Content:</h3>
-        <dx-tree-list
-            [dataSource]="archiveFiles$ | async"
-            keyExpr="name">
+        <dx-tree-list [dataSource]="archiveFiles$ | async" keyExpr="name">
             <dxi-column dataField="name"></dxi-column>
             <dxi-column dataField="date"></dxi-column>
         </dx-tree-list>
@@ -100,16 +203,27 @@
 
     <dx-data-grid
         id="gridContainer"
-        *ngIf="showViewerType === documentViewerTypes.CSV && parsedCsv && parsedCsv.length"
+        *ngIf="
+            showViewerType === documentViewerTypes.CSV &&
+            parsedCsv &&
+            parsedCsv.length
+        "
         [columnAutoWidth]="true"
         [pager]="defaultGridPagerConfig"
         [showColumnHeaders]="false"
-        [dataSource]="parsedCsv">
+        [dataSource]="parsedCsv"
+    >
     </dx-data-grid>
 
     <vg-player *ngIf="showViewerType === documentViewerTypes.VIDEO">
-        <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>
-            <source src="{{currentDocumentURL}}">
+        <video
+            [vgMedia]="media"
+            #media
+            id="singleVideo"
+            preload="auto"
+            controls
+        >
+            <source src="{{ currentDocumentURL }}" />
         </video>
     </vg-player>
 </div>

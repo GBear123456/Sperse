@@ -1,6 +1,123 @@
 :host {
     color: var(--text-color);
 
+    &.modern {
+        header {
+            height: auto;
+            background: transparent;
+            display: block;
+            border-bottom: none;
+            box-shadow: none;
+
+            .header_buttons {
+                position: fixed;
+                margin-right: 15px;
+                top: 10px;
+                right: 0;
+
+                .vertical-delimiter::before {
+                    height: 78px;
+                }
+
+                button {
+                    height: 44px;
+                    &#addEntity {
+                        padding: 0 50px 0 20px;
+                        &::before {
+                            top: 20px;
+                        }
+                    }
+                }
+            }
+
+            .avatar {
+                position: relative;
+                top: 0;
+                left: 0;
+                .photo-area {
+                    margin: 40px auto 10px auto;
+                }
+                .active {
+                    right: 95px;
+                }
+            }
+
+            .personal_info {
+                margin: auto;
+
+                .company-name {
+                    font-family: var(--app-font-family);
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 27px;
+                    text-align: center;
+                    margin-bottom: 0;
+                    margin-top: -2px;
+                }
+                .job-title {
+                    font-family: var(--app-font-family);
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 27px;
+                    text-align: center;
+                    color: rgba(136, 139, 149, 1);
+                }
+
+                ::ng-deep inplace-edit {
+                    .inplace-edit-view-mode {
+                        display: flex;
+                        flex-direction: column;
+                        width: 287px;
+                        height: auto;
+                        a {
+                            font-family: var(--app-font-family);
+                            font-size: 22px;
+                            font-weight: 600;
+                            line-height: 27px;
+                            text-align: center;
+                        }
+                        .actions {
+                            display: none;
+                        }
+                    }
+                }
+
+                ::ng-deep rating-bar {
+                    .rating {
+                        margin: 0 30px 10px;
+                    }
+                    mat-progress-bar {
+                        width: 190px;
+                        max-width: 100%;
+                    }
+                    .mat-progress-bar-fill::after {
+                        background-color: rgba(0, 202, 106, 1);
+                    }
+                }
+            }
+        }
+    }
+
+    header {
+        height: 82px;
+        background: #f3f7fa;
+        display: flex;
+        border-bottom: 1px solid #e5e9ec;
+        box-shadow: -2px 2px 6px 0 rgba(0, 0, 0, 0.1);
+        align-items: center;
+        justify-content: space-between;
+
+        mat-progress-spinner {
+            width: 44px;
+            height: 44px;
+            margin: 5px 0 5px 0;
+
+            ::ng-deep path {
+                stroke: #00aeef;
+            }
+        }
+    }
+
     ::ng-deep inplace-edit {
         .inplace-edit-view-mode {
             height: 30px;
@@ -27,59 +144,6 @@
         }
     }
 
-    .organization_info {
-        ::ng-deep inplace-edit {
-            .inplace-edit-view-mode {
-                height: auto;
-            }
-            i.dx-icon {
-                font-size: 14px !important;
-            }
-            i.edit {
-                display: none !important;
-            }
-            span {
-                display: inline-block;
-                white-space: nowrap;
-                @media (max-width: 1366px) {
-                    max-width: 260px;
-                }
-            }
-            input {
-                font-size: 16px !important;
-            }
-        }
-    }
-
-    .vertical-delimiter {
-        width: 30px;
-        height: 0;
-        position: relative;
-        display: inline-block;
-        vertical-align: top;
-        align-self: flex-start;
-        &:before {
-            content: '';
-            position: absolute;
-            border-left: 1px solid var(--border-color);
-            display: block;
-            height: 82px;
-            left: 15px;
-            top: -15px;
-        }
-    }
-
-    .refresh-button {
-        width: 44px;
-        height: 44px;
-        margin: 5px;
-        outline: none;
-        border: none;
-        cursor: pointer;
-        vertical-align: bottom;
-        background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
-    }
-
     .full_name {
         font-family: var(--app-font-family);
         display: flex;
@@ -91,15 +155,15 @@
             color: var(--text-color);
             margin-top: -2px;
             margin-bottom: 0;
-            font-size: 24px !important;
-            font-weight: 400;
-            line-height: 1;
+            font-size: 22px !important;
+            font-weight: 600 !important;
+            line-height: 27px;
             max-width: 100%;
 
             ::ng-deep .inplace-edit-view-mode {
                 .placeholder {
                     font-size: 24px;
-                    opacity: .6;
+                    opacity: 0.6;
                 }
                 span {
                     max-width: 92%;
@@ -200,6 +264,212 @@
         @media (max-width: 1280px) {
             width: 280px;
         }
+    }
+
+    .user-card-container {
+        display: flex;
+        align-items: center;
+        background: #f7fafd;
+        border-radius: 8px;
+        // padding: 0 8px;
+        min-height: 46px;
+        font-family: inherit;
+        margin: 0px 10px;
+    }
+
+    .nav-btn {
+        background: transparent;
+        border: none;
+        color: #cbd5e1;
+        padding: 0 6px;
+        font-size: 18px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
+        &.left {
+            margin-right: 2px;
+        }
+        &.right {
+            margin-left: 2px;
+        }
+    }
+
+    .user-card-content {
+        display: flex;
+        align-items: center;
+        background: none;
+        padding: 2px 8px;
+        border-radius: 6px;
+        flex: 1;
+        min-width: 0;
+
+        .icon {
+            color: #1e335c;
+            font-size: 18px;
+            margin-right: 6px;
+            display: flex;
+            align-items: center;
+        }
+
+        .name-role {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            .name {
+                font-weight: 600;
+                color: #1e335c;
+                font-size: 15px;
+                margin-right: 4px;
+                white-space: nowrap;
+            }
+            .divider {
+                width: 1px;
+                height: 16px;
+                background: #dbeafe;
+                margin: 0 7px;
+                display: inline-block;
+            }
+            .role {
+                color: #1e335c;
+                font-weight: 400;
+                font-size: 15px;
+                white-space: nowrap;
+            }
+        }
+
+        .dropdown-btn,
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: #b3b9c4;
+            margin-left: 6px;
+            font-size: 16px;
+            height: 28px;
+            width: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &:hover {
+                color: #1e335c;
+                background: #e5e7eb;
+                border-radius: 50%;
+            }
+        }
+        .dropdown-btn {
+            margin-left: 18px; // extra space before dropdown
+        }
+    }
+
+    .organization_info {
+        ::ng-deep inplace-edit {
+            .inplace-edit-view-mode {
+                height: auto;
+            }
+            i.dx-icon {
+                font-size: 14px !important;
+            }
+            i.edit {
+                display: none !important;
+            }
+            span {
+                display: inline-block;
+                white-space: nowrap;
+                @media (max-width: 1366px) {
+                    max-width: 260px;
+                }
+            }
+            input {
+                font-size: 16px !important;
+            }
+        }
+    }
+
+    .vertical-delimiter {
+        width: 30px;
+        height: 0;
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        align-self: flex-start;
+        &:before {
+            content: "";
+            position: absolute;
+            border-left: 1px solid #dfdfdf;
+            display: block;
+            height: 82px;
+            left: 15px;
+            top: -15px;
+        }
+    }
+
+    .refresh-button {
+        width: 44px;
+        height: 44px;
+        margin: 5px;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        vertical-align: bottom;
+        background: url("../../../../assets/common/icons/refresh-btn.svg")
+            no-repeat center;
+    }
+
+    .organization_info {
+        ::ng-deep inplace-edit {
+            .inplace-edit-view-mode {
+                height: auto;
+            }
+            i.dx-icon {
+                font-size: 14px !important;
+            }
+            i.edit {
+                display: none !important;
+            }
+            span {
+                display: inline-block;
+                white-space: nowrap;
+                @media (max-width: 1366px) {
+                    max-width: 260px;
+                }
+            }
+            input {
+                font-size: 16px !important;
+            }
+        }
+    }
+
+    .vertical-delimiter {
+        width: 30px;
+        height: 0;
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        align-self: flex-start;
+        &:before {
+            content: "";
+            position: absolute;
+            border-left: 1px solid #dfdfdf;
+            display: block;
+            height: 82px;
+            left: 15px;
+            top: -15px;
+        }
+    }
+
+    .refresh-button {
+        width: 44px;
+        height: 44px;
+        margin: 5px;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        vertical-align: bottom;
+        background: url("../../../../assets/common/icons/refresh-btn.svg")
+            no-repeat center;
     }
 
     .organization_info {
@@ -325,7 +595,8 @@
             position: relative;
         }
 
-        h2, h3 {
+        h2,
+        h3 {
             ::ng-deep inplace-edit {
                 .inplace-edit-edit-mode {
                     width: 93%;
@@ -436,6 +707,11 @@
             white-space: nowrap;
         }
 
+        .menu img {
+            vertical-align: sub;
+            margin-right: 7px;
+        }
+
         @media (max-width: 1280px) {
             .menu {
                 min-width: 50px !important;
@@ -446,30 +722,95 @@
         }
     }
 
-    .contact-persons-info {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        margin: 3px 0 0 15px;
-        height: 10px;
-        opacity: 0.8;
-        &:hover {
-            opacity: 1;
-        }
-    }
-
     .loadindicator {
         height: 16px;
         width: 16px;
         left: -9px;
         border: 2px solid var(--primary-color);
-        border-left-color: rgba(255, 255, 255, .2);
-        border-bottom-color: rgba(255, 255, 255, .2);
+        border-left-color: rgba(255, 255, 255, 0.2);
+        border-bottom-color: rgba(255, 255, 255, 0.2);
         border-radius: 50%;
         position: relative;
-        -webkit-animation: rotation .6s infinite linear;
-        -moz-animation: rotation .6s infinite linear;
-        -o-animation: rotation .6s infinite linear;
-        animation: rotation .6s infinite linear;
+        -webkit-animation: rotation 0.6s infinite linear;
+        -moz-animation: rotation 0.6s infinite linear;
+        -o-animation: rotation 0.6s infinite linear;
+        animation: rotation 0.6s infinite linear;
     }
+}
+
+.details-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7fafd;
+    border-radius: 16px;
+    padding: 0;
+    min-height: 48px;
+    position: relative;
+}
+
+.details-header-content {
+    display: flex;
+    align-items: center;
+    background: none;
+    padding: 0 16px;
+    flex: 1;
+    justify-content: center;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-btn {
+    width: 40px;
+    height: 48px;
+    border-radius: 16px 0 0 16px;
+}
+
+.icon-building {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
+.contact-name {
+    font-weight: 500;
+    color: #223354;
+    margin-right: 8px;
+}
+
+.divider {
+    margin: 0 8px;
+    color: #b0b8c1;
+}
+
+.contact-role {
+    font-weight: 400;
+    color: #223354;
+    margin-right: 4px;
+}
+
+.dropdown-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 8px;
+    padding: 0 4px;
+}
+
+.close-btn {
+    margin-left: 8px;
+    margin-right: 8px;
+    color: #b0b8c1;
+    font-size: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
