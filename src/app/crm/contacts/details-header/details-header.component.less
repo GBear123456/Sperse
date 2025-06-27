@@ -703,6 +703,11 @@
         #addEntity {
             min-width: 187px;
             white-space: nowrap;
+            background-color: #00ca6a;
+        }
+        #addEntity::after {
+            background-color: #00ca6a;
+            border-left: #02bd64 1px solid;
         }
 
         .menu img {
@@ -811,4 +816,10 @@
     background: none;
     border: none;
     cursor: pointer;
+}
+.context-tooltip {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 158px;
+    gap: 10px;
 }
