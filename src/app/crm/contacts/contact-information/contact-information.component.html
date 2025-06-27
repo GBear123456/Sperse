@@ -1,166 +1,113 @@
 <task-info></task-info>
-<dx-scroll-view
-    showScrollbar="onHover"
-    direction="both"
-    width="100%"
-    height="calc(100vh - 343px)"
->
-    <div class="table-wrapper">
-        <table width="100%" height="100%">
-            <tr>
-                <th height="70px"></th>
-                <th>{{ ls.l("ContactInformation_PersonTitle") }}</th>
-                <th>{{ ls.l("ContactInformation_CompanyTitle") }}</th>
-            </tr>
-            <tr>
-                <td>
-                    <img
-                        src="./assets/common/icons/contact/email.svg"
-                        class="dx-icon"
-                        alt="email"
-                    />
-                    {{ ls.l("Emails") }}
-                </td>
-                <td>
-                    <contacts-area
-                        [contactInfo]="data?.contactInfo"
-                        [contactInfoData]="
-                            data?.contactInfo?.personContactInfo?.details
-                        "
-                        [showContactType]="'emails'"
-                    >
-                    </contacts-area>
-                </td>
-                <td>
-                    <contacts-area
-                        [isCompany]="true"
-                        [contactInfo]="data?.contactInfo"
-                        [contactInfoData]="
-                            data?.contactInfo['organizationContactInfo']
-                                ?.details
-                        "
-                        [showContactType]="'emails'"
-                    >
-                    </contacts-area>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <img
-                        src="./assets/common/icons/contact/phone.svg"
-                        class="dx-icon"
-                        alt="phone"
-                    />
-                    {{ ls.l("Phones") }}
-                </td>
-                <td>
-                    <contacts-area
-                        [contactInfo]="data?.contactInfo"
-                        [contactInfoData]="
-                            data?.contactInfo?.personContactInfo?.details
-                        "
-                        [showContactType]="'phones'"
-                    >
-                    </contacts-area>
-                </td>
-                <td>
-                    <contacts-area
-                        [isCompany]="true"
-                        [contactInfo]="data?.contactInfo"
-                        [contactInfoData]="
-                            data?.contactInfo['organizationContactInfo']
-                                ?.details
-                        "
-                        [showContactType]="'phones'"
-                    >
-                    </contacts-area>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <img
-                        src="./assets/common/icons/contact/link.svg"
-                        class="dx-icon"
-                        alt="link"
-                    />
-                    {{ ls.l("Links") }}
-                </td>
-                <td>
-                    <socials
-                        [contactInfo]="data?.contactInfo"
-                        [contactInfoData]="
-                            data?.contactInfo?.personContactInfo?.details
-                        "
-                    >
-                    </socials>
-                </td>
-                <td>
-                    <socials
-                        [isCompany]="true"
-                        [contactInfo]="data?.contactInfo"
-                        [contactInfoData]="
-                            data?.contactInfo['organizationContactInfo']
-                                ?.details
-                        "
-                    >
-                    </socials>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <img
-                        src="./assets/common/icons/contact/location.svg"
-                        class="dx-icon"
-                        alt="email"
-                    />
-                    {{ ls.l("Addresses") }}
-                </td>
-                <td>
-                    <addresses
-                        [contactInfo]="data?.contactInfo"
-                        [contactId]="
-                            data?.contactInfo?.personContactInfo?.details
-                                ?.contactId
-                        "
-                        [addresses]="
-                            data?.contactInfo?.personContactInfo?.details
-                                ?.addresses
-                        "
-                        (onAddressUpdate)="
-                            updateAddress(
-                                $event,
-                                data?.contactInfo?.personContactInfo?.details
-                                    ?.addresses
-                            )
-                        "
-                    >
-                    </addresses>
-                </td>
-                <td>
-                    <addresses
-                        [isCompany]="true"
-                        [contactInfo]="data?.contactInfo"
-                        [addresses]="
-                            data?.contactInfo['organizationContactInfo']
-                                ?.details?.addresses
-                        "
-                        [contactId]="
-                            data?.contactInfo['organizationContactInfo']
-                                ?.details?.contactId
-                        "
-                        (onAddressUpdate)="
-                            updateAddress(
-                                $event,
-                                data?.contactInfo['organizationContactInfo']
-                                    ?.details?.addresses
-                            )
-                        "
-                    >
-                    </addresses>
-                </td>
-            </tr>
-        </table>
-    </div>
+<dx-scroll-view showScrollbar="onHover" direction="both" width="100%" height="calc(100vh - 343px)">
+  <div class="table-wrapper">
+    <table width="100%" height="100%">
+      <tr>
+        <th height="70px"></th>
+        <th>{{ ls.l('ContactInformation_PersonTitle') }}</th>
+        <th>{{ ls.l('ContactInformation_CompanyTitle') }}</th>
+      </tr>
+      <tr>
+        <td>
+          <img src="./assets/common/icons/contact/email.svg" class="dx-icon" alt="email" />
+          {{ ls.l('Emails') }}
+        </td>
+        <td>
+          <contacts-area
+            [contactInfo]="data?.contactInfo"
+            [contactInfoData]="data?.contactInfo?.personContactInfo?.details"
+            [showContactType]="'emails'"
+          >
+          </contacts-area>
+        </td>
+        <td>
+          <contacts-area
+            [isCompany]="true"
+            [contactInfo]="data?.contactInfo"
+            [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details"
+            [showContactType]="'emails'"
+          >
+          </contacts-area>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="./assets/common/icons/contact/phone.svg" class="dx-icon" alt="phone" />
+          {{ ls.l('Phones') }}
+        </td>
+        <td>
+          <contacts-area
+            [contactInfo]="data?.contactInfo"
+            [contactInfoData]="data?.contactInfo?.personContactInfo?.details"
+            [showContactType]="'phones'"
+          >
+          </contacts-area>
+        </td>
+        <td>
+          <contacts-area
+            [isCompany]="true"
+            [contactInfo]="data?.contactInfo"
+            [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details"
+            [showContactType]="'phones'"
+          >
+          </contacts-area>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="./assets/common/icons/contact/link.svg" class="dx-icon" alt="link" />
+          {{ ls.l('Links') }}
+        </td>
+        <td>
+          <socials
+            [contactInfo]="data?.contactInfo"
+            [contactInfoData]="data?.contactInfo?.personContactInfo?.details"
+          >
+          </socials>
+        </td>
+        <td>
+          <socials
+            [isCompany]="true"
+            [contactInfo]="data?.contactInfo"
+            [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details"
+          >
+          </socials>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="./assets/common/icons/contact/location.svg" class="dx-icon" alt="email" />
+          {{ ls.l('Addresses') }}
+        </td>
+        <td>
+          <addresses
+            [contactInfo]="data?.contactInfo"
+            [contactId]="data?.contactInfo?.personContactInfo?.details?.contactId"
+            [addresses]="data?.contactInfo?.personContactInfo?.details?.addresses"
+            (onAddressUpdate)="
+              updateAddress($event, data?.contactInfo?.personContactInfo?.details?.addresses)
+            "
+          >
+          </addresses>
+        </td>
+        <td>
+          <addresses
+            [isCompany]="true"
+            [contactInfo]="data?.contactInfo"
+            [addresses]="data?.contactInfo['organizationContactInfo']?.details?.addresses"
+            [contactId]="data?.contactInfo['organizationContactInfo']?.details?.contactId"
+            (onAddressUpdate)="
+              updateAddress(
+                $event,
+                data?.contactInfo['organizationContactInfo']?.details?.addresses
+              )
+            "
+          >
+          </addresses>
+        </td>
+      </tr>
+    </table>
+  </div>
 </dx-scroll-view>
 <!-- <div class="additional-info">    
     <div class="item width-percent-35">
@@ -222,92 +169,56 @@
     </div>
 </div> -->
 <mat-card class="group-info-card">
-    <div class="group-info-container">
-        <div class="info-section">
-            <div class="section-header">
-                <!-- <mat-icon>folder_open</mat-icon> -->
-                <img
-                    src="./assets/common/icons/groups.svg"
-                    class="dx-icon"
-                    [alt]="ls.l('Groups')"
-                />
-                <span class="section-title">{{ ls.l("Groups") }}</span>
-            </div>
-            <mat-chip-list>
-                <mat-chip
-                    *ngFor="let group of groups"
-                    [ngClass]="group.className"
-                    selected
-                    >{{ group.name }}</mat-chip
-                >
-                <mat-chip
-                    *ngIf="groups.length === 0"
-                    class="empty-chip"
-                    selected
-                ></mat-chip>
-            </mat-chip-list>
-        </div>
-        <div class="info-section">
-            <div class="section-header">
-                <!-- <mat-icon>list</mat-icon> -->
-                <img
-                    src="./assets/common/icons/lists.svg"
-                    class="dx-icon"
-                    [alt]="ls.l('Lists')"
-                />
-                <span class="section-title">{{ ls.l("Lists") }}</span>
-            </div>
-            <mat-chip-list>
-                <mat-chip *ngFor="let list of lists" color="primary" selected>{{
-                    list
-                }}</mat-chip>
-            </mat-chip-list>
-        </div>
-        <div class="info-section">
-            <div class="section-header">
-                <!-- <mat-icon>label</mat-icon> -->
-                <img
-                    src="./assets/common/icons/tags_pen.svg"
-                    class="dx-icon"
-                    [alt]="ls.l('Tags')"
-                />
-                <span class="section-title">{{ ls.l("Tags") }}</span>
-            </div>
-            <mat-chip-list>
-                <mat-chip *ngFor="let tag of tags" color="primary" selected>{{
-                    tag
-                }}</mat-chip>
-                <mat-chip
-                    *ngIf="tags?.length === 0"
-                    class="empty-chip"
-                    selected
-                ></mat-chip>
-            </mat-chip-list>
-        </div>
-        <div class="info-section rating-section">
-            <div class="section-header">
-                <!-- <mat-icon>star_border</mat-icon> -->
-                <img
-                    src="./assets/common/icons/rating_star.svg"
-                    class="dx-icon"
-                    [alt]="ls.l('Rating')"
-                />
-                <span class="section-title">{{ ls.l("Rating") }}</span>
-            </div>
-            <div class="rating-bar">
-                <mat-progress-bar
-                    ng-reflect-color="#2fb8f0"
-                    color="#2fb8f0"
-                    [value]="
-                        ((data?.contactInfo?.ratingId || 0) / maxRating) * 100
-                    "
-                ></mat-progress-bar>
-                <span class="rating-label"
-                    >{{ data?.contactInfo?.ratingId || 0 }}/{{
-                        maxRating
-                    }}</span
-                >
-            </div>
-        </div>
+  <div class="group-info-container">
+    <div class="info-section">
+      <div class="section-header">
+        <!-- <mat-icon>folder_open</mat-icon> -->
+        <img src="./assets/common/icons/groups.svg" class="dx-icon" [alt]="ls.l('Groups')" />
+        <span class="section-title">{{ ls.l('Groups') }}</span>
+      </div>
+      <mat-chip-list>
+        <mat-chip *ngFor="let group of groups" [ngClass]="group.className" selected>{{
+          group.name
+        }}</mat-chip>
+        <mat-chip *ngIf="groups.length === 0" class="empty-chip" selected></mat-chip>
+      </mat-chip-list>
     </div>
+    <div class="info-section">
+      <div class="section-header">
+        <!-- <mat-icon>list</mat-icon> -->
+        <img src="./assets/common/icons/lists.svg" class="dx-icon" [alt]="ls.l('Lists')" />
+        <span class="section-title">{{ ls.l('Lists') }}</span>
+      </div>
+      <mat-chip-list>
+        <mat-chip *ngFor="let list of lists" color="primary" selected>{{ list }}</mat-chip>
+        <mat-chip *ngIf="lists.length === 0" class="empty-chip" selected></mat-chip>
+      </mat-chip-list>
+    </div>
+    <div class="info-section">
+      <div class="section-header">
+        <!-- <mat-icon>label</mat-icon> -->
+        <img src="./assets/common/icons/tags_pen.svg" class="dx-icon" [alt]="ls.l('Tags')" />
+        <span class="section-title">{{ ls.l('Tags') }}</span>
+      </div>
+      <mat-chip-list>
+        <mat-chip *ngFor="let tag of tags" color="primary" selected>{{ tag }}</mat-chip>
+        <mat-chip *ngIf="tags?.length === 0" class="empty-chip" selected></mat-chip>
+      </mat-chip-list>
+    </div>
+    <div class="info-section rating-section">
+      <div class="section-header">
+        <!-- <mat-icon>star_border</mat-icon> -->
+        <img src="./assets/common/icons/rating_star.svg" class="dx-icon" [alt]="ls.l('Rating')" />
+        <span class="section-title">{{ ls.l('Rating') }}</span>
+      </div>
+      <div class="rating-bar">
+        <mat-progress-bar
+          ng-reflect-color="#2fb8f0"
+          color="#2fb8f0"
+          [value]="((data?.contactInfo?.ratingId || 0) / maxRating) * 100"
+        ></mat-progress-bar>
+        <span class="rating-label">{{ data?.contactInfo?.ratingId || 0 }}/{{ maxRating }}</span>
+      </div>
+    </div>
+  </div>
 </mat-card>

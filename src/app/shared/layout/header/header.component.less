@@ -1,167 +1,168 @@
 :host {
-    display: block;
+  display: block;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+
+  .global-search {
+    margin: auto;
+    margin-left: calc(100vw / 2 - 420px);
+    z-index: 1;
+  }
+
+  .logo-layout {
+    max-width: 200px;
+    max-height: 70px;
+  }
+
+  .page-header.navbar {
+    height: 75px;
+    padding: 0;
+    border-bottom: 1px solid var(--border-color) !important;
+    background: var(--card-bg);
+    color: var(--text-color);
     transition: background 0.3s, color 0.3s, border-color 0.3s;
 
-    .global-search {
-        margin: auto;
-        margin-left: calc(100vw / 2 - 420px);
-        z-index: 1;
+    .page-header-inner {
+      width: 100%;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+
+      @media (max-width: 580px) {
+        .page-logo img {
+          width: 120px;
+        }
+      }
+      @media (max-width: 480px) {
+        .m-topbar__notifications {
+          display: none;
+        }
+      }
     }
 
-    .logo-layout {
-        max-width: 200px;
-        max-height: 70px;
-    }
+    .page-top {
+      width: auto !important;
+      clear: none !important;
+      background: none !important;
 
-    .page-header.navbar {
-        height: 75px;
-        padding: 0;
-        border-bottom: 1px solid var(--border-color) !important;
-        background: var(--card-bg);
-        color: var(--text-color);
-        transition: background 0.3s, color 0.3s, border-color 0.3s;
+      #m_header_topbar {
+        width: auto !important;
+        height: auto !important;
+        margin-top: 0 !important;
+        box-shadow: none !important;
 
-        .page-header-inner {
-            width: 100%;
-            padding: 0 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .m-topbar__nav.m-nav {
+          margin: 0 !important;
+          padding-top: 6px;
 
-            @media (max-width: 580px) {
-                .page-logo img {
-                    width: 120px;
-                }
-            }
-            @media (max-width: 480px) {
-                .m-topbar__notifications {
-                    display: none;
-                }
-            }
-        }
+          .m-nav__item {
+            padding: 0 14px !important;
 
-        .page-top {
-            width: auto !important;
-            clear: none !important;
-            background: none !important;
-
-            #m_header_topbar {
-                width: auto !important;
-                height: auto !important;
-                margin-top: 0 !important;
-                box-shadow: none !important;
-
-                .m-topbar__nav.m-nav {
-                    margin: 0 !important;
-                    padding-top: 6px;
-
-                    .m-nav__item {
-                        padding: 0 14px !important;
-
-                        &.bottom-logout {
-                            width: 100px;
-                            .m-nav__link-text {
-                                color: var(--primary-color);
-                            }
-                        }
-
-                        @media (max-width: 768px) {
-                            padding: 0 8px !important;
-                        }
-                    }
-                }
-
-            }
-        }
-
-        ::ng-deep &.navbar-fixed-top,
-        &.navbar-static-top {
-            z-index: 3;
-        }
-
-        .filter-toggle {
-            color: var(--text-color);
-            font-size: 23px;
-            cursor: pointer;
-            padding: 0 0 0 10px;
-            transition: color 0.3s;
-            &:hover {
-                opacity: 0.5
-            }
-        }
-
-        .page-logo {
-            flex: 0 0 220px;
-
-            a {
-                max-width: 200px;
-                overflow: hidden;
-                display: flex;
-                align-items: center;
-                margin: auto;
-            }
-
-            @media (max-width: 1530px) {
-                flex: 0 0 150px;
+            &.bottom-logout {
+              width: 100px;
+              .m-nav__link-text {
+                color: var(--primary-color);
+              }
             }
 
             @media (max-width: 768px) {
-                flex-basis: auto;
+              padding: 0 8px !important;
             }
+          }
         }
-
-        .dropdown-language {
-            display: none !important;
-        }
+      }
     }
 
-    &.withContactInfo {
-        ::ng-deep top-bar {
-            left: 0;
-            .adaptive-menu {
-                margin-left: auto;
-                margin-right: 10px;
-            }
-        }
+    ::ng-deep &.navbar-fixed-top,
+    &.navbar-static-top {
+      z-index: 3;
     }
 
+    .filter-toggle {
+      color: var(--text-color);
+      font-size: 23px;
+      cursor: pointer;
+      padding: 0 0 0 10px;
+      transition: color 0.3s;
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+
+    .page-logo {
+      flex: 0 0 220px;
+
+      a {
+        max-width: 200px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        margin: auto;
+      }
+
+      @media (max-width: 1530px) {
+        flex: 0 0 150px;
+      }
+
+      @media (max-width: 768px) {
+        flex-basis: auto;
+      }
+    }
+
+    .dropdown-language {
+      display: none !important;
+    }
+  }
+
+  &.withContactInfo {
+    ::ng-deep top-bar {
+      left: 0;
+      .adaptive-menu {
+        margin-left: auto;
+        margin-right: 10px;
+      }
+    }
+  }
 }
 
 ::ng-deep body.lend-space {
-    .page-header .page-top {
-        ::ng-deep i[aria-label="Notifications"] {
-            display: inline-block!important;
-            background: url('../../../../assets/common/images/lend-space-dark/notification.svg') no-repeat!important;
-            width: 17px!important;
-            height: 20px!important;
-            &:before {
-                display: none!important;
-            }
-        }
-
-        ::ng-deep .m-nav__item {
-            .m-nav__link {
-                white-space: nowrap;
-            }
-
-            .m-nav__link-icon:before {
-                    content: none;
-            }
-            .m-nav__link-icon.flaticon-more-v6 {
-                background: url(../../../../assets/common/images/lend-space-dark/icons/lock-open.svg) no-repeat;
-            }
-            .m-nav__link-icon.flaticon-list {
-                background: url(../../../../assets/common/images/lend-space-dark/icons/playlist.svg) no-repeat;
-            }
-            .m-nav__link-icon.flaticon-profile-1 {
-                background: url(../../../../assets/common/images/lend-space-dark/icons/user-picture.svg) no-repeat;
-            }
-            .m-nav__link-icon.flaticon-cogwheel {
-                background: url(../../../../assets/common/images/lend-space-dark/icons/settings-gear.svg) no-repeat;
-            }
-            .m-nav__link-icon.flaticon-info {
-                background: url(../../../../assets/common/images/lend-space-dark/icons/help.svg) no-repeat;
-            }
-        }
+  .page-header .page-top {
+    ::ng-deep i[aria-label='Notifications'] {
+      display: inline-block !important;
+      background: url('../../../../assets/common/images/lend-space-dark/notification.svg') no-repeat !important;
+      width: 17px !important;
+      height: 20px !important;
+      &:before {
+        display: none !important;
+      }
     }
+
+    ::ng-deep .m-nav__item {
+      .m-nav__link {
+        white-space: nowrap;
+      }
+
+      .m-nav__link-icon:before {
+        content: none;
+      }
+      .m-nav__link-icon.flaticon-more-v6 {
+        background: url(../../../../assets/common/images/lend-space-dark/icons/lock-open.svg)
+          no-repeat;
+      }
+      .m-nav__link-icon.flaticon-list {
+        background: url(../../../../assets/common/images/lend-space-dark/icons/playlist.svg)
+          no-repeat;
+      }
+      .m-nav__link-icon.flaticon-profile-1 {
+        background: url(../../../../assets/common/images/lend-space-dark/icons/user-picture.svg)
+          no-repeat;
+      }
+      .m-nav__link-icon.flaticon-cogwheel {
+        background: url(../../../../assets/common/images/lend-space-dark/icons/settings-gear.svg)
+          no-repeat;
+      }
+      .m-nav__link-icon.flaticon-info {
+        background: url(../../../../assets/common/images/lend-space-dark/icons/help.svg) no-repeat;
+      }
+    }
+  }
 }
