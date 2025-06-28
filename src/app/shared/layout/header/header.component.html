@@ -38,14 +38,16 @@
 
         <clients-navigation *ngIf="isContactDetailRoute()"></clients-navigation>
         <global-search
-            *ngIf="showGlobalSearch"
+            *ngIf="showGlobalSearch || isContactDetailRoute()"
             [ngClass]="{
                 'global-search': !isContactDetailRoute(),
                 'contact-info-panel-search': isContactDetailRoute()
             }"
         ></global-search>
 
-        <ng-container *ngIf="layoutService.showTopBar">
+        <ng-container
+            *ngIf="layoutService.showTopBar && !isContactDetailRoute()"
+        >
             <contact-info-panel
                 *ngIf="appService.showContactInfoPanel$ | async"
                 [data]="appService.contactInfo"

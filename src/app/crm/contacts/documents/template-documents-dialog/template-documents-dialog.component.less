@@ -18,13 +18,14 @@
             right: 15px;
             cursor: pointer;
             display: block;
-            background-color: #FFF;
+            background-color: #fff;
 
-            &:after, &:before {
+            &:after,
+            &:before {
                 position: absolute;
                 top: 0;
                 left: 9px;
-                content: ' ';
+                content: " ";
                 height: 20px;
                 width: 2px;
                 background-color: #202b35;
@@ -39,11 +40,10 @@
             }
         }
     }
-
     mat-dialog-content {
         overflow: hidden;
         position: relative;
-        max-height: 100%!important;
+        max-height: 100% !important;
         min-height: 300px;
         padding-left: 30px;
 
@@ -71,7 +71,7 @@
             }
         }
 
-        ::ng-deep dx-tabs {    
+        ::ng-deep dx-tabs {
             border-top-left-radius: 6px;
             border-top-right-radius: 6px;
             .dx-tab {
@@ -86,7 +86,8 @@
                     border-top-right-radius: 6px;
                 }
             }
-            .dx-tab:after, .dx-tab-selected {
+            .dx-tab:after,
+            .dx-tab-selected {
                 border-top-left-radius: 6px;
                 border-top-right-radius: 6px;
             }
@@ -123,9 +124,9 @@
                     width: 350px;
                     height: calc(~"100vh - 220px");
                     border: 1px dashed #00aeef;
-                    background-color: #F5FCFE;
+                    background-color: #f5fcfe;
                     border-radius: 5px;
-                    text-transform: none;                
+                    text-transform: none;
 
                     .ngx-file-drop__content {
                         height: 100%;
@@ -205,8 +206,8 @@
                         letter-spacing: 0.3px;
                         color: #677380;
                         &.file-name {
-                            max-width: 250px;                    
-                            overflow: hidden!important;
+                            max-width: 250px;
+                            overflow: hidden !important;
                             text-overflow: ellipsis;
                             display: inline-block;
                         }
@@ -217,11 +218,12 @@
                             height: 28px;
                             bottom: 13px;
                             position: relative;
-                            &:after, &:before {
+                            &:after,
+                            &:before {
                                 position: absolute;
                                 top: 6px;
                                 left: 20px;
-                                content: ' ';
+                                content: " ";
                                 height: 14px;
                                 width: 1px;
                                 background-color: #e7326a;
@@ -255,4 +257,8 @@
     mat-dialog-actions {
         justify-content: flex-end;
     }
+}
+
+::ng-deep .crm-document-dialog.cdk-overlay-pane .mat-dialog-container {
+    box-shadow: none;
 }
