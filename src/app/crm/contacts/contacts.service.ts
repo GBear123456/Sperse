@@ -873,7 +873,7 @@ export class ContactsService {
                 this.dialog
                     .open(NoteAddDialogComponent, {
                         id: dialogId,
-                        panelClass: ["slider"],
+                        panelClass: ["slider", "crm-note-dialog"],
                         hasBackdrop: false,
                         closeOnNavigation: true,
                         data: noteAddDialogData,
