@@ -5,11 +5,10 @@ import {
     SettingScopes,
     UserNotificationState,
     TenantAvailabilityState,
-    ChartDateInterval
-//    RegisterTenantInputSubscriptionStartType,
-
-} from '@shared/service-proxies/service-proxies';
-import { AppPermissions } from '@shared/AppPermissions';
+    ChartDateInterval,
+    //    RegisterTenantInputSubscriptionStartType,
+} from "@shared/service-proxies/service-proxies";
+import { AppPermissions } from "@shared/AppPermissions";
 
 export class AppChatMessageReadState {
     static Unread: number = ChatMessageReadState.Unread;
@@ -25,7 +24,6 @@ export class AppFriendshipState {
     static Accepted: number = FriendshipState.Accepted;
     static Blocked: number = FriendshipState.Blocked;
 }
-
 
 export class AppTimezoneScope {
     static Application: number = SettingScopes.Application;
@@ -59,60 +57,61 @@ export class SubscriptionStartType {
 */
 
 export class AppEditionExpireAction {
-    static DeactiveTenant = 'DeactiveTenant';
-    static AssignToAnotherEdition = 'AssignToAnotherEdition';
+    static DeactiveTenant = "DeactiveTenant";
+    static AssignToAnotherEdition = "AssignToAnotherEdition";
 }
 
 export class LinkType {
-    static Facebook = 'F';
-    static GooglePlus = 'G';
-    static LinkedIn = 'L';
-    static Pinterest = 'P';
-    static Twitter = 'T';
-    static Website = 'J';
-    static Alexa = 'A';
-    static BBB = 'B';
-    static Crunchbase = 'C';
-    static Domain = 'D';
-    static Yelp = 'E';
-    static Instagram = 'I';
-    static Nav = 'N';
-    static OpenCorporates = 'O';
-    static Trustpilot = 'R';
-    static GlassDoor = 'S';
-    static Followers = 'W';
-    static Youtube = 'Y';
-    static RSS = 'Z';
+    static Facebook = "F";
+    static GooglePlus = "G";
+    static LinkedIn = "L";
+    static Pinterest = "P";
+    static Twitter = "T";
+    static Website = "J";
+    static Alexa = "A";
+    static BBB = "B";
+    static Crunchbase = "C";
+    static Domain = "D";
+    static Yelp = "E";
+    static Instagram = "I";
+    static Nav = "N";
+    static OpenCorporates = "O";
+    static Trustpilot = "R";
+    static GlassDoor = "S";
+    static Followers = "W";
+    static Youtube = "Y";
+    static RSS = "Z";
+    static Tiktok = "TT";
 }
 
 export class LinkUsageType {
-    static Home = 'H';
-    static Mobile = 'M';
-    static Work = 'W';
+    static Home = "H";
+    static Mobile = "M";
+    static Work = "W";
 }
 
 export class AddressUsageType {
-    static Shipping = 'S';
+    static Shipping = "S";
 }
 
 export class ContactTypes {
-    static Person = 'P';
-    static Organization = 'O';
-    static Property = 'Y';
+    static Person = "P";
+    static Organization = "O";
+    static Property = "Y";
 }
 
 export class ContactStatus {
-    static Active = 'A';
-    static Inactive = 'I';
+    static Active = "A";
+    static Inactive = "I";
 }
 
 export class ContactGroup {
-    static Client = 'C';
-    static Partner = 'P';
-    static Employee = 'U';
-    static Investor = 'I';
-    static Vendor = 'V';
-    static Other = 'O';
+    static Client = "C";
+    static Partner = "P";
+    static Employee = "U";
+    static Investor = "I";
+    static Vendor = "V";
+    static Other = "O";
 }
 
 export class ContactGroupPermission {
@@ -125,43 +124,43 @@ export class ContactGroupPermission {
 }
 
 export class PersonOrgRelationType {
-    static Owner = 'O';
-    static CoOwner = 'C';
-    static Shareholder = 'S';
-    static Employee = 'E';
+    static Owner = "O";
+    static CoOwner = "C";
+    static Shareholder = "S";
+    static Employee = "E";
 }
 
 export class ODataSearchStrategy {
-    static Contains = 'contains';
-    static StartsWith = 'startswith';
-    static Equals = 'equals';
+    static Contains = "contains";
+    static StartsWith = "startswith";
+    static Equals = "equals";
 }
 
 export enum ImportStatus {
-    Cancelled = 'A',
-    Completed = 'C',
-    InProgress = 'I',
-    New = 'N',
-    Failed = 'F'
+    Cancelled = "A",
+    Completed = "C",
+    InProgress = "I",
+    New = "N",
+    Failed = "F",
 }
 
 export enum AccountConnectors {
-    Plaid = 'Plaid',
-    QuickBook = 'QuickBook',
-    XeroOAuth2 = 'XeroOAuth2',
-    SaltEdge = 'SaltEdge'
+    Plaid = "Plaid",
+    QuickBook = "QuickBook",
+    XeroOAuth2 = "XeroOAuth2",
+    SaltEdge = "SaltEdge",
 }
 
 export enum SyncTypeIds {
-    Plaid = 'P',
-    QuickBook = 'B',
-    XeroOAuth2 = 'O',
-    SaltEdge = 'S'
+    Plaid = "P",
+    QuickBook = "B",
+    XeroOAuth2 = "O",
+    SaltEdge = "S",
 }
 
 export enum ConditionsType {
-    Terms = 'Terms',
-    Policies = 'Policies'
+    Terms = "Terms",
+    Policies = "Policies",
 }
 
 export enum ActionButtonType {
@@ -170,21 +169,21 @@ export enum ActionButtonType {
     Send,
     Cancel,
     MarkAsSent,
-    MarkAsDraft
+    MarkAsDraft,
 }
 
 export enum NavigationState {
-    Prev    = -1,
+    Prev = -1,
     Current = 0,
-    Next    = 1
+    Next = 1,
 }
 
 export enum Country {
-    USA = 'US', 
-    Canada = 'CA'
+    USA = "US",
+    Canada = "CA",
 }
 
 export enum PortalType {
     Vercel,
-    Angular
+    Angular,
 }

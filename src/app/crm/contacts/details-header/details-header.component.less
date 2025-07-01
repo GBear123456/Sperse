@@ -697,16 +697,18 @@
     color: var(--primary-color);
   }
 
-  .header_buttons {
-    margin-right: 75px;
-    display: flex;
-    #addEntity {
-      display: inline-flex;
-      align-items: center;
-      min-width: 187px;
-      white-space: nowrap;
-      background-color: #00ca6a;
-    }
+    .header_buttons {
+        margin-right: 75px;
+        display: flex;
+        #addEntity {
+            min-width: 187px;
+            white-space: nowrap;
+            background-color: #00ca6a;
+        }
+        #addEntity::after {
+            background-color: #00ca6a;
+            border-left: #02bd64 1px solid;
+        }
 
     .menu img {
       vertical-align: sub;
@@ -817,11 +819,9 @@
   border: none;
   cursor: pointer;
 }
-
 .context-tooltip {
-  display: flex;
-  flex-wrap: wrap;
-  max-width: 160px;
-  gap: 10px;
-  border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 158px;
+    gap: 10px;
 }

@@ -1,22 +1,32 @@
 <div class="contacts">
-  <div class="phones" *ngIf="showContactType == 'phones'">
-    <button
-      class="icon-btn"
-      aria-label="Contact action"
-      (click)="showDialog('phoneNumber', null, $event)"
-    >
-      <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
-    </button>
-    <ul>
-      <li *ngFor="let phone of contactInfoData?.phones; let i = index">
-        <div class="email-row" *ngIf="!phone.inplaceEdit">
-          <div (click)="inPlaceEdit('phoneNumber', phone, $event, i)">
-            {{ phone.phoneNumber | phone }}
-            <span *ngIf="phone.phoneExtension" class="phoneExt"
-              >Ext. {{ phone.phoneExtension }}</span
-            >
-            <img src="./assets/common/icons/contact/call-calling.svg" alt="send" />
-          </div>
+    <div class="phones" *ngIf="showContactType == 'phones'">
+        <button
+            class="icon-btn"
+            aria-label="Contact action"
+            (click)="showDialog('phoneNumber', null, $event)"
+        >
+            <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
+        </button>
+        <ul>
+            <li *ngFor="let phone of contactInfoData?.phones; let i = index">
+                <div class="email-row" *ngIf="!phone.inplaceEdit">
+                    <div>
+                        <span
+                            class="email-address"
+                            (click)="
+                                inPlaceEdit('phoneNumber', phone, $event, i)
+                            "
+                        >
+                            {{ phone.phoneNumber | phone }}
+                            <span *ngIf="phone.phoneExtension" class="phoneExt"
+                                >Ext. {{ phone.phoneExtension }}</span
+                            >
+                            <img
+                                src="./assets/common/icons/contact/call-calling.svg"
+                                alt="send"
+                            />
+                        </span>
+                    </div>
 
           <div class="actions" *ngIf="isEditAllowed" [class.visible]="hovered">
             <span
