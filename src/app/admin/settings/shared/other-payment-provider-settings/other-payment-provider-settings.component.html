@@ -1,0 +1,165 @@
+<mat-tab-group 
+    animationDuration="10ms" 
+    disableRipple="true" 
+>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <span>{{l('Introduction')}}</span>
+        </ng-template>
+        <div class="introduction">
+            <div class="intro-container">
+                <div class="base-card">
+                    <div class="content-header">
+                        <h2>Payment Aggregation Platform</h2>
+                        <p>Scale with speed & confidence</p>
+                    </div>
+                    <p>With our payment aggregation across multiple providers, we help merchants scale with speed and confidence. Accelerate growth and scale faster with our simplified payment solutions.</p>
+                    <p>Offer value-added services to retain and expand your existing customer base. Attract customers in new markets by offering a flexible, merchant-friendly approach.</p>
+                    <p>Hyper-growth merchants focus on building great customer experiences and optimizing revenue from each transaction. Our customers have gained the ability to offer outstanding experiences to users who come back after making a purchase.</p>
+                </div>
+                <div class="function-wrapper">
+                    <div class="base-card">
+                        <div class="function-header">
+                            <lucide-angular [img]="GlobeIcon"></lucide-angular>
+                            <h3>Connect</h3>
+                        </div>
+                        <p>Build your payment stack on our open payment platform with a single, normalized API and deep connections to the world's most utilized payment tools.</p>
+                    </div>
+                    <div class="base-card">
+                        <div class="function-header">
+                            <lucide-angular [img]="ShieldIcon"></lucide-angular>
+                            <h3>Protect</h3>
+                        </div>
+                        <p>Minimize technical complexity, enhance security, and boost approval rates by strategically applying fraud prevention.</p>
+                    </div>
+                    <div class="base-card">
+                        <div class="function-header">
+                            <lucide-angular [img]="KeyIcon"></lucide-angular>
+                            <h3>Vault</h3>
+                        </div>
+                        <p>With over a billion secured payment methods, our vault management provides the freedom and functionality growing companies require.</p>
+                    </div>
+                    <div class="base-card">
+                        <div class="function-header">
+                            <lucide-angular [img]="ZapIcon"></lucide-angular>
+                            <h3>Optimize</h3>
+                        </div>
+                        <p>Drive performance across multiple connections, improve reliability, increase success rates, and recover lost revenue.</p>
+                    </div>
+                </div>
+                <div class="base-card resolve-card">
+                    <div class="function-header">
+                        <lucide-angular [img]="LineChartIcon"></lucide-angular>
+                        <h3>Resolve</h3>
+                    </div>
+                    <p>We provide rich, flexible reporting tools to help you spot opportunities for efficiency gains. Comprehensive reporting and reconciliation functionality let you make informed decisions across your payment stack in a single platform.</p>
+                    <p>We securely store credit cards and enable your customers to transact against any number of payment gateways and third-party APIs. This is accomplished through simultaneous provision of card tokenization/vault service and gateway integration service.</p>
+                    <p>Payment methods tokenized by us are stored in a PCI compliant way. We refer to this ability to use a token against multiple gateways/endpoints as "universal tokenization".</p>
+                </div>
+                <div class="base-card resolve-card">
+                    <div class="function-header">
+                        <h3>Connectivity that Drives Performance</h3>
+                    </div>
+                    <p>As cross-border commerce and the variety of payment types increase, our connectivity with various payment providers allows you to drive positive payment performance.</p>
+                    <button class="base-button">
+                        Contact Sales for Integration
+                    </button>
+                </div>
+            </div>
+            <div class="faq base-card">
+                <div class="content-header">
+                    <h2>Frequently Asked Questions</h2>
+                </div>
+                <cdk-accordion [multi]="true">
+                    <cdk-accordion-item
+                        *ngFor="let item of faqs; let index = index;"
+                        #accordionItem="cdkAccordionItem"
+                        class="accordion-item"
+                        role="button"
+                        tabindex="0"
+                        [attr.id]="'accordion-header-' + index"
+                        [attr.aria-expanded]="accordionItem.expanded"
+                        [attr.aria-controls]="'accordion-body-' + index"
+                    >
+                        <div class="accordion-item-header" (click)="accordionItem.toggle()">
+                            <span>{{ item.title }}</span>
+                            <lucide-angular [img]="ChevronIcon"></lucide-angular>
+                        </div>
+                        <div
+                            class="accordion-item-body"
+                            role="region"
+                            [style.display]="accordionItem.expanded ? '' : 'none'"
+                            [attr.id]="'accordion-body-' + index"
+                            [attr.aria-labelledby]="'accordion-header-' + index"
+                        >
+                            {{ item.content }}
+                        </div>
+                    </cdk-accordion-item>
+                </cdk-accordion>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <span>{{l('Payment Methods')}}</span>
+        </ng-template>
+        <div class="payment-method">
+            <div class="content-header">
+                <h2>Supported Payment Methods</h2>
+                <p>We support a wide variety of payment methods to help your business accept payments globally</p>
+            </div>
+
+            <div class="payment-card-wrapper">
+                <div 
+                    *ngFor="let payment of paymentMethods"
+                    class="base-card">
+                    <lucide-angular [img]="payment.icon || CardIcon"></lucide-angular>
+                    <div class="payment-content">
+                        <h3>{{ payment.name }}</h3>
+                        <p>{{ payment.type }}</p>
+                    </div>
+                    <span
+                        *ngIf="payment.status === 'Preferred Partner'"
+                    >Preferred</span>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <span>{{l('Payment Gateways')}}</span>
+        </ng-template>
+        <div class="payment-gateway">
+            <div class="content-header">
+                <h2>Supported Payment Gateways</h2>
+                <p>Connect to any of our supported payment gateways through a single integration</p>
+            </div>
+
+            <div class="payment-gateway-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Gateway Name</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr 
+                            *ngFor="let gateway of paymentGateways"
+                        >
+                            <td>
+                                {{ gateway.name }}
+                            </td>
+                            <td>
+                                <span 
+                                    [style.background-color]="gateway.status === 'Preferred Partner' ? 'rgb(220 252 231)' : 'rgb(219 234 254)'" 
+                                    [style.color]="gateway.status === 'Preferred Partner' ? 'rgb(22 101 52)': 'rgb(30 64 175)'"
+                                >{{ gateway.status }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

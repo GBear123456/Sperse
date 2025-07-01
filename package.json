@@ -184,6 +184,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "ng-inline-svg-2": "^19.0.0",
     "ngrx-generator": "^1.1.0",
     "nswag": "^13.11.3",
     "postcss": "^8.5.4",

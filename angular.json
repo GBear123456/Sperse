@@ -739,7 +739,12 @@
     }
   },
   "cli": {
+<<<<<<< HEAD
     "analytics": "10e04c52-b0b0-4cd7-bace-9612b42f324b",
     "defaultCollection": "@schematics/angular"
+=======
+    "analytics": false,
+    "defaultCollection": "@ngrx/schematics"
+>>>>>>> 54ff479fd0380671b1ccdc4e6f8681853a7909b2
   }
 }

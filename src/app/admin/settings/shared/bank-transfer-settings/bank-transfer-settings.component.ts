@@ -1,0 +1,48 @@
+/** Core imports */
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component
+} from '@angular/core';
+
+/** Third party imports */
+import { Observable } from 'rxjs';
+
+/** Application imports */
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import {
+    TenantPaymentSettingsServiceProxy,
+    BankTransferSettings
+} from '@shared/service-proxies/service-proxies';
+import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
+
+@Component({
+    selector: 'bank-transfer-settings',
+    templateUrl: 'bank-transfer-settings.component.html',
+    styleUrls: [
+        'bank-transfer-settings.component.less'
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class BankTransferSettingsComponent implements ITenantSettingsStepComponent {
+    settings: BankTransferSettings;
+
+    constructor(
+        private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
+        public ls: AppLocalizationService
+    ) {
+        this.tenantPaymentSettingsProxy.getBankTransferSettings().subscribe(settings => {
+            this.settings = settings;
+            this.changeDetectorRef.detectChanges();
+        });
+    }
+
+    save(): Observable<any> {
+        return this.tenantPaymentSettingsProxy.updateBankTransferSettings(this.settings);
+    }
+
+    isValid(): boolean {
+        return true;
+    }
+}

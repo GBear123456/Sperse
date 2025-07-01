@@ -1,33 +1,153 @@
-<h2>{{l('Mailchimp')}} {{l('Settings')}}</h2>
-<ng-container *ngIf="mailchimpSettings">
-    <div>
-        <div class="form-group">
-            <dx-check-box [text]="l('Enabled')"
-                          [(value)]="mailchimpSettings.isEnabled"
-                          [disabled]="!mailchimpSettings.isEnabled && !mailchimpSettings.isConfigured">
-            </dx-check-box>
+<div class="base-card integration-wrapper">
+    <div class="integration-container">
+        <div class="integration-content">
+            <div class="content-header">
+                <h2>MailChimp Integration</h2>
+                <p>
+                    Connect your MailChimp account to automatically sync contacts, manage campaigns,
+                    and track email performance directly from your CRM.
+                </p>
+            </div>
+            <div class="integration-check">
+                <ul>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Accept all Major Credit Cards</span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Flexible subsrcriptions and billing terms</span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Accept SEPA</span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Accept Apple Pay</span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Accept iDeal</span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Fraud prevention tools</span>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div class="mailchimp-button-container">
-            <button class="btn btn-layout mailchimp-button" (click)="setupOAuth()" [disabled]="!mailchimpSettings.clientId">
-                <img src="./assets/common/icons/mailchimp.svg" />
-                {{ mailchimpSettings.isConfigured ? l('Authorized') : l('Authorize') }}
-            </button>
-            <img *ngIf="mailchimpSettings.isConfigured" src="./assets/common/icons/check-green.svg" />
-            <span *ngIf="mailchimpSettings.isConfigured" class="disconnect" (click)="disconnect()">{{l("Disconnect")}}</span>
-        </div>
-        <div class="form-group">
-            <label>Mailchimp list to add contacts</label>
-            <dx-select-box [(value)]="mailchimpSettings.listId"
-                           [dataSource]="listsDataSource"
-                           valueExpr="id"
-                           displayExpr="name"
-                           [disabled]="!mailchimpSettings.isConfigured || !listsDataSource.length"
-                           width="300">
-            </dx-select-box>
+        <div class="integration-image">
+            <img 
+            src="./assets/common/images/mailchimp.png" 
+            alt="MailChimp Logo" 
+            />
         </div>
     </div>
-    <!-- button class="btn btn-layout" (click)="save()">
-        <i class="icon-la la la-floppy-o"></i>
-        {{l('Save')}}
-    </button -->
-</ng-container>
+
+    <div class="integration-footer">
+        <lucide-angular [img]="AlertIcon"></lucide-angular>
+        <p>Connect your MailChimp account to get started with email marketing automation.</p>
+        <button class="base-button" *ngIf="!mailchimpSettings.isConfigured" (click)="setupOAuth()">
+            <lucide-angular [img]="LinkIcon"></lucide-angular>
+            <span>Connect</span>
+        </button>
+        <button class="base-button mailchimp-connected" *ngIf="mailchimpSettings.isConfigured">
+            <lucide-angular [img]="CheckIcon"></lucide-angular>
+            <span>Connected</span>
+        </button>
+    </div>
+</div>
+
+<div class="base-card" *ngIf="mailchimpSettings.isConfigured">
+    <div class="config-container">
+        <div class="content-header">
+            <h2>Configuration Settings</h2>
+            <p>
+                Manage how MailChimp integrates with your CRM
+            </p>
+        </div>
+        <div class="config-content">
+            <div class="config-enable">
+                <div class="config-enable-header">
+                    <h3>Enable MailChimp Integration</h3>
+                    <p>
+                        Toggle to enable or disable the MailChimp integration.
+                    </p>
+                </div>
+                <div class="config-enable-toggle">
+                    <mat-slide-toggle
+                        [(ngModel)]="mailchimpSettings.isEnabled"
+                        labelPosition="before"
+                        [disabled]="!mailchimpSettings.isEnabled && !mailchimpSettings.isConfigured"
+                    >
+                    </mat-slide-toggle>
+                </div>
+            </div>
+
+            <div class="config-list">
+                <div class="config-list-header">
+                    <h3>Default MailChimp List</h3>
+                    <p>
+                        Select which MailChimp list new contacts will be added to by default
+                    </p>
+                </div>
+
+                <dx-select-box
+                    [(value)]="mailchimpSettings.listId"
+                    [dataSource]="listsDataSource"
+                    valueExpr="id"
+                    displayExpr="name"
+                    [disabled]="!mailchimpSettings.isConfigured || !listsDataSource.length"
+                    placeholder="Select a list..."
+                ></dx-select-box>
+            </div>
+
+            <div class="config-sync-options">
+                <div class="config-sync-options-header">
+                    <h3>Sync Options</h3>
+                </div>
+                <div class="config-sync-options-content">
+                    <mat-slide-toggle
+                            [(ngModel)]="mailchimpSettings.isEnabled"
+                            labelPosition="before"
+                    >
+                    {{ l('Enable two-way synchronization') }}
+                    </mat-slide-toggle>
+                    <mat-slide-toggle
+                            [(ngModel)]="mailchimpSettings.isEnabled"
+                            labelPosition="before"
+                    >
+                    {{ l('Automatically sync new contacts') }}
+                    </mat-slide-toggle>
+                    <mat-slide-toggle
+                            [(ngModel)]="mailchimpSettings.isEnabled"
+                            labelPosition="before"
+                    >
+                    {{ l('Sync unsubscribes from MailChimp') }}
+                    </mat-slide-toggle>
+                </div>
+            </div>
+        </div>
+
+        <hr/>
+        <div class="config-footer">
+            <button class="base-button" (click)="disconnect()">
+                Disconnect
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="base-card">
+    <div class="help-container">
+        <div class="help-header">
+            <lucide-angular [img]="AlertIcon"></lucide-angular>
+            <h2>Need Help?</h2>
+        </div>
+        <p class="help-content">
+            If you're experiencing issues with your MailChimp integration or have questions about setting it up, 
+            please visit our <a href="#">help documentation</a> or 
+            contact <a href="#">customer support</a>.
+    </div>
+</div>

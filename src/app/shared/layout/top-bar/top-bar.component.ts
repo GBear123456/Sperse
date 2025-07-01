@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Inject, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -62,6 +62,7 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
         private element: ElementRef,
         public layoutService: LayoutService,
         public ls: AppLocalizationService,
+        private changeDetectorRef: ChangeDetectorRef,
         @Inject(DOCUMENT) private document: any
     ) {
         this.router.events.pipe(
@@ -71,13 +72,9 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
             let currModuleName = (this.config ? this.config.name : '').toLowerCase();
             if (currModuleName && currModuleName != appService.getModule())
                 appService.initModule();
+
             setTimeout(() => {
-                this.selectedIndex = undefined;
-                let route = event.urlAfterRedirects.split('?').shift();
-                this.menu.items.forEach((item: PanelMenuItem, i: number) => {
-                    if (route === item.route || _.contains(item.alterRoutes, route))
-                        this.selectedIndex = i;
-                });
+                this.updateSelectedItem();
             });
         });
         this.appService.subscribeModuleChange((config: ConfigInterface) => {
@@ -91,7 +88,7 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
                 )
             );
             const selectedIndex = this.navbarItems.findIndex((navBarItem: PanelMenuItem) => {
-                return navBarItem.route === this.router.url.split('?')[0];
+                return this.router.url.split('?')[0].includes(navBarItem.route);
             });
             this.navbarItems = this.menu.items;
             this.selectedIndex = selectedIndex === -1 ? this.selectedIndex : selectedIndex;
@@ -122,6 +119,17 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
     get showGlobalSearch():  boolean {
         return this.config && this.config.name === 'CRM';
     };
+
+    updateSelectedItem() {
+        this.selectedIndex = undefined;
+        let route = this.router.url.split('?').shift();
+        this.menu.items.forEach((item: PanelMenuItem, i: number) => {
+            if (route.includes(item.route) || _.contains(item.alterRoutes, route))
+                this.selectedIndex = i;
+        });
+
+        this.changeDetectorRef.detectChanges();
+    }
 
     initMenu(configNavigation: ConfigNavigation[], localizationSource, parent?: PanelMenuItem): PanelMenuItem[] {
         let navList: PanelMenuItem[] = [];
@@ -216,7 +224,7 @@ export class TopBarComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.adaptiveMenuItems = switchItemIndex ? this.menu.items.slice(switchItemIndex) : this.menu.items;
                     }
                 }
-                this.navBar.instance.option('selectedIndex', this.selectedIndex);
+                this.updateSelectedItem();
             }, 300);
         }
     }

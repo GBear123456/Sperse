@@ -1,10 +1,12 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Injector, ViewChild, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { forkJoin, Observable, of } from 'rxjs';
 import { finalize, switchMap, tap } from 'rxjs/operators';
 import kebabCase from 'lodash/kebabCase';
+import {  Palette, FileText } from 'lucide-angular';
+import { SettingService } from 'abp-ng2-module';
 
 /** Application imports */
 import {
@@ -24,12 +26,12 @@ import { SettingsComponentBase } from './../settings-base.component';
 import { UploaderComponent } from '@shared/common/uploader/uploader.component';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { FontService } from '@shared/common/font-service/font.service';
-import { SettingService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 import { DomHelper } from '@shared/helpers/DomHelper';
 import { AppFeatures } from '@shared/AppFeatures';
 import { PortalMenuItemConfig } from './portal/portal-menu-item';
 import { PortalMenuItemEnum } from './portal/portal-menu-item.enum';
+import { AdditionalAppFeatures } from './appearance-settings.enum';
 
 @Component({
     selector: 'appearance-settings',
@@ -38,7 +40,10 @@ import { PortalMenuItemEnum } from './portal/portal-menu-item.enum';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantCustomizationServiceProxy, TenantSettingsServiceProxy]
 })
-export class AppearanceSettingsComponent extends SettingsComponentBase {
+export class AppearanceSettingsComponent extends SettingsComponentBase implements OnInit {
+    readonly LogoIcon = Palette;
+    readonly CustomIcon = FileText;
+
     @ViewChild('logoUploader') logoUploader: UploaderComponent;
     @ViewChild('cssUploader') cssUploader: UploaderComponent;
     @ViewChild('loginCssUploader') loginCssUploader: UploaderComponent;
@@ -52,7 +57,17 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     tenantId = this.appSession.tenantId;
 
     hasPortalFeature = this.feature.isEnabled(AppFeatures.Portal);
-    isPortalSelected = false;
+    featureTypeList = [{
+        type: AdditionalAppFeatures.PortalPublic,
+        name: this.l('Public')
+    }, {
+        type: AppFeatures.Admin,
+        name: this.l('Platform')
+    }, {
+        type: AppFeatures.Portal,
+        name: this.l('Portal')
+    }];
+    selectedFeatureType: AdditionalAppFeatures.PortalPublic | AppFeatures.Admin | AppFeatures.Portal = AdditionalAppFeatures.PortalPublic;
 
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
@@ -124,14 +139,16 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
             this.changeDetection.detectChanges();
         });
 
-        this.organizationUnitChanged();
-
         DomHelper.addStyleSheet('allfonts', 'https://fonts.googleapis.com/css?family='
             + this.fontService.supportedGoogleFonts.concat(this.fontService.supportedTabularGoogleFonts).join('|')
         );
         this.fontService.supportedCustomFonts.map(font =>
             DomHelper.addStyleSheet('custom-font', './assets/fonts/fonts-' + font.toLowerCase() + '.css')
         );
+    }
+
+    ngOnInit(): void {
+        this.organizationUnitChanged();
     }
 
     organizationUnitChanged() {
@@ -151,7 +168,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
                     if (!this.selectedOrgUnitId)
                         this.tenantDefaultSettings = AppearanceSettingsDto.fromJS(res.appearanceSettings);
 
-                    this.toggleColorSetting(this.isPortalSelected);
+                    this.toggleColorSetting(this.selectedFeatureType);
                     this.changeDetection.detectChanges();
 
                     this.someColorChanged = false;
@@ -228,11 +245,11 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
         }
     }
 
-    toggleColorSetting(isPortalSelected) {
-        this.isPortalSelected = isPortalSelected;
-        this.colorSettings = this.isPortalSelected ? this.appearance.portalSettings : this.appearance;
+    toggleColorSetting(selected) {
+        this.selectedFeatureType = selected;
+        this.colorSettings = this.selectedFeatureType !== AppFeatures.Admin ? this.appearance.portalSettings : this.appearance;
 
-        this.currentDefaultSettings = this.getDefaultColorSettings(isPortalSelected);
+        this.currentDefaultSettings = this.getDefaultColorSettings(this.selectedFeatureType !== AppFeatures.Admin);
         this.changeDetection.detectChanges();
     }
 
@@ -414,7 +431,7 @@ export class AppearanceSettingsComponent extends SettingsComponentBase {
     }
 
     onColorValueChanged(event, defaultColor) {
-        this.someColorChanged = this.someColorChanged || (event.value != defaultColor && !this.isPortalSelected);
+        this.someColorChanged = this.someColorChanged || (event.value != defaultColor && this.selectedFeatureType === AppFeatures.Admin);
         if (!event.value)
             event.component.option('value', defaultColor);
     }

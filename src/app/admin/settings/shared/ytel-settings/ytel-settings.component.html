@@ -1,32 +1,119 @@
-<h2>{{l('YTel')}} {{l('Settings')}}</h2>
-<div>
-    <div class="form-group">
-        <br />
-        <dx-check-box id="YTelIsEnabled"
-                      [text]="l('YTelIsEnabled')"
-                      [(value)]="yTelSettings.isEnabled">
-        </dx-check-box>
+<div class="base-card integration-wrapper">
+    <div class="integration-container">
+        <div class="integration-content">
+            <div class="content-header">
+                <h2>YTel SMS Integration</h2>
+                <p>
+                    Configure your YTel SMS settings to send and receive text messages directly from your CRM. Set up your API credentials, configure your messaging preferences, and manage SMS communications.
+                </p>
+            </div>
+            <div class="integration-check">
+                <ul>
+                    <li>
+                        <lucide-angular [img]="PhoneIcon"></lucide-angular>
+                        <span class="title">Send SMS messages to your contacts</span>
+                    </li>
+                    <li>
+                        <lucide-angular [img]="MessageSquareIcon"></lucide-angular>
+                        <span class="title">Receive incoming SMS messages</span>
+                    </li>
+                    <li>
+                        <lucide-angular [img]="KeyIcon"></lucide-angular>
+                        <span class="title">Secure API integration with YTel
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="integration-image">
+            <lucide-angular [img]="MessageSquareIcon"></lucide-angular>
+        </div>
+    </div>
+
+    <div class="integration-footer">
+        <lucide-angular [img]="AlertIcon"></lucide-angular>
+        <p>SMS functionality enables better communication with your contacts. Enable or disable the YTel integration below.</p>
+        <mat-slide-toggle
+                [(ngModel)]="yTelSettings.isEnabled"
+                labelPosition="before"
+        >
+        {{ l('Enable YTel SMS') }}
+        </mat-slide-toggle>
     </div>
 </div>
-<div>
+
+<div class="base-card">
+    <div class="content-header">
+        <h2>API Configuration
+        </h2>
+        <p>
+            Enter your YTel API credentials to connect with the SMS service.
+        </p>
+    </div>
+
     <div class="form-group">
-        <label for="YTelAuthToken">{{l("YTelAuthToken")}}</label>
-        <input id="YTelAuthToken" type="text" name="YTelAuthToken" class="form-control" [(ngModel)]="yTelSettings.authToken" maxlength="800">
+        <label class="base-label" for="YTelAuthToken">{{l("YTelAuthToken")}}</label>
+        <input id="YTelAuthToken" type="text" name="YTelAuthToken" class="base-input" placeholder="Enter your YTel API account dashboard" [(ngModel)]="yTelSettings.authToken" maxlength="800">
+        <p class="base-hint">You can find your auth token in your YTel account dashboard</p>
     </div>
 </div>
-<div>
-    <div class="form-group">
-        <label for="YTelFrom">{{l("YTelFrom")}}</label>
+
+<div class="base-card config-phone-container">
+    <div class="content-header">
+        <h2>Phone Number Settings
+        </h2>
+        <p>
+            Configure the phone number to use for sending SMS messages.
+        </p>
+    </div>
+
+    <div class="form-group config-ytel">
+        <label class="base-label" for="YTelFrom">{{l("YTelFrom")}}</label>
         <dx-text-box type="tel" id="YTelFrom" name="YTelFrom" class="form-control" [(ngModel)]="yTelSettings.from" maxlength="128" [mask]="masks.phone" useMaskedValue="true" maskInvalidMessage=""></dx-text-box>
+        <p class="base-hint">Enter the YTel phone number you'll use to send SMS messages</p>
     </div>
 </div>
-<div>
-    <div class="form-group">
-        <label for="YTelInboundSMSKey">{{l("YTelInboundSMSKey")}}</label>
-        <input id="YTelInboundSMSKey" type="text" name="YTelInboundSMSKey" class="form-control" [(ngModel)]="yTelSettings.inboundSmsKey" maxlength="128">
+
+<div class="base-card">
+    <div class="config-container">
+        <div class="content-header">
+            <h2>Inbound SMS Configuration
+            </h2>
+            <p>
+                Configure settings to receive incoming SMS messages.
+            </p>
+        </div>
+        <div class="config-content">
+            <div class="config-inbound">
+                <div class="form-group">
+                    <label class="base-label" for="YTelInboundSMSKey">{{l("YTelInboundSMSKey")}}</label>
+                    <input id="YTelInboundSMSKey" type="text" name="YTelInboundSMSKey" class="base-input" placeholder="Enter a secure string for inbound SMS" [(ngModel)]="yTelSettings.inboundSmsKey" maxlength="128">
+                </div>
+                <button class="base-button">Generate Key</button>
+            </div>
+
+            <div class="config-url">
+                <div class="config-url-header">
+                    <lucide-angular [img]="AlertIcon"></lucide-angular>
+                    <h5>How to Setup Inbound SMS</h5>
+                </div>
+                <p class="config-url-content">
+                    To receive inbound SMS messages, please enter any secure string above, then {{ " " }}
+                    <a 
+                        href="https://ytel.com/account/settings" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline inline-flex items-center gap-1"
+                    >
+                        edit your phone on YTel
+                        <lucide-angular [img]="ExternalLinkIcon"></lucide-angular>
+                    </a>
+                </p>
+                <p class="config-url-info">
+                    On the Inbound SMS settings tab, use the following SMS request URL:
+                </p>
+                <code>{{ getYtelInboundSMSUrl() }}<i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></code>
+            </div>
+        </div>
     </div>
 </div>
-<p>
-    <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span><br />
-    <span class="copy-url"><b>{{getYtelInboundSMSUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span><br /><br />
-</p>

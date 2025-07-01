@@ -1,0 +1,464 @@
+<dx-scroll-view showScrollbar="onHover">
+    <div class="personal-settings-container">
+        <div class="modal-body" *ngIf="user">
+            <mat-tab-group 
+                [(selectedIndex)]="selectedIndex" 
+                (selectedTabChange)="onTabChanged($event)" 
+                animationDuration="10ms" 
+                disableRipple="true" 
+                class="main-tabs"
+            >
+                <mat-tab [label]="l('Profile')">
+                    <ng-template mat-tab-label>
+                        <lucide-angular [img]="UserIcon"></lucide-angular>
+                        <span>{{l('Personal Profile')}}</span>
+                    </ng-template>
+                    <div class="profile-settings-card">
+                        <div class="profile-settings-header-container">
+                            <div class="profile-settings-header">
+                                <h1>Profile Information</h1>
+                                <p>
+                                  Update your basic profile details
+                                </p>
+                            </div>
+                        </div>
+
+                        <mat-tab-group 
+                            mat-align-tabs="end" 
+                            class="child-tabs tab-card"
+                            animationDuration="0ms"
+                        >
+                            <mat-tab label="Profile">
+                                <div class="profile-settings-container">
+                                    <div class="profile-settings-image-wrapper">
+                                        <div style="position: relative;">
+                                          <div class="profile-settings-image">
+                                            <img 
+                                              src=""
+                                              alt="Profile" 
+                                            />
+                                          </div>
+                                          <label 
+                                            htmlFor="profile-image" 
+                                          >
+                                            <lucide-angular [img]="CameraIcon"></lucide-angular>
+                                          </label>
+                                          <input 
+                                            id="profile-image" 
+                                            type="file" 
+                                            accept="image/*" 
+                                            style="display: none;"
+                                          />
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-2-line">
+                                        <div class="form-group">
+                                            <label for="Name">{{l("FirstName")}} *</label>
+                                            <input id="Name" #nameInput="ngModel" class="form-control" type="text" name="Name" [(ngModel)]="user.name" required maxlength="32">
+                                            <validation-messages [formCtrl]="nameInput"></validation-messages>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Surname">{{l("LastName")}} *</label>
+                                            <input id="Surname" #surnameInput="ngModel" type="text" name="Surname" class="form-control" [(ngModel)]="user.surname" required maxlength="32">
+                                            <validation-messages [formCtrl]="surnameInput"></validation-messages>
+                                        </div>
+                                    </div>
+    
+                                    <div class="form-group">
+                                        <label for="EmailAddress">{{l("EmailAddress")}} *</label>
+                                        <input id="EmailAddress" #emailAddressInput="ngModel" type="email" name="EmailAddress" class="form-control" [(ngModel)]="user.emailAddress" required email maxlength="256">
+                                        <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{email: l('InvalidEmailAddress')}]"></validation-messages>
+                                    </div>
+                                    <div *ngIf="smsEnabled && !isPhoneNumberEmpty">
+                                        <div class="form-group">
+                                            <label>{{l("PhoneNumber")}}</label>
+                                            <div class="input-group">
+                                                <input type="text" name="PhoneNumber" class="form-control" [(ngModel)]="user.phoneNumber" maxlength="24">
+                                                <span *ngIf="!isPhoneNumberConfirmed" id="SpanSmsVerificationUnverified" class="input-group-btn">
+                                                    <button id="btnSmsVerification" (click)="smsVerify()" class="btn btn-primary" type="button" tooltip="{{l('YourPhoneNumberIsNotVerified')}}"><i class="fa fa-warning"></i>{{l('Verify')}}</button>
+                                                </span>
+                                                <span *ngIf="!isPhoneNumberConfirmed" id="SpanSmsVerificationVerified" style="display: none;" class="input-group-addon" tooltip="{{l('YourPhoneNumberIsVerified')}}">
+                                                    <i class="la la-check m--font-success" [attr.aria-label]="l('Verified')"></i>
+                                                </span>
+                                                <span *ngIf="isPhoneNumberConfirmed" class="input-group-addon" tooltip="{{l('YourPhoneNumberIsVerified')}}">
+                                                    <i class="la la-check m--font-success" [attr.aria-label]="l('Verified')"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="!smsEnabled || isPhoneNumberEmpty">
+                                        <div class="form-group">
+                                            <label>{{l("PhoneNumber")}}</label>
+                                            <country-phone-number class="phoneNumber"
+                                                                    [(phoneNumber)]="user.phoneNumber"
+                                                                    [required]="false">
+                                            </country-phone-number>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" *ngIf="showTimezoneSelection">
+                                        <label for="Timezone">{{l("Timezone")}}</label>
+                                        <timezone-combo id="Timezone"
+                                                        [(selectedTimeZone)]="user.timezone"
+                                                        [defaultTimezoneScope]="defaultTimezoneScope">
+                                        </timezone-combo>
+                                    </div>
+                                </div>
+                            </mat-tab>
+                            <mat-tab label="Social Links">
+                                <div class="form-group">
+                                    <label for="linkedin">{{l("Linkedin URL")}}</label>
+                                    <input id="linkedin" placeholder="https://linkedin.com/in/yourprofile" class="form-control" type="text" name="linkedin">
+                                </div>
+                                <div class="form-group">
+                                    <label for="twitter">{{l("Twitter/X URL")}}</label>
+                                    <input id="twitter" placeholder="https://twitter.com/yourusername" class="form-control" type="text" name="twitter">
+                                </div>
+                                <div class="form-group">
+                                    <label for="facebook">{{l("Facebook URL")}}</label>
+                                    <input id="facebook" placeholder="https://facebook.com/yourusername" class="form-control" type="text" name="facebook">
+                                </div>
+                                <div class="form-group">
+                                    <label for="instagram">{{l("Instagram URL")}}</label>
+                                    <input id="instagram" placeholder="https://instagram.com/yourusername" class="form-control" type="text" name="instagram">
+                                </div>
+                                <div class="form-group">
+                                    <label for="github">{{l("GitHub URL")}}</label>
+                                    <input id="github" placeholder="https://github.com/yourusername" class="form-control" type="text" name="github">
+                                </div>
+                            </mat-tab>
+                            <mat-tab label="Address">
+                                <div class="form-group">
+                                    <label for="street">{{l("Street Address")}}</label>
+                                    <input id="street" placeholder="123 Main St" class="form-control" type="text" name="street">
+                                </div>
+                                <div class="form-group">
+                                    <label for="apt">{{l("Apartment/Suite")}}</label>
+                                    <input id="apt" placeholder="Apt 4B" class="form-control" type="text" name="apt">
+                                </div>
+                                <div class="grid-3-line">
+                                    <div class="form-group">
+                                        <label for="city">{{l("City")}}</label>
+                                        <input id="city" placeholder="Phoenix" class="form-control" type="text" name="city">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="state">{{l("State/Province")}}</label>
+                                        <input id="state" placeholder="Arizona" class="form-control" type="text" name="state">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="zip">{{l("Zip/Postal Code")}}</label>
+                                        <input id="zip" placeholder="85001" class="form-control" type="text" name="zip">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="country">{{l("Country")}}</label>
+                                    <input id="country" placeholder="United States" class="form-control" type="text" name="country">
+                                </div>
+                            </mat-tab>
+                        </mat-tab-group>
+                    </div>
+                </mat-tab>
+                <mat-tab [label]="l('SMTP')">
+                    <ng-template mat-tab-label>
+                        <lucide-angular [img]="EmailIcon"></lucide-angular>
+                        <span>{{l('My Email Settings')}}</span>
+                    </ng-template>
+                    <div>
+                        <div class="profile-settings-header-container">
+                            <div class="profile-settings-header">
+                                <h1>Email Settings</h1>
+                                <p>
+                                    Configure your personal email preferences
+                                </p>
+                            </div>
+    
+                            <div class="profile-settings-toggle-wrapper">
+                                <mat-slide-toggle
+                                    class="profile-settings-toggle"
+                                    [(ngModel)]="userEmailSettings.isUserSmtpEnabled"
+                                    labelPosition="before"
+                                >
+                                    {{ l('AllowToSendFromYourEmailAddress') }}
+                                </mat-slide-toggle>
+                            </div>
+                        </div>
+
+                        <div class="tab-card smtp-container" *ngIf="userEmailSettings.isUserSmtpEnabled">
+                            <!-- <dx-check-box class="is-user-smtp-enabled" 
+                                [text]="l('AllowToSendFromYourEmailAddress')" 
+                                [(value)]="userEmailSettings.isUserSmtpEnabled">
+                            </dx-check-box> -->
+        
+                            <div class="information" *ngIf="['gmail.com', 'outlook.com'].includes(selectedProvider?.domain)" [ngClass]="{error: smtpProviderErrorLink}">
+                                <div class="block" *ngIf="selectedProvider?.domain == 'gmail.com'">
+                                    Gmail requires using an app-specific password for third-party apps, instead of your regular password for your security. Your Google account requires 2FA turned on to use this feature.
+                                    <br><br>
+                                    <a target="blank" href="https://myaccount.google.com/apppasswords"><b>Generate an app-specific password</b></a>
+                                    <br>
+                                    <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('gmail.com')">Provider recommendations</a>
+                                    <br>
+                                    <a target="blank" href="https://support.google.com/mail/answer/185833">How to generate App Password</a>
+                                </div>
+                                <div class="block" *ngIf="selectedProvider?.domain == 'outlook.com'">
+                                    If you face with any troubles on connecting your account check the link below.
+                                    <br><br>
+                                    <a target="blank" [href]="emailSmtpSettingsService.getSmtpErrorHelpLink('office365.com')">Provider recommendations</a>
+                                </div>
+                            </div>
+    
+                            <div class="settings">
+                                <div class="flex-2 providers">
+                                    <h3><img src="assets/common/icons/smtp/step1.svg">&nbsp;&nbsp;&nbsp;Select Mail Provider</h3>
+                                    <dx-select-box
+                                        width="96%"
+                                        height="53px"
+                                        [showClearButton]="true"
+                                        [dataSource]="supportedProviders"
+                                        displayExpr="name"
+                                        fieldTemplate="field"
+                                        [(value)]="selectedProvider"
+                                        (onValueChanged)="onProviderChanged($event)">
+                                        <div class="provider-select-item" *dxTemplate="let data of 'item'">
+                                            <div class="provider-icon" [ngStyle]="{'background-image': 'url(assets/common/icons/smtp/' + data?.icon + ')'}"></div>{{data?.name}}
+                                        </div>
+                                        <div class="provider-select-item" *dxTemplate="let data of 'field'">
+                                            <div *ngIf="data" class="provider-icon" [ngStyle]="{'background-image': 'url(assets/common/icons/smtp/' + data?.icon + ')'}"></div>{{data?.name}}
+                                            <dx-text-box [visible]="false"></dx-text-box>
+                                        </div>
+                                    </dx-select-box>
+                                </div>
+                                <div class="flex-2">
+                                    <div class="credentials">
+                                        <h3><img src="assets/common/icons/smtp/step2.svg">&nbsp;&nbsp;&nbsp;Enter Credentials</h3>
+                                        <div class="form-group">
+                                            <label for="SmtpUserName">{{l("UserName")}}</label>
+                                            <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control"
+                                                    [ngClass]="{'edited': userEmailSettings.smtp.userName}"
+                                                    [(ngModel)]="userEmailSettings.smtp.userName" maxlength="128" placeholder="Enter your user name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="SmtpPassword">{{l("Password")}}</label>
+                                            <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control"
+                                                    [ngClass]="{'edited':userEmailSettings.smtp.password}" [(ngModel)]="userEmailSettings.smtp.password"
+                                                    maxlength="128" autocomplete="off" placeholder="Enter your password">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-2">
+                                    <div class="servers">
+                                        <h3><img src="assets/common/icons/smtp/step3.svg">&nbsp;&nbsp;&nbsp;Manually Edit Incoming & Outgoing Servers</h3>
+                                        <div class="columns">
+                                            <div class="outgoing">
+                                                <div class="outgoing-field"><img src="assets/common/icons/smtp/outgoing.svg">&nbsp;&nbsp;&nbsp;OUTGOING SERVER</div>
+                                                <div class="form-group">
+                                                    <label for="SmtpHost">{{l("SmtpHost")}}</label>
+                                                    <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':userEmailSettings.smtp.host}"
+                                                            [(ngModel)]="userEmailSettings.smtp.host"
+                                                            maxlength="64" placeholder="Enter smtl host">
+                                                </div>
+                                                <div class="form-group port">
+                                                    <label for="SmtpPort">{{l("SmtpPort")}}</label>
+                                                    <input id="SmtpPort" type="number" name="SmtpPort" class="form-control"
+                                                            [ngClass]="{'edited':userEmailSettings.smtp.port}" [(ngModel)]="userEmailSettings.smtp.port"
+                                                            maxlength="5" placeholder="Enter smtp port">
+                                                </div>
+                                                <dx-switch class="tls" switchedOffText="" switchedOnText="" [(value)]="userEmailSettings.smtp.enableSsl"></dx-switch>TLS
+                                            </div>
+                                            <div class="ingoing">
+                                                <div class="ingoing-field"><img src="assets/common/icons/smtp/incoming.svg">&nbsp;&nbsp;&nbsp;INCOMING MAIL - IMAP SERVER <dx-switch switchedOffText="" switchedOnText="" [(value)]="userEmailSettings.isImapEnabled"></dx-switch></div>
+                                                <div class="form-group" [ngClass]="{disabled: !userEmailSettings.isImapEnabled}">
+                                                    <label for="ImapHost">{{l("ImapHost")}}</label>
+                                                    <input id="ImapHost" type="text" name="ImapHost" class="form-control" [ngClass]="{'edited':userEmailSettings.imapHost}" [(ngModel)]="userEmailSettings.imapHost" maxlength="128">
+                                                </div>
+                                                <div class="form-group port" [ngClass]="{disabled: !userEmailSettings.isImapEnabled}">
+                                                    <label for="ImapPort">{{l("ImapPort")}}</label>
+                                                    <input id="ImapPort" type="number" name="ImapPort" class="form-control" [ngClass]="{'edited':userEmailSettings.imapPort}" [(ngModel)]="userEmailSettings.imapPort" maxlength="5">
+                                                </div>
+                                                <dx-switch class="tls" switchedOffText="" switchedOnText="" [disabled]="!userEmailSettings.isImapEnabled" [(value)]="userEmailSettings.imapUseSsl"></dx-switch>TLS
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="default" [ngStyle]="{'margin-top': '20px'}">
+                                        <h3><img src="assets/common/icons/smtp/step4.svg">&nbsp;&nbsp;&nbsp;Modify and Test Your Connection</h3>
+                                        <div class="form-group">
+                                            <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
+                                            <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control"
+                                                    [ngClass]="{'edited':userEmailSettings.from.emailAddress}"
+                                                    [(ngModel)]="userEmailSettings.from.emailAddress" maxlength="100">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
+                                            <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control"
+                                                    [ngClass]="{'edited':userEmailSettings.from.displayName}"
+                                                    [(ngModel)]="userEmailSettings.from.displayName" maxlength="100">
+                                        </div>
+                                        <div class="form-group test-email">
+                                            <label for="TestEmail">Enter any email to receive a test email</label>
+                                            <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+                                            <button class="btn btn-layout" type="button" (click)="sendTestEmail()"><img src="assets/common/icons/smtp/send.svg">&nbsp;&nbsp;&nbsp;{{l("SendTestEmail")}}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </mat-tab>
+                <mat-tab [label]="l('Gmail')" [disabled]="!gmailSettings || !gmailSettings.clientId">
+                    <ng-template mat-tab-label>
+                        <lucide-angular [img]="SignatureIcon"></lucide-angular>
+                        <span>{{l('Gmail')}}</span>
+                    </ng-template>
+                    <div class="form-group">
+                        <dx-check-box id="GmailIsEnabled"
+                                        [text]="l('Enabled')"
+                                        [(value)]="gmailSettings.isEnabled"
+                                        [disabled]="!gmailSettings.isEnabled && !gmailSettings.isConfigured">
+                        </dx-check-box>
+                    </div>
+                    <div class="google-button-container">
+                        <button class="btn btn-layout google-button" (click)="getAuthCode()">
+                            <img src="./assets/common/icons/google.svg" />
+                            {{ gmailSettings.isConfigured ? l('Authorized') : l('Authorize') }}
+                        </button>
+                        <img *ngIf="gmailSettings.isConfigured" src="./assets/common/icons/check-green.svg" />
+                        <span *ngIf="gmailSettings.isConfigured" class="disconnect" (click)="disconnedGmail()">{{l("Disconnect")}}</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
+                        <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" disabled [value]="gmailSettings.defaultFromAddress" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
+                        <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [(ngModel)]="gmailSettings.defaultFromDisplayName" maxlength="100">
+                    </div>
+
+                    <h5>{{l("TestEmailSettingsHeader")}}</h5>
+                    <div class="row gmail-test-email">
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <button class="btn btn-layout" type="button" [disabled]="!testEmailAddress || !gmailSettings.isConfigured" (click)="sendGmailTestEmail()">{{l("SendTestEmail")}}</button>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab [label]="l('Signature')">
+                    <ng-template mat-tab-label>
+                        <lucide-angular [img]="SignatureIcon"></lucide-angular>
+                        <span>{{l('My Email Signature')}}</span>
+                    </ng-template>
+                    <div>
+                        <div class="profile-settings-header-container">
+                            <div class="profile-settings-header">
+                                <h1>Email Signature</h1>
+                                <p>
+                                    Customize your email signature for all outgoing messages
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="tab-card smtp-container">
+                            <div class="form-group ck-container">
+                                <label for="signature">{{l('EmailSignature')}}</label>
+                                <dx-tooltip [width]="250"
+                                            position="bottom"
+                                            [(visible)]="tagsTooltipVisible"
+                                            [target]="'.tags-button'">
+                                    <div *dxTemplate="let data of 'content'" class="tags-container">
+                                        <p class="tags-note">{{l('InvoiceEmail_SupportedTags')}}</p>
+                                        <dx-list height="calc(100% - 40px)"
+                                                    [selectionMode]="'single'"
+                                                    [dataSource]="tagsList"
+                                                    [itemTemplate]="'startCase'"
+                                                    (onItemClick)="onTagClick($event)">
+                                            <div *dxTemplate="let data of 'startCase'" class="tags-list-item">
+                                                {{ startCase(data) }}
+                                            </div>
+                                        </dx-list>
+                                    </div>
+                                </dx-tooltip>
+                                <a #tagsButton [class]="'tags-button'" *ngIf="tagsList?.length" (click)="tagsTooltipVisible = true">Tags</a>
+                            </div>
+                            <ckeditor [hidden]="currentTab != l('Signature')" [config]="ckConfig" [(data)]="signatureHtml"></ckeditor>
+                        </div>
+                    </div>
+                    
+                </mat-tab>
+                <mat-tab [label]="l('TwoFactorLogin')">
+                    <ng-template mat-tab-label>
+                        <lucide-angular [img]="KeyIcon"></lucide-angular>
+                        <span>{{l('2FA Secuirty')}}</span>
+                    </ng-template>
+                    <div>
+                        <div class="profile-settings-header-container">
+                            <div class="profile-settings-header">
+                                <h1>Two-Factor Authentication</h1>
+                                <p>
+                                    Secure your account with two-factor authentication
+                                </p>
+                            </div>
+
+                            <div class="profile-settings-toggle-wrapper">
+                                <mat-slide-toggle
+                                    class="profile-settings-toggle"
+                                    [(ngModel)]="isGoogleAuthenticatorEnabled"
+                                    labelPosition="before"
+                                >
+                                    Google Authenticator Enable
+                                </mat-slide-toggle>
+                            </div>
+                        </div>
+
+                        <div class="tab-card smtp-container" *ngIf="isGoogleAuthenticatorEnabled">
+                            <div class="authenticator-container">
+                                <h1>Authenticator App</h1>
+                                <p>
+                                    Use an authenticator app like Google Authenticator, Authy, or 1Password
+                                </p>
+                            </div>
+
+                            <div class="grid-2-line authenticator-app-wrapper">
+                                <div class="tab-card authenticator-qr">
+                                    <span>QR Code</span>
+                                    <img [src]="user.qrCodeSetupImageUrl" />
+                                </div>
+                                <div class="authenticator-app">
+                                    <label class="base-label">Setup Key</label>
+                                    <div class="input-wrapper">
+                                        <input class="base-input" value="ABCD EFGH IJKL MNOP" readOnly>
+                                        <button class="base-button">Copy</button>
+                                    </div>
+
+                                    <br/>
+                                    <label class="base-label">Verification Code</label>
+                                    <div class="input-wrapper">
+                                        <input class="base-input" placeholder="Enter 6-digit code">
+                                        <button class="base-button">Verify</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <h4>
+                                Google Authenticator
+                            </h4> -->
+                            <div style="display: flex;flex-direction: column;">
+                                <span style="margin-bottom: 0.5rem;">
+                                    {{l("ScanQrCodeWithYourMobileApp")}}
+                                </span>
+                                
+                                <small>
+                                    {{l("GoogleAuthenticatorReferrerLink")}}: <a href="https://support.google.com/accounts/answer/1066447" target="_blank" rel="noopener noreferrer">Google Authenticator</a>
+                                </small>
+                            </div>
+                            <!-- <div [hidden]="isGoogleAuthenticatorEnabled">
+                                <button type="button" class="button-layout button-primary" (click)="updateQrCodeSetupImageUrl()">{{l("Enable")}}</button>
+                            </div> -->
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>                            
+    </div>
+</dx-scroll-view>
+<smsVerificationModal #smsVerificationModal (modalSave)="changePhoneNumberToVerified()"></smsVerificationModal>

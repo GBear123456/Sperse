@@ -1,72 +1,110 @@
-<h2>{{l('General')}} {{l('Settings')}}</h2>
 <div *ngIf="generalSettings">
+    <settings-card title="About Localization Settings" description="These settings affect how dates, numbers, and currencies are displayed throughout the application. They also determine default options for new users and content. All settings can be overridden at the user level if needed."></settings-card>
     <ng-container *ngIf="isRenameTenantEnabled">
-        <div class="form-group">
-            <label for="TenantName">{{l("Tenant Name")}}</label>
-            <input #tenantNameModel="ngModel"
-                   id="TenantName"
-                   type="text"
-                   name="TenantName"
-                   class="form-control"
-                   [(ngModel)]="tenantName"
-                   maxlength="128">
-        </div>
+        <settings-item
+            [label]='l("Tenant Name")'
+            tooltipDescription="The name of your organization as it will appear throughout the application and in emails."
+            [icon]="GLobeIcon"
+            color="rgb(99 102 241)"
+        >
+            <input 
+                #tenantNameModel="ngModel"
+                id="TenantName"
+                type="text"
+                name="TenantName"
+                class="form-control"                   
+                [(ngModel)]="tenantName"
+                maxlength="128"
+            >
+        </settings-item>
     </ng-container>
     <div class="form-group">
-        <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
-        <dx-select-box valueExpr="code"
-                       displayExpr="name"
-                       [searchExpr]="['code', 'name']"
-                       [searchEnabled]="true"
-                       [placeholder]="Search"
-                       fieldTemplate="field"
-                       [(value)]="generalSettings.defaultCountryCode"
-                       [dataSource]="supportedCountries"
-                       (onValueChanged)="onCountryChanged($event)">
-            <div *dxTemplate="let item of 'field'" class="flag-field">
-                <img [hidden]="!generalSettings?.defaultCountryCode" class="selected-flag-icon" src="assets/common/icons/flags/{{generalSettings?.defaultCountryCode?.toLowerCase()}}.svg" width="19px" height="auto">&nbsp;
-                <dx-text-box width="90%" [value]="item?.name"></dx-text-box>
-            </div>
-            <div *dxTemplate="let item of 'item'" class="flag-row">
-                <img class="flag-icon" src="assets/common/icons/flags/{{item?.code?.toLowerCase()}}.svg" width="auto" height="38px"><div><span class="country-name">{{item.name}}</span><br><b class="country-id">{{item.code}}</b></div>
-            </div>
-        </dx-select-box>
+        <settings-item
+            [label]='l("DefaultCountry")'
+            tooltipDescription="The default country used for address forms, phone number formats, and other regional settings."
+            [icon]="CountryIcon"
+            color="rgb(59 130 246)"
+        >
+            <dx-select-box 
+                valueExpr="code"
+                displayExpr="name"
+                [searchExpr]="['code', 'name']"
+                [searchEnabled]="true"
+                [placeholder]="Search"
+                fieldTemplate="field"
+                [(value)]="generalSettings.defaultCountryCode"
+                [dataSource]="supportedCountries"
+                (onValueChanged)="onCountryChanged($event)"
+            >
+                <div *dxTemplate="let item of 'field'" class="flag-field">
+                    <img [hidden]="!generalSettings?.defaultCountryCode" class="selected-flag-icon" src="assets/common/icons/flags/{{generalSettings?.defaultCountryCode?.toLowerCase()}}.svg" width="19px" height="auto">&nbsp;
+                    <dx-text-box width="90%" [value]="item?.name"></dx-text-box>
+                </div>
+                <div *dxTemplate="let item of 'item'" class="flag-row">
+                    <img class="flag-icon" src="assets/common/icons/flags/{{item?.code?.toLowerCase()}}.svg" width="auto" height="38px"><div><span class="country-name">{{item.name}}</span><br><b class="country-id">{{item.code}}</b></div>
+                </div>
+            </dx-select-box>
+        </settings-item>
     </div>
     <div class="form-group" *ngIf="showTimezoneSelection">
-        <label for="Timezone">{{l("Timezone")}}</label>
-        <timezone-combo id="Timezone"
-                        [(selectedTimeZone)]="generalSettings.timezone"
-                        [defaultTimezoneScope]="defaultTimezoneScope">
-        </timezone-combo>
+        <settings-item
+            [label]='l("Timezone")'
+            tooltipDescription="The default timezone for displaying dates and times. This affects scheduled tasks, reports and user interfaces."
+            [icon]="ClockIcon"
+            color="rgb(16 185 129)"
+        >
+            <timezone-combo id="Timezone"
+                            [(selectedTimeZone)]="generalSettings.timezone"
+                            [defaultTimezoneScope]="defaultTimezoneScope">
+            </timezone-combo>
+        </settings-item>
     </div>
     <div class="form-group">
-        <label for="Currency">{{l("Currency")}}</label>
-        <currency-selector [(currency)]="generalSettings.currency">
-        </currency-selector>
+        <settings-item
+            [label]='l("Currency")'
+            tooltipDescription="The default currency for prices, payments, and financial reports. This determines number formatting and currency symbols."
+            [icon]="DollarSignIcon"
+            color="rgb(34 197 94)"
+        >
+            <currency-selector [(currency)]="generalSettings.currency">
+            </currency-selector>
+        </settings-item>
     </div>
     <ng-container *ngIf="!isHost">
         <div class="form-group">
-            <label for="PublicPhone">{{l("PublicPhone")}}</label>
-            <div>
-                <country-phone-number #publicPhoneNumber
-                                      [phoneNumber]="generalSettings.publicPhone"
-                                      [required]="false"
-                                      (phoneNumberChange)="onPhoneNumberChange($event, publicPhoneNumber)">
-                </country-phone-number>
-            </div>
+            <settings-item
+                [label]='l("PublicPhone")'
+                tooltipDescription="The primary contact phone number for your organization. This may be displayed on public pages and in email footers."
+                [icon]="PhoneIcon"
+                color="rgb(244 63 94)"
+            >
+                <div>
+                    <country-phone-number #publicPhoneNumber
+                                        [phoneNumber]="generalSettings.publicPhone"
+                                        [required]="false"
+                                        (phoneNumberChange)="onPhoneNumberChange($event, publicPhoneNumber)">
+                    </country-phone-number>
+                </div>
+            </settings-item>
         </div>
         <div class="form-group">
-            <label for="PublicSiteUrl">{{l("PublicSiteUrl")}}</label>
-            <input #publicSiteUrl="ngModel"
-                   id="PublicSiteUrl"
-                   type="url"
-                   name="PublicSiteUrl"
-                   class="form-control"
-                   [(ngModel)]="generalSettings.publicSiteUrl"
-                   maxlength="128"
-                   [pattern]="siteUrlRegexPattern.source"
-                   (change)="onUrlPaste($event)"
-                   (paste)="onUrlPaste($event)">
+            <settings-item
+                [label]='l("PublicSiteUrl")'
+                tooltipDescription="Your organization's primary website address. This may be used in links, email footers, and other communications."
+                [icon]="PublicSiteIcon"
+                color="rgb(245 158 11)"
+            >
+                <input #publicSiteUrl="ngModel"
+                    id="PublicSiteUrl"
+                    type="url"
+                    name="PublicSiteUrl"
+                    class="form-control"
+                    [(ngModel)]="generalSettings.publicSiteUrl"
+                    maxlength="128"
+                    [pattern]="siteUrlRegexPattern.source"
+                    (change)="onUrlPaste($event)"
+                    (paste)="onUrlPaste($event)">
+            </settings-item>
         </div>
         <div>
             <span class="help-block text-danger"
@@ -75,16 +113,22 @@
             </span>
         </div>
         <div class="form-group">
-            <label for="ZendeskAccountUrl">{{l("ZendeskAccountUrl")}}</label>
-            <input id="ZendeskAccountUrl"
-                   type="text"
-                   name="ZendeskAccountUrl"
-                   class="form-control"
-                   [(ngModel)]="generalSettings.zendeskAccountUrl"
-                   maxlength="128">
+            <settings-item
+                [label]='l("ZendeskAccountUrl")'
+                tooltipDescription="Your organization's primary website address. This may be used in links, email footers, and other communications."
+                [icon]="ZendeskIcon"
+                color="rgb(245 158 11)"
+            >
+                <input id="ZendeskAccountUrl"
+                    type="text"
+                    name="ZendeskAccountUrl"
+                    class="form-control"
+                    [(ngModel)]="generalSettings.zendeskAccountUrl"
+                    maxlength="128">
+            </settings-item>
         </div>
     </ng-container>
-    <div class="row m-form" *ngIf="isAdminCustomizations">
+    <!-- <div class="row m-form" *ngIf="isAdminCustomizations">
         <div class="col-md-6">
             <uploader #privacyPolicyUploader
                       [title]="l('PrivacyPolicy')"
@@ -105,5 +149,5 @@
                       (onDocumentClear)="clearConditions(conditions.Terms)">
             </uploader>
         </div>
-    </div>
+    </div> -->
 </div>

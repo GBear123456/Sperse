@@ -1,42 +1,65 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Injector, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, throwError } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { catchError, finalize,tap } from 'rxjs/operators';
 
 /** Application imports */
 import {
     EmailSettingsEditDto,
+    GmailSettingsDto,
+    GmailSettingsEditDto,
+    GoogleServiceProxy,
     TenantSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SettingsComponentBase } from './../settings-base.component';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
-
+import { GmailSettingsService } from '@root/shared/common/settings/gmail-settings.service';
+import { SettingService } from '../../settings/settings.service';
+import { GmailAuthType } from './email-settings.enum';
 @Component({
     selector: 'email-settings',
     templateUrl: './email-settings.component.html',
-    styleUrls: ['./email-settings.component.less'],
+    styleUrls: ['./email-settings.component.less', '../settings-base.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantSettingsServiceProxy]
+    providers: [TenantSettingsServiceProxy, GoogleServiceProxy, GmailSettingsService]
 })
 export class EmailSettingsComponent extends SettingsComponentBase {
     emailSettings: EmailSettingsEditDto;
-
     testEmailAddress: string = undefined;
     smtpProviderErrorLink: string;
     showCustomSmptSettings = true;
     supportedProviders = this.emailSmtpSettingsService.supportedProviders;
     selectedProvider: any;
 
+    gmailSettings: GmailSettingsDto = new GmailSettingsDto();
+
+    gmailAuthTypes = [{
+        type: GmailAuthType.SMTP,
+        name: this.l('SMTP')
+    }, {
+        type: GmailAuthType.OAUTH,
+        name: this.l('OAuth')
+    }];
+
+    selectedGmailAuthType: GmailAuthType.SMTP | GmailAuthType.OAUTH = GmailAuthType.SMTP;
+
     constructor(
         _injector: Injector,
+        private route: ActivatedRoute,
+        private router: Router,
         private tenantSettingsService: TenantSettingsServiceProxy,
-        public emailSmtpSettingsService: EmailSmtpSettingsService
+        public emailSmtpSettingsService: EmailSmtpSettingsService,
+        private gmailSettingsService: GmailSettingsService,
+        private googleService: GoogleServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
+        private settingService: SettingService
     ) {
-        super(_injector);
+        super(_injector);  
     }
-
+    
     ngOnInit(): void {
         this.testEmailAddress = this.appSession.user.emailAddress;
 
@@ -54,8 +77,15 @@ export class EmailSettingsComponent extends SettingsComponentBase {
                 else
                     this.onProviderChanged(this.supportedProviders[0]);
 
+                this.route.params.subscribe(params => {
+                    if (params['id'] === 'other') this.onProviderChanged(null)
+                    else this.onProviderChanged(this.supportedProviders.find(provider => provider.name.toLowerCase().search(params['id'])> -1));
+                })
+
                 this.changeDetection.detectChanges();
             });
+
+        this.gmailSettingsService.initGmail(() => this.initGmailClient());
     }
 
     onProviderChanged(provider) {
@@ -90,10 +120,17 @@ export class EmailSettingsComponent extends SettingsComponentBase {
     }
 
     sendTestEmail(): void {
-        this.startLoading();
-        this.smtpProviderErrorLink = undefined;
-        let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.emailSettings);
-        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this), () => this.checkHandlerErrorWarning());
+        if (this.selectedProvider?.domain == 'gmail.com' && this.selectedGmailAuthType == this.gmailAuthTypes[1].type) {
+            if (!this.gmailSettings.isConfigured)
+                return;
+    
+            this.gmailSettingsService.sendTestEmail(this.testEmailAddress, this.gmailSettings.defaultFromAddress, this.gmailSettings.defaultFromDisplayName, false);
+        } else {
+            this.startLoading();
+            this.smtpProviderErrorLink = undefined;
+            let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.emailSettings);
+            this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this), () => this.checkHandlerErrorWarning());
+        }
     }
 
     checkHandlerErrorWarning(forced = false) {
@@ -104,21 +141,73 @@ export class EmailSettingsComponent extends SettingsComponentBase {
     }
 
     getSaveObs(): Observable<any> {
-        this.smtpProviderErrorLink = undefined;
-        if (!this.emailSettings.isImapEnabled) {
-            this.emailSettings.imapHost = undefined;
-            this.emailSettings.imapPort = undefined;
-            this.emailSettings.imapUseSsl = undefined;
-        }
+        if (this.selectedProvider?.domain == 'gmail.com' && this.selectedGmailAuthType == this.gmailAuthTypes[1].type) {
+            let obj = new GmailSettingsEditDto();
+                obj.init(this.gmailSettings);
+                obj.forUser = false;
+                return this.googleService.updateGmailSettings(obj).pipe(tap(() => {
+                    sessionStorage.removeItem('SupportedFrom' + this.appSession.userId);
+                }));
+        } else {
+            this.smtpProviderErrorLink = undefined;
+            if (!this.emailSettings.isImapEnabled) {
+                this.emailSettings.imapHost = undefined;
+                this.emailSettings.imapPort = undefined;
+                this.emailSettings.imapUseSsl = undefined;
+            }
+    
+            return this.tenantSettingsService.updateEmailSettings(this.emailSettings).pipe(
+                catchError(error => {
+                    this.checkHandlerErrorWarning(true);
+                    return throwError(error);
+                }),
+                tap(() => {
+                    sessionStorage.removeItem('SupportedFrom' + this.appSession.userId);
+                })
+            );
+         }
+    }
 
-        return this.tenantSettingsService.updateEmailSettings(this.emailSettings).pipe(
-            catchError(error => {
-                this.checkHandlerErrorWarning(true);
-                return throwError(error);
-            }),
-            tap(() => {
-                sessionStorage.removeItem('SupportedFrom' + this.appSession.userId);
-            })
-        );
+    toggleGmailAuthType(selected) {
+        this.selectedGmailAuthType = selected;
+        this.changeDetection.detectChanges();
+    }
+
+    initGmailClient() {
+        this.testEmailAddress = this.appSession.user.emailAddress;
+        this.loadingService.startLoading();
+        this.googleService.getGmailSettings(false)
+            .pipe(
+                finalize(() => this.loadingService.finishLoading())
+            )
+            .subscribe(res => {
+                this.gmailSettings = res;
+
+                this.gmailSettingsService.initGmailClient(this.gmailSettings.clientId, (response) => {
+                    this.loadingService.startLoading();
+                    this.googleService.setupGmail(false, response.code)
+                        .pipe(
+                            finalize(() => this.loadingService.finishLoading())
+                        )
+                        .subscribe(() => {
+                            this.initGmailClient();
+                        });
+                });
+
+                this.changeDetection.detectChanges();
+            });
+    }
+
+    getAuthCode() {
+        this.gmailSettingsService.getAuthCode();
+    }
+
+    disconnedGmail() {
+        this.gmailSettingsService.disconnedGmail(false, () => {
+            this.gmailSettings.isConfigured = false;
+            this.gmailSettings.isEnabled = false;
+            this.gmailSettings.defaultFromAddress = null;
+            this.changeDetection.detectChanges();
+        });
     }
 }

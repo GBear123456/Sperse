@@ -29,7 +29,7 @@ export class EmailSmtpSettingsService {
         icon: 'gmail.svg',
         imap: {host: 'imap.gmail.com', port: 993, ssl: true}
     }, {
-        name: 'HotMail (OutLook)', 
+        name: 'Outlook (Hotmail)', 
         hosts: ['smtp-mail.outlook.com','outlook.office365.com'], 
         port: '587', 
         ssl: false, 
@@ -85,7 +85,7 @@ export class EmailSmtpSettingsService {
         icon: 'proton.png', 
         imap: {host: 'imap.protonmail.com', port: 993, ssl: true}
     }, {
-        name: 'Zoho', 
+        name: 'Zoho Mail', 
         hosts: ['smtp.zoho.eu', 'smtppro.zoho.com'], 
         port: '465', 
         ssl: true, 

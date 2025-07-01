@@ -160,10 +160,11 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         if (module && module.items.length) {
             let route = this.router.url.split('?').shift();
             module.items.some((item: PanelMenuItem, i: number) => {
-                if (route == item.route || _.contains(item.alterRoutes, route))
+                if (route.includes(item.route) || _.contains(item.alterRoutes, route))
                     return module.selectedItem = item;
             });
         }
+        this.changeDetectorRef.detectChanges();
     }
     
     registerToEvents() {

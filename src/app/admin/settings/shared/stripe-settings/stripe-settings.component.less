@@ -1,366 +1,467 @@
 :host {
-    display: block;
-    background-color: var(--background-color);
-    min-height: 100%;
+  display: block;
+  padding: 1rem;
 
-    ::ng-deep .mat-tab-body-content {
-        padding: 20px 0 0 10px;
-        background-color: var(--background-color);
+  @media (min-width: 640px) {
+    padding: 1.5rem;
+  }
 
-        .introduction-tab {
-            .take-payments-header {
-                display: flex;
-                justify-content: space-between;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 0.5rem;
 
-                h3 {
-                    font-size: 26px;
-                    font-weight: 600;
-                    color: var(--text-color);
-                    font-family: var(--app-font-family);
-                }
-
-                span {
-                    font-size: 13px;
-                    color: var(--text-color);
-                }
-
-                .stripe-button {
-                    height: 43px;
-                    width: 180px;
-                    background-color: var(--primary-color);
-                    color: var(--btn-primary-text);
-                    border: none;
-                    border-radius: 6px;
-                    font-family: var(--app-font-family);
-                    transition: all 0.2s ease-in-out;
-
-                    &:hover {
-                        background-color: var(--primary-color);
-                    }
-                }
-            }
-
-            .video-block {
-                display: flex;
-                margin-top: 33px;
-                padding: 20px;
-                background-color: var(--card-bg);
-                border-radius: 10px;
-                border: 1px solid var(--border-color);
-
-                img {
-                    width: 306px;
-                    height: 205px;
-                    border-radius: 4px;
-                }
-
-                .video-block-text {
-                    margin-left: 33px;
-
-                    .video-block-title {
-                        margin-top: 25px;
-                        font-size: 22px;
-                        font-weight: 600;
-                        color: var(--text-color);
-                    }
-
-                    ul {
-                        margin-top: 13px;
-                        padding: 0;
-                        font-size: 13px;
-                        line-height: 23px;
-                        list-style-type: disc;
-                        list-style-position: inside;
-                        color: var(--text-color);
-
-                        li {
-                            margin-bottom: 6px;
-
-                            &::marker {
-                                color: var(--primary-color);
-                            }
-                        }
-                    }
-
-                    .video-block-learnmore {
-                        font-size: 13px;
-                        font-weight: 600;
-                        color: var(--text-color);
-
-                        a {
-                            color: var(--primary-color);
-                            text-decoration: none;
-
-                            &:hover {
-                                color: var(--primary-color);
-                            }
-                        }
-                    }
-                }
-            }
-
-            .payments-block {
-                margin-top: 20px;
-                padding: 30px;
-                border: 1px solid var(--border-color);
-                background-color: var(--card-bg);
-                border-radius: 10px;
-
-                h2 {
-                    font-size: 22px;
-                    line-height: 27px;
-                    font-weight: 600;
-                    color: var(--text-color);
-                }
-
-                h3 {
-                    font-size: 15px;
-                    line-height: 27px;
-                    font-weight: 500;
-                    color: var(--text-color);
-                }
-
-                ul {
-                    font-size: 13px;
-                    padding: 0;
-                    list-style-type: none;
-                    color: var(--text-color);
-
-                    li {
-                        margin-bottom: 6px;
-                        line-height: 23px;
-
-                        &:before {
-                            content: '\f058';
-                            font-size: 18px;
-                            font-family: FontAwesome !important;
-                            color: var(--success-color);
-                            margin-right: 8px;
-                        }
-                    }
-                }
-            }
-
-            .faq-block {
-                background-color: var(--card-bg);
-                border-radius: 10px;
-                padding: 30px;
-                border: 1px solid var(--border-color);
-
-                .faq-block-title {
-                    font-size: 23px;
-                    margin-bottom: 18px;
-                    color: var(--text-color);
-                }
-
-                .faq-block-row {
-                    background-color: var(--background-color);
-                    font-size: 13px;
-                    line-height: 23px;
-                    color: var(--text-color);
-                    margin-bottom: 8px;
-                    border-radius: 6px;
-                    padding: 5px;
-                    border: 1px solid var(--border-color);
-
-                    img {
-                        margin-right: 6px;
-                        width: 16px;
-                    }
-
-                    a {
-                        color: var(--primary-color);
-                        text-decoration: none;
-
-                        &:hover {
-                            color: var(--primary-color);
-                        }
-                    }
-                }
-            }
-        }
-
-        .connected-tab {
-            .block {
-                width: 500px;
-                background-color: var(--card-bg);
-                border: 1px solid var(--border-color);
-                border-radius: 10px;
-                padding: 20px;
-            }
-
-            .connected-account {
-                .account-info {
-                    .stripe-button-container {
-                        margin-bottom: 25px;
-                    }
-
-                    .account-details {
-                        margin-bottom: 25px;
-                        color: var(--text-color);
-
-                        .fa-refresh {
-                            color: var(--primary-color);
-                            margin-left: 10px;
-                            cursor: pointer;
-
-                            &:hover {
-                                color: var(--primary-color);
-                            }
-                        }
-                    }
-
-                    .tax-settings {
-                        margin-bottom: 15px;
-                    }
-                }
-            }
-        }
-
-        .api-keys-tab {
-            input {
-                width: 100%;
-                border: 1px solid var(--border-color);
-                border-radius: 6px;
-                height: 45px;
-                padding: 0 10px;
-                background-color: var(--background-color);
-                color: var(--text-color);
-
-                &:hover {
-                    border-color: var(--border-color);
-                }
-
-                &:focus {
-                    border-color: var(--primary-color);
-                    outline: none;
-                }
-
-                &::placeholder {
-                    color: var(--muted-color);
-                }
-            }
-        }
-
-        .blocks-tab {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-
-            .block {
-                border: 1px solid var(--border-color);
-                border-radius: 10px;
-                padding: 16px 20px;
-                font-size: 13px;
-                font-weight: 500;
-                line-height: 28px;
-                background-color: var(--card-bg);
-                color: var(--text-color);
-
-                &.active {
-                    border-color: var(--success-color);
-                    background-color: var(--success-color);
-
-                    .check-icon {
-                        color: var(--success-color) !important;
-                    }
-                }
-
-                .section {
-                    border-bottom: 1px solid var(--border-color);
-                    padding-bottom: 12px;
-                    margin-bottom: 20px;
-                }
-
-                .top-bar {
-                    .check-icon {
-                        font-size: 20px;
-                        color: var(--muted-color);
-                    }
-
-                    inplace-edit {
-                        display: inline-block;
-                        width: 90%;
-                        margin-left: 10px;
-                        font-size: 17px;
-                        font-weight: 600;
-                        color: var(--text-color);
-                    }
-                }
-
-                h6 {
-                    font-size: 16px;
-                    font-weight: 600;
-                    margin: 15px 0;
-                    color: var(--text-color);
-                }
-
-                .small {
-                    font-size: 11px;
-                    color: var(--muted-color);
-                }
-
-                ::ng-deep .dx-checkbox .dx-checkbox-text {
-                    font-size: 13px;
-                    font-weight: 500;
-                    color: var(--text-color);
-                }
-
-                .account-actions {
-                    display: flex;
-                    justify-content: space-around;
-                    font-size: 13px;
-                    font-weight: 500;
-                    color: var(--primary-color);
-                    opacity: .6;
-
-                    span {
-                        cursor: pointer;
-
-                        &:hover {
-                            opacity: 1;
-                        }
-
-                        i {
-                            margin-right: 7px;
-                            font-size: 13px;
-                        }
-                    }
-                }
-            }
-        }
-
-        .import-tab {
-            width: 300px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-
-            h5 {
-                font-size: 16px;
-                font-weight: 600;
-                margin: 15px 0;
-                color: var(--text-color);
-            }
-        }
+    @media (min-width: 640px) {
+      flex-direction: row;
     }
 
-    .clipboard-holder {
-        .save-to-clipboard {
-            display: none;
+    img {
+      width: auto;
+      height: 2.5rem;
+      object-fit: contain;
+      align-self: flex-start;
+
+      @media (min-width: 640px) {
+        height: 3.5rem;
+      }
+    }
+
+    .header-toggle {
+      margin-top: 5px;
+      align-self: flex-end;
+
+      @media (min-width: 640px) {
+        align-self: flex-start;
+      }
+    }
+  }
+
+  .main-tabs {
+    margin: 1rem 0;
+  }
+
+  ::ng-deep .mat-tab-body-content {
+    overflow: hidden;
+    padding: 20px 0 0 10px;
+    background-color: var(--background-color);
+
+    .introduction-tab {
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: 1rem;
+
+      @media (min-width: 640px) {
+        gap: 1.5rem;
+      }
+
+      @media (min-width: 1024px) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .left-side {
+        @media (min-width: 1024px) {
+          grid-column: span 2 / span 2;
+        }
+
+        .payment-header {
+          h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+            font-weight: 600;
+
+            @media (min-width: 640px) {
+              font-size: 1.875rem;
+              line-height: 2.25rem;
+            }
+          }
+
+          p {
+            color: rgb(75 85 99);
+            margin: 0;
+          }
+        }
+
+        .content-wrapper {
+          display: grid;
+          margin-top: 1rem;
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+          gap: 1rem;
+
+          margin-top: 1.5rem;
+          margin-bottom: 1.5rem;
+
+          @media (min-width: 640px) {
+            gap: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+          }
+
+          @media (min-width: 768px) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+
+          ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+
+            li {
+              display: flex;
+              align-items: flex-start;
+              gap: 0.5rem;
+
+              .title {
+                font-size: 0.875rem;
+                line-height: 1.5rem;
+
+                @media (min-width: 640px) {
+                  font-size: 1rem;
+                  line-height: 2rem;
+                }
+              }
+            }
+          }
+
+          .content-info {
+            border-radius: 0.5rem;
+            background-color: rgb(249 250 251);
+            padding: 1rem;
+
+            @media (min-width: 640px) {
+              padding: 1.5rem;
+            }
+
+            .info-img {
+              display: flex;
+              align-items: center;
+              margin-bottom: 1rem;
+
+              img {
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+                border-radius: 0.5rem;
+                object-fit: cover;
+              }
+            }
+
+            h3 {
+              margin-bottom: 1rem;
+              font-size: 1.125rem;
+              line-height: 1.75rem;
+              font-weight: 700;
+
+              @media (min-width: 640px) {
+                font-size: 1.25rem;
+                line-height: 1.75rem;
+              }
+            }
+
+            ul li div {
+              color: rgb(59 130 246);
+              font-size: 2rem;
+              line-height: 1.75rem;
+            }
+
+            a {
+              margin-top: 1rem;
+            }
+          }
+
+          .content-invoice {
+            border-radius: 0.5rem;
+            background-color: rgb(249 250 251);
+            padding: 1rem;
+
+            @media (min-width: 640px) {
+              padding: 1.5rem;
+            }
+
+            h3 {
+              margin-bottom: 1rem;
+              font-size: 1.125rem;
+              line-height: 1.75rem;
+              font-weight: 700;
+
+              @media (min-width: 640px) {
+                font-size: 1.25rem;
+                line-height: 1.75rem;
+              }
+            }
+
+            p {
+              margin-bottom: 1rem;
+              font-size: 0.75rem;
+              line-height: 1rem;
+              color: rgb(75 85 99);
+
+              @media (min-width: 640px) {
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+              }
+            }
+
+            ul {
+              .check {
+                flex-shrink: 0;
+                color: rgb(34 197 94);
+              }
+            }
+
+            button {
+              background-color: rgb(59 130 246);
+              color: white;
+              margin-top: 1rem;
+
+              @media (min-width: 640px) {
+                margin-top: 1.5rem;
+              }
+            }
+          }
+        }
+      }
+
+      .faq-side {
+        border-radius: 0.5rem;
+        background-color: #f1eff8;
+        padding: 1rem;
+
+        @media (min-width: 640px) {
+          padding: 1.5rem;
+        }
+
+        .faq-block-title {
+          font-size: 1.25rem;
+          line-height: 1.75rem;
+          margin-bottom: 1rem;
+          font-weight: 700;
+
+          @media (min-width: 640px) {
+            font-size: 1.5rem;
+            line-height: 2rem;
+            margin-bottom: 1.5rem;
+          }
+        }
+
+        .faq-block-row {
+          background-color: var(--background-color);
+          font-size: 13px;
+          line-height: 23px;
+          color: var(--text-color);
+          margin-bottom: 8px;
+          border-radius: 6px;
+          padding: 5px;
+          border: 1px solid var(--border-color);
+
+          img {
+            margin-right: 6px;
+            width: 16px;
+          }
+
+          a {
             color: var(--primary-color);
+            text-decoration: none;
+
+            &:hover {
+              color: var(--primary-color);
+            }
+          }
+        }
+      }
+    }
+
+    .connected-tab {
+      .block {
+        width: 500px;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 20px;
+      }
+
+      .connected-account {
+        .account-info {
+          .stripe-button-container {
+            margin-bottom: 25px;
+          }
+
+          .account-details {
+            margin-bottom: 25px;
+            color: var(--text-color);
+
+            .fa-refresh {
+              color: var(--primary-color);
+              margin-left: 10px;
+              cursor: pointer;
+
+              &:hover {
+                color: var(--primary-color);
+              }
+            }
+          }
+
+          .tax-settings {
+            margin-bottom: 15px;
+          }
+        }
+      }
+    }
+
+    .api-keys-tab {
+      input {
+        width: 100%;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        height: 45px;
+        padding: 0 10px;
+        background-color: var(--background-color);
+        color: var(--text-color);
+
+        &:hover {
+          border-color: var(--border-color);
+        }
+
+        &:focus {
+          border-color: var(--primary-color);
+          outline: none;
+        }
+
+        &::placeholder {
+          color: var(--muted-color);
+        }
+      }
+
+      button {
+        background-color: rgb(30 174 219);
+        color: white;
+      }
+    }
+
+    .blocks-tab {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+
+      .block {
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 16px 20px;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 28px;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+
+        &.active {
+          border-color: var(--success-color);
+          background-color: var(--success-color);
+
+          .check-icon {
+            color: var(--success-color) !important;
+          }
+        }
+
+        .form-group {
+          margin-bottom: 1rem;
+        }
+
+        .section {
+          border-bottom: 1px solid var(--border-color);
+          padding-bottom: 12px;
+          margin-bottom: 20px;
+        }
+
+        .top-bar {
+          .check-icon {
+            font-size: 20px;
+            color: var(--muted-color);
+          }
+
+          inplace-edit {
+            display: inline-block;
+            width: 90%;
+            margin-left: 10px;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-color);
+          }
+        }
+
+        h6 {
+          font-size: 16px;
+          font-weight: 600;
+          margin: 15px 0;
+          color: var(--text-color);
+        }
+
+        ::ng-deep .dx-checkbox .dx-checkbox-text {
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--text-color);
+        }
+
+        .account-actions {
+          display: flex;
+          justify-content: space-around;
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--primary-color);
+          opacity: 0.6;
+
+          span {
             cursor: pointer;
 
             &:hover {
-                color: var(--primary-color);
+              opacity: 1;
             }
-        }
 
-        &:hover {
-            .save-to-clipboard {
-                display: inline-block;
+            i {
+              margin-right: 7px;
+              font-size: 13px;
             }
+          }
         }
+      }
     }
+
+    .import-tab {
+      width: 300px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 20px;
+
+      h5 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 15px 0;
+        color: var(--text-color);
+      }
+
+      ::ng-deep dx-select-box .dx-placeholder {
+        font-weight: 400;
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  .clipboard-holder {
+    .save-to-clipboard {
+      display: none;
+      color: var(--primary-color);
+      cursor: pointer;
+
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
+
+    &:hover {
+      .save-to-clipboard {
+        display: inline-block;
+      }
+    }
+  }
 }

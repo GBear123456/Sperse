@@ -786,7 +786,7 @@
                         padding: 10px;
                         min-height: 250px;
                         flex-direction: column;
-
+                        
                         img {
                             margin: 0 0 15px;
                         }
@@ -1150,6 +1150,16 @@
             }
         }
 
+        .event-address.base-input {
+            display: flex;
+            align-items: center;
+
+            i {
+                line-height: 17px;
+                padding-left: 4px;
+            }
+        }
+
         .address.dx-texteditor-input {
             font-family: Poppins;
             font-size: 13px;
@@ -1185,6 +1195,29 @@
                     background-color: #000;
                     border-color: #000;
                 }
+            }
+        }
+
+        ::ng-deep .dx-texteditor-input-container {
+            .dx-texteditor-input {
+                font-size: 0.9rem;
+                font-weight: 500 !important;
+            }
+
+            .dx-placeholder {
+                font-size: 0.9rem;
+                font-weight: 400 !important;
+            }
+        }
+
+        ::ng-deep .dx-radiogroup {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+
+            .dx-item-content {
+                font-weight: 600;
+                font-size: 0.875rem;
+                color: hsl(var(--primary));
             }
         }
     }

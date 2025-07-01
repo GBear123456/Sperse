@@ -1,90 +1,122 @@
 :host {
-    display: block;
+  display: block;
+  padding: 1rem;
 
-    ::ng-deep country-phone-number {
-        .wrapper {
-            width: 100% !important;
+  @media screen and (min-width: 768px) {
+    padding: 2rem;
+  }
 
-            .flagInput {
-                align-self: center;
-            }
-        }
+  ::ng-deep settings-card {
+    margin-bottom: 2.5rem;
+  }
+
+  .form-control,
+  ::ng-deep dx-select-box,
+  ::ng-deep dx-select-box input,
+  ::ng-deep timezone-combo,
+  ::ng-deep timezone-combo input,
+  ::ng-deep currency-selector,
+  ::ng-deep currency-selector input,
+  ::ng-deep country-phone-number,
+  ::ng-deep country-phone-number input {
+    font-weight: 500;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  .form-control {
+    padding: 10px 8px;
+  }
+
+  ::ng-deep country-phone-number {
+    .wrapper {
+      width: 100% !important;
+
+      .flagInput {
+        align-self: center;
+      }
     }
 
-    .row {
-        width: 100%;
+    .list-group-item {
+      font-size: 1rem;
     }
+  }
+
+  .row {
+    width: 100%;
+  }
 }
 
 ::ng-deep .flag-field {
-    background-color: var(--background-color);
-    border: 1px solid var(--border-color);
-    padding: 0.65rem 1rem;
-    border-radius: 0.25rem;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  padding: 0.65rem 1rem;
+  border-radius: 0.25rem;
+  color: var(--text-color);
+
+  span,
+  b {
+    vertical-align: middle;
     color: var(--text-color);
+  }
 
-    span, b {
-        vertical-align: middle;
-        color: var(--text-color);
+  ::ng-deep dx-text-box {
+    display: inline-block !important;
+    height: 22px;
+
+    input {
+      border: none;
+      min-height: 20px;
+      background-color: var(--background-color);
+      color: var(--text-color);
+
+      &:hover {
+        border-color: var(--border-color-hover);
+      }
+
+      &:focus {
+        border-color: var(--primary-color);
+      }
     }
 
-    ::ng-deep dx-text-box {
-        display: inline-block !important;
-        height: 22px;
-
-        input {
-            border: none;
-            min-height: 20px;
-            background-color: var(--background-color);
-            color: var(--text-color);
-
-            &:hover {
-                border-color: var(--border-color-hover);
-            }
-
-            &:focus {
-                border-color: var(--primary-color);
-            }
-        }
-
-        .dx-placeholder {
-            color: var(--muted-color);
-        }
+    .dx-placeholder {
+      color: var(--muted-color);
     }
+  }
 }
 
 ::ng-deep .flag-row {
-    border-bottom: 1px solid var(--border-color);
-    padding: 7px 0px !important;
-    margin: 0 10px;
-    display: flex;
-    width: calc(100% - 20px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 7px 0px !important;
+  margin: 0 10px;
+  display: flex;
+  width: calc(100% - 20px);
+  font-size: 1rem;
+
+  .flag-icon {
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+  }
+
+  div {
+    display: inline-block;
+    margin: auto 0 auto 10px;
+    white-space: pre-wrap;
     color: var(--text-color);
+  }
 
-    .flag-icon {
-        border-radius: 10px;
-        border: 1px solid var(--border-color);
-        background-color: var(--card-bg);
-    }
+  &:hover {
+    background-color: var(--hover-bg);
+  }
 
-    div {
-        display: inline-block;
-        margin: auto 0 auto 10px;
-        white-space: pre-wrap;
-        color: var(--text-color);
-    }
-
-    &:hover {
-        background-color: var(--hover-bg);
-    }
-
-    &.selected {
-        background-color: var(--hover-bg);
-        border-color: var(--primary-color);
-    }
+  &.selected {
+    background-color: var(--hover-bg);
+    border-color: var(--primary-color);
+  }
 }
 
 .form-control {
-    background-color: var(--background-color);
-    color: var(--text-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
