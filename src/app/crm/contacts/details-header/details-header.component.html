@@ -241,63 +241,91 @@
     [position]="{ my: 'top right', at: 'bottom right', collision: 'fit flip' }"
 >
     <div *dxTemplate="let data = data; of: 'content'" class="context-tooltip">
-        <img
-            *ngIf="manageAllowed"
-            (click)="
-                addOptionSelectionChanged({
-                    addedItems: [addContextMenuItems[contextType.AddNotes]]
-                })
-            "
-            src="./assets/common/icons/contact/notes.svg"
-        />
-        <img src="./assets/common/icons/contact/tasks.svg" />
-        <img src="./assets/common/icons/contact/meetings.svg" />
-        <img
-            *ngIf="isSendSmsAndEmailAllowed"
-            (click)="
-                router.navigate(['user-inbox'], {
-                    relativeTo: this.activatedRoute
-                })
-            "
-            src="./assets/common/icons/contact/calllog.svg"
-        />
-        <img
-            *ngIf="isSendSmsAndEmailAllowed"
-            (click)="showEmailDialog()"
-            src="./assets/common/icons/contact/emails.svg"
-        />
-        <img
-            *ngIf="isSendSmsAndEmailAllowed && !isSMSIntegrationDisabled"
-            (click)="showSMSDialog()"
-            src="./assets/common/icons/contact/sms.svg"
-        />
-        <img
-            *ngIf="manageAllowed"
-            (click)="
-                addOptionSelectionChanged({
-                    addedItems: [addContextMenuItems[contextType.AddFiles]]
-                })
-            "
-            src="./assets/common/icons/contact/files.svg"
-        />
-        <img
-            *ngIf="addContextMenuItems[contextType.AddInvoice].visible"
-            (click)="
-                addOptionSelectionChanged({
-                    addedItems: [addContextMenuItems[contextType.AddInvoice]]
-                })
-            "
-            src="./assets/common/icons/contact/invoices.svg"
-        />
-        <img
-            *ngIf="!data?.parentId"
-            (click)="
-                addOptionSelectionChanged({
-                    addedItems: [addContextMenuItems[contextType.AddContact]]
-                })
-            "
-            src="./assets/common/icons/contact/contacts.svg"
-        />
+        <div *ngIf="manageAllowed">
+            <img
+                (click)="
+                    addOptionSelectionChanged({
+                        addedItems: [addContextMenuItems[contextType.AddNotes]]
+                    })
+                "
+                src="./assets/common/icons/contact/notes-without-name.svg"
+            />
+            <span>Note</span>
+        </div>
+        <div>
+            <img src="./assets/common/icons/contact/tasks-without-name.svg" />
+            <span>Task</span>
+        </div>
+        <div>
+            <img
+                height="43"
+                src="./assets/common/icons/contact/meetings-without-name.svg"
+            />
+            <span>Meetings</span>
+        </div>
+        <div *ngIf="isSendSmsAndEmailAllowed">
+            <img
+                (click)="
+                    router.navigate(['user-inbox'], {
+                        relativeTo: this.activatedRoute
+                    })
+                "
+                src="./assets/common/icons/contact/calllog-without-name.svg"
+            />
+            <span>Call Log</span>
+        </div>
+        <div>
+            <img
+                *ngIf="isSendSmsAndEmailAllowed"
+                (click)="showEmailDialog()"
+                src="./assets/common/icons/contact/emails-without-name.svg"
+            />
+            <span>Email</span>
+        </div>
+        <div *ngIf="isSendSmsAndEmailAllowed && !isSMSIntegrationDisabled">
+            <img
+                (click)="showSMSDialog()"
+                src="./assets/common/icons/contact/sms.svg"
+            />
+            <span>SMS</span>
+        </div>
+        <div *ngIf="manageAllowed">
+            <img
+                (click)="
+                    addOptionSelectionChanged({
+                        addedItems: [addContextMenuItems[contextType.AddFiles]]
+                    })
+                "
+                src="./assets/common/icons/contact/files-without-name.svg"
+            />
+            <span> File </span>
+        </div>
+        <div *ngIf="addContextMenuItems[contextType.AddInvoice].visible">
+            <img
+                (click)="
+                    addOptionSelectionChanged({
+                        addedItems: [
+                            addContextMenuItems[contextType.AddInvoice]
+                        ]
+                    })
+                "
+                src="./assets/common/icons/contact/invoices-without-name.svg"
+            />
+            <span>Invoice</span>
+        </div>
+        <div *ngIf="!data?.parentId">
+            <img
+                (click)="
+                    addOptionSelectionChanged({
+                        addedItems: [
+                            addContextMenuItems[contextType.AddContact]
+                        ]
+                    })
+                "
+                src="./assets/common/icons/contact/contacts-without-name.svg"
+            />
+            <span>Contacts</span>
+        </div>
     </div>
 </dx-tooltip>
 <dx-context-menu

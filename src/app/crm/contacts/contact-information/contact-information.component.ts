@@ -46,9 +46,7 @@ import { PersonalDetailsService } from "../personal-details/personal-details.ser
     styleUrls: ["./contact-information.component.less"],
     providers: [LifecycleSubjectsService],
 })
-export class ContactInformationComponent
-    implements AfterViewInit, OnDestroy, AfterContentChecked
-{
+export class ContactInformationComponent implements AfterViewInit, OnDestroy {
     public data: {
         contactInfo: ContactInfoDto;
         leadInfo: LeadInfoDto;
@@ -75,7 +73,6 @@ export class ContactInformationComponent
         })
     );
     settingsDialog$: Subscription;
-    isTagsAndListsLoading = false;
 
     /* my modifications */
     groups = [];
@@ -101,7 +98,10 @@ export class ContactInformationComponent
         this.contactsService.contactInfoSubscribe(
             (contactInfo: ContactInfoDto) => {
                 if (contactInfo) {
-                    setTimeout(() => this.updateToolbar());
+                    setTimeout(() => {
+                        this.loadTagsAndGroups();
+                        this.updateToolbar();
+                    });
                     if (contactInfo.parentId) {
                         this.contactsService.closeSettingsDialog(false);
                     }
@@ -110,10 +110,8 @@ export class ContactInformationComponent
             this.ident
         );
     }
-    ngAfterContentChecked(): void {
-        if (this.data.contactInfo.tags && !this.isTagsAndListsLoading) {
-            this.isTagsAndListsLoading = true;
-
+    loadTagsAndGroups(): void {
+        if (this.data.contactInfo.tags) {
             this.tags$
                 .pipe(takeUntil(this.lifeCycleService.destroy$))
                 .subscribe((tags: ContactTagInfoDto[]) => {

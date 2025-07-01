@@ -2,10 +2,15 @@
     .task-info {
         display: flex;
         justify-content: space-between;
+        gap: 50px;
+        flex-wrap: wrap;
         .rectangle.seles-statics {
-            width: 40%;
+            width: auto;
             justify-content: space-around;
-            margin-right: 10px;
+            gap: 10px;
+            .sales-wrapper {
+                flex: 1 1 0;
+            }
             .sales-wrapper:not(:last-child) {
                 position: relative;
             }
@@ -13,7 +18,7 @@
             .sales-wrapper:not(:last-child)::after {
                 content: "";
                 position: absolute;
-                right: -40px;
+                right: 0px;
                 top: 50%;
                 height: 50%;
                 width: 1px;
@@ -36,8 +41,10 @@
             background-color: #e7eff660;
             display: flex;
             align-items: center;
-            gap: 38px;
-            width: 50%;
+            gap: 20px;
+            flex: 1 0 0;
+            flex-wrap: wrap;
+            width: auto;
             border-radius: 10px;
             padding: 13px 14px;
             img {

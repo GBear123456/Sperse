@@ -160,6 +160,13 @@ export class SocialsComponent {
         );
     }
 
+    isShowSocialIcon(linkType: string) {
+        return (
+            !linkType ||
+            !this.contactInfoData?.links?.some((m) => m.linkTypeId == linkType)
+        );
+    }
+
     calculateShiftY(event) {
         let shift = 160;
 

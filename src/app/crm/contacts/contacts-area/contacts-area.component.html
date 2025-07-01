@@ -74,7 +74,7 @@
             </div> -->
     </div>
     <div *ngIf="showContactType == 'emails'">
-        <div class="emails" *ngIf="contactInfoData?.emails?.length">
+        <div class="emails">
             <button
                 class="icon-btn"
                 aria-label="Contact action"
@@ -82,7 +82,7 @@
             >
                 <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
             </button>
-            <ul>
+            <ul *ngIf="contactInfoData?.emails?.length">
                 <li
                     *ngFor="let email of contactInfoData?.emails; let i = index"
                 >

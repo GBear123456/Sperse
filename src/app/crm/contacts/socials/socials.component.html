@@ -1,19 +1,23 @@
 <div class="socials">
     <div class="social">
         <div class="social-icon-group">
-            <button
-                *ngFor="let icon of socialIcons"
-                class="social-icon-btn"
-                [title]="icon.name"
-                (click)="
-                    showEditDialog(
-                        icon.linkType ? { linkTypeId: icon.linkType } : null,
-                        $event
-                    )
-                "
-            >
-                <img [src]="icon.img" [alt]="icon.name" />
-            </button>
+            <ng-container *ngFor="let icon of socialIcons">
+                <button
+                    *ngIf="isShowSocialIcon(icon.linkType)"
+                    class="social-icon-btn"
+                    [title]="icon.name"
+                    (click)="
+                        showEditDialog(
+                            icon.linkType
+                                ? { linkTypeId: icon.linkType }
+                                : null,
+                            $event
+                        )
+                    "
+                >
+                    <img [src]="icon.img" [alt]="icon.name" />
+                </button>
+            </ng-container>
         </div>
         <ul>
             <li *ngIf="contactInfoData?.publicPersonProfileUrl">
