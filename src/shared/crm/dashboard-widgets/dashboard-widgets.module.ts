@@ -24,6 +24,7 @@ import { TotalsByPeriodComponent } from './totals-by-period/totals-by-period.com
 import { TotalsBySourceComponent } from './totals-by-source/totals-by-source.component';
 import { RecentClientsComponent } from './recent-clients/recent-clients.component';
 import { ClientsByRegionComponent } from './clients-by-region/clients-by-region.component';
+import { ConvertedCurrencyTooltipComponent } from './shared/converted-currency-tooltip/converted-currency-tooltip.component';
 import { DashboardWidgetsService } from './dashboard-widgets.service';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
@@ -57,7 +58,8 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
         NewItemsTotalsComponent,
         TotalsByPeriodComponent,
         TotalsBySourceComponent,
-        RecentClientsComponent
+        RecentClientsComponent,
+        ConvertedCurrencyTooltipComponent
     ],
     entryComponents: [],
     exports: [

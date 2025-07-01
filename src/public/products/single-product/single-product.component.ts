@@ -42,7 +42,8 @@ import {
     PriceOptionType,
     ExternalUserDataServiceProxy,
     GetExternalUserDataInput,
-    PublicProductAddOnOptionInfo
+    PublicProductAddOnOptionInfo,
+    PublicProductChargeInput
 } from '@root/shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
@@ -59,6 +60,7 @@ import { StatesService } from '../../../store/states-store/states.service';
 import { select, Store } from '@ngrx/store';
 import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreActions, StatesStoreSelectors } from '../../../store';
 import { AppSessionService } from '../../../shared/common/session/app-session.service';
+import { SpreedlyPayButtonsComponent } from '@shared/common/spreedly-pay-buttons/spreedly-pay-buttons.component';
 
 declare const Stripe: any;
 
@@ -151,6 +153,7 @@ export class SingleProductComponent implements OnInit {
     private calculationTaxTimeout;
 
     discordPopup: Window;
+    lastSubmittedLeadRequestId: number;
 
     constructor(
         private sessionService: AppSessionService,
@@ -258,7 +261,7 @@ export class SingleProductComponent implements OnInit {
                         this.productInfo.productDonation.raisedAmount >= this.productInfo.productDonation.goalAmount;
 
                     if (this.isInStock && (!this.isDonationGoalReached || this.productInfo.productDonation.keepActiveIfGoalReached)) {
-                        this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured;
+                        this.showNoPaymentSystems = !result.data.paypalClientId && !result.data.stripeConfigured && !result.data.spreedlyConfiguration?.spreedlyGateways.length;
                         if (result.descriptionHtml)
                             this.descriptionHtml = this.sanitizer.bypassSecurityTrustHtml(result.descriptionHtml);
                         if (result.data.hasTenantService)
@@ -319,6 +322,53 @@ export class SingleProductComponent implements OnInit {
         this.showCheckout = false;
     }
 
+    onSpreedlyClick(event) {
+        abp.ui.setBusy();
+        this.getSubmitRequest('Spreedly')
+            .pipe(
+                finalize(() => abp.ui.clearBusy())
+            )
+            .subscribe(res => {
+                this.lastSubmittedLeadRequestId = Number(res.paymentData);
+                let spreedlyComponent: SpreedlyPayButtonsComponent = event.component;
+                let displayOptions = {
+                    amount: spreedlyComponent.formatAmount(this.getGeneralPrice(true), this.productInfo.currencyId),
+                    company_name: this.productInfo.name,
+                    sidebar_top_description: '',
+                    sidebar_bottom_description: this.selectedPriceOption.name,
+                    full_name: this.requestInfo.firstName + ' ' + this.requestInfo.lastName
+                };
+                let paymentMethodParams = {
+                    email: this.requestInfo.email.trim(),
+                    country: "US"
+                };
+                spreedlyComponent.showBankCardPopup(event.providerId, displayOptions, paymentMethodParams);
+            });
+    }
+
+    onSpreedlyPaymentMethod(event) {
+        if (!this.lastSubmittedLeadRequestId)
+            return;
+
+        abp.ui.setBusy();
+        this.publicProductService.publicProductCharge(new PublicProductChargeInput({
+            tenantId: this.tenantId,
+            leadRequestId: this.lastSubmittedLeadRequestId,
+            paymentGateway: 'Spreedly',
+            paymentGatewayTokenId: event.providerId,
+            paymentMethodToken: event.token
+        })).pipe(
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe(res => {
+            if (res.errorMessage) {
+                abp.message.error(res.errorMessage);
+            } else {
+                this.initialInvoiceXref = res.invoicePublicId;
+                this.redirectToReceipt();
+            }
+        });
+    }
+
     submitFreeRequest() {
         abp.ui.setBusy();
         this.getSubmitRequest(null)
@@ -333,7 +383,7 @@ export class SingleProductComponent implements OnInit {
     submitTenant() {
         if (!this.isFormValid()) {
             abp.notify.error(this.ls.l('SaleProductValidationError'));
-            return of();
+            return;
         }
 
         if (this.phoneNumber && this.phoneNumber.isEmpty())
@@ -457,7 +507,7 @@ export class SingleProductComponent implements OnInit {
         );
     }
 
-    onPayPalApprove() {
+    redirectToReceipt() {
         location.href = this.getReceiptUrl();
     }
 
@@ -519,6 +569,20 @@ export class SingleProductComponent implements OnInit {
 
         return this.productInfo.data.paypalClientId &&
             (!this.couponInfo || this.couponInfo.duration == CouponDiscountDuration.Forever);
+    }
+
+    showSpreedlyButtons() {
+        if (!this.productInfo.data.spreedlyConfiguration?.spreedlyGateways.length)
+            return false;
+
+        if (this.selectedPriceOption.type == PriceOptionType.Subscription &&
+            (this.selectedPriceOption.trialDayCount > 0 || !this.singlePaymentOptions.includes(this.selectedPriceOption.frequency)))
+            return false;
+
+        if (this.productInfo.data.isStripeTaxationEnabled)
+            return false;
+
+        return !!this.productInfo.data.spreedlyConfiguration.spreedlyGateways.length;
     }
 
     showSubmitButton() {

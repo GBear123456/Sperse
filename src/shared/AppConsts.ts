@@ -111,6 +111,8 @@ export class AppConsts {
     ),
     phone: /^[\d\+\-\(\)\s]{10,24}$/,
     url: /^([Hh][Tt][Tt][Pp][Ss]?:\/\/)?(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?$/,
+    whitelistDomain:
+      /^^(?:\*\.|[Hh][Tt][Tt][Pp][Ss]?:\/\/)?(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?$/,
     fullName: /^[^~\!\?\\/@#$%\^\&\*\(\)\<\>\:;\|]+(\(.+\))?$/,
     affiliateCode: /^(?!.*?\.\.)[a-zA-Z0-9\._-]*$/,
     affiliateRateZeroBase: /^0(\.[0-9]{1,4})?$/,

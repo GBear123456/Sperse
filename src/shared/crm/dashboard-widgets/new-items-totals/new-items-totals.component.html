@@ -10,7 +10,13 @@
                         {{ls.ls('CRM', 'CRMDashboard_NewAdded', [ls.l(field.title).toLowerCase()])}}
                         <div class="value">
                             <ng-container *ngIf="field.type == 'currency'">
-                                <div [ngStyle]="{'color': field.color}">{{ totalsData[field.name.replace('total', 'new')] | currency: currency : 'symbol' : '1.0-0' }}</div>
+                                <div [ngStyle]="{'color': field.color}">
+                                    {{ totalsData[field.name.replace('total', 'new')] | currency: currency : 'symbol' : '1.0-0' }}
+                                    <converted-currency-tooltip [show]="field.showDetails"
+                                                                [currency]="currency"
+                                                                [data]="totalsData[field.detailsField.replace('total', 'new')]">
+                                    </converted-currency-tooltip>
+                                </div>
                                 <div *ngIf="totalsData[field.name.replace('total', 'new')] != 0">
                                     of {{ totalsData[field.name] | currency : currency : 'symbol' : '1.0-0' }}
                                 </div>

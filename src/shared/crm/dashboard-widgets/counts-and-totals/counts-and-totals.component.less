@@ -1,94 +1,98 @@
 :host {
-    display: block;
-    min-height: 71px;
-    padding: 28px 0;
-    border-bottom: 1px solid var(--border-color);
-    background-color: none;
+  display: block;
+  min-height: 71px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border-color);
+  background-color: none;
 
-    .totals-list {
-        .total-item {
-            padding: 0 24px;
-            border-radius: 4px;
-            position: relative;
+  .totals-list {
+    .total-item {
+      padding: 0 24px;
+      border-radius: 4px;
+      position: relative;
 
-            .chart-head {
-                width: 100vw;
-                height: 34px;
-                display: table-cell;
-                vertical-align: bottom;
-                span:first-child {
-                    padding-top: 6px;
-                    float: left;
-                    font-size: 17px;
-                    font-weight: bold;
-                    letter-spacing: normal;
-                    color: var(--text-color);
-                }
-                span:last-child {
-                    float: right;
-                    font-size: 25px;
-                    font-weight: 600;
-                    line-height: 0.96;
-                    letter-spacing: normal;
-                }
-            }
+      .chart-head {
+        width: 100vw;
+        height: 34px;
+        display: table-cell;
+        vertical-align: bottom;
 
-            .chart-progress {
-                color: var(--muted-color);
-                span:first-child {
-                    float: left;
-                    font-size: 13px;
-                    line-height: 1.46;
-                    letter-spacing: 0.26px;
-                    color: var(--muted-color);
-                }
-                span:last-child {
-                    float: right;
-                    font-size: 15px;
-                    font-weight: 600;
-                    line-height: 1.27;
-                    letter-spacing: 0.3px;
-                    color: var(--muted-color);
-                }
-            }
-
-            .chart-head {
-                font-size: 14px;
-                font-weight: 400;
-                font-style: normal;
-                font-stretch: normal;
-                letter-spacing: 0.3px;
-                color: var(--muted-color);
-
-                span {
-                    font-weight: 500;
-                }
-
-                .plus {
-                    position: relative;
-                    right: -4px;
-                }
-            }
-
-            .chart-line {
-                width: 100%;
-                background-color: var(--input-bg);
-                border-radius: 6.5px;
-                margin-bottom: 6px;
-                margin-top: 8px;
-                div {
-                    height: 10px;
-                    border-radius: 6.5px;
-                }
-            }
+        span:first-child {
+          padding-top: 6px;
+          float: left;
+          font-size: 17px;
+          font-weight: bold;
+          letter-spacing: normal;
+          color: var(--text-color);
         }
 
-        & > div {
-            @media (max-width: 991px) {
-                &:not(:last-child) {
-                    margin-bottom: 20px;
-                }
-            }
+        span:last-child {
+          float: right;
+          font-size: 25px;
+          font-weight: 600;
+          line-height: 0.96;
+          letter-spacing: normal;
         }
+      }
+
+      .chart-progress {
+        color: var(--muted-color);
+        span:first-child {
+          float: left;
+          font-size: 13px;
+          line-height: 1.46;
+          letter-spacing: 0.26px;
+          color: var(--muted-color);
+        }
+
+        span:last-child {
+          float: right;
+          font-size: 15px;
+          font-weight: 600;
+          line-height: 1.27;
+          letter-spacing: 0.3px;
+          color: var(--muted-color);
+        }
+      }
+
+      .chart-head {
+        font-size: 14px;
+        font-weight: 400;
+        font-style: normal;
+        font-stretch: normal;
+        letter-spacing: 0.3px;
+        color: var(--muted-color);
+
+        span {
+          font-weight: 500;
+        }
+
+        .plus {
+          position: relative;
+          right: -4px;
+        }
+      }
+
+      .chart-line {
+        width: 100%;
+        background-color: var(--input-bg);
+        border-radius: 6.5px;
+        margin-bottom: 6px;
+        margin-top: 8px;
+
+        div {
+          height: 10px;
+          border-radius: 6.5px;
+        }
+      }
     }
+
+    & > div {
+      @media (max-width: 991px) {
+        &:not(:last-child) {
+          margin-bottom: 20px;
+        }
+      }
+    }
+  }
 }

@@ -12,6 +12,7 @@ import { ReceiptComponent } from './receipt/receipt.component';
 import { InvoiceComponent } from './invoice/invoice.component';
 import { UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-proxies';
 import { PaypalModule } from '@shared/common/paypal/paypal.module';
+import { SpreedlyPayButtonsModule } from '@shared/common/spreedly-pay-buttons/spreedly-pay-buttons.module';
 
 @NgModule({
     imports: [
@@ -19,7 +20,8 @@ import { PaypalModule } from '@shared/common/paypal/paypal.module';
         CommonModule,
         MatMenuModule,
         InvoicingRoutingModule,
-        PaypalModule
+        PaypalModule,
+        SpreedlyPayButtonsModule
     ],
     exports: [],
     declarations: [
