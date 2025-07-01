@@ -32,7 +32,7 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
 export class CreditsSettingsComponent implements ITenantSettingsStepComponent {
     creditSettings: CreditSettings;
 
-    products$: Observable<ProductDto[]> = this.productProxy.getProducts(ProductType.General, undefined, false, true)
+    products$: Observable<ProductDto[]> = this.productProxy.getProductsForSettings(ProductType.General, undefined, false, true)
         .pipe(map(values => {
             return values.filter(v => v.isPublished);
         }));
