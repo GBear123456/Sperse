@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatMenuModule } from '@angular/material/menu';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -155,7 +156,6 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { InvoiceAddressDialog } from '@app/crm/shared/create-invoice-dialog/invoice-address-dialog/invoice-address-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
-import { AddProductDialogComponent } from './subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
 import { CreateProductDialogComponent, FilterAssignmentsPipe } from './subscriptions/add-subscription-dialog/create-product-dialog/create-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './subscriptions/add-subscription-dialog/add-member-service-dialog/add-member-service-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
@@ -230,7 +230,6 @@ import { CommunityAccessSelectorComponent } from './subscriptions/add-subscripti
         CreateInvoiceDialogComponent,
         InvoiceAddressDialog,
         LeadRelatedContactsComponent,
-        AddProductDialogComponent,
         CreateProductDialogComponent,
         FilterAssignmentsPipe,
         AddMemberServiceDialogComponent,
@@ -310,6 +309,7 @@ import { CommunityAccessSelectorComponent } from './subscriptions/add-subscripti
         GooglePlaceModule,
         MatTooltipModule,
         MatSliderModule,
+        MatMenuModule,
         FeaturesModule,
         InvoiceGridMenuModule,
         CurrencySelectorModule,
@@ -341,7 +341,6 @@ import { CommunityAccessSelectorComponent } from './subscriptions/add-subscripti
         CancelSubscriptionDialogComponent,
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
-        AddProductDialogComponent,
         CreateProductDialogComponent,
         AddMemberServiceDialogComponent,
         TemplateDocumentsDialogComponent,

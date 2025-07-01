@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import filter from 'lodash/filter';
 
 /** Application imports */
-import { FeatureTreeEditModel } from '@app/shared/features/feature-tree-edit.model';
+import { FeatureTreeEditModel, FlatFeatureTreeDto } from '@app/shared/features/feature-tree-edit.model';
 import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-proxies';
 import { ArrayToTreeConverterService } from '@shared/utils/array-to-tree-converter.service';
 import { TreeDataHelperService } from '@shared/utils/tree-data-helper.service';
@@ -21,6 +21,7 @@ export class FeatureTreeComponent {
     @Input() showResetToDefault: boolean = false;
     @Input() enableRestoreCustom: boolean = false;
     @Input() isReadOnly: boolean = false;
+    @Input() hostDiscordClientId: string = null;
     @Input() set editData(val: FeatureTreeEditModel) {
         if (val) {
             if (!this._editData || ArrayHelper.dataChanged(val.features, this._editData.features) || ArrayHelper.dataChanged(val.featureValues, this._editData.featureValues)) {
@@ -37,15 +38,15 @@ export class FeatureTreeComponent {
 
     constructor(
         private arrayToTreeConverterService: ArrayToTreeConverterService,
-        private treeDataHelperService: TreeDataHelperService,
+        private treeDataHelperService: TreeDataHelperService
     ) {
         if (this.isReadOnly)
             this.showResetToDefault = false;
     }
 
-    setTreeData(features: FlatFeatureDto[]) {
+    setTreeData(features: FlatFeatureTreeDto[]) {
         this.treeData = this.arrayToTreeConverterService.createTree(
-            features,
+            features.filter(v => !v.hidden),
             'parentName',
             'name',
             null,
@@ -59,6 +60,9 @@ export class FeatureTreeComponent {
 
     setSelectedNodes(val: FeatureTreeEditModel) {
         val.features.forEach((feature) => {
+            if (feature.hidden)
+                return;
+
             let node = this.treeDataHelperService.findNode(this.treeData, { data: { name: feature.name } });
             let items = filter(val.featureValues, { name: feature.name });
             let value = '';
@@ -79,7 +83,7 @@ export class FeatureTreeComponent {
         this.initialGrantedFeatures = this.getGrantedFeatures();
     }
 
-    getGrantedFeatures(): NameValueDto[] {
+    public getGrantedFeatures(): NameValueDto[] {
         if (!this._editData.features) {
             return [];
         }
@@ -219,8 +223,14 @@ export class FeatureTreeComponent {
 
     getFeatureValueByName(featureName: string): string {
         let feature = this.treeDataHelperService.findNode(this.treeData, { data: { name: featureName } });
-        if (!feature)
-            return null;
+        if (!feature) {
+            let featureConfig = this._editData.features.find(v => v.name == featureName);
+            if (!featureConfig || !featureConfig.hidden)
+                return null;
+
+            let initialValue = this._editData.featureValues.find(v => v.name == featureName);
+            return initialValue ? initialValue.value : null;
+        }
 
         if (!feature.data.inputType || feature.data.inputType.name === 'CHECKBOX')
             return feature.value ? 'true' : 'false';
@@ -268,5 +278,9 @@ export class FeatureTreeComponent {
         node.isCustom = false;
         node.value = node.restoreValue == node.data.defaultValue ? '' : node.restoreValue;
         this.setFeatureValueByName(node.data.name, node.restoreValue);
+    }
+
+    installBotClick() {
+        window.open(`https://discord.com/oauth2/authorize?client_id=${this.hostDiscordClientId}&permissions=8&integration_type=0&scope=bot`, '_blank');
     }
 }

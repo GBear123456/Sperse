@@ -19,16 +19,20 @@ import {
     MemberServiceDto,
     MemberServiceLevelDto,
     FlatFeatureDto,
-    SystemTypeDto
+    SystemTypeDto,
+    HostSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { FeatureTreeComponent } from '@app/shared/features/feature-tree.component';
-import { FeatureTreeEditModel, FeatureValuesDto } from '@app/shared/features/feature-tree-edit.model';
+import { FeatureTreeEditModel, FeatureValuesDto, FlatFeatureTreeDto } from '@app/shared/features/feature-tree-edit.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from 'abp-ng2-module';
+import { FeatureCheckerService, NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { shareReplay, withLatestFrom } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { AppFeatures } from '../../../../../../shared/AppFeatures';
 
 @Component({
     selector: 'add-member-service-dialog',
@@ -38,7 +42,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
         '../../../../../shared/common/styles/form.less',
         './add-member-service-dialog.component.less'
     ],
-    providers: [MemberServiceServiceProxy],
+    providers: [MemberServiceServiceProxy, HostSettingsServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
@@ -51,14 +55,19 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
     systemTypes: string[];
     featuresData: FeatureTreeEditModel;
     title: string;
+    hostDiscordClientId: string;
     isReadOnly = true;
+
+    hostDiscordClientId$ = this.hostSettingsProxy.getDiscordCientId().pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
     constructor(
         private elementRef: ElementRef,
         private memberServiceProxy: MemberServiceServiceProxy,
+        private hostSettingsProxy: HostSettingsServiceProxy,
         private notify: NotifyService,
         private changeDetection: ChangeDetectorRef,
         private loadingService: LoadingService,
+        private featureService: FeatureCheckerService,
         public dialogRef: MatDialogRef<AddMemberServiceDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -77,7 +86,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
 
         this.isReadOnly = data && !!data.isReadOnly;
         this.title = ls.l(this.isReadOnly ? 'Service' : this.memberService.id ? 'EditService' : 'AddService');
-        
+
         this.memberServiceProxy.getSystemTypes().subscribe((types: SystemTypeDto[]) => {
             this.systemTypes = types.map(type => type.code);
             if (data && data.service)
@@ -96,16 +105,25 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
 
     onSystemTypeChanged(event) {
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.memberServiceProxy.getSystemFeatures(
-            event.value
-        ).subscribe((features: FlatFeatureDto[]) => {
+
+        let hasProductDiscordFeature = this.featureService.isEnabled(AppFeatures.CRMProductDiscordIntegration);
+        let systemType = event.value;
+        forkJoin([
+            this.memberServiceProxy.getSystemFeatures(systemType),
+            this.hostDiscordClientId$
+        ]).subscribe(([features, clientId]: [FlatFeatureDto[], string]) => {
             this.featuresData = {
-                features: features,
+                features: features.map(v => {
+                    let feature = new FlatFeatureTreeDto(v);
+                    feature.hidden = !hasProductDiscordFeature && systemType == 'General' && v.name.startsWith('CRM.Discord');
+                    return feature;
+                }),
                 featureValues: features.map(feature => new FeatureValuesDto({
                     name: feature.name,
                     value: this.memberService.features[feature.name] || feature.defaultValue
                 }))
             };
+            this.hostDiscordClientId = clientId;
 
             this.loadingService.finishLoading(this.elementRef.nativeElement);
             this.detectChanges();

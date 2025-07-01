@@ -46,7 +46,9 @@ export class DashboardWidgetsService  {
             type: 'currency',
             percent:  '0%',
             visible: this.isAnyCGGranted ||
-                this.permissionService.isGranted(AppPermissions.CRMOrders)
+                this.permissionService.isGranted(AppPermissions.CRMOrders),
+            showDetails: true,
+            detailsField: 'totalOrderConvertedAmounts'
         }, {
             title: 'Leads',
             color: this.layoutService.getLayoutColor('totalLeads'),
