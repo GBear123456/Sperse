@@ -34,14 +34,14 @@
                 th:not(:first-child) {
                     font-size: 18px;
                     font-weight: 600;
-                    font-family: "Manrope", sans-serif;
+                    font-family: var(--app-font-family);
                     line-height: 27px;
                     // padding-left: 35px;
                 }
 
                 th,
                 td:first-child {
-                    font-family: "Manrope", sans-serif;
+                    font-family: var(--app-font-family);
                     color: #202b35;
                 }
                 th {
@@ -167,7 +167,8 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    flex-wrap: wrap;
+    overflow: auto;
+    width: 100%;
 }
 
 .info-section {
@@ -185,7 +186,7 @@
 
     .section-title {
         font-weight: 500;
-        font-family: "Manrope", sans-serif;
+        font-family: var(--app-font-family);
         color: #08295b;
         margin-left: 8px;
         margin-bottom: 8px;
@@ -198,11 +199,15 @@
         border-radius: 10px;
         background-color: #ffffff;
         padding: 4px;
+        ::ng-deep .mat-chip-list-wrapper {
+            max-height: 50px;
+            overflow: auto;
+        }
         mat-chip {
             // margin: 2px 4px 2px 0;
             align-items: center;
             margin-left: 4px;
-            font-family: "manrope", sans-serif;
+            font-family: var(--app-font-family);
             font-weight: 500;
             font-size: 12px;
             border-radius: 6px;
@@ -315,4 +320,12 @@
         font-size: 15px;
         margin-bottom: 0;
     }
+}
+
+.contact-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    justify-content: space-between;
+    height: 100%;
 }
