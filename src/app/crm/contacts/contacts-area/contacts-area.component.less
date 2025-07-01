@@ -122,6 +122,18 @@
             position: relative;
             background-color: #fff;
 
+            div {
+                display: flex;
+                align-items: center;
+                width: 50%;
+            }
+            .email-address {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                min-width: 0;
+            }
+
             .verify-icon {
                 margin-right: 3px;
                 width: 19px;
@@ -134,7 +146,7 @@
             }
 
             .actions {
-                display: flex;
+                display: none;
                 align-items: center;
                 gap: 9px;
 
@@ -186,6 +198,12 @@
                     display: inline-block;
                     width: 25px;
                     height: 23px;
+                }
+            }
+
+            &:hover {
+                .actions {
+                    display: flex;
                 }
             }
         }
