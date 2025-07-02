@@ -17,7 +17,7 @@ import { DocumentInfo } from "@shared/service-proxies/service-proxies";
 })
 export class TaskInfoComponent implements OnInit {
     leadId: number;
-    balanceDue: string;
+    balance: number;
     contactIds: number[];
     logs: ContactActivityLogInfo[];
     files: DocumentInfo[];
@@ -62,7 +62,7 @@ export class TaskInfoComponent implements OnInit {
             this.creditBalanceProxy.getContactBalance(
                 contactInfo.id
             ).subscribe((result: ContactBalanceBaseDto) => {
-                this.balanceDue = result.lastUpdated;
+                this.balance = result.balance;
             })
         });
 
