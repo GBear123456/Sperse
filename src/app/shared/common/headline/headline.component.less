@@ -6,11 +6,12 @@
         left: 140px;
 
         &.expandedLeftBar {
-            left: -70px;            
+            left: -70px;
         }
 
-        .headline-row, .reload-button-container {
-            background: transparent!important;
+        .headline-row,
+        .reload-button-container {
+            background: transparent !important;
         }
 
         .toggle-button-container {
@@ -19,8 +20,8 @@
             border-right: none;
         }
 
-        ul.buttons { 
-            left: -140px!important;
+        ul.buttons {
+            left: -140px !important;
         }
     }
 
@@ -61,7 +62,6 @@
         }
 
         ::ng-deep synch-progress {
-
             @media all and (min-width: 1200px) {
                 position: absolute;
                 left: 50%;
@@ -80,7 +80,8 @@
             align-items: center;
 
             business-entities-chooser {
-                &, .dx-dropdownbox {
+                &,
+                .dx-dropdownbox {
                     margin-left: 0;
                     margin-right: 0;
                     width: 100px !important;
@@ -112,7 +113,9 @@
             height: 42px;
             border: 1px solid #e6eaed;
             border-radius: 50%;
-            background: #fff url('../../../../assets/common/icons/follow-icon.svg') no-repeat center;
+            background: #fff
+                url("../../../../assets/common/icons/follow-icon.svg") no-repeat
+                center;
             @media (max-width: 767px) {
                 margin: 5px;
             }
@@ -181,58 +184,57 @@
             height: 100%;
             width: 100%;
             display: block;
-            content: '';
+            content: "";
             background-repeat: no-repeat;
             background-position: center;
             background-size: 31px;
         }
         &.top-bar:after {
-            background-image: url('../../../../assets/common/icons/headline/top-bar.svg');
+            background-image: url("../../../../assets/common/icons/headline/top-bar.svg");
         }
         &.left-bar:after {
-            background-image: url('../../../../assets/common/icons/headline/left-bar.svg');
+            background-image: url("../../../../assets/common/icons/headline/left-bar.svg");
         }
         &.left-panel-show:after {
-            background-image: url('../../../../assets/common/icons/headline/left-panel-show.svg');
+            background-image: url("../../../../assets/common/icons/headline/left-panel-show.svg");
         }
         &.left-panel-hide:after {
-            background-image: url('../../../../assets/common/icons/headline/left-panel-hide.svg');
+            background-image: url("../../../../assets/common/icons/headline/left-panel-hide.svg");
         }
         &.toolbar-menu-show:after {
-            background-image: url('../../../../assets/common/icons/headline/toolbar-menu-show.svg');
+            background-image: url("../../../../assets/common/icons/headline/toolbar-menu-show.svg");
         }
         &.toolbar-menu-hide:after {
-            background-image: url('../../../../assets/common/icons/headline/toolbar-menu-hide.svg');
+            background-image: url("../../../../assets/common/icons/headline/toolbar-menu-hide.svg");
         }
         &.compact-view:after {
-            background-image: url('../../../../assets/common/icons/headline/compact-view.svg');
-        }        
+            background-image: url("../../../../assets/common/icons/headline/compact-view.svg");
+        }
         &.fullscreen-view:after {
-            background-image: url('../../../../assets/common/icons/headline/fullscreen.svg');
+            background-image: url("../../../../assets/common/icons/headline/fullscreen.svg");
         }
         &.column-selector:after {
-            background-image: url('../../../../assets/common/icons/headline/column-selector.svg');
+            background-image: url("../../../../assets/common/icons/headline/column-selector.svg");
         }
         &.reset:after {
-            background-image: url('../../../../assets/common/icons/headline/reset.svg');
+            background-image: url("../../../../assets/common/icons/headline/reset.svg");
         }
         &.filter:after {
-            background-image: url('../../../../assets/common/icons/headline/filter.svg');
+            background-image: url("../../../../assets/common/icons/headline/filter.svg");
         }
 
-        
         &.reload:after {
-            background-image: url('../../../../assets/common/icons/reload.svg');
+            background-image: url("../../../../assets/common/icons/reload.svg");
             background-size: 20px;
         }
 
         &.toggleTotals:after {
-            background-image: url('../../../../assets/common/icons/sigma.png');
+            background-image: url("../../../../assets/common/icons/sigma.png");
             background-size: 20px;
         }
 
         &.print {
-            background-image: url('../../../../assets/common/icons/print-icon.svg');
+            background-image: url("../../../../assets/common/icons/print-icon.svg");
         }
 
         &.left-menu {
@@ -241,7 +243,7 @@
             justify-content: center;
             &:before {
                 font-size: 20px;
-                color: #959A9F;
+                color: #959a9f;
             }
             &:after {
                 display: none;
@@ -254,13 +256,14 @@
         align-items: center;
         margin-left: auto;
         height: 100%;
+        z-index: 99;
 
         &.need-refresh {
             .toggle-button,
             .icon.reload {
                 position: relative;
                 &::before {
-                    content: '';
+                    content: "";
                     display: block;
                     position: absolute;
                     width: 11px;
