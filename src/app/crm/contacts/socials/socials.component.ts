@@ -6,6 +6,8 @@ import { MatDialog } from "@angular/material/dialog";
 import { Store, select } from "@ngrx/store";
 import * as _ from "underscore";
 import { first, filter } from "rxjs/operators";
+import { ClipboardService } from "ngx-clipboard";
+import { NotifyService } from "abp-ng2-module";
 
 /** Application imports */
 import { AppConsts } from "@shared/AppConsts";
@@ -112,6 +114,8 @@ export class SocialsComponent {
         private contactLinkService: ContactLinkServiceProxy,
         private organizationContactService: OrganizationContactServiceProxy,
         private permissionService: AppPermissionService,
+        private clipboardService: ClipboardService,
+        private notifyService: NotifyService,
         public dialog: MatDialog,
         public ls: AppLocalizationService
     ) {
@@ -327,5 +331,9 @@ export class SocialsComponent {
                 ? link
                 : "http://" + link
             : link;
+    }
+    copyToClipbord(value) {
+        this.clipboardService.copyFromContent(value);
+        this.notifyService.info(this.ls.l("SavedToClipboard"));
     }
 }

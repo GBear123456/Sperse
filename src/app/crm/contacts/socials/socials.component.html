@@ -79,7 +79,11 @@
                             (click)="showEditDialog(social, $event)"
                             >{{ normalizeLink(social.url) }}</span
                         >
-                        <button class="action-btn copy-btn" title="Copy">
+                        <button
+                            class="action-btn copy-btn"
+                            title="Copy"
+                            (click)="copyToClipbord(social.url)"
+                        >
                             <img
                                 src="./assets/common/icons/contact/document-copy.svg"
                                 alt="icon"
