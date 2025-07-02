@@ -46,8 +46,8 @@
             img {
                 vertical-align: middle;
                 margin-right: 10px;
-                width: 25px;
-                height: 25px;
+                width: 18px;
+                height: 18px;
             }
         }
     }
@@ -56,7 +56,7 @@
         position: relative;
         font-size: 15px;
         font-weight: 300;
-        line-height: 2;
+        line-height: 1;
         text-align: left;
         color: #424c56;
 
@@ -171,7 +171,7 @@
 .social-icon-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 3px;
 
     .social-icon-btn {
         width: 24px;
@@ -201,7 +201,7 @@
     display: flex;
     align-items: center;
     min-height: 36px;
-    margin-top: 10px;
+    margin-top: 6px;
     padding: 0 6px;
     background: #fff;
 
@@ -221,7 +221,7 @@
         align-items: center;
         border: 1px solid #e1e7ed;
         border-radius: 8px;
-        padding: 9px;
+        padding: 8px;
         background: #fff;
         min-width: 0;
         flex: 1;
@@ -246,7 +246,7 @@
 
         .link-text {
             color: #475569;
-            font-size: 15px;
+            font-size: 13px;
             padding-right: 6px;
             white-space: nowrap;
             overflow: hidden;
@@ -265,8 +265,10 @@
             margin-right: 9px;
             display: flex;
             align-items: center;
-            height: 18px;
-            width: 18px;
+            img {
+                height: 18px;
+                width: 18px;
+            }
 
             svg {
                 display: block;
@@ -286,7 +288,7 @@
     }
 
     .delete-btn {
-        opacity: 0;
+        display: none !important;
         pointer-events: none;
         background: transparent;
         border: none;
@@ -322,7 +324,7 @@
     .link-block:hover {
         + .delete-btn,
         .delete-btn {
-            opacity: 1;
+            display: inline-flex !important;
             pointer-events: auto;
         }
     }
