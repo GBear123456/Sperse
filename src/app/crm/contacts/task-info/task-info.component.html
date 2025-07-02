@@ -8,7 +8,7 @@
                 <div>
                     {{ ls.l("Activity") }}
                 </div>
-                <div>({{ logs?.length }})</div>
+                <div>({{ logs?.length ?? 0 }})</div>
             </div>
         </div>
         <div class="statics-wrapper">
@@ -19,7 +19,7 @@
                 <div>
                     {{ ls.l("Contacts") }}
                 </div>
-                <div>({{ contactIds?.length }})</div>
+                <div>({{ contactIds?.length ?? 0 }})</div>
             </div>
         </div>
         <div class="statics-wrapper">
@@ -30,7 +30,7 @@
                 <div>
                     {{ ls.l("Tasks") }}
                 </div>
-                <div>(1)</div>
+                <div>({{ tasks ?? 0 }})</div>
             </div>
         </div>
         <div class="statics-wrapper">
@@ -42,7 +42,7 @@
                 <div>
                     {{ ls.l("Files") }}
                 </div>
-                <div>({{ files?.length }})</div>
+                <div>({{ files?.length ?? 0 }})</div>
             </div>
         </div>
         <div class="statics-wrapper">
@@ -54,7 +54,7 @@
                 <div>
                     {{ ls.l("Invoices") }}
                 </div>
-                <div>(1)</div>
+                <div>({{ invoices ?? 0 }})</div>
             </div>
         </div>
     </div>
@@ -63,19 +63,31 @@
             <div class="title">
                 {{ ls.l("Gross sales") }}
             </div>
-            <div class="statics-data">10000</div>
+            <div class="statics-data">
+                {{ amountCustomizer(grossSale ?? 0) }}
+            </div>
         </div>
         <div class="sales-wrapper">
             <div class="title">
                 {{ ls.l("current plan") }}
             </div>
-            <div class="statics-data">10000</div>
+            <div class="statics-data">
+                {{
+                    amountCustomizer(
+                        currentPlan?.amount ?? 0,
+                        currentPlan?.currencyId
+                    )
+                }}
+                <span>
+                    {{ currentPlan ? "/" + currentPlan?.period : "" }}
+                </span>
+            </div>
         </div>
         <div class="sales-wrapper">
             <div class="title">
                 {{ ls.l("balance due") }}
             </div>
-            <div class="statics-data">{{ balance ?? 0 }}</div>
+            <div class="statics-data">{{ amountCustomizer(balance ?? 0) }}</div>
         </div>
     </div>
 </div>
