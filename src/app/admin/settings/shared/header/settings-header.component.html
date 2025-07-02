@@ -1,24 +1,20 @@
-<div
-    class="settings-header-container"
-    [style.border-color]="isDarkMode ? '#2D3544' : '#E2E6ED'"
-    [style.background-color]="isDarkMode ? '#1F2532' : 'white'"
-    [style.color]="isDarkMode ? 'white' : '#1B1F2B'"
->
-    <div class="title-container">
-        <button 
-          aria-label="Back to previous page"
-          [class]="isDarkMode ? 'dark-mode' : 'white-mode'"
-          (click)="goBack()"
-        >
-            <lucide-angular [img]="LeftIcon"></lucide-angular>
-        </button>
-        <h1>{{ title }}</h1>
-    </div>
-    <ng-content></ng-content>
-    <!-- <button
+<div class="settings-header-container">
+  <div class="title-container">
+    <button
+      aria-label="Back to previous page"
+      [class]="isDarkMode ? 'dark-mode' : 'white-mode'"
+      (click)="goBack()"
+      class="back-btn"
+    >
+      <lucide-angular [img]="LeftIcon"></lucide-angular>
+    </button>
+    <h1>{{ title }}</h1>
+  </div>
+  <ng-content></ng-content>
+  <!-- <button
       class="save-button"
     >
         <lucide-angular [img]="SaveIcon"></lucide-angular>
         <span>Save Settings</span>
     </button> -->
-  </div>
+</div>

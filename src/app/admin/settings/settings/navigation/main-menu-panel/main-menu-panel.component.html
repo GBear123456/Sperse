@@ -1,19 +1,17 @@
-<div 
-    class="header-container"
-    [style.transform]="selectedMainItem && hasSubmenu ? 'translateX(-100%)' : 'translateX(0)'"
+<div
+  class="header-container"
+  [style.transform]="selectedMainItem && hasSubmenu ? 'translateX(-100%)' : 'translateX(0)'"
 >
-    <div 
-        class="header" 
-        [style.border-color]="isDarkMode ? '#2D3544' : '#E2E6ED'"
-        (click)="navigateToWelcome()"
-    >
-      <div class="main-title">
-        <lucide-angular [img]="HomeIcon" [style.color]="isDarkMode ? 'white' : '#1B1F2B'"></lucide-angular>
-        <h1 [style.color]="isDarkMode ? 'white' : '#1B1F2B'">
-          Settings Menu
-        </h1>
-      </div>
-      <!-- <button 
+  <div
+    class="header"
+    [style.border-color]="isDarkMode ? '#2D3544' : '#E2E6ED'"
+    (click)="navigateToWelcome()"
+  >
+    <div class="main-title">
+      <lucide-angular [img]="HomeIcon" class="title-icon"></lucide-angular>
+      <h1>Settings Menu</h1>
+    </div>
+    <!-- <button
         [style.color]="isDarkMode ? 'white' : '#1B1F2B'"
         [ngClass]="isDarkMode ? 'dark-mode' : 'white-mode'"
         (click)="toggleTheme();$event.stopPropagation()"
@@ -21,20 +19,18 @@
         <lucide-angular [img]="SunIcon" *ngIf="isDarkMode"></lucide-angular>
         <lucide-angular [img]="MoonIcon" *ngIf="!isDarkMode"></lucide-angular>
       </button> -->
-    </div>
+  </div>
 
-    <div class="main-content">
-        <div class="content">
-            <ng-container *ngFor="let item of items">
-                <main-menu-item 
-                    [item]="item" 
-                    [isActive]="isActive(item)" 
-                    [isDarkMode]="isDarkMode"
-                    [(handleMainItemClick)]="handleMainItemClick"
-                ></main-menu-item>
-            </ng-container>
-        </div>
+  <div class="main-content">
+    <div class="content">
+      <ng-container *ngFor="let item of items">
+        <main-menu-item
+          [item]="item"
+          [isActive]="isActive(item)"
+          [isDarkMode]="isDarkMode"
+          [(handleMainItemClick)]="handleMainItemClick"
+        ></main-menu-item>
+      </ng-container>
     </div>
+  </div>
 </div>
-
-

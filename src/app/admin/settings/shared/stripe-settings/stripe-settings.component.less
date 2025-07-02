@@ -126,7 +126,7 @@
 
           .content-info {
             border-radius: 0.5rem;
-            background-color: rgb(249 250 251);
+            background-color: var(--card-bg);
             padding: 1rem;
 
             @media (min-width: 640px) {
@@ -172,7 +172,7 @@
 
           .content-invoice {
             border-radius: 0.5rem;
-            background-color: rgb(249 250 251);
+            background-color: var(--card-bg);
             padding: 1rem;
 
             @media (min-width: 640px) {
@@ -225,7 +225,7 @@
 
       .faq-side {
         border-radius: 0.5rem;
-        background-color: #f1eff8;
+        background-color: var(--card-bg);
         padding: 1rem;
 
         @media (min-width: 640px) {
@@ -443,6 +443,10 @@
       ::ng-deep dx-select-box .dx-placeholder {
         font-weight: 400;
         font-size: 1.25rem;
+      }
+
+      ::ng-deep .dx-scrollable-container {
+        background-color: var(--card-bg) !important;
       }
     }
   }

@@ -19,7 +19,7 @@
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
                 "dragula", "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
-                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar", 
+                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar",
                 "hammerjs", "moment-timezone", "ng2-cache-service", "jquery-calendar", "@angularclass/hmr",
                 "uuid", "ng2-image-viewer", "iv-viewer", "safe-buffer", "@bugsnag/js", "buffer", "angular2-counto"
             ],
@@ -382,7 +382,7 @@
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
                 "dragula", "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
-                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar", 
+                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar",
                 "hammerjs", "moment-timezone", "ng2-cache-service", "jquery-calendar", "@angularclass/hmr",
                 "uuid", "ng2-image-viewer", "iv-viewer", "safe-buffer", "@bugsnag/js", "buffer", "angular2-counto"
             ],
@@ -739,12 +739,7 @@
     }
   },
   "cli": {
-<<<<<<< HEAD
     "analytics": "10e04c52-b0b0-4cd7-bace-9612b42f324b",
     "defaultCollection": "@schematics/angular"
-=======
-    "analytics": false,
-    "defaultCollection": "@ngrx/schematics"
->>>>>>> 54ff479fd0380671b1ccdc4e6f8681853a7909b2
   }
 }
