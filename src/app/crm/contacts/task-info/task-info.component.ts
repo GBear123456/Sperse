@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { takeUntil } from "rxjs/operators";
 
-import { ContactActivityLogInfo, ContactServiceProxy, DocumentServiceProxy } from "@shared/service-proxies/service-proxies";
+import { ContactActivityLogInfo, ContactBalanceBaseDto, ContactServiceProxy, CreditBalanceServiceProxy, DocumentServiceProxy } from "@shared/service-proxies/service-proxies";
 import { ActivityServiceProxy } from "@shared/service-proxies/service-proxies";
 import { ContactsService } from "../contacts.service";
 import { LifecycleSubjectsService } from "@shared/common/lifecycle-subjects/lifecycle-subjects.service";
@@ -13,9 +13,11 @@ import { DocumentInfo } from "@shared/service-proxies/service-proxies";
     selector: "task-info",
     templateUrl: "./task-info.component.html",
     styleUrls: ["./task-info.component.less"],
+    providers: [CreditBalanceServiceProxy]
 })
 export class TaskInfoComponent implements OnInit {
     leadId: number;
+    balanceDue: string;
     contactIds: number[];
     logs: ContactActivityLogInfo[];
     files: DocumentInfo[];
@@ -23,6 +25,7 @@ export class TaskInfoComponent implements OnInit {
     constructor(
         private contactServiceProxy: ContactServiceProxy,
         private lifeCycleService: LifecycleSubjectsService,
+        private creditBalanceProxy: CreditBalanceServiceProxy,
         public ls: AppLocalizationService,
         private documentProxy: DocumentServiceProxy,
         public activityProxy: ActivityServiceProxy,
@@ -56,6 +59,11 @@ export class TaskInfoComponent implements OnInit {
                 this.files = files;
             })
 
+            this.creditBalanceProxy.getContactBalance(
+                contactInfo.id
+            ).subscribe((result: ContactBalanceBaseDto) => {
+                this.balanceDue = result.lastUpdated;
+            })
         });
 
     }
