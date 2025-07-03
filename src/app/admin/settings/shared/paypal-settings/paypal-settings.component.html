@@ -1,41 +1,194 @@
-<h2>{{l('Paypal')}} {{l('Settings')}}</h2>
+<h2><img width="140" src="./assets/common/images/paypal.svg" /></h2>
 
 <div class="form-group">
-    <dx-check-box id="PayPalIsEnabled"
+    <dx-check-box id="PaypalIsEnabled"
                   [text]="l('Enabled')"
                   [(value)]="paypalPaymentSettings.isEnabled">
     </dx-check-box>
 </div>
-<div class="form-group">
-    <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
-    <dx-select-box class="bold-text"
-                   stylingMode="outlined"
-                   valueExpr="value"
-                   displayExpr="text"
-                   [showClearButton]="true"
-                   [(value)]="paypalPaymentSettings.environment"
-                   [dataSource]="payPalEnvironments">
-    </dx-select-box>
-</div>
-<div class="form-group">
-    <label for="PayPalClientId">{{l("Client ID")}}</label>
-    <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="paypalPaymentSettings.clientId">
-</div>
-<div class="form-group">
-    <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
-    <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="paypalPaymentSettings.clientSecret">
-</div>
-<div class="form-group">
-    <label for="PayPalWebhookKey">{{l("Webhook Id")}}</label>
-    <input id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" class="form-control" [(ngModel)]="paypalPaymentSettings.webhookKey" maxlength="128">
-</div>
-<p>
-    <span class="small">* To recieve webhooks from PayPal please add new endpoint on your application using the following info and save Webhook Id in the field above:</span><br />
-    <span class="small">URL - <span class="copy-url"><b>{{getPayPalWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
-    <span class="small">
-        Events -
-        <b>'Billing subscription activated'</b>, <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>,
-        <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b>,
-        <b>'Payment payouts-item succeeded'</b>, <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
-    </span>
-</p>
+<mat-tab-group *ngIf="paypalPaymentSettings">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <img src="./assets/common/icons/house.svg">
+            <div class="title">PAYPAL INTRODUCTION</div>
+        </ng-template>
+        <div class="container-fluid introduction-tab">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <div class="take-payments-header">
+                        <div>
+                            <h3>Accept PayPal Payments</h3>
+                            <span>Connect with the world's most powerful and easy to use Payment Gateway</span>
+                        </div>
+                        <button *ngIf="paypalPaymentSettings.isHostAccountEnabled && !paypalPaymentSettings.paypalMerchantId" class="btn btn-layout stripe-button" (click)="createConnectedAccount()">
+                            {{ l('Connect to Paypal') }}
+                        </button>
+                    </div>
+                    <div class="video-block">
+                        <img src="./assets/common/images/workingman.jpg">
+                        <div class="video-block-text">
+                            <div class="video-block-title">Now your customers can pay by card</div>
+                            <ul>
+                                <li>Take instant online card payments</li>
+                                <li>Get your money quickly and securely</li>
+                                <li>Choose which invoices can be paud this way</li>
+                            </ul>
+                            <div class="video-block-learnmore">
+                                <a target="_blank" href="https://www.paypal.com/us/digital-wallet/how-paypal-works">Learn more about how PayPal works<i class="fa fa-long-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="payments-block">
+                        <h2>Connect PayPal collect payments from customers worldwide!</h2>
+                        <h3>Only pay a small percentage of your invoice total:</h3>
+                        <ul>
+                            <li>Accept all Major Credit Cards</li>
+                            <li>Flexible subsrcriptions and billing terms</li>
+                            <li>Accept SEPA</li>
+                            <li>Accept Apple Pay</li>
+                            <li>Accept iDeal</li>
+                            <li>Fraud prevention tools</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4 faq-block">
+                    <div class="faq-block-title">FAQ</div>
+                    <div class="faq-block-row">
+                        <img src="./assets/common/icons/document-text.svg" />
+                        <a target="_blank" href="https://www.paypal.com/c2/webapps/mpp/how-to-guides/how-to-use-paypal">What’s Paypal and how do I get started?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab *ngIf="!isHost">
+        <ng-template mat-tab-label>
+            <img src="./assets/common/icons/peoples.svg">
+            <div class="title">CONNECTED ACCOUNTS</div>
+        </ng-template>
+        <div class="connected-tab blocks-tab">
+            Connected merchant account - <b>{{paypalPaymentSettings.paypalMerchantId}}</b>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <img src="./assets/common/icons/blocks.svg">
+            <div class="title">API KEYS</div>
+        </ng-template>
+        <div class="api-keys-tab blocks-tab">
+            <!--<button *ngIf="apiKeySettings && !apiKeySettings.length" class="btn btn-layout" (click)="addApiKeySettings()">
+                {{ l('Add new API settings') }}
+            </button>-->
+            <!--<div *ngFor="let settings of apiKeySettings" class="api-key-account block" [class.active]="settings.isActive">
+                <div class="section top-bar">
+                    <i class="fa check-icon" [ngClass]="settings.isActive ? 'fa-check-circle' : 'fa-circle-thin'"></i>
+                    <inplace-edit [id]="settings.id"
+                                  [value]="settings.displayName"
+                                  [maxLength]="256"
+                                  [validationRules]="[ { type: 'required', message: l('ThisFieldIsRequired') } ]"
+                                  showInlineEditButton="true"
+                                  lEntityName="DisplayName"
+                                  [editPlaceholder]="l('DisplayName')"
+                                  (valueChanged)="settings.displayName = $event">
+                    </inplace-edit>
+                </div>
+                <div class="api-key-info" [class.section]="!isHost">
+                    <h6>{{l("Secret key")}}</h6>
+                    <input placeholder="Enter Your Secret Key" [disabled]="settings.id" type="text" [(ngModel)]="settings.apiKey">
+
+                    <h6>{{l("Publishable key")}}</h6>
+                    <input placeholder="Enter Your Secret Key" type="text" [(ngModel)]="settings.publishableKey">
+                    <p>
+                        <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
+                    </p>
+                    <br />
+                    <p>
+                        <dx-check-box id="StripeIgnoreExternalWebhooks"
+                                      [text]="l('Ignore external webhooks')"
+                                      [(value)]="settings.ignoreExternalWebhooks">
+                        </dx-check-box>
+                        <span class="small">*Skip webhooks that are not intended for <b>{{tenantName}}</b></span>
+                    </p>
+                    <div>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</div>
+                    <p>
+                        <button [disabled]="settings.webhookSingingSecret" [title]="settings.webhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, false)">
+                            {{ settings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
+                        </button>
+                        <img *ngIf="settings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
+                    </p>
+                    <div *ngIf="isHost" class="section">
+                        <h6>{{l("OAuth Client Id")}}</h6>
+                        <input type="text" [(ngModel)]="settings.oAuthClientId">
+
+                        <span class="small">{{l('Connects a tenant\'s Stripe account. The value can be found in the ')}}<a href="https://dashboard.stripe.com/settings/connect" target="_blank">settings</a>.</span><br />
+                        <span class="small">{{l('Please enable ')}}<b>OAuth for Standard accounts</b>{{l(' and add the following URL to OAuth redirects')}}</span>
+                        <span class="small">URL - <span class="copy-url"><b>{{getStripeOAuthConnectRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span>
+                    </div>
+                    <div>Use button below to create <b>Connect</b> webhook and recieve Connect events from Stripe</div>
+                    <p>
+                        <button [disabled]="settings.connectWebhookSingingSecret" [title]="settings.connectWebhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, true)">
+                            {{ settings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
+                        </button>
+                        <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
+                    </p>
+                    <p>
+                        <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
+                                      [text]="l('Ignore external connected accounts')"
+                                      [(value)]="settings.ignoreExternalConnectedAccounts">
+                        </dx-check-box>
+                        <span class="small">*Skip webhooks from external connected accounts</span>
+                    </p>
+                    <h6 class="tax-settings">Tax Settings</h6>
+                    <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
+                        {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
+                    </button>
+                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
+                </div>
+                <div *ngIf="!isHost" class="account-actions">
+                    <span *ngIf="!settings.isActive" (click)="setIsActive(settings)"><i class="fa fa-check"></i>Set as active</span>
+                    <span (click)="delete(settings)"><i class="fa fa-trash-o"></i>Delete Connection</span>
+                </div>
+            </div>-->
+            <div class="api-key-account block">
+                <div class="form-group">
+                    <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
+                    <dx-select-box class="bold-text"
+                                   stylingMode="outlined"
+                                   valueExpr="value"
+                                   displayExpr="text"
+                                   [showClearButton]="true"
+                                   [(value)]="paypalPaymentSettings.environment"
+                                   [dataSource]="payPalEnvironments">
+                    </dx-select-box>
+                </div>
+                <div class="form-group">
+                    <label for="PayPalClientId">{{l("Client ID")}}</label>
+                    <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="paypalPaymentSettings.clientId">
+                </div>
+                <div class="form-group">
+                    <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
+                    <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="paypalPaymentSettings.clientSecret">
+                </div>
+                <div *ngIf="isHost" class="form-group">
+                    <label for="BNCode">{{l("BN Code")}}</label>
+                    <input id="BNCode" type="text" name="BNCode" class="form-control" [(ngModel)]="paypalPaymentSettings.bnCode" maxlength="128">
+                </div>
+                <div class="form-group">
+                    <label for="PayPalWebhookKey">{{l("Webhook Id")}}</label>
+                    <input id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" class="form-control" [(ngModel)]="paypalPaymentSettings.webhookKey" maxlength="128">
+                </div>
+                <p>
+                    <span class="small">* To recieve webhooks from PayPal please add new endpoint on your application using the following info and save Webhook Id in the field above:</span><br />
+                    <span class="small">URL - <span class="copy-url"><b>{{getPayPalWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+                    <span class="small">
+                        Events -
+                        <b>'Billing subscription activated'</b>, <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>,
+                        <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b>,
+                        <b>'Payment payouts-item succeeded'</b>, <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
+                    </span>
+                </p>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

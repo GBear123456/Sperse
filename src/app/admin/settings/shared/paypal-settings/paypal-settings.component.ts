@@ -7,7 +7,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    PayPalSettings,
+    PayPalSettingsDto,
     TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@root/shared/AppConsts';
@@ -23,7 +23,7 @@ import { SettingsComponentBase } from './../settings-base.component';
 })
 export class PaypalSettingsComponent extends SettingsComponentBase {
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
-    paypalPaymentSettings: PayPalSettings = new PayPalSettings();
+    paypalPaymentSettings: PayPalSettingsDto = new PayPalSettingsDto();
 
     payPalEnvironments = [
         { value: 'sandbox', text: 'Sandbox' },
@@ -49,6 +49,22 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
                     this.changeDetection.detectChanges();
                 })
         }
+    }
+
+    createConnectedAccount() {
+        if (this.isHost || !this.paypalPaymentSettings.isHostAccountEnabled || (this.paypalPaymentSettings && this.paypalPaymentSettings.paypalMerchantId))
+            return;
+
+        this.message.confirm('', this.l('Do you want to connect Paypal account ?'), (isConfirmed) => {
+            if (isConfirmed) {
+                this.startLoading();
+                this.tenantPaymentSettingsService.getPayPalPartnerConnectUrl().pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe((url) => {
+                    window.location.href = url;
+                });
+            }
+        });
     }
 
     getSaveObs(): Observable<any> {
