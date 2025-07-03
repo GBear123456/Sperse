@@ -27,8 +27,8 @@ import { AppConsts } from "@root/shared/AppConsts";
 import { ODataService } from "@root/shared/common/odata/odata.service";
 import { InstanceModel } from "@root/shared/cfo/instance.model";
 import { Param } from "@root/shared/common/odata/param.model";
-import { FilterHelpers } from "@app/crm/shared/helpers/filter.helper";
 import { DateHelper } from "@root/shared/helpers/DateHelper";
+import { FilterHelpers } from "@app/crm/shared/helpers/filter.helper";
 
 @Component({
     selector: "task-info",
@@ -94,12 +94,6 @@ export class TaskInfoComponent implements OnInit {
                 .subscribe((files: DocumentInfo[]) => {
                     this.files = files;
                 });
-
-            this.creditBalanceProxy
-                .getContactBalance(contactInfo.id)
-                .subscribe((result: ContactBalanceBaseDto) => {
-                    this.balance = result.balance;
-                });
             this.paymentServiceProxy
                 .getPayments(contactInfo.id)
                 .subscribe((result: GetPaymentsDto) => {
@@ -108,6 +102,7 @@ export class TaskInfoComponent implements OnInit {
                 });
             this.getInvoiceCount(contactInfo.id);
             this.getCurrentSubscription(contactInfo.id);
+            this.getDueAmount(contactInfo.id);
         });
     }
 
@@ -126,6 +121,44 @@ export class TaskInfoComponent implements OnInit {
         invoiceStore
             .load()
             .then((res: any) => (this.invoices = res?.count ?? 0));
+    }
+
+    getDueAmount(id: number) {
+        const invoiceStore = new ODataStore({
+            version: AppConsts.ODataVersion,
+            url: this.getODataUrl(this.dataSourceCountURI, [
+                { ContactId: { eq: id } },
+                ...this.getDueFilter(),
+            ]),
+            beforeSend: (request) => {
+                request.headers["Authorization"] =
+                    "Bearer " + abp.auth.getToken();
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+            },
+        });
+        invoiceStore.load().then((res: any) => (this.balance = res?.sum ?? 0));
+    }
+    getDueFilter() {
+        const unpaidStatusFilter = {
+            Status: {
+                in: [InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid],
+            },
+        };
+        let today = DateHelper.removeTimezoneOffset(
+            new Date(),
+            true,
+            "from"
+        ).toISOString();
+
+        return [
+            unpaidStatusFilter,
+            {
+                or: [
+                    [`DueDate ne null`, `DueDate lt ${today}`],
+                    [`DueDate eq null`, `Date lt ${today}`],
+                ],
+            },
+        ];
     }
 
     getODataUrl(
