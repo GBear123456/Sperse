@@ -321,15 +321,6 @@
     opacity: 0.7;
   }
 
-  .dx-button-content {
-    color: inherit;
-  }
-
-  .dx-icon {
-    color: inherit;
-    filter: var(--icon-filter);
-  }
-
   &.dx-button-success {
     background-color: var(--success-color);
     color: var(--success-color-contrast);
@@ -785,4 +776,16 @@
 
 .dx-overlay-wrapper {
   background: transparent !important;
+}
+
+.dx-row {
+  td {
+    color: var(--text-color) !important;
+  }
+
+  &:hover {
+    td {
+      color: #000 !important;
+    }
+  }
 }
