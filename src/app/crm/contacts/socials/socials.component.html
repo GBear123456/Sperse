@@ -1,23 +1,40 @@
 <div class="socials">
     <div class="social">
         <div class="social-icon-group">
-            <ng-container *ngFor="let icon of socialIcons">
-                <button
-                    *ngIf="isShowSocialIcon(icon.linkType)"
-                    class="social-icon-btn"
-                    [title]="icon.name"
-                    (click)="
-                        showEditDialog(
-                            icon.linkType
-                                ? { linkTypeId: icon.linkType }
-                                : null,
-                            $event
-                        )
-                    "
-                >
-                    <img [src]="icon.img" [alt]="icon.name" />
-                </button>
-            </ng-container>
+            <button
+                class="social-add"
+                aria-label="Social action"
+                (click)="showEditDialog(null, $event)"
+            >
+                <img
+                    src="./assets/common/icons/contact/plus.svg"
+                    alt="icon"
+                    onError="this.src='./assets/common/icons/social/OtherLink.svg';"
+                />
+            </button>
+            <button
+                *ngFor="let icon of contactInfoData?.links"
+                class="social-icon-btn"
+                (click)="onSelectLinks(icon)"
+            >
+                <img
+                    src="./assets/common/icons/social/{{
+                        LINK_TYPES[icon.linkTypeId] || 'OtherLink'
+                    }}.svg"
+                    onError="this.src='./assets/common/icons/social/OtherLink.svg';"
+                    alt="links"
+                />
+            </button>
+            <button
+                class="social-icon-btn"
+                *ngIf="contactInfoData?.links.length > 0"
+                (click)="onAllSelectLinks()"
+            >
+                <img
+                    src="./assets/common/icons/arrow-down-grey.svg"
+                    alt="Select Role"
+                />
+            </button>
         </div>
         <ul>
             <li *ngIf="contactInfoData?.publicPersonProfileUrl">
@@ -56,7 +73,7 @@
                               (itemDeleted)="deleteLink($event)">
                 </inplace-edit>
             </li> -->
-            <li *ngFor="let social of contactInfoData?.links; let i = index">
+            <li *ngFor="let social of selectedLinks; let i = index">
                 <div class="video-link-row">
                     <span class="drag-handle" title="Drag to reorder">
                         <img

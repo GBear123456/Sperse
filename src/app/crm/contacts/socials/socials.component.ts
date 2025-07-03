@@ -65,48 +65,8 @@ export class SocialsComponent {
 
     LINK_TYPES = {};
     urlRegEx = AppConsts.regexPatterns.url;
-    socialIcons = [
-        {
-            linkType: null,
-            name: "Add",
-            img: "./assets/common/icons/contact/plus_1.svg",
-        },
-        {
-            linkType: LinkType.Facebook,
-            name: "Facebook",
-            img: "./assets/common/icons/contact/facebook_symbol.svg",
-        },
-        {
-            linkType: LinkType.Twitter,
-            name: "X",
-            img: "./assets/common/icons/contact/twitter.svg",
-        },
-        {
-            linkType: LinkType.Tiktok,
-            name: "TikTok",
-            img: "./assets/common/icons/contact/tik-tok.svg",
-        },
-        {
-            linkType: LinkType.Youtube,
-            name: "YouTube",
-            img: "./assets/common/icons/contact/youtube.svg",
-        },
-        {
-            linkType: LinkType.Instagram,
-            name: "Instagram",
-            img: "./assets/common/icons/contact/instagram.svg",
-        },
-        {
-            linkType: AppConsts.otherLinkTypeId,
-            name: "Email",
-            img: "./assets/common/icons/contact/inbox.svg",
-        },
-        {
-            linkType: AppConsts.otherLinkTypeId,
-            name: "Home",
-            img: "./assets/common/icons/contact/home.svg",
-        },
-    ];
+
+    selectedLinks: ContactLinkDto[] | undefined = undefined;
 
     constructor(
         private store$: Store<RootStore.State>,
@@ -321,6 +281,13 @@ export class SocialsComponent {
                     }
                     return true;
                 });
+                this.selectedLinks.every((item, index) => {
+                    if (item.id == id) {
+                        this.selectedLinks.splice(index, 1);
+                        return false;
+                    }
+                    return true;
+                });
                 this.onChanged.emit();
             });
     }
@@ -335,5 +302,26 @@ export class SocialsComponent {
     copyToClipbord(value) {
         this.clipboardService.copyFromContent(value);
         this.notifyService.info(this.ls.l("SavedToClipboard"));
+    }
+    onSelectLinks(link: ContactLinkDto) {
+        if (this.selectedLinks?.length > 1) {
+            this.selectedLinks = [link];
+            return;
+        }
+        const isAlreadySelected = this.selectedLinks?.some(
+            (m) => m.id === link.id
+        );
+        if (isAlreadySelected) {
+            this.selectedLinks = [];
+        } else {
+            this.selectedLinks = [link];
+        }
+    }
+    onAllSelectLinks() {
+        if (this.selectedLinks?.length <= 1)
+            this.selectedLinks = this.contactInfoData?.links;
+        else {
+            this.selectedLinks = [];
+        }
     }
 }

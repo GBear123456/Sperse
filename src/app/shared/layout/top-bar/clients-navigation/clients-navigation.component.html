@@ -1,44 +1,69 @@
 <div class="user-card-container">
-    <button class="icon-btn nav-btn left" [disabled]="!contactIds || contactIds.indexOf(currentContactId) <= 0"
-        (click)="goToPrevClient()">
-        <img src="assets/common/icons/contact/header-angle-left.svg" alt="Previous" />
+    <button
+        class="icon-btn nav-btn left"
+        [disabled]="!contactIds || contactIds.indexOf(currentContactId) <= 0"
+        (click)="goToPrevClient()"
+    >
+        <img
+            src="assets/common/icons/contact/header-angle-left.svg"
+            alt="Previous"
+        />
     </button>
-    <div class="user-card-content">
-        <img src="assets/common/icons/contact/building.svg" class="icon-building" alt="Company" />
+    <div class="user-card-content" #dropdownBtn (click)="toggleDropdown()">
+        <img
+            src="assets/common/icons/contact/building.svg"
+            class="icon-building"
+            alt="Company"
+        />
         <span class="name-role">
-            <span class="name">{{ contacts[contactIds?.indexOf(currentContactId)]?.Name }}</span>
-            <span class="divider"></span>
-            <span class="role">{{ contacts[contactIds?.indexOf(currentContactId)]?.CompanyName }}</span>
+            <span class="name">{{
+                contacts[contactIds?.indexOf(currentContactId)]?.Name
+            }}</span>
         </span>
-        <button class="dropdown-btn" #dropdownBtn (click)="toggleDropdown()">
-            <img src="assets/common/icons/arrow-down-grey.svg" alt="Select Role" />
-        </button>
-        <button class="icon-btn close-btn" (click)="onClose()" [disabled]="!isDropdownVisible">
-            <img src="assets/common/icons/contact/header-close.svg" alt="Close" />
+        <button class="dropdown-btn">
+            <img
+                src="assets/common/icons/arrow-down-grey.svg"
+                alt="Select Role"
+            />
         </button>
     </div>
-    <button class="icon-btn nav-btn right"
-        [disabled]="!contactIds || contactIds.indexOf(currentContactId) === contactIds.length - 1"
-        (click)="goToNextClient()">
-        <img src="assets/common/icons/contact/header-angle-right.svg" alt="Next" />
+    <button
+        class="icon-btn nav-btn right"
+        [disabled]="
+            !contactIds ||
+            contactIds.indexOf(currentContactId) === contactIds.length - 1
+        "
+        (click)="goToNextClient()"
+    >
+        <img
+            src="assets/common/icons/contact/header-angle-right.svg"
+            alt="Next"
+        />
     </button>
 </div>
 <dx-tooltip
-  [target]="dropdownBtn"
-  [scroll]="true"
-  [visible]="isDropdownVisible"
-  [position]="{ my: 'top center', at: 'bottom center' }"
-  [closeOnOutsideClick]="true"
-  (onHiding)="isDropdownVisible = false"
-  [width]="300"
+    [target]="dropdownBtn"
+    [scroll]="true"
+    [visible]="isDropdownVisible"
+    [position]="{ my: 'top center', at: 'bottom center' }"
+    [closeOnOutsideClick]="true"
+    (onHiding)="isDropdownVisible = false"
 >
     <dx-scroll-view [height]="450">
         <div class="dropdown-list">
-        <div *ngFor="let contact of contacts" class="dropdown-item" (click)="navigateToContact(contact[clientFields.Id])">
-            <div class="name">{{ contact[clientFields.Name] }}</div>
-            <div class="divider"></div>
-            <div class="role">{{ contact[clientFields.CompanyName] }}</div>
-        </div>
+            <div
+                *ngFor="let contact of contacts"
+                class="dropdown-item"
+                (click)="navigateToContact(contact[clientFields.Id])"
+            >
+                <img src="../../../../../assets/common/images/no-photo.png" />
+                <div class="role-name">
+                    <div class="name">{{ contact[clientFields.Name] }}</div>
+                    <div class="role">
+                        {{ contact[clientFields.CompanyName] }}
+                    </div>
+                </div>
+            </div>
         </div>
     </dx-scroll-view>
 </dx-tooltip>

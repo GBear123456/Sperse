@@ -33,7 +33,7 @@
                 top: 0;
                 left: 0;
                 .photo-area {
-                    margin: 40px auto 10px auto;
+                    margin: 10px auto;
                 }
                 .active {
                     right: 95px;
@@ -51,6 +51,24 @@
                     text-align: center;
                     margin-bottom: 0;
                     margin-top: -2px;
+                    ::ng-deep inplace-edit {
+                        .inplace-edit-view-mode {
+                            min-height: auto;
+                            a {
+                                font-size: 14px;
+                            }
+                        }
+                        .inplace-edit-edit-mode {
+                            dx-text-box {
+                                .dx-texteditor-input {
+                                    background: #f3f7fa;
+                                    color: #202b35;
+                                    font-size: 14px !important;
+                                    font-weight: 400;
+                                }
+                            }
+                        }
+                    }
                 }
                 .job-title {
                     font-family: var(--app-font-family);
@@ -67,6 +85,7 @@
                         flex-direction: column;
                         width: 287px;
                         height: auto;
+                        min-height: auto;
                         a {
                             font-family: var(--app-font-family);
                             font-size: 22px;
@@ -820,10 +839,18 @@
 .context-tooltip {
     display: flex;
     flex-wrap: wrap;
-    max-width: 155px;
-    gap: 5px;
+    max-width: 218px;
+    gap: 15px 30px;
+    padding: 18px 13px;
     div {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        max-width: 44px;
+
+        img {
+            max-width: 44px;
+            aspect-ratio: 1 / 1;
+        }
     }
 }

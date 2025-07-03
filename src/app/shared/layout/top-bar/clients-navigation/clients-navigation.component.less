@@ -8,7 +8,7 @@
         background: #f7fafd;
         border-radius: 8px;
         // padding: 0 8px;
-        min-height: 46px;
+        min-height: 51px;
         font-family: inherit;
         margin: 0px 10px;
     }
@@ -19,7 +19,7 @@
         color: #cbd5e1;
         padding: 0;
         font-size: 18px;
-        height: 32px;
+        height: 51px;
         display: flex;
         align-items: center;
         cursor: pointer;
@@ -46,6 +46,9 @@
                 width: 4px;
                 height: 46px;
             }
+        }
+        img {
+            min-height: 51px;
         }
     }
 
@@ -131,16 +134,27 @@
 .dropdown-list {
     display: flex;
     flex-direction: column;
-    padding: 10px;
 }
 
 .dropdown-item {
     display: flex;
     align-items: center;
     min-width: 0;
+    gap: 12px;
     cursor: pointer;
     padding: 10px 8px;
     border-bottom: 1px solid #e7edf2;
+
+    img {
+        width: 38px;
+        border-radius: 50%;
+    }
+
+    .role-name {
+        display: flex;
+        flex-direction: column;
+    }
+
     .name {
         width: 120px;
         overflow: hidden;
@@ -151,14 +165,7 @@
         font-size: 15px;
         margin-right: 4px;
         white-space: nowrap;
-    }
-
-    .divider {
-        width: 1px;
-        height: 16px;
-        background: #dbeafe;
-        margin: 0 7px;
-        display: inline-block;
+        text-align: left;
     }
 
     .role {
@@ -170,6 +177,7 @@
         font-weight: 400;
         font-size: 15px;
         white-space: nowrap;
+        text-align: left;
     }
 }
 
