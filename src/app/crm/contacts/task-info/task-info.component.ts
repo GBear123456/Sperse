@@ -81,12 +81,13 @@ export class TaskInfoComponent implements OnInit {
                 this.contactIds = contacts.map((contact) => contact.id);
             });
 
-        this.contactsService.contactInfo$.subscribe(contactInfo => {
-            this.contactServiceProxy.getActivityLogs(
-                contactInfo.id
-            ).subscribe((logs: ContactActivityLogInfo[]) => {
-                this.logs = logs;
-            });
+        this.contactsService.contactInfo$.subscribe((contactInfo) => {
+            if (!contactInfo?.id) return;
+            this.contactServiceProxy
+                .getActivityLogs(contactInfo.id)
+                .subscribe((logs: ContactActivityLogInfo[]) => {
+                    this.logs = logs;
+                });
 
             this.documentProxy.getAll(
                 contactInfo.id
