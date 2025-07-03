@@ -10,7 +10,7 @@
         <ul>
             <li *ngFor="let phone of contactInfoData?.phones; let i = index">
                 <div class="email-row" *ngIf="!phone.inplaceEdit">
-                    <div>
+                    <div class="phone-content">
                         <span
                             class="email-address"
                             (click)="
@@ -87,7 +87,7 @@
                     *ngFor="let email of contactInfoData?.emails; let i = index"
                 >
                     <div class="email-row" *ngIf="!email.inplaceEdit">
-                        <div>
+                        <div class="email-content">
                             <img
                                 class="verify-icon"
                                 *ngIf="email.isConfirmed"
