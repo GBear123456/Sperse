@@ -82,6 +82,7 @@ export class TaskInfoComponent implements OnInit {
             });
 
         this.contactsService.contactInfo$.subscribe((contactInfo) => {
+            if (!contactInfo?.id) return;
             this.contactServiceProxy
                 .getActivityLogs(contactInfo.id)
                 .subscribe((logs: ContactActivityLogInfo[]) => {
