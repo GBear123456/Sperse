@@ -1,25 +1,23 @@
 .container {
-  background-color: var(--card-bg);
-  color: var(--text-color);
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 24px;
+  padding-bottom: 24px;
 
   @media screen and (min-width: 768px) {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 32px;
+    padding-right: 32px;
   }
 
   .inner-container {
-    max-width: 80rem;
+    max-width: 1280px;
     margin-left: auto;
     margin-right: auto;
 
     .header {
       display: flex;
       flex-direction: column;
-      margin-bottom: 0.5rem;
+      margin-bottom: 8px;
 
       @media screen and (min-width: 768px) {
         flex-direction: row;
@@ -28,10 +26,10 @@
       }
 
       h1 {
-        font-size: 1.875rem;
-        line-height: 2.25rem;
+        font-size: 30px;
+        line-height: 36px;
         font-weight: 700;
-        margin-bottom: 0.125rem;
+        margin-bottom: 2px;
         text-align: center;
 
         @media screen and (min-width: 768px) {
@@ -41,8 +39,8 @@
       }
 
       p {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
+        font-size: 14px;
+        line-height: 20px;
         text-align: center;
         color: var(--muted-color);
 
@@ -53,21 +51,21 @@
 
       .search-bar {
         width: 100%;
-        margin-top: 1rem;
+        margin-top: 16px;
 
         @media screen and (min-width: 768px) {
           margin-top: 0px;
-          width: 16rem;
+          width: 256px;
         }
       }
     }
 
     .header-description {
       display: none;
-      margin-bottom: 1.5rem;
+      margin-bottom: 24px;
       text-align: left;
-      font-size: 0.875rem;
-      line-height: 1.25rem;
+      font-size: 14px;
+      line-height: 20px;
       color: var(--muted-color);
 
       @media screen and (min-width: 768px) {
@@ -77,8 +75,8 @@
 
     .header-nosearch {
       text-align: center;
-      padding-top: 2rem;
-      padding-bottom: 2rem;
+      padding-top: 32px;
+      padding-bottom: 32px;
 
       p {
         color: var(--muted-color);
@@ -88,7 +86,7 @@
       button {
         color: var(--primary-color);
         font-weight: 500;
-        margin-top: 0.5rem;
+        margin-top: 8px;
         cursor: pointer;
         outline: none;
         border: none;
@@ -101,13 +99,13 @@
     }
 
     .card-container {
-      gap: 1rem;
+      gap: 16px;
       grid-template-columns: repeat(1, minmax(0, 1fr));
       display: grid;
 
       @media screen and (min-width: 768px) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1.5rem;
+        gap: 24px;
       }
 
       @media screen and (min-width: 1024px) {
@@ -117,7 +115,7 @@
       .card {
         border-width: 1px;
         cursor: pointer;
-        border-radius: 0.5rem;
+        border-radius: 8px;
         transition-property: color, background-color, border-color, text-decoration-color, fill,
           stroke;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -126,22 +124,22 @@
         .card-block {
           display: block;
           text-decoration: none;
-          padding: 1rem;
+          padding: 16px;
           height: 100%;
 
           @media screen and (min-width: 640px) {
-            padding: 1.25rem;
+            padding: 20px;
           }
 
           .card-header {
             display: flex;
             align-items: center;
-            margin-bottom: 0.5rem;
-            gap: 0.5rem;
+            margin-bottom: 8px;
+            gap: 8px;
 
             @media screen and (min-width: 640px) {
-              gap: 0.75rem;
-              margin-bottom: 0.75rem;
+              gap: 12px;
+              margin-bottom: 12px;
             }
 
             lucide-angular {
@@ -149,83 +147,83 @@
             }
 
             ::ng-deep lucide-angular svg {
-              width: 1.25rem;
-              height: 1.25rem;
+              width: 20px;
+              height: 20px;
               stroke-width: 1.75;
 
               @media screen and (min-width: 640px) {
-                width: 1.5rem;
-                height: 1.5rem;
+                width: 24px;
+                height: 24px;
               }
             }
 
             h2 {
-              font-size: 1rem;
-              line-height: 1.5rem;
+              font-size: 16px;
+              line-height: 24px;
               font-weight: 600;
               margin-bottom: 0px;
               color: var(--text-color);
 
               @media screen and (min-width: 640px) {
-                font-size: 1.125rem;
-                line-height: 1.75rem;
+                font-size: 18px;
+                line-height: 28px;
               }
             }
           }
 
           .card-description {
-            margin-bottom: 0.5rem;
-            font-size: 0.75rem;
-            line-height: 1rem;
+            margin-bottom: 8px;
+            font-size: 12px;
+            line-height: 16px;
             color: var(--muted-color);
 
             @media screen and (min-width: 640px) {
-              font-size: 0.875rem;
-              line-height: 1.25rem;
+              font-size: 14px;
+              line-height: 20px;
             }
           }
 
           .card-includes {
             border-top-width: 1px;
-            margin-top: 0.5rem;
+            margin-top: 8px;
             border-color: var(--border-color);
-            padding-top: 0.5rem;
+            padding-top: 8px;
 
             @media screen and (min-width: 640px) {
-              padding-top: 0.75rem;
-              margin-top: 0.75rem;
+              padding-top: 12px;
+              margin-top: 12px;
             }
 
             p {
-              font-size: 0.75rem;
-              line-height: 1rem;
-              margin-bottom: 0.5rem;
+              font-size: 12px;
+              line-height: 16px;
+              margin-bottom: 8px;
               color: var(--muted-color);
             }
 
             .include-content {
               display: flex;
-              gap: 0.25rem;
+              gap: 4px;
               flex-wrap: wrap;
 
               @media screen and (min-width: 640px) {
-                gap: 0.5rem;
+                gap: 8px;
               }
 
               .include-item {
                 display: inline-flex;
                 align-items: center;
-                padding-left: 0.5rem;
-                padding-right: 0.5rem;
-                padding-top: 0.25rem;
-                padding-bottom: 0.25rem;
-                border-radius: 0.25rem;
+                padding-left: 8px;
+                padding-right: 8px;
+                padding-top: 4px;
+                padding-bottom: 4px;
+                border-radius: 4px;
                 border-width: 1px;
                 border-style: solid;
                 opacity: 0.7;
                 border-color: var(--border-color);
-                font-size: 0.75rem;
-                line-height: 1rem;
+                font-size: 12px;
+                line-height: 16px;
                 color: var(--text-color);
 
                 &:hover {
@@ -236,10 +234,10 @@
           }
 
           .hightlighted {
-            padding-left: 0.125rem;
-            padding-right: 0.125rem;
+            padding-left: 2px;
+            padding-right: 2px;
             background-color: var(--warning-color);
-            border-radius: 0.25rem;
+            border-radius: 4px;
             color: var(--text-color);
           }
         }
