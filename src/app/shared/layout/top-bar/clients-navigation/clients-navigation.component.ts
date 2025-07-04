@@ -6,6 +6,7 @@ import {
     ViewChild,
 } from "@angular/core";
 import { Router } from "@angular/router";
+import { AppService } from "@app/app.service";
 import { ClientFields } from "@app/crm/clients/client-fields.enum";
 import { ContactDto } from "@app/crm/clients/contact.dto";
 import { LifecycleSubjectsService } from "@root/shared/common/lifecycle-subjects/lifecycle-subjects.service";
@@ -39,11 +40,22 @@ export class ClientsNavigationComponent
 
     subscription: Subscription;
 
-    constructor(injector: Injector, private router: Router) {
+    constructor(
+        injector: Injector,
+        private router: Router,
+        private appService: AppService
+    ) {
         super(injector);
+        appService.clientDetailsChange.subscribe((res) => {
+            if (res === "clientNavigate") this.loadContact();
+        });
     }
 
     ngOnInit(): void {
+        this.loadContact();
+    }
+
+    loadContact() {
         this.contactDropdownDataSource = new DataSource({
             store: new ODataStore({
                 key: this.clientFields.Id,
@@ -67,6 +79,12 @@ export class ClientsNavigationComponent
             const routeId = +this.router.url
                 .split("/")
                 .find((part) => /^\d+$/.test(part));
+            const segments = this.getSegment;
+            if (segments.indexOf("company") < 0) {
+                const contact = this.getContact(routeId);
+                if (contact[this.clientFields.OrganizationId])
+                    this.navigateToContact(routeId);
+            }
             this.currentContactId = routeId;
         });
     }
@@ -88,21 +106,52 @@ export class ClientsNavigationComponent
     }
 
     navigateToContact(contactId: number) {
-        const urlTree = this.router.parseUrl(this.router.url);
-        const segments = urlTree.root.children["primary"].segments.map(
-            (s) => s.path
-        );
-
+        const contact = this.getContact(contactId);
+        let segments = this.getSegment;
         const contactIndex = segments.indexOf("contact");
         if (contactIndex !== -1 && segments.length > contactIndex + 1) {
             segments[contactIndex + 1] = contactId.toString();
         }
+        if (contact[this.clientFields.OrganizationId]) {
+            const companyIdIndex = segments.indexOf("company");
+            if (companyIdIndex < 0) {
+                segments = [
+                    ...segments.slice(0, contactIndex + 2),
+                    "company",
+                    contact[this.clientFields.OrganizationId]?.toString(),
+                    ...segments.slice(contactIndex + 3),
+                ];
+            } else {
+                segments[companyIdIndex + 1] =
+                    contact[this.clientFields.OrganizationId]?.toString();
+            }
+        } else {
+            const companyIdIndex = segments.indexOf("company");
+            if (companyIdIndex >= 0) {
+                segments = [
+                    ...segments.slice(0, contactIndex + 2),
+                    ...segments.slice(companyIdIndex + 2),
+                ];
+            }
+        }
+        this.navigate(segments);
+        this.currentContactId = contactId;
+        this.onClose();
+    }
 
+    get getSegment() {
+        const urlTree = this.router.parseUrl(this.router.url);
+        return urlTree.root.children["primary"].segments.map((s) => s.path);
+    }
+    navigate(segments) {
+        const urlTree = this.router.parseUrl(this.router.url);
         this.router.navigate(["/", ...segments], {
             queryParams: urlTree.queryParams,
         });
-        this.currentContactId = contactId;
-        this.onClose();
+    }
+
+    getContact(contactId) {
+        return this.contacts.find((m) => m[this.clientFields.Id] === contactId);
     }
 
     toggleDropdown() {

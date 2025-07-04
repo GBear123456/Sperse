@@ -674,6 +674,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                         .clearContactPhoto(this.data[dataField].id)
                         .subscribe(() => {
                             this.handlePhotoChange(dataField, null, null);
+                            this.appService.clientDetailsChange.next(
+                                "clientNavigate"
+                            );
                         });
                 } else {
                     let base64OrigImage = StringHelper.getBase64(
@@ -692,6 +695,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                             })
                         )
                         .subscribe((result: string) => {
+                            this.appService.clientDetailsChange.next(
+                                "clientNavigate"
+                            );
                             this.handlePhotoChange(
                                 dataField,
                                 base64OrigImage,
@@ -760,6 +766,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 );
                 if (org) org.organization.name = value;
                 this.contactsService.invalidateUserData();
+                this.appService.clientDetailsChange.next("clientNavigate");
             });
     }
 
@@ -776,6 +783,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             )
             .subscribe(() => {
                 this.data.personContactInfo.fullName = value;
+                this.appService.clientDetailsChange.next("clientNavigate");
             });
     }
 
