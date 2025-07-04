@@ -1,33 +1,39 @@
 /** Core imports */
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 /** Third party imports */
 import { Search } from 'lucide-angular';
 
 @Component({
-    selector: 'search-bar',
-    templateUrl: './search-bar.component.html',
-    styleUrls: ['./search-bar.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'search-bar',
+  templateUrl: './search-bar.component.html',
+  styleUrls: ['./search-bar.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchBarComponent implements OnInit {
-    readonly SearchIcon = Search;
+  readonly SearchIcon = Search;
 
-    @Input() placeholder: string;
-    @Input() isDarkMode: boolean;
-    @Input() searchQuery: string;
-    @Output() searchQueryChange: EventEmitter<string> = new EventEmitter<string>();
+  @Input() placeholder: string;
+  @Input() isDarkMode: boolean;
+  @Input() searchQuery: string;
+  @Output() searchQueryChange: EventEmitter<string> = new EventEmitter<string>();
 
-    constructor() { }
+  constructor() {}
 
-    ngOnInit(): void {
-    }
+  ngOnInit(): void {}
 
-    clearSearch = () => {
-        this.searchQueryChange.emit('');
-    }
+  clearSearch = () => {
+    this.searchQueryChange.emit('');
+  };
 
-    onChange = (value: string) => {
-        this.searchQueryChange.emit(value);
-    }
+  onChange = (value: string) => {
+    this.searchQueryChange.emit(value);
+  };
 }

@@ -13,7 +13,7 @@
       <dx-scroll-view showScrollbar="onHover">
         <main-menu-panel
           [items]="settingService.configuredNavs"
-          [isDarkMode]="settingService.isDarkMode"
+          [isDarkMode]="themeService.isDarkTheme$ | async"
           [selectedMainItem]="selectedMainItem"
           [hasSubmenu]="settingService.hasSubmenu"
           [(toggleTheme)]="settingService.toggleTheme"

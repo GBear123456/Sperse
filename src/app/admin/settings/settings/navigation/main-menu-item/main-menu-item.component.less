@@ -64,3 +64,20 @@
   background-color: var(--menu-active-bg);
   color: var(--text-color);
 }
+
+.item-container.dark-active-mode {
+  background-color: rgb(44 48 59);
+}
+.item-container.white-active-mode {
+  background-color: rgb(226 230 237);
+}
+.item-container.white-inactive-mode {
+  &:hover {
+    background-color: rgb(226 230 237);
+  }
+}
+.item-container.dark-inactive-mode {
+  &:hover {
+    background-color: rgb(44 48 59);
+  }
+}

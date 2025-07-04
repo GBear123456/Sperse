@@ -38,21 +38,19 @@
   }
 }
 
-.item.active {
-  background-color: var(--menu-active-bg);
-  color: var(--text-color);
+.item.dark-active-mode {
+  background-color: rgb(44 48 59);
 }
-
-.item.inactive {
-  color: var(--muted-color);
+.item.white-active-mode {
+  background-color: rgb(226 230 237);
 }
-
-.item.inactive:hover {
-  background-color: var(--menu-hover-bg);
-  color: var(--text-color);
+.item.white-inactive-mode {
+  &:hover {
+    background-color: rgb(226 230 237);
+  }
 }
-
-.item.active:hover {
-  background-color: var(--menu-active-bg);
-  color: var(--text-color);
+.item.dark-inactive-mode {
+  &:hover {
+    background-color: rgb(44 48 59);
+  }
 }

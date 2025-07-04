@@ -4,265 +4,282 @@
   Module/brand colors (e.g., #00B0F5, #4D3AA0, #107500, #0051AA) are left as-is unless you want to map them to theme variables.
 */
 :host {
-    transition: width 0.5s;
-    height: calc(100vh - 75px);
-    z-index: 999;
-    border-right: 1px solid var(--border-color);
-    background: var(--background-color);
-    position: absolute;
-    display: block;
-    top: 75px;
-    left: 0;
+  transition: width 0.5s;
+  height: calc(100vh - 75px);
+  z-index: 999;
+  border-right: 1px solid var(--border-color);
+  background: var(--background-color);
+  position: absolute;
+  display: block;
+  top: 75px;
+  left: 0;
 
-    &.fullscreen {
-        top: 0;
+  &.fullscreen {
+    top: 0;
+  }
+
+  ::ng-deep .flaticon-music-2 {
+    &:before {
+      content: url(../../../../assets/common/icons/notification-bing.svg);
     }
+  }
 
-    ::ng-deep .flaticon-music-2 {
-        &:before {
-            content: url(../../../../assets/common/icons/notification-bing.svg);
+  .nav-menu {
+    ::ng-deep dx-menu {
+      margin: auto auto auto 0;
+      .dx-menu-items-container {
+        width: 100%;
+      }
+      .dx-menu-vertical {
+        text-align: center;
+      }
+      .dx-menu-item {
+        background: transparent;
+        &.dx-state-hover {
+          .dx-item-content.dx-menu-item-content {
+            background: var(--background-color);
+            img {
+              //border: 3px solid var(--border-color);
+            }
+          }
         }
-    }
 
-    .nav-menu {
-        ::ng-deep dx-menu {
-            margin: auto auto auto 0;
-            .dx-menu-items-container {
-                width: 100%;
-            }
-            .dx-menu-vertical {
-                text-align: center;
-            }
-            .dx-menu-item {
-                background: transparent;
-                &.dx-state-hover {
-                    .dx-item-content.dx-menu-item-content {
-                        background: var(--background-color);
-                        img {
-                            //border: 3px solid var(--border-color);
-                        }
-                    }
-                }
-
-                .dx-item-content.dx-menu-item-content {
-                    display: flex;
-                    justify-content: left;
-                    height: 45px;
-                    padding: 0;
-                    img {
-                        max-width: 27px;
-                        margin: auto 17px auto 15px;
-                    }
-                    .caption {
-                        font-size: 16px;
-                        font-weight: 600;
-                        margin: auto 0;
-                    }
-                    .triangle {
-                        width: 100%;
-                        text-align: right;
-                        margin: auto 10px;
-                    }
-                    .dx-menu-item-text {
-                        display: none;
-                    }
-                }
-
-            }
-            .dx-context-menu-container-border {
-                border: 0;
-                box-shadow: none;
-            }
-        }
-    }
-
-    .top-menu {
-        width: 54px;
-        height: 40px;
-        border-radius: 8px;
-        border: 1px solid var(--border-color);
-        margin: 10px 18px 6px 18px;
-        background: url(../../../../assets/common/icons/three-dots.svg) center no-repeat;
-        background-color: var(--background-color);
-        cursor: pointer;
-    }
-
-    .top-home {
-        width: 55px;
-        height: 40px;
-        display: block;
-        cursor: pointer;
-        background: url(../../../../assets/common/icons/welcome.svg) center no-repeat;
-        margin: 0px 18px 11px 18px;
-        overflow: hidden;
-
-        platform-select {
-            left: 40px;
-            position: relative;
-            top: -25px;
-            opacity: 0;
-            z-index: -1;
-        }
-    }
-
-    .accordion-wrapper {
-        height: calc(100vh - 330px);
-    }
-
-    ::ng-deep dx-accordion {
-        background-color: transparent!important;
-        .dx-empty-message {
-            display: none!important;
-        }
-        .dx-accordion-item {
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            outline: none;
-            margin: 5px 16px;
-            &.dx-accordion-item-opened {
-                .dx-accordion-item-title {
-                    border-bottom-left-radius: 0;
-                    border-bottom-right-radius: 0;
-                    width: 100%;
-                }
-                .dx-accordion-item-body {
-                    &.api {
-                        background: var(--card-bg);
-                    }
-                    &.admin {
-                        background: var(--card-bg);
-                    }
-                    &.crm {
-                        background: var(--card-bg);
-                    }
-                    &.cfo {
-                        background: var(--card-bg);
-                    }
-                }
-            }
-            &.dx-accordion-item-closed {
-                width: 56px;
-                border: 0;
-                .api {
-                    background: #10750008;
-                    border: 1px solid #10750030;
-                    color: #107500;
-                }
-                .admin {
-                    background: #0051AA08;
-                    border: 1px solid #0051AA30;
-                    color: #0051AA;
-                }
-                .crm {
-                    background: #4D3AA008;
-                    border: 1px solid #4D3AA030;
-                    color: #4D3AA0;
-                }
-                .cfo {
-                    background: #00B0F508;
-                    border: 1px solid #00B0F530;
-                    color: #00B0F5;
-                }
-            }
-        }
-        .dx-accordion-item-title {
-            &:before {
-                display: none;
-            }
-
-            &.cfo {
-                background: #00B0F5;
-            }
-
-            &.crm {
-                background: #4D3AA0;
-            }
-
-            &.api {
-                background: #107500;
-            }
-
-            &.admin {
-                background: #0051AA;
-            }
-
-            font-family: Plus Jakarta Sans!important;
-            font-size: 12px;
+        .dx-item-content.dx-menu-item-content {
+          display: flex;
+          justify-content: left;
+          height: 45px;
+          padding: 0;
+          img {
+            max-width: 27px;
+            margin: auto 17px auto 15px;
+          }
+          .caption {
+            font-size: 16px;
             font-weight: 600;
-            line-height: 27px;
-            letter-spacing: 0em;
-            text-align: center;
-            border-radius: 8px;
-            padding: 0;
-            color: var(--button-bg);
-            width: 55px;
-            height: 30px;
-            margin: 0;
+            margin: auto 0;
+          }
+          .triangle {
+            width: 100%;
+            text-align: right;
+            margin: auto 10px;
+          }
+          .dx-menu-item-text {
+            display: none;
+          }
+        }
+      }
+      .dx-context-menu-container-border {
+        border: 0;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .top-menu {
+    width: 54px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin: 10px 18px 6px 18px;
+    background: url(../../../../assets/common/icons/three-dots.svg) center no-repeat;
+    background-color: var(--background-color);
+    cursor: pointer;
+  }
+
+  .top-home {
+    width: 55px;
+    height: 40px;
+    display: block;
+    cursor: pointer;
+    background: url(../../../../assets/common/icons/welcome.svg) center no-repeat;
+    margin: 0px 18px 11px 18px;
+    overflow: hidden;
+
+    platform-select {
+      left: 40px;
+      position: relative;
+      top: -25px;
+      opacity: 0;
+      z-index: -1;
+    }
+  }
+
+  .top-home-dark {
+    width: 55px;
+    height: 40px;
+    display: block;
+    cursor: pointer;
+    background: url(../../../../assets/common/icons/welcome.svg) center no-repeat;
+    margin: 0px 18px 11px 18px;
+    overflow: hidden;
+    opacity: 0.4;
+
+    platform-select {
+      left: 40px;
+      position: relative;
+      top: -25px;
+      opacity: 0;
+      z-index: -1;
+    }
+  }
+
+  .accordion-wrapper {
+    height: calc(100vh - 330px);
+  }
+
+  ::ng-deep dx-accordion {
+    background-color: transparent !important;
+    .dx-empty-message {
+      display: none !important;
+    }
+    .dx-accordion-item {
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      outline: none;
+      margin: 5px 16px;
+      &.dx-accordion-item-opened {
+        .dx-accordion-item-title {
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+          width: 100%;
         }
         .dx-accordion-item-body {
-            padding: 0 0 7px 0;
-            max-height: calc(100vh - 420px);
-
-            &.cfo {
-                ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
-                    border-left: 2px solid #00B0F5;
-                    background: var(--card-bg);
-                }
-            }
-            &.crm {
-                ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
-                    border-left: 2px solid #4D3AA0;
-                    background: var(--card-bg);
-                }
-            }
-
-            &.api {
-                ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
-                    border-left: 2px solid #107500;
-                    background: var(--card-bg);
-                }
-            }
-
-            &.admin {
-                ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
-                    border-left: 2px solid #0051AA;
-                    background: var(--card-bg);
-                }
-            }
-
+          &.api {
+            background: var(--card-bg);
+          }
+          &.admin {
+            background: var(--card-bg);
+          }
+          &.crm {
+            background: var(--card-bg);
+          }
+          &.cfo {
+            background: var(--card-bg);
+          }
         }
-    }
-
-    ::ng-deep user-management-list {
-        display: block;
-        width: 90px!important;
-        margin-right: auto;
-        margin-left: 0px;
-        margin-bottom: 10px;
-
-        position: absolute;
-        bottom: 0;
-
-        .m-topbar__nav.m-nav {
-            flex-direction: column;
-            margin: 0 18px;
+      }
+      &.dx-accordion-item-closed {
+        width: 56px;
+        border: 0;
+        .api {
+          background: #10750008;
+          border: 1px solid #10750030;
+          color: #107500;
         }
-    }
-
-    ::ng-deep user-dropdown-menu {
-        .m-topbar__user-profile--img {
-            margin-left: -6px;
+        .admin {
+          background: #0051aa08;
+          border: 1px solid #0051aa30;
+          color: #0051aa;
         }
+        .crm {
+          background: #4d3aa008;
+          border: 1px solid #4d3aa030;
+          color: #4d3aa0;
+        }
+        .cfo {
+          background: #00b0f508;
+          border: 1px solid #00b0f530;
+          color: #00b0f5;
+        }
+      }
     }
+    .dx-accordion-item-title {
+      &:before {
+        display: none;
+      }
+
+      &.cfo {
+        background: #00b0f5;
+      }
+
+      &.crm {
+        background: #4d3aa0;
+      }
+
+      &.api {
+        background: #107500;
+      }
+
+      &.admin {
+        background: #0051aa;
+      }
+
+      font-family: Plus Jakarta Sans !important;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 27px;
+      letter-spacing: 0em;
+      text-align: center;
+      border-radius: 8px;
+      padding: 0;
+      color: var(--button-bg);
+      width: 55px;
+      height: 30px;
+      margin: 0;
+    }
+    .dx-accordion-item-body {
+      padding: 0 0 7px 0;
+      max-height: calc(100vh - 420px);
+
+      &.cfo {
+        ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
+          border-left: 2px solid #00b0f5;
+          background: var(--card-bg);
+        }
+      }
+      &.crm {
+        ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
+          border-left: 2px solid #4d3aa0;
+          background: var(--card-bg);
+        }
+      }
+
+      &.api {
+        ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
+          border-left: 2px solid #107500;
+          background: var(--card-bg);
+        }
+      }
+
+      &.admin {
+        ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
+          border-left: 2px solid #0051aa;
+          background: var(--card-bg);
+        }
+      }
+    }
+  }
+
+  ::ng-deep user-management-list {
+    display: block;
+    width: 90px !important;
+    margin-right: auto;
+    margin-left: 0px;
+    margin-bottom: 10px;
+
+    position: absolute;
+    bottom: 0;
+
+    .m-topbar__nav.m-nav {
+      flex-direction: column;
+      margin: 0 18px;
+    }
+  }
+
+  ::ng-deep user-dropdown-menu {
+    .m-topbar__user-profile--img {
+      margin-left: -6px;
+    }
+  }
 }
 
 ::ng-deep .menu-tooltip {
-    font-family: Plus Jakarta Sans;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 13px;
-    letter-spacing: 0em;
-    color: var(--text-color);
-    padding: 0;
-    margin: 0;
+  font-family: Plus Jakarta Sans;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 13px;
+  letter-spacing: 0em;
+  color: var(--text-color);
+  padding: 0;
+  margin: 0;
 }

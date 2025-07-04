@@ -1,42 +1,45 @@
 <div class="item-container">
-    <div
-        class="item"
-        [class.dark-active-mode]="isDarkMode && isActive"
-        [class.white-active-mode]="!isDarkMode && isActive"
-        [class.dark-inactive-mode]="isDarkMode && !isActive"
-        [class.white-inactive-mode]="!isDarkMode && !isActive"
-        (click)="handleSubItemClick(item)"
-    >
-        <ng-container [ngSwitch]="true">
-            <ng-container *ngSwitchCase="item.path.startsWith('email/')">
-                <img [src]="'assets/common/icons/smtp/' + getEmailIcon(item)"/>
-            </ng-container>
-            <ng-container *ngSwitchCase="item.path.startsWith('payment/')">
-                <img [src]="getPaymentIcon(item)"/>
-            </ng-container>
-            <ng-container *ngSwitchDefault>
-                <lucide-angular *ngIf="item.iconComponent" [img]="item.iconComponent"></lucide-angular>
-                <lucide-angular *ngIf="!item.iconComponent" [img]="UserIcon"></lucide-angular>
-            </ng-container>
-        </ng-container>
-        <span>{{ item.label }}</span>
-    </div>
-
-    <ng-container *ngIf="item.submenu">
-        <ng-container *ngFor="let subSubItem of item.submenu">
-            <div
-                class="item"
-                [class.dark-active-mode]="isDarkMode && isSubActive(subSubItem)"
-                [class.white-active-mode]="!isDarkMode && isSubActive(subSubItem)"
-                [class.dark-inactive-mode]="isDarkMode && !isSubActive(subSubItem)"
-                [class.white-inactive-mode]="!isDarkMode && !isSubActive(subSubItem)"
-                style="padding-left: 3rem;"
-                (click)="handleSubItemClick(subSubItem)"
-        >
-                <lucide-angular *ngIf="subSubItem.iconComponent" [img]="subSubItem.iconComponent"></lucide-angular>
-                <lucide-angular *ngIf="!subSubItem.iconComponent" [img]="UserIcon"></lucide-angular>
-                <span>{{ subSubItem.label }}</span>
-            </div>
-        </ng-container>
+  <div
+    class="item"
+    [class.dark-active-mode]="isDarkMode && isActive"
+    [class.white-active-mode]="!isDarkMode && isActive"
+    [class.dark-inactive-mode]="isDarkMode && !isActive"
+    [class.white-inactive-mode]="!isDarkMode && !isActive"
+    (click)="handleSubItemClick(item)"
+  >
+    <ng-container [ngSwitch]="true">
+      <ng-container *ngSwitchCase="item.path.startsWith('email/')">
+        <img [src]="'assets/common/icons/smtp/' + getEmailIcon(item)" />
+      </ng-container>
+      <ng-container *ngSwitchCase="item.path.startsWith('payment/')">
+        <img [src]="getPaymentIcon(item)" />
+      </ng-container>
+      <ng-container *ngSwitchDefault>
+        <lucide-angular *ngIf="item.iconComponent" [img]="item.iconComponent"></lucide-angular>
+        <lucide-angular *ngIf="!item.iconComponent" [img]="UserIcon"></lucide-angular>
+      </ng-container>
     </ng-container>
+    <span>{{ item.label }}</span>
+  </div>
+
+  <ng-container *ngIf="item.submenu">
+    <ng-container *ngFor="let subSubItem of item.submenu">
+      <div
+        class="item"
+        [class.dark-active-mode]="isDarkMode && isSubActive(subSubItem)"
+        [class.white-active-mode]="!isDarkMode && isSubActive(subSubItem)"
+        [class.dark-inactive-mode]="isDarkMode && !isSubActive(subSubItem)"
+        [class.white-inactive-mode]="!isDarkMode && !isSubActive(subSubItem)"
+        style="padding-left: 3rem"
+        (click)="handleSubItemClick(subSubItem)"
+      >
+        <lucide-angular
+          *ngIf="subSubItem.iconComponent"
+          [img]="subSubItem.iconComponent"
+        ></lucide-angular>
+        <lucide-angular *ngIf="!subSubItem.iconComponent" [img]="UserIcon"></lucide-angular>
+        <span>{{ subSubItem.label }}</span>
+      </div>
+    </ng-container>
+  </ng-container>
 </div>

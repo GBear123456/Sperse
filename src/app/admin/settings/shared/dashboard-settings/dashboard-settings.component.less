@@ -133,6 +133,7 @@
 
           .card-header {
             display: flex;
+
             align-items: center;
             margin-bottom: 8px;
             gap: 8px;
@@ -158,8 +159,8 @@
             }
 
             h2 {
-              font-size: 16px;
-              line-height: 24px;
+              font-size: 18px;
+              line-height: 28px;
               font-weight: 600;
               margin-bottom: 0px;
               color: var(--text-color);
@@ -173,9 +174,9 @@
 
           .card-description {
             margin-bottom: 8px;
-            font-size: 12px;
-            line-height: 16px;
-            color: var(--muted-color);
+            font-size: 14px;
+            line-height: 20px;
+            color: var(--text-color);
 
             @media screen and (min-width: 640px) {
               font-size: 14px;
@@ -460,10 +461,8 @@
       }
 
       .blue-bg-dark {
-        background-color: #1e293b;
-        &:hover {
-          background-color: #334155;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(30, 58, 138, 0.1));
+        border-color: rgba(30, 58, 138, 0.3);
       }
       .blue-border-dark {
         &:hover {
@@ -475,12 +474,13 @@
       }
 
       .purple-bg-dark {
-        background-color: #2e1065;
-        &:hover {
-          background-color: #4c1d95;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(88, 28, 135, 0.1));
+        border-color: rgba(88, 28, 135, 0.3);
       }
+
       .purple-border-dark {
+        border-color: rgba(88, 28, 135, 0.3);
+
         &:hover {
           border-color: #c084fc;
         }
@@ -490,10 +490,8 @@
       }
 
       .green-bg-dark {
-        background-color: #052e16;
-        &:hover {
-          background-color: #14532d;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(5, 150, 105, 0.1));
+        border-color: rgba(5, 150, 105, 0.3);
       }
       .green-border-dark {
         &:hover {
@@ -501,14 +499,12 @@
         }
       }
       .green-icon-dark {
-        color: #6ee7b7;
+        color: rgb(5 150 105);
       }
 
       .amber-bg-dark {
-        background-color: #78350f;
-        &:hover {
-          background-color: #92400e;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(217, 119, 6, 0.1));
+        border-color: rgba(217, 119, 6, 0.3);
       }
       .amber-border-dark {
         &:hover {
@@ -516,14 +512,12 @@
         }
       }
       .amber-icon-dark {
-        color: #fde68a;
+        color: rgb(217 119 6);
       }
 
       .red-bg-dark {
-        background-color: #7f1d1d;
-        &:hover {
-          background-color: #991b1b;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(225, 29, 72, 0.1));
+        border-color: rgba(225, 29, 72, 0.3);
       }
       .red-border-dark {
         &:hover {
@@ -531,14 +525,12 @@
         }
       }
       .red-icon-dark {
-        color: #fca5a5;
+        color: rgb(225 29 72);
       }
 
       .teal-bg-dark {
-        background-color: #134e4a;
-        &:hover {
-          background-color: #115e59;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(13, 148, 136, 0.1));
+        border-color: rgba(13, 148, 136, 0.3);
       }
       .teal-border-dark {
         &:hover {
@@ -546,14 +538,12 @@
         }
       }
       .teal-icon-dark {
-        color: #5eead4;
+        color: rgb(13 148 136);
       }
 
       .pink-bg-dark {
-        background-color: #831843;
-        &:hover {
-          background-color: #9d174d;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(219, 39, 119, 0.1));
+        border-color: rgba(219, 39, 119, 0.3);
       }
       .pink-border-dark {
         &:hover {
@@ -561,14 +551,12 @@
         }
       }
       .pink-icon-dark {
-        color: #f9a8d4;
+        color: rgb(219 39 119);
       }
 
       .orange-bg-dark {
-        background-color: #7c2d12;
-        &:hover {
-          background-color: #9a3412;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(234, 88, 12, 0.1));
+        border-color: rgba(234, 88, 12, 0.3);
       }
       .orange-border-dark {
         &:hover {
@@ -576,14 +564,12 @@
         }
       }
       .orange-icon-dark {
-        color: #fdba74;
+        color: rgb(234 88 12);
       }
 
       .lime-bg-dark {
-        background-color: #365314;
-        &:hover {
-          background-color: #3f6212;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(101, 163, 13, 0.1));
+        border-color: rgba(101, 163, 13, 0.3);
       }
       .lime-border-dark {
         &:hover {
@@ -591,14 +577,12 @@
         }
       }
       .lime-icon-dark {
-        color: #bef264;
+        color: rgb(101 163 13);
       }
 
       .cyan-bg-dark {
-        background-color: #164e63;
-        &:hover {
-          background-color: #155e75;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(8, 145, 178, 0.1));
+        border-color: rgba(8, 145, 178, 0.3);
       }
       .cyan-border-dark {
         &:hover {
@@ -606,14 +590,12 @@
         }
       }
       .cyan-icon-dark {
-        color: #67e8f9;
+        color: rgb(8 145 178);
       }
 
       .fuchsia-bg-dark {
-        background-color: #701a75;
-        &:hover {
-          background-color: #86198f;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(162, 28, 175, 0.1));
+        border-color: rgba(162, 28, 175, 0.3);
       }
       .fuchsia-border-dark {
         &:hover {
@@ -621,14 +603,12 @@
         }
       }
       .fuchsia-icon-dark {
-        color: #f0abfc;
+        color: rgb(192 38 211);
       }
 
       .sky-bg-dark {
-        background-color: #0c4a6e;
-        &:hover {
-          background-color: #0369a1;
-        }
+        background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(2, 132, 199, 0.1));
+        border-color: rgba(2, 132, 199, 0.3);
       }
       .sky-border-dark {
         &:hover {
@@ -636,7 +616,7 @@
         }
       }
       .sky-icon-dark {
-        color: #7dd3fc;
+        color: rgb(2 132 199);
       }
     }
   }

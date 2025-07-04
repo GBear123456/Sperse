@@ -4,6 +4,7 @@
     appService.isHostTenant ? 'dashboard' : layoutService.getWelcomePageUri()
   }}"
   class="top-home"
+  [ngClass]="{ 'top-home-dark': isDarkTheme }"
   (click)="updateSelectedItem()"
   (mouseover)="showPlatformSelect()"
 >
