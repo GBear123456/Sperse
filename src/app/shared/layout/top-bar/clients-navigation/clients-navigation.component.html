@@ -63,7 +63,19 @@
                 <div class="role-name">
                     <div class="name">{{ contact[clientFields.Name] }}</div>
                     <div class="role">
-                        {{ contact[clientFields.CompanyName] }}
+                        <ng-container
+                            *ngIf="
+                                contact[
+                                    clientFields.CompanyName
+                                ] as companyName;
+                                else email
+                            "
+                        >
+                            {{ companyName }}
+                        </ng-container>
+                        <ng-template #email>
+                            {{ contact[clientFields.Email] }}
+                        </ng-template>
                     </div>
                 </div>
             </div>
