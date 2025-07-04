@@ -4,6 +4,10 @@
         justify-content: space-between;
         gap: 2px;
         flex-wrap: wrap;
+        flex-direction: row;
+        @media  (max-width: 970px) {
+            flex-direction: column;
+        }
         .rectangle.seles-statics {
             width: auto;
             justify-content: space-around;
