@@ -13,7 +13,8 @@
                         <a *ngIf="isVisible(link) | async" mat-tab-link [disabled]="link.disabled"
                            [routerLink]="link.route" routerLinkActive="active" [queryParams]="queryParams"
                            (click)="navChanged(link)">
-                           <svg-icon *ngIf="showModernLayout && link.icon" src="./assets/common/icons/{{link.icon}}.svg" class="nav-icon"></svg-icon>{{ getLabel(link) | async }}
+                           <svg-icon *ngIf="showModernLayout && link.icon" src="./assets/common/icons/{{link.icon}}.svg" class="nav-icon"></svg-icon>
+                           <span>{{ getLabel(link) | async }}</span>
                         </a>
                     </ng-container>
                 </nav>

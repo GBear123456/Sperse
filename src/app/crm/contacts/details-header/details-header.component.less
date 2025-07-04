@@ -188,13 +188,19 @@
                     font-size: 24px;
                     opacity: 0.6;
                 }
-                span {
-                    max-width: 92%;
-                    overflow: hidden;
+                span a{
+                    width: 93%;
+                    margin: auto;
+                    // overflow: hidden;
                     display: inline-block;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
+                    white-space: wrap !important;
+                    // text-overflow: ellipsis;
                     height: 100%;
+                }
+            }
+            .inplace-edit-view-mode {
+                span a{
+                    width: 100%;
                 }
             }
         }
