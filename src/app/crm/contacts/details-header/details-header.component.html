@@ -28,25 +28,26 @@
                     (onHistoryClick)="showPersonHistory($event)"
                 >
                 </inplace-edit>
-                <p
-                    *ngIf="
-                        showModernLayout &&
-                        data?.organizationContactInfo?.fullName
-                    "
-                    class="company-name"
-                >
+                <p *ngIf="showModernLayout" class="company-name">
                     <inplace-edit
+                        *ngIf="data?.organizationContactInfo?.fullName"
                         [id]="data?.organizationContactInfo.id"
-                        [value]="trim(data?.organizationContactInfo.fullName)"
+                        [value]="trim(data?.organizationContactInfo?.fullName)"
                         [isReadOnlyField]="!isOrgUpdatable"
-                        lEntityName="Name"
-                        [editPlaceholder]="ls.l('ClientNamePlaceholder')"
+                        lEntityName="Company Name"
+                        [editPlaceholder]="ls.l('Company Name')"
                         [isHistoryEnabled]="true"
                         [doubleClickEdit]="false"
                         [validationRules]="companyValidationRules"
                         (valueChanged)="updateCompanyField($event)"
                     >
                     </inplace-edit>
+                    <span
+                        class="add-company"
+                        *ngIf="!data?.organizationContactInfo?.fullName"
+                        (click)="addCompanyDialog($event)"
+                        >Enter company name</span
+                    >
                 </p>
                 <p
                     *ngIf="

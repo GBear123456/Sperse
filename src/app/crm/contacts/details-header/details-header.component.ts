@@ -753,6 +753,12 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             )
             .subscribe(() => {
                 data.fullName = value;
+                let org = this.data?.personContactInfo?.orgRelations?.find(
+                    (m) =>
+                        m?.organization?.id ===
+                        this.data.primaryOrganizationContactId
+                );
+                if (org) org.organization.name = value;
                 this.contactsService.invalidateUserData();
             });
     }
@@ -939,6 +945,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                     this.selectedOrganizationId.next(
                         personContactInfo.orgRelationId
                     );
+                    this.data.personContactInfo = personContactInfo;
                 });
     }
 
