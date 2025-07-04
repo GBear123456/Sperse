@@ -1,264 +1,269 @@
 .lists-tooltip-container,
 .tags-tooltip-container {
-    font-size: 15px;
-    width: 300px !important;
-    height: 400px !important;
-    overflow: hidden;
+  font-size: 15px;
+  width: 300px !important;
+  height: 400px !important;
+  overflow: hidden;
 
-    .title {
+  .title {
+    float: left;
+    font-size: 18px;
+    font-weight: 500;
+    padding-top: 5px;
+  }
+
+  .filter-apply,
+  .filter-clear {
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.21;
+    letter-spacing: 0.3px;
+    color: var(--primary-color);
+    padding: 10px 5px;
+    float: right;
+
+    &:hover {
+      color: var(--info-color);
+    }
+
+    &.disabled {
+      color: var(--muted-color);
+      cursor: unset;
+      pointer-events: none;
+    }
+  }
+
+  .add-button {
+    position: absolute;
+    right: 27px;
+    top: 57px;
+    font-size: 24px;
+    z-index: 1;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--primary-color);
+  }
+
+  ::ng-deep .dx-widget {
+    .dx-placeholder {
+      font-weight: 400;
+    }
+
+    .dx-state-focused {
+      .dx-placeholder {
+        top: -15px !important;
+      }
+    }
+
+    .dx-item-content {
+      text-align: left;
+
+      .dx-searchbox {
+        width: 100%;
+
+        .dx-icon-search {
+          padding-left: 0;
+
+          &:before {
+            position: absolute;
+            left: 2px;
+          }
+        }
+      }
+    }
+
+    .dx-icon-clear {
+      right: 0;
+    }
+
+    .dx-treelist-text-content {
+      line-height: 1.7;
+      padding-left: 10px;
+    }
+
+    .dx-toolbar-after {
+      padding-left: 0 !important;
+      width: 300px;
+      left: 0;
+
+      .dx-treelist-addrow-button {
+        border: none !important;
+
+        i {
+          color: var(--primary-color);
+        }
+      }
+
+      .dx-toolbar-button {
         float: left;
-        font-size: 18px;
-        font-weight: 500;
-        padding-top: 5px;
-    }
+        padding-left: 0;
 
-    .filter-apply, .filter-clear {
-        cursor: pointer;
-        font-size: 14px;
-        line-height: 1.21;
-        letter-spacing: 0.3px;
-        color: #00AEEF;
-        padding: 10px 5px;
-        float: right;
-
-        &:hover {
-            color: lighten(#00AEEF, 20%);
+        &:first-child {
+          margin-top: 4px;
         }
+      }
 
-        &.disabled {
-            color: #999;
-            cursor: unset;
-            pointer-events: none;
-        }
-    }
-
-    .add-button {
-        position: absolute;
-        right: 27px;
-        top: 57px;
-        font-size: 24px;
-        z-index: 1;
-        font-weight: 500;
-        cursor: pointer;
-        color: #00AEEF;
-    }
-
-    ::ng-deep .dx-widget {
-        .dx-placeholder {
-            font-weight: 400;
-        }
-
-        .dx-state-focused {
-            .dx-placeholder {
-                top: -15px !important;
-            }
-        }
-
-        .dx-item-content {
-            text-align: left;
-
-            .dx-searchbox {
-                width: 100%;
-
-                .dx-icon-search {
-                    padding-left: 0;
-
-                    &:before {
-                        position: absolute;
-                        left: 2px;
-                    }
-                }
-            }
-        }
-
-        .dx-icon-clear {
-            right: 0;
-        }
-
-        .dx-treelist-text-content {
-            line-height: 1.7;
-            padding-left: 10px;
-        }
-
-        .dx-toolbar-after {
-            padding-left: 0 !important;
-            width: 300px;
-            left: 0;
-
-            .dx-treelist-addrow-button {
-                border: none !important;
-
-                i {
-                    color: #00AEEF;
-                }
-            }
-
-            .dx-toolbar-button {
-                float: left;
-                padding-left: 0;
-
-                &:first-child {
-                    margin-top: 4px;
-                }
-            }
-
-            .dx-treelist-search-panel {
-                margin: 0 !important;
-
-                input {
-                    border: none;
-                }
-            }
-
-            .dx-item.dx-toolbar-item.dx-toolbar-button, .dx-texteditor-input {
-                width: 100%;
-            }
-
-            .dx-treelist-search-panel.dx-textbox.dx-texteditor.dx-searchbox.dx-show-clear-button.dx-widget {
-                width: 100% !important;
-            }
-        }
-
-        .dx-treelist-icon-container.dx-editor-inline-block {
-            padding-left: 0;
-
-            .dx-checkbox {
-                margin-top: -5px;
-            }
-        }
+      .dx-treelist-search-panel {
+        margin: 0 !important;
 
         input {
-            font-size: 15px;
-            font-weight: 300;
-            line-height: 1.67;
-            letter-spacing: 0.3px;
-            color: #424c56;
+          border: none;
         }
+      }
 
-        tr {
-            display: flex;
-            justify-content: space-between;
-            width: 300px;
-            position: relative;
+      .dx-item.dx-toolbar-item.dx-toolbar-button,
+      .dx-texteditor-input {
+        width: 100%;
+      }
 
-            &.filtered {
-                background-color: #effafe;
-            }
-
-            td:first-child {
-                width: 227px;
-                border: none !important;
-                background: none !important;
-                padding-left: 0;
-            }
-
-            td.dx-command-edit {
-                text-overflow: unset;
-                text-align: right !important;
-                position: absolute;
-                right: 0;
-                min-width: 0;
-                -webkit-box-pack: center;
-                justify-content: center;
-                width: 81px;
-                height: 100%;
-                padding-left: 0;
-                padding-right: 16px;
-
-                a.dx-link {
-                    width: 22px;
-                    display: inline-block;
-                    color: transparent !important;
-
-                    &.dx-link-add, &.dx-link-delete {
-                        display: none;
-                    }
-
-                    &.dx-link-edit {
-                        background: url('../../../../../assets/common/icons/edit-pencil-icon.svg') no-repeat center;
-                        display: none;
-                    }
-
-                    &.dx-link-delete {
-                        background: url('../../../../../assets/common/icons/delete-icon.svg') no-repeat center;
-                    }
-
-                    &.dx-link-save {
-                        background: url('../../../../../assets/common/icons/check.svg') no-repeat center;
-                    }
-
-                    &.dx-link-cancel {
-                        background: url('../../../../../assets/common/icons/cancel.svg') no-repeat center;
-                    }
-
-                    &.dx-link-filter {
-                        background: url('../../../../../assets/common/icons/filter.svg') no-repeat center;
-                    }
-                }
-
-                &.no-manage .dx-link-edit {
-                    display: none !important;
-                }
-            }
-
-            td {
-                border: none !important;
-                background: none !important;
-            }
-
-            &.dx-edit-row {
-                padding-right: 85px;
-
-                td.dx-editor-cell {
-                    min-width: 217px;
-                }
-
-                td.dx-command-edit {
-                    width: 83px;
-                }
-
-                .dx-texteditor-input {
-                    font-weight: 400;
-                    border-bottom: none !important;
-                }
-
-                .dx-link-filter,
-                .dx-link-edit {
-                    display: none !important;
-                }
-
-                .dx-link-delete {
-                    display: inline-block !important;
-                }
-            }
-
-            &:hover td.dx-command-edit a.dx-link.dx-link-edit {
-                display: inline;
-            }
-        }
+      .dx-treelist-search-panel.dx-textbox.dx-texteditor.dx-searchbox.dx-show-clear-button.dx-widget {
+        width: 100% !important;
+      }
     }
 
-    .add-new-item-mode {
-        ::ng-deep .dx-widget {
-            .dx-item-content {
-                .dx-searchbox {
-                    width: 260px;
-                }
-            }
+    .dx-treelist-icon-container.dx-editor-inline-block {
+      padding-left: 0;
 
-            .dx-toolbar-after {
-                .dx-item.dx-toolbar-item.dx-toolbar-button.dx-toolbar-item-auto-hide.dx-toolbar-text-auto-hide {
-                    float: right !important;
-                }
-
-                .dx-item.dx-toolbar-item.dx-toolbar-button, .dx-texteditor-input {
-                    width: auto;
-                }
-
-                .dx-treelist-search-panel.dx-textbox.dx-texteditor.dx-searchbox.dx-show-clear-button.dx-widget {
-                    width: 260px !important;
-                }
-            }
-        }
+      .dx-checkbox {
+        margin-top: -5px;
+      }
     }
+
+    input {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.67;
+      letter-spacing: 0.3px;
+      color: var(--text-color);
+    }
+
+    tr {
+      display: flex;
+      justify-content: space-between;
+      width: 300px;
+      position: relative;
+
+      &.filtered {
+        background-color: var(--menu-hover-bg);
+      }
+
+      td:first-child {
+        width: 227px;
+        border: none !important;
+        background: none !important;
+        padding-left: 0;
+      }
+
+      td.dx-command-edit {
+        text-overflow: unset;
+        text-align: right !important;
+        position: absolute;
+        right: 0;
+        min-width: 0;
+        -webkit-box-pack: center;
+        justify-content: center;
+        width: 81px;
+        height: 100%;
+        padding-left: 0;
+        padding-right: 16px;
+
+        a.dx-link {
+          width: 22px;
+          display: inline-block;
+          color: transparent !important;
+
+          &.dx-link-add,
+          &.dx-link-delete {
+            display: none;
+          }
+
+          &.dx-link-edit {
+            background: url('../../../../../assets/common/icons/edit-pencil-icon.svg') no-repeat
+              center;
+            display: none;
+          }
+
+          &.dx-link-delete {
+            background: url('../../../../../assets/common/icons/delete-icon.svg') no-repeat center;
+          }
+
+          &.dx-link-save {
+            background: url('../../../../../assets/common/icons/check.svg') no-repeat center;
+          }
+
+          &.dx-link-cancel {
+            background: url('../../../../../assets/common/icons/cancel.svg') no-repeat center;
+          }
+
+          &.dx-link-filter {
+            background: url('../../../../../assets/common/icons/filter.svg') no-repeat center;
+          }
+        }
+
+        &.no-manage .dx-link-edit {
+          display: none !important;
+        }
+      }
+
+      td {
+        border: none !important;
+        background: none !important;
+      }
+
+      &.dx-edit-row {
+        padding-right: 85px;
+
+        td.dx-editor-cell {
+          min-width: 217px;
+        }
+
+        td.dx-command-edit {
+          width: 83px;
+        }
+
+        .dx-texteditor-input {
+          font-weight: 400;
+          border-bottom: none !important;
+        }
+
+        .dx-link-filter,
+        .dx-link-edit {
+          display: none !important;
+        }
+
+        .dx-link-delete {
+          display: inline-block !important;
+        }
+      }
+
+      &:hover td.dx-command-edit a.dx-link.dx-link-edit {
+        display: inline;
+      }
+    }
+  }
+
+  .add-new-item-mode {
+    ::ng-deep .dx-widget {
+      .dx-item-content {
+        .dx-searchbox {
+          width: 260px;
+        }
+      }
+
+      .dx-toolbar-after {
+        .dx-item.dx-toolbar-item.dx-toolbar-button.dx-toolbar-item-auto-hide.dx-toolbar-text-auto-hide {
+          float: right !important;
+        }
+
+        .dx-item.dx-toolbar-item.dx-toolbar-button,
+        .dx-texteditor-input {
+          width: auto;
+        }
+
+        .dx-treelist-search-panel.dx-textbox.dx-texteditor.dx-searchbox.dx-show-clear-button.dx-widget {
+          width: 260px !important;
+        }
+      }
+    }
+  }
 }

@@ -1,113 +1,113 @@
 :host {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    align-items: center;
-    padding: 0 85px 20px;
-    position: relative;
-    height: 710px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  padding: 0 85px 20px;
+  position: relative;
+  height: 710px;
+  background-color: var(--background-color);
+
+  ::ng-deep dx-data-grid {
     background-color: var(--background-color);
+    color: var(--text-color);
 
-    ::ng-deep dx-data-grid {
-        background-color: var(--background-color);
-        color: var(--text-color);
-
-        .dx-datagrid-focus-overlay {
-            display: none;
-        }
-
-        .dx-header-row td:focus {
-            outline: none !important;
-        }
-
-        .dx-row {
-            background-color: var(--background-color);
-            color: var(--text-color);
-        }
-
-        .dx-header-row {
-            background-color: var(--background-color);
-            color: var(--text-color);
-        }
+    .dx-datagrid-focus-overlay {
+      display: none;
     }
 
-    .status {
-        font-weight: 600;
-
-        &.A {
-            color: var(--success-color);
-        }
-
-        &.D {
-            color: var(--text-color);
-            opacity: 0.7;
-        }
-
-        &.C {
-            color: var(--error-color);
-        }
-
-        &.E {
-            color: var(--warning-color);
-        }
+    .dx-header-row td:focus {
+      outline: none !important;
     }
 
-    .payment-method {
+    .dx-row {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    .dx-header-row {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+  }
+
+  .status {
+    font-weight: 600;
+
+    &.A {
+      color: var(--success-color);
+    }
+
+    &.D {
+      color: var(--text-color);
+      opacity: 0.7;
+    }
+
+    &.C {
+      color: var(--error-color);
+    }
+
+    &.E {
+      color: var(--warning-color);
+    }
+  }
+
+  .payment-method {
+    display: flex;
+    align-items: center;
+
+    .paymentMethodIcon {
+      border-radius: 4px;
+      background-color: var(--background-color);
+      border: solid 1px var(--border-color);
+      width: 58px;
+      min-width: 58px;
+      height: 40px;
+      position: relative;
+      margin-right: 10px;
+      text-align: center;
+
+      &.achPaymentMethodIcon {
+        background-color: var(--primary-color);
+        color: var(--primary-color-contrast);
+        border: none;
         display: flex;
         align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
 
-        .paymentMethodIcon {
-            border-radius: 4px;
-            background-color: var(--background-color);
-            border: solid 1px var(--border-color);
-            width: 58px;
-            min-width: 58px;
-            height: 40px;
-            position: relative;
-            margin-right: 10px;
-            text-align: center;
-
-            &.achPaymentMethodIcon {
-                background-color: var(--primary-color);
-                color: var(--primary-color-contrast);
-                border: none;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 12px;
-            }
-
-            img {
-                max-width: 100%;
-                height: 100%;
-                filter: var(--icon-filter);
-            }
-        }
-
-        .paymentName {
-            font-size: 15px;
-            line-height: 1.6;
-            color: var(--text-color);
-            font-weight: 600;
-            align-self: center;
-            width: 130px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            word-break: break-word;
-
-            span {
-                font-weight: normal;
-            }
-        }
-
-        .paymentExpiration {
-            font-size: 13px;
-            font-weight: 300;
-            line-height: 1.85;
-            letter-spacing: 0.3px;
-            color: var(--text-color);
-            opacity: 0.8;
-        }
+      img {
+        max-width: 100%;
+        height: 100%;
+        filter: var(--icon-filter);
+      }
     }
+
+    .paymentName {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-color);
+      font-weight: 600;
+      align-self: center;
+      width: 130px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-word;
+
+      span {
+        font-weight: normal;
+      }
+    }
+
+    .paymentExpiration {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.85;
+      letter-spacing: 0.3px;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+  }
 }

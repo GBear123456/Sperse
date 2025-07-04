@@ -1,19 +1,19 @@
 :host {
-    display: block;
+  display: block;
 
+  ::ng-deep .left-menu {
+    height: calc(~'100vh - 75px') !important;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+  }
+
+  &.left-nav-menu {
     ::ng-deep .left-menu {
-        height: calc(~"100vh - 150px") !important;
-        background: var(--card-bg);
-        border-right: 1px solid var(--border-color);
+      height: calc(~'100vh - 75px') !important;
+      background: var(--card-bg);
+      border-right: 1px solid var(--border-color);
     }
-
-    &.left-nav-menu {
-        ::ng-deep .left-menu {
-            height: calc(~"100vh - 75px") !important;
-            background: var(--card-bg);
-            border-right: 1px solid var(--border-color);
-        }
-    }
+  }
 }
 
 // No color changes needed for dark mode; structure is fine.

@@ -1,341 +1,341 @@
 package-card {
-    position: relative;
-    min-height: 222px;
-    padding: 20px 26px;
-    width: 30%;
-    border-radius: 18px;
-    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.1);
-    display: block;
-    position: relative;
-    margin: 0 10px 10px;
-    cursor: default;
-    height: 100%;
-    border: 3px solid transparent;
-    filter: blur(1px);
+  position: relative;
+  min-height: 222px;
+  padding: 20px 26px;
+  width: 30%;
+  border-radius: 18px;
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.1);
+  display: block;
+  position: relative;
+  margin: 0 10px 10px;
+  cursor: default;
+  height: 100%;
+  border: 3px solid transparent;
+  filter: blur(1px);
 
-    .trial-period-note {
-        color: #FFF;
-        font-style: italic;
-        margin: 5px;
+  .trial-period-note {
+    color: var(--text-color);
+    font-style: italic;
+    margin: 5px;
+  }
+
+  .trial-day-count {
+    font-style: italic;
+    color: var(--text-color);
+  }
+
+  @media all and (max-width: 768px) {
+    width: 100% !important;
+    margin: 0 0 15px;
+  }
+
+  .package-card-selector-root {
+    /** Best Value Triangle */
+    .bestValue {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 84px 84px 0;
+      border-color: transparent var(--muted-color) transparent transparent;
+
+      span {
+        transform: rotate(45deg);
+        color: var(--text-color);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: center;
+        position: absolute;
+        right: -84px;
+        top: 11px;
+        width: 50px;
+      }
     }
 
-    .trial-day-count {
-        font-style: italic;
-        color: #FFF;
-    }
+    .cardHeader {
+      //display: flex;
+      //justify-content: space-between;
+      text-align: center;
+      margin-bottom: 19px;
 
-    @media all and (max-width: 768px) {
-        width: 100% !important;
-        margin: 0 0 15px;
-    }
+      .title {
+        min-width: 120px;
+        display: inline-block;
+        font-family: auto;
+        font-size: 33px;
+        font-weight: 500;
+        letter-spacing: 1.2px;
+        text-transform: capitalize;
+        margin-bottom: 8px;
+        color: var(--text-color);
 
-    .package-card-selector-root {
-        /** Best Value Triangle */
-        .bestValue {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 84px 84px 0;
-            border-color: transparent grey transparent transparent;
-
-            span {
-                transform: rotate(45deg);
-                color: #fff;
-                font-size: 10px;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                text-align: center;
-                position: absolute;
-                right: -84px;
-                top: 11px;
-                width: 50px;
-            }
+        img {
+          vertical-align: middle;
         }
+      }
 
-        .cardHeader {
-            //display: flex;
-            //justify-content: space-between;
-            text-align: center;
-            margin-bottom: 19px;
+      sup {
+        top: 0;
+      }
 
-            .title {
-                min-width: 120px;
-                display: inline-block;
-                font-family: auto;
-                font-size: 33px;
-                font-weight: 500;
-                letter-spacing: 1.2px;
-                text-transform: capitalize;
-                margin-bottom: 8px;
-                color: #fff;
+      .price-block {
+        flex-direction: column;
+        margin-top: 10px;
+        display: flex;
 
-                img {
-                    vertical-align: middle;
-                }
-            }
+        .saveAmountPerMonth,
+        .amountPerMonth {
+          font-size: 14px;
+          line-height: 1;
+          margin: auto;
 
-            sup {
-                top: 0;
-            }
-
-            .price-block {
-                flex-direction: column;
-                margin-top: 10px;
-                display: flex;
-
-                .saveAmountPerMonth,
-                .amountPerMonth {
-                    font-size: 14px;
-                    line-height: 1;
-                    margin: auto;
-
-                    .currency-symbol {
-                        position: relative;
-                        top: 5px;
-                    }
-
-                    .number {
-                        font-size: 36px;
-                        line-height: 1;
-                        font-weight: 600;
-                        color: #fff;
-                    }
-                }
-            }
-
-            .includesUsers,
-            .amountPerUser,
-            .amountPerMonth,
-            .saveAmountPerMonth {
-                font-size: 11px;
-                font-weight: 500;
-                color: #fff;
-                display: flex;
-                white-space: nowrap;
-            }
-
-            .saveAmountPerMonth {
-                margin-bottom: 10px !important;
-
-                .number {
-                    font-size: 18px !important;
-                    text-decoration: line-through;
-                }
-            }
-
-            .includesUsers {
-                display: inline-block;
-            }
-
-            .amountPerUser {
-                margin-left: auto;
-                flex-direction: column;
-
-                .top {
-                    font-size: 16px;
-                }
-
-                .bottom {
-                    font-size: 11px;
-                    color: #fff;
-                }
-            }
-
-            .number-info {
-                display: flex;
-                flex-direction: column;
-                font-size: 11px;
-                justify-content: space-around;
-                color: #fff;
-
-                .decimal {
-                    color: #fff;
-                    text-align: left;
-                }
-            }
-        }
-
-        .planFeatures {
-            font-size: 13px;
-            font-weight: 400;
-            color: #fff;
-
-            ul {
-                list-style: none;
-                padding-left: 0;
-                margin-bottom: 0;
-
-                li {
-                    + li {
-                        margin-top: 6px;
-                    }
-
-                    line-height: 12px;
-                    display: flex;
-
-                    &.disabled {
-                        color: #d7d7d7;
-                    }
-
-                    img {
-                        margin-right: 8px;
-                    }
-                }
-            }
-        }
-
-        .features {
-            ul {
-                margin-top: 0;
-                font-weight: 300;
-                line-height: 1.5;
-                margin-bottom: auto;
-                padding: 26px 0;
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-                margin-right: 10px;
-
-                li {
-                    display: flex;
-                    gap: 8px;
-                    padding: 0;
-                    margin: 0;
-                    box-sizing: border-box;
-                    text-align: justify;
-                    white-space: normal;
-                    font-size: 11px;
-                    color: #fff;
-                    margin-top: 2px;
-
-                    span {
-                        flex-shrink: 0;
-                        width: 20px;
-                        height: 20px;
-                        border-radius: 50%;
-                        background-color: #4caf50;
-                        background-image: url(../../../../../../assets/common/icons/included.svg);
-                        background-repeat: no-repeat;
-                        background-position: 50%;
-                        background-size: auto;
-                        margin-top: -3px;
-
-                        &.excluded {
-                            background-color: rgba(0,0,0,.4) !important;
-                            background-image: url(../../../../../../assets/common/icons/excluded.svg) !important;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    &.purchased {
-        pointer-events: none;
-        opacity: 0.7;
-
-        &::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 125px;
-            display: block;
-            background: url(../../../../../../assets/common/images/purchased.png) no-repeat;
-            background-position: center;
-            background-size: contain;
-            bottom: 0px;
-        }
-    }
-
-    &.heightFitContent {
-        height: fit-content;
-        height: auto;
-    }
-
-    &.bestValue {
-        border-radius: 5px;
-        box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
-        border: 3px solid transparent;
-    }
-
-    &.isActive {
-        cursor: pointer;
-        filter: blur(0px);
-
-        .cardHeader {
-            .left .title {
-                color: #00aeef;
-            }
-
-            .right .priceNumber {
-                color: #424c56;
-            }
-        }
-    }
-
-    &.isActive.bestValue {
-        .bestValue {
-            border-color: transparent #61d956 transparent transparent;
-        }
-    }
-
-    &.selected.isActive {
-        border: solid 3px #60d956;
-
-        &:after {
-            content: '';
-            display: block;
-            width: 40px;
-            height: 40px;
-            position: absolute;
-            right: 5px;
+          .currency-symbol {
+            position: relative;
             top: 5px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2213%22 height%3D%229%22%3E%0D    %3Cpath fill%3D%22%2361d956%22 fill-rule%3D%22evenodd%22 d%3D%22M11.11.369L4.912 6.603 2.648 4.326a.953.953 0 0 0-1.384 0 .962.962 0 0 0 0 1.39L4.22 8.688c.198.198.395.297.692.297.297 0 .495-.099.693-.297l6.89-6.929a.963.963 0 0 0 0-1.39.953.953 0 0 0-1.385 0z%22%2F%3E%0D%3C%2Fsvg%3E%0D");
-            background-size: 70%;
-            background-color: #d5ffd1;
+          }
+
+          .number {
+            font-size: 36px;
+            line-height: 1;
+            font-weight: 600;
+            color: var(--text-color);
+          }
+        }
+      }
+
+      .includesUsers,
+      .amountPerUser,
+      .amountPerMonth,
+      .saveAmountPerMonth {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-color);
+        display: flex;
+        white-space: nowrap;
+      }
+
+      .saveAmountPerMonth {
+        margin-bottom: 10px !important;
+
+        .number {
+          font-size: 18px !important;
+          text-decoration: line-through;
+        }
+      }
+
+      .includesUsers {
+        display: inline-block;
+      }
+
+      .amountPerUser {
+        margin-left: auto;
+        flex-direction: column;
+
+        .top {
+          font-size: 16px;
+        }
+
+        .bottom {
+          font-size: 11px;
+          color: var(--text-color);
+        }
+      }
+
+      .number-info {
+        display: flex;
+        flex-direction: column;
+        font-size: 11px;
+        justify-content: space-around;
+        color: var(--text-color);
+
+        .decimal {
+          color: var(--text-color);
+          text-align: left;
+        }
+      }
+    }
+
+    .planFeatures {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-color);
+
+      ul {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 0;
+
+        li {
+          + li {
+            margin-top: 6px;
+          }
+
+          line-height: 12px;
+          display: flex;
+
+          &.disabled {
+            color: var(--muted-color);
+          }
+
+          img {
+            margin-right: 8px;
+          }
+        }
+      }
+    }
+
+    .features {
+      ul {
+        margin-top: 0;
+        font-weight: 300;
+        line-height: 1.5;
+        margin-bottom: auto;
+        padding: 26px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-right: 10px;
+
+        li {
+          display: flex;
+          gap: 8px;
+          padding: 0;
+          margin: 0;
+          box-sizing: border-box;
+          text-align: justify;
+          white-space: normal;
+          font-size: 11px;
+          color: var(--text-color);
+          margin-top: 2px;
+
+          span {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            background-position: 50% 50%;
+            background-color: var(--success-color);
+            background-image: url(../../../../../../assets/common/icons/included.svg);
             background-repeat: no-repeat;
-        }
+            background-position: 50%;
+            background-size: auto;
+            margin-top: -3px;
 
-        .bestValue span {
-            display: none;
-        }
-
-        .planFeatures {
-            ul {
-                li {
-                    color: #0bb1f0;
-
-                    &.disabled {
-                        color: #d7d7d7;
-                    }
-                }
+            &.excluded {
+              background-color: var(--muted-color) !important;
+              background-image: url(../../../../../../assets/common/icons/excluded.svg) !important;
             }
+          }
         }
+      }
+    }
+  }
+
+  &.purchased {
+    pointer-events: none;
+    opacity: 0.7;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 125px;
+      display: block;
+      background: url(../../../../../../assets/common/images/purchased.png) no-repeat;
+      background-position: center;
+      background-size: contain;
+      bottom: 0px;
+    }
+  }
+
+  &.heightFitContent {
+    height: fit-content;
+    height: auto;
+  }
+
+  &.bestValue {
+    border-radius: 5px;
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
+    border: 3px solid transparent;
+  }
+
+  &.isActive {
+    cursor: pointer;
+    filter: blur(0px);
+
+    .cardHeader {
+      .left .title {
+        color: var(--primary-color);
+      }
+
+      .right .priceNumber {
+        color: var(--text-color);
+      }
+    }
+  }
+
+  &.isActive.bestValue {
+    .bestValue {
+      border-color: transparent var(--success-color) transparent transparent;
+    }
+  }
+
+  &.selected.isActive {
+    border: solid 3px var(--success-color);
+
+    &:after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      background-image: url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2213%22 height%3D%229%22%3E%0D    %3Cpath fill%3D%22%2361d956%22 fill-rule%3D%22evenodd%22 d%3D%22M11.11.369L4.912 6.603 2.648 4.326a.953.953 0 0 0-1.384 0 .962.962 0 0 0 0 1.39L4.22 8.688c.198.198.395.297.692.297.297 0 .495-.099.693-.297l6.89-6.929a.963.963 0 0 0 0-1.39.953.953 0 0 0-1.385 0z%22%2F%3E%0D%3C%2Fsvg%3E%0D');
+      background-size: 70%;
+      background-color: var(--success-color);
+      border-radius: 50%;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
     }
 
-    &.large {
-        width: 34%;
-
-        .cardHeader {
-            padding-right: 39px;
-
-            @media all and (max-width: 767px) {
-                padding-right: 0;
-            }
-
-            .title {
-                font-size: 15px;
-            }
-        }
-
-        .planFeatures {
-            font-size: 13px;
-        }
+    .bestValue span {
+      display: none;
     }
+
+    .planFeatures {
+      ul {
+        li {
+          color: var(--primary-color);
+
+          &.disabled {
+            color: var(--muted-color);
+          }
+        }
+      }
+    }
+  }
+
+  &.large {
+    width: 34%;
+
+    .cardHeader {
+      padding-right: 39px;
+
+      @media all and (max-width: 767px) {
+        padding-right: 0;
+      }
+
+      .title {
+        font-size: 15px;
+      }
+    }
+
+    .planFeatures {
+      font-size: 13px;
+    }
+  }
 }

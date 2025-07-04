@@ -1,25 +1,24 @@
 :host {
-    ::ng-deep .left-menu {
-        height: calc(~"100vh - 150px") !important;
-        padding: 45px 25px 25px 25px !important;
+  ::ng-deep .left-menu {
+    height: calc(~'100vh - 50px') !important;
+    padding: 45px 25px 25px 25px !important;
 
-        .items-progress {
-            color: var(--text-color) !important;
-            font-weight: 500;
-            letter-spacing: 0.7px !important;
+    .items-progress {
+      color: var(--text-color) !important;
+      font-weight: 500;
+      letter-spacing: 0.7px !important;
 
-            &-item {
-
-                &:not(:last-child) {
-                    padding-bottom: 56px;
-                }
-            }
+      &-item {
+        &:not(:last-child) {
+          padding-bottom: 56px;
         }
+      }
     }
+  }
 
-    ::ng-deep .showLeftBar {
-        .left-menu {
-            height: calc(~"100vh - 75px") !important;
-        }
+  ::ng-deep .showLeftBar {
+    .left-menu {
+      height: calc(~'100vh - 75px') !important;
     }
+  }
 }
