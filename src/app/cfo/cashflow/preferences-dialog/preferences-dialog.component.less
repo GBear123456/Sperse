@@ -1,205 +1,208 @@
 :host {
-    .btn {
-        width: 132px;
-        height: 36px;
+  .btn {
+    width: 132px;
+    height: 36px;
+    margin-top: 10px;
+    font-weight: 500 !important;
+    padding-top: 6px !important;
+    padding-bottom: 9px !important;
+  }
+
+  .modal-body {
+    padding: 28px 37px;
+
+    .section {
+      .header {
+        font-size: 15px;
+        font-weight: 600;
+        position: relative;
+        padding-left: 30px;
+
+        &::before {
+          content: '';
+          background-size: cover;
+          width: 18px;
+          height: 18px;
+          display: inline-block;
+          position: absolute;
+          left: 0;
+          top: 2px;
+          background: url('../../../../assets/common/icons/edit-icon.svg') no-repeat;
+        }
+
+        &.header-visuals::before {
+          background-image: url('../../../../assets/common/icons/visual-config.svg');
+          width: 19px;
+          height: 17px;
+        }
+
+        &.header-currency::before {
+          background-image: url('../../../../assets/common/icons/coin.svg');
+        }
+
+        &.header-date::before {
+          width: 20px;
+          height: 20px;
+          background-image: url('../../../../assets/common/icons/calendar-icon.svg');
+        }
+      }
+
+      .section-body {
+        margin-left: 32px;
         margin-top: 10px;
-        font-weight: 500 !important;
-        padding-top: 6px !important;
-        padding-bottom: 9px !important;
-    }
 
-    .modal-body {
-        padding: 28px 37px;
-
-        .section {
-            .header {
-                font-size: 15px;
-                font-weight: 600;
-                position: relative;
-                padding-left: 30px;
-
-                &::before {
-                    content: '';
-                    background-size: cover;
-                    width: 18px;
-                    height: 18px;
-                    display: inline-block;
-                    position: absolute;
-                    left: 0;
-                    top: 2px;
-                    background: url("../../../../assets/common/icons/edit-icon.svg") no-repeat;
-                }
-
-                &.header-visuals::before {
-                    background-image: url("../../../../assets/common/icons/visual-config.svg");
-                    width: 19px;
-                    height: 17px;
-                }
-
-                &.header-currency::before {
-                    background-image: url("../../../../assets/common/icons/coin.svg");
-                }
-                
-                &.header-date::before {
-                    width: 20px;
-                    height: 20px;
-                    background-image: url("../../../../assets/common/icons/calendar-icon.svg");
-                }
-            }
-
-            .section-body {
-                margin-left: 32px;
-                margin-top: 10px;
-
-                .row, .col-xs-1, .col-xs-4, .container-fluid {
-                    padding-left: 0;
-                    padding-right: 0;
-                }
-
-                .row {
-                    margin: 14px -15px;
-                    font-weight: 500;
-
-                    &.row-header {
-                        font-size: 13px;
-                        color: #677380;
-                        padding-bottom: 16px;
-                        border-bottom: 1px solid #E5E9EC;
-
-                        &.row-header-narrow {
-                            .col-xs-1 {
-                                padding: 0 28px;
-                            }
-                        }
-                    }
-
-                    + .row-header {
-                        margin-top: 30px;
-                    }
-
-                    .col-xs-1 {
-                        width: 17%;
-                        text-align: center;
-
-                        &.small-col {
-                            width: 11%;
-                        }
-                    }
-
-                    & > div.col-xs-4 {
-                        width: 29%;
-                    }
-                }
-
-                .dx-field {
-                    .dx-field-label {
-                        color: #677380;
-                        font-size: 14px;
-                        font-weight: 300;
-                        width: 29%;
-                        padding: 13px 0 11px 0;
-                        border-bottom: 1px solid #dfdfdf;
-                    }
-
-                    .dx-field-value {
-                        width: 71%;
-
-                        .left-select {
-                            width: 41%;
-                            float: left;
-                        }
-
-                        .right-select {
-                            width: 54%;
-                            float: right;
-                        }
-                    }
-
-                    &.left-field {
-                        float: left;
-                        width: 60%;
-    
-                        &.sync-date-picker {
-                            width: 40%;
-                        }
-
-                        .dx-field-label {
-                            width: 50%;
-                        }
-
-                        .dx-field-value {
-                            width: 50%;
-                        }
-                    }
-
-                    &.right-field {
-                        width: 36%;
-                        float: right;
-
-                        .dx-field-value {
-                            width: 71%;
-                        }
-                    }
-                }
-            }
-
-            + .section {
-                margin-top: 45px;
-            }
-
-            ::ng-deep .dx-checkbox {
-                margin: auto;
-                .dx-checkbox-icon {
-                    width: 21px;
-                    height: 21px;
-                    background-color: #FFF;
-                    border: 1px solid #DADEE1 !important;
-                    border-radius: 4px;
-                }
-
-                &.dx-checkbox-checked {
-                    .dx-checkbox-icon {
-                        color: #FFF;
-                        font-size: 8px;
-                        font-weight: bold;
-                        background-color: #00AEEF;
-                        border-color: #00AEEF !important;
-                    }
-                }
-
-                .dx-checkbox-text {
-                    white-space: nowrap;
-                }
-            }
-
-            ::ng-deep .dx-radiogroup {
-                width: 70%;
-
-                .dx-radiobutton {
-                    width: 16%;
-                    margin-right: 0;
-
-                    .dx-radio-value-container {
-                        padding-right: 0;
-
-                        .dx-radiobutton-icon {
-                            margin: 0 auto;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    ::ng-deep .dx-selectbox {
-        .dx-placeholder.dx-state-invisible {
-            display: none !important;
+        .row,
+        .col-xs-1,
+        .col-xs-4,
+        .container-fluid {
+          padding-left: 0;
+          padding-right: 0;
         }
 
-        .dx-texteditor-input {
-            height: 44px;
-            font-size: 15px;
-            font-weight: 500;
+        .row {
+          margin: 14px -15px;
+          font-weight: 500;
+
+          &.row-header {
+            font-size: 13px;
+            color: #677380;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e9ec;
+
+            &.row-header-narrow {
+              .col-xs-1 {
+                padding: 0 28px;
+              }
+            }
+          }
+
+          + .row-header {
+            margin-top: 30px;
+          }
+
+          .col-xs-1 {
+            width: 17%;
+            text-align: center;
+
+            &.small-col {
+              width: 11%;
+            }
+          }
+
+          & > div.col-xs-4 {
+            width: 29%;
+          }
         }
+
+        .dx-field {
+          .dx-field-label {
+            color: #677380;
+            font-size: 14px;
+            font-weight: 300;
+            width: 29%;
+            padding: 13px 0 11px 0;
+            border-bottom: 1px solid #dfdfdf;
+          }
+
+          .dx-field-value {
+            width: 71%;
+
+            .left-select {
+              width: 41%;
+              float: left;
+            }
+
+            .right-select {
+              width: 54%;
+              float: right;
+            }
+          }
+
+          &.left-field {
+            float: left;
+            width: 60%;
+
+            &.sync-date-picker {
+              width: 40%;
+            }
+
+            .dx-field-label {
+              width: 50%;
+            }
+
+            .dx-field-value {
+              width: 50%;
+            }
+          }
+
+          &.right-field {
+            width: 36%;
+            float: right;
+
+            .dx-field-value {
+              width: 71%;
+            }
+          }
+        }
+      }
+
+      + .section {
+        margin-top: 45px;
+      }
+
+      ::ng-deep .dx-checkbox {
+        margin: auto;
+        .dx-checkbox-icon {
+          width: 21px;
+          height: 21px;
+          background-color: #fff;
+          border: 1px solid #dadee1 !important;
+          border-radius: 4px;
+        }
+
+        &.dx-checkbox-checked {
+          .dx-checkbox-icon {
+            color: #fff;
+            font-size: 8px;
+            font-weight: bold;
+            background-color: #00aeef;
+            border-color: #00aeef !important;
+          }
+        }
+
+        .dx-checkbox-text {
+          white-space: nowrap;
+        }
+      }
+
+      ::ng-deep .dx-radiogroup {
+        width: 70%;
+
+        .dx-radiobutton {
+          width: 16%;
+          margin-right: 0;
+
+          .dx-radio-value-container {
+            padding-right: 0;
+
+            .dx-radiobutton-icon {
+              margin: 0 auto;
+            }
+          }
+        }
+      }
     }
+  }
+
+  ::ng-deep .dx-selectbox {
+    .dx-placeholder.dx-state-invisible {
+      display: none !important;
+    }
+
+    .dx-texteditor-input {
+      height: 44px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+  }
 }

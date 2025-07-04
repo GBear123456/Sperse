@@ -1,117 +1,119 @@
 :host {
-    position: fixed;
-    display: block;
-    width: calc(100% - 90px);
+  position: fixed;
+  display: block;
+  width: calc(100% - 90px);
 
-    .wrapper {
-        max-width: 100vw;
-        display: flex;
-        border-top: 1px solid #dfdfdf;
+  .wrapper {
+    max-width: 100vw;
+    display: flex;
+    border-top: 1px solid var(--border-color);
 
-        .reports {
-            z-index: 1;
-            width: 100%;
+    .reports {
+      z-index: 1;
+      width: 100%;
 
-            ::ng-deep dx-data-grid#gridContainer {
-                .dx-toolbar-before {
-                    width: 100px !important;
-                    padding: 15px !important;
-                }
-
-                .dx-toolbar-center {
-                    margin: auto !important;
-                    padding: 15px !important;
-                    float: none !important;
-                }
-            }
+      ::ng-deep dx-data-grid#gridContainer {
+        .dx-toolbar-before {
+          width: 100px !important;
+          padding: 15px !important;
         }
 
-        &.leftMenuOpened .reports {
-            width: calc(100% - 321px);
+        .dx-toolbar-center {
+          margin: auto !important;
+          padding: 15px !important;
+          float: none !important;
         }
+      }
     }
 
-    &.fullscreen .reportView {
-        width: 100%;
-        border: solid 1px green;
-
-        ::ng-deep app-image-viewer {
-            #imageViewer {
-                height: 100%;
-                border: solid 1px red;
-            }
-        }
+    &.leftMenuOpened .reports {
+      width: calc(100% - 321px);
     }
+  }
 
-    .reportView {
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
-
-        .xmlContainer {
-            padding-bottom: 10px;
-        }
-    }
-
-    .report-viewer-wrapper {
-        height: calc(100vh - 150px);
-        width: 100%;
-
-        ::ng-deep app-no-data .title {
-            max-width: unset;
-        }
-    }
+  &.fullscreen .reportView {
+    width: 100%;
+    border: solid 1px var(--success-color, green);
 
     ::ng-deep app-image-viewer {
-        #imageViewer {
-            height: calc(~"100vh - 220px");
-            margin-top: 0;
+      #imageViewer {
+        height: 100%;
+        border: solid 1px var(--danger-color, red);
+      }
+    }
+  }
 
-            .image-container {
-                bottom: 0;
-            }
+  .reportView {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
 
-            .inline-icon, i.material-icons, .footer-info {
-                display: none;
-            }
-        }
+    .xmlContainer {
+      padding-bottom: 10px;
+    }
+  }
+
+  .report-viewer-wrapper {
+    height: calc(100vh - 150px);
+    width: 100%;
+
+    ::ng-deep app-no-data .title {
+      max-width: unset;
+    }
+  }
+
+  ::ng-deep app-image-viewer {
+    #imageViewer {
+      height: calc(~'100vh - 220px');
+      margin-top: 0;
+
+      .image-container {
+        bottom: 0;
+      }
+
+      .inline-icon,
+      i.material-icons,
+      .footer-info {
+        display: none;
+      }
+    }
+  }
+
+  ::ng-deep .dx-datagrid {
+    .dx-header-filter {
+      display: none !important;
     }
 
-    ::ng-deep .dx-datagrid {
-        .dx-header-filter {
-            display: none !important;
-        }
-
-        td:hover .dx-header-filter {
-            display: inline-block !important;
-        }
-
-        .deptCell {
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
+    td:hover .dx-header-filter {
+      display: inline-block !important;
     }
 
-    ::ng-deep app-toolbar {
-        .dx-item.dx-toolbar-item.dx-toolbar-label {
-            max-width: unset !important;
-        }
+    .deptCell {
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
+  }
+
+  ::ng-deep app-toolbar {
+    .dx-item.dx-toolbar-item.dx-toolbar-label {
+      max-width: unset !important;
+    }
+  }
 }
 
 ::ng-deep .file-name {
-    width: 90%;
-    padding-left: 15px;
-    font-weight: 500;
-    overflow: visible !important;
-    display: flex;
-    align-items: center;
-    &:before {
-        margin-right: 17px;
-        max-height: 32px;
-        width: 24px;
-    }
-    &.pdf:before {
-        content: url('../../../assets/common/icons/documents/pdf.svg');
-    }
+  width: 90%;
+  padding-left: 15px;
+  font-weight: 500;
+  overflow: visible !important;
+  display: flex;
+  align-items: center;
+  &:before {
+    margin-right: 17px;
+    max-height: 32px;
+    width: 24px;
+  }
+  &.pdf:before {
+    content: url('../../../assets/common/icons/documents/pdf.svg');
+  }
 }
