@@ -15,7 +15,7 @@
                             </mat-expansion-panel-header>
                             <div class="field">
                                 <label>{{ ls.l('AvailableBalance') }}:</label>
-                                <span>{{contactInfo?.creditsBalance || 0}}<i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo?.creditsBalance)"></i></span>
+                                <span class="available-balance">{{contactInfo?.creditsBalance || 0}}<i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo?.creditsBalance)"></i></span>
                             </div>
                             <hr />
                             <div *ngIf="contactInfo?.creditsTier" class="field">
