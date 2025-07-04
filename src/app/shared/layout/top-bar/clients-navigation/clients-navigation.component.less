@@ -1,5 +1,6 @@
 :host {
     margin: 0 30px;
+    height: 49px;
 
     .user-card-container {
         position: relative;
@@ -8,7 +9,7 @@
         background: #f7fafd;
         border-radius: 8px;
         // padding: 0 8px;
-        min-height: 46px;
+        min-height: 49px;
         font-family: inherit;
         margin: 0px 10px;
     }
@@ -19,33 +20,36 @@
         color: #cbd5e1;
         padding: 0;
         font-size: 18px;
-        height: 32px;
+        height: 49px;
         display: flex;
         align-items: center;
         cursor: pointer;
 
         &.left {
-            margin-right: 2px;
+            margin-right: 1px;
 
             &::after {
                 content: "";
                 display: block;
                 background-color: white;
-                width: 4px;
+                width: 2px;
                 height: 46px;
             }
         }
 
         &.right {
-            margin-left: 2px;
+            margin-left: 1px;
 
             &::before {
                 content: "";
                 display: block;
                 background-color: white;
-                width: 4px;
+                width: 2px;
                 height: 46px;
             }
+        }
+        img {
+            min-height: 49px;
         }
     }
 
@@ -131,18 +135,30 @@
 .dropdown-list {
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    width: 300px;
 }
 
 .dropdown-item {
     display: flex;
     align-items: center;
     min-width: 0;
+    gap: 12px;
     cursor: pointer;
     padding: 10px 8px;
     border-bottom: 1px solid #e7edf2;
+
+    img {
+        width: 38px;
+        border-radius: 50%;
+    }
+
+    .role-name {
+        display: flex;
+        flex-direction: column;
+    }
+
     .name {
-        width: 120px;
+        width: 100%;
         overflow: hidden;
         word-break: keep-all;
         text-overflow: ellipsis;
@@ -151,18 +167,11 @@
         font-size: 15px;
         margin-right: 4px;
         white-space: nowrap;
-    }
-
-    .divider {
-        width: 1px;
-        height: 16px;
-        background: #dbeafe;
-        margin: 0 7px;
-        display: inline-block;
+        text-align: left;
     }
 
     .role {
-        width: 70px;
+        width: 100%;
         color: #1e335c;
         overflow: hidden;
         word-break: keep-all;
@@ -170,6 +179,7 @@
         font-weight: 400;
         font-size: 15px;
         white-space: nowrap;
+        text-align: left;
     }
 }
 

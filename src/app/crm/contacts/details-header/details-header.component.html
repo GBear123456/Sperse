@@ -35,7 +35,19 @@
                     "
                     class="company-name"
                 >
-                    {{ data?.organizationContactInfo?.fullName }}
+                    <inplace-edit
+                        [id]="data?.organizationContactInfo.id"
+                        [value]="trim(data?.organizationContactInfo.fullName)"
+                        [isReadOnlyField]="!isOrgUpdatable"
+                        lEntityName="Name"
+                        [editPlaceholder]="ls.l('ClientNamePlaceholder')"
+                        [isHistoryEnabled]="true"
+                        [doubleClickEdit]="false"
+                        [validationRules]="companyValidationRules"
+                        (valueChanged)="updateCompanyField($event)"
+                    >
+                    </inplace-edit>
+                    <!-- {{ data?.organizationContactInfo?.fullName }} -->
                 </p>
                 <p
                     *ngIf="
@@ -248,19 +260,16 @@
                         addedItems: [addContextMenuItems[contextType.AddNotes]]
                     })
                 "
-                src="./assets/common/icons/contact/notes-without-name.svg"
+                src="./assets/common/icons/contact/note.svg"
             />
             <span>Note</span>
         </div>
         <div>
-            <img src="./assets/common/icons/contact/tasks-without-name.svg" />
+            <img src="./assets/common/icons/contact/task.svg" />
             <span>Task</span>
         </div>
         <div>
-            <img
-                height="43"
-                src="./assets/common/icons/contact/meetings-without-name.svg"
-            />
+            <img src="./assets/common/icons/contact/meetings.svg" />
             <span>Meetings</span>
         </div>
         <div *ngIf="isSendSmsAndEmailAllowed">
@@ -270,7 +279,7 @@
                         relativeTo: this.activatedRoute
                     })
                 "
-                src="./assets/common/icons/contact/calllog-without-name.svg"
+                src="./assets/common/icons/contact/call-log.svg"
             />
             <span>Call Log</span>
         </div>
@@ -278,7 +287,7 @@
             <img
                 *ngIf="isSendSmsAndEmailAllowed"
                 (click)="showEmailDialog()"
-                src="./assets/common/icons/contact/emails-without-name.svg"
+                src="./assets/common/icons/contact/email-with-bg.svg"
             />
             <span>Email</span>
         </div>
@@ -296,7 +305,7 @@
                         addedItems: [addContextMenuItems[contextType.AddFiles]]
                     })
                 "
-                src="./assets/common/icons/contact/files-without-name.svg"
+                src="./assets/common/icons/contact/file.svg"
             />
             <span> File </span>
         </div>
@@ -309,7 +318,7 @@
                         ]
                     })
                 "
-                src="./assets/common/icons/contact/invoices-without-name.svg"
+                src="./assets/common/icons/contact/invoice.svg"
             />
             <span>Invoice</span>
         </div>
@@ -322,7 +331,7 @@
                         ]
                     })
                 "
-                src="./assets/common/icons/contact/contacts-without-name.svg"
+                src="./assets/common/icons/contact/new-contact.svg"
             />
             <span>Contacts</span>
         </div>
