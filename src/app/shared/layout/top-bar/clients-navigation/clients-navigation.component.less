@@ -1,5 +1,6 @@
 :host {
     margin: 0 30px;
+    height: 49px;
 
     .user-card-container {
         position: relative;
@@ -25,25 +26,25 @@
         cursor: pointer;
 
         &.left {
-            margin-right: 2px;
+            margin-right: 1px;
 
             &::after {
                 content: "";
                 display: block;
                 background-color: white;
-                width: 4px;
+                width: 2px;
                 height: 46px;
             }
         }
 
         &.right {
-            margin-left: 2px;
+            margin-left: 1px;
 
             &::before {
                 content: "";
                 display: block;
                 background-color: white;
-                width: 4px;
+                width: 2px;
                 height: 46px;
             }
         }
@@ -156,7 +157,7 @@
     }
 
     .name {
-        width: 120px;
+        width: 100%;
         overflow: hidden;
         word-break: keep-all;
         text-overflow: ellipsis;
@@ -169,7 +170,7 @@
     }
 
     .role {
-        width: 70px;
+        width: 100%;
         color: #1e335c;
         overflow: hidden;
         word-break: keep-all;
