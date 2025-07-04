@@ -140,13 +140,15 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
                 });
             this.data.contactInfo.groups &&
             this.data.contactInfo.groups.length > 0
-                ? (this.groups = this.data.contactInfo.groups.map((group) => {
-                      var groupName = invert(ContactGroup)[group.groupId];
-                      return {
-                          name: groupName,
-                          className: `chip-${groupName.toLowerCase()}`,
-                      };
-                  }))
+                ? (this.groups = this.data.contactInfo.groups
+                      .filter((m) => m.isActive)
+                      .map((group) => {
+                          var groupName = invert(ContactGroup)[group.groupId];
+                          return {
+                              name: groupName,
+                              className: `chip-${groupName.toLowerCase()}`,
+                          };
+                      }))
                 : [];
         }
     }

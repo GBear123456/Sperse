@@ -47,7 +47,6 @@
                         (valueChanged)="updateCompanyField($event)"
                     >
                     </inplace-edit>
-                    <!-- {{ data?.organizationContactInfo?.fullName }} -->
                 </p>
                 <p
                     *ngIf="
@@ -249,7 +248,7 @@
 </header>
 <dx-tooltip
     *ngIf="showModernLayout"
-    [target]="'.tooltip-target'"
+    [target]="'#addEntity'"
     [position]="{ my: 'top right', at: 'bottom right', collision: 'fit flip' }"
 >
     <div *dxTemplate="let data = data; of: 'content'" class="context-tooltip">
