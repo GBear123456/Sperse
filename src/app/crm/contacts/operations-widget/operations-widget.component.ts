@@ -7,6 +7,7 @@ import {
     Injector,
     Input,
     OnChanges,
+    OnInit,
     Output,
     Renderer2,
     SimpleChanges,
@@ -51,6 +52,8 @@ import { GroupStatus } from "@app/crm/contacts/operations-widget/status.interfac
 import { AppAuthService } from "@shared/common/auth/app-auth.service";
 import { environment } from "@root/environments/environment";
 import { AppFeatures } from "@shared/AppFeatures";
+import { Store } from "@node_modules/@ngrx/store";
+import { AppStore, StarsStoreSelectors } from "@app/store";
 
 @Component({
     selector: "operations-widget",
@@ -60,7 +63,7 @@ import { AppFeatures } from "@shared/AppFeatures";
 })
 export class OperationsWidgetComponent
     extends AppComponentBase
-    implements AfterViewInit, OnChanges
+    implements AfterViewInit, OnChanges, OnInit
 {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
@@ -151,10 +154,12 @@ export class OperationsWidgetComponent
     contactGroupKeys = invert(ContactGroup);
     contactGroups: ContactGroupDto[];
     salesTalkApiLink: string;
+    starList = [];
 
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
+        private store$: Store<AppStore.State>,
         private elementRef: ElementRef,
         private appService: AppService,
         private authService: AppAuthService,
@@ -186,6 +191,11 @@ export class OperationsWidgetComponent
                 this.updateActiveGroups();
             });
         this.initSalesTalkApiLink();
+    }
+    ngOnInit(): void {
+        this.store$.select(StarsStoreSelectors.getStars).subscribe((result) => {
+            this.starList = result;
+        });
     }
 
     initSalesTalkApiLink() {
@@ -584,6 +594,18 @@ export class OperationsWidgetComponent
                               },
                               {
                                   name: "star",
+                                  attr: {
+                                      class: this.contactInfo.starId
+                                          ? "star-" +
+                                            this.starList
+                                                .find(
+                                                    (m) =>
+                                                        m.id ==
+                                                        this.contactInfo.starId
+                                                )
+                                                .colorType?.toLowerCase()
+                                          : "star-empty",
+                                  },
                                   action: this.toggleStars.bind(this),
                                   visible: !this.isBankCodeLayout,
                                   disabled: !this.permission.checkCGPermission(

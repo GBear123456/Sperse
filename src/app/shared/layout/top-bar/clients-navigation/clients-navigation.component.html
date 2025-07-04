@@ -56,7 +56,10 @@
                 class="dropdown-item"
                 (click)="navigateToContact(contact[clientFields.Id])"
             >
-                <img src="../../../../../assets/common/images/no-photo.png" />
+                <img
+                    *ngIf="getPhotoSrc(contact) as photoSrc"
+                    [src]="photoSrc"
+                />
                 <div class="role-name">
                     <div class="name">{{ contact[clientFields.Name] }}</div>
                     <div class="role">

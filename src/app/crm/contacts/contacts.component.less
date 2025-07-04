@@ -5,7 +5,6 @@
         }
 
         ::ng-deep operations-widget {
-
             .operations-widget {
                 width: 100%;
                 margin-right: 0;
@@ -114,12 +113,42 @@
                         .dx-button-content::before {
                             content: " ";
                             display: block;
-                            background: url(../../../assets/common/icons/stars.svg);
+                            -webkit-mask-image: url(../../../assets/common/icons/stars.svg);
                             background-repeat: no-repeat;
                             position: absolute;
                             width: 18px;
                             height: 18px;
                             top: 8px;
+                        }
+                    }
+                    &.star-empty {
+                        .dx-button-content::before {
+                            background-color: gray;
+                        }
+                    }
+                    &.star-yellow {
+                        .dx-button-content::before {
+                            background-color: #e6e600;
+                        }
+                    }
+                    &.star-blue {
+                        .dx-button-content::before {
+                            background-color: blue;
+                        }
+                    }
+                    &.star-green {
+                        .dx-button-content::before {
+                            background-color: green;
+                        }
+                    }
+                    &.star-purple {
+                        .dx-button-content::before {
+                            background-color: purple;
+                        }
+                    }
+                    &.star-red {
+                        .dx-button-content::before {
+                            background-color: red;
                         }
                     }
 
