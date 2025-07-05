@@ -43,8 +43,11 @@
             height: 100%;
         }
 
-        .mat-tab-nav-bar {
+        ::ng-deep .mat-tab-nav-bar {
             // padding-bottom: 50px;
+            .mat-tab-header-pagination {
+                display: none !important;
+            }
         }
 
         .mat-tab-link {
