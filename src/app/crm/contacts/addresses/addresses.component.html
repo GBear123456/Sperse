@@ -21,7 +21,7 @@
             (dblclick)="showDialog(address, $event, i)"
         >
             <div *ngIf="isEditAllowed" class="actions">
-                <i
+                <!-- <i
                     *ngIf="isCopyAllowed"
                     class="copy save-to-clipboard"
                     aria-hidden="true"
@@ -38,7 +38,25 @@
                     aria-hidden="true"
                     (click)="deleteAddress(address, $event, i)"
                 >
-                </i>
+                </i> -->
+                <i
+                    class="copy save-to-clipboard"
+                    aria-hidden="true"
+                    *ngIf="isCopyAllowed"
+                    (click)="copyToClipbord($event, address)"
+                ></i>
+                <i
+                    class="edit"
+                    aria-hidden="true"
+                    (click)="showDialog(address, $event, i)"
+                ></i>
+                <i
+                    class="delete"
+                    aria-hidden="true"
+                    *ngIf="isDeleteAllowed"
+                    (click)="deleteAddress(address, $event, i)"
+                ></i>
+                <i class="trash" aria-hidden="true"></i>
             </div>
             <div class="address">
                 <p *ngIf="!address.inplaceEdit">
