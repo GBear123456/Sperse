@@ -572,7 +572,6 @@ export class ToolBarComponent implements OnDestroy, OnInit {
       });
 
     this.toolbarService.showSearchBox(isSearchEnabled);
-    console.log('======== this items ========', this.items);
     this.items = items;
   }
 

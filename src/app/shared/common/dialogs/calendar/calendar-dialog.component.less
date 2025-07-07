@@ -1,28 +1,35 @@
 ::ng-deep .hide {
-    display: none;
+  display: none;
 }
 :host {
-    height: calc(100vh - 75px);
-    display: block;
-    position: relative;
+  height: calc(100vh - 75px);
+  display: block;
+  position: relative;
+  background: var(--card-bg);
+  color: var(--text-color);
+  @media (max-width: 767px) {
+    width: 80vw;
+  }
+
+  mat-dialog-content {
+    max-height: 100%;
+    text-align: right;
+    padding: 0;
+    margin: 0px !important;
     background: var(--card-bg);
     color: var(--text-color);
-    @media (max-width: 767px) {
-        width: 80vw;
+    ::ng-deep calendar {
+      position: relative;
+      .date-range-length-tip {
+        white-space: nowrap;
+      }
     }
 
-    mat-dialog-content {
-        max-height: 100%;
-        text-align: right;
-        margin: 20px 0 0;
-        padding: 0;
-        background: var(--card-bg);
-        color: var(--text-color);
-        ::ng-deep calendar {
-            position: relative;
-            .date-range-length-tip {
-                white-space: nowrap;
-            }
-        }
+    .close-button {
+      top: 20px !important;
+      left: -42px !important;
+      background-color: var(--card-bg) !important;
+      opacity: 1 !important;
     }
+  }
 }
