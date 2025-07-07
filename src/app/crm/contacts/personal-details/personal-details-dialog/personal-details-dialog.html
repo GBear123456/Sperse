@@ -75,7 +75,7 @@
                                               (itemDeleted)="deleteItem(ls.l('AffiliateRate'))">
                                 </inplace-edit>
                             </div>
-                            <!-- <div class="field tier" *ngIf="hasCommissionsFeature">
+                            <div class="field tier" *ngIf="hasCommissionsFeature">
                                 <label>{{ ls.l('AffiliateRateTier2') }}:</label>
                                 <inplace-edit [id]="contactInfo?.id"
                                               [editPlaceholder]="defaultAffiliateRateTier2Str !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRateTier2Str : ''"
@@ -89,7 +89,7 @@
                                               (valueChanged)="updateAffiliateRate($event, 'affiliateRate2', 'affiliateRate2Initil', CommissionTier.Tier2)"
                                               (itemDeleted)="deleteItem(ls.l('AffiliateRateTier2'))">
                                 </inplace-edit>
-                            </div> -->
+                            </div>
                         </mat-expansion-panel>
                         <mat-expansion-panel class="source-info" [expanded]="true">
                             <mat-expansion-panel-header>
