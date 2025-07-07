@@ -24,7 +24,7 @@
             (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
             (onToolbarPreparing)="onToolbarPreparing($event)"
         >
-            <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
+            <!-- <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel> -->
             <dxo-header-filter
                 [visible]="true"
                 [allowSearch]="true"
@@ -101,11 +101,11 @@
             </div>
             <div *dxTemplate="let data of 'title'">
                 <h2 class="title">
-                    {{
+                    <!-- {{
                         showPropertyDocuments
                             ? l("PropertyDocuments")
                             : l("Documents")
-                    }}
+                    }} -->
                 </h2>
             </div>
             <div class="document-type" *dxTemplate="let data of 'typeCell'">
