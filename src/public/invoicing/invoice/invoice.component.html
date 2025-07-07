@@ -7,7 +7,13 @@
             <div class="header-right-side">
                 <ng-container *ngIf="invoiceInfo.invoiceData.status == invoiceStatuses.Sent && invoiceInfo.isPaymentsEnabled && invoiceInfo.isQuantityAvailable">
                     <ng-container *ngIf="!invoiceInfo.invoiceData.isAutoCalculatedTax">
-                        <pay-pal [height]="38" (onApprove)="onPayPalApprove()">
+                        <spreedly-pay-buttons *ngIf="invoiceInfo.spreedlyConfiguration?.spreedlyGateways.length"
+                                              [environmentKey]="invoiceInfo.spreedlyConfiguration.environmentKey"
+                                              [gateways]="invoiceInfo.spreedlyConfiguration.spreedlyGateways"
+                                              (onButtonClick)="onSpreedlyClick($event)"
+                                              (onPaymentMethod)="onSpreedlyPaymentMethod($event)">
+                        </spreedly-pay-buttons>
+                        <pay-pal [height]="38" (onApprove)="redirectToReceipt()">
                         </pay-pal>
                     </ng-container>
                     <a *ngIf="invoiceInfo.stripePayUrl" role="button" class="btn btn-primary stripe-button" href="{{invoiceInfo.stripePayUrl}}">

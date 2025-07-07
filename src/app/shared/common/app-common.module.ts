@@ -100,6 +100,7 @@ import { CalendarButtonComponent } from '@app/shared/common/calendar-button/cale
 import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.module';
 import { ActionMenuModule } from './action-menu/action-menu.module';
 import { PaypalModule } from '@shared/common/paypal/paypal.module';
+import { SpreedlyPayButtonsModule } from '@shared/common/spreedly-pay-buttons/spreedly-pay-buttons.module';
 
 @NgModule({
     imports: [
@@ -171,7 +172,8 @@ import { PaypalModule } from '@shared/common/paypal/paypal.module';
         GooglePlaceModule,
         TimeZoneComboModule,
         ActionMenuModule,
-        PaypalModule
+        PaypalModule,
+        SpreedlyPayButtonsModule
     ],
     declarations: [
         TimeAgoPipe,

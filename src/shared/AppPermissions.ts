@@ -74,6 +74,7 @@ export enum AppPermissions {
     CRMOrdersManage = 'Pages.CRM.Orders.Manage',
     CRMOrdersInvoices = 'Pages.CRM.Orders.Invoices',
     CRMOrdersInvoicesManage = 'Pages.CRM.Orders.Invoices.Manage',
+    CRMOrdersInvoicesRefund = 'Pages.CRM.Orders.Invoices.Refund',
     CRMAffiliates = 'Pages.CRM.Affiliates',
     CRMAffiliatesManage = 'Pages.CRM.Affiliates.Manage',
     CRMAffiliatesCommissions = 'Pages.CRM.Affiliates.Commissions',
