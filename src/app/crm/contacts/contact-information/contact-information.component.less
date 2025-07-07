@@ -22,12 +22,23 @@
                     }
                 }
 
+                td {
+                    &:not(:first-child) {
+                        border-right: 30px solid #fff;
+                    }
+                }
+
                 &:not(:last-child) {
                     td {
                         &:not(:first-child) {
                             border-bottom: 1.5px dashed #e3e8ef;
-                            border-right: 30px solid #fff;
                         }
+                    }
+                }
+
+                &:last-child {
+                    td {
+                        padding-left: 5px;
                     }
                 }
 
