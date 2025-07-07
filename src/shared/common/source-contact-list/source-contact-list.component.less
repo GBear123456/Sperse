@@ -1,79 +1,79 @@
 div {
-    &[custom-title],
-    &[custom-content] {
-        width: 300px;
-    }
+  &[custom-title],
+  &[custom-content] {
+    width: 300px;
+  }
 
-    &[custom-title] {
-        width: 140px;
-        line-height: 1.7;
-        display: inline-block;
-        text-align: left;
-        font-size: 18px;
-        font-weight: 500;
+  &[custom-title] {
+    width: 140px;
+    line-height: 1.7;
+    display: inline-block;
+    text-align: left;
+    font-size: 18px;
+    font-weight: 500;
 
-        span {
-            padding-right: 20px;
-            cursor: pointer;
-            color: #000;
-            opacity: 0.4;
+    span {
+      padding-right: 20px;
+      cursor: pointer;
+      color: var(--text-color, #000);
+      opacity: 0.4;
 
-            &:not(.selected):hover {
-                color: #00AEEF;
-                text-decoration: underline;
-            }
+      &:not(.selected):hover {
+        color: var(--primary-color, #00aeef);
+        text-decoration: underline;
+      }
 
-            &.selected {
-                opacity: 1;
-                color: #000;
-                cursor: default;
-                pointer-events: none;
-            }
+      &.selected {
+        opacity: 1;
+        color: var(--text-color, #000);
+        cursor: default;
+        pointer-events: none;
+      }
 
-            &.filter-apply {
-                opacity: 1;
-                cursor: pointer;
-                font-size: 14px;
-                font-weight: 400;
-                line-height: 1.21;
-                letter-spacing: 0.3px;
-                color: #00AEEF;
-                padding: 9px;
-                position: absolute;
-                right: -4px;
+      &.filter-apply {
+        opacity: 1;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: var(--primary-color, #00aeef);
+        padding: 9px;
+        position: absolute;
+        right: -4px;
 
-                &.transparent {
-                    opacity: .2;
-                }
-
-                &:hover {
-                    color: lighten(#00AEEF, 20%);
-                    text-decoration: none;
-                }
-            }
+        &.transparent {
+          opacity: 0.2;
         }
 
-        ::ng-deep {
-            .dx-switch {
-                position: absolute;
-                right: 0;
-
-                &.centered {
-                    right: 106px;
-                    top: 6px;
-                }
-
-                .dx-switch-off {
-                    color: #333;
-                }
-            }
+        &:hover {
+          color: var(--primary-color-hover, #33cfff);
+          text-decoration: none;
         }
+      }
     }
 
-    &[custom-content] {
-        ::ng-deep organization-units-tree {
-            padding: 0 !important;
-            margin-top: 10px;
+    ::ng-deep {
+      .dx-switch {
+        position: absolute;
+        right: 0;
+
+        &.centered {
+          right: 106px;
+          top: 6px;
         }
+
+        .dx-switch-off {
+          color: var(--secondary-text-color, #333);
+        }
+      }
     }
+  }
+
+  &[custom-content] {
+    ::ng-deep organization-units-tree {
+      padding: 0 !important;
+      margin-top: 10px;
+    }
+  }
 }
