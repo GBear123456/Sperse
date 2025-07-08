@@ -63,7 +63,7 @@ export class PayPalComponent {
         return enbaledConfigs.reduce((prev, curr) => prev && curr.initialized, true);
     }
 
-    initialize(clientId: string, type: ButtonType, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>, currency: string) {
+    initialize(clientId: string, type: ButtonType, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>, currency: string, merchantId?: string) {
         if (!clientId)
             return;
 
@@ -72,15 +72,15 @@ export class PayPalComponent {
         this.requestSubscription = requestSubscription;
 
         if (type == ButtonType.Subscription || type == ButtonType.Both) {
-            this.initializeScript(clientId, ButtonType.Subscription, currency);
+            this.initializeScript(clientId, merchantId, ButtonType.Subscription, currency);
         }
 
         if (type == ButtonType.Payment || type == ButtonType.Both) {
-            this.initializeScript(clientId, ButtonType.Payment, currency);
+            this.initializeScript(clientId, merchantId, ButtonType.Payment, currency);
         }
     }
 
-    private initializeScript(clientId: string, type: ButtonType, currency: string) {
+    private initializeScript(clientId: string, merchantId: string, type: ButtonType, currency: string) {
         let typeConfig = this.config[type];
         typeConfig.isEnabled = true;
 
@@ -92,6 +92,8 @@ export class PayPalComponent {
             let payPalUrl = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${currency}`;
             if (type == ButtonType.Subscription)
                 payPalUrl += '&vault=true&intent=subscription';
+            if (merchantId)
+                payPalUrl += `&merchant-id=${merchantId}`;
 
             let data = {
                 namespace: typeConfig.namespace
