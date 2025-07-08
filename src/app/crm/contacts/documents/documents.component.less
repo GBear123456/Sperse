@@ -1,402 +1,416 @@
 ﻿::ng-deep .file-name {
-    width: 90%;
-    padding-left: 15px;
-    font-weight: 500;
-    overflow: visible !important;
-    align-items: center;
-    display: flex;
-    & > span {
-        max-width: 92%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    &:before {
-        content: '';
-        margin-right: 17px;
-        height: 32px;
-        width: 32px;
-        background-size: contain!important;
-        background-position: center!important;
-        background-repeat: no-repeat!important;
-    }
-    &.unknown:before {
-        content: '\f070';
-        font-family: 'FontAwesome';
-        font-size: 25px;
-        line-height: 1em;
-    }
+  width: 90%;
+  padding-left: 15px;
+  font-weight: 500;
+  overflow: visible !important;
+  align-items: center;
+  display: flex;
+  & > span {
+    max-width: 92%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  &:before {
+    content: '';
+    margin-right: 17px;
+    height: 32px;
+    width: 32px;
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+  }
+  &.unknown:before {
+    content: '\f070';
+    font-family: 'FontAwesome';
+    font-size: 25px;
+    line-height: 1em;
+  }
 
-    &.rtf:before,
-    &.ott:before,
-    &.djvu:before,
-    &.ods:before,
-    &.odt:before,
-    &.odp:before,
-    &.doc:before,
-    &.docx:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/doc.svg');
-    }
-    &.pdf:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/pdf.svg');
-    }
-    &.xlsx:before,
-    &.xls:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/xls.svg');
-    }
-    &.rar:before,
-    &.zip:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/zip.svg');
-    }
-    &.txt:before,
-    &.csv:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/txt.svg');
-    }
-    &.ttf:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/ttf.svg');
-    }
-    &.svg:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/svg.svg');
-    }
-    &.sql:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/sql.svg');
-    }
-    &.psd:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/psd.svg');
-    }
-    &.ppt:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/ppt.svg');
-    }
-    &.apk:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/apk.svg');
-    }
-    &.css:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/css.svg');
-    }
-    &.iso:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/iso.svg');
-    }
-    &.mp3:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/mp3.svg');
-    }
-    &.json:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/code.svg');
-    }
-    &.jpg:before,
-    &.jpe:before,
-    &.jfif:before,
-    &.jpeg:before,
-    &.bmp:before,
-    &.gif:before,
-    &.tif:before,
-    &.tiff:before,
-    &.jpeg:before,
-    &.png:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/image.svg');
-    }
-    &.js:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/js.svg');
-    }
-    &.woff:before,
-    &.woff2:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/font.svg');
-    }
-    &.mp4a:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/record.svg');
-    }
-    &.eml:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/eml.svg');
-    }
-    &.eps:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/eps.svg');
-    }
-    &.ai:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/ai.svg');
-    }
-    &.php:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/php.svg');
-    }
-    &.pptx:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/pptx.svg');
-    }
-    &.\33gp:before,
-    &.mpeg:before,
-    &.flv:before,
-    &.mkv:before,
-    &.wmv:before,
-    &.mov:before,
-    &.avi:before,
-    &.rm:before,
-    &.mpg:before,
-    &.f4v:before,
-    &.vob:before,
-    &.hevc:before,
-    &.webm:before,
-    &.asf:before,
-    &.ogv:before,
-    &.m4v:before,
-    &.mjpeg:before,
-    &.mxf:before,
-    &.m2ts:before,
-    &.m2v:before,
-    &.ts:before,
-    &.mts:before,
-    &.swf:before,
-    &.wtv:before,
-    &.mp4:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/video.svg');
-    }
-    &.docm:before,
-    &.dotx:before,
-    &.dotm:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/word.svg');
-    }
-    &.ogg:before,
-    &.wve:before,
-    &.ima:before,
-    &.ac3:before,
-    &.mp2:before,
-    &.wv:before,
-    &.m4a:before,
-    &.flac:before,
-    &.wav:before,
-    &.wma:before,
-    &.aac:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/music.svg');
-    }
-    &.aif:before,
-    &.cda:before,
-    &.mid:before,
-    &.midi:before,
-    &.vcd:before,
-    &.toast:before,
-    &.dmg:before,
-    &.bin:before {
-        content: '';
-        background: url('../../../../assets/common/icons/documents/disc.svg');
-    }
+  &.rtf:before,
+  &.ott:before,
+  &.djvu:before,
+  &.ods:before,
+  &.odt:before,
+  &.odp:before,
+  &.doc:before,
+  &.docx:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/doc.svg');
+  }
+  &.pdf:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/pdf.svg');
+  }
+  &.xlsx:before,
+  &.xls:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/xls.svg');
+  }
+  &.rar:before,
+  &.zip:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/zip.svg');
+  }
+  &.txt:before,
+  &.csv:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/txt.svg');
+  }
+  &.ttf:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/ttf.svg');
+  }
+  &.svg:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/svg.svg');
+  }
+  &.sql:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/sql.svg');
+  }
+  &.psd:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/psd.svg');
+  }
+  &.ppt:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/ppt.svg');
+  }
+  &.apk:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/apk.svg');
+  }
+  &.css:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/css.svg');
+  }
+  &.iso:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/iso.svg');
+  }
+  &.mp3:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/mp3.svg');
+  }
+  &.json:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/code.svg');
+  }
+  &.jpg:before,
+  &.jpe:before,
+  &.jfif:before,
+  &.jpeg:before,
+  &.bmp:before,
+  &.gif:before,
+  &.tif:before,
+  &.tiff:before,
+  &.jpeg:before,
+  &.png:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/image.svg');
+  }
+  &.js:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/js.svg');
+  }
+  &.woff:before,
+  &.woff2:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/font.svg');
+  }
+  &.mp4a:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/record.svg');
+  }
+  &.eml:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/eml.svg');
+  }
+  &.eps:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/eps.svg');
+  }
+  &.ai:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/ai.svg');
+  }
+  &.php:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/php.svg');
+  }
+  &.pptx:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/pptx.svg');
+  }
+  &.\33gp:before,
+  &.mpeg:before,
+  &.flv:before,
+  &.mkv:before,
+  &.wmv:before,
+  &.mov:before,
+  &.avi:before,
+  &.rm:before,
+  &.mpg:before,
+  &.f4v:before,
+  &.vob:before,
+  &.hevc:before,
+  &.webm:before,
+  &.asf:before,
+  &.ogv:before,
+  &.m4v:before,
+  &.mjpeg:before,
+  &.mxf:before,
+  &.m2ts:before,
+  &.m2v:before,
+  &.ts:before,
+  &.mts:before,
+  &.swf:before,
+  &.wtv:before,
+  &.mp4:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/video.svg');
+  }
+  &.docm:before,
+  &.dotx:before,
+  &.dotm:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/word.svg');
+  }
+  &.ogg:before,
+  &.wve:before,
+  &.ima:before,
+  &.ac3:before,
+  &.mp2:before,
+  &.wv:before,
+  &.m4a:before,
+  &.flac:before,
+  &.wav:before,
+  &.wma:before,
+  &.aac:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/music.svg');
+  }
+  &.aif:before,
+  &.cda:before,
+  &.mid:before,
+  &.midi:before,
+  &.vcd:before,
+  &.toast:before,
+  &.dmg:before,
+  &.bin:before {
+    content: '';
+    background: url('../../../../assets/common/icons/documents/disc.svg');
+  }
 
-    .file-size {
-        padding-left: 5px;
-        color: #677380;
-        font-size: 13px;
-    }
+  .file-size {
+    padding-left: 5px;
+    color: var(--muted-color);
+    font-size: 13px;
+  }
 }
 
 :host {
-    color: var(--text-color);
-    &.fullscreen .documentView {
-        width: 100%;
-        textarea {
-            height: 100%;
-        }
-        ::ng-deep app-image-viewer {
-            #imageViewer {
-                height: 100%;
-            }
-        }
-    }
-
-    .wrapper {
-        display: flex;
-        margin: 0px 23px;
-        height: 100%;
-        overflow: hidden;
-        width: 97%;
-
-        .grid-view {
-            width: auto;
-            max-width: 100%;
-            height: 100%;
-            ::ng-deep dx-data-grid {
-                 table {
-                     direction: rtl;
-                     tr, td {
-                         direction: ltr;
-                     }
-                 }
-
-                .dx-datagrid-header-panel {
-                    height: 62px;
-                    display: block;
-                    .dx-toolbar .dx-toolbar-after {
-                        margin: 6px!important;
-                    }
-                    .dx-toolbar-button.dx-toolbar-menu-container {
-                        display: none;
-                    }
-                }
-
-                .dx-datagrid-search-panel {
-                    input {
-                        border-radius: 3px;
-                        border: solid 1px #dadee1;
-                    }
-                }
-
-                .dx-row {
-                    .dx-link.dx-link-edit {
-                        &:before {
-                            width: 19px !important;
-                            height: 19px !important;
-                        }
-                    }
-                }
-
-                .dx-data-row {
-                    cursor: pointer;
-                }
-
-                 .dx-datagrid .dx-link.dx-link-edit {
-                     color: transparent!important;
-                     width: 18px!important;
-                 }
-                 td.dx-command-edit {
-                     width: 120px!important;
-                     &:before {
-                        left: 60px!important;
-                     }
-                 }
-
-                .title {
-                    margin-top: 12px;
-                }
-                input {
-                    border-bottom: none;
-                }
-            }
-        }
-    }
-
-    .open-document-header {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        align-items: stretch;
-        align-content: flex-end;
-    }
-
-    .close {
-        top: 18px;
-        right: 18px;
-        width: 20px;
-        height: 20px;
-        float: right;
-        cursor: pointer;
-        position: relative;
-        display: block;
-
-        &:after, &:before {
-            position: absolute;
-            top: 0px;
-            left: 8px;
-            content: ' ';
-            height: 20px;
-            width: 2px;
-            background-color: #1b1b1b;
-        }
-
-        &:before {
-            transform: rotate(45deg);
-        }
-
-        &:after {
-            transform: rotate(-45deg);
-        }
-    }
-
+  color: var(--text-color);
+  &.fullscreen .documentView {
+    width: 100%;
     textarea {
-        width: 100%;
-        outline: 0;
-        padding: 10px;
-        height: calc(~"100vh - 220px");
-        resize: none;
+      height: 100%;
     }
-
     ::ng-deep app-image-viewer {
-        #imageViewer {
-            height: calc(~"100vh - 220px");
-            margin-top: 0;
-            .image-container {
-                bottom: 0;
-            }
-            .inline-icon, i.material-icons, .footer-info {
-                display: none;
-            }
-        }
-    }
-
-    vg-player {
-        height: calc(~"100vh - 220px");
-        margin-top: 0px;
-
-        video {
-            width: 100%;
-            height: 100%;
-        }
-    }
-
-    .document-type {
-        p {
-            padding: 10px 0;
-            margin: 0;
-            font-weight: 600;
-            cursor: text !important;
-
-            &.choose-document-type {
-                color: #8a969b;
-                font-weight: 100;
-                font-size: 14px;
-            }
-        }
-    }
-
-    .documentView {
+      #imageViewer {
         height: 100%;
-        overflow: hidden;
-        .xmlContainer {
-            padding-bottom: 10px;
+      }
+    }
+  }
+
+  .wrapper {
+    display: flex;
+    margin: 0px 23px;
+    height: 100%;
+    overflow: hidden;
+    width: 97%;
+
+    .grid-view {
+      width: auto;
+      max-width: 100%;
+      height: 100%;
+      ::ng-deep dx-data-grid {
+        table {
+          direction: rtl;
+          tr,
+          td {
+            direction: ltr;
+          }
         }
+
+        .dx-datagrid-header-panel {
+          height: 62px;
+          display: block;
+          .dx-toolbar .dx-toolbar-after {
+            margin: 6px !important;
+          }
+          .dx-toolbar-button.dx-toolbar-menu-container {
+            display: none;
+          }
+        }
+
+        .dx-datagrid-search-panel {
+          input {
+            border-radius: 3px;
+            border: solid 1px var(--input-border);
+            background: var(--input-bg);
+            color: var(--input-text);
+          }
+        }
+
+        .dx-row {
+          .dx-link.dx-link-edit {
+            &:before {
+              width: 19px !important;
+              height: 19px !important;
+            }
+          }
+        }
+
+        .dx-data-row {
+          cursor: pointer;
+        }
+
+        .dx-datagrid .dx-link.dx-link-edit {
+          color: transparent !important;
+          width: 18px !important;
+        }
+        td.dx-command-edit {
+          width: 120px !important;
+          &:before {
+            left: 60px !important;
+          }
+        }
+
+        .title {
+          margin-top: 12px;
+        }
+        input {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  .open-document-header {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+    align-content: flex-end;
+  }
+
+  .close {
+    top: 18px;
+    right: 18px;
+    width: 20px;
+    height: 20px;
+    float: right;
+    cursor: pointer;
+    position: relative;
+    display: block;
+
+    &:after,
+    &:before {
+      position: absolute;
+      top: 0px;
+      left: 8px;
+      content: ' ';
+      height: 20px;
+      width: 2px;
+      background-color: var(--text-color);
     }
 
-    .archiveContainer {
-        padding-top: 20px;
-        padding-left: 20px;
+    &:before {
+      transform: rotate(45deg);
     }
 
-    ::ng-deep .dx-datagrid-content .dx-datagrid-table .dx-row {
-        td:first-child {
-            padding-right: 47px;
-        }
-        td:last-child {
-            padding-right: 7px;
-        }
+    &:after {
+      transform: rotate(-45deg);
     }
+  }
+
+  textarea {
+    width: 100%;
+    outline: 0;
+    padding: 10px;
+    height: calc(~'100vh - 220px');
+    resize: none;
+    background: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid var(--input-border);
+  }
+
+  ::ng-deep app-image-viewer {
+    #imageViewer {
+      height: calc(~'100vh - 220px');
+      margin-top: 0;
+      .image-container {
+        bottom: 0;
+      }
+      .inline-icon,
+      i.material-icons,
+      .footer-info {
+        display: none;
+      }
+    }
+  }
+
+  vg-player {
+    height: calc(~'100vh - 220px');
+    margin-top: 0px;
+
+    video {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .document-type {
+    p {
+      padding: 10px 0;
+      margin: 0;
+      font-weight: 600;
+      cursor: text !important;
+
+      &.choose-document-type {
+        color: var(--muted-color);
+        font-weight: 100;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .documentView {
+    height: 100%;
+    overflow: hidden;
+    .xmlContainer {
+      padding-bottom: 10px;
+    }
+  }
+
+  .archiveContainer {
+    padding-top: 20px;
+    padding-left: 20px;
+  }
+
+  ::ng-deep .dx-datagrid-content .dx-datagrid-table .dx-row {
+    td:first-child {
+      padding-right: 47px;
+    }
+    td:last-child {
+      padding-right: 7px;
+    }
+  }
+
+  .dx-datagrid-header-panel {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+  }
 }

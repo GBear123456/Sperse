@@ -198,18 +198,9 @@
           letter-spacing: 0.3px;
           color: var(--text-color);
           overflow: visible;
-          &:hover {
-            .pipeline-photo-wrap {
-              .img-circle {
-                display: none;
-              }
-              .action-gear {
-                display: block;
-              }
-            }
-          }
+
           &.selected {
-            background-color: var(--menu-hover-bg);
+            background-color: var(--card-bg);
           }
           &.locked {
             opacity: 0.3;
@@ -218,19 +209,28 @@
             opacity: 1;
             background: var(--card-bg);
           }
+
+          .action-gear {
+            width: 30px;
+            height: 20px;
+            background: url(../../../assets/common/icons/edit-icon.svg) no-repeat center;
+            display: none;
+          }
+
+          &:hover {
+            .action-gear {
+              display: block;
+            }
+          }
           .pipeline-photo-wrap {
             min-width: 40px;
             position: absolute;
             right: 5px;
             bottom: 5px;
-            .action-gear {
-              width: 40px;
-              height: 40px;
-              background: url(../../../assets/common/icons/edit-icon.svg) no-repeat center;
-              display: none;
-            }
           }
           .row {
+            display: flex;
+            align-items: center;
             margin-right: -15px;
             padding: 0 10px;
             flex-wrap: nowrap;
