@@ -52,7 +52,7 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     }
 
     createConnectedAccount() {
-        if (this.isHost || !this.paypalPaymentSettings.isHostAccountEnabled || (this.paypalPaymentSettings && this.paypalPaymentSettings.paypalMerchantId))
+        if (this.isHost || !this.paypalPaymentSettings.isHostAccountEnabled || (this.paypalPaymentSettings && this.paypalPaymentSettings.merchantId))
             return;
 
         this.message.confirm('', this.l('Do you want to connect Paypal account ?'), (isConfirmed) => {

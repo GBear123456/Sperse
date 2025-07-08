@@ -20,7 +20,7 @@
                             <h3>Accept PayPal Payments</h3>
                             <span>Connect with the world's most powerful and easy to use Payment Gateway</span>
                         </div>
-                        <button *ngIf="paypalPaymentSettings.isHostAccountEnabled && !paypalPaymentSettings.paypalMerchantId" class="btn btn-layout stripe-button" (click)="createConnectedAccount()">
+                        <button *ngIf="paypalPaymentSettings.isHostAccountEnabled && !paypalPaymentSettings.merchantId" class="btn btn-layout stripe-button" (click)="createConnectedAccount()">
                             {{ l('Connect to Paypal') }}
                         </button>
                     </div>
@@ -68,7 +68,7 @@
             <div class="title">CONNECTED ACCOUNTS</div>
         </ng-template>
         <div class="connected-tab blocks-tab">
-            Connected merchant account - <b>{{paypalPaymentSettings.paypalMerchantId}}</b>
+            Connected merchant account - <b>{{paypalPaymentSettings.merchantId}}</b>
         </div>
     </mat-tab>
     <mat-tab>
