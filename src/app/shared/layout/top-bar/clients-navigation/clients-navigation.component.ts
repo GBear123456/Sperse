@@ -3,7 +3,9 @@ import {
     ElementRef,
     Injector,
     OnInit,
+    QueryList,
     ViewChild,
+    ViewChildren,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { AppService } from "@app/app.service";
@@ -33,6 +35,9 @@ export class ClientsNavigationComponent
     isDropdownVisible = false;
     @ViewChild("dropdownBtn", { static: false }) dropdownBtn: ElementRef;
     @ViewChild(DxScrollViewComponent, { static: false }) scrollView: DxScrollViewComponent;
+
+    @ViewChild('scrollViewRef') scrollViewRef: DxScrollViewComponent;
+    @ViewChildren('contactItem') contactItems: QueryList<ElementRef>;
 
 
     contactDropdownDataSource: DataSource;
@@ -159,24 +164,44 @@ export class ClientsNavigationComponent
 
     toggleDropdown() {
         this.isDropdownVisible = !this.isDropdownVisible;
-        // if (this.isDropdownVisible) {
+
+        if (this.isDropdownVisible) {
             this.scrollToSelectedClient();
-        // }
+        }
     }
 
     scrollToSelectedClient() {
+        // Final solution
         setTimeout(() => {
-        if (!this.scrollView || !this.currentContactId) return;
+            const selected = this.contactItems.find((el) =>
+                el.nativeElement.classList.contains('selectedItem')
+            );
+            setTimeout(() => {
+                selected.nativeElement.classList.remove('flash');
+            }, 2000); // adjust if needed
 
-            const dropdownElement = this.scrollView.instance.content();
-            const selectedItem = dropdownElement.querySelector('.dropdown-item.selectedItem') as HTMLElement; // Type assertion
-            console.log(selectedItem);
-            if (selectedItem) {
-                const scrollTop = selectedItem.offsetTop - (dropdownElement.clientHeight / 2);
-                console.log(selectedItem);
-                this.scrollView.instance.scrollTo(scrollTop);
+            if (selected) {
+                // Add animation class
+                selected.nativeElement.classList.add('flash');
+
+                selected.nativeElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                });
             }
-        }, 150);
+        });
+        // setTimeout(() => {
+        // if (!this.scrollView || !this.currentContactId) return;
+
+        //     const dropdownElement = this.scrollView.instance.content();
+        //     const selectedItem = dropdownElement.querySelector('.dropdown-item.selectedItem') as HTMLElement; // Type assertion
+        //     console.log(selectedItem);
+        //     if (selectedItem) {
+        //         const scrollTop = selectedItem.offsetTop - (dropdownElement.clientHeight / 2);
+        //         console.log(selectedItem);
+        //         this.scrollView.instance.scrollTo(scrollTop);
+        //     }
+        // }, 150);
     }
 
     onClose() {

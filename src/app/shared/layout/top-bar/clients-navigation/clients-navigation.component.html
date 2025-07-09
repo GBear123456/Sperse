@@ -1,82 +1,47 @@
 <div class="user-card-container">
-    <button
-        class="icon-btn nav-btn left"
-        [disabled]="!contactIds || contactIds.indexOf(currentContactId) <= 0"
-        (click)="goToPrevClient()"
-    >
-        <img
-            src="assets/common/icons/contact/header-angle-left.svg"
-            alt="Previous"
-        />
+    <button class="icon-btn nav-btn left" [disabled]="!contactIds || contactIds.indexOf(currentContactId) <= 0"
+        (click)="goToPrevClient()">
+        <img src="assets/common/icons/contact/header-angle-left.svg" alt="Previous" />
     </button>
     <div class="user-card-content" #dropdownBtn (click)="toggleDropdown()">
-        <img
-            src="assets/common/icons/contact/building.svg"
-            class="icon-building"
-            alt="Company"
-        />
+        <img src="assets/common/icons/contact/building.svg" class="icon-building" alt="Company" />
         <span class="name-role">
             <span class="name">{{
                 contacts[contactIds?.indexOf(currentContactId)]?.Name
-            }}</span>
+                }}</span>
         </span>
         <button class="dropdown-btn">
-            <img
-                src="assets/common/icons/arrow-down-grey.svg"
-                alt="Select Role"
-            />
+            <img src="assets/common/icons/arrow-down-grey.svg" alt="Select Role" />
         </button>
     </div>
-    <button
-        class="icon-btn nav-btn right"
-        [disabled]="
+    <button class="icon-btn nav-btn right" [disabled]="
             !contactIds ||
             contactIds.indexOf(currentContactId) === contactIds.length - 1
-        "
-        (click)="goToNextClient()"
-    >
-        <img
-            src="assets/common/icons/contact/header-angle-right.svg"
-            alt="Next"
-        />
+        " (click)="goToNextClient()">
+        <img src="assets/common/icons/contact/header-angle-right.svg" alt="Next" />
     </button>
 </div>
-<dx-tooltip
-    [target]="dropdownBtn"
-    [scroll]="true"
-    [visible]="isDropdownVisible"
-    [position]="{ my: 'top center', at: 'bottom center' }"
-    [closeOnOutsideClick]="true"
-    (onHiding)="isDropdownVisible = false"
->
-    <dx-scroll-view [height]="450">
+<dx-tooltip [target]="dropdownBtn" [scroll]="true" [visible]="isDropdownVisible"
+    [position]="{ my: 'top center', at: 'bottom center' }" [closeOnOutsideClick]="true"
+    (onHiding)="isDropdownVisible = false">
+
+    <dx-scroll-view #scrollViewRef [height]="450">
         <div class="dropdown-list">
-            <div
-                *ngFor="let contact of contacts"
-                class="dropdown-item"
+            <div *ngFor="let contact of contacts" class="dropdown-item"
                 (click)="navigateToContact(contact[clientFields.Id])"
-                [class.selectedItem]="contact[clientFields.Id] === currentContactId"
-            >
-                <img
-                    *ngIf="getPhotoSrc(contact) as photoSrc"
-                    [src]="photoSrc"
-                />
+                [class.selectedItem]="contact[clientFields.Id] === currentContactId" #contactItem>
+                <img *ngIf="getPhotoSrc(contact) as photoSrc" [src]="photoSrc" />
                 <div class="role-name">
                     <div class="name">{{ contact[clientFields.Name] }}</div>
-                    <div
-                        class="role"
-                        *ngIf="contact[clientFields.CompanyName] as companyName"
-                    >
+                    <div class="role" *ngIf="contact[clientFields.CompanyName] as companyName">
                         {{ companyName }}
                     </div>
-                    <div
-                        class="role"
-                        *ngIf="contact[clientFields.Email] as email"
-                    >
+                    <div class="role" *ngIf="contact[clientFields.Email] as email">
                         {{ email }}
                     </div>
                 </div>
             </div>
         </div>
     </dx-scroll-view>
+
 </dx-tooltip>
