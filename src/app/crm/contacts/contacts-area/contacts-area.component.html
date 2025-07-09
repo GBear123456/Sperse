@@ -42,7 +42,7 @@
                                 src="./assets/common/icons/contact/send_icon.svg"
                                 alt="send"
                             />
-                            send
+                            call
                         </span>
                         <i
                             class="copy save-to-clipboard"
@@ -138,12 +138,12 @@
                                 aria-hidden="true"
                                 (click)="editEmailAddress(email, $event, i)"
                             ></i>
-                            <i
+                            <!-- <i
                                 *ngIf="checkEditEmailAllowed(email)"
                                 class="delete"
                                 aria-hidden="true"
                                 (click)="deleteEmailAddress(email, $event, i)"
-                            ></i>
+                            ></i> -->
                             <i
                                 *ngIf="checkEditEmailAllowed(email)"
                                 class="trash"
