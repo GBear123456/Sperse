@@ -219,7 +219,8 @@ export class SingleProductComponent implements OnInit {
                 this.getPayPalRequest.bind(this),
                 this.getPayPalRequest.bind(this),
                 this.productInfo.currencyId,
-                this.productInfo.data.paypalMerchantId
+                this.productInfo.data.paypalMerchantId,
+                this.productInfo.data.paypalBNCode
             );
         }
     }
