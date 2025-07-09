@@ -55,7 +55,7 @@
                 *ngFor="let contact of contacts"
                 class="dropdown-item"
                 (click)="navigateToContact(contact[clientFields.Id])"
-                [class.selected]="contact[clientFields.Id] === currentContactId"
+                [class.selectedItem]="contact[clientFields.Id] === currentContactId"
             >
                 <img
                     *ngIf="getPhotoSrc(contact) as photoSrc"
