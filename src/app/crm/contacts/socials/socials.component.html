@@ -12,19 +12,21 @@
                     onError="this.src='./assets/common/icons/social/OtherLink.svg';"
                 />
             </button>
-            <button
-                *ngFor="let icon of contactInfoData?.links"
-                class="social-icon-btn"
-                (click)="onSelectLinks(icon)"
-            >
-                <img
-                    src="./assets/common/icons/social/{{
-                        LINK_TYPES[icon.linkTypeId] || 'OtherLink'
-                    }}.svg"
-                    onError="this.src='./assets/common/icons/social/OtherLink.svg';"
-                    alt="links"
-                />
-            </button>
+            <div class="button-group">
+                <button
+                    *ngFor="let icon of contactInfoData?.links"
+                    class="social-icon-btn"
+                    (click)="onSelectLinks(icon)"
+                >
+                    <img
+                        src="./assets/common/icons/social/{{
+                            LINK_TYPES[icon.linkTypeId] || 'OtherLink'
+                        }}.svg"
+                        onError="this.src='./assets/common/icons/social/OtherLink.svg';"
+                        alt="links"
+                    />
+                </button>
+            </div>
             <button
                 class="social-icon-btn"
                 *ngIf="contactInfoData?.links.length > 0"
@@ -96,26 +98,28 @@
                             (click)="showEditDialog(social, $event)"
                             >{{ normalizeLink(social.url) }}</span
                         >
-                        <button
-                            class="action-btn copy-btn"
-                            title="Copy"
-                            (click)="copyToClipbord(social.url)"
-                        >
-                            <img
-                                src="./assets/common/icons/contact/document-copy.svg"
-                                alt="icon"
-                            />
-                        </button>
-                        <button
-                            class="action-btn delete-btn"
-                            title="Delete"
-                            (click)="deleteLink(social.id)"
-                        >
-                            <img
-                                src="./assets/common/icons/contact/trash.svg"
-                                alt="icon"
-                            />
-                        </button>
+                        <div class="button-group">
+                            <button
+                                class="action-btn copy-btn"
+                                title="Copy"
+                                (click)="copyToClipbord(social.url)"
+                            >
+                                <img
+                                    src="./assets/common/icons/contact/document-copy.svg"
+                                    alt="icon"
+                                />
+                            </button>
+                            <button
+                                class="action-btn delete-btn"
+                                title="Delete"
+                                (click)="deleteLink(social.id)"
+                            >
+                                <img
+                                    src="./assets/common/icons/contact/trash.svg"
+                                    alt="icon"
+                                />
+                            </button>
+                        </div>
                     </span>
                 </div>
             </li>

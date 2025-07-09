@@ -112,6 +112,7 @@
                 font-size: 12px;
                 font-weight: 200;
             }
+
             /*span {
                 width: calc(100% - 60px);
             }*/
@@ -173,10 +174,17 @@
     align-items: center;
     gap: 3px;
     flex-wrap: wrap;
+
     .social-add {
         border: none;
         background: none;
     }
+
+    .button-group {
+        display: flex;
+        gap: 3px;
+    }
+
     .social-icon-btn {
         width: 30px;
         height: 30px;
@@ -241,6 +249,7 @@
                 border-radius: 6px;
                 display: block;
             }
+
             img {
                 height: 20px;
                 width: 20px;
@@ -269,6 +278,7 @@
             margin-right: 9px;
             display: flex;
             align-items: center;
+
             img {
                 height: 18px;
                 width: 18px;
@@ -278,7 +288,8 @@
                 display: block;
             }
 
-            transition: background 0.2s, color 0.2s;
+            transition: background 0.2s,
+            color 0.2s;
 
             &:hover {
                 background: #f1f5f9;
@@ -289,6 +300,10 @@
                 }
             }
         }
+    }
+
+    .button-group {
+        display: none;
     }
 
     .delete-btn {
@@ -305,7 +320,8 @@
             display: block;
         }
 
-        transition: background 0.2s, color 0.2s;
+        transition: background 0.2s,
+        color 0.2s;
 
     }
 
@@ -317,10 +333,17 @@
     // Show icons on hover
     &:hover,
     .link-block:hover {
-        + .delete-btn,
+
+        +.delete-btn,
         .delete-btn {
             display: inline-flex !important;
             pointer-events: auto;
+        }
+        .button-group {
+            display: flex !important;
+            gap: 5px;
+            pointer-events: none;
+            background: transparent;
         }
     }
 }
