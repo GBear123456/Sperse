@@ -1,4 +1,36 @@
 <div class="task-info">
+    <div class="rectangle seles-statics">
+        <div class="sales-wrapper">
+            <div class="title">
+                {{ ls.l("Gross sales") }}
+            </div>
+            <div class="statics-data">
+                {{ amountCustomizer(grossSale ?? 0) }}
+            </div>
+        </div>
+        <div class="sales-wrapper">
+            <div class="title">
+                {{ ls.l("current plan") }}
+            </div>
+            <div class="statics-data">
+                {{
+                    amountCustomizer(
+                        currentPlan?.amount ?? 0,
+                        currentPlan?.currencyId
+                    )
+                }}
+                <span>
+                    {{ currentPlan ? "/" + currentPlan?.period : "" }}
+                </span>
+            </div>
+        </div>
+        <div class="sales-wrapper">
+            <div class="title">
+                {{ ls.l("balance due") }}
+            </div>
+            <div class="statics-data">{{ amountCustomizer(balance ?? 0) }}</div>
+        </div>
+    </div>
     <div class="rectangle">
         <div class="statics-wrapper">
             <img
@@ -58,38 +90,6 @@
                 </div>
                 <div>({{ invoices ?? 0 }})</div>
             </div>
-        </div>
-    </div>
-    <div class="rectangle seles-statics">
-        <div class="sales-wrapper">
-            <div class="title">
-                {{ ls.l("Gross sales") }}
-            </div>
-            <div class="statics-data">
-                {{ amountCustomizer(grossSale ?? 0) }}
-            </div>
-        </div>
-        <div class="sales-wrapper">
-            <div class="title">
-                {{ ls.l("current plan") }}
-            </div>
-            <div class="statics-data">
-                {{
-                    amountCustomizer(
-                        currentPlan?.amount ?? 0,
-                        currentPlan?.currencyId
-                    )
-                }}
-                <span>
-                    {{ currentPlan ? "/" + currentPlan?.period : "" }}
-                </span>
-            </div>
-        </div>
-        <div class="sales-wrapper">
-            <div class="title">
-                {{ ls.l("balance due") }}
-            </div>
-            <div class="statics-data">{{ amountCustomizer(balance ?? 0) }}</div>
         </div>
     </div>
 </div>

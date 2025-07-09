@@ -17,6 +17,7 @@ import { KeysEnum } from "@shared/common/keys.enum/keys.enum";
 import DataSource from "devextreme/data/data_source";
 import ODataStore from "devextreme/data/odata/store";
 import { Subscription } from "rxjs";
+import { DxScrollViewComponent } from 'devextreme-angular';
 
 @Component({
     selector: "clients-navigation",
@@ -31,6 +32,8 @@ export class ClientsNavigationComponent
     readonly clientFields: KeysEnum<ContactDto> = ClientFields;
     isDropdownVisible = false;
     @ViewChild("dropdownBtn", { static: false }) dropdownBtn: ElementRef;
+    @ViewChild(DxScrollViewComponent, { static: false }) scrollView: DxScrollViewComponent;
+
 
     contactDropdownDataSource: DataSource;
 
@@ -156,6 +159,24 @@ export class ClientsNavigationComponent
 
     toggleDropdown() {
         this.isDropdownVisible = !this.isDropdownVisible;
+        // if (this.isDropdownVisible) {
+            this.scrollToSelectedClient();
+        // }
+    }
+
+    scrollToSelectedClient() {
+        setTimeout(() => {
+        if (!this.scrollView || !this.currentContactId) return;
+
+            const dropdownElement = this.scrollView.instance.content();
+            const selectedItem = dropdownElement.querySelector('.dropdown-item.selectedItem') as HTMLElement; // Type assertion
+            console.log(selectedItem);
+            if (selectedItem) {
+                const scrollTop = selectedItem.offsetTop - (dropdownElement.clientHeight / 2);
+                console.log(selectedItem);
+                this.scrollView.instance.scrollTo(scrollTop);
+            }
+        }, 150);
     }
 
     onClose() {
