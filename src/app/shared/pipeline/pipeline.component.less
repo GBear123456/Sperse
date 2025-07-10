@@ -837,3 +837,52 @@
 ::ng-deep .show-left-bar .funnel-wrapper {
   height: calc(~'100vh - 135px');
 }
+
+::ng-deep .new-column-title {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 63px;
+  min-height: 40px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+::ng-deep .column4.negative {
+  .new-column-title {
+    clip-path: polygon(0% 0%, calc(100% - 15px) 0%, 100% 100%, 0% 100%);
+    margin-left: 0px;
+  }
+}
+
+::ng-deep .column3.negative,
+.column2.negative,
+.column1.negative {
+  .new-column-title {
+    clip-path: polygon(0% 0%, calc(100% - 15px) 0%, 100% 100%, 15px 100%);
+    margin-left: -10px;
+  }
+}
+
+::ng-deep .column0.focused {
+  .new-column-title {
+    clip-path: polygon(0% 0%, 100% 0%, calc(100% - 15px) 100%, 15px 100%);
+  }
+}
+
+::ng-deep .column4.positive {
+  .new-column-title {
+    clip-path: polygon(15px 0%, 100% 0%, 100% 100%, 0% 100%);
+    margin-left: 10px;
+  }
+}
+
+::ng-deep .column3.positive,
+.column2.positive,
+.column1.positive {
+  .new-column-title {
+    clip-path: polygon(15px 0%, 100% 0%, calc(100% - 15px) 100%, 0% 100%);
+  }
+}
