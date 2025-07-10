@@ -14,6 +14,7 @@
                 !contactInfo.parentId
             "
             #stagesList
+            staticListId="stages"
             [width]="'210px'"
             [title]="l('Stages')"
             [selectedTabId]="selectedPipelineId"
@@ -31,6 +32,7 @@
         </app-static-list>
         <app-static-list
             #statusesList
+            staticListId="groups"
             [width]="'180px'"
             [title]="l('Toolbar_Groups')"
             [showConfirmation]="false"

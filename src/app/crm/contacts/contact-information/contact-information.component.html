@@ -170,7 +170,7 @@
                     />
                     <span class="section-title">{{ ls.l("Groups") }}</span>
                 </div>
-                <mat-chip-list>
+                <mat-chip-list (click)="showTooltip()">
                     <mat-chip
                         *ngFor="let group of groups"
                         [ngClass]="group.className"
