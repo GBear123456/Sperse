@@ -11,7 +11,7 @@
 <div class="pipeline-wrapper" style="--max-column-height: {{ getMaxColumnHeight(columnItems) }}">
   <div
     *ngFor="let stage of stages; let i = index"
-    class="column column{{
+    class="new-column new-column{{
       stage.index +
         ' ' +
         ((stage.sortOrder && (stage.sortOrder > 0 ? 'positive' : 'negative')) || 'focused')
@@ -26,7 +26,7 @@
     #parent
   >
     <div
-      class="column-title"
+      class="new-column-title"
       [title]="stage.name"
       [hidden]="loading"
       [ngStyle]="{
