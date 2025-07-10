@@ -73,6 +73,9 @@
         box-shadow: none;
       }
     }
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .top-menu {
@@ -282,4 +285,28 @@
   color: var(--text-color);
   padding: 0;
   margin: 0;
+}
+
+:host {
+  /* Scrollbar track (background) */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 8px;
+  }
+
+  /* Scrollbar thumb (the draggable part) */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+
+  /* Scrollbar track (the container the thumb moves inside) */
+  ::-webkit-scrollbar-track {
+    background: #f0f0f0;
+  }
+
+  /* Scrollbar corner (if both axes are present) */
+  ::-webkit-scrollbar-corner {
+    background: #ccc;
+  }
 }
