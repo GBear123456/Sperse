@@ -1,18 +1,64 @@
 :host {
-  display: block;
   position: relative;
   height: 100%;
   z-index: 2;
+
+  .top {
+    height: 115px;
+    border-bottom: 1px solid var(--border-color);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px;
+    position: relative;
+
+    .home-button {
+      padding: 4px 12px;
+      background-color: var(--warning-color);
+      color: var(--text-color);
+      border-radius: 4px;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 60px;
+      left: -28px;
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      background-color: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    img {
+      filter: brightness(0) invert(1);
+    }
+  }
 
   .left-menu {
     width: 341px;
     height: calc(~'100vh - 215px');
     border-right: 1px solid var(--border-color);
     background-color: var(--card-bg);
-    padding: 35px 25px 25px 25px;
+
     float: right;
-    transition: transform 0.5s;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateX(0);
+    opacity: 1;
     z-index: 2;
+  }
+
+  .left-menu.closing {
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .items-list {
+    padding: 20px;
   }
 
   &.fullscreen .left-menu {
@@ -47,39 +93,32 @@
   }
 
   .items-progress {
-    position: relative;
-    padding-left: 45px;
     list-style: none;
     line-height: 1;
-    color: var(--muted-color);
     letter-spacing: 0.3px;
 
-    &::before {
-      display: inline-block;
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 15px;
-      width: 10px;
-      height: 100%;
-      border-left: 3px solid var(--card-bg);
-    }
-
     &-item {
-      position: relative;
       font-weight: 500;
       display: flex;
       align-items: center;
+      padding: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--button-hover-bg);
+        color: var(--text-color);
+
+        img {
+          filter: brightness(0) invert(1);
+        }
+      }
 
       .img {
-        width: 45px;
-        height: 45px;
+        width: 20px;
+        height: 20px;
         margin: 0;
         padding: 0;
-        position: absolute;
-        left: -52px;
-        top: -17px;
-        background: var(--card-bg) no-repeat center;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -100,13 +139,13 @@
           font-weight: 300;
           text-align: center;
           font-size: 25px;
-          color: var(--border-color);
+          color: var(--text-color);
           width: 25px;
           height: 25px;
           right: 0;
           top: -7px;
           cursor: pointer;
-          border: 1px solid var(--border-color);
+          border: 1px solid var(--text-color);
         }
 
         &:hover .add-button {
@@ -137,7 +176,7 @@
       }
 
       &:not(:last-child) {
-        padding-bottom: 63px;
+        margin-bottom: 10px;
       }
 
       &.current {
