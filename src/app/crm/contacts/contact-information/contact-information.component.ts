@@ -4,6 +4,7 @@ import {
     AfterViewInit,
     Component,
     OnDestroy,
+    ViewChild,
 } from "@angular/core";
 
 /** Third party imports */
@@ -39,6 +40,7 @@ import {
 } from "@shared/service-proxies/service-proxies";
 import { ContactsService } from "../contacts.service";
 import { PersonalDetailsService } from "../personal-details/personal-details.service";
+import { ToolbarService } from "@app/shared/common/toolbar/toolbar.service";
 
 @Component({
     selector: "contact-information",
@@ -92,6 +94,7 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
         private addressServiceProxy: ContactAddressServiceProxy,
         public ls: AppLocalizationService,
         public layoutService: LayoutService,
+        private toolbarService: ToolbarService,
         private store$: Store<AppStore.State>
     ) {
         this.dialog.closeAll();
@@ -151,6 +154,10 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
                       }))
                 : [];
         }
+    }
+
+    showTooltip() {
+        this.toolbarService.showTooltipFor("groups");
     }
 
     ngOnInit() {

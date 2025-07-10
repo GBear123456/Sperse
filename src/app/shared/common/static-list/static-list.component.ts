@@ -14,6 +14,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService } from 'abp-ng2-module';
 import { PermissionCheckerService } from 'abp-ng2-module';
+import { ToolbarService } from '../toolbar/toolbar.service';
 
 @Component({
   selector: 'app-static-list',
@@ -31,6 +32,7 @@ export class StaticListComponent {
     @Output() onBottomInputApplyValue: EventEmitter<any> = new EventEmitter();
     @Output() onFilterApply: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
+    @Input() staticListId: string;
     @Input() width: string = '100%';
     @Input() height: number;
     @Input() listHeight: string;
@@ -95,12 +97,23 @@ export class StaticListComponent {
         private filtersService: FiltersService,
         private messageService: MessageService,
         private permissionCheckerService: PermissionCheckerService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        private toolbarService: ToolbarService
     ) {}
 
+    ngOnInit() {
+        this.toolbarService.tooltipTarget$.subscribe((id) => {
+            if(id === this.staticListId) {
+                this.toggle();
+            }
+        });
+    }
+
     toggle() {
-        if (this.tooltipVisible = !this.tooltipVisible)
+        this.tooltipVisible = !this.tooltipVisible;
+        if (this.tooltipVisible) {
             this.highlightSelectedFilters();
+        }
         return this.tooltipVisible;
     }
 
