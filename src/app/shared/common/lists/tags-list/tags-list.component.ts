@@ -18,6 +18,7 @@ import { ContactTagsServiceProxy, ContactTagInfoDto, ContactTagInput, UntagConta
 import { MessageService, NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 
 @Component({
   selector: 'tags-list',
@@ -27,6 +28,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 })
 export class TagsListComponent implements OnInit {
     @Input() filterModel: any;
+    @Input() staticListId: string;
     @Input() selectedKeys: number[] = [];
     @Input() targetSelector = '[aria-label="' + this.ls.l('Toolbar_Tags') + '"]';
     @Input() bulkUpdateMode = false;
@@ -65,7 +67,8 @@ export class TagsListComponent implements OnInit {
         private notifyService: NotifyService,
         private permissionChecker: AppPermissionService,
         public dialog: MatDialog,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        private toolbarService: ToolbarService
     ) {}
 
     toggle() {
@@ -151,6 +154,11 @@ export class TagsListComponent implements OnInit {
 
     ngOnInit() {
         this.refresh();
+        this.toolbarService.tooltipTarget$.subscribe((id) => {
+            if(id === this.staticListId) {
+                this.toggle();
+            }
+        });
     }
 
     refresh() {

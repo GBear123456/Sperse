@@ -170,7 +170,7 @@
                     />
                     <span class="section-title">{{ ls.l("Groups") }}</span>
                 </div>
-                <mat-chip-list (click)="showTooltip()">
+                <mat-chip-list (click)="showTooltipGroups()">
                     <mat-chip
                         *ngFor="let group of groups"
                         [ngClass]="group.className"
@@ -194,7 +194,7 @@
                     />
                     <span class="section-title">{{ ls.l("Lists") }}</span>
                 </div>
-                <mat-chip-list>
+                <mat-chip-list (click)="showTooltipLists()">
                     <mat-chip
                         *ngFor="let list of lists"
                         color="primary"
@@ -218,7 +218,7 @@
                     />
                     <span class="section-title">{{ ls.l("Tags") }}</span>
                 </div>
-                <mat-chip-list>
+                <mat-chip-list (click)="showTooltipTags()">
                     <mat-chip
                         *ngFor="let tag of tags"
                         color="primary"
@@ -242,7 +242,7 @@
                     />
                     <span class="section-title">{{ ls.l("Rating") }}</span>
                 </div>
-                <div class="rating-bar">
+                <div class="rating-bar" (click)="showTooltipRating()">
                     <mat-progress-bar
                         ng-reflect-color="#2fb8f0"
                         color="#2fb8f0"

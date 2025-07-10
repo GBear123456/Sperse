@@ -67,13 +67,16 @@
         </types-list>
         <tags-list
             [selectedKeys]="[contactInfo.id]"
+            staticListId="tags"
             [selectedItems]="contactInfo?.tags"
             [managePermission]="manageCGPermision"
             (onUpdated)="invalidateContact()"
+            targetSelector="[aria-label='{{ l('Toolbar_Tags') }}']"
         >
         </tags-list>
         <lists-list
             [selectedKeys]="[contactInfo.id]"
+            staticListId="lists"
             [selectedItems]="contactInfo?.lists"
             [managePermission]="manageCGPermision"
             (onUpdated)="invalidateContact()"
@@ -89,6 +92,7 @@
         </user-assignment-list>
         <rating
             [selectedKeys]="[contactInfo.id]"
+            staticListId="rating"
             [ratingValue]="contactInfo?.ratingId"
             (onRatingUpdated)="invalidateContact()"
             [managePermission]="manageCGPermision"
