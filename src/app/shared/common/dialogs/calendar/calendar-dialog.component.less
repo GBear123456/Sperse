@@ -1,6 +1,16 @@
 ::ng-deep .hide {
   display: none;
 }
+
+::ng-deep .cdk-overlay-container .cdk-overlay-pane.slider.min-width-0 {
+  height: 100vh !important;
+  margin-top: 0px !important;
+}
+
+::ng-deep .mat-dialog-container {
+  background-color: var(--card-bg) !important;
+}
+
 :host {
   height: calc(100vh - 75px);
   display: block;
