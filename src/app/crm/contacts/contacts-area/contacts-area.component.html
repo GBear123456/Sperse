@@ -36,10 +36,9 @@
                         <span
                             *ngIf="isEditAllowed"
                             class="send-icon"
-                            (click)="showDialog('phoneNumber', null, $event)"
                         >
                             <img
-                                src="./assets/common/icons/contact/send_icon.svg"
+                                src="./assets/common/icons/contact/call-calling.svg"
                                 alt="send"
                             />
                             call
@@ -120,7 +119,10 @@
                             *ngIf="isEditAllowed"
                             [class.visible]="hovered"
                         >
-                            <span class="send-icon">
+                            <span 
+                                class="send-icon" 
+                                (click)="showNewEmailDialog()"
+                            >
                                 <img
                                     src="./assets/common/icons/contact/send_icon.svg"
                                     alt="send"

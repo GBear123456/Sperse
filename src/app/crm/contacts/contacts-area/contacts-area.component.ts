@@ -304,4 +304,24 @@ export class ContactsAreaComponent {
         this.clipboardService.copyFromContent(value);
         this.notifyService.info(this.ls.l('SavedToClipboard'));
     }
+
+    showNewEmailDialog(title = 'NewEmail', data: any = {}) {
+        data = Object.assign({
+            contactId: this.contactInfo.id,
+            contact: this.contactInfo,
+            replyToId: undefined
+        }, data);
+
+        this.contactsService.showEmailDialog(Object.assign(data, {
+            to: data.to ? (data.to['join'] ? data.to : [data.to]) : []
+        }), title).subscribe((res) => {
+            this.dialog.closeAll();
+        })
+    }
+
+    // showNewSMSDialog() {
+    //     this.contactsService.showSMSDialog({
+    //         contact: this.contactInfo
+    //     });
+    // }
 }
