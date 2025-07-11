@@ -87,12 +87,12 @@ export class ClientsNavigationComponent
             const routeId = +this.router.url
                 .split("/")
                 .find((part) => /^\d+$/.test(part));
-            const segments = this.getSegment;
-            if (segments.indexOf("company") < 0) {
-                const contact = this.getContact(routeId);
-                if (contact[this.clientFields.OrganizationId])
-                    this.navigateToContact(routeId);
-            }
+            // const segments = this.getSegment;
+            // if (segments.indexOf("company") < 0) {
+            //     const contact = this.getContact(routeId);
+            //     if (contact[this.clientFields.OrganizationId])
+            //         this.navigateToContact(routeId);
+            // }
             this.currentContactId = routeId;
         });
     }
