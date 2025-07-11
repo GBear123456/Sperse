@@ -4,7 +4,8 @@
     [items]="items"
     [disabled]="isDisabled"
     [elementAttr]="{ compact: compact }"
-    (onItemRendered)="onItemRendered($event)">
+    (onItemRendered)="onItemRendered($event)"
+    [ngClass]="toolbarClass">
     <div *dxTemplate="let data of 'titleTemplate'">
         <ng-template [ngTemplateOutlet]="titleTemplate"></ng-template>
     </div>
