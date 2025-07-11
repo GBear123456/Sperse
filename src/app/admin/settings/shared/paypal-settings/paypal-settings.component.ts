@@ -38,6 +38,10 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     }
 
     ngOnInit(): void {
+        this.loadSettings();
+    }
+
+    loadSettings() {
         this.startLoading();
         if (this.isPaymentsEnabled) {
             this.tenantPaymentSettingsService.getPayPalSettings()
@@ -67,6 +71,22 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
         });
     }
 
+    unlinkMerchant() {
+        if (this.isHost || !this.paypalPaymentSettings.merchantId)
+            return;
+
+        this.message.confirm('', this.l('Do you want to unlink Paypal account ?'), (isConfirmed) => {
+            if (isConfirmed) {
+                this.startLoading();
+                this.tenantPaymentSettingsService.unlinkPayPalMerchant().pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe(() => {
+                    this.loadSettings();
+                });
+            }
+        });
+    }
+
     getSaveObs(): Observable<any> {
         return this.tenantPaymentSettingsService.updatePayPalSettings(this.paypalPaymentSettings);
     }
@@ -74,5 +94,14 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     getPayPalWebhookUrl(): string {
         let tenantId = this.appSession.tenantId || '';
         return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=${tenantId}`;
+    }
+
+    get isMerchantConnected(): boolean {
+        return this.paypalPaymentSettings.merchantId && this.paypalPaymentSettings.merchantEmailConfirmed && this.paypalPaymentSettings.merchantPaymentsReceivable;
+    }
+
+    copyToClipboard(value: string) {
+        this.clipboardService.copyFromContent(value.trim());
+        this.notify.info(this.l('SavedToClipboard'));
     }
 }

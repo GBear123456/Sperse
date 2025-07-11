@@ -62,94 +62,43 @@
             </div>
         </div>
     </mat-tab>
-    <mat-tab *ngIf="!isHost">
+    <mat-tab *ngIf="!isHost && paypalPaymentSettings.merchantId">
         <ng-template mat-tab-label>
             <img src="./assets/common/icons/peoples.svg">
-            <div class="title">CONNECTED ACCOUNTS</div>
+            <div class="title">CONNECTED ACCOUNT</div>
         </ng-template>
         <div class="connected-tab blocks-tab">
-            Connected merchant account - <b>{{paypalPaymentSettings.merchantId}}</b>
+            <div class="connected-account block" [class.active]="isMerchantConnected">
+                <div class="section top-bar">
+                    <i class="fa check-icon" [ngClass]="isMerchantConnected ? 'fa-check-circle' : 'fa-circle-thin'"></i>
+                    <span class="name-title">{{paypalPaymentSettings.merchantLegalName}}</span>
+                </div>
+                <div class="section account-info">
+                    <div class="stripe-button-container">
+                        <button class="btn btn-layout paypal-button">
+                            {{ isMerchantConnected ? l('Connected with') : l('Finish onboarding with') }}
+                            <img width="100" src="./assets/common/images/paypal.svg" />
+                        </button>
+                    </div>
+                    <div class="account-details">
+                        <h6>{{l("Merchant account info")}}:</h6>
+                        <div class="clipboard-holder"><span>Merchant Id: </span><b>{{paypalPaymentSettings.merchantId}}</b><i class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipboard(paypalPaymentSettings.merchantId)"></i></div>
+                        <div class="clipboard-holder"><span>Legal Name: </span><b>{{paypalPaymentSettings.merchantLegalName}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(paypalPaymentSettings.merchantLegalName)"></i></div>
+                        <div class="clipboard-holder"><span>Merchant Email: </span><b>{{paypalPaymentSettings.merchantEmail}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(paypalPaymentSettings.merchantEmail)"></i></div>
+                    </div>
+                </div>
+                <div class="account-actions">
+                    <span (click)="unlinkMerchant()"><i class="fa fa-trash-o"></i>Unlink Connection</span>
+                </div>
+            </div>
         </div>
     </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
             <img src="./assets/common/icons/blocks.svg">
-            <div class="title">API KEYS</div>
+            <div class="title">API KEY</div>
         </ng-template>
         <div class="api-keys-tab blocks-tab">
-            <!--<button *ngIf="apiKeySettings && !apiKeySettings.length" class="btn btn-layout" (click)="addApiKeySettings()">
-                {{ l('Add new API settings') }}
-            </button>-->
-            <!--<div *ngFor="let settings of apiKeySettings" class="api-key-account block" [class.active]="settings.isActive">
-                <div class="section top-bar">
-                    <i class="fa check-icon" [ngClass]="settings.isActive ? 'fa-check-circle' : 'fa-circle-thin'"></i>
-                    <inplace-edit [id]="settings.id"
-                                  [value]="settings.displayName"
-                                  [maxLength]="256"
-                                  [validationRules]="[ { type: 'required', message: l('ThisFieldIsRequired') } ]"
-                                  showInlineEditButton="true"
-                                  lEntityName="DisplayName"
-                                  [editPlaceholder]="l('DisplayName')"
-                                  (valueChanged)="settings.displayName = $event">
-                    </inplace-edit>
-                </div>
-                <div class="api-key-info" [class.section]="!isHost">
-                    <h6>{{l("Secret key")}}</h6>
-                    <input placeholder="Enter Your Secret Key" [disabled]="settings.id" type="text" [(ngModel)]="settings.apiKey">
-
-                    <h6>{{l("Publishable key")}}</h6>
-                    <input placeholder="Enter Your Secret Key" type="text" [(ngModel)]="settings.publishableKey">
-                    <p>
-                        <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
-                    </p>
-                    <br />
-                    <p>
-                        <dx-check-box id="StripeIgnoreExternalWebhooks"
-                                      [text]="l('Ignore external webhooks')"
-                                      [(value)]="settings.ignoreExternalWebhooks">
-                        </dx-check-box>
-                        <span class="small">*Skip webhooks that are not intended for <b>{{tenantName}}</b></span>
-                    </p>
-                    <div>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</div>
-                    <p>
-                        <button [disabled]="settings.webhookSingingSecret" [title]="settings.webhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, false)">
-                            {{ settings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
-                        </button>
-                        <img *ngIf="settings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
-                    </p>
-                    <div *ngIf="isHost" class="section">
-                        <h6>{{l("OAuth Client Id")}}</h6>
-                        <input type="text" [(ngModel)]="settings.oAuthClientId">
-
-                        <span class="small">{{l('Connects a tenant\'s Stripe account. The value can be found in the ')}}<a href="https://dashboard.stripe.com/settings/connect" target="_blank">settings</a>.</span><br />
-                        <span class="small">{{l('Please enable ')}}<b>OAuth for Standard accounts</b>{{l(' and add the following URL to OAuth redirects')}}</span>
-                        <span class="small">URL - <span class="copy-url"><b>{{getStripeOAuthConnectRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span>
-                    </div>
-                    <div>Use button below to create <b>Connect</b> webhook and recieve Connect events from Stripe</div>
-                    <p>
-                        <button [disabled]="settings.connectWebhookSingingSecret" [title]="settings.connectWebhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, true)">
-                            {{ settings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
-                        </button>
-                        <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
-                    </p>
-                    <p>
-                        <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
-                                      [text]="l('Ignore external connected accounts')"
-                                      [(value)]="settings.ignoreExternalConnectedAccounts">
-                        </dx-check-box>
-                        <span class="small">*Skip webhooks from external connected accounts</span>
-                    </p>
-                    <h6 class="tax-settings">Tax Settings</h6>
-                    <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
-                        {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
-                    </button>
-                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
-                </div>
-                <div *ngIf="!isHost" class="account-actions">
-                    <span *ngIf="!settings.isActive" (click)="setIsActive(settings)"><i class="fa fa-check"></i>Set as active</span>
-                    <span (click)="delete(settings)"><i class="fa fa-trash-o"></i>Delete Connection</span>
-                </div>
-            </div>-->
             <div class="api-key-account block">
                 <div class="form-group">
                     <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
@@ -190,7 +139,7 @@
                         <b>'Billing subscription activated'</b>, <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>,
                         <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b>,
                         <b>'Payment payouts-item succeeded'</b>, <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
-                        <b *ngIf="isHost">, 'Merchant onboarding completed'</b>
+                        <b *ngIf="isHost">, 'Merchant onboarding completed', 'Merchant partner-consent revoked'</b>
                     </span>
                 </p>
             </div>

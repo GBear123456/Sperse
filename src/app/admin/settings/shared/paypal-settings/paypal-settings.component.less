@@ -142,6 +142,31 @@
             }
         }
 
+        .connected-tab {
+            .block {
+                width: 500px;
+            }
+
+            .connected-account {
+                .name-title {
+                    font-size: 17px;
+                    font-weight: 600;
+                    margin-left: 10px;
+                }
+
+                .account-info {
+                    .stripe-button-container {
+                        margin-bottom: 25px;
+
+                        .paypal-button {
+                            background-color: #ffc439;
+                            color: black;
+                        }
+                    }
+                }
+            }
+        }
+
         .api-keys-tab {
             input {
                 width: 100%;
@@ -231,6 +256,18 @@
                         }
                     }
                 }
+            }
+        }
+    }
+
+    .clipboard-holder {
+        .save-to-clipboard {
+            display: none;
+        }
+
+        &:hover {
+            .save-to-clipboard {
+                display: inline-block;
             }
         }
     }
