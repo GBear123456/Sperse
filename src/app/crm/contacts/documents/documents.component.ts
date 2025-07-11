@@ -1044,24 +1044,22 @@ export class DocumentsComponent
                                 this.searchValueChange(e);
                             },
                         },
-                    },
-                    {
-                        name: "title",
-                    },
+                    }
                 ],
             },
             {
-                location: "before",
-                locateInMenu: "auto",
+                location: 'before',
+                locateInMenu: 'auto',
                 items: [
                     {
-                        name: "ByExt",
-                        text: this.l("ByExt"),
-                        widget: "dxDropDownMenu",
+                        name: 'select-box',
+                        text: this.l('By Ext'),
+                        widget: 'dxDropDownMenu',
                         options: {
-                            text: this.l("ByExt"),
-                            hint: this.l("ByExt"),
+                            hint: this.l('Filter By Extension'),
+                            selectedIndex: this.selectedGroupByIndex,
                             items: [
+                                '',
                                 ...this.validWopiExtensions,
                                 ...this.validImageExtensions,
                                 ...this.validVideoExtensions,
@@ -1071,16 +1069,18 @@ export class DocumentsComponent
                                 ...this.validXmlExtensions,
                             ].map((extension) => {
                                 return {
-                                    action: (options) => {
-                                        this.changeGroupBy(options);
-                                    },
-                                    text: extension,
-                                };
+                                    action: this.changeGroupBy.bind(this),
+                                    text: extension
+                                }
                             }),
-                        },
-                    },
-                    { name: 'print', action: Function(), visible: false }
-                ],
+                            onSelectionChanged: (e) => {
+                                if (e) {
+                                    this.selectedGroupByIndex = e.itemIndex;
+                                }
+                            }
+                        }
+                    }
+                ]
             },
             {
                 location: "after",

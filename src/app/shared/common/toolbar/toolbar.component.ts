@@ -391,9 +391,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 hint: this.ls.l("Actions"),
             },
             extension: {
-                hint: this.ls.l("ByExt"),
-                text: this.ls.l("ByExt"),
-                icon: this.getImgURI("arrow-down-icon"),
+                hint: this.ls.l("By Ext"),
+                text: this.ls.l("By Ext")
             },
             list: {
                 hint: this.ls.l("List"),
