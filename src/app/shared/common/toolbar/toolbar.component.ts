@@ -395,12 +395,9 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 text: this.ls.l("By Ext")
             },
             list: {
+                accessKey: "list",
                 hint: this.ls.l("List"),
                 icon: this.getImgURI("bullet-list-69"),
-            },
-            grid: {
-                hint: this.ls.l("Grid"),
-                icon: this.getImgURI("blocks"),
             }
         };
     }

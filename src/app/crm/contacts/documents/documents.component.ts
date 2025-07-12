@@ -29,6 +29,7 @@ import {
     map,
     takeUntil,
     switchMap,
+    mapTo,
 } from "rxjs/operators";
 import { CacheService } from "ng2-cache-service";
 import * as xmlJs from "xml-js";
@@ -69,6 +70,7 @@ import { ToolbarGroupModel } from "@app/shared/common/toolbar/toolbar.model";
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from "@app/app.service";
 import { DocumentTabsFilter, DocumentViewTypeFilter } from './documents-dto.interface';
+import { DataLayoutType } from "@app/shared/layout/data-layout-type";
 
 
 @Component({
@@ -152,6 +154,15 @@ export class DocumentsComponent
         "bmp",
         "gif",
     ];
+    private allValidExtensions: String[] = [
+        ...this.validWopiExtensions,
+        ...this.validImageExtensions,
+        ...this.validVideoExtensions,
+        ...this.validArchiveExtensions,
+        ...this.validCsvExtensions,
+        ...this.validTextExtensions,
+        ...this.validXmlExtensions,
+    ];
     public viewerToolbarConfig: any = [];
     public parsedCsv: any;
     archiveFiles$: Observable<any[]>;
@@ -195,6 +206,7 @@ export class DocumentsComponent
                 : of(this.documentProxy["data"].source);
         })
     );
+    filteredDocuments$: Observable<DocumentInfo[]> = this.documents$;
 
     selectedDocumentTabsFilter: DocumentTabsFilter = DocumentTabsFilter.All;
     selectedViewType: string = DocumentViewTypeFilter.List;
@@ -202,6 +214,10 @@ export class DocumentsComponent
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private rootComponent: any;
     private selectedGroupByIndex = 0;
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
+        DataLayoutType.DataGrid
+    );
+    isGalleryView = false;
 
     constructor(
         injector: Injector,
@@ -579,6 +595,11 @@ export class DocumentsComponent
 
     private getFileExtensionByFileName(fileName: string): string {
         return fileName && fileName.split(".").pop();
+    }
+
+    private getFileNameWithoutExtension(fileName: string): string {
+        if (!fileName) return '';
+        return fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
     }
 
     viewDocument(type: DocumentType = DocumentType.Current, event?: Event) {
@@ -994,8 +1015,62 @@ export class DocumentsComponent
 
     triggerToolbarFilter() {
         this.initToolbarConfig();
-        // this.filtersService.change([]);
     }
+
+    filterDocumentsByType = (filterValue) => {
+        if (filterValue === 'all') {
+            this.filteredDocuments$ = this.documents$;
+            return;
+        }
+
+        let allowedExts = [];
+
+        switch (filterValue) {
+            case 'All':
+                allowedExts = [
+                    ...this.validWopiExtensions,
+                    ...this.validImageExtensions,
+                    ...this.validVideoExtensions,
+                    ...this.validArchiveExtensions,
+                    ...this.validCsvExtensions,
+                    ...this.validTextExtensions,
+                    ...this.validXmlExtensions,
+                ];
+            break;
+            case 'Images':
+                allowedExts = this.validImageExtensions;
+            break;
+            case 'Videos':
+                allowedExts = this.validVideoExtensions;
+            break;
+            case 'PDFs':
+                allowedExts = ['pdf'];
+            break;
+            case 'Text':
+                allowedExts = this.validTextExtensions;
+            break;
+            case 'CSV':
+                allowedExts = this.validCsvExtensions;
+            break;
+            case 'XML':
+                allowedExts = this.validXmlExtensions;
+            break;
+            case 'ARCHIVE':
+                allowedExts = this.validArchiveExtensions;
+            break;
+            case 'Invoices':
+                allowedExts = ['pdf'];
+            break;
+        }
+
+        this.filteredDocuments$ = this.documents$.pipe(
+            map((documents) =>
+                documents.filter((document) =>
+                    allowedExts.includes(this.getFileExtensionByFileName(document.fileName))
+                )
+            )
+        );
+    };
 
     initToolbarConfig() {
         this.toolbarConfig = [
@@ -1017,14 +1092,43 @@ export class DocumentsComponent
                         },
                         action: () => {
                             this.selectedDocumentTabsFilter = DocumentTabsFilter[key];
+                            this.filterDocumentsByType(DocumentTabsFilter[key]);
                             this.triggerToolbarFilter();
                         },
                         attr: {
-                            "document-selected":
-                                this.selectedDocumentTabsFilter == DocumentTabsFilter[key],
+                            "class": `document-filter-type ${this.selectedDocumentTabsFilter == DocumentTabsFilter[key] ? "document-selected" : ""}`,
                         },
                     };
                 }),
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'select-box',
+                        text: this.l('By Ext'),
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Filter By Extension'),
+                            selectedIndex: this.selectedGroupByIndex,
+                            items: [
+                                '',
+                                ...this.allValidExtensions
+                            ].map((extension) => {
+                                return {
+                                    action: this.filterByExtension.bind(this),
+                                    text: extension
+                                }
+                            }),
+                            onSelectionChanged: (e) => {
+                                if (e) {
+                                    this.selectedGroupByIndex = e.itemIndex;
+                                }
+                            }
+                        }
+                    }
+                ]
             },
             {
                 location: "after",
@@ -1044,81 +1148,46 @@ export class DocumentsComponent
                                 this.searchValueChange(e);
                             },
                         },
+                        attr: {
+                            "class": "document-search-filter"
+                        }
                     }
                 ],
             },
             {
-                location: 'before',
+                location: 'after',
                 locateInMenu: 'auto',
+                areItemsDependent: true,
                 items: [
                     {
-                        name: 'select-box',
-                        text: this.l('By Ext'),
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Filter By Extension'),
-                            selectedIndex: this.selectedGroupByIndex,
-                            items: [
-                                '',
-                                ...this.validWopiExtensions,
-                                ...this.validImageExtensions,
-                                ...this.validVideoExtensions,
-                                ...this.validArchiveExtensions,
-                                ...this.validCsvExtensions,
-                                ...this.validTextExtensions,
-                                ...this.validXmlExtensions,
-                            ].map((extension) => {
-                                return {
-                                    action: this.changeGroupBy.bind(this),
-                                    text: extension
-                                }
-                            }),
-                            onSelectionChanged: (e) => {
-                                if (e) {
-                                    this.selectedGroupByIndex = e.itemIndex;
-                                }
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                location: "after",
-                items: [
-                    {
-                        name: "grid",
-                        options: {
-                            hint: this.l("Grid"),
-                        },
-                        visible: true,
+                        name: 'gallery',
                         action: () => {
                             this.selectedViewType = DocumentViewTypeFilter.Grid;
                             this.triggerToolbarFilter();
+                            this.isGalleryView = true;
+                        },
+                        options: {
+                            checkPressed: () => this.showGallery
                         },
                         attr: {
                             "class": `dx-document-grid-view ${this.selectedViewType === DocumentViewTypeFilter.Grid ? 'dx-document-selected-view' : ''}`
-                        },
+                        }
                     },
-                ],
-            },
-            {
-                location: "after",
-                items: [
                     {
-                        name: "list",
-                        options: {
-                            hint: this.l("List"),
-                        },
-                        visible: true,
-                        action: () => {
+                        name: 'list',
+                        action: ()  => {
                             this.selectedViewType = DocumentViewTypeFilter.List;
                             this.triggerToolbarFilter();
+                            this.isGalleryView = false;
+                        },
+                        options: {
+                            checkPressed: () => this.showDataGrid
                         },
                         attr: {
                             "class": `dx-document-list-view ${this.selectedViewType === DocumentViewTypeFilter.List ? 'dx-document-selected-view' : ''}`
-                        },
+                        }
                     },
-                ],
+                ]
             }
         ];
     }
@@ -1137,8 +1206,6 @@ export class DocumentsComponent
     activate() {
         super.activate();
         this.searchClear = false;
-        // this.lifeCycleSubjectsService.activate.next();
-        // this.initFilterConfig();
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
@@ -1146,20 +1213,30 @@ export class DocumentsComponent
         this.showHostElement();
     }
 
-    changeGroupBy(event) {
-        // this.startLoading();
-        // let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex;
-        // /** Change historical field for different date intervals */
-        // this.closeTransactionsDetail();
-        // if (this.pivotGrid) {
-        //     if (this.expandAll(itemIndex)) {
-        //         this.pivotGrid.instance.repaint();
-        //     }
-        // } else {
-        //     /** Update later when new pivot grid reinit */
-        //     this.expandBeforeIndex = itemIndex;
-        //     this.finishLoading();
-        // }
+    filterByExtension(event) {
+        const selectedExtension = event.itemData.text;
+
+        if(!selectedExtension || !this.allValidExtensions.includes(selectedExtension)) {
+            this.filteredDocuments$ = this.documents$;
+            return;
+        };
+
+        this.filteredDocuments$ = this.documents$.pipe(
+            map((documents) =>
+                documents.filter((document) => {
+                    console.log(document, this.getFileExtensionByFileName(document.fileName), selectedExtension);
+                    return this.getFileExtensionByFileName(document.fileName) == selectedExtension;
+                })
+            )
+        );
+    }
+
+    get showDataGrid(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && !this.isGalleryView;
+    }
+
+    get showGallery(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.DataGrid && this.isGalleryView;
     }
 
     ngOnDestroy() {
