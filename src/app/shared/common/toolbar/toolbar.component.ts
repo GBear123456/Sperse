@@ -39,6 +39,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
     @Input() titleTemplate: TemplateRef<any>;
     @Input() isDisabled = false;
     @Input() width = "100%";
+    @Input() toolbarClass!: string;
     _config: ToolbarGroupModel[];
     @Input()
     set config(config: ToolbarGroupModel[]) {
@@ -389,6 +390,18 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 text: this.ls.l("Actions"),
                 hint: this.ls.l("Actions"),
             },
+            extension: {
+                hint: this.ls.l("By Ext"),
+                text: this.ls.l("By Ext")
+            },
+            list: {
+                hint: this.ls.l("List"),
+                icon: this.getImgURI("bullet-list-69"),
+            },
+            grid: {
+                hint: this.ls.l("Grid"),
+                icon: this.getImgURI("blocks"),
+            }
         };
     }
 

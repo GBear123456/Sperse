@@ -65,6 +65,11 @@ import { DocumentViewerType } from "@app/crm/contacts/documents/document-viewer-
 import { RequestHelper } from "@root/shared/helpers/RequestHelper";
 import { ActionMenuComponent } from "@app/shared/common/action-menu/action-menu.component";
 import { ActionMenuItem } from "@app/shared/common/action-menu/action-menu-item.interface";
+import { ToolbarGroupModel } from "@app/shared/common/toolbar/toolbar.model";
+import { FiltersService } from '@shared/filters/filters.service';
+import { AppService } from "@app/app.service";
+import { DocumentTabsFilter, DocumentViewTypeFilter } from './documents-dto.interface';
+
 
 @Component({
     templateUrl: "./documents.component.html",
@@ -191,6 +196,13 @@ export class DocumentsComponent
         })
     );
 
+    selectedDocumentTabsFilter: DocumentTabsFilter = DocumentTabsFilter.All;
+    selectedViewType: string = DocumentViewTypeFilter.List;
+    toolbarConfig: ToolbarGroupModel[];
+    private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+    private rootComponent: any;
+    private selectedGroupByIndex = 0;
+
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -203,7 +215,9 @@ export class DocumentsComponent
         private cacheService: CacheService,
         private renderer: Renderer2,
         private csvParser: Papa,
-        public documentsService: DocumentsService
+        public documentsService: DocumentsService,
+        protected appService: AppService,
+        private filtersService: FiltersService
     ) {
         super(injector);
         this.data = this.contactService["data"];
@@ -216,6 +230,7 @@ export class DocumentsComponent
     }
 
     ngOnInit() {
+        this.activate();
         this.loadDocumentTypes();
     }
 
@@ -977,7 +992,178 @@ export class DocumentsComponent
         return moment(prev).diff(moment(next)) >= 0 ? 1 : -1;
     }
 
+    triggerToolbarFilter() {
+        this.initToolbarConfig();
+        // this.filtersService.change([]);
+    }
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: "before",
+                locateInMenu: "auto",
+                areItemsDependent: true,
+                items: Object.keys(DocumentTabsFilter).map((key) => {
+                    return {
+                        name: key,
+                        widget: "dxButton",
+                        options: {
+                            text: key,
+                            checkPressed: () => {
+                                return (
+                                    this.selectedDocumentTabsFilter == DocumentTabsFilter[key]
+                                );
+                            },
+                        },
+                        action: () => {
+                            this.selectedDocumentTabsFilter = DocumentTabsFilter[key];
+                            this.triggerToolbarFilter();
+                        },
+                        attr: {
+                            "document-selected":
+                                this.selectedDocumentTabsFilter == DocumentTabsFilter[key],
+                        },
+                    };
+                }),
+            },
+            {
+                location: "after",
+                items: [
+                    {
+                        name: "search",
+                        widget: "dxTextBox",
+                        options: {
+                            value: this.searchValue,
+                            width: "263",
+                            mode: "search",
+                            placeholder:
+                                this.l("Search") +
+                                " " +
+                                this.l("files and documents").toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            },
+                        },
+                    }
+                ],
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'select-box',
+                        text: this.l('By Ext'),
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Filter By Extension'),
+                            selectedIndex: this.selectedGroupByIndex,
+                            items: [
+                                '',
+                                ...this.validWopiExtensions,
+                                ...this.validImageExtensions,
+                                ...this.validVideoExtensions,
+                                ...this.validArchiveExtensions,
+                                ...this.validCsvExtensions,
+                                ...this.validTextExtensions,
+                                ...this.validXmlExtensions,
+                            ].map((extension) => {
+                                return {
+                                    action: this.changeGroupBy.bind(this),
+                                    text: extension
+                                }
+                            }),
+                            onSelectionChanged: (e) => {
+                                if (e) {
+                                    this.selectedGroupByIndex = e.itemIndex;
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                location: "after",
+                items: [
+                    {
+                        name: "grid",
+                        options: {
+                            hint: this.l("Grid"),
+                        },
+                        visible: true,
+                        action: () => {
+                            this.selectedViewType = DocumentViewTypeFilter.Grid;
+                            this.triggerToolbarFilter();
+                        },
+                        attr: {
+                            "class": `dx-document-grid-view ${this.selectedViewType === DocumentViewTypeFilter.Grid ? 'dx-document-selected-view' : ''}`
+                        },
+                    },
+                ],
+            },
+            {
+                location: "after",
+                items: [
+                    {
+                        name: "list",
+                        options: {
+                            hint: this.l("List"),
+                        },
+                        visible: true,
+                        action: () => {
+                            this.selectedViewType = DocumentViewTypeFilter.List;
+                            this.triggerToolbarFilter();
+                        },
+                        attr: {
+                            "class": `dx-document-list-view ${this.selectedViewType === DocumentViewTypeFilter.List ? 'dx-document-selected-view' : ''}`
+                        },
+                    },
+                ],
+            }
+        ];
+    }
+
+    searchValueChange(e: object) {
+        if (this.searchValue != e['value']) {
+            this.searchValue = e['value'];
+            this.invalidate();
+        }
+    }
+
+    invalidate() {
+        this._refresh.next(null);
+    }
+
+    activate() {
+        super.activate();
+        this.searchClear = false;
+        // this.lifeCycleSubjectsService.activate.next();
+        // this.initFilterConfig();
+        this.initToolbarConfig();
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+
+        this.showHostElement();
+    }
+
+    changeGroupBy(event) {
+        // this.startLoading();
+        // let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex;
+        // /** Change historical field for different date intervals */
+        // this.closeTransactionsDetail();
+        // if (this.pivotGrid) {
+        //     if (this.expandAll(itemIndex)) {
+        //         this.pivotGrid.instance.repaint();
+        //     }
+        // } else {
+        //     /** Update later when new pivot grid reinit */
+        //     this.expandBeforeIndex = itemIndex;
+        //     this.finishLoading();
+        // }
+    }
+
     ngOnDestroy() {
+        this.deactivate();
         this.clientService.unsubscribe(this.ident);
         this.closeDocument();
         super.ngOnDestroy();

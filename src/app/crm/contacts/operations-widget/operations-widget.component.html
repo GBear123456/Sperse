@@ -71,7 +71,7 @@
             [selectedItems]="contactInfo?.tags"
             [managePermission]="manageCGPermision"
             (onUpdated)="invalidateContact()"
-            targetSelector="[aria-label='{{ l('Toolbar_Tags') }}']"
+            staticListId="tags"
         >
         </tags-list>
         <lists-list
@@ -80,6 +80,7 @@
             [selectedItems]="contactInfo?.lists"
             [managePermission]="manageCGPermision"
             (onUpdated)="invalidateContact()"
+            staticListId="lists"
         >
         </lists-list>
         <user-assignment-list

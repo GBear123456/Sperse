@@ -156,8 +156,8 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-    showTooltipGroups() {
-        this.toolbarService.showTooltipFor("groups");
+    showTooltip(target) {
+        this.toolbarService.showTooltipFor(target);
     }
 
     showTooltipLists() {

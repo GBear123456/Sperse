@@ -18,7 +18,7 @@ import { ContactTagsServiceProxy, ContactTagInfoDto, ContactTagInput, UntagConta
 import { MessageService, NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
+import { ToolbarService } from '../../toolbar/toolbar.service';
 
 @Component({
   selector: 'tags-list',
@@ -28,13 +28,13 @@ import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 })
 export class TagsListComponent implements OnInit {
     @Input() filterModel: any;
-    @Input() staticListId: string;
     @Input() selectedKeys: number[] = [];
     @Input() targetSelector = '[aria-label="' + this.ls.l('Toolbar_Tags') + '"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() showSelection = false;
+    @Input() staticListId: string;
     @Input() set selectedItems(value) {
         this.selectedTags = value && value.slice();
     }
@@ -55,7 +55,7 @@ export class TagsListComponent implements OnInit {
     addNewTimeout: any;
     listComponent: any;
     tooltipVisible = false;
-
+    
     isUpdateDeleteAllowed = this.permissionChecker.isGranted(AppPermissions.CRMManageListsAndTags);
 
     constructor(
@@ -81,6 +81,7 @@ export class TagsListComponent implements OnInit {
             this.highlightSelectedFilters();
         }
     }
+
 
     apply(isRemove: boolean = false, selectedKeys?) {
         if (this.listComponent) {

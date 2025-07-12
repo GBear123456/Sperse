@@ -170,17 +170,19 @@
                     />
                     <span class="section-title">{{ ls.l("Groups") }}</span>
                 </div>
-                <mat-chip-list (click)="showTooltipGroups()">
+                <mat-chip-list (click)="showTooltip('groups')">
                     <mat-chip
                         *ngFor="let group of groups"
                         [ngClass]="group.className"
                         selected
+                        (click)="showTooltip('groups')"
                         >{{ group.name }}</mat-chip
                     >
                     <mat-chip
                         *ngIf="groups.length === 0"
                         class="empty-chip"
                         selected
+                        (click)="showTooltip('groups')"
                     ></mat-chip>
                 </mat-chip-list>
             </div>
@@ -194,17 +196,19 @@
                     />
                     <span class="section-title">{{ ls.l("Lists") }}</span>
                 </div>
-                <mat-chip-list (click)="showTooltipLists()">
+                <mat-chip-list (click)="showTooltip('lists')">
                     <mat-chip
                         *ngFor="let list of lists"
                         color="primary"
                         selected
+                        (click)="showTooltip('lists')"
                         >{{ list }}</mat-chip
                     >
                     <mat-chip
                         *ngIf="lists.length === 0"
                         class="empty-chip"
                         selected
+                        (click)="showTooltip('lists')"
                     ></mat-chip>
                 </mat-chip-list>
             </div>
@@ -218,17 +222,19 @@
                     />
                     <span class="section-title">{{ ls.l("Tags") }}</span>
                 </div>
-                <mat-chip-list (click)="showTooltipTags()">
+                <mat-chip-list (click)="showTooltip('tags')">
                     <mat-chip
                         *ngFor="let tag of tags"
                         color="primary"
                         selected
+                        (click)="showTooltip('tags')"
                         >{{ tag }}</mat-chip
                     >
                     <mat-chip
                         *ngIf="tags?.length === 0"
                         class="empty-chip"
                         selected
+                        (click)="showTooltip('tags')"
                     ></mat-chip>
                 </mat-chip-list>
             </div>
@@ -236,7 +242,7 @@
                 <div class="section-header">
                     <!-- <mat-icon>star_border</mat-icon> -->
                     <img
-                        src="./assets/common/icons/rating_star.svg"
+                        src="./assets/common/icons/flag-icon.svg"
                         class="dx-icon"
                         [alt]="ls.l('Rating')"
                     />

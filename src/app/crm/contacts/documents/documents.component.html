@@ -6,6 +6,13 @@
         (onItemClick)="onMenuItemClick($event)"
     >
     </action-menu>
+
+    <app-toolbar 
+        [config]="toolbarConfig"
+        [hidden]="appService.toolbarIsHidden$ | async"
+        [toolbarClass]="'dx-document-toolbar'"
+    >
+    </app-toolbar>
     <div class="grid-view">
         <dx-data-grid
             height="100%"
@@ -25,10 +32,10 @@
             (onToolbarPreparing)="onToolbarPreparing($event)"
         >
             <!-- <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel> -->
-            <dxo-header-filter
+            <!-- <dxo-header-filter
                 [visible]="true"
                 [allowSearch]="true"
-            ></dxo-header-filter>
+            ></dxo-header-filter> -->
 
             <dxi-column
                 dataField="size"
@@ -100,7 +107,7 @@
                 {{ cellData.value | datetime : formatting.dateTimeMoment }}
             </div>
             <div *dxTemplate="let data of 'title'">
-                <h2 class="title">
+                <h2 *ngIf="title" class="title">
                     <!-- {{
                         showPropertyDocuments
                             ? l("PropertyDocuments")
@@ -147,6 +154,7 @@
         </dx-data-grid>
     </div>
 </div>
+
 <div [hidden]="!openDocumentMode" class="documentView" #documentViewContainer>
     <form
         *ngIf="showViewerType == documentViewerTypes.WOPI"
