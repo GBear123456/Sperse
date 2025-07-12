@@ -201,7 +201,6 @@ export class OperationsWidgetComponent
         });
         this.toolbarService.tooltipTarget$.subscribe((id) => {
             if(id.indexOf("star-id-") > -1) {
-                console.log(id);
                 const _id = id.split("-")[2];
                 this.selectedStarId = Number(_id);
             }
