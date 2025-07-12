@@ -227,14 +227,14 @@
                         *ngFor="let tag of tags"
                         color="primary"
                         selected
-                        click)="showTooltip('tags')"
+                        (click)="showTooltip('tags')"
                         >{{ tag }}</mat-chip
                     >
                     <mat-chip
                         *ngIf="tags?.length === 0"
                         class="empty-chip"
                         selected
-                        click)="showTooltip('tags')"
+                        (click)="showTooltip('tags')"
                     ></mat-chip>
                 </mat-chip-list>
             </div>
