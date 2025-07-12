@@ -20,6 +20,7 @@ import { Observable } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import invert from "lodash/invert";
 import startCase from "lodash/startCase";
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 
 /** Application imports */
 import { TagsListComponent } from "@app/shared/common/lists/tags-list/tags-list.component";
@@ -155,6 +156,7 @@ export class OperationsWidgetComponent
     contactGroups: ContactGroupDto[];
     salesTalkApiLink: string;
     starList = [];
+    selectedStarId = -1;
 
     constructor(
         injector: Injector,
@@ -170,7 +172,8 @@ export class OperationsWidgetComponent
         private userManagementService: UserManagementService,
         private settingsProxy: TenantCRMIntegrationSettingsServiceProxy,
         private contactProxy: ContactServiceProxy,
-        private renderer: Renderer2
+        private renderer: Renderer2,
+        private toolbarService: ToolbarService
     ) {
         super(injector);
         contactService.toolbarSubscribe((config) => {
@@ -196,6 +199,14 @@ export class OperationsWidgetComponent
         this.store$.select(StarsStoreSelectors.getStars).subscribe((result) => {
             this.starList = result;
         });
+        this.toolbarService.tooltipTarget$.subscribe((id) => {
+            if(id.indexOf("star-id-") > -1) {
+                console.log(id);
+                const _id = id.split("-")[2];
+                this.selectedStarId = Number(_id);
+            }
+        });
+        
     }
 
     initSalesTalkApiLink() {
@@ -601,7 +612,7 @@ export class OperationsWidgetComponent
                                                 .find(
                                                     (m) =>
                                                         m.id ==
-                                                        this.contactInfo.starId
+                                                        this.selectedStarId < 0 ? this.contactInfo.starId : this.selectedStarId
                                                 )
                                                 .colorType?.toLowerCase()
                                           : "star-empty",
