@@ -175,12 +175,14 @@
                         *ngFor="let group of groups"
                         [ngClass]="group.className"
                         selected
+                        (click)="showTooltip('groups')"
                         >{{ group.name }}</mat-chip
                     >
                     <mat-chip
                         *ngIf="groups.length === 0"
                         class="empty-chip"
                         selected
+                        (click)="showTooltip('groups')"
                     ></mat-chip>
                 </mat-chip-list>
             </div>
@@ -199,12 +201,14 @@
                         *ngFor="let list of lists"
                         color="primary"
                         selected
+                        (click)="showTooltip('lists')"
                         >{{ list }}</mat-chip
                     >
                     <mat-chip
                         *ngIf="lists.length === 0"
                         class="empty-chip"
                         selected
+                        (click)="showTooltip('lists')"
                     ></mat-chip>
                 </mat-chip-list>
             </div>
