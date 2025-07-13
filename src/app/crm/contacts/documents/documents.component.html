@@ -148,7 +148,7 @@
                         ></a>
 
                         <!-- Gallary Type View Template -->
-                        <div *dxTemplate="let document of 'dataRowTemplate'" (click)="onCellClick($event)" (mouseenter)="actionEvent = null">
+                        <div *dxTemplate="let document of 'dataRowTemplate'" (click)="onGalleryCellClick(document.data, $event)" (mouseenter)="actionEvent = null">
                             <ng-container *ngIf="getFileExtensionByFileName(document.data.fileName) as extension" >
                                 <div class="fileIconWithAction">
                                     <div [ngClass]="['file-name', extension, getViewerType(extension)]"></div>
