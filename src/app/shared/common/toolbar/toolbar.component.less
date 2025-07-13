@@ -306,53 +306,6 @@
             border-radius: 8px !important;
         }
 
-        &.dx-document-toolbar {
-            margin-top: 10px;
-            .dx-texteditor-buttons-container {
-               margin-right: 0;
-            }
-
-            .dx-toolbar-item-content {
-                margin-right: 15px;
-                .dx-button {
-                    min-width: 30px;
-                    border-radius: 8px;
-                    &[group-item-position="first"] {
-                        right: 0;
-                    }
-                    &[group-item-position="single"] {
-                        margin-right: 0;
-                    }
-                    .dx-button-content {
-                        min-width: 30px;
-                    }
-                    &:hover {
-                        border: 1px solid #d9d9d9;
-                        background-color: #F5FAFF;
-                    }
-                    &[accesskey="select-box"] {
-                        border: 0;
-                        min-width: 50px !important;
-                        padding: 0px;
-                    }
-                }
-                .dx-dropdownmenu.dx-dropdownmenu-button .dx-button-content::after {
-                    right: 4px !important;;
-                    top: 40% !important;
-                }
-                .dx-document-grid-view, .dx-document-list-view {
-                    background-color: #FFFFFF;
-                    border: 1px solid #E6EDF2;
-                    color: #7C8C95 !important;
-                    padding: 0px 5px;
-                }
-                .dx-document-selected-view {
-                    background-color: #E6F7FF !important;
-                    border: 1px solid #C2E1FA !important;
-                }
-            }
-        } 
-
         [view="headline"] {
             padding: 0;
             font-size: 20px;
@@ -976,18 +929,6 @@
             &[group-item-position="single"] {
                 margin-left: 0;
                 margin-right: 12px;
-            }
-
-            &[document-selected="false"] {
-                border: 0;
-                color: #7C8C95 !important;
-            }
-
-            &[document-selected="true"] {
-                background-color: #E6F7FF !important;
-                border: 1px solid #C2E1FA !important;
-                color: #08295B !important;
-                border-radius: 4px !important;
             }
 
             &[group-item-position="first"] {

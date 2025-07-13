@@ -3,6 +3,10 @@ export enum DocumentTabsFilter {
     Images = 'Images',
     Videos = 'Videos',
     PDFs = 'PDFs',
+    Text = 'Text',
+    CSV = 'CSV',
+    XML = 'XML',
+    ARCHIVE = 'ARCHIVE',
     Invoices = 'Invoices'
 }
 
