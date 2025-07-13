@@ -141,6 +141,7 @@ export class DocumentsComponent
         "xlsm",
         "xlsb",
         "ods",
+        "pdf"
     ];
     public validVideoExtensions: String[] = ["mp4", "3gp", "webm", "ogg"];
     public validArchiveExtensions: String[] = ["zip", "rar"];
@@ -207,6 +208,25 @@ export class DocumentsComponent
     );
     filteredDocuments$: Observable<DocumentInfo[]> = this.documents$;
 
+    groupedDocuments$: Observable<any[]> = this.documents$.pipe(
+        map((documents: DocumentInfo[]) => {
+            const grouped: any[] = [];
+            const groups = [...new Set(documents.map(doc => doc.group))];
+
+            for (const groupName of groups) {
+                grouped.push({ type: 'groupHeader', groupLabel: groupName });
+
+                grouped.push(
+                    ...documents
+                    .filter(doc => doc.group === groupName)
+                    .map(doc => ({ ...doc, type: 'data' }))
+                );
+            }
+
+            return grouped;
+        })
+    );
+
     selectedDocumentTabsFilter: DocumentTabsFilter = DocumentTabsFilter.All;
     selectedViewType: string = DocumentViewTypeFilter.List;
     toolbarConfig: ToolbarGroupModel[];
@@ -216,6 +236,7 @@ export class DocumentsComponent
         DataLayoutType.DataGrid
     );
     isGalleryView = false;
+    showDocumentsGrid: boolean = true;
 
     constructor(
         injector: Injector,
@@ -556,20 +577,19 @@ export class DocumentsComponent
 
         const nativeEvent = $event.event;
         const target = nativeEvent?.target;
-
         if ($event.rowType === "data" && target) {
-            if (target.closest(".dx-link.dx-link-edit")) {
-            this.toggleActionsMenu($event.data, target);
+            if (target.closest(".dx-link.dx-link-edit") || target.classList.contains('dx-link-edit')) {
+                this.toggleActionsMenu($event.data, target);
             } else if (target.closest(".document-type")) {
-            this.clickedCellKey = $event.data.id;
+                this.clickedCellKey = $event.data.id;
             } else {
-            this.currentDocumentInfo = $event.data;
+                this.currentDocumentInfo = $event.data;
 
-            // Handle list and gallery gracefully
-            this.visibleDocuments = $event.component?.getVisibleRows?.()
-                ?.map((row) => row.data) ?? [];
+                // Handle list and gallery gracefully
+                this.visibleDocuments = $event.component?.getVisibleRows?.()
+                    ?.map((row) => row.data) ?? [];
 
-            this.viewDocument(DocumentType.Current, nativeEvent);
+                this.viewDocument(DocumentType.Current, nativeEvent);
             }
         }
     }
@@ -1248,7 +1268,6 @@ export class DocumentsComponent
         this.filteredDocuments$ = this.documents$.pipe(
             map((documents) =>
                 documents.filter((document) => {
-                    console.log(document, this.getFileExtensionByFileName(document.fileName), selectedExtension);
                     return this.getFileExtensionByFileName(document.fileName) == selectedExtension;
                 })
             )
