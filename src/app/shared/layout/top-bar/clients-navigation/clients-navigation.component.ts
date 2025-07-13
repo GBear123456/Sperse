@@ -87,12 +87,12 @@ export class ClientsNavigationComponent
             const routeId = +this.router.url
                 .split("/")
                 .find((part) => /^\d+$/.test(part));
-            // const segments = this.getSegment;
-            // if (segments.indexOf("company") < 0) {
-            //     const contact = this.getContact(routeId);
-            //     if (contact[this.clientFields.OrganizationId])
-            //         this.navigateToContact(routeId);
-            // }
+            const segments = this.getSegment;
+            if (this.router.url.indexOf("lead") < 0 && segments.indexOf("company") < 0) {
+                const contact = this.getContact(routeId);
+                if (contact[this.clientFields.OrganizationId])
+                    this.navigateToContact(routeId);
+            }
             this.currentContactId = routeId;
         });
     }
@@ -120,8 +120,12 @@ export class ClientsNavigationComponent
         if (contactIndex !== -1 && segments.length > contactIndex + 1) {
             segments[contactIndex + 1] = contactId.toString();
         }
+        let companyIdIndex = segments.indexOf("company");
+        const leadIdIndex = segments.indexOf("lead");
+        if (leadIdIndex > 0 && companyIdIndex < 0) {
+            companyIdIndex = leadIdIndex;
+        }
         if (contact[this.clientFields.OrganizationId]) {
-            const companyIdIndex = segments.indexOf("company");
             if (companyIdIndex < 0) {
                 segments = [
                     ...segments.slice(0, contactIndex + 2),
@@ -134,7 +138,6 @@ export class ClientsNavigationComponent
                     contact[this.clientFields.OrganizationId]?.toString();
             }
         } else {
-            const companyIdIndex = segments.indexOf("company");
             if (companyIdIndex >= 0) {
                 segments = [
                     ...segments.slice(0, contactIndex + 2),
