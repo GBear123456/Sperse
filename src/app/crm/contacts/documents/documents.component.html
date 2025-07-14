@@ -20,7 +20,7 @@
                 <div id="DocumentsTable">
                     <ghost-list *ngIf="!isDataLoaded"></ghost-list>
                     <mat-accordion displayMode="flat" [multi]="true">
-                        <mat-expansion-panel [(expanded)]="showDocumentsGrid">
+                        <mat-expansion-panel [(expanded)]="showDocumentsGrid" style="box-shadow: none">
                             <!-- Title -->
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
