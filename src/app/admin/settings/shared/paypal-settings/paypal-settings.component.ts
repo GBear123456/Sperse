@@ -30,6 +30,8 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
         { value: 'live', text: 'Live' }
     ];
 
+    selectedTabIndex = 0;
+
     constructor(
         _injector: Injector,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy
@@ -81,6 +83,7 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
                 this.tenantPaymentSettingsService.unlinkPayPalMerchant().pipe(
                     finalize(() => this.finishLoading())
                 ).subscribe(() => {
+                    this.selectedTabIndex = 0;
                     this.loadSettings();
                 });
             }

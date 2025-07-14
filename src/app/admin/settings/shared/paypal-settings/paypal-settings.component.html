@@ -6,7 +6,8 @@
                   [(value)]="paypalPaymentSettings.isEnabled">
     </dx-check-box>
 </div>
-<mat-tab-group *ngIf="paypalPaymentSettings">
+<mat-tab-group *ngIf="paypalPaymentSettings"
+               [(selectedIndex)]="selectedTabIndex">
     <mat-tab>
         <ng-template mat-tab-label>
             <img src="./assets/common/icons/house.svg">
@@ -34,7 +35,8 @@
                                 <li>Choose which invoices can be paud this way</li>
                             </ul>
                             <div class="video-block-learnmore">
-                                <a target="_blank" href="https://www.paypal.com/us/digital-wallet/how-paypal-works">Learn more about how PayPal works<i class="fa fa-long-arrow-right"></i>
+                                <a target="_blank" href="https://www.paypal.com/us/digital-wallet/how-paypal-works">
+                                    Learn more about how PayPal works<i class="fa fa-long-arrow-right"></i>
                                 </a>
                             </div>
                         </div>
@@ -136,7 +138,7 @@
                     <span class="small">URL - <span class="copy-url"><b>{{getPayPalWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
                     <span class="small">
                         Events -
-                        <b>'Billing subscription activated'</b>, <b>'Billing subscription cancelled'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>,
+                        <b>'Billing subscription activated'</b>, <b>'Billing subscription cancelled'</b>, <b>'Billing subscription expired'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>,
                         <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b>,
                         <b>'Payment payouts-item succeeded'</b>, <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
                         <b *ngIf="isHost">, 'Merchant onboarding completed', 'Merchant partner-consent revoked'</b>
