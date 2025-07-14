@@ -81,11 +81,12 @@
             border-top-left-radius: 6px;
             border-top-right-radius: 6px;
             background: white;
-
+            
             .dx-tab {
+                border: none;
                 &:first-child {
                     border-top-left-radius: 6px;
-
+                    
                     i.dx-icon-upload {
                         margin: 0;
                     }
@@ -98,8 +99,7 @@
 
             .dx-tab:after,
             .dx-tab-selected {
-                border-top-left-radius: 6px;
-                border-top-right-radius: 6px;
+                background-color: transparent;
             }
 
             .dx-tab.dx-state-focused:after {
