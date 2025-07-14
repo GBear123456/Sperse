@@ -88,6 +88,12 @@
                         <div class="clipboard-holder"><span>Legal Name: </span><b>{{paypalPaymentSettings.merchantLegalName}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(paypalPaymentSettings.merchantLegalName)"></i></div>
                         <div class="clipboard-holder"><span>Merchant Email: </span><b>{{paypalPaymentSettings.merchantEmail}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard(paypalPaymentSettings.merchantEmail)"></i></div>
                     </div>
+                    <div class="account-warning" *ngIf="!paypalPaymentSettings.merchantEmailConfirmed">
+                        * Your PayPal account email is not confirmed. Email confirmation is required to use PayPal for receiving payments.
+                    </div>
+                    <div class="account-warning" *ngIf="!paypalPaymentSettings.merchantPaymentsReceivable">
+                        * Your PayPal account is currently not ready to receive payments. Please ensure your account is fully set up and that all required permissions are granted. Reconnecting your account may help resolve the issue.
+                    </div>
                 </div>
                 <div class="account-actions">
                     <span (click)="unlinkMerchant()"><i class="fa fa-trash-o"></i>Unlink Connection</span>
@@ -138,10 +144,11 @@
                     <span class="small">URL - <span class="copy-url"><b>{{getPayPalWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
                     <span class="small">
                         Events -
-                        <b>'Billing subscription activated'</b>, <b>'Billing subscription cancelled'</b>, <b>'Billing subscription expired'</b>, <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>,
+                        <b>'Billing subscription activated'</b>, <b>'Billing subscription cancelled'</b>, <b>'Billing subscription expired'</b>,
+                        <b>'Payment sale completed'</b>, <b>'Payment sale refunded'</b>,
                         <b>'Payment capture completed'</b>, <b>'Payment capture refunded'</b>,
                         <b>'Payment payouts-item succeeded'</b>, <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
-                        <b *ngIf="isHost">, 'Merchant onboarding completed', 'Merchant partner-consent revoked'</b>
+                        <b *ngIf="isHost">, 'Merchant onboarding completed', 'Customer merchant-integration seller-consent-granted', 'Merchant partner-consent revoked'</b>
                     </span>
                 </p>
             </div>
