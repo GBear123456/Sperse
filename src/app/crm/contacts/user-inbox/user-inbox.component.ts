@@ -242,21 +242,21 @@ export class UserInboxComponent implements OnDestroy {
                         }
                     }]
                 },
-                {
-                    location: 'after',
-                    items: [
-                        {
-                            name: 'prev',
-                            action: (e) => this.contactsService.prev.next(e),
-                            disabled: this.contactsService.isPrevDisabled
-                        },
-                        {
-                            name: 'next',
-                            action: (e) => this.contactsService.next.next(e),
-                            disabled: this.contactsService.isNextDisabled
-                        }
-                    ]
-                },
+                // {
+                //     location: 'after',
+                //     items: [
+                //         {
+                //             name: 'prev',
+                //             action: (e) => this.contactsService.prev.next(e),
+                //             disabled: this.contactsService.isPrevDisabled
+                //         },
+                //         {
+                //             name: 'next',
+                //             action: (e) => this.contactsService.next.next(e),
+                //             disabled: this.contactsService.isNextDisabled
+                //         }
+                //     ]
+                // },
                 {
                     location: 'after',
                     items: [

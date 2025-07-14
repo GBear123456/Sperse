@@ -141,6 +141,7 @@ export class DocumentsComponent
         "xlsm",
         "xlsb",
         "ods",
+        "pdf"
     ];
     public validVideoExtensions: String[] = ["mp4", "3gp", "webm", "ogg"];
     public validArchiveExtensions: String[] = ["zip", "rar"];
@@ -150,7 +151,6 @@ export class DocumentsComponent
         "jfif",
         "jpe",
         "png",
-        "pdf",
         "bmp",
         "gif",
     ];
@@ -211,13 +211,13 @@ export class DocumentsComponent
     selectedDocumentTabsFilter: DocumentTabsFilter = DocumentTabsFilter.All;
     selectedViewType: string = DocumentViewTypeFilter.List;
     toolbarConfig: ToolbarGroupModel[];
-    private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private rootComponent: any;
     private selectedGroupByIndex = 0;
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         DataLayoutType.DataGrid
     );
     isGalleryView = false;
+    showDocumentsGrid: boolean = true;
 
     constructor(
         injector: Injector,
@@ -553,26 +553,38 @@ export class DocumentsComponent
         this.actionMenu.toggle(target);
     }
 
-    onCellClick($event) {
+    onCellClick($event: any) {
         this.clickedCellKey = undefined;
-        const target = $event.event.target;
-        if ($event.rowType === "data") {
-            /** If user click on actions icon */
-            if (target.closest(".dx-link.dx-link-edit")) {
+
+        const nativeEvent = $event.event;
+        const target = nativeEvent?.target;
+        if ($event.rowType === "data" && target) {
+            if (target.closest(".dx-link.dx-link-edit") || target.classList.contains('dx-link-edit')) {
                 this.toggleActionsMenu($event.data, target);
             } else if (target.closest(".document-type")) {
-                /** If user click on document type */
                 this.clickedCellKey = $event.data.id;
             } else {
                 this.currentDocumentInfo = $event.data;
-                /** Save sorted visible rows to get next and prev properly */
-                this.visibleDocuments = $event.component
-                    .getVisibleRows()
-                    .map((row) => row.data);
-                /** If user click the whole row */
-                this.viewDocument(DocumentType.Current, $event.event);
+
+                // Handle list and gallery gracefully
+                this.visibleDocuments = $event.component?.getVisibleRows?.()
+                    ?.map((row) => row.data) ?? [];
+
+                this.viewDocument(DocumentType.Current, nativeEvent);
             }
         }
+    }
+
+    onGalleryCellClick(data: any, event) {
+        const simulatedGridEvent = {
+            rowType: "data",
+            data: data,
+            event: event,
+            component: {
+                getVisibleRows: () => [] // just return an empty array or fallback if needed
+            }
+        };
+        this.onCellClick(simulatedGridEvent);
     }
 
     onMenuItemClick($event) {
@@ -1072,6 +1084,30 @@ export class DocumentsComponent
         );
     };
 
+    matchesSearch(document: any, fields: string[], search: string): boolean {
+        return fields.some(field =>
+            (document[field] || '').toLowerCase().includes(search)
+        );
+    }
+
+    searchValueChange(e: object) {
+        const newValue = e['value']?.toLowerCase()?.trim();
+
+        if (this.searchValue != newValue) {
+            this.searchValue = newValue;
+            if(!newValue) {
+                this.filteredDocuments$ = this.documents$;
+            }
+            this.filteredDocuments$ = this.documents$.pipe(
+                map((documents) =>
+                    documents.filter(document =>
+                        this.matchesSearch(document, ['fileName', 'typeName'], this.searchValue)
+                    )
+                )
+            );
+        }
+    }
+
     initToolbarConfig() {
         this.toolbarConfig = [
             {
@@ -1192,17 +1228,6 @@ export class DocumentsComponent
         ];
     }
 
-    searchValueChange(e: object) {
-        if (this.searchValue != e['value']) {
-            this.searchValue = e['value'];
-            this.invalidate();
-        }
-    }
-
-    invalidate() {
-        this._refresh.next(null);
-    }
-
     activate() {
         super.activate();
         this.searchClear = false;
@@ -1224,7 +1249,6 @@ export class DocumentsComponent
         this.filteredDocuments$ = this.documents$.pipe(
             map((documents) =>
                 documents.filter((document) => {
-                    console.log(document, this.getFileExtensionByFileName(document.fileName), selectedExtension);
                     return this.getFileExtensionByFileName(document.fileName) == selectedExtension;
                 })
             )
