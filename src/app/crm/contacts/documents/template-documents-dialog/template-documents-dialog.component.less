@@ -1,14 +1,17 @@
 ::ng-deep .hide {
     display: none;
 }
+
+
 :host {
+
     display: block;
     width: 400px;
-    padding: 20px;
 
     h2 {
         position: relative;
         padding-left: 10px;
+        display: none;
 
         .close {
             position: absolute;
@@ -40,6 +43,7 @@
             }
         }
     }
+
     mat-dialog-content {
         overflow: hidden;
         position: relative;
@@ -62,10 +66,12 @@
         }
 
         ::ng-deep dx-file-manager {
+
             .dx-filemanager-toolbar,
             .dx-drawer-panel-content {
                 display: none;
             }
+
             .dx-datagrid-adaptive-more:before {
                 font: 14px/1 DXIcons;
             }
@@ -74,23 +80,28 @@
         ::ng-deep dx-tabs {
             border-top-left-radius: 6px;
             border-top-right-radius: 6px;
+            background: white;
+
             .dx-tab {
                 &:first-child {
-                    width: 45px;
                     border-top-left-radius: 6px;
+
                     i.dx-icon-upload {
                         margin: 0;
                     }
                 }
+
                 &:last-child {
                     border-top-right-radius: 6px;
                 }
             }
+
             .dx-tab:after,
             .dx-tab-selected {
                 border-top-left-radius: 6px;
                 border-top-right-radius: 6px;
             }
+
             .dx-tab.dx-state-focused:after {
                 border-right: 1px solid #ddd;
                 border-left: 1px solid #ddd;
@@ -113,19 +124,20 @@
             ::ng-deep ngx-file-drop {
                 &.full-height .ngx-file-drop__drop-zone {
                     height: calc(~"100vh - 140px");
+
                     &.single-tab {
                         height: calc(~"100vh - 100px");
                     }
                 }
+
                 &.single-tab .ngx-file-drop__drop-zone {
                     height: calc(~"100vh - 180px");
                 }
+
                 .ngx-file-drop__drop-zone {
                     width: 350px;
-                    height: calc(~"100vh - 220px");
-                    border: 1px dashed #00aeef;
-                    background-color: #f5fcfe;
-                    border-radius: 5px;
+                    height: calc(~"100vh - 120px");
+                    background-color: #eaf6ff;
                     text-transform: none;
 
                     .ngx-file-drop__content {
@@ -134,6 +146,7 @@
                         justify-content: center;
                         flex-flow: column;
                     }
+
                     p {
                         color: #333333;
                         padding: 10px 0;
@@ -142,9 +155,11 @@
                     }
                 }
             }
+
             p.alter-text {
                 position: relative;
                 text-align: center;
+
                 input {
                     cursor: pointer;
                     opacity: 0;
@@ -161,13 +176,16 @@
             .wrapper {
                 display: flex;
                 height: calc(~"100vh - 170px");
+                background-color: #eaf6ff;
                 justify-content: baseline;
                 flex-flow: column;
                 align-items: center;
                 margin: 0 25px;
+
                 img {
                     margin: 25px 0;
                 }
+
                 h3 {
                     width: 100%;
                     font-size: 16px;
@@ -177,6 +195,7 @@
                     line-height: 1.56;
                     letter-spacing: normal;
                     color: #424c56;
+
                     span {
                         float: right;
                         font-size: 14px;
@@ -188,15 +207,18 @@
                         color: #677380;
                     }
                 }
+
                 .file-progress-wrapper {
                     width: 100%;
                     height: 28px;
                     margin-top: 14px;
                     white-space: nowrap;
                     background-color: #f3f7fa;
+
                     img {
                         margin: -5px -6px 14px 7px;
                     }
+
                     span {
                         font-size: 13px;
                         font-weight: 400;
@@ -205,12 +227,14 @@
                         line-height: 2.1;
                         letter-spacing: 0.3px;
                         color: #677380;
+
                         &.file-name {
                             max-width: 250px;
                             overflow: hidden !important;
                             text-overflow: ellipsis;
                             display: inline-block;
                         }
+
                         &.cancel {
                             cursor: pointer;
                             right: 5px;
@@ -218,6 +242,7 @@
                             height: 28px;
                             bottom: 13px;
                             position: relative;
+
                             &:after,
                             &:before {
                                 position: absolute;
@@ -228,13 +253,16 @@
                                 width: 1px;
                                 background-color: #e7326a;
                             }
+
                             &:before {
                                 transform: rotate(45deg);
                             }
+
                             &:after {
                                 transform: rotate(-45deg);
                             }
                         }
+
                         &.completed {
                             &:before {
                                 content: "\2713";
@@ -245,6 +273,7 @@
                                 bottom: 6px;
                                 font-weight: 500;
                             }
+
                             width: 40px;
                             height: 28px;
                         }
@@ -261,4 +290,8 @@
 
 ::ng-deep .crm-document-dialog.cdk-overlay-pane .mat-dialog-container {
     box-shadow: none;
+    background-color: #eaf6ff !important;
+    .mat-dialog-content {
+        padding-left: 25px;
+    }
 }

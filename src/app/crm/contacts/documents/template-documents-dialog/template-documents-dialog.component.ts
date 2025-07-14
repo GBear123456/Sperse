@@ -64,28 +64,29 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         }
     });
     isDocumentsVisible = !!(this.data.showDocuments && this.data.contactId);
-    isTemplatesVisible = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);
+    // isTemplatesVisible = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);
+    isTemplatesVisible = true;
     isUploadVisible = this.data.showUpload && (this.isDocumentsVisible || this.isTemplatesVisible);
 
     folderTabs = [
         {
             id: 0,
             visible: this.isUploadVisible,
-            text: '',
+            text: this.ls.l('Upload'),
             icon: 'upload',
         },
         {
             id: 1,
-            visible: this.isDocumentsVisible,
-            text: this.ls.l('Documents'),
-            icon: 'inactivefolder',
-        },
-        {
-            id: 2,
             visible: this.isTemplatesVisible,
             text: this.ls.l('Templates'),
             icon: 'activefolder',
-        }
+        },
+        {
+            id: 2,
+            visible: this.isDocumentsVisible,
+            text: this.ls.l('External'),
+            icon: 'inactivefolder',
+        },
     ];
     selectedIndex = this.isUploadVisible ? 0 : (this.isDocumentsVisible ? 1 : 2);
     title: string = this.data.title || this.ls.l('UploadDocumentsDialogTitle');

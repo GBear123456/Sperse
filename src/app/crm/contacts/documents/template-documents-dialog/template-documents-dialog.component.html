@@ -25,7 +25,10 @@
                 </dxo-permissions>
             </dx-file-manager>
         </div>
-        <div *ngIf="!selectedIndex">
+        <div>
+            
+        </div>
+        <!-- <div *ngIf="!selectedIndex">
             <div class="drop-down" *ngIf="!totalCount">
                 <ngx-file-drop (onFileDrop)="data.dropFiles ? data.dropFiles($event) : fileDropped($event)" [ngClass]="{'full-height': data.fullHeight, 'single-tab': !isDocumentsVisible && !isTemplatesVisible}">
                     <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
@@ -54,10 +57,10 @@
                     </div>
                 </dx-scroll-view>
             </div>
-        </div>
+        </div> -->
     </div>
 </mat-dialog-content>
-<mat-dialog-actions *ngIf="selectedIndex">
+<mat-dialog-actions>
     <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
     <button mat-button class="button-layout button-primary" (click)="onAddFile()">{{ls.l('Add')}}</button>
 </mat-dialog-actions>
