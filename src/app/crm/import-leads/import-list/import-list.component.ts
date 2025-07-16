@@ -21,197 +21,212 @@ import { ImportListDto } from '@app/crm/import-leads/import-list/import-list-dto
 import { ImportListFields } from '@app/crm/import-leads/import-list/import-list.enum';
 
 @Component({
-    templateUrl: './import-list.component.html',
-    styleUrls: ['./import-list.component.less'],
-    providers: [ FileSizePipe ]
+  templateUrl: './import-list.component.html',
+  styleUrls: ['./import-list.component.less'],
+  providers: [FileSizePipe],
 })
 export class ImportListComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+  @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
-    private rootComponent: any;
-    private readonly dataSourceURI = 'Import';
+  private rootComponent: any;
+  private readonly dataSourceURI = 'Import';
 
-    public toolbarConfig: any = [];
-    public selectedRowIds: number[] = [];
-    public headlineButtons: HeadlineButton[] = [
-        {
-            enabled: true,
-            action: this.navigateToWizard.bind(this),
-            label: this.l('AddNewImport')
-        }
+  public toolbarConfig: any = [];
+  public selectedRowIds: number[] = [];
+  public headlineButtons: HeadlineButton[] = [
+    {
+      enabled: true,
+      action: this.navigateToWizard.bind(this),
+      label: this.l('AddNewImport'),
+    },
+  ];
+  leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
+  readonly importListFields: KeysEnum<ImportListDto> = ImportListFields;
+
+  menuSide: 'left' | 'right' = 'left';
+
+  constructor(
+    injector: Injector,
+    private importLeadsService: ImportLeadsService,
+    private sizeFormatPipe: FileSizePipe,
+    private importProxy: ImportServiceProxy,
+    private leftMenuService: LeftMenuService
+  ) {
+    super(injector);
+    this.dataSource = new DataSource({
+      store: new ODataStore({
+        url: this.getODataUrl(this.dataSourceURI),
+        version: AppConsts.ODataVersion,
+        beforeSend: request => {
+          request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+          request.params.$select = DataGridService.getSelectFields(this.dataGrid, [
+            this.importListFields.Id,
+          ]);
+        },
+        errorHandler: error => {
+          setTimeout(() => (this.isDataLoaded = true));
+        },
+        key: this.importListFields.Id,
+      }),
+    });
+    this.initToolbarConfig();
+    this.layoutService.crmMenuPosition$.subscribe(side => {
+      this.menuSide = side;
+    });
+  }
+
+  initToolbarConfig() {
+    this.toolbarConfig = [
+      {
+        location: 'before',
+        locateInMenu: 'auto',
+        items: [
+          {
+            name: 'back',
+            action: this.navigateToDashboard.bind(this),
+          },
+        ],
+      },
+      {
+        location: 'before',
+        locateInMenu: 'auto',
+        items: [
+          {
+            name: 'cancel',
+            action: this.cancelImport.bind(this),
+            disabled: !this.selectedRowIds.length,
+          },
+          {
+            name: 'delete',
+            action: this.deleteImport.bind(this),
+            disabled: !this.selectedRowIds.length,
+          },
+        ],
+      },
+      {
+        location: 'after',
+        locateInMenu: 'auto',
+        items: [
+          {
+            name: 'download',
+            widget: 'dxDropDownMenu',
+            options: {
+              hint: this.l('Download'),
+              items: [
+                {
+                  action: Function(),
+                  text: this.l('Save as PDF'),
+                  icon: 'pdf',
+                },
+                {
+                  action: this.exportToXLS.bind(this),
+                  text: this.l('Export to Excel'),
+                  icon: 'xls',
+                },
+                {
+                  action: this.exportToCSV.bind(this),
+                  text: this.l('Export to CSV'),
+                  icon: 'sheet',
+                },
+                {
+                  action: this.exportToGoogleSheet.bind(this),
+                  text: this.l('Export to Google Sheets'),
+                  icon: 'sheet',
+                },
+                { type: 'downloadOptions' },
+              ],
+            },
+          },
+        ],
+      },
     ];
-    leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
-    readonly importListFields: KeysEnum<ImportListDto> = ImportListFields;
+  }
 
-    constructor(injector: Injector,
-        private importLeadsService: ImportLeadsService,
-        private sizeFormatPipe: FileSizePipe,
-        private importProxy: ImportServiceProxy,
-        private leftMenuService: LeftMenuService
-    ) {
-        super(injector);
-        this.dataSource = new DataSource({
-            store: new ODataStore({
-                url: this.getODataUrl(this.dataSourceURI),
-                version: AppConsts.ODataVersion,
-                beforeSend: (request) => {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.params.$select = DataGridService.getSelectFields(this.dataGrid, [this.importListFields.Id]);
-                },
-                errorHandler: (error) => {
-                    setTimeout(() => this.isDataLoaded = true);
-                },
-                key: this.importListFields.Id
+  toggleColumnChooser() {
+    DataGridService.showColumnChooser(this.dataGrid);
+  }
+
+  onContentReady(event) {
+    if (!event.component.totalCount()) return this.navigateToWizard();
+
+    this.setGridDataLoaded();
+    setTimeout(() => event.component.option('visible', true));
+    event.component.columnOption('command:edit', {
+      visibleIndex: -1,
+      width: 40,
+    });
+  }
+
+  navigateToDashboard() {
+    this._router.navigate(['app/crm/dashboard']);
+  }
+
+  navigateToWizard() {
+    if (this.componentIsActivated) this._router.navigate(['app/crm/import-leads']);
+  }
+
+  deleteImport() {
+    this.message.confirm(
+      this.l('LeadsDeleteComfirmation', [this.selectedRowIds.length]),
+      '',
+      isConfirmed => {
+        if (isConfirmed)
+          forkJoin(
+            this.selectedRowIds.map(id => {
+              return this.importProxy.delete(id);
             })
-        });
-        this.initToolbarConfig();
-    }
+          ).subscribe(() => {
+            this.invalidate();
+          });
+      }
+    );
+  }
 
-    initToolbarConfig() {
-        this.toolbarConfig = [
-            {
-                location: 'before',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'back',
-                        action: this.navigateToDashboard.bind(this)
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'cancel',
-                        action: this.cancelImport.bind(this),
-                        disabled: !this.selectedRowIds.length
-                    }, {
-                        name: 'delete',
-                        action: this.deleteImport.bind(this),
-                        disabled: !this.selectedRowIds.length
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [{
-                                action: Function(),
-                                text: this.l('Save as PDF'),
-                                icon: 'pdf',
-                            }, {
-                                action: this.exportToXLS.bind(this),
-                                text: this.l('Export to Excel'),
-                                icon: 'xls',
-                            }, {
-                                action: this.exportToCSV.bind(this),
-                                text: this.l('Export to CSV'),
-                                icon: 'sheet'
-                            }, {
-                                action: this.exportToGoogleSheet.bind(this),
-                                text: this.l('Export to Google Sheets'),
-                                icon: 'sheet'
-                            }, { type: 'downloadOptions' }]
-                        }
-                    }
-                ]
-            }
-        ];
-    }
+  cancelImport() {
+    this.message.confirm(
+      this.l('LeadsCancelComfirmation', [this.selectedRowIds.length]),
+      '',
+      isConfirmed => {
+        if (isConfirmed)
+          forkJoin(
+            this.selectedRowIds.map(id => {
+              return this.importProxy.cancel(id);
+            })
+          ).subscribe(() => {
+            this.invalidate();
+          });
+      }
+    );
+  }
 
-    toggleColumnChooser() {
-        DataGridService.showColumnChooser(this.dataGrid);
+  onCellClick($event) {
+    if ($event.rowType == 'data' && $event.column.dataField == 'FileName') {
+      const importList: ImportListDto = $event.data;
+      this.importProxy.getFileUrl(importList.Id).subscribe((response: GetFileUrlOutput) => {
+        if (response && response.url) window.open(response.url, '_self');
+      });
     }
+  }
 
-    onContentReady(event) {
-        if (!event.component.totalCount())
-            return this.navigateToWizard();
+  fileSizeFormat = data => {
+    return this.sizeFormatPipe.transform(data.FileSize);
+  };
 
-        this.setGridDataLoaded();
-        setTimeout(() =>
-            event.component.option('visible', true));
-        event.component.columnOption('command:edit', {
-            visibleIndex: -1,
-            width: 40
-        });
-    }
+  activate() {
+    this.rootComponent.overflowHidden(true);
+    this.invalidate();
+  }
 
-    navigateToDashboard() {
-        this._router.navigate(['app/crm/dashboard']);
-    }
+  deactivate() {
+    this.rootComponent.overflowHidden();
+  }
 
-    navigateToWizard() {
-        if (this.componentIsActivated)
-            this._router.navigate(['app/crm/import-leads']);
-    }
+  ngAfterViewInit(): void {
+    this.rootComponent = this.getRootComponent();
+    this.activate();
+  }
 
-    deleteImport() {
-        this.message.confirm(
-            this.l('LeadsDeleteComfirmation', [this.selectedRowIds.length]), '',
-            isConfirmed => {
-                if (isConfirmed)
-                    forkJoin(
-                        this.selectedRowIds.map((id) => {
-                            return this.importProxy.delete(id);
-                        })
-                    ).subscribe(() => {
-                        this.invalidate();
-                    });
-            });
-    }
-
-    cancelImport() {
-        this.message.confirm(
-            this.l('LeadsCancelComfirmation', [this.selectedRowIds.length]), '',
-            isConfirmed => {
-                if (isConfirmed)
-                  forkJoin(
-                      this.selectedRowIds.map((id) => {
-                          return this.importProxy.cancel(id);
-                      })
-                  ).subscribe(() => {
-                      this.invalidate();
-                  });
-            });
-    }
-
-    onCellClick($event) {
-        if ($event.rowType == 'data' && $event.column.dataField == 'FileName') {
-            const importList: ImportListDto = $event.data;
-            this.importProxy.getFileUrl(importList.Id).subscribe((response: GetFileUrlOutput) => {
-                if (response && response.url)
-                    window.open(response.url, '_self');
-            });
-        }
-    }
-
-    fileSizeFormat = (data) => {
-        return this.sizeFormatPipe.transform(data.FileSize);
-    }
-
-    activate() {
-        this.rootComponent.overflowHidden(true);
-        this.invalidate();
-    }
-
-    deactivate() {
-        this.rootComponent.overflowHidden();
-    }
-
-    ngAfterViewInit(): void {
-        this.rootComponent = this.getRootComponent();
-        this.activate();
-    }
-
-    ngOnDestroy() {
-        this.deactivate();
-    }
+  ngOnDestroy() {
+    this.deactivate();
+  }
 }

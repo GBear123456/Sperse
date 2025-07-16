@@ -1,63 +1,89 @@
-<div>
-    <crm-left-menu [selectedItemIndex]="2"></crm-left-menu>
-    <div class="margin-left" [ngClass]="{ expanded: leftMenuCollapsed$ | async }">
-        <app-headline [names]="[ l('Import') ]"
-                      icon="docs"
-                      [buttons]="headlineButtons"
-                      [showReloadButton]="ui.showReload"
-                      [showToggleColumnSelectorButton]="true"
-                      [showToggleLeftMenuButton]="true"
-                      (onReload)="invalidate()"
-                      (onToggleColumnSelector)="toggleColumnChooser()">
-            <import-progress-bar></import-progress-bar>
-        </app-headline>
-        <app-toolbar [config]="toolbarConfig"></app-toolbar>
-        <div class="main-wrapper portlet light no-padding margin-bottom-0">
-            <div class="portlet-body">
-                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                 <dx-data-grid id="gridContainer"
-                               class="main-component-view"
-                               accesskey="narrowHeaderPanel"
-                               [visible]="false"
-                               [dataSource]="dataSource"
-                               [allowColumnReordering]="true"
-                               [columnAutoWidth]="true"
-                               [allowColumnResizing]="true"
-                               [loadPanel]="{ enabled: false }"
-                               [hoverStateEnabled]="true"
-                               [pager]="defaultGridPagerConfig"
-                               [(selectedRowKeys)]="selectedRowIds"
-                               (onOptionChanged)="onGridOptionChanged($event)"
-                               (onCellClick)="onCellClick($event)"
-                               (onContentReady)="onContentReady($event)"
-                               (onSelectionChanged)="initToolbarConfig()"
-                               (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                     <dxo-selection selectAllMode="page"
-                                    showCheckBoxesMode="always"
-                                    mode="multiple">
-                     </dxo-selection>
-                     <dxo-editing mode="popup"
-                                  [allowUpdating]="false">
-                     </dxo-editing>
+<div class="flex">
+  <crm-left-menu [selectedItemIndex]="2" *ngIf="menuSide === 'left'"></crm-left-menu>
+  <div [ngClass]="{ expanded: leftMenuCollapsed$ | async }">
+    <app-headline
+      [names]="[l('Import')]"
+      icon="docs"
+      [buttons]="headlineButtons"
+      [showReloadButton]="ui.showReload"
+      [showToggleColumnSelectorButton]="true"
+      [showToggleLeftMenuButton]="true"
+      (onReload)="invalidate()"
+      (onToggleColumnSelector)="toggleColumnChooser()"
+    >
+      <import-progress-bar></import-progress-bar>
+    </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <div class="main-wrapper portlet light no-padding margin-bottom-0">
+      <div class="portlet-body">
+        <ghost-list [hidden]="isDataLoaded"></ghost-list>
+        <dx-data-grid
+          id="gridContainer"
+          class="main-component-view"
+          accesskey="narrowHeaderPanel"
+          [visible]="false"
+          [dataSource]="dataSource"
+          [allowColumnReordering]="true"
+          [columnAutoWidth]="true"
+          [allowColumnResizing]="true"
+          [loadPanel]="{ enabled: false }"
+          [hoverStateEnabled]="true"
+          [pager]="defaultGridPagerConfig"
+          [(selectedRowKeys)]="selectedRowIds"
+          (onOptionChanged)="onGridOptionChanged($event)"
+          (onCellClick)="onCellClick($event)"
+          (onContentReady)="onContentReady($event)"
+          (onSelectionChanged)="initToolbarConfig()"
+          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+        >
+          <dxo-selection selectAllMode="page" showCheckBoxesMode="always" mode="multiple">
+          </dxo-selection>
+          <dxo-editing mode="popup" [allowUpdating]="false"> </dxo-editing>
 
-                     <dxi-column [dataField]="importListFields.Id" [caption]="l('Id')" sortOrder="desc" [width]="80" cssClass="clipboard-holder"></dxi-column>
-                     <dxi-column [dataField]="importListFields.FileName" [caption]="l('FileName')" cssClass="clipboard-holder"></dxi-column>
-                     <dxi-column [dataField]="importListFields.FileSize" [caption]="l('FileSize')" [calculateDisplayValue]="fileSizeFormat" cssClass="clipboard-holder"></dxi-column>
-                     <dxi-column [dataField]="importListFields.StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
-                     <dxi-column [dataField]="importListFields.TotalCount" [caption]="l('RecordCount')" cssClass="clipboard-holder"></dxi-column>
-                     <dxi-column [dataField]="importListFields.TypeName" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
+          <dxi-column
+            [dataField]="importListFields.Id"
+            [caption]="l('Id')"
+            sortOrder="desc"
+            [width]="80"
+            cssClass="clipboard-holder"
+          ></dxi-column>
+          <dxi-column
+            [dataField]="importListFields.FileName"
+            [caption]="l('FileName')"
+            cssClass="clipboard-holder"
+          ></dxi-column>
+          <dxi-column
+            [dataField]="importListFields.FileSize"
+            [caption]="l('FileSize')"
+            [calculateDisplayValue]="fileSizeFormat"
+            cssClass="clipboard-holder"
+          ></dxi-column>
+          <dxi-column
+            [dataField]="importListFields.StatusName"
+            [caption]="l('Status')"
+            cssClass="clipboard-holder"
+          ></dxi-column>
+          <dxi-column
+            [dataField]="importListFields.TotalCount"
+            [caption]="l('RecordCount')"
+            cssClass="clipboard-holder"
+          ></dxi-column>
+          <dxi-column
+            [dataField]="importListFields.TypeName"
+            [caption]="l('Type')"
+            cssClass="clipboard-holder"
+          ></dxi-column>
 
-                     <dxo-sorting mode="multiple"></dxo-sorting>
-                     <dxo-group-panel [visible]="true"></dxo-group-panel>
-                     <dxo-paging [pageSize]="20"></dxo-paging>
-                     <dxo-summary>
-                         <dxi-group-item [column]="importListFields.Id"
-                                         summaryType="count"
-                                         displayFormat="{0}">
-                         </dxi-group-item>
-                     </dxo-summary>
-                 </dx-data-grid>
-            </div>
-        </div>
+          <dxo-sorting mode="multiple"></dxo-sorting>
+          <dxo-group-panel [visible]="true"></dxo-group-panel>
+          <dxo-paging [pageSize]="20"></dxo-paging>
+          <dxo-summary>
+            <dxi-group-item [column]="importListFields.Id" summaryType="count" displayFormat="{0}">
+            </dxi-group-item>
+          </dxo-summary>
+        </dx-data-grid>
+      </div>
     </div>
+  </div>
+  <crm-left-menu [selectedItemIndex]="2" *ngIf="menuSide === 'right'"></crm-left-menu>
 </div>
