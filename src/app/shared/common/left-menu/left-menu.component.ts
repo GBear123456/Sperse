@@ -22,6 +22,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { LeftMenuItem } from './left-menu-item.interface';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
   templateUrl: './left-menu.component.html',
@@ -45,18 +46,10 @@ export class LeftMenuComponent implements AfterViewInit, OnDestroy, OnInit {
   private destroy$: Observable<null> = new Observable<null>();
   isMenuVisible = true;
   closing = false;
-
-  // Menu side state
   menuSide: 'left' | 'right' = 'left';
-  @HostBinding('class.left-side') get isLeftSide() {
-    return this.menuSide === 'left';
-  }
-  @HostBinding('class.right-side') get isRightSide() {
-    return this.menuSide === 'right';
-  }
 
   setMenuSide(side: 'left' | 'right') {
-    this.menuSide = side;
+    this.layoutService.setCrmMenuSide(side);
     this.changeDetectorRef.markForCheck();
   }
 
@@ -64,8 +57,14 @@ export class LeftMenuComponent implements AfterViewInit, OnDestroy, OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router,
     private leftMenuService: LeftMenuService,
-    private fullScreenService: FullScreenService
-  ) {}
+    private fullScreenService: FullScreenService,
+    private layoutService: LayoutService
+  ) {
+    this.layoutService.crmMenuPosition$.subscribe(side => {
+      this.menuSide = side;
+      this.changeDetectorRef.markForCheck();
+    });
+  }
 
   ngOnInit() {
     this.leftMenuService.collapsed$

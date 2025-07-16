@@ -151,6 +151,8 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
   private filters: FilterModel[] = this.getFilters();
 
+  menuSide: 'left' | 'right' = 'left';
+
   constructor(
     private router: Router,
     private appService: AppService,
@@ -177,6 +179,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   ) {
     this.store$.dispatch(new StatesStoreActions.LoadRequestAction(AppConsts.defaultCountryCode));
     this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
+    this.layoutService.crmMenuPosition$.subscribe(side => {
+      this.menuSide = side;
+    });
   }
 
   ngOnInit() {

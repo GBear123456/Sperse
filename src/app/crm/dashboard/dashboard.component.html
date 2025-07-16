@@ -12,6 +12,13 @@
   <calendar-button *ngIf="hasAccessibleCG"></calendar-button>
 </app-headline>
 <div class="flex">
+  <crm-left-menu
+    *ngIf="menuSide === 'left'"
+    [showIntroductionTour]="!appService.isHostTenant"
+    [currentContactGroup]="filterModelContactGroup.items.element.value"
+    (openIntro)="openDialog()"
+  >
+  </crm-left-menu>
   <div
     *ngIf="hasAccessibleCG; else noData"
     class="widgets-wrapper"
@@ -78,6 +85,7 @@
     </div>
   </div>
   <crm-left-menu
+    *ngIf="menuSide === 'right'"
     [showIntroductionTour]="!appService.isHostTenant"
     [currentContactGroup]="filterModelContactGroup.items.element.value"
     (openIntro)="openDialog()"
