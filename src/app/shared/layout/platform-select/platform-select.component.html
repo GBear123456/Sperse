@@ -176,31 +176,38 @@
                 <div class="scroll-wrapper">
                   <dx-scroll-view showScrollbar="onHover">
                     <div class="product-list">
-                      <div *ngFor="let product of productDataSource.items()">
-                        <img
-                          class="thumb"
-                          [src]="product.ThumbnailUrl || 'assets/common/images/no-image.svg'"
-                        />
-                        <div
-                          (click)="selectProduct(productList, product.PublicName)"
-                          class="name"
-                          [title]="product.Name"
-                        >
-                          {{ product.Name }}
-                          <div class="type">{{ product.Type }}</div>
+                      <div
+                        *ngFor="let product of productDataSource.items()"
+                        class="flex items-center justify-between"
+                      >
+                        <div class="flex items-center">
+                          <img
+                            class="thumb"
+                            [src]="product.ThumbnailUrl || 'assets/common/images/no-image.svg'"
+                          />
+                          <div
+                            (click)="selectProduct(productList, product.PublicName)"
+                            class="name"
+                            [title]="product.Name"
+                          >
+                            {{ product.Name }}
+                            <div class="type">{{ product.Type }}</div>
+                          </div>
                         </div>
-                        <img
-                          class="copy"
-                          src="./assets/common/images/platform-select/copy.png"
-                          (click)="copyToClipboard(getProductPublicLink(product.PublicName))"
-                        />
-                        <img
-                          class="open"
-                          src="./assets/common/images/platform-select/open.png"
-                          (click)="openLink(getProductPublicLink(product.PublicName))"
-                        />
-                        <div class="price">
-                          {{ product.Price | currency : currency : 'symbol' : '1.2-2' }}
+                        <div class="flex items-center">
+                          <img
+                            class="copy"
+                            src="./assets/common/images/platform-select/copy.png"
+                            (click)="copyToClipboard(getProductPublicLink(product.PublicName))"
+                          />
+                          <img
+                            class="open"
+                            src="./assets/common/images/platform-select/open.png"
+                            (click)="openLink(getProductPublicLink(product.PublicName))"
+                          />
+                          <div class="price">
+                            {{ product.Price | currency : currency : 'symbol' : '1.2-2' }}
+                          </div>
                         </div>
                       </div>
                     </div>
