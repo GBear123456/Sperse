@@ -8,7 +8,7 @@
     >
         <mat-tab [label]="ls.l('Upload')"> </mat-tab>
         <mat-tab [label]="ls.l('Template')"> </mat-tab>
-        <mat-tab [label]="ls.l('External')"> </mat-tab>
+        <!-- <mat-tab [label]="ls.l('External')"> </mat-tab> -->
     </mat-tab-group>
     <div class="wrapper">
         <!-- <div *ngIf="selectedIndex">
@@ -30,13 +30,21 @@
                 </dxo-permissions>
             </dx-file-manager>
         </div> -->
+        <div class="search-template" *ngIf="selectedIndex">
+            <input type="text" class="form-control placeholder-no-fix"
+                [(ngModel)]="searchTemplate" 
+                placeholder="Search for Template..."
+                (ngModelChange)="searchTemplates()"
+            />
+            <i class="fa fa-search"></i>
+        </div>
         <div class="file-upload">
             <dx-file-manager
                 width="100%"
                 [height]="getHeight()"
                 [allowedFileExtensions]="[]"
                 [fileSystemProvider]="
-                    selectedIndex == 2 || selectedIndex == 0 
+                    selectedIndex == 2 || selectedIndex == 0
                         ? documentsFileProvider
                         : templatesFileProvider
                 "
@@ -57,14 +65,39 @@
             <div class="uploading" *ngIf="totalCount > 0">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="wrapper">
-                        <img src="./assets/common/icons/upload-file.svg">
-                        <h3>{{ls.l('Uploading')}}<span>{{uploadedCount + ' of ' + totalCount + ' files'}}</span></h3>
+                        <img src="./assets/common/icons/upload-file.svg" />
+                        <h3>
+                            {{ ls.l("Uploading")
+                            }}<span>{{
+                                uploadedCount + " of " + totalCount + " files"
+                            }}</span>
+                        </h3>
                         <ng-container *ngFor="let file of files; let i = index">
-                            <div class="file-progress-wrapper"
-                                 [ngStyle]="{ background: 'linear-gradient(to right, #00aeef21 ' + file.progress + '%, #f3f7fa 0%)' }">
-                                <img width="16px" height="16px" src="./assets/common/icons/file-types/{{file.type}}.svg" onError="this.src='./assets/common/icons/files.svg';">
-                                <span class="file-name">{{file.name}}</span>
-                                <span (click)="cancelUpload(i)" [ngClass]="{ cancel: file.progress < 100, completed: file.progress >= 100 }"></span>
+                            <div
+                                class="file-progress-wrapper"
+                                [ngStyle]="{
+                                    background:
+                                        'linear-gradient(to right, #00aeef21 ' +
+                                        file.progress +
+                                        '%, #f3f7fa 0%)'
+                                }"
+                            >
+                                <img
+                                    width="16px"
+                                    height="16px"
+                                    src="./assets/common/icons/file-types/{{
+                                        file.type
+                                    }}.svg"
+                                    onError="this.src='./assets/common/icons/files.svg';"
+                                />
+                                <span class="file-name">{{ file.name }}</span>
+                                <span
+                                    (click)="cancelUpload(i)"
+                                    [ngClass]="{
+                                        cancel: file.progress < 100,
+                                        completed: file.progress >= 100
+                                    }"
+                                ></span>
                             </div>
                         </ng-container>
                     </div>
@@ -78,7 +111,6 @@
                         ? data.dropFiles($event)
                         : fileDropped($event)
                 "
-                
             >
                 <ng-template
                     ngx-file-drop-content-tmp
@@ -117,9 +149,7 @@
     </div>
 </mat-dialog-content>
 
-<mat-dialog-actions
-*ngIf="selectedIndex"
->
+<mat-dialog-actions *ngIf="selectedIndex">
     <button mat-button mat-dialog-close class="button-layout button-default">
         {{ ls.l("Cancel") }}
     </button>
