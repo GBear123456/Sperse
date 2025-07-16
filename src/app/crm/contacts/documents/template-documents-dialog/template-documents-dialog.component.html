@@ -55,19 +55,32 @@
                 </dxo-permissions>
             </dx-file-manager>
         </div>
+        <!-- <div>
+            <ngx-file-drop
+                (onFileDrop)="
+                    data.dropFiles
+                        ? data.dropFiles($event)
+                        : fileDropped($event)
+                "
+                [ngClass]="{
+                    'full-height': data.fullHeight,
+                    'single-tab': !isDocumentsVisible && !isTemplatesVisible
+                }"
+            >
+                <ng-template
+                    ngx-file-drop-content-tmp
+                    let-openFileSelector="openFileSelector"
+                >
+                    <a
+                        href="javascript:void(0);"
+                        (click)="openFileSelector()"
+                        >{{ ls.l("SelectFileFrom") }}</a
+                    >
+                </ng-template>
+            </ngx-file-drop>
+        </div> -->
         <!-- <div *ngIf="!selectedIndex">
-            <div class="drop-down" *ngIf="!totalCount">
-                <ngx-file-drop (onFileDrop)="data.dropFiles ? data.dropFiles($event) : fileDropped($event)" [ngClass]="{'full-height': data.fullHeight, 'single-tab': !isDocumentsVisible && !isTemplatesVisible}">
-                    <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-                        <img src="./assets/common/icons/upload-file.svg">
-                        <p>{{ls.l('DragAndDrop')}}</p>
-                        <p style="color: #677380;">{{ls.l('or')}}</p>
-                        <p class="alter-text">
-                            <a href="javascript:void(0);" (click)="openFileSelector()">{{ls.l('SelectFileFrom')}}</a>
-                        </p>
-                    </ng-template>
-                </ngx-file-drop>
-            </div>
+            
             <div class="uploading" *ngIf="totalCount > 0">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="wrapper">
@@ -87,7 +100,7 @@
         </div> -->
     </div>
     <div class="close-widget" mat-button mat-dialog-close>
-        <i class="fa fa-angle-right" ></i>
+        <i class="fa fa-angle-right"></i>
     </div>
 </mat-dialog-content>
 

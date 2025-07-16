@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, ViewChild, OnInit, AfterViewInit, Inject, ElementRef } from '@angular/core';
-
+import * as $ from 'jquery';
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import RemoteFileSystemProvider from 'devextreme/file_management/remote_provider';
@@ -119,6 +119,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
             top: (this.data.fullHeight ? 0 : 75) + 'px',
             right: '-100vw'
         });
+        
     }
 
     ngAfterViewInit() {
