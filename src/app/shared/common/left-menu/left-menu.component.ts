@@ -46,6 +46,20 @@ export class LeftMenuComponent implements AfterViewInit, OnDestroy, OnInit {
   isMenuVisible = true;
   closing = false;
 
+  // Menu side state
+  menuSide: 'left' | 'right' = 'left';
+  @HostBinding('class.left-side') get isLeftSide() {
+    return this.menuSide === 'left';
+  }
+  @HostBinding('class.right-side') get isRightSide() {
+    return this.menuSide === 'right';
+  }
+
+  setMenuSide(side: 'left' | 'right') {
+    this.menuSide = side;
+    this.changeDetectorRef.markForCheck();
+  }
+
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router,

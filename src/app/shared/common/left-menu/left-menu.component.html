@@ -31,4 +31,27 @@
       </ng-template>
     </ul>
   </div>
+  <!-- Side switch at the bottom -->
+  <div class="side-switch-bottom">
+    <span
+      class="side-switch-label"
+      [class.active]="menuSide === 'left'"
+      (click)="setMenuSide('left')"
+      >Left</span
+    >
+    <label class="side-switch">
+      <input
+        type="checkbox"
+        [checked]="menuSide === 'right'"
+        (change)="setMenuSide($event.target.checked ? 'right' : 'left')"
+      />
+      <span class="slider"></span>
+    </label>
+    <span
+      class="side-switch-label"
+      [class.active]="menuSide === 'right'"
+      (click)="setMenuSide('right')"
+      >Right</span
+    >
+  </div>
 </div>
