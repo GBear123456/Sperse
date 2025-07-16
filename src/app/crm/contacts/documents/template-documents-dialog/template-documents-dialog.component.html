@@ -1,12 +1,17 @@
-<h2 mat-dialog-title>{{ title }}<span class="close" (click)="close()"></span></h2>
+<h2 mat-dialog-title>
+    {{ title }}<span class="close" (click)="close()"></span>
+</h2>
 <mat-dialog-content>
+    <mat-tab-group
+        [(selectedIndex)]="selectedIndex"
+        (selectedTabChange)="onSelectedTabChange($event)"
+    >
+        <mat-tab [label]="ls.l('Upload')"> </mat-tab>
+        <mat-tab [label]="ls.l('Template')"> </mat-tab>
+        <mat-tab [label]="ls.l('External')"> </mat-tab>
+    </mat-tab-group>
     <div class="wrapper">
-        <dx-tabs width="310px"
-                 [visible]="isDocumentsVisible || isTemplatesVisible"
-                 [dataSource]="folderTabs"
-                 [(selectedIndex)]="selectedIndex">
-        </dx-tabs>
-        <div *ngIf="selectedIndex">
+        <!-- <div *ngIf="selectedIndex">
             <i class="layout-view dx-icon-{{layout == VIEW_MODE_DETAILS ? 'smalliconslayout' : 'contentlayout'}}" (click)="onLayoutToogle()"></i>
             <dx-file-manager width="360px"
                              [height]="getHeight()"
@@ -24,20 +29,31 @@
                              [download]="false">
                 </dxo-permissions>
             </dx-file-manager>
-        </div>
-        <div *ngIf="!selectedIndex">
-            <div class="drop-down" *ngIf="!totalCount">
-                <ngx-file-drop (onFileDrop)="data.dropFiles ? data.dropFiles($event) : fileDropped($event)" [ngClass]="{'full-height': data.fullHeight, 'single-tab': !isDocumentsVisible && !isTemplatesVisible}">
-                    <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-                        <img src="./assets/common/icons/upload-file.svg">
-                        <p>{{ls.l('DragAndDrop')}}</p>
-                        <p style="color: #677380;">{{ls.l('or')}}</p>
-                        <p class="alter-text">
-                            <a href="javascript:void(0);" (click)="openFileSelector()">{{ls.l('SelectFileFrom')}}</a>
-                        </p>
-                    </ng-template>
-                </ngx-file-drop>
-            </div>
+        </div> -->
+        <div class="file-upload">
+            <dx-file-manager
+                width="100%"
+                [height]="getHeight()"
+                [allowedFileExtensions]="[]"
+                [fileSystemProvider]="
+                    selectedIndex == 2 || selectedIndex == 0 
+                        ? documentsFileProvider
+                        : templatesFileProvider
+                "
+                [itemView]="{ mode: layout }"
+                (onContentReady)="onContentReady()"
+            >
+                <dxo-permissions
+                    [create]="false"
+                    [copy]="false"
+                    [move]="false"
+                    [delete]="false"
+                    [rename]="false"
+                    [upload]="false"
+                    [download]="false"
+                >
+                </dxo-permissions>
+            </dx-file-manager>
             <div class="uploading" *ngIf="totalCount > 0">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="wrapper">
@@ -55,9 +71,63 @@
                 </dx-scroll-view>
             </div>
         </div>
+        <div style="display: none">
+            <ngx-file-drop
+                (onFileDrop)="
+                    data.dropFiles
+                        ? data.dropFiles($event)
+                        : fileDropped($event)
+                "
+                
+            >
+                <ng-template
+                    ngx-file-drop-content-tmp
+                    let-openFileSelector="openFileSelector"
+                >
+                    <a
+                        class="file-selector"
+                        href="javascript:void(0);"
+                        (click)="openFileSelector()"
+                    ></a>
+                </ng-template>
+            </ngx-file-drop>
+        </div>
+        <!-- <div *ngIf="!selectedIndex">
+            
+            <div class="uploading" *ngIf="totalCount > 0">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="wrapper">
+                        <img src="./assets/common/icons/upload-file.svg">
+                        <h3>{{ls.l('Uploading')}}<span>{{uploadedCount + ' of ' + totalCount + ' files'}}</span></h3>
+                        <ng-container *ngFor="let file of files; let i = index">
+                            <div class="file-progress-wrapper"
+                                 [ngStyle]="{ background: 'linear-gradient(to right, #00aeef21 ' + file.progress + '%, #f3f7fa 0%)' }">
+                                <img width="16px" height="16px" src="./assets/common/icons/file-types/{{file.type}}.svg" onError="this.src='./assets/common/icons/files.svg';">
+                                <span class="file-name">{{file.name}}</span>
+                                <span (click)="cancelUpload(i)" [ngClass]="{ cancel: file.progress < 100, completed: file.progress >= 100 }"></span>
+                            </div>
+                        </ng-container>
+                    </div>
+                </dx-scroll-view>
+            </div>
+        </div> -->
+    </div>
+    <div class="close-widget" mat-button mat-dialog-close>
+        <i class="fa fa-angle-right"></i>
     </div>
 </mat-dialog-content>
-<mat-dialog-actions *ngIf="selectedIndex">
-    <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
-    <button mat-button class="button-layout button-primary" (click)="onAddFile()">{{ls.l('Add')}}</button>
+
+<mat-dialog-actions
+*ngIf="selectedIndex"
+>
+    <button mat-button mat-dialog-close class="button-layout button-default">
+        {{ ls.l("Cancel") }}
+    </button>
+    <button
+        mat-button
+        class="button-layout button-primary"
+        (click)="onAddFile()"
+    >
+        {{ ls.l("Add") }}
+    </button>
 </mat-dialog-actions>
