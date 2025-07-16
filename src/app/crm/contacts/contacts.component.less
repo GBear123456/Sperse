@@ -1,129 +1,129 @@
 :host {
+  .cb-visible-section {
+    top: 4px;
+    cursor: pointer;
+    position: absolute;
+    margin-right: 10px;
+  }
 
-    .cb-visible-section {
-        top: 4px;
-        cursor: pointer;
-        position: absolute;
-        margin-right: 10px;
-    }
+  .short-contact {
+    width: 85%;
+    margin: 0 auto;
+    min-height: 50px;
+    position: relative;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
 
-    .short-contact {
-        width: 85%;
-        margin: 0 auto;
-        min-height: 50px;
-        position: relative;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        align-items: center;
+    .related-contacts {
+      .similar-contacts-count {
+        margin: 0 10px;
+        color: var(--primary-color);
+      }
 
-        .related-contacts {
-            .similar-contacts-count {
-                margin: 0 10px;
-            }
-
-            .add-new-contact {
-                font-size: 14px;
-                font-weight: 400;
-                line-height: 1.57;
-                letter-spacing: 0.3px;
-                text-align: left;
-                color: var(--primary-color);
-                margin-left: 10px;
-                text-decoration: none;
-                transition: opacity 0.2s ease;
-
-                &:hover {
-                    opacity: 0.8;
-                }
-            }
-            .sub-contacts-info {
-                display: flex;
-                align-items: flex-start;
-                & > div {
-                    margin: 0 10px;
-                    & > a {
-                        margin-left: 0;
-                    }
-                }
-            }
-        }
-    }
-
-    .general-links {
-        float: left;
-        width: 289px;
-        height: 63px;
-        text-align: right;
-        background: var(--card-bg);
-        padding-right: 30px;
-        border-right: 1px solid var(--border-color);
-
-        .disabled {
-            opacity: 0.5;
-            cursor: default;
-            pointer-events: none;
-        }
-
-        i {
-            color: var(--muted-color);
-            width: 20px;
-            height: 20px;
-            margin: 10px 0 0 20px;
-            display: inline-block;
-            cursor: pointer;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        a.general-active-link i {
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        i.sms-icon:before {
-            bottom: 5px;
-            position: relative;
-            color: var(--muted-color);
-            opacity: 0.6;
-        }
-        i.note-icon {
-            background-image: url(../../../assets/common/icons/sms.svg);
-            background-position: 4px 4px;
-        }
-        i.phone-icon {
-            background-image: url(../../../assets/common/icons/phone2.svg);
-        }
-        i.inbox-icon {
-            background-image: url(../../../assets/common/icons/inbox.svg);
-        }
-    }
-
-    .created_owner {
-        padding-left: 20px;
-        position: absolute;
-        bottom: 10px;
-        width: 100%;
-    }
-
-    .created > *,
-    .lead_owner > * {
-        display: inline;
-    }
-
-    .lead_owner > img {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-    }
-
-    .created_owner h4 {
-        color: var(--muted-color);
-        width: 50%;
-        display: inline-block;
+      .add-new-contact {
         font-size: 14px;
+        font-weight: 400;
+        line-height: 1.57;
+        letter-spacing: 0.3px;
+        text-align: left;
+        color: var(--primary-color);
+        margin-left: 10px;
+        text-decoration: none;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+      .sub-contacts-info {
+        display: flex;
+        align-items: flex-start;
+        & > div {
+          margin: 0 10px;
+          & > a {
+            margin-left: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .general-links {
+    float: left;
+    width: 289px;
+    height: 63px;
+    text-align: right;
+    background: var(--card-bg);
+    padding-right: 30px;
+    border-right: 1px solid var(--border-color);
+
+    .disabled {
+      opacity: 0.5;
+      cursor: default;
+      pointer-events: none;
     }
 
-    .contact-persons-info {
-        display: flex;
-        align-items: center;
+    i {
+      color: var(--muted-color);
+      width: 20px;
+      height: 20px;
+      margin: 10px 0 0 20px;
+      display: inline-block;
+      cursor: pointer;
+      background-repeat: no-repeat;
+      background-position: center;
     }
+
+    a.general-active-link i {
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    i.sms-icon:before {
+      bottom: 5px;
+      position: relative;
+      color: var(--muted-color);
+      opacity: 0.6;
+    }
+    i.note-icon {
+      background-image: url(../../../assets/common/icons/sms.svg);
+      background-position: 4px 4px;
+    }
+    i.phone-icon {
+      background-image: url(../../../assets/common/icons/phone2.svg);
+    }
+    i.inbox-icon {
+      background-image: url(../../../assets/common/icons/inbox.svg);
+    }
+  }
+
+  .created_owner {
+    padding-left: 20px;
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+  }
+
+  .created > *,
+  .lead_owner > * {
+    display: inline;
+  }
+
+  .lead_owner > img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+
+  .created_owner h4 {
+    color: var(--muted-color);
+    width: 50%;
+    display: inline-block;
+    font-size: 14px;
+  }
+
+  .contact-persons-info {
+    display: flex;
+    align-items: center;
+  }
 }

@@ -191,6 +191,7 @@
     ::ng-deep .field-area {
       display: block;
       margin-bottom: 20px;
+      background-color: var(--background-color);
 
       .currencies-dropdown {
         vertical-align: top;
@@ -820,7 +821,7 @@
         left: -50px;
         margin-top: 9px;
         position: relative;
-        background: var(--card-bg);
+        background: var(--background-color);
       }
 
       span {
@@ -984,6 +985,43 @@
 
 ::ng-deep {
   .dx-empty-message {
-    color: #000 !important;
+    color: var(--text-color) !important;
+  }
+
+  .dx-datagrid-content {
+    background-color: var(--background-color);
+  }
+
+  .dx-popup-wrapper.dx-overlay-content {
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--card-bg) !important;
+  }
+
+  .dx-selectbox-popup-wrapper .dx-list {
+    background-color: var(--card-bg) !important;
+  }
+
+  .dx-dropdownlist-popup-wrapper {
+    .dx-list-item {
+      background-color: var(--background-color) !important;
+      color: var(--text-color) !important;
+    }
+  }
+
+  .dx-state-hover {
+    .dx-button-content {
+      background-color: var(--button-hover-bg) !important;
+    }
+  }
+
+  .dx-item-content.dx-list-item-content {
+    &:hover {
+      background-color: var(--card-bg);
+    }
+  }
+  .title-wrapper {
+    .dx-texteditor-input-container {
+      background: var(--background-color) !important;
+    }
   }
 }
