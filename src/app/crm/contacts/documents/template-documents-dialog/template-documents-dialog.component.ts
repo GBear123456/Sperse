@@ -41,6 +41,8 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     files = [];
     uploadedCount = 0;
     totalCount = 0;
+    searchTemplate = "";
+    orginalTemplate = [];
 
     private slider: any;
     private uploadSubscribers = [];
@@ -79,6 +81,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
                 };
         },
     });
+
     isDocumentsVisible = !!(this.data.showDocuments && this.data.contactId);
     // isTemplatesVisible = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);
     isTemplatesVisible = true;
@@ -88,7 +91,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
 
     folderTabs = [
         {
-            id: 1,
+            id: 0,
             visible: this.isUploadVisible,
             text: this.ls.l("Upload"),
             icon: "",
@@ -99,12 +102,12 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
             text: this.ls.l("Template"),
             icon: "",
         },
-        {
-            id: 2,
-            visible: true,
-            text: this.ls.l("External"),
-            icon: "",
-        },
+        // {
+        //     id: 2,
+        //     visible: true,
+        //     text: this.ls.l("External"),
+        //     icon: "",
+        // },
     ];
     selectedIndex = this.isUploadVisible ? 0 : this.isDocumentsVisible ? 1 : 2;
 
@@ -127,7 +130,32 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
             });
         });
     }
-
+    searchTemplates() {
+        let filteredTemplates = [];
+        // $.ajax({
+        //     type: "GET",
+        //     cache: false,
+        //     url:
+        //         AppConsts.remoteServiceBaseUrl +
+        //         "/api/services/CRM/DocumentTemplates/FileSystem",
+        //     dataType: "json",
+        //     success: function (res) {
+        //         console.log(res);
+        //         if (!this.searchTemplate) {
+        //             filteredTemplates = [
+        //                 ...this.templatesFileProvider["result"],
+        //             ];
+        //         } else {
+        //             const searchTerm = this.searchTemplate.toLowerCase();
+        //             filteredTemplates = this.templatesFileProvider[
+        //                 "result"
+        //             ].filter((template: any) =>
+        //                 template.name.toLowerCase().includes(searchTerm)
+        //             );
+        //         }
+        //     },
+        // });
+    }
     ngOnInit() {
         this.slider = this.elementRef.nativeElement.closest(".slider");
         this.slider.classList.add("hide", "min-width-0");

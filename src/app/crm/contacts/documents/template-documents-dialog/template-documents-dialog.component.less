@@ -50,7 +50,7 @@
         max-height: 100% !important;
         min-height: 300px;
         padding-left: 30px;
-        
+
         .close-widget {
             position: absolute;
             right: 0px;
@@ -65,7 +65,7 @@
             background-color: white;
             z-index: 100;
         }
-        
+
         .layout-view {
             width: 32px;
             height: 32px;
@@ -96,12 +96,13 @@
             border-top-left-radius: 6px;
             border-top-right-radius: 6px;
             background: white;
-            
+
             .dx-tab {
                 border: none;
+
                 &:first-child {
                     border-top-left-radius: 6px;
-                    
+
                     i.dx-icon-upload {
                         margin: 0;
                     }
@@ -124,18 +125,20 @@
                 border-bottom: none;
             }
         }
-        
+
         .file-upload {
             height: calc(~"100vh - 240px");
             padding: 20px;
+
             .header {
                 display: flex;
                 gap: 5px;
                 padding-bottom: 10px;
                 color: #08295B;
-                border: 1px solid  #DEE7EC;
+                border: 1px solid #DEE7EC;
             }
         }
+
         .drop-down {
             display: none;
             width: 100%;
@@ -194,6 +197,27 @@
                     width: 300px;
                     position: absolute;
                 }
+            }
+        }
+
+        .search-template {
+            padding-left: 20px;
+            position: relative;
+            margin-top: 20px;
+            i {
+                position: absolute;
+                top: 6px;
+                left: 30px;
+                color: lightgray;
+            }
+
+            input {
+                width: 60%;
+                height: 30px;
+                padding-left: 30px;
+                border: 1px solid lightgray;
+                border-radius: 5px;
+                font-size: 13px;
             }
         }
 
@@ -318,10 +342,12 @@
 ::ng-deep .crm-document-dialog.cdk-overlay-pane .mat-dialog-container {
     box-shadow: none;
     background-color: #eaf6ff !important;
+
     .mat-dialog-content {
         padding-left: 25px;
     }
 }
+
 ::ng-deep .mat-tab-header-pagination-controls-enabled .mat-tab-header-pagination {
     display: none;
 }
