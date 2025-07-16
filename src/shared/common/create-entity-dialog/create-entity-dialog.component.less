@@ -1,381 +1,409 @@
 ::ng-deep .dx-submenu {
-    border-radius: 5px;
+  border-radius: 5px;
 }
 
 ::ng-deep .usage-type-item {
-    span{
-        &:first-child {
-            display: inline-block;
-            width: 80px;
-        }
-        &:last-child {
-            font-size: 10px;
-        }
+  span {
+    &:first-child {
+      display: inline-block;
+      width: 80px;
     }
+    &:last-child {
+      font-size: 10px;
+    }
+  }
 }
 
 :host {
+  display: block;
+  min-width: 910px;
+
+  ::ng-deep .mat-dialog-header {
+    padding: 0 10px 0 130px !important;
+  }
+
+  ::ng-deep .mat-dialog-actions {
+    #saveClientOptions {
+      width: 227px;
+    }
+  }
+
+  ::ng-deep dx-toolbar {
     display: block;
-    min-width: 910px;
+  }
 
-    ::ng-deep .mat-dialog-header {
-        padding: 0 10px 0 130px!important;
-    }
+  .form-content {
+    display: flex;
+    flex-direction: column;
+    padding: 30px 0 30px 50px;
+    height: calc(~'100vh - 150px');
 
-    ::ng-deep .mat-dialog-actions {
-        #saveClientOptions {
-            width: 227px;
+    ::ng-deep .drop-down-box-wrapper {
+      width: 130px;
+      height: 34px;
+      margin-left: 30px;
+      overflow: hidden;
+      display: inline-block;
+      ::ng-deep .dx-widget {
+        margin: 0;
+        input {
+          font-size: 15px;
+          font-weight: 400;
+          line-height: 1.79;
+          letter-spacing: 0.3px;
+          color: var(--text-color);
+          padding: 0 24px 0 0;
+          width: 130px;
+          background: var(--input-bg);
         }
-    }
-
-    ::ng-deep dx-toolbar {
-        display: block;
-    }
-
-    .form-content {
-        display: flex;
-        flex-direction: column;
-        padding: 30px 0 30px 50px;
-        height: calc(~"100vh - 150px");
-
-        ::ng-deep .drop-down-box-wrapper {
-            width: 130px;
-            height: 34px;
-            margin-left: 30px;
-            overflow: hidden;
-            display: inline-block;
-            ::ng-deep .dx-widget {
-                margin: 0;
-                input {
-                    font-size: 15px;
-                    font-weight: 400;
-                    line-height: 1.79;
-                    letter-spacing: 0.3px;
-                    color: #424c56;
-                    padding: 0 24px 0 0;
-                    width: 130px;
-                }
-                .dx-texteditor-buttons-container {
-                    left: 97px;
-                    .dx-dropdowneditor-button {
-                        float: left;
-                    }
-                }
-            }
+        .dx-texteditor-buttons-container {
+          left: 97px;
+          .dx-dropdowneditor-button {
+            float: left;
+          }
         }
-
-        ::ng-deep .field {
-            margin-bottom: 30px;
-            &.addr {
-                margin-bottom: 0;
-            }
-            &.notes {
-                margin-top: 20px;
-                span.clear-contact {
-                    align-self: flex-start;
-                }
-            }
-
-            label {
-                width: 175px;
-            }
-            p {
-                width: 100%;
-                height: 22px;
-                max-width: 750px;
-                position: relative;
-                padding-left: 290px;
-                padding-right: 32px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                &.phone {
-                    &.H, &.P {
-                        background: url("../../../assets/common/icons/phone.svg") no-repeat 260px 0;
-                    }
-
-                    &.W {
-                        background: url("../../../assets/common/icons/phone-work.svg") no-repeat 260px 0;
-                    }
-                    &.M {
-                        background: url("../../../assets/common/icons/phone-mobile.svg") no-repeat 260px 0;
-                    }
-                }
-                &.address {
-                    padding-left: 60px;
-                    &.P {
-                        background: url("../../../assets/common/icons/address-primary.png") no-repeat 30px 0;
-                    }
-                    &.H {
-                        background: url("../../../assets/common/icons/address-home.png") no-repeat 30px 0;
-                    }
-                    &.S, &.W {
-                        background: url("../../../assets/common/icons/address-shipping.png") no-repeat 30px 0;
-                    }
-                }
-                span {
-                    top: 0;
-                    right: 0;
-                    position: absolute;
-                    width: 20px;
-                    height: 20px;
-                    cursor: pointer;
-                    background: url('../../../assets/common/icons/delete-icon.svg') no-repeat center;
-                }
-            }
-            input[name="Address"] {
-                width: 410px;
-                height: 34px;
-                font-size: 15px;
-                font-weight: 400;
-                line-height: 1.79;
-                letter-spacing: 0.3px;
-                color: #424c56;
-                padding: 0;
-                vertical-align: top;
-                margin-left: 30px;
-                &::placeholder {
-                    color: #8a969b;
-                }
-                &.wide {
-                    width: 570px!important;
-                }
-            }
-
-            dx-text-box, dx-number-box, dx-text-area, dx-select-box, country-phone-number, dx-drop-down-box, .dx-datebox {
-                display: inline-block;
-                margin-left: 30px;
-                vertical-align: top;
-                &[name="phoneExtension"] {
-                    margin-left: 60px;
-                }
-                &.dx-invalid {
-                    input {
-                        color: #d9534f!important;
-                    }
-                }
-                &.dx-state-focused {
-                    .dx-placeholder {
-                        top: -30px;
-                    }
-                }
-                input, textarea {
-                    color: #424c56;
-                }
-                .dx-placeholder, input, textarea {
-                    font-size: 15px;
-                    font-weight: 400;
-                    line-height: 1.79;
-                    letter-spacing: 0.3px;
-                    padding: 0;
-                }
-            }
-            dx-select-box[name="company"] {
-                .dx-texteditor-buttons-container {
-                    display: none;
-                }
-            }
-            dx-select-box[name="state"] {
-                &[name="state"], &[name="country"] {
-                    input {
-                        width: 360px;
-                    }
-                }
-            }
-            country-phone-number {
-                width: 300px;
-                vertical-align: top;
-
-                .input-group {
-                    height: 34px;
-                }
-
-                .wrapper {
-                    width: 340px!important;
-                }
-
-                .flagInput .dropdown .btn {
-                    height: 33px;
-                }
-
-                .flagInput, .flagInput .dropdown .btn span, .dropdown-content .list-group a span {
-                    line-height: unset;
-                    font-size: 12px;
-                    margin: 0;
-                    top: 0;
-                }
-
-                .flagInput .dropdown .btn span.arrow-down {
-                    margin-top: 5px;
-                    margin-left: 2px;
-                }
-
-                .dropdown-content .list-group a span.country-name {
-                    margin-left: 6px;
-                }
-
-                .list-group .list-group-item span {
-                    vertical-align: middle;
-                }
-            }
-
-            &.bank-code {
-                label {
-                    padding-left: 0;
-                    margin-right: 65px;
-                }
-                bank-code-letters bank-code-letter span {
-                    width: 37px;
-                    height: 37px;
-                    line-height: 37px;
-                    font-size: 28px;
-                    margin: 0 5px;
-                }
-            }
-        }
+      }
     }
 
-    &.hideToolbar .form-content {
-        height: calc(~"100vh - 84px");
-    }
-
-    .photo-area {
-        top: 20px;
-        width: 110px;
-        height: 110px;
-        cursor: pointer;
-        position: absolute;
-        background-color: #F4F4F4;
-        z-index: 9999999;
-        border-radius: 50%;
-        margin-left: 15px;
-        background-size: cover;
-        background-image: url('../../../assets/common/images/avatar.svg');
-
-        &:before {
-            display: block;
-            width: 10px;
-            background-color: #DBDCDD;
-            height: 40px;
-            top: 35px;
-            left: 50px;
-            position: relative;
+    ::ng-deep .field {
+      margin-bottom: 30px;
+      &.addr {
+        margin-bottom: 0;
+      }
+      &.notes {
+        margin-top: 20px;
+        span.clear-contact {
+          align-self: flex-start;
         }
-        &:after {
-           display: block;
-           width: 40px;
-           background-color: #DBDCDD;
-           height: 10px;
-           top: 10px;
-           left: 35px;
-           position: relative;
-        }
-    }
+      }
 
-    .similar-clients-message {
+      label {
+        width: 175px;
+      }
+      p {
+        width: 100%;
+        height: 22px;
+        max-width: 750px;
         position: relative;
-        background-color: #ed6d6d;
+        padding-left: 290px;
+        padding-right: 32px;
+        overflow: hidden;
+        text-overflow: ellipsis;
         white-space: nowrap;
-        color: white;
-        padding: 5px 30px;
-        font-size: 16px;
-        cursor: pointer;
+        &.phone {
+          &.H,
+          &.P {
+            background: url('../../../assets/common/icons/phone.svg') no-repeat 260px 0;
+          }
+
+          &.W {
+            background: url('../../../assets/common/icons/phone-work.svg') no-repeat 260px 0;
+          }
+          &.M {
+            background: url('../../../assets/common/icons/phone-mobile.svg') no-repeat 260px 0;
+          }
+        }
+        &.address {
+          padding-left: 60px;
+          &.P {
+            background: url('../../../assets/common/icons/address-primary.png') no-repeat 30px 0;
+          }
+          &.H {
+            background: url('../../../assets/common/icons/address-home.png') no-repeat 30px 0;
+          }
+          &.S,
+          &.W {
+            background: url('../../../assets/common/icons/address-shipping.png') no-repeat 30px 0;
+          }
+        }
+        span {
+          top: 0;
+          right: 0;
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+          background: url('../../../assets/common/icons/delete-icon.svg') no-repeat center;
+        }
+      }
+      input[name='Address'] {
+        width: 410px;
+        height: 34px;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.79;
+        letter-spacing: 0.3px;
+        color: var(--text-color);
+        padding: 0;
+        vertical-align: top;
+        margin-left: 30px;
+        background: var(--input-bg);
+        &::placeholder {
+          color: var(--input-placeholder);
+        }
+        &.wide {
+          width: 570px !important;
+        }
+      }
+
+      dx-text-box,
+      dx-number-box,
+      dx-text-area,
+      dx-select-box,
+      country-phone-number,
+      dx-drop-down-box,
+      .dx-datebox {
+        display: inline-block;
+        margin-left: 30px;
+        vertical-align: top;
+        &[name='phoneExtension'] {
+          margin-left: 60px;
+        }
+        &.dx-invalid {
+          input {
+            color: var(--danger-color) !important;
+          }
+        }
+        &.dx-state-focused {
+          .dx-placeholder {
+            top: -30px;
+          }
+        }
+        input,
+        textarea {
+          color: var(--text-color);
+          background: var(--input-bg);
+        }
+        .dx-placeholder,
+        input,
+        textarea {
+          font-size: 15px;
+          font-weight: 400;
+          line-height: 1.79;
+          letter-spacing: 0.3px;
+          padding: 0;
+          color: var(--input-placeholder);
+        }
+      }
+      dx-select-box[name='company'] {
+        .dx-texteditor-buttons-container {
+          display: none;
+        }
+      }
+      dx-select-box[name='state'] {
+        &[name='state'],
+        &[name='country'] {
+          input {
+            width: 360px;
+          }
+        }
+      }
+      country-phone-number {
+        width: 300px;
+        vertical-align: top;
+
+        .input-group {
+          height: 34px;
+        }
+
+        .wrapper {
+          width: 340px !important;
+        }
+
+        .flagInput .dropdown .btn {
+          height: 33px;
+        }
+
+        .flagInput,
+        .flagInput .dropdown .btn span,
+        .dropdown-content .list-group a span {
+          line-height: unset;
+          font-size: 12px;
+          margin: 0;
+          top: 0;
+        }
+
+        .flagInput .dropbtn {
+          background-color: var(--background-color) !important;
+        }
+
+        .flagInput .dropdown .btn span.arrow-down {
+          margin-top: 5px;
+          margin-left: 2px;
+        }
+
+        .dropdown-content .list-group a span.country-name {
+          margin-left: 6px;
+          color: var(--text-color);
+        }
+
+        .list-group .list-group-item span {
+          vertical-align: middle;
+        }
+      }
+
+      &.bank-code {
+        label {
+          padding-left: 0;
+          margin-right: 65px;
+        }
+        bank-code-letters bank-code-letter span {
+          width: 37px;
+          height: 37px;
+          line-height: 37px;
+          font-size: 28px;
+          margin: 0 5px;
+        }
+      }
+    }
+  }
+
+  &.hideToolbar .form-content {
+    height: calc(~'100vh - 84px');
+  }
+
+  .photo-area {
+    top: 20px;
+    width: 110px;
+    height: 110px;
+    cursor: pointer;
+    position: absolute;
+    background-color: var(--card-bg);
+    z-index: 9999999;
+    border-radius: 50%;
+    margin-left: 15px;
+    background-size: cover;
+    background-image: url('../../../assets/common/images/avatar.svg');
+
+    &:before {
+      display: block;
+      width: 10px;
+      background-color: var(--divider-color);
+      height: 40px;
+      top: 35px;
+      left: 50px;
+      position: relative;
+    }
+    &:after {
+      display: block;
+      width: 40px;
+      background-color: var(--divider-color);
+      height: 10px;
+      top: 10px;
+      left: 35px;
+      position: relative;
+    }
+  }
+
+  .similar-clients-message {
+    position: relative;
+    background-color: var(--danger-color);
+    white-space: nowrap;
+    color: var(--btn-primary-text);
+    padding: 5px 30px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .dx-icon-clear {
+    color: var(--muted-color);
+    position: absolute;
+    top: 50%;
+    width: 34px;
+    height: 34px;
+    background-position: 8px 8px;
+    background-size: 18px 18px;
+    padding: 8px;
+    font-size: 18px !important;
+    text-align: center;
+    line-height: 18px;
+  }
+
+  .property-info .field > div {
+    width: 410px;
+    label {
+      width: 140px;
+      margin-right: 0;
+      padding-left: 30px;
+      line-height: 31px;
     }
 
-    .dx-icon-clear {
-        color: #999999;
+    dx-number-box,
+    dx-date-box {
+      margin-left: 0;
+    }
+    &:last-child label {
+      width: 0;
+      min-width: 100px;
+    }
+  }
+
+  .property-address {
+    flex-grow: 1;
+    padding-right: 10px;
+    position: relative;
+    &.invalid {
+      &:after {
+        pointer-events: none;
+        font-weight: bold;
         position: absolute;
         top: 50%;
-        width: 34px;
-        height: 34px;
-        background-position: 8px 8px;
-        background-size: 18px 18px;
-        padding: 8px;
-        font-size: 18px!important;
+        right: 20px;
+        margin-top: -9px;
+        width: 18px;
+        height: 18px;
         text-align: center;
         line-height: 18px;
+        font-size: 13px;
+        background-color: var(--danger-color);
+        color: var(--btn-primary-text);
+        content: '!';
+        border-radius: 50%;
+      }
+      .placeholder {
+        color: var(--danger-color);
+      }
+      input {
+        border-bottom: 1px solid var(--danger-color);
+      }
     }
 
-    .property-info .field > div {
-        width: 410px;
-        label {
-            width: 140px;
-            margin-right: 0;
-            padding-left: 30px;
-            line-height: 31px;
-        }
-
-        dx-number-box,
-        dx-date-box {
-            margin-left: 0;
-        }
-        &:last-child label {
-            width: 0;
-            min-width: 100px;
-        }
+    input {
+      height: 35px;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.4px;
+      color: var(--text-color);
+      background-color: var(--background-color);
+      border-radius: 0;
     }
 
-    .property-address {
-        flex-grow: 1;
-        padding-right: 10px;
-        position: relative;
-        &.invalid {
-            &:after {
-                pointer-events: none;
-                font-weight: bold;
-                position: absolute;
-                top: 50%;
-                right: 20px;
-                margin-top: -9px;
-                width: 18px;
-                height: 18px;
-                text-align: center;
-                line-height: 18px;
-                font-size: 13px;
-                background-color: #d9534f;
-                color: #fff;
-                content: '!';
-                border-radius: 50%;
-            }
-            .placeholder {
-                color: #d9534f;
-            }
-            input {
-                border-bottom: 1px solid #d9534f;
-            }
-        }
-
-        input {
-            height: 35px;
-            font-size: 22px;
-            font-weight: 500;
-            letter-spacing: 0.4px;
-            color: #202b35;
-            background-color: var(--background-color);
-            border-radius: 0;
-        }
-
-        input:focus ~ span.placeholder,
-        input:not(:focus):valid ~ span.placeholder {
-            top: -12px;
-            left: 0;
-            font-size: 11px;
-            opacity: 1;
-        }
-
-        span.placeholder {
-            position: absolute;
-            pointer-events: none;
-            left: 0;
-            top: 5px;
-            font-size: 18px;
-            font-weight: 600;
-            color: #8a969b;
-            transition: 0.2s;
-        }
+    input:focus ~ span.placeholder,
+    input:not(:focus):valid ~ span.placeholder {
+      top: -12px;
+      left: 0;
+      font-size: 11px;
+      opacity: 1;
     }
 
-    .property-dropdown input {
-        padding-right: 34px;
+    span.placeholder {
+      position: absolute;
+      pointer-events: none;
+      left: 0;
+      top: 5px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--input-placeholder);
+      transition: 0.2s;
     }
+  }
+
+  .property-dropdown input {
+    padding-right: 34px;
+  }
+
+  ::ng-deep .dropdown-content {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+  }
 }
