@@ -851,7 +851,27 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    justify-content: center;
     color: #fff;
+
+    .edit-button {
+      width: 20px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      top: 50%;
+      transform: translateY(-50%);
+      outline: none;
+      opacity: 0;
+      transition: 0.3s;
+      position: absolute;
+      right: 16px;
+    }
+    &:hover {
+      .edit-button {
+        opacity: 1;
+      }
+    }
   }
 
   .new-column0.focused {
