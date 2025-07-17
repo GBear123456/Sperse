@@ -41,7 +41,6 @@
         <div class="file-upload">
             <dx-file-manager
                 width="100%"
-                [height]="getHeight()"
                 [allowedFileExtensions]="[]"
                 [fileSystemProvider]="
                     selectedIndex == 2 || selectedIndex == 0
@@ -150,7 +149,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions *ngIf="selectedIndex">
-    <button mat-button mat-dialog-close class="button-layout button-default">
+    <button mat-button mat-dialog-close class="button-layout button-cancel">
         {{ ls.l("Cancel") }}
     </button>
     <button
@@ -158,6 +157,7 @@
         class="button-layout button-secondary"
         (click)="onAddFile()"
     >
-    <i class="fa fa-plus"></i>{{ ls.l("Add") }}
+
+    <span class="plus-icon">+</span> {{ ls.l("Add") }}
     </button>
 </mat-dialog-actions>
