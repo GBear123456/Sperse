@@ -53,20 +53,21 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     layout = this.VIEW_MODE_THUMBNAILS;
     documentsFileProvider = new CustomFileSystemProvider({
         getItems: () => {
-            return this.documentService
-                .getAll(this.data.contactId)
-                .pipe(
-                    map((documents: DocumentInfo[]) => {
-                        return documents.map((item: DocumentInfo) => {
-                            return {
-                                key: item.fileId,
-                                name: item.fileName,
-                                size: item.size,
-                            };
-                        });
-                    })
-                )
-                .toPromise();
+            // return this.documentService
+            //     .getAll(this.data.contactId)
+            //     .pipe(
+            //         map((documents: DocumentInfo[]) => {
+            //             return documents.map((item: DocumentInfo) => {
+            //                 return {
+            //                     key: item.fileId,
+            //                     name: item.fileName,
+            //                     size: item.size,
+            //                 };
+            //             });
+            //         })
+            //     )
+            //     .toPromise();
+            return null;
         },
     });
     templatesFileProvider = new RemoteFileSystemProvider({
