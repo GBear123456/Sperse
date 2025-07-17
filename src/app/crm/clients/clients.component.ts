@@ -77,14 +77,13 @@ import { FilterContactStatusModel } from '@app/crm/shared/filters/contact-status
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
 import { FilterNullableRadioGroupModel } from '@shared/filters/radio-group/filter-nullable-radio-group.model';
 import {
-    UpdateContactStatusesInput,
     ProductDto,
-    ProductType,
     ProductServiceProxy,
     ContactEmailServiceProxy,
     ContactServiceProxy,
     CreateContactEmailInput,
-    LayoutType
+    LayoutType,
+    PriceOptionType
 } from '@shared/service-proxies/service-proxies';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -655,7 +654,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     filterMode: 'All',
                     dataSource$: this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts) ?
                         this.productProxy.getProducts(
-                            ProductType.Subscription, undefined, false
+                            PriceOptionType.Subscription, undefined, false, undefined, false
                         ).pipe(
                             map((products: ProductDto[]) => {
                                 let productsWithGroups = products.filter(x => x.group);

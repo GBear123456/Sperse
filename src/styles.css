@@ -28,7 +28,7 @@ a {
     cursor: pointer;
 }
 
-[class^=dx]:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.dx-datagrid-group-opened):not(.dx-datagrid-group-closed):not(.dx-total):not(.tabular):not(.dx-texteditor-input):not([class*="fontName"]):not(.dx-placeholder):not(.dx-button-text):not(.dx-navigate-button), input.form-control {
+[class^=dx]:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.dx-datagrid-group-opened):not(.dx-datagrid-group-closed):not(.dx-total):not(.tabular):not(.dx-texteditor-input):not([class*="fontName"]):not(.dx-placeholder):not(.dx-button-text):not(.dx-navigate-button):not(.dx-list-reorder-handle), input.form-control {
     font-family: var(--app-font-family) !important;
 }
 
@@ -233,4 +233,8 @@ i.save-to-clipboard {
 
 .dx-item:hover .email-templates-select-box .fa-times {
     display: inline-block;
+}
+
+.dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item-content.dx-selectbox-popup-horizonal-line-spec {
+    border-top: 1px solid hsl(214.3 31.8% 91.4%);
 }

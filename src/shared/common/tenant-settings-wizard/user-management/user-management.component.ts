@@ -51,4 +51,8 @@ export class UserManagementComponent implements ITenantSettingsStepComponent {
                     this.onOptionChanged.emit('SignUpPageEnabled');
             })) : this.hostSettingsServiceProxy.updateUserManagementSettings(this.hostSettings);
     }
+
+    isValid(): boolean {
+        return this.contactGroupTemplates.validate();
+    }
 }

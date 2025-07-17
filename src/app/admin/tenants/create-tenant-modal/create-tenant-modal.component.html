@@ -92,8 +92,9 @@
                                                 </dx-select-box>
                                             </div>
                                             <div class="col-sm-6">
-                                                <dx-select-box [dataSource]="paymentPeriodTypes"
-                                                            [(value)]="paymentPeriodType"
+                                                <dx-select-box [dataSource]="priceOptions"
+                                                            [(value)]="priceOption"
+                                                            displayExpr="frequency"
                                                             placeholder="Payment type"
                                                             [showClearButton]="true">
                                                 </dx-select-box>

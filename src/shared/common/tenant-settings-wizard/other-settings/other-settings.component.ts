@@ -44,4 +44,8 @@ export class OtherSettingsComponent implements ITenantSettingsStepComponent {
             this.subsSettings.defaultSubscriptionGracePeriodDayCount = 0;
         return this.tenantPaymentSettingsProxy.updateSubscriptionSettings(this.subsSettings);
     }
+
+    isValid(): boolean {
+        return true;
+    }
 }

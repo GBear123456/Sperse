@@ -26,9 +26,14 @@
                         <tenant-management-settings></tenant-management-settings>
                     </ng-container>
                 </mat-step>
-                <mat-step *ngIf="!appService.isHostTenant && isAdminCustomizations" #appearanceStep>
+                <mat-step *ngIf="isAdminCustomizations" #appearanceStep>
                     <ng-container *ngIf="stepper.selected === appearanceStep">
                         <appearance-settings></appearance-settings>
+                    </ng-container>
+                </mat-step>
+                <mat-step #trackingToolsStep>
+                    <ng-container *ngIf="stepper.selected === trackingToolsStep">
+                        <tracking-tools-settings></tracking-tools-settings>
                     </ng-container>
                 </mat-step>
                 <mat-step #userManagementStep>
@@ -94,6 +99,11 @@
                 <mat-step *ngIf="isPaymentsEnabled" #stripeStep>
                     <ng-container *ngIf="stepper.selected === stripeStep">
                         <stripe-settings></stripe-settings>
+                    </ng-container>
+                </mat-step>
+                <mat-step *ngIf="isSpreedlyEnabled" #paymentProvidersStep>
+                    <ng-container *ngIf="stepper.selected === paymentProvidersStep">
+                        <payment-providers-settings></payment-providers-settings>
                     </ng-container>
                 </mat-step>
                 <mat-step *ngIf="isAIIntegrationEnabled" #aiIntegrationStep>

@@ -55,4 +55,8 @@ export class MemberPortalComponent implements ITenantSettingsStepComponent {
             this.memberPortalSettings.url = undefined;
         return this.tenantSettingsProxy.updateMemberPortalSettings(this.memberPortalSettings);
     }
+
+    isValid(): boolean {
+        return true;
+    }
 }

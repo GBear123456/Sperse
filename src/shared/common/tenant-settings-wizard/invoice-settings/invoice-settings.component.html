@@ -69,6 +69,12 @@
             </dx-check-box>
         </div>
         <div class="form-group">
+            <dx-check-box [readOnly]="isManageUnallowed"
+                          [text]="ls.l('InvoiceEmail_AttachXMLToPdf')"
+                          [(value)]="settings.attachXMLToPdf">
+            </dx-check-box>
+        </div>
+        <div class="form-group">
             <label>
                 {{ls.l('InvoiceEmail_DueGracePeriod')}}
             </label>

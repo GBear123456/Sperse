@@ -29,7 +29,7 @@ import {
     TenantManagementSettingsEditDto,
     TenantSettingsServiceProxy,
     TenantUserManagementSettingsEditDto,
-    SecuritySettingsEditDto,
+    SecuritySettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -52,6 +52,7 @@ import { CommissionsComponent } from './commissions/commissions.component';
 import { BankTransferComponent } from './bank-transfer/bank-transfer.component';
 import { OtherSettingsComponent } from './other-settings/other-settings.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
+import { CreditsSettingsComponent } from './credits-settings/credits-settings.component';
 
 @Component({
     selector: 'tenant-settings-wizard',
@@ -75,6 +76,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(InvoiceSettingsComponent) invoiceSettingsComponent: InvoiceSettingsComponent;
     @ViewChild(CommissionsComponent) commissionsComponent: CommissionsComponent;
     @ViewChild(BankTransferComponent) bankTransferComponent: BankTransferComponent;
+    @ViewChild(CreditsSettingsComponent) creditsSettingsComponent: CreditsSettingsComponent;
     @ViewChild(OtherSettingsComponent) otherSettingsComponent: OtherSettingsComponent;
     @ViewChild(LandingPageComponent) landingPageComponent: LandingPageComponent;
     hasCustomizationsFeture = this.featureCheckerService.isEnabled(AppFeatures.AdminCustomizations);
@@ -86,6 +88,8 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     showCommissionsSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions) &&
         (this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage) || this.hasHostPermission || this.hasTenantPermission);
     showBankTransferSettings = this.hasHostTenantOrCRMSettings;
+    showCreditsSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMContactCredits) &&
+        (this.permissionCheckerService.isGranted(AppPermissions.CRMContactCreditsManage) || this.hasHostPermission || this.hasTenantPermission);
     showOtherSettings = this.featureCheckerService.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && (this.hasHostPermission || this.hasTenantPermission);
     showLandingPageSettings = !this.appService.isHostTenant && this.featureCheckerService.isEnabled(AppFeatures.CRMTenantLandingPage) && this.permissionCheckerService.isGranted(AppPermissions.AdministrationUsers);
 
@@ -152,6 +156,9 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 case 'appearance':
                     message = this.ls.l('ReloadPageStylesMessage');
                     break;
+                case 'tenantName':
+                    message = this.ls.l('SettingsChangedRefreshPageNotification', this.ls.l('Tenant name'));
+                    break;
             }
 
             this.messageService.info(message).done(() => {
@@ -176,7 +183,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             },
             {
                 name: 'appearance',
-                text: this.ls.l('Appearance'),
+                text: this.ls.l('Platform') + ' ' + this.ls.l('Appearance'),
                 getComponent: () => this.appearanceComponent,
                 saved: false,
                 visible: !this.appService.isHostTenant && this.hasCustomizationsFeture
@@ -245,6 +252,13 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 visible: this.showBankTransferSettings
             },
             {
+                name: 'credits',
+                text: this.ls.l('ContactCreditsBalance'),
+                getComponent: () => this.creditsSettingsComponent,
+                saved: false,
+                visible: this.showCreditsSettings
+            },
+            {
                 name: 'others',
                 text: this.ls.l('SubscriptionManagement'),
                 getComponent: () => this.otherSettingsComponent,
@@ -290,7 +304,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     saveAndNext() {
         const currentStep = this.visibleSteps[this.stepper.selectedIndex];
         const currentStepComponent: ITenantSettingsStepComponent = currentStep.getComponent();
-        if (currentStepComponent) {
+        if (currentStepComponent && currentStepComponent.isValid()) {
             this.loadingService.startLoading(this.elementRef.nativeElement);
             currentStepComponent.save().pipe(
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))

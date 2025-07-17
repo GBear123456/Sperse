@@ -1,5 +1,17 @@
 <h2>{{l('General')}} {{l('Settings')}}</h2>
 <div *ngIf="generalSettings">
+    <ng-container *ngIf="isRenameTenantEnabled">
+        <div class="form-group">
+            <label for="TenantName">{{l("Tenant Name")}}</label>
+            <input #tenantNameModel="ngModel"
+                   id="TenantName"
+                   type="text"
+                   name="TenantName"
+                   class="form-control"
+                   [(ngModel)]="tenantName"
+                   maxlength="128">
+        </div>
+    </ng-container>
     <div class="form-group">
         <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
         <dx-select-box valueExpr="code"
@@ -71,25 +83,27 @@
                    [(ngModel)]="generalSettings.zendeskAccountUrl"
                    maxlength="128">
         </div>
-        <div class="row m-form" *ngIf="isAdminCustomizations">
-            <div class="col-md-6">
-                <uploader #privacyPolicyUploader
-                          [title]="l('PrivacyPolicy')"
-                          [documentId]="tenant.customPrivacyPolicyDocumentId"
-                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + tenant.id"
-                          [uploadButtonText]="l('UploadPrivacyPolicy')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomPrivacyPolicyDocument'">
-                </uploader>
-            </div>
-            <div class="col-md-6">
-                <uploader #tosUploader
-                          [title]="l('TermsOfService')"
-                          [documentId]="tenant.customToSDocumentId"
-                          [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + tenant.id"
-                          [uploadButtonText]="l('UploadTermsOfService')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomToSDocument'">
-                </uploader>
-            </div>
-        </div>
     </ng-container>
+    <div class="row m-form" *ngIf="isAdminCustomizations">
+        <div class="col-md-6">
+            <uploader #privacyPolicyUploader
+                      [title]="l('PrivacyPolicy')"
+                      [documentId]="appearanceConfig.customPrivacyPolicyDocumentId"
+                      [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + (appearanceConfig.id || '')"
+                      [uploadButtonText]="l('UploadPrivacyPolicy')"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomPrivacyPolicyDocument'"
+                      (onDocumentClear)="clearConditions(conditions.Policies)">
+            </uploader>
+        </div>
+        <div class="col-md-6">
+            <uploader #tosUploader
+                      [title]="l('TermsOfService')"
+                      [documentId]="appearanceConfig.customToSDocumentId"
+                      [documentLink]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + (appearanceConfig.id || '')"
+                      [uploadButtonText]="l('UploadTermsOfService')"
+                      [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomToSDocument'"
+                      (onDocumentClear)="clearConditions(conditions.Terms)">
+            </uploader>
+        </div>
+    </div>
 </div>

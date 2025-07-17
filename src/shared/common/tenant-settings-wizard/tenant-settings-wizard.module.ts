@@ -44,6 +44,7 @@ import { InvoiceSettingsComponent } from './invoice-settings/invoice-settings.co
 import { CommissionsComponent } from './commissions/commissions.component';
 import { BankTransferComponent } from './bank-transfer/bank-transfer.component';
 import { OtherSettingsComponent } from './other-settings/other-settings.component';
+import { CreditsSettingsComponent } from './credits-settings/credits-settings.component';
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
 import { StaticListModule } from '@app/shared/common/static-list/static-list.module'; 
 import { CurrencySelectorModule } from '../currency-selector/currency-selector.module';
@@ -93,6 +94,7 @@ import { CurrencySelectorModule } from '../currency-selector/currency-selector.m
         CommissionsComponent,
         BankTransferComponent,
         OtherSettingsComponent,
+        CreditsSettingsComponent,
         LandingPageComponent,
         LandingPageListComponent,
         WordingListComponent

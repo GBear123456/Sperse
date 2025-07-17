@@ -31,8 +31,8 @@ import { CreateProductDialogComponent } from '@app/crm/contacts/subscriptions/ad
 import { ShareDialogComponent } from '@app/shared/common/dialogs/share/share-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ProductServiceProxy, ProductType, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
-import { ProductDto, ProductSubscriptionOption } from '@app/crm/products/products-dto.interface';
+import { PriceOptionType, ProductServiceProxy, ProductType, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
+import { ProductDto, PriceOption } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -150,8 +150,8 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                     this.productFields.IsArchived
                 ],
                 {
-                    Price: [this.productFields.CurrencyId, this.productFields.ProductSubscriptionOptions],
-                    Unit: [this.productFields.ProductSubscriptionOptions]
+                    Price: [this.productFields.CurrencyId, this.productFields.PriceOptions],
+                    Unit: [this.productFields.PriceOptions]
                 }
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -240,12 +240,14 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 product.hasExternalReference = false;
                 product.hasIncompletedInvoices = false;
                 product.isArchived = false;
-                if (product.productSubscriptionOptions)
-                    product.productSubscriptionOptions =
-                        product.productSubscriptionOptions.map(sub => {
+                if (product.priceOptions)
+                    product.priceOptions =
+                        product.priceOptions.map(sub => {
+                            sub.id = undefined;
                             sub.stripeXref = undefined;
                             sub.stripeXrefUrl = undefined;
                             sub.paypalXref = undefined;
+                            sub.isArchived = false;
                             return sub;
                         });
                 product.imageUrl = undefined;
@@ -327,9 +329,11 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     showShareDialog(event, product) {
+        let productLink = this.getProductPublicLink(product);
         const dialogData = {
             title: this.l('Product share link options'),
-            linkUrl: this.getProductPublicLink(product)
+            linkUrl: this.getProductPublicLink(product),
+            embedLinkUrl: productLink + '?embeddedCheckout=true'
         };
         this.dialog.open(ShareDialogComponent, {
             panelClass: '',
@@ -570,14 +574,17 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    getUnitColumnText(data: ProductDto) {
-        if (data.Type == ProductType.Subscription)
-            return this.getSubscrOptionDescription(data.ProductSubscriptionOptions[0]);
+    getUnitColumnText(data: PriceOption) {
+        if (!data)
+            return '';
+
+        if (data.Type == PriceOptionType.Subscription)
+            return this.getSubscrOptionDescription(data);
 
         return data.Unit;
     }
 
-    getSubscrOptionDescription(data: ProductSubscriptionOption) {
+    getSubscrOptionDescription(data: PriceOption) {
         if (data.Frequency == RecurringPaymentFrequency.Custom) {
             return this.l('RecurringPaymentFrequency_CustomDescription', data.CustomPeriodCount, this.l('CustomPeriodType_' + data.CustomPeriodType));
         }

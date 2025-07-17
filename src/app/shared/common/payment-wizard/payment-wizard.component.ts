@@ -139,12 +139,13 @@ export class PaymentWizardComponent implements AfterViewInit {
             })
         ).subscribe((product: ProductInfo) => {
             let selectedOption = product &&
-                product.productSubscriptionOptions.find(x => x.frequency == 
+                product.priceOptions.find(x => x.frequency == 
                     RecurringPaymentFrequency[this.data.subscription.paymentPeriodType]);
 
             this.changePlan({
                 productId: this.data.subscription.productId,
                 productName: this.data.subscription.productName,
+                priceOptionId: selectedOption ? selectedOption.id : undefined,
                 paymentPeriodType: this.data.subscription.paymentPeriodType,
                 total: selectedOption ? selectedOption.fee : 0
             });

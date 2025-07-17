@@ -29,7 +29,7 @@ import {
     PrimaryContactInfo,
     GetContactInfoForMergeOutput
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from 'abp-ng2-module';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService } from 'abp-ng2-module';
@@ -38,6 +38,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: 'merge-contact-dialog.component.html',
@@ -59,7 +60,8 @@ export class MergeContactDialogComponent implements AfterViewInit {
     public readonly CONTACT_XREFS_FIELD       = 'xrefs';
     public readonly CONTACT_AFFILIATECODES_FIELD = 'contactAffiliateCodes';
     public readonly CONTACT_BANK_CODE         = 'bankCode';
-    public readonly CONTACT_STRIPECUSTOMERID  = 'stripeXrefOptions';
+    public readonly CONTACT_STRIPECUSTOMERID = 'stripeXrefOptions';
+    public readonly CONTACT_CREDITPLAN = 'creditsBalancePlan';
     public readonly LEAD_STAGE_FIELD          = 'stage';
     public readonly LEAD_OWNER_FIELD          = 'sourceOrganizationUnitName';
     public readonly LEAD_REQUEST_DATE_FIELD   = 'leadDate';
@@ -68,6 +70,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
     public readonly ASSIGNED_USER_EMAIL       = 'userEmailAddress';
 
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
+    hasCreditsBalanceFeature = this.feature.isEnabled(AppFeatures.CRMContactCredits);
     isSameContact = this.data.mergeInfo.contactInfo.id == this.data.mergeInfo.targetContactInfo.id;
     keepSource: boolean = this.data.keepSource !== undefined ? this.data.keepSource : true;
     keepTarget: boolean = this.data.keepTarget !== undefined ? this.data.keepTarget : true;
@@ -137,6 +140,11 @@ export class MergeContactDialogComponent implements AfterViewInit {
             hidden: this.isSameContact
         },
         [this.CONTACT_STRIPECUSTOMERID]: this.getStripeXrefOptionsConfig(),
+        [this.CONTACT_CREDITPLAN]: {
+            caption: this.ls.l('ContactCredits') + ' ' + this.ls.l('Plan'),
+            hidden: this.isSameContact || !this.hasCreditsBalanceFeature,
+            showIfBothHasValues: true
+        },
         [this.MERGE_OPTIONS_FIELD]: {
             name: this.MERGE_OPTIONS_FIELD,
             caption: this.ls.l('LeadSourceInformation'),
@@ -195,7 +203,11 @@ export class MergeContactDialogComponent implements AfterViewInit {
             target = { ...this.mergeInfo.targetContactInfo, ...this.mergeInfo.targetContactLeadInfo },
             sourceValues = this.getFieldValues(source, field),
             targetValues = this.getFieldValues(target, field);
-        return sourceValues.length || targetValues.length ?
+        let showField = this.fieldsConfig[field].showIfBothHasValues ?
+            sourceValues.length && targetValues.length :
+            sourceValues.length || targetValues.length;
+
+        return showField ?
             Object.assign(this.fieldsConfig[field], {
                 name: field,
                 source: { values: sourceValues },
@@ -230,7 +242,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
         private pipelineService: PipelineService,
         private loadingService: LoadingService,
         private contactProxy: ContactServiceProxy,
-        private notifyService: NotifyService,
+        private feature: FeatureCheckerService,
         private messageService: MessageService,
         private userManagementService: UserManagementService,
         private dialogRef: MatDialogRef<MergeContactDialogComponent>,
@@ -609,7 +621,8 @@ export class MergeContactDialogComponent implements AfterViewInit {
         return (this.isFieldSelected(this.CONTACT_FULL_NAME_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.FullName : 0)
             | (this.isFieldSelected(this.CONTACT_DATE_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.ContactDate : 0)
             | (this.isFieldSelected(this.CONTACT_BANK_CODE, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.BANKCode : 0)
-            | (this.isFieldSelected(this.CONTACT_STRIPECUSTOMERID, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.StripeCustomerId : 0);
+            | (this.isFieldSelected(this.CONTACT_STRIPECUSTOMERID, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.StripeCustomerId : 0)
+            | (this.isFieldSelected(this.CONTACT_CREDITPLAN, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.CreditsBalancePlan : 0);
     }
 
     getMergeContactInput() {

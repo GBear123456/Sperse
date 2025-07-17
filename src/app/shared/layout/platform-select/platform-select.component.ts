@@ -111,7 +111,7 @@ export class PlatformSelectComponent {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$filter = '(IsPublished eq true) and (PublishDate le ' + (new Date()).toISOString() + ')' +
                     ' and (PublicName ne null)' + (this.searchProduct ? " and startswith(Name,'" + this.searchProduct + "')" : '');
-                request.params.$select = 'Id,ThumbnailUrl,PublicName,Price,Name,Type';
+                request.params.$select = 'Id,ThumbnailUrl,PublicName,Name,Type';
                 request.params.$top = 100;
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             },

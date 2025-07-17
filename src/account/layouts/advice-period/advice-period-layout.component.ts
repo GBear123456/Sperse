@@ -14,7 +14,7 @@ import * as moment from 'moment';
 })
 export class AdvicePeriodLayoutComponent implements OnInit {
     currentYear: number = moment().year();
-    tenantName = AppConsts.defaultTenantName;
+    tenantName = this.appSession.tenantName || AppConsts.defaultTenantName;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     originUrl = location.origin;
 
@@ -23,8 +23,5 @@ export class AdvicePeriodLayoutComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        let tenant = this.appSession.tenant;
-        if (tenant)
-            this.tenantName = tenant.name || tenant.tenancyName;
     }
 }

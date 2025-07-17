@@ -1,4 +1,4 @@
-:host {
+single-product {
     height: 100vh;
     display: block;
     background: linear-gradient(115.57deg, #C1E1FF 16.28%, #CFE5FA 95.97%);
@@ -13,6 +13,10 @@
     --divider: #AAC1D7;
     --br: 10px;
     --error-color: gold;
+
+    .box__left {
+        max-width: 570px;
+    }
 
     @media (max-width: 1024px) {
         .box__inner {
@@ -37,11 +41,6 @@
             font-size: 36px !important;
         }
 
-        .subtitle {
-            font-size: 24px !important;
-            line-height: 32px !important;
-        }
-
         .box__inner {
             scale: 0.6;
             margin-top: -170px;
@@ -56,7 +55,6 @@
         }
 
         .subtitle {
-            font-size: 18px !important;
             line-height: 26px !important;
         }
 
@@ -64,6 +62,12 @@
             scale: 0.5;
             margin-top: calc(-100% / 1.5);
         }
+    }
+
+    .dx-texteditor.dx-editor-outlined {
+        background: #69bef7;
+        border: none;
+        border-radius: 7px;
     }
 
     input,
@@ -130,6 +134,22 @@
         font-size: 30px;
     }
 
+    .stripe-checkout {
+        background: white;
+
+        &.visible {
+            height: 100%;
+        }
+
+        .back-icon {
+            position: absolute;
+            font-size: 30px;
+            left: 15px;
+            line-height: 1;
+            cursor: pointer;
+        }
+    }
+
     .box {
         display: flex;
         flex-direction: column;
@@ -177,9 +197,10 @@
     }
 
     .subtitle {
+        max-width: 1144px;
         font-weight: 300;
-        font-size: 32px;
-        line-height: 53px;
+        font-size: 18px;
+        line-height: 30px;
         text-align: center;
         margin-bottom: clamp(30px, 4vw, 45px);
         color: var(--title);
@@ -253,16 +274,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-bottom: 6px;
         font-weight: 500;
         width: 100%;
         font-size: 12px;
+        height: 108px;
 
         &__new {
             text-align: center;
             font-size: 24px;
-            line-height: 30px;
-            margin-bottom: 6px;
             width: 60%;
 
             span {
@@ -274,10 +293,10 @@
                 &::before {
                     position: absolute;
                     content: attr(data-currency);
-                    font-size: 24px;
+                    font-size: 14px;
                     line-height: 30px;
-                    right: 102%;
-                    top: 10px;
+                    left: -10px;
+                    top: 5px;
                 }
             }
         }
@@ -317,8 +336,60 @@
         }
 
         .customer-price-edit {
-            margin-left: 15px;
-            font-size: 27px;
+            margin-left: 5px;
+            font-size: 14px;
+            position: relative;
+            top: -40px;
+        }
+    }
+
+    .tax {
+        width: 60%;
+        min-width: 300px; /* Ensures it expands if needed */
+
+        .tax-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            line-height: 30px;
+            font-size: 16px;
+
+            .amount {
+                text-align: right;
+                width: 30%;
+
+                span {
+                    display: inline-block;
+                    font-size: 18px;
+                    position: relative;
+
+                    &::before {
+                        position: absolute;
+                        content: attr(data-currency);
+                        font-size: 12px;
+                        left: -8px;
+                        top: -5px;
+                    }
+                }
+            }
+        }
+
+        .tax-total {
+            font-size: 18px;
+            line-height: 35px;
+
+            .amount {
+                span {
+                    font-size: 26px;
+
+                    &::before {
+                        font-size: 12px;
+                        line-height: 30px;
+                        right: 102%;
+                        top: -2px;
+                    }
+                }
+            }
         }
     }
 
@@ -342,6 +413,43 @@
         &::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
+        }
+    }
+
+    .addOns {
+        max-width: 100%;
+        min-width: 60%;
+        font-size: 16px;
+        margin-bottom: 30px;
+
+        .addOn-header {
+            margin: 5px 0;
+
+            .required {
+                color: var(--error-color);
+                margin-left: 10px;
+                font-size: 13px;
+            }
+        }
+
+        .addOn-option {
+            display: flex;
+            gap: 5px;
+
+            .check_wrap__style::before {
+                background-color: var(--m-blue);
+            }
+
+            .addOn-option-name {
+                min-width: 50%;
+                max-width: 80%;
+            }
+
+            .addOn-option-price {
+                width: 80px;
+                margin-left: auto;
+                text-align: right;
+            }
         }
     }
 
@@ -433,6 +541,18 @@
             &:hover,
             &:focus {
                 border-color: #fff;
+            }
+        }
+
+        .dx-selectbox {
+            input:hover,
+            input:focus,
+            input:active {
+                border-color: #69bef7;
+            }
+
+            &.dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+                background: none;
             }
         }
 
@@ -544,6 +664,7 @@
             display: flex;
             gap: 10px;
             justify-content: center;
+            flex-wrap: wrap;
 
             .no-payment-systems {
                 color: gold;
@@ -570,6 +691,10 @@
             display: inline-block;
             margin-bottom: 10px;
         }
+    }
+
+    .address {
+        margin-bottom: 10px;
     }
 
     .button_global {
@@ -620,7 +745,29 @@
         }
     }
 
-    ::ng-deep country-phone-number {
+    .social_login {
+        .button_global {
+            width: 100%;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: bold;
+
+            .discord-icon:before {
+                content: "";
+                display: inline-block;
+                margin-right: 14px;
+                width: 25px;
+                height: 21px;
+                background-image: url(../../../assets/common/icons/discord-icon.svg);
+            }
+
+            &:hover .discord-icon:before {
+                background-image: url(../../../assets/common/icons/discord-icon-blue.svg);
+            }
+        }
+    }
+
+    country-phone-number {
         button {
             height: 45px;
             min-width: auto;
@@ -632,25 +779,25 @@
             background: #69bef7;
         }
 
-        input {
-            border-radius: 0 7px 7px 0;
-            background: #69bef7;
-            color: #FFF !important;
-            font-size: 16px;
-            font-weight: 500;
-
-            &:-webkit-autofill,
-            &:-webkit-autofill:hover,
-            &:-webkit-autofill:focus,
-            &:-webkit-autofill:active {
-                -webkit-box-shadow: 0 0 0 30px #69bef7 inset !important;
-                -webkit-text-fill-color: #fff !important;
-            }
-        }
-
         .input-group {
             width: 490px;
             border-bottom: none !important;
+
+            input {
+                border-radius: 0 7px 7px 0;
+                background: #69bef7;
+                color: #FFF !important;
+                font-size: 16px;
+                font-weight: 500;
+
+                &:-webkit-autofill,
+                &:-webkit-autofill:hover,
+                &:-webkit-autofill:focus,
+                &:-webkit-autofill:active {
+                    -webkit-box-shadow: 0 0 0 30px #69bef7 inset !important;
+                    -webkit-text-fill-color: #fff !important;
+                }
+            }
         }
     }
 
@@ -712,7 +859,7 @@
         transform: translate(-50%, -50%) scale(1);
     }
 
-    ::ng-deep validation-messages {
+    validation-messages {
         .form-control-feedback {
             color: var(--error-color);
             font-weight: 600;
@@ -788,96 +935,6 @@
                 color: var(--m-green);
             }
         }
-
-        .state-slider {
-            position: relative;
-            width: 334px;
-            height: 38px;
-            border: solid 1px #9e9e9e;
-            border-radius: 19px;
-            cursor: pointer;
-            margin-bottom: 15px;
-
-            &.point1 {
-                width: 128px;
-
-                ::ng-deep .mat-slider {
-                    .mat-slider-thumb {
-                        width: 100%;
-                        right: 0px;
-                    }
-                }
-            }
-
-            &.point2 {
-                width: 222px;
-
-                ::ng-deep .mat-slider {
-                    .mat-slider-thumb {
-                        width: 50%;
-                        right: -50%;
-                    }
-                }
-            }
-
-            &.point4 {
-                width: 444px;
-
-                ::ng-deep .mat-slider {
-                    .mat-slider-thumb {
-                        width: 25%;
-                        right: -25%;
-                    }
-                }
-            }
-
-            .captions {
-                position: absolute;
-                display: flex;
-                width: 100%;
-                height: 100%;
-                justify-content: space-around;
-                font-size: 14px;
-                font-weight: 500;
-                color: #919aa3;
-                z-index: 2;
-
-                div {
-                    margin: auto;
-                    text-align: center;
-                }
-
-                .active {
-                    font-weight: 500;
-                    color: #fff;
-                }
-            }
-
-            ::ng-deep .mat-slider {
-                width: 100%;
-                height: 38px;
-
-                .mat-slider-wrapper {
-                    left: 0px;
-                    width: 100%;
-                }
-
-                .mat-slider-track-wrapper {
-                    display: none;
-                }
-
-                .mat-slider-thumb {
-                    width: 33%;
-                    height: 36px;
-                    right: -33%;
-                    bottom: -12px;
-                    border-radius: 19px;
-                    background-color: #4caf50;
-                    border-color: transparent;
-                    transform: none;
-                }
-            }
-        }
     }
 
     .goal-reached-message {
@@ -901,7 +958,7 @@
     }
 }
 
-::ng-deep .description-html {
+.description-html {
     border-top: 1px solid;
     margin-top: 10px;
     padding-top: 10px;

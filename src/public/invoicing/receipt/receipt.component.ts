@@ -35,7 +35,7 @@ export class ReceiptComponent implements OnInit {
     returnText: string = '';
     hostName = AppConsts.defaultTenantName;
     currentYear: number = new Date().getFullYear();
-    hasToSOrPolicy: boolean = AppConsts.isSperseHost;
+    hasToSOrPolicy: boolean;
     conditions = ConditionsType;
 
     static retryDelay: number = 4000;
@@ -99,6 +99,7 @@ export class ReceiptComponent implements OnInit {
 
                             this.invoiceInfo = result;
                             this.invoiceInfo.resources = result.resources.sort((a, b) => Boolean(a.url) > Boolean(b.url) ? 1 : -1);
+                            this.hasToSOrPolicy = this.invoiceInfo.tenantHasTerms || this.invoiceInfo.tenantHasPrivacyPolicy;
                             this.initEventsInfo();
                             this.setReturnLinkInfo();
                             this.loading = false;
@@ -158,7 +159,8 @@ export class ReceiptComponent implements OnInit {
             panelClass: ['slider', 'footer-slider'],
             data: {
                 type: type,
-                onlyHost: true
+                tenantId: this.tenantId,
+                hasOwnDocument: type == ConditionsType.Terms ? this.invoiceInfo.tenantHasTerms : this.invoiceInfo.tenantHasPrivacyPolicy
             }
         });
     }

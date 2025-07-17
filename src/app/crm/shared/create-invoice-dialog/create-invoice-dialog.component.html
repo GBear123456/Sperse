@@ -37,7 +37,7 @@
                                    (onCurrencyChanged)="onCurrencyChanged($event)">
                 </currency-selector>
                 <div class="logo-container">
-                    <img [src]="appSession.tenant && appSession.tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId : './assets/common/images/sperse-logo.png'" alt="logo" />
+                    <img [src]="appSession.appearanceConfig && appSession.appearanceConfig.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.appearanceConfig.logoId : './assets/common/images/sperse-logo.png'" alt="logo" />
                 </div>
             </div>
             <div class="field-area flex-space-between">
@@ -250,7 +250,8 @@
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
                                 <div *dxTemplate="let cell of 'item'">
-                                    <span title="{{cell.description}}">{{cell.description}}{{cell.isInStock ? '' : ' (Out of stock)' }}</span>
+                                    <span title="{{cell.description}}">{{cell.description}}{{cell.isInStock ? '' : ' (Out of stock)' }}{{cell.hasRequiredAddOns ? ' (Requires AddOn)' : '' }}</span>
+                                    <span class="tax-product" *ngIf="isTaxationEnabled && cell.isStripeTaxationEnabled">(AutoTax)</span>
                                 </div>
                             </dx-select-box>
 
@@ -298,11 +299,11 @@
                                 width="145px"
                                 height="32px"
                                 displayExpr="unitName"
-                                valueExpr="unitId"
+                                valueExpr="id"
                                 [showDropDownButton]="false"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('Select')"
-                                [(value)]="cellData.data.unitId"
+                                [(value)]="cellData.data.priceOptionId"
                                 [dataSource]="cellData.data.units || invoiceUnits"
                                 [dropDownOptions]="{ width: 220 }"
                                 (onValueChanged)="onUnitChanged($event, cellData)"
@@ -364,14 +365,21 @@
                 </div>
             </div>
         </dx-scroll-view>
-        <div *ngIf="stripeSubscriptionsLinesCount > 1 || hasReccuringSubscription" class="row stripe-subs-warning">
-            <div *ngIf="stripeSubscriptionsLinesCount > 1" class="col-12">
-                * {{ls.l('Invoice_StripeSubsWarning', stripeSubscriptionsLinesCount)}}
+        <div class="row stripe-subs-warning">
+            <div *ngIf="allowedProducts == 'T'" class="col-12">
+                * {{ls.l('Invoice_AutoTaxNeedsBillingAddress')}}<br>
             </div>
-            <div *ngIf="hasReccuringSubscription" class="col-12">
-                * {{ls.l('Invoice_SubsTaxShippingWarning')}}<br>
-                * {{ls.l('Invoice_SubsStartWarning')}}
-            </div>
+            <ng-container *ngIf="stripeSubscriptionsLinesCount > 1 || hasReccuringSubscription">
+                <div *ngIf="stripeSubscriptionsLinesCount > 1" class="col-12">
+                    * {{ls.l('Invoice_StripeSubsWarning', stripeSubscriptionsLinesCount)}}
+                </div>
+                <div *ngIf="hasReccuringSubscription && allowedProducts != 'T'" class="col-12">
+                    * {{ls.l('Invoice_SubsTaxShippingWarning')}}
+                </div>
+                <div *ngIf="hasReccuringSubscription" class="col-12">
+                    * {{ls.l('Invoice_SubsStartWarning')}}
+                </div>
+            </ng-container>
         </div>
         <div class="row bottom-container">
             <div class="col-sm-6">
@@ -441,15 +449,15 @@
                     </span>
                 </div>
                 <div class="user-total">
-                    <span>{{ls.l('TaxTotal')}}</span>
+                    <span *ngIf="allowedProducts != 'T'">{{ls.l('TaxTotal')}}</span>
+                    <span *ngIf="allowedProducts == 'T'">{{ls.l('Calculated Tax Total')}}</span>
                     <span>
                         <dx-number-box [min]="0"
                                        [height]="33"
-                                       [placeholder]="ls.l('Tax')"
                                        [format]="{ style: 'currency', currency: currency, useGrouping: true }"
-                                       (onValueChanged)="calculateBalance()"
+                                       (onValueChanged)="taxChanged()"
                                        [(value)]="taxTotal"
-                                       [disabled]="hasReccuringSubscription || disabledForUpdate">
+                                       [disabled]="hasReccuringSubscription || disabledForUpdate || allowedProducts == 'T'">
                         </dx-number-box>
                     </span>
                 </div>

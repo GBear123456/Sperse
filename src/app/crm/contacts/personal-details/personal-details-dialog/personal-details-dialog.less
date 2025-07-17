@@ -141,6 +141,9 @@
                 &, & .span {
                     white-space: nowrap;
                 }
+                span {
+                    padding-right: 0;
+                }
             }
 
             ::ng-deep inplace-edit {
@@ -151,6 +154,12 @@
 
             .add-xref {
                 cursor: pointer;
+            }
+
+            &.credit-balance-actions {
+                span {
+                    cursor: pointer;
+                }
             }
         }
 
@@ -195,12 +204,6 @@
                         }
                     }
                 }
-            }
-
-            .history-icon {
-                font-size: 18px;
-                float: right;
-                padding: 0;
             }
 
             .mat-expansion-panel-body {
@@ -369,6 +372,11 @@
     ::ng-deep mat-accordion {
         .mat-expansion-panel {
             box-shadow: initial;
+
+            .history-icon {
+                font-size: 18px;
+                padding: 0 !important;
+            }
         }
 
         .mat-expansion-indicator {
