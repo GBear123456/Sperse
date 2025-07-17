@@ -11,9 +11,9 @@
   <import-progress-bar *ngIf="hasAccessibleCG"></import-progress-bar>
   <calendar-button *ngIf="hasAccessibleCG"></calendar-button>
 </app-headline>
-<div class="flex">
+<div>
   <crm-left-menu
-    *ngIf="menuSide === 'left'"
+    [ngStyle]="{ float: menuSide }"
     [showIntroductionTour]="!appService.isHostTenant"
     [currentContactGroup]="filterModelContactGroup.items.element.value"
     (openIntro)="openDialog()"
@@ -23,6 +23,7 @@
     *ngIf="hasAccessibleCG; else noData"
     class="widgets-wrapper"
     [ngClass]="{ expanded: leftMenuCollapsed$ | async, 'left-nav-menu': layoutService.showLeftBar }"
+    [ngStyle]="menuSide === 'left' ? { 'margin-left': '341px' } : { 'margin-right': '341px' }"
   >
     <div class="wrapper">
       <!-- div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
@@ -84,13 +85,6 @@
       <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
     </div>
   </div>
-  <crm-left-menu
-    *ngIf="menuSide === 'right'"
-    [showIntroductionTour]="!appService.isHostTenant"
-    [currentContactGroup]="filterModelContactGroup.items.element.value"
-    (openIntro)="openDialog()"
-  >
-  </crm-left-menu>
   <ng-template #noData>
     <app-no-data> </app-no-data>
   </ng-template>

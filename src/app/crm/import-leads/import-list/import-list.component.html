@@ -1,6 +1,9 @@
-<div class="flex">
-  <crm-left-menu [selectedItemIndex]="2" *ngIf="menuSide === 'left'"></crm-left-menu>
-  <div [ngClass]="{ expanded: leftMenuCollapsed$ | async }">
+<div>
+  <crm-left-menu [selectedItemIndex]="2" [ngStyle]="{ float: menuSide }"></crm-left-menu>
+  <div
+    [ngClass]="{ expanded: leftMenuCollapsed$ | async }"
+    [ngStyle]="menuSide === 'left' ? { 'margin-left': '341px' } : { 'margin-right': '341px' }"
+  >
     <app-headline
       [names]="[l('Import')]"
       icon="docs"
@@ -85,5 +88,4 @@
       </div>
     </div>
   </div>
-  <crm-left-menu [selectedItemIndex]="2" *ngIf="menuSide === 'right'"></crm-left-menu>
 </div>
