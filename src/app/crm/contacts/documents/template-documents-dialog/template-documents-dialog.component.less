@@ -81,6 +81,11 @@
         }
 
         ::ng-deep dx-file-manager {
+            border: none !important;
+
+            .dx-filemanager-container {
+                border: none !important;
+            }
 
             .dx-filemanager-toolbar,
             .dx-drawer-panel-content {
@@ -127,8 +132,9 @@
         }
 
         .file-upload {
-            height: calc(~"100vh - 240px");
+            height: calc(~"100vh - 260px");
             padding: 20px;
+            box-sizing: border-box;
 
             .header {
                 display: flex;
@@ -336,12 +342,13 @@
 
     mat-dialog-actions {
         justify-content: flex-end;
+        padding-right: 20px;
     }
 }
 
 ::ng-deep .crm-document-dialog.cdk-overlay-pane .mat-dialog-container {
     box-shadow: none;
-    background-color: #eaf6ff !important;
+    background: linear-gradient(to bottom, #eaf6ff, #ffffff);
 
     .mat-dialog-content {
         padding-left: 25px;
@@ -359,4 +366,12 @@
 ::ng-deep .dx-filemanager .dx-filemanager-files-view {
     background: transparent !important;
     border: none;
+}
+
+::ng-deep mat-tab-header {
+    border-bottom: none !important;
+}
+
+::ng-deep .dx-item.dx-menu-item.dx-menu-item-has-text.dx-filemanager-breadcrumbs-separator-item {
+    display: none !important;
 }
