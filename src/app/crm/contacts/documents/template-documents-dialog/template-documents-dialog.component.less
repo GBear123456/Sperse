@@ -81,6 +81,11 @@
         }
 
         ::ng-deep dx-file-manager {
+            border: none !important;
+
+            .dx-filemanager-container {
+                border: none !important;
+            }
 
             .dx-filemanager-toolbar,
             .dx-drawer-panel-content {
@@ -360,4 +365,12 @@
 ::ng-deep .dx-filemanager .dx-filemanager-files-view {
     background: transparent !important;
     border: none;
+}
+
+::ng-deep mat-tab-header {
+    border-bottom: none !important;
+}
+
+::ng-deep .dx-item.dx-menu-item.dx-menu-item-has-text.dx-filemanager-breadcrumbs-separator-item {
+    display: none !important;
 }
