@@ -22,7 +22,7 @@
                                 >Ext. {{ phone.phoneExtension }}</span
                             >
                             <img
-                                src="./assets/common/icons/contact/call-calling.svg"
+                                [src]="getUsageTypeImage(phone.usageTypeId)"
                                 alt="send"
                             />
                         </span>
@@ -33,7 +33,7 @@
                         *ngIf="isEditAllowed"
                         [class.visible]="hovered"
                     >
-                        <span
+                        <a [href]="'tel:' + phone.phoneNumber"><span
                             *ngIf="isEditAllowed"
                             class="send-icon"
                         >
@@ -42,7 +42,7 @@
                                 alt="send"
                             />
                             call
-                        </span>
+                        </span></a>
                         <i
                             class="copy save-to-clipboard"
                             aria-hidden="true"
@@ -55,12 +55,12 @@
                                 showDialog('phoneNumber', phone, $event, i)
                             "
                         ></i>
-                        <!-- <i
-                            class="delete"
+                        <i
+                            class="trash"
                             aria-hidden="true"
                             (click)="deletePhoneNumber(phone, $event, i)"
-                        ></i> -->
-                        <i class="trash" aria-hidden="true"></i>
+                        ></i>
+                        <!-- <i class="trash" aria-hidden="true"></i> -->
                     </div>
                 </div>
             </li>
