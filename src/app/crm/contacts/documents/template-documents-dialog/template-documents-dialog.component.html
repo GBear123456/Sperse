@@ -11,25 +11,6 @@
         <!-- <mat-tab [label]="ls.l('External')"> </mat-tab> -->
     </mat-tab-group>
     <div class="wrapper">
-        <!-- <div *ngIf="selectedIndex">
-            <i class="layout-view dx-icon-{{layout == VIEW_MODE_DETAILS ? 'smalliconslayout' : 'contentlayout'}}" (click)="onLayoutToogle()"></i>
-            <dx-file-manager width="360px"
-                             [height]="getHeight()"
-                             [allowedFileExtensions]="[]"
-                             [fileSystemProvider]="selectedIndex == 1 ? documentsFileProvider : templatesFileProvider"
-                             [itemView]="{mode: layout}"
-                             (onContentReady)="onContentReady()">
-                <dxo-permissions 
-                             [create]="false"
-                             [copy]="false"
-                             [move]="false"
-                             [delete]="false"
-                             [rename]="false"
-                             [upload]="false"
-                             [download]="false">
-                </dxo-permissions>
-            </dx-file-manager>
-        </div> -->
         <div class="search-template" *ngIf="selectedIndex">
             <input type="text" class="form-control placeholder-no-fix"
                 [(ngModel)]="searchTemplate" 
