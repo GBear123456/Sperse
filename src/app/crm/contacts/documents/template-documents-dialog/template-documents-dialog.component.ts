@@ -30,6 +30,7 @@ import {
 } from "@shared/service-proxies/service-proxies";
 import { StringHelper } from "@shared/helpers/StringHelper";
 import { TemplateDocumentsDialogData } from "@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface";
+import { HttpParams, HttpHeaders, HttpClient } from '@angular/common/http';
 
 @Component({
     templateUrl: "template-documents-dialog.component.html",
@@ -42,7 +43,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     uploadedCount = 0;
     totalCount = 0;
     searchTemplate = "";
-    orginalTemplate = [];
+    originalTemplate: any[] = [];
 
     private slider: any;
     private uploadSubscribers = [];
@@ -70,18 +71,102 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
             return null;
         },
     });
-    templatesFileProvider = new RemoteFileSystemProvider({
-        endpointUrl:
-            AppConsts.remoteServiceBaseUrl +
-            "/api/services/CRM/DocumentTemplates/FileSystem",
-        beforeAjaxSend: (options) => {
-            if (!options.headers || !options.headers["Authorization"])
-                options.headers = {
-                    Authorization: "Bearer " + abp.auth.getToken(),
-                    ...(options.headers || {}),
-                };
+
+    // templatesFileProvider = new RemoteFileSystemProvider({
+    //     endpointUrl:
+    //         AppConsts.remoteServiceBaseUrl +
+    //         "/api/services/CRM/DocumentTemplates/FileSystem",
+    //     beforeAjaxSend: (options) => {
+    //         if (!options.headers || !options.headers["Authorization"])
+    //             options.headers = {
+    //                 Authorization: "Bearer " + abp.auth.getToken(),
+    //                 ...(options.headers || {}),
+    //             };
+    //     },
+    // });
+    
+    getTemplatesFileProvider() {
+        return null;
+        const headers = new HttpHeaders({
+          'Authorization': 'Bearer ' + abp.auth.getToken(),
+        });
+        const params = new HttpParams()
+          .set('command', 'GetDirContents')
+          .set('arguments', JSON.stringify({ pathInfo: [] }));
+      
+        return new CustomFileSystemProvider({
+          getItems: () => {
+            return this.http.get(AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem', {
+              headers,
+              params,
+            }).pipe(
+              map((response: any) => {
+                const items = response.result || response;
+                this.originalTemplate = items;
+                let filteredItems = items;
+      
+                if (this.searchTemplate && this.searchTemplate.trim() !== '') {
+                  const lowerSearchText = this.searchTemplate.toLowerCase();
+                  filteredItems = items.filter((item: any) =>
+                    item.name && item.name.toLowerCase().includes(lowerSearchText)
+                  );
+                }
+      
+                console.log(filteredItems);
+      
+                return filteredItems.map((item: any) => ({
+                  key: item.key,
+                  name: item.name,
+                  size: item.size,
+                }));
+              })
+            ).toPromise();
+          }
+        });
+    }
+
+    templatesFileProvider = new CustomFileSystemProvider({
+        getItems: () => {
+            const headers = new HttpHeaders({
+                'Authorization': 'Bearer ' + abp.auth.getToken(),
+              });
+            const params = new HttpParams()
+                .set('command', 'GetDirContents')
+                .set('arguments', JSON.stringify({ pathInfo: [] }));
+
+            return this.http.get(AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem', {
+                headers: headers,
+                params: params,
+              })
+            .pipe(
+              map((response: any) => {
+                     // process response here, e.g., filter or modify data
+                     const items = response.result || response; // adjust based on actual response shape
+                     this.originalTemplate = items;
+                     let filteredItems = items;
+                
+                     // Filter items based on searchText
+                     if (this.searchTemplate && this.searchTemplate.trim() !== '') {
+                        const lowerSearchText = this.searchTemplate.toLowerCase();
+                        filteredItems = items.filter((item: any) =>
+                          item.name && item.name.toLowerCase().includes(lowerSearchText)
+                        );
+                      }
+
+                      console.log(filteredItems);
+                    
+                    return filteredItems.map((item: any) => {
+                        return {
+                            key: item.key,
+                            name: item.name,
+                            size: item.size,
+                        };
+                    });
+              })
+            )
+            .toPromise();
         },
-    });
+      });
 
     isDocumentsVisible = !!(this.data.showDocuments && this.data.contactId);
     // isTemplatesVisible = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);
@@ -122,6 +207,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         private permission: PermissionCheckerService,
         public dialogRef: MatDialogRef<TemplateDocumentsDialogComponent>,
         public ls: AppLocalizationService,
+        private http: HttpClient,
         @Inject(MAT_DIALOG_DATA) public data: TemplateDocumentsDialogData
     ) {
         this.dialogRef.beforeClosed().subscribe(() => {
@@ -132,32 +218,15 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         });
     }
     searchTemplates() {
-        let filteredTemplates = [];
-        // $.ajax({
-        //     type: "GET",
-        //     cache: false,
-        //     url:
-        //         AppConsts.remoteServiceBaseUrl +
-        //         "/api/services/CRM/DocumentTemplates/FileSystem",
-        //     dataType: "json",
-        //     success: function (res) {
-        //         console.log(res);
-        //         if (!this.searchTemplate) {
-        //             filteredTemplates = [
-        //                 ...this.templatesFileProvider["result"],
-        //             ];
-        //         } else {
-        //             const searchTerm = this.searchTemplate.toLowerCase();
-        //             filteredTemplates = this.templatesFileProvider[
-        //                 "result"
-        //             ].filter((template: any) =>
-        //                 template.name.toLowerCase().includes(searchTerm)
-        //             );
-        //         }
-        //     },
-        // });
+        this.templatesFileProvider = this.getTemplatesFileProvider();
+
+        // Alternatively, if your file manager supports refresh, call it:
+        if (this.fileManager && this.fileManager.instance) {
+            this.fileManager.instance.refresh(); // if supported
+        }
     }
     ngOnInit() {
+        this.templatesFileProvider = this.getTemplatesFileProvider();
         this.slider = this.elementRef.nativeElement.closest(".slider");
         this.slider.classList.add("hide", "min-width-0");
         this.dialogRef.updateSize("0px", "0px");
