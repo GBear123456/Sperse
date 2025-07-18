@@ -71,22 +71,8 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
             return null;
         },
     });
-
-    // templatesFileProvider = new RemoteFileSystemProvider({
-    //     endpointUrl:
-    //         AppConsts.remoteServiceBaseUrl +
-    //         "/api/services/CRM/DocumentTemplates/FileSystem",
-    //     beforeAjaxSend: (options) => {
-    //         if (!options.headers || !options.headers["Authorization"])
-    //             options.headers = {
-    //                 Authorization: "Bearer " + abp.auth.getToken(),
-    //                 ...(options.headers || {}),
-    //             };
-    //     },
-    // });
     
     getTemplatesFileProvider() {
-        return null;
         const headers = new HttpHeaders({
           'Authorization': 'Bearer ' + abp.auth.getToken(),
         });
@@ -188,12 +174,6 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
             text: this.ls.l("Template"),
             icon: "",
         },
-        // {
-        //     id: 2,
-        //     visible: true,
-        //     text: this.ls.l("External"),
-        //     icon: "",
-        // },
     ];
     selectedIndex = this.isUploadVisible ? 0 : this.isDocumentsVisible ? 1 : 2;
 
@@ -222,7 +202,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
 
         // Alternatively, if your file manager supports refresh, call it:
         if (this.fileManager && this.fileManager.instance) {
-            this.fileManager.instance.refresh(); // if supported
+            this.fileManager.instance.refresh();
         }
     }
     ngOnInit() {
@@ -237,6 +217,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
+        this.templatesFileProvider = this.getTemplatesFileProvider();
         setTimeout(() => {
             this.slider.classList.remove("hide");
             this.dialogRef.updateSize(
