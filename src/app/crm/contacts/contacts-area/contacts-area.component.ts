@@ -319,6 +319,16 @@ export class ContactsAreaComponent {
         })
     }
 
+    getUsageTypeImage(usageTypeId: string): string {
+        const imageMap: { [key: string]: string } = {
+          'M': 'phone-mobile.svg',
+          'W': 'phone-work.svg',
+          'F': 'fax.svg',
+          'P': 'phone.svg',
+          // add as many mappings as needed
+        };
+        return imageMap[usageTypeId] || 'phone.svg'; // fallback image
+    }
     // showNewSMSDialog() {
     //     this.contactsService.showSMSDialog({
     //         contact: this.contactInfo
