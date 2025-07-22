@@ -5,7 +5,7 @@
     line-height: 27px;
     letter-spacing: -0.02em;
     text-align: left;
-    color: rgba(8, 41, 91, 1);
+    color: var(--headline-title-color);
   }
 
   ::ng-deep app-toolbar {
@@ -25,8 +25,8 @@
 
   .operations-widget {
     float: right;
-    color: #c5c7ca;
-    background: #fff;
+    color: var(--muted-color);
+    background: var(--button-bg);
     width: calc(~'100% - 354px');
     margin-right: 65px;
     white-space: nowrap;
@@ -34,11 +34,11 @@
 
   .operations-widget i,
   .operations-widget button {
-    color: #677380;
+    color: var(--muted-color);
     border-radius: 0;
     margin: 0px;
     box-shadow: none;
-    border-color: #dadee1;
+    border-color: var(--border-color);
   }
 
   .operations-widget button:first-child {

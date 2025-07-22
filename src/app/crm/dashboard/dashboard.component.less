@@ -101,11 +101,6 @@
       padding-bottom: 30px;
     }
 
-    ::ng-deep app-headline .headline-content {
-      justify-content: flex-end;
-      z-index: 2;
-    }
-
     totals-by-source {
       padding-top: 25px;
     }
@@ -192,4 +187,9 @@
       height: calc(~'100vh - 150px');
     }
   }
+}
+
+::ng-deep app-headline .headline-content {
+  justify-content: flex-end;
+  z-index: 100;
 }
