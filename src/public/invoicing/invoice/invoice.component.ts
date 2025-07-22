@@ -135,7 +135,9 @@ export class InvoiceComponent implements OnInit {
             this.payPal.initialize(this.payPalInfo.clientId, type,
                 () => this.paypalServiceProxy.requestPayment(this.tenantId, this.publicId).toPromise(),
                 () => this.paypalServiceProxy.requestSubscription(this.tenantId, this.publicId).toPromise(),
-                this.invoiceInfo.invoiceData.currencyId
+                this.invoiceInfo.invoiceData.currencyId,
+                this.payPalInfo.merchantId,
+                this.payPalInfo.bnCode
             );
         }
     }
