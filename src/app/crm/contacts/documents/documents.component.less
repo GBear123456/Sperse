@@ -1,4 +1,6 @@
-﻿::ng-deep .file-name {
+﻿@import '../../../../styles/theme.less';
+
+::ng-deep .file-name {
   width: 90%;
   padding-left: 15px;
   font-weight: 500;
@@ -253,12 +255,12 @@
           .dx-button-content {
             min-width: 30px;
             .dx-button-text {
-              color: #7c8c95;
+              color: var(--muted-color);
             }
           }
           &:hover {
-            border: 1px solid #d9d9d9;
-            background-color: #f5faff;
+            border: 1px solid var(--divider-color);
+            background-color: var(--headline-bg);
           }
           &[accesskey='select-box'] {
             border: 0;
@@ -272,11 +274,11 @@
           }
 
           &.document-selected {
-            background-color: #e6f7ff !important;
-            border: 1px solid #c2e1fa !important;
+            background-color: var(--headline-bg) !important;
+            border: 1px solid var(--divider-color) !important;
             border-radius: 4px !important;
             .dx-button-text {
-              color: #08295b !important;
+              color: var(--headline-title-color) !important;
             }
           }
 
@@ -290,14 +292,14 @@
         }
         .dx-document-grid-view,
         .dx-document-list-view {
-          background-color: #ffffff;
-          border: 1px solid #e6edf2;
-          color: #7c8c95 !important;
+          background-color: var(--card-bg);
+          border: 1px solid var(--divider-color);
+          color: var(--muted-color) !important;
           padding: 0px 5px;
         }
         .dx-document-selected-view {
-          background-color: #e6f7ff !important;
-          border: 1px solid #c2e1fa !important;
+          background-color: var(--headline-bg) !important;
+          border: 1px solid var(--divider-color) !important;
         }
       }
     }
@@ -325,12 +327,12 @@
         &.gallery-view {
           .dx-datagrid-rowsview {
             .dx-column-lines {
-              border: 1px solid #e6edf2;
+              border: 1px solid var(--divider-color);
               border-radius: 10px;
               width: 222px;
               height: 274px;
               margin: 18px 18px 18px 0px;
-              background-color: #f8fafc;
+              background-color: var(--headline-bg);
 
               .dx-template-wrapper {
                 height: 100%;
@@ -362,7 +364,7 @@
 
                 .dx-divider {
                   height: 1px;
-                  color: #e6edf2;
+                  color: var(--divider-color);
                   margin: 0px;
                 }
 
@@ -378,7 +380,7 @@
                   flex-direction: row;
                   justify-content: space-between;
                   align-items: center;
-                  color: #8294ab;
+                  color: var(--muted-color);
                   font-size: 14px;
                   height: 27px;
                 }
@@ -386,7 +388,7 @@
                 .document-type {
                   height: 27px;
                   font-size: 14px;
-                  color: #8294ab;
+                  color: var(--muted-color);
                   margin: 0px;
                 }
               }
@@ -400,7 +402,7 @@
                 padding-right: 7px;
               }
               &:not(:first-child) {
-                color: #8294ab;
+                color: var(--muted-color);
                 font-size: 14px;
               }
             }
@@ -446,7 +448,7 @@
       content: ' ';
       height: 20px;
       width: 2px;
-      background-color: #1b1b1b;
+      background-color: var(--text-color);
     }
 
     &:before {
@@ -585,4 +587,8 @@
   ::ng-deep .dx-texteditor {
     display: block !important;
   }
+}
+
+:host .mat-expansion-panel {
+  background-color: var(--background-color) !important;
 }

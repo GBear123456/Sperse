@@ -1,3 +1,4 @@
+@import '../../../styles/theme.less';
 :host {
   left: 60px;
   position: relative;
@@ -12,7 +13,7 @@
       left: 15px;
       z-index: 2;
       box-shadow: none;
-      border: 1px solid rgba(220, 227, 232, 1);
+      border: 1px solid var(--divider-color);
       border-radius: 10px;
 
       &::before,
@@ -21,7 +22,7 @@
         left: 19px;
         height: 13px;
         width: 1.5px;
-        background-color: rgba(16, 33, 58, 1);
+        background-color: var(--text-color);
       }
     }
 
@@ -63,7 +64,7 @@
       align-content: center;
       &.active {
         color: #fff;
-        background-color: rgba(0, 168, 237, 1);
+        background-color: var(--primary-color);
         path {
           stroke: #fff;
         }

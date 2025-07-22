@@ -1,3 +1,4 @@
+@import '../../../../../styles/theme.less';
 ::ng-deep .hide {
   display: none;
 }
@@ -43,7 +44,7 @@
           font-weight: 600;
           line-height: 27px;
           letter-spacing: -0.02em;
-          color: rgba(8, 41, 91, 1);
+          color: var(--headline-title-color);
           text-transform: none;
         }
         .mat-content {
@@ -75,7 +76,7 @@
       .mat-expansion-panel-body {
         margin: 0 24px !important;
         padding: 0 0 16px 0 !important;
-        border-bottom: 1px solid rgba(222, 231, 236, 1);
+        border-bottom: 1px solid var(--divider-color);
       }
     }
 
@@ -85,10 +86,10 @@
         border: none;
         .mat-tab-label {
           padding: 0 26px;
-          background: rgba(250, 252, 255, 1);
+          background: var(--card-bg);
           &:nth-child(2) {
-            border-right: 1px solid rgba(231, 237, 242, 1);
-            border-left: 1px solid rgba(231, 237, 242, 1);
+            border-right: 1px solid var(--divider-color);
+            border-left: 1px solid var(--divider-color);
           }
           .mat-tab-label-content {
             font-family: var(--app-font-family);
@@ -96,12 +97,12 @@
             font-weight: 500;
             line-height: 27px;
             text-align: left;
-            color: rgba(16, 33, 58, 1);
+            color: var(--text-color);
             text-transform: none;
           }
         }
         .mat-tab-label-active {
-          background: rgba(238, 248, 255, 1) !important;
+          background: var(--headline-bg) !important;
         }
         .mat-ink-bar {
           display: none;
@@ -169,7 +170,7 @@
     &,
     ::ng-deep .mat-expansion-panel-header,
     ::ng-deep .mat-expansion-panel-content {
-      background: rgba(238, 248, 255, 1);
+      background: var(--headline-bg);
     }
 
     .expand-angle {
@@ -180,8 +181,8 @@
       z-index: 2;
       right: 0px;
       padding-top: 19px;
-      border-left: 1px solid rgba(231, 237, 242, 1);
-      background: rgba(250, 252, 255, 1);
+      border-left: 1px solid var(--divider-color);
+      background: var(--card-bg);
       img {
         margin: auto;
         display: block;
@@ -198,7 +199,7 @@
       font-size: 14px;
       font-weight: 400;
       line-height: 27px;
-      color: rgba(16, 33, 58, 1);
+      color: var(--text-color);
       cursor: pointer;
       margin-top: -6px;
     }
@@ -216,6 +217,13 @@
         cursor: pointer;
       }
     }
+
+    .contact-persons-info,
+    .sub-contacts-info {
+      display: flex;
+      align-items: center;
+    }
+
     .contact-persons-info img {
       cursor: pointer;
     }
@@ -234,7 +242,7 @@
     right: 20px;
     cursor: pointer;
     display: block;
-    background-color: #fff;
+    background-color: var(--card-bg);
 
     &:after,
     &:before {
@@ -560,6 +568,10 @@
             flex-direction: column;
             align-items: flex-start;
 
+            &:hover {
+              color: var(--text-color);
+            }
+
             .additional-info {
               span {
                 font-size: 12px;
@@ -804,7 +816,26 @@
 
 ::ng-deep .mat-tab-label-active {
   border-bottom: none;
-  background: #fff;
+  background: var(--card-bg);
   font-weight: 500;
-  color: #202b35;
+  color: var(--text-color);
+}
+
+::ng-deep .mat-expansion-panel-header.mat-expanded,
+.mat-expansion-panel-header.mat-expanded {
+  &:hover {
+    background: var(--card-bg) !important;
+  }
+  &:focus {
+    background: var(--card-bg) !important;
+  }
+}
+
+::ng-deep .mat-expansion-panel {
+  &:hover {
+    background: var(--card-bg) !important;
+  }
+  &:focus {
+    background: var(--card-bg) !important;
+  }
 }
