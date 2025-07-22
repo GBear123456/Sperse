@@ -1,3 +1,5 @@
+@import '../../../../../styles/theme.less';
+
 ::ng-deep .hide {
   display: none;
 }
@@ -19,7 +21,7 @@
       right: 15px;
       cursor: pointer;
       display: block;
-      background-color: #fff;
+      background-color: var(--card-bg);
 
       &:after,
       &:before {
@@ -60,7 +62,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background-color: white;
+      background-color: var(--card-bg);
       z-index: 100;
     }
 
@@ -98,7 +100,7 @@
     ::ng-deep dx-tabs {
       border-top-left-radius: 6px;
       border-top-right-radius: 6px;
-      background: white;
+      background: var(--card-bg);
 
       .dx-tab {
         border: none;
@@ -122,8 +124,8 @@
       }
 
       .dx-tab.dx-state-focused:after {
-        border-right: 1px solid #ddd;
-        border-left: 1px solid #ddd;
+        border-right: 1px solid var(--divider-color);
+        border-left: 1px solid var(--divider-color);
         border-top: none;
         border-bottom: none;
       }
@@ -138,8 +140,8 @@
         display: flex;
         gap: 5px;
         padding-bottom: 10px;
-        color: #08295b;
-        border: 1px solid #dee7ec;
+        color: var(--headline-title-color);
+        border: 1px solid var(--divider-color);
       }
     }
 
@@ -171,7 +173,7 @@
         .ngx-file-drop__drop-zone {
           width: 350px;
           height: calc(~'100vh - 120px');
-          background-color: #eaf6ff;
+          background-color: var(--headline-bg);
           text-transform: none;
 
           .ngx-file-drop__content {
@@ -231,7 +233,7 @@
       .wrapper {
         display: flex;
         height: calc(~'100vh - 170px');
-        background-color: #eaf6ff;
+        background-color: var(--headline-bg);
         justify-content: baseline;
         flex-flow: column;
         align-items: center;
@@ -249,7 +251,7 @@
           font-stretch: normal;
           line-height: 1.56;
           letter-spacing: normal;
-          color: #424c56;
+          color: var(--headline-title-color);
 
           span {
             float: right;
@@ -268,7 +270,7 @@
           height: 28px;
           margin-top: 14px;
           white-space: nowrap;
-          background-color: #f3f7fa;
+          background-color: var(--headline-bg);
 
           img {
             margin: -5px -6px 14px 7px;
@@ -281,7 +283,7 @@
             font-stretch: normal;
             line-height: 2.1;
             letter-spacing: 0.3px;
-            color: #677380;
+            color: var(--muted-color);
 
             &.file-name {
               max-width: 250px;
@@ -346,7 +348,7 @@
 
 ::ng-deep .crm-document-dialog.cdk-overlay-pane .mat-dialog-container {
   box-shadow: none;
-  background: linear-gradient(to bottom, #eaf6ff, #ffffff);
+  background: linear-gradient(to bottom, var(--headline-bg), var(--card-bg));
 
   .mat-dialog-content {
     padding-left: 25px;
