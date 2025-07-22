@@ -510,6 +510,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     redirectToReceipt() {
+        abp.ui.setBusy();
         location.href = this.getReceiptUrl();
     }
 
