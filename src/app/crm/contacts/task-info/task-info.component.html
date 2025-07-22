@@ -1,0 +1,95 @@
+<div class="task-info">
+    <div class="rectangle seles-statics">
+        <div class="sales-wrapper">
+            <div class="title">
+                {{ ls.l("Gross sales") }}
+            </div>
+            <div class="statics-data">
+                {{ amountCustomizer(grossSale ?? 0) }}
+            </div>
+        </div>
+        <div class="sales-wrapper">
+            <div class="title">
+                {{ ls.l("current plan") }}
+            </div>
+            <div class="statics-data">
+                {{
+                    amountCustomizer(
+                        currentPlan?.amount ?? 0,
+                        currentPlan?.currencyId
+                    )
+                }}
+                <span>
+                    {{ currentPlan ? "/" + currentPlan?.period : "" }}
+                </span>
+            </div>
+        </div>
+        <div class="sales-wrapper">
+            <div class="title">
+                {{ ls.l("balance due") }}
+            </div>
+            <div class="statics-data">{{ amountCustomizer(balance ?? 0) }}</div>
+        </div>
+    </div>
+    <div class="rectangle">
+        <div class="statics-wrapper">
+            <img
+                src="../../../../assets/common/icons/contact/calllog-without-name.svg"
+                style="width: 41px; height: 41px"
+            />
+            <div class="statics-data">
+                <div>
+                    {{ ls.l("Activity") }}
+                </div>
+                <div>({{ logs?.length ?? 0 }})</div>
+            </div>
+        </div>
+        <div class="statics-wrapper">
+            <img
+                src="../../../../assets/common/icons/contact/contacts-without-name.svg"
+                style="width: 43px; height: 43px"
+            />
+            <div class="statics-data">
+                <div>
+                    {{ ls.l("Contacts") }}
+                </div>
+                <div>({{ contactIds?.length ?? 0 }})</div>
+            </div>
+        </div>
+        <div class="statics-wrapper">
+            <img
+                src="../../../../assets/common/icons/contact/tasks-without-name.svg"
+            />
+            <div class="statics-data">
+                <div>
+                    {{ ls.l("Tasks") }}
+                </div>
+                <div>({{ tasks ?? 0 }})</div>
+            </div>
+        </div>
+        <div class="statics-wrapper">
+            <img
+                src="../../../../assets/common/icons/contact/files-without-name.svg"
+            />
+
+            <div class="statics-data">
+                <div>
+                    {{ ls.l("Files") }}
+                </div>
+                <div>({{ files?.length ?? 0 }})</div>
+            </div>
+        </div>
+        <div class="statics-wrapper">
+            <img
+                src="../../../../assets/common/icons/contact/invoices-without-name.svg"
+            />
+
+            <div class="statics-data">
+                <div>
+                    {{ ls.l("Invoices") }}
+                </div>
+                <div>({{ invoices ?? 0 }})</div>
+            </div>
+        </div>
+    </div>
+</div>

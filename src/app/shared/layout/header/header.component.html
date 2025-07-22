@@ -1,5 +1,12 @@
-<!-- <div class="page-header navbar navbar-fixed-top md-shadow-zero-light" [ngStyle]="{background: appSession.appearanceConfig && appSession.appearanceConfig.customCssId ? undefined : layoutService.getLayoutColor('navBackground')}"> -->
-<div class="page-header navbar navbar-fixed-top md-shadow-zero-light">
+<div
+  class="page-header navbar navbar-fixed-top md-shadow-zero-light"
+  [ngStyle]="{
+    background:
+      appSession.appearanceConfig && appSession.appearanceConfig.customCssId
+        ? undefined
+        : layoutService.getLayoutColor('navBackground')
+  }"
+>
   <div class="page-header-inner">
     <div class="page-logo" *ngIf="layoutService.showPageLogo">
       <a (click)="logoClick()">
@@ -22,9 +29,16 @@
       </a>
     </div>
 
-    <global-search *ngIf="showGlobalSearch"></global-search>
+    <clients-navigation *ngIf="isContactDetailRoute()"></clients-navigation>
+    <global-search
+      *ngIf="showGlobalSearch || isContactDetailRoute()"
+      [ngClass]="{
+        'global-search': !isContactDetailRoute(),
+        'contact-info-panel-search': isContactDetailRoute()
+      }"
+    ></global-search>
 
-    <ng-container *ngIf="layoutService.showTopBar">
+    <ng-container *ngIf="layoutService.showTopBar && !isContactDetailRoute()">
       <contact-info-panel
         *ngIf="appService.showContactInfoPanel$ | async"
         [data]="appService.contactInfo"
@@ -50,12 +64,13 @@
           <ul class="dropdown-menu">
             <li *ngFor="let language of languages">
               <a href="javascript:;" (click)="changeLanguage(language.name)">
-                <i [class]="language.icon"></i> {{ language.displayName }}
+                <i [class]="language.icon"></i>
+                {{ language.displayName }}
               </a>
             </li>
           </ul>
         </li>
-        <app-theme-toggle></app-theme-toggle>
+
         <li
           *ngIf="userManagementService.notificationEnabled && layoutService.showNotificationsButton"
           headerNotifications

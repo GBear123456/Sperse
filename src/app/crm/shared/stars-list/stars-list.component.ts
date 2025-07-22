@@ -3,6 +3,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
+import { Observable, BehaviorSubject, ReplaySubject } from 'rxjs';
 import * as _ from 'underscore';
 import { Store } from '@ngrx/store';
 
@@ -23,6 +24,9 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
   providers: [ ContactStarsServiceProxy ]
 })
 export class StarsListComponent implements OnInit {
+    private _tooltipTarget$ = new BehaviorSubject<string | null>(null);
+    tooltipTarget$ = this._tooltipTarget$.asObservable();
+
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() bulkUpdateMode = false;
@@ -170,6 +174,7 @@ export class StarsListComponent implements OnInit {
 
     onSelectionChange(event) {
         this.selectedItemKey = event && event.addedItems.length ? event.addedItems[0].id : undefined;
+        this._tooltipTarget$.next(`star-id-${this.selectedItemKey}`);
         this.onSelectionChanged.emit(event);
     }
 

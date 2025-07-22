@@ -11,6 +11,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppRatingComponent } from '@app/shared/common/rating/rating.component';
 import { ContactRatingsServiceProxy, RateContactInput, RateContactsInput } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 
 @Component({
   selector: 'rating',
@@ -20,6 +21,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class RatingComponent {
     @ViewChild(AppRatingComponent) ratingComponent: AppRatingComponent;
     @Input() filterModel: any;
+    @Input() staticListId: string;
     @Input() selectedKeys: any;
     @Input() ratingValue: number;
     @Input() targetSelector = '[aria-label="Rating"]';
@@ -34,9 +36,18 @@ export class RatingComponent {
         private notify: NotifyService,
         private ls: AppLocalizationService,
         private permission: AppPermissionService,
-        private ratingService: ContactRatingsServiceProxy
+        private ratingService: ContactRatingsServiceProxy,
+        private toolbarService: ToolbarService
     ) {}
 
+    ngOnInit() {
+        this.toolbarService.tooltipTarget$.subscribe((id) => {
+            if(id === this.staticListId) {
+                this.toggle();
+            }
+        });
+    }
+    
     toggle() {
         this.ratingComponent.toggle();
     }

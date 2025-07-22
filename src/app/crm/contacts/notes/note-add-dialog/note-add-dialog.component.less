@@ -41,6 +41,23 @@
       color: var(--primary-color);
     }
 
+    .add-phone {
+      color: #00aeef;
+      font-size: 32px;
+      font-weight: 100;
+      display: inline-block;
+      vertical-align: top;
+      padding-left: 7px;
+      cursor: pointer;
+      margin: 0;
+    }
+  }
+  ::ng-deep .dx-widget {
+    &:not(.dx-state-focused) .dx-placeholder {
+      font-weight: 400;
+      font-size: 16px;
+    }
+
     .field {
       label {
         font-size: 10px;
@@ -50,7 +67,7 @@
         font-style: normal;
         font-stretch: normal;
         letter-spacing: 0.4px;
-        color: var(--muted-color);
+        color: #686f76;
       }
       &.contact {
         ::ng-deep dx-select-box {
@@ -77,7 +94,7 @@
         font-style: normal;
         font-stretch: normal;
         letter-spacing: 0.3px;
-        color: var(--text-color);
+        color: #424c56;
       }
       &.type {
         display: flex;
@@ -101,7 +118,7 @@
         right: 20px;
         cursor: pointer;
         display: block;
-        background-color: var(--background-color);
+        background-color: #fff;
         &:after,
         &:before {
           position: absolute;
@@ -110,7 +127,7 @@
           content: ' ';
           height: 20px;
           width: 2px;
-          background-color: var(--text-color);
+          background-color: #202b35;
         }
         &:before {
           transform: rotate(45deg);
@@ -139,10 +156,68 @@
     padding-top: 0;
     justify-content: center;
     position: relative;
-    margin-bottom: -7px;
-
-    .button-primary {
-      width: 150px;
+    ::ng-deep dx-select-box {
+      input {
+        border: none !important;
+        font-size: 18px;
+        font-weight: 600;
+      }
     }
   }
+  .close {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    right: 20px;
+    cursor: pointer;
+    display: block;
+    background-color: var(--background-color);
+    &:after,
+    &:before {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      content: ' ';
+      height: 20px;
+      width: 2px;
+      background-color: var(--text-color);
+    }
+    &:before {
+      transform: rotate(45deg);
+    }
+    &:after {
+      transform: rotate(-45deg);
+    }
+  }
+}
+
+::ng-deep dx-select-box {
+  .dx-texteditor-container {
+    padding-right: 35px;
+  }
+}
+
+mat-dialog-content {
+  overflow: hidden;
+  max-height: 100% !important;
+  min-height: 300px;
+  padding-left: 30px;
+}
+
+mat-dialog-actions {
+  padding-top: 0;
+  justify-content: center;
+  position: relative;
+  margin-bottom: -7px;
+
+  .button-primary {
+    width: 150px;
+  }
+}
+
+::ng-deep .crm-note-dialog.cdk-overlay-pane .mat-dialog-container {
+  box-shadow: none;
 }

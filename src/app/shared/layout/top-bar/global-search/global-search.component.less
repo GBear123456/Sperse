@@ -7,10 +7,6 @@
   border-radius: 10px;
   height: 50px;
   width: inherit;
-  min-width: 200px;
-  max-width: 361px;
-  color: var(--text-color);
-  transition: background 0.3s, color 0.3s, border-color 0.3s;
 
   &.showSearchMode {
     &:hover {
@@ -85,7 +81,7 @@
     right: 15px;
     left: initial !important;
     border-width: 3px;
-    background: var(--card-bg);
+    background: #fff;
     margin: auto 0;
   }
   ::ng-deep .blockOverlay {
@@ -102,7 +98,7 @@
     align-items: center;
     .dx-icon-search:before {
       content: '';
-      background: url('../../../../../assets/common/icons/search-icon.png');
+      background: url('../../../../../assets/common/icons/search-icon.svg') no-repeat center;
       background-size: 100%;
       width: 19px;
       height: 19px;
@@ -110,10 +106,8 @@
       margin-top: -2px;
     }
     .dx-texteditor-input {
-      background: var(--card-bg);
+      background: #ffffff;
       font-weight: 500;
-      color: var(--text-color);
-      transition: background 0.3s, color 0.3s;
     }
     .dx-texteditor-buttons-container {
       position: absolute;
@@ -143,21 +137,20 @@
 
     .dx-placeholder,
     .dx-texteditor-input {
-      font-family: Poppins;
+      font-family: var(--app-font-family);
       font-size: 15px;
       font-weight: 400;
       line-height: 23px;
       letter-spacing: -0.02em;
       text-align: left;
-      color: var(--input-placeholder);
     }
     .dx-texteditor-input {
-      border-radius: 8px;
-      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      background: #f7fafd;
       padding-left: 45px;
-      background: var(--card-bg);
-      color: var(--text-color);
-      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      padding-top: 15px;
+      padding-bottom: 15px;
+      color: #97a3a9;
     }
   }
 }
@@ -173,7 +166,7 @@
   padding: 1px 6px;
   .group {
     &:not(:last-child) {
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid #e5e9ec;
     }
     header {
       display: flex;
@@ -183,7 +176,7 @@
       h4 {
         font-size: 12px;
         letter-spacing: 0.6px;
-        color: var(--text-color);
+        color: #424c56;
         margin-bottom: 0;
         text-transform: uppercase;
       }
@@ -191,7 +184,7 @@
         font-weight: 300;
         line-height: 2.92;
         letter-spacing: 0.26px;
-        color: var(--primary-color);
+        color: #00aeef;
         &:after {
           content: url('../../../../../assets/common/icons/arrow-right-trend-by.svg');
           display: inline-block;
@@ -221,22 +214,18 @@
             font-size: 15px;
             font-weight: 500;
             letter-spacing: 0.3px;
-            color: var(--text-color);
+            color: #424c56;
             margin-bottom: 2px;
           }
           p {
             font-size: 13px;
             font-weight: 300;
             letter-spacing: 0.26px;
-            color: var(--input-placeholder);
+            color: #424c56;
             margin-bottom: 0;
           }
         }
       }
     }
   }
-}
-
-::ng-deep .dx-texteditor-container {
-  background: var(--card-bg);
 }

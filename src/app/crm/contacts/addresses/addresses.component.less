@@ -1,28 +1,28 @@
-:host {
-  color: var(--text-color);
-}
-
 .addresses {
+  display: flex;
+  align-items: flex-start;
+
   h3 {
     margin-bottom: 22px;
     font-size: 12px;
     line-height: 1.67;
     letter-spacing: 0.7px;
     text-align: left;
-    color: var(--muted-color);
+    color: #677380;
     font-weight: 400;
   }
 
   .add-address {
+    margin-right: 10px;
     font-size: 14px;
     font-weight: 300;
     font-style: normal;
     font-stretch: normal;
     line-height: 1.79;
     letter-spacing: 0.3px;
-    color: var(--primary-color);
+    // color: #00aeef;
     cursor: pointer;
-    padding-left: 35px;
+    // padding-left: 35px;
   }
 
   .address-wrapper {
@@ -30,28 +30,97 @@
     margin-bottom: 20px;
     cursor: pointer;
 
-    .address-icons {
-      top: 8px;
-    }
-
     .actions {
-      top: 2px;
-      display: none;
+      opacity: 0;
+      visibility: hidden;
+      display: flex;
+      align-items: center;
+      gap: 9px;
       position: absolute;
-      right: calc(~'10% + 45px');
+      right: 0;
+      transform: translateX(-50%);
+      transition: all 0.4s ease-in-out;
+      display: flex !important;
+      top: 40%;
+      .send-icon {
+        transition: background 0.15s;
+        border-radius: 4px;
+      }
+
+      // i:hover, .send-icon:hover {
+      //     background: #f3f7fa;
+      // }
+
+      .send-icon {
+        display: flex;
+        align-items: center;
+        background-color: #ecf3fa;
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 14px;
+        gap: 5px;
+        line-height: 1;
+        font-weight: 500;
+        cursor: pointer;
+
+        img {
+          width: 14px;
+          aspect-ratio: 1 / 1;
+        }
+      }
 
       i {
         font-size: 18px;
-        padding: 7px;
+        padding: 7px 5px;
+        cursor: pointer;
       }
 
-      i.edit {
-        color: var(--primary-color);
-      }
+      // i.edit {
+      //     color: #00aeef;
+      // }
 
-      i.delete {
-        color: var(--danger-color);
+      // i.delete {
+      //     color: #f44336;
+      // }
+
+      i.edit-info {
+        background: url(../../../../assets/common/icons/c-info.svg) no-repeat center;
+        background-size: 20px;
+        display: inline-block;
+        width: 25px;
+        height: 23px;
       }
+    }
+
+    &:hover {
+      .actions {
+        opacity: 1;
+        visibility: visible;
+        background: #ffffff;
+        transform: translateX(0);
+      }
+    }
+
+    .edit {
+      background: url(../../../../assets/common/icons/edit-2.svg) no-repeat center;
+      height: 18px;
+      width: 18px;
+    }
+
+    .delete {
+      background: url(../../../../assets/common/icons/cross.svg) no-repeat center;
+      height: 18px;
+      width: 18px;
+    }
+
+    .trash {
+      background: url(../../../../assets/common/icons/trash.svg) no-repeat center;
+      height: 18px;
+      width: 18px;
+    }
+
+    .address-icons {
+      top: 8px;
     }
 
     .address h4 {
@@ -64,13 +133,12 @@
       line-height: 35px;
       letter-spacing: 0.3px;
       text-align: left;
-      color: var(--text-color);
-      background-color: var(--list-bg);
+      color: #202b35;
     }
 
     &:hover {
       .address h4 {
-        background-color: var(--list-hover-bg);
+        background-color: #f7fafa;
       }
 
       .actions {
@@ -81,7 +149,7 @@
 
   .address {
     width: 90%;
-    padding-left: 35px;
+    // padding-left: 35px;
 
     input {
       max-width: 80%;
@@ -90,8 +158,6 @@
       line-height: 1.67;
       letter-spacing: 0.3px;
       font-family: var(--app-font-family);
-      color: var(--text-color);
-      background-color: var(--input-bg);
     }
 
     dx-button {
@@ -99,11 +165,11 @@
       position: relative;
 
       ::ng-deep &.update i {
-        color: var(--primary-color);
+        color: #00aeef;
       }
 
       ::ng-deep &.exit i {
-        color: var(--danger-color);
+        color: #f44336;
       }
     }
 
@@ -114,11 +180,11 @@
       line-height: 1.67;
       letter-spacing: 0.3px;
       text-align: left;
-      color: var(--text-color);
-      background-color: var(--list-bg);
+      color: #424c56;
       overflow: hidden;
       margin-right: 30px;
       text-overflow: ellipsis;
+
       i {
         display: block;
         font-style: normal;
@@ -128,7 +194,7 @@
 
   .other-info {
     text-transform: uppercase;
-    color: var(--muted-color);
+    color: #c1c5ca;
     cursor: pointer;
   }
 }

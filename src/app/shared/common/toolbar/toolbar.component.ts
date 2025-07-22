@@ -39,6 +39,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
   @Input() titleTemplate: TemplateRef<any>;
   @Input() isDisabled = false;
   @Input() width = '100%';
+  @Input() toolbarClass!: string;
   _config: ToolbarGroupModel[];
   @Input()
   set config(config: ToolbarGroupModel[]) {
@@ -115,7 +116,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
       title: {
         accessKey: 'title',
         itemTemplate: 'titleTemplate',
-        visible: this.layoutService.showLeftBar,
+        visible: true,
       },
       filters: {
         hint: this.ls.l('Filters'),
@@ -386,6 +387,15 @@ export class ToolBarComponent implements OnDestroy, OnInit {
         text: this.ls.l('Actions'),
         hint: this.ls.l('Actions'),
       },
+      extension: {
+        hint: this.ls.l('By Ext'),
+        text: this.ls.l('By Ext'),
+      },
+      list: {
+        accessKey: 'list',
+        hint: this.ls.l('List'),
+        icon: this.getImgURI('bullet-list-69'),
+      },
     };
   }
 
@@ -396,9 +406,10 @@ export class ToolBarComponent implements OnDestroy, OnInit {
         $('.dx-button[accesskey=' + i.name + ']').removeAttr('button-pressed');
       });
 
-    let checkPressed = item.options && item.options['checkPressed'];
-    if (checkPressed)
-      event.element.setAttribute('button-pressed', Boolean(checkPressed.call(this)));
+    if ((item.options && item.options['checkPressed']) || item['checkVisible']) {
+      this.initToolbarItems();
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
   getImgURI(name: string) {
@@ -496,7 +507,10 @@ export class ToolBarComponent implements OnDestroy, OnInit {
       (!item.hasOwnProperty('visible') || item.visible) &&
       (!item.options ||
         !item.options.items ||
-        item.options.items.some(subitem => !subitem.hasOwnProperty('visible') || subitem.visible))
+        item.options.items.some(
+          subitem => !subitem.hasOwnProperty('visible') || subitem.visible
+        )) &&
+      (!item.checkVisible || item.checkVisible())
     );
   }
 

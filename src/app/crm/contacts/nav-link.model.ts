@@ -7,4 +7,5 @@ export interface NavLink {
     route: string;
     disabled?: boolean;
     visible$?: Observable<boolean>;
+    icon?: string;
 }

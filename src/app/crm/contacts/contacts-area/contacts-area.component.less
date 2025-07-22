@@ -17,19 +17,6 @@
   .inplace-edit-wrapper {
     height: 35px;
 
-    ::ng-deep input {
-      margin: 0;
-      padding: 0 0 0 5px;
-      font-size: 15px;
-      font-weight: 300;
-      line-height: 1.67;
-      letter-spacing: 0.3px;
-      text-align: left;
-      font-family: var(--app-font-family);
-      color: var(--text-color);
-      background-color: var(--input-bg);
-    }
-
     dx-text-box,
     dx-button,
     international-phone-number {
@@ -44,10 +31,10 @@
 
     dx-button {
       ::ng-deep &.update i {
-        color: var(--primary-color);
+        color: #00aeef;
       }
       ::ng-deep &.exit i {
-        color: var(--danger-color);
+        color: #f44336;
       }
 
       border: none;
@@ -55,105 +42,280 @@
     }
   }
 
-  h3 {
-    font-size: 12px;
-    line-height: 1.67;
-    letter-spacing: 0.7px;
-    text-align: left;
-    color: var(--muted-color);
-    margin-bottom: 22px;
-    font-weight: 400;
+  dx-text-box,
+  dx-button,
+  international-phone-number {
+    display: inline-block;
   }
 
-  .add-contact {
-    font-size: 14px;
-    font-weight: 300;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1.79;
-    letter-spacing: 0.3px;
-    color: var(--primary-color);
-    cursor: pointer;
-    margin: 0;
-    padding-left: 35px;
+  dx-text-box,
+  international-phone-number {
+    min-width: 230px;
+    width: 70%;
   }
 
-  ul {
-    padding-left: 30px;
+  dx-button {
+    ::ng-deep &.update i {
+      color: var(--primary-color);
+    }
+    ::ng-deep &.exit i {
+      color: var(--danger-color);
+    }
+
+    border: none;
     position: relative;
+  }
+}
 
-    .actions {
-      position: absolute;
-      display: none;
-      right: 0;
-      top: 2px;
+h3 {
+  font-size: 12px;
+  line-height: 1.67;
+  letter-spacing: 0.7px;
+  text-align: left;
+  color: var(--muted-color);
+  margin-bottom: 22px;
+  font-weight: 400;
+}
 
-      i {
-        font-size: 18px;
-        padding: 7px 5px;
-        cursor: pointer;
+.add-contact {
+  font-size: 14px;
+  font-weight: 300;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.79;
+  letter-spacing: 0.3px;
+  color: var(--primary-color);
+  cursor: pointer;
+  margin: 0;
+  padding-left: 35px;
+}
+
+ul {
+  padding-left: 30px;
+  position: relative;
+
+  .actions {
+    position: absolute;
+    display: none;
+    right: 0;
+    top: 2px;
+
+    i {
+      font-size: 18px;
+      padding: 7px 5px;
+      cursor: pointer;
+    }
+
+    i.edit {
+      color: var(--primary-color);
+    }
+
+    i.delete {
+      color: var(--danger-color);
+    }
+
+    i.edit-info {
+      background: url(../../../../assets/common/icons/c-info.svg) no-repeat 0px 4px;
+      background-size: 20px;
+      display: inline-block;
+      width: 25px;
+      height: 23px;
+    }
+  }
+  .emails,
+  .phones {
+    display: flex;
+    align-items: flex-start;
+    ul {
+      width: 100%;
+      margin: 0;
+      li {
+        padding: 0;
+        width: 100%;
+        .edit {
+          background: url(../../../../assets/common/icons/edit-2.svg) no-repeat center;
+          height: 18px;
+          width: 18px;
+        }
+        .delete {
+          background: url(../../../../assets/common/icons/cross.svg) no-repeat center;
+          height: 18px;
+          width: 18px;
+        }
+        .trash {
+          background: url(../../../../assets/common/icons/trash.svg) no-repeat center;
+          height: 18px;
+          width: 18px;
+        }
+      }
+    }
+    .icon-btn {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+  }
+  ul {
+    // padding-left: 3px;
+    position: relative;
+    li {
+      width: 350px;
+    }
+    .email-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px;
+      position: relative;
+      background-color: #fff;
+
+      .email-content,
+      .phone-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+      .email-address {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+
+        img {
+          max-width: 24px !important;
+          max-height: 35px !important;
+          margin-left: 18px;
+        }
       }
 
-      i.edit {
-        color: var(--primary-color);
+      .verify-icon {
+        margin-right: 3px;
+        width: 19px;
+        height: 19px;
+      }
+      .un-verify-icon {
+        margin-right: 3px;
+        width: 15px;
+        height: 15px;
       }
 
-      i.delete {
-        color: var(--danger-color);
+      .actions {
+        opacity: 0;
+        visibility: hidden;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        position: absolute;
+        right: 0;
+        transform: translateX(-50%);
+        transition: all 0.4s ease-in-out;
+
+        a {
+          text-decoration: none;
+        }
+
+        i,
+        .send-icon {
+          transition: background 0.15s;
+          border-radius: 4px;
+        }
+        // i:hover, .send-icon:hover {
+        //     background: #f3f7fa;
+        // }
+
+        .send-icon {
+          display: flex;
+          align-items: center;
+          background-color: #ecf3fa;
+          padding: 8px;
+          border-radius: 8px;
+          font-size: 14px;
+          gap: 5px;
+          line-height: 1;
+          font-weight: 500;
+          cursor: pointer;
+
+          img {
+            width: 14px;
+            aspect-ratio: 1 / 1;
+          }
+        }
+
+        i {
+          font-size: 18px;
+          padding: 7px 5px;
+          cursor: pointer;
+        }
+
+        // i.edit {
+        //     color: #00aeef;
+        // }
+
+        // i.delete {
+        //     color: #f44336;
+        // }
+
+        i.edit-info {
+          background: url(../../../../assets/common/icons/c-info.svg) no-repeat center;
+          background-size: 20px;
+          display: inline-block;
+          width: 25px;
+          height: 23px;
+        }
       }
 
-      i.edit-info {
-        background: url(../../../../assets/common/icons/c-info.svg) no-repeat 0px 4px;
-        background-size: 20px;
-        display: inline-block;
-        width: 25px;
-        height: 23px;
+      &:hover {
+        .actions {
+          opacity: 1;
+          visibility: visible;
+          background: #ffffff;
+          transform: translateX(0);
+        }
       }
     }
 
     &:hover {
       li {
-        background-color: var(--list-hover-bg);
+        background-color: #f8fafc;
       }
 
-      .actions {
-        display: block;
-      }
+      // .actions {
+      //     display: block;
+      // }
     }
   }
+}
 
-  & > div {
-    width: 94%;
-    margin-bottom: 15px;
-  }
+& > div {
+  width: 100%;
+  margin-bottom: 15px;
+}
 
-  li {
-    cursor: pointer;
-    padding: 5px;
-    padding-right: 50px;
-    font-size: 15px;
-    font-weight: 300;
-    line-height: 1.67;
-    letter-spacing: 0.3px;
-    text-align: left;
-    color: var(--text-color);
-    background-color: var(--list-bg);
+li {
+  cursor: pointer;
+  padding: 5px;
+  padding-right: 50px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.3px;
+  text-align: left;
+  color: #424c56;
 
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none;
-    /* Non-prefixed version, currently
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
                                          supported by Chrome and Opera */
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  .phoneExt {
-    padding-left: 20px;
-  }
+.phoneExt {
+  padding-left: 20px;
 }
 
 :host {

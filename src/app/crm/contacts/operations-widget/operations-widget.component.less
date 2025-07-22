@@ -1,42 +1,64 @@
 :host {
+  h3.title {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 27px;
+    letter-spacing: -0.02em;
+    text-align: left;
+    color: rgba(8, 41, 91, 1);
+  }
+
+  ::ng-deep app-toolbar {
+    div[accesskey='open-settings-dialog'] {
+      margin: 0 !important;
+      &,
+      .dx-button-content {
+        min-width: 18px !important;
+      }
+      img {
+        max-width: 18px;
+        max-height: 18px;
+        margin-right: 0 !important;
+      }
+    }
+  }
+
   .operations-widget {
     float: right;
     color: #c5c7ca;
-    background: #FFF;
-    width: calc(~"100% - 354px");
+    background: #fff;
+    width: calc(~'100% - 354px');
     margin-right: 65px;
     white-space: nowrap;
   }
 
   .operations-widget i,
   .operations-widget button {
-      color: #677380;
-      border-radius: 0;
-      margin: 0px;
-      box-shadow: none;
-      border-color: #dadee1;
+    color: #677380;
+    border-radius: 0;
+    margin: 0px;
+    box-shadow: none;
+    border-color: #dadee1;
   }
 
   .operations-widget button:first-child {
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
   }
 
   .operations-widget button:last-child {
-      border-top-right-radius: 5px;
-      border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 
   .operations-widget > div {
-      display: inline-block;
-      margin-right: 10px;
-      border-radius: 5px;
+    display: inline-block;
+    margin-right: 10px;
+    border-radius: 5px;
   }
 
   .operations-widget > div > div {
-      margin-right: 0;
-      display: inline-block;
+    margin-right: 0;
+    display: inline-block;
   }
-
-  color: var(--text-color);
 }

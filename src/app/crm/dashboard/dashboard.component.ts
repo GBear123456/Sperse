@@ -68,15 +68,17 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   @ViewChild(LeftMenuComponent) leftMenu: LeftMenuComponent;
 
   private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
-  showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable().pipe(
-    tap((showWelcomeSection: boolean) =>
-      !this.appService.isHostTenant && showWelcomeSection
-        ? this.router.navigate(['app/crm/' + this.layoutService.getWelcomePageUri()], {
-            skipLocationChange: true,
-          })
-        : undefined
-    )
-  );
+  showWelcomeSection$: Observable<boolean> = this.showWelcomeSection
+    .asObservable()
+    .pipe(
+      tap((showWelcomeSection: boolean) =>
+        !this.appService.isHostTenant && showWelcomeSection
+          ? this.router.navigate(['app/crm/' + this.layoutService.getWelcomePageUri()], {
+              skipLocationChange: true,
+            })
+          : undefined
+      )
+    );
   showDefaultSection$: Observable<boolean> = this.showWelcomeSection$.pipe(
     map((showWelcomeSection: boolean) => showWelcomeSection === false)
   );
@@ -151,8 +153,6 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
   private filters: FilterModel[] = this.getFilters();
 
-  menuSide: 'left' | 'right' = 'left';
-
   constructor(
     private router: Router,
     private appService: AppService,
@@ -179,9 +179,6 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   ) {
     this.store$.dispatch(new StatesStoreActions.LoadRequestAction(AppConsts.defaultCountryCode));
     this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
-    this.layoutService.crmMenuPosition$.subscribe(side => {
-      this.menuSide = side;
-    });
   }
 
   ngOnInit() {

@@ -1,11 +1,24 @@
 /** Core imports */
-import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
-import { ActivationEnd, Event, NavigationEnd, Params } from '@angular/router';
+import {
+    Component,
+    Injector,
+    HostBinding,
+    OnDestroy,
+    ViewChild,
+} from "@angular/core";
+import { ActivationEnd, Event, NavigationEnd, Params } from "@angular/router";
 
 /** Third party imports */
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, forkJoin, Observable, of, zip } from 'rxjs';
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { select, Store } from "@ngrx/store";
+import {
+    BehaviorSubject,
+    combineLatest,
+    forkJoin,
+    Observable,
+    of,
+    zip,
+} from "rxjs";
 import {
     first,
     buffer,
@@ -17,18 +30,22 @@ import {
     refCount,
     switchMap,
     takeUntil,
-    tap
-} from 'rxjs/operators';
-import * as _ from 'underscore';
+    tap,
+} from "rxjs/operators";
+import * as _ from "underscore";
 
 /** Application imports */
-import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppStore, ContactAssignedUsersStoreSelectors, PartnerTypesStoreSelectors } from '@app/store';
-import { PipelinesStoreActions } from '@app/crm/store';
-import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup, ContactStatus } from '@shared/AppEnums';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { PipelineService } from "@app/shared/pipeline/pipeline.service";
+import { DialogService } from "@app/shared/common/dialogs/dialog.service";
+import {
+    AppStore,
+    ContactAssignedUsersStoreSelectors,
+    PartnerTypesStoreSelectors,
+} from "@app/store";
+import { PipelinesStoreActions } from "@app/crm/store";
+import { AppConsts } from "@shared/AppConsts";
+import { ContactGroup, ContactStatus } from "@shared/AppEnums";
+import { AppComponentBase } from "@shared/common/app-component-base";
 import {
     ContactInfoDto,
     ContactServiceProxy,
@@ -47,39 +64,50 @@ import {
     UserServiceProxy,
     LayoutType,
     PartnerTypeDto,
-    ContactGroupInfo
-} from '@shared/service-proxies/service-proxies';
-import { OperationsWidgetComponent } from './operations-widget/operations-widget.component';
-import { ContactsService } from './contacts.service';
-import { AppStoreService } from '@app/store/app-store.service';
-import { RP_CONTACT_INFO_ID, RP_DEFAULT_ID, RP_LEAD_INFO_ID, RP_USER_INFO_ID } from './contacts.const';
-import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
-import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
-import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
-import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
-import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
-import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
-import { AppPermissions } from '@shared/AppPermissions';
-import { NavLink } from '@app/crm/contacts/nav-link.model';
-import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
-import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
-import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
-import { GroupStatus } from '@app/crm/contacts/operations-widget/status.interface';
-import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
-import { AppSessionService } from '@shared/common/session/app-session.service';
-import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
-import { AppFeatures } from '@shared/AppFeatures';
+    ContactGroupInfo,
+} from "@shared/service-proxies/service-proxies";
+import { OperationsWidgetComponent } from "./operations-widget/operations-widget.component";
+import { ContactsService } from "./contacts.service";
+import { AppStoreService } from "@app/store/app-store.service";
+import {
+    RP_CONTACT_INFO_ID,
+    RP_DEFAULT_ID,
+    RP_LEAD_INFO_ID,
+    RP_USER_INFO_ID,
+} from "./contacts.const";
+import { ContactPersonsDialogComponent } from "./contact-persons-dialog/contact-persons-dialog.component";
+import { CreateEntityDialogComponent } from "@shared/common/create-entity-dialog/create-entity-dialog.component";
+import { ItemDetailsService } from "@shared/common/item-details-layout/item-details.service";
+import { ItemTypeEnum } from "@shared/common/item-details-layout/item-type.enum";
+import { ItemFullInfo } from "@shared/common/item-details-layout/item-full-info";
+import { TargetDirectionEnum } from "@app/crm/contacts/target-direction.enum";
+import { AppPermissions } from "@shared/AppPermissions";
+import { NavLink } from "@app/crm/contacts/nav-link.model";
+import { ContextType } from "@app/crm/contacts/details-header/context-type.enum";
+import { DetailsHeaderComponent } from "@app/crm/contacts/details-header/details-header.component";
+import { AppHttpConfiguration } from "@shared/http/appHttpConfiguration";
+import { GroupStatus } from "@app/crm/contacts/operations-widget/status.interface";
+import { CreateEntityDialogData } from "@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface";
+import { AppSessionService } from "@shared/common/session/app-session.service";
+import { EntityTypeSys } from "@app/crm/leads/entity-type-sys.enum";
+import { AppFeatures } from "@shared/AppFeatures";
 
 @Component({
-    templateUrl: './contacts.component.html',
-    styleUrls: ['./contacts.component.less'],
-    providers: [ AppStoreService, DialogService ]
+    templateUrl: "./contacts.component.html",
+    styleUrls: ["./contacts.component.less"],
+    providers: [AppStoreService, DialogService],
 })
 export class ContactsComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
-    @ViewChild(DetailsHeaderComponent) detailsHeaderComponent: DetailsHeaderComponent;
+    @ViewChild(OperationsWidgetComponent)
+    toolbarComponent: OperationsWidgetComponent;
+    @ViewChild(DetailsHeaderComponent)
+    detailsHeaderComponent: DetailsHeaderComponent;
+    @HostBinding("class.modern") get showModernLayout(): boolean {
+        // return this.layoutService.showModernLayout
+        return true;
+    }
 
-    readonly RP_DEFAULT_ID   = RP_DEFAULT_ID;
+    readonly RP_DEFAULT_ID = RP_DEFAULT_ID;
     readonly RP_USER_INFO_ID = RP_USER_INFO_ID;
     readonly RP_LEAD_INFO_ID = RP_LEAD_INFO_ID;
     readonly RP_CONTACT_INFO_ID = RP_CONTACT_INFO_ID;
@@ -99,14 +127,22 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private initialData: string;
 
-    public contactGroupId: BehaviorSubject<string> = this.contactsService.contactGroupId;
-    public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean)) as Observable<string>;
-    isCommunicationHistoryAllowed$: Observable<boolean> = this.contactsService.contactInfo$.pipe(
-        map((contactInfo: ContactInfoDto) => contactInfo && this.permission.checkCGPermission(
-            contactInfo.groups,
-            'ViewCommunicationHistory'
-        ))
-    );
+    public contactGroupId: BehaviorSubject<string> =
+        this.contactsService.contactGroupId;
+    public contactGroupId$: Observable<string> = this.contactGroupId
+        .asObservable()
+        .pipe(filter(Boolean)) as Observable<string>;
+    isCommunicationHistoryAllowed$: Observable<boolean> =
+        this.contactsService.contactInfo$.pipe(
+            map(
+                (contactInfo: ContactInfoDto) =>
+                    contactInfo &&
+                    this.permission.checkCGPermission(
+                        contactInfo.groups,
+                        "ViewCommunicationHistory"
+                    )
+            )
+        );
     leadInfo$: Observable<LeadInfoDto> = this.contactsService.leadInfo$.pipe(
         filter((leadInfo: LeadInfoDto) => !!leadInfo)
     );
@@ -114,22 +150,37 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         map((leadInfo: LeadInfoDto) => !!leadInfo.propertyId)
     );
     userId$: Observable<number> = this.contactsService.userId$;
-    contactIsParent$: Observable<boolean> = this.contactsService.contactInfo$.pipe(
-        filter(Boolean),
-        map((contactInfo: ContactInfoDto) => !contactInfo.parentId)
-    );
-    isContactProspective$: Observable<boolean> = this.contactsService.contactInfo$.pipe(
-        filter(Boolean),
-        map((contactInfo: ContactInfoDto) => contactInfo.groups.every(group => group.isProspective))
-    );
+    contactIsParent$: Observable<boolean> =
+        this.contactsService.contactInfo$.pipe(
+            filter(Boolean),
+            map((contactInfo: ContactInfoDto) => !contactInfo.parentId)
+        );
+    isContactProspective$: Observable<boolean> =
+        this.contactsService.contactInfo$.pipe(
+            filter(Boolean),
+            map((contactInfo: ContactInfoDto) =>
+                contactInfo.groups.every((group) => group.isProspective)
+            )
+        );
     showSubscriptionsSection$: Observable<boolean> = combineLatest(
         this.contactIsParent$,
         this.userId$,
         this.isContactProspective$
     ).pipe(
-        map(([contactIsParent, userId, isProspective]: [boolean, number, boolean]) => {
-            return abp.features.isEnabled(AppFeatures.CRMSubscriptionManagementSystem) && (contactIsParent || (!userId && isProspective));
-        })
+        map(
+            ([contactIsParent, userId, isProspective]: [
+                boolean,
+                number,
+                boolean
+            ]) => {
+                return (
+                    abp.features.isEnabled(
+                        AppFeatures.CRMSubscriptionManagementSystem
+                    ) &&
+                    (contactIsParent || (!userId && isProspective))
+                );
+            }
+        )
     );
     showPaymentInformationSection$: Observable<boolean> = combineLatest(
         this.contactIsParent$,
@@ -142,127 +193,179 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     navLinks: NavLink[] = [
         {
-            name: 'property-information',
-            label: this.capitalize(this.l('PropertyInfo')),
-            route: 'property-information',
-            visible$: this.isPropertyContact$
+            name: "property-information",
+            label: this.capitalize(this.l("PropertyInfo")),
+            route: "property-information",
+            visible$: this.isPropertyContact$,
         },
         {
-            name: 'property-documents',
-            label: this.l('PropertyDocuments'),
-            route: 'property-documents',
-            visible$: this.isPropertyContact$
+            name: "property-documents",
+            label: this.l("PropertyDocuments"),
+            route: "property-documents",
+            visible$: this.isPropertyContact$,
         },
         {
-            name: 'contact-information',
-            label$: this.contactsService.leadInfo$.pipe(map(
-                lead => {
+            name: "contact-information",
+            label$: this.contactsService.leadInfo$.pipe(
+                map((lead) => {
                     if (lead && lead.typeSysId) {
-                        if (lead.typeSysId == EntityTypeSys.PropertyAcquisition) return this.l('SellerContactInfo');
-                        if (lead.typeSysId.startsWith(EntityTypeSys.PropertyRentAndSale)) return this.l('BuyerContactInfo');
+                        if (lead.typeSysId == EntityTypeSys.PropertyAcquisition)
+                            return this.l("SellerContactInfo");
+                        if (
+                            lead.typeSysId.startsWith(
+                                EntityTypeSys.PropertyRentAndSale
+                            )
+                        )
+                            return this.l("BuyerContactInfo");
                     }
-                    return this.l('ContactInfo')
-                }
-            )),
-            route: 'contact-information'
-        },
-        { name: 'personal-details', label: this.l('PersonalDetails'), route: 'personal-details'},
-        {
-            name: 'user-information',
-            label$: this.userId$.pipe(map((userId: number) => userId
-                ? this.l('UserInformation')
-                : this.l('InviteUser'))),
-            visible$: combineLatest(this.userId$, this.contactsService.contactInfo$).pipe(
-                map(([userId, contactInfo] : [number, ContactInfoDto]) => {
-                    return userId ? this.permission.isGranted(AppPermissions.AdministrationUsersEdit)
-                        || contactInfo && this.permission.checkCGPermission(contactInfo.groups, 'UserInformation')
-                    : this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
+                    return this.l("Contact Overview");
                 })
             ),
-            route: 'user-information'
+            route: "contact-information",
+            icon: "contact",
         },
         {
-            name: 'user-inbox',
-            label: this.l('CommunicationHistory'),
-            route: 'user-inbox',
-            visible$: this.isCommunicationHistoryAllowed$
+            name: "personal-details",
+            label: this.l("PersonalDetails"),
+            route: "personal-details",
+            icon: "personal",
         },
         {
-            name: 'documents',
-            label$: this.contactsService.leadInfo$.pipe(map(
-                lead => {
+            name: "user-information",
+            label$: this.userId$.pipe(
+                map((userId: number) =>
+                    userId ? this.l("UserInformation") : this.l("InviteUser")
+                )
+            ),
+            visible$: combineLatest(
+                this.userId$,
+                this.contactsService.contactInfo$
+            ).pipe(
+                map(([userId, contactInfo]: [number, ContactInfoDto]) => {
+                    return userId
+                        ? this.permission.isGranted(
+                              AppPermissions.AdministrationUsersEdit
+                          ) ||
+                              (contactInfo &&
+                                  this.permission.checkCGPermission(
+                                      contactInfo.groups,
+                                      "UserInformation"
+                                  ))
+                        : this.permission.isGranted(
+                              AppPermissions.AdministrationUsersCreate
+                          );
+                })
+            ),
+            route: "user-information",
+            icon: "user-tag",
+        },
+        {
+            name: "user-inbox",
+            label: this.l("CommunicationHistory"),
+            route: "user-inbox",
+            visible$: this.isCommunicationHistoryAllowed$,
+            icon: "communication",
+        },
+        {
+            name: "documents",
+            label$: this.contactsService.leadInfo$.pipe(
+                map((lead) => {
                     if (lead && lead.typeSysId) {
-                        if (lead.typeSysId == EntityTypeSys.PropertyAcquisition) return this.l('SellerDocuments');
-                        if (lead.typeSysId.startsWith(EntityTypeSys.PropertyRentAndSale)) return this.l('BuyerDocuments');
+                        if (lead.typeSysId == EntityTypeSys.PropertyAcquisition)
+                            return this.l("SellerDocuments");
+                        if (
+                            lead.typeSysId.startsWith(
+                                EntityTypeSys.PropertyRentAndSale
+                            )
+                        )
+                            return this.l("BuyerDocuments");
                     }
-                    return this.l('Documents')
-                }
-            )),
-            route: 'documents'
-        },
-        { name: 'notes', label: this.l('Notes'), route: 'notes'},
-        {
-            name: 'invoices',
-            label: this.l('OrdersAndInvoices'),
-            route: 'invoices',
-            disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices),
-            visible$: this.contactIsParent$
+                    return this.l("Documents");
+                })
+            ),
+            route: "documents",
+            icon: "documents",
         },
         {
-            name: 'subscriptions',
-            label: this.l('Subscriptions'),
-            route: 'subscriptions',
-            visible$: this.showSubscriptionsSection$
+            name: "notes",
+            label: this.l("Notes"),
+            route: "notes",
+            icon: "notes-messages",
         },
         {
-            name: 'payment-information',
-            label: this.l('PaymentInformation'),
-            route: 'payment-information',
+            name: "invoices",
+            label: this.l("OrdersAndInvoices"),
+            route: "invoices",
+            disabled: !this.permission.isGranted(
+                AppPermissions.CRMOrdersInvoices
+            ),
+            visible$: this.contactIsParent$,
+            icon: "orders-invoices",
+        },
+        {
+            name: "subscriptions",
+            label: this.l("Subscriptions"),
+            route: "subscriptions",
+            visible$: this.showSubscriptionsSection$,
+            icon: "subscriptions",
+        },
+        {
+            name: "payment-information",
+            label: this.l("PaymentInformation"),
+            route: "payment-information",
             visible$: this.showPaymentInformationSection$,
-            disabled: !abp.features.isEnabled(AppFeatures.CRMInvoicesManagement)
+            disabled: !abp.features.isEnabled(
+                AppFeatures.CRMInvoicesManagement
+            ),
+            icon: "personal",
         },
         {
-            name: 'reseller-activity',
-            label: this.l('ResellerActivity'), route: 'reseller-activity'
+            name: "reseller-activity",
+            label: this.l("ResellerActivity"),
+            route: "reseller-activity",
+            icon: "reseller-activity",
         },
         {
-            name: 'lead-information',
-            label: this.l('LeadInformation'),
-            route: 'lead-information',
-            visible$: this.contactIsParent$
+            name: "lead-information",
+            label: this.l("LeadInformation"),
+            route: "lead-information",
+            visible$: this.contactIsParent$,
+            icon: "flag",
         },
         {
-            name: 'lead-related-contacts',
-            label: this.l('LeadsRelatedContacts'),
-            route: 'lead-related-contacts',
-            visible$: this.contactIsParent$
+            name: "lead-related-contacts",
+            label: this.l("LeadsRelatedContacts"),
+            route: "lead-related-contacts",
+            visible$: this.contactIsParent$,
+            icon: "level",
         },
         {
-            name: 'activity-logs',
-            label: this.l('ActivityLogs'),
-            route: 'activity-logs'
+            name: "activity-logs",
+            label: this.l("ActivityLogs"),
+            route: "activity-logs",
+            icon: "documents",
         },
         {
-            name: 'referral-history',
-            label: this.l('ReferralHistory'),
-            route: 'referral-history',
-            disabled: true
+            name: "referral-history",
+            label: this.l("ReferralHistory"),
+            route: "referral-history",
+            disabled: true,
         },
         {
-            name: 'application-status',
-            label: this.l('ApplicationStatus'),
-            route: 'application-status',
+            name: "application-status",
+            label: this.l("ApplicationStatus"),
+            route: "application-status",
             visible$: this.leadInfo$.pipe(
                 map((leadInfo: LeadInfoDto) => !!leadInfo.id)
             ),
-            disabled: true
+            disabled: true,
         },
         {
-            name: 'questionnaire',
-            label: this.l('Questionnaire'),
-            route: 'questionnaire',
-            disabled: true
-        }
+            name: "questionnaire",
+            label: this.l("Questionnaire"),
+            route: "questionnaire",
+            disabled: true,
+        },
     ];
     params: any;
     private rootComponent: any;
@@ -271,12 +374,17 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     showToolbar;
     currentItemId;
     dataSourceURI: ItemTypeEnum = ItemTypeEnum.Customer;
-    private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
-    public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
+    private targetEntity: BehaviorSubject<TargetDirectionEnum> =
+        new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
+    public targetEntity$: Observable<TargetDirectionEnum> =
+        this.targetEntity.asObservable();
     manageAllowed = false;
-    
-    isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
-    isInboundOutboundSMSAllowed = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
+
+    isSMSIntegrationDisabled =
+        abp.setting.get("Integrations:YTel:IsEnabled") == "False";
+    isInboundOutboundSMSAllowed = abp.features.isEnabled(
+        AppFeatures.InboundOutboundSMS
+    );
     isCommunicationHistoryAllowed = false;
     isSendSmsAndEmailAllowed = false;
 
@@ -299,49 +407,83 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     ) {
         super(injector);
         this.appStoreService.loadUserDictionaries();
-        contactService['data'] = {
+        contactService["data"] = {
             contactInfo: null,
             leadInfo: null,
-            partnerInfo: null
+            partnerInfo: null,
         };
         this.rootComponent = this.getRootComponent();
-        this._activatedRoute.params.pipe(
-            takeUntil(this.destroy$),
-            switchMap((params: Params) => this.loadContactInfo(params)),
-            switchMap(() => this._activatedRoute.queryParams)
-        ).subscribe((params: Params) => {
-            this.queryParams = params;
-            this.initNavButtons();
-        });
+        this._activatedRoute.params
+            .pipe(
+                takeUntil(this.destroy$),
+                switchMap((params: Params) => this.loadContactInfo(params)),
+                switchMap(() => this._activatedRoute.queryParams)
+            )
+            .subscribe((params: Params) => {
+                this.queryParams = params;
+                this.initNavButtons();
+            });
 
-        contactsService.invalidateSubscribe(area => this.invalidate(area));
+        contactsService.invalidateSubscribe((area) => this.invalidate(area));
         contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
         this.handleContactsOptions();
-        this.contactsService.prev.pipe(takeUntil(this.destroy$)).subscribe((e) => {
-            this.loadTargetEntity(e, TargetDirectionEnum.Prev);
-        });
-        this.contactsService.next.pipe(takeUntil(this.destroy$)).subscribe((e) => {
-            this.loadTargetEntity(e, TargetDirectionEnum.Next);
-        });
+        this.contactsService.prev
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((e) => {
+                this.loadTargetEntity(e, TargetDirectionEnum.Prev);
+            });
+        this.contactsService.next
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((e) => {
+                this.loadTargetEntity(e, TargetDirectionEnum.Next);
+            });
+
+        this.layoutService.isWideView = true;
     }
 
     initContextTypeByRoute() {
-        this.detailsHeaderComponent.contextMenuInit$.pipe(first()).subscribe(() => {
-            let section = this._activatedRoute.children[0].routeConfig.path;
-            this.updateContextType(this.navLinks.find(link => link.name == section), false);
-        });
+        if (this.detailsHeaderComponent)
+            this.detailsHeaderComponent.contextMenuInit$
+                .pipe(first())
+                .subscribe(() => {
+                    this.updateContextType(this.getActiveNavLink(), false);
+                });
+    }
+
+    getActiveNavLink() {
+        let section = this._activatedRoute.children[0].routeConfig.path;
+        return (
+            this.navLinks && this.navLinks.find((link) => link.name == section)
+        );
+    }
+
+    getTitle(): Observable<string> {
+        let navLink = this.getActiveNavLink();
+        return navLink
+            ? navLink.label
+                ? of(navLink.label)
+                : navLink.label$ || of("")
+            : of("");
     }
 
     private handleContactsOptions() {
         const routeData$: Observable<any> = this._router.events.pipe(
             takeUntil(this.destroy$),
             filter((event: Event) => event instanceof ActivationEnd),
-            buffer(this._router.events.pipe(filter((event: Event) => event instanceof NavigationEnd))),
+            buffer(
+                this._router.events.pipe(
+                    filter((event: Event) => event instanceof NavigationEnd)
+                )
+            ),
             map((events: ActivationEnd[]) => events[0])
         );
 
         combineLatest(routeData$).subscribe(([event]: [ActivationEnd]) => {
-            this.showToolbar = this.getCheckPropertyValue(event.snapshot.data, 'showToolbar', true);
+            this.showToolbar = this.getCheckPropertyValue(
+                event.snapshot.data,
+                "showToolbar",
+                true
+            );
         });
     }
 
@@ -350,20 +492,35 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     initNavigatorProperties() {
-        this.dataSourceURI = this.contactsService.getCurrentItemType(this.queryParams);
+        this.dataSourceURI = this.contactsService.getCurrentItemType(
+            this.queryParams
+        );
         this.currentItemId = this.getCurrentItemId();
     }
 
     private getCurrentItemId(): string {
         let currentItemId: string;
         switch (this.contactsService.getSection(this.queryParams)) {
-            case 'leads': currentItemId = this.params.leadId; break;
-            case 'clients': currentItemId = this.params.contactId; break;
-            case 'partners': currentItemId = this.params.contactId; break;
-            case 'users': currentItemId = this.params.userId; break;
-            case 'orders': currentItemId = this.queryParams.orderId; break;
-            case 'subscriptions': currentItemId = this.queryParams.subId; break;
-            default: break;
+            case "leads":
+                currentItemId = this.params.leadId;
+                break;
+            case "clients":
+                currentItemId = this.params.contactId;
+                break;
+            case "partners":
+                currentItemId = this.params.contactId;
+                break;
+            case "users":
+                currentItemId = this.params.userId;
+                break;
+            case "orders":
+                currentItemId = this.queryParams.orderId;
+                break;
+            case "subscriptions":
+                currentItemId = this.queryParams.subId;
+                break;
+            default:
+                break;
         }
         return currentItemId;
     }
@@ -372,67 +529,112 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.overflowHidden(true);
         this.rootComponent.pageHeaderFixed();
         this.initNavigatorProperties();
-        const itemKeyField = this.dataSourceURI == ItemTypeEnum.User ? 'id' : 'Id',
-              itemDistinctField = [ItemTypeEnum.Order, ItemTypeEnum.Subscription].indexOf(this.dataSourceURI) >= 0 ? 'LeadId' : itemKeyField;
-        let subscription = this.targetEntity$.pipe(
-            /** To avoid fast next/prev clicking */
-            takeUntil(this.destroy$),
-            debounceTime(100),
-            tap(() => {
-                if (this.toolbarComponent) {
-                    this.toolbarComponent.updateNavButtons(true, true);
+        const itemKeyField =
+                this.dataSourceURI == ItemTypeEnum.User ? "id" : "Id",
+            itemDistinctField =
+                [ItemTypeEnum.Order, ItemTypeEnum.Subscription].indexOf(
+                    this.dataSourceURI
+                ) >= 0
+                    ? "LeadId"
+                    : itemKeyField;
+        let subscription = this.targetEntity$
+            .pipe(
+                /** To avoid fast next/prev clicking */
+                takeUntil(this.destroy$),
+                debounceTime(100),
+                tap(() => {
+                    if (this.toolbarComponent) {
+                        this.toolbarComponent.updateNavButtons(true, true);
+                    }
+                    this.startLoading(true);
+                }),
+                switchMap((direction: TargetDirectionEnum) =>
+                    this.itemDetailsService
+                        .getItemFullInfo(
+                            this.dataSourceURI,
+                            this.currentItemId,
+                            direction,
+                            itemKeyField,
+                            itemDistinctField
+                        )
+                        .pipe(finalize(() => this.finishLoading(true)))
+                )
+            )
+            .subscribe((itemFullInfo: ItemFullInfo) => {
+                let isImproperItemInfo =
+                    itemFullInfo &&
+                    itemFullInfo.itemData &&
+                    this.currentItemId != itemFullInfo.itemData[itemKeyField];
+                if (
+                    isImproperItemInfo &&
+                    itemFullInfo.items.some(
+                        (item) => this.currentItemId == item[itemKeyField]
+                    )
+                ) {
+                    subscription.unsubscribe();
+                    this.targetEntity.next(TargetDirectionEnum.Current);
+                    this.updateLocation(itemFullInfo);
+                } else if (this.toolbarComponent) {
+                    this.toolbarComponent.updateNavButtons(
+                        !itemFullInfo ||
+                            isImproperItemInfo ||
+                            itemFullInfo.isFirstOnList,
+                        !itemFullInfo ||
+                            isImproperItemInfo ||
+                            itemFullInfo.isLastOnList
+                    );
                 }
-                this.startLoading(true);
-            }),
-            switchMap((direction: TargetDirectionEnum) => this.itemDetailsService.getItemFullInfo(
-                this.dataSourceURI,
-                this.currentItemId,
-                direction,
-                itemKeyField,
-                itemDistinctField
-            ).pipe(
-                finalize(() => this.finishLoading(true))
-            ))
-        ).subscribe((itemFullInfo: ItemFullInfo) => {
-            let isImproperItemInfo = itemFullInfo && itemFullInfo.itemData && this.currentItemId != itemFullInfo.itemData[itemKeyField]; 
-            if (isImproperItemInfo && itemFullInfo.items.some(item => this.currentItemId == item[itemKeyField])) {
-                subscription.unsubscribe();
-                this.targetEntity.next(TargetDirectionEnum.Current);
-                this.updateLocation(itemFullInfo);
-            } else if (this.toolbarComponent) {
-                this.toolbarComponent.updateNavButtons(
-                    !itemFullInfo || isImproperItemInfo || itemFullInfo.isFirstOnList,
-                    !itemFullInfo || isImproperItemInfo || itemFullInfo.isLastOnList
-                );
-            }
-        });
+            });
     }
 
     private updateLocation(itemFullInfo) {
         switch (this.contactsService.getSection(this.queryParams)) {
-            case 'leads':
+            case "leads":
                 this.contactsService.updateLocation(
                     itemFullInfo.itemData.CustomerId,
                     itemFullInfo.itemData.Id,
                     itemFullInfo.itemData.OrganizationId
                 );
                 break;
-            case 'clients':
-                this.contactsService.updateLocation(itemFullInfo.itemData.Id, null, itemFullInfo.itemData.OrganizationId);
+            case "clients":
+                this.contactsService.updateLocation(
+                    itemFullInfo.itemData.Id,
+                    null,
+                    itemFullInfo.itemData.OrganizationId
+                );
                 break;
-            case 'partners':
-                this.contactsService.updateLocation(itemFullInfo.itemData.Id, null, itemFullInfo.itemData.OrganizationId);
+            case "partners":
+                this.contactsService.updateLocation(
+                    itemFullInfo.itemData.Id,
+                    null,
+                    itemFullInfo.itemData.OrganizationId
+                );
                 break;
-            case 'users':
-                this.contactsService.updateLocation(null, null, null, itemFullInfo.itemData.id);
+            case "users":
+                this.contactsService.updateLocation(
+                    null,
+                    null,
+                    null,
+                    itemFullInfo.itemData.id
+                );
                 break;
-            case 'orders':
-                this.contactsService.updateLocation(itemFullInfo.itemData.ContactId,
-                    itemFullInfo.itemData.LeadId, null, null, {...this.queryParams, orderId: itemFullInfo.itemData.Id});
+            case "orders":
+                this.contactsService.updateLocation(
+                    itemFullInfo.itemData.ContactId,
+                    itemFullInfo.itemData.LeadId,
+                    null,
+                    null,
+                    { ...this.queryParams, orderId: itemFullInfo.itemData.Id }
+                );
                 break;
-            case 'subscriptions':
-                this.contactsService.updateLocation(itemFullInfo.itemData.ContactId,
-                    itemFullInfo.itemData.LeadId, null, null, {...this.queryParams, subId: itemFullInfo.itemData.Id});
+            case "subscriptions":
+                this.contactsService.updateLocation(
+                    itemFullInfo.itemData.ContactId,
+                    itemFullInfo.itemData.LeadId,
+                    null,
+                    null,
+                    { ...this.queryParams, subId: itemFullInfo.itemData.Id }
+                );
                 break;
             default:
                 break;
@@ -440,13 +642,15 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private storeInitialData() {
-        this.initialData = JSON.stringify(this.contactService['data']);
+        this.initialData = JSON.stringify(this.contactService["data"]);
     }
 
     private checkUpdateToolbar() {
-        if (!['user-inbox', 'documents', 'notes'].includes(
-            this._activatedRoute.snapshot.firstChild.routeConfig.path
-        ))
+        if (
+            !["user-inbox", "documents", "notes"].includes(
+                this._activatedRoute.snapshot.firstChild.routeConfig.path
+            )
+        )
             this.contactsService.toolbarUpdate();
     }
 
@@ -454,17 +658,25 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         let contactGroupId = this.contactsService.getContactGroupId(
             (this._activatedRoute.queryParams as BehaviorSubject<any>).value
         );
-        if (contactGroupId && contactInfo.groups.some(group => group.groupId == contactGroupId)) {
+        if (
+            contactGroupId &&
+            contactInfo.groups.some((group) => group.groupId == contactGroupId)
+        ) {
             return contactGroupId;
         }
-        let group = contactInfo.groups.filter(group => group.isActive).shift() || 
-            contactInfo.groups.filter(group => group.isProspective).shift();
+        let group =
+            contactInfo.groups.filter((group) => group.isActive).shift() ||
+            contactInfo.groups.filter((group) => group.isProspective).shift();
 
-        return (group && group.groupId) || contactInfo.groups[0].groupId || ContactGroup.Client;
+        return (
+            (group && group.groupId) ||
+            contactInfo.groups[0].groupId ||
+            ContactGroup.Client
+        );
     }
 
     private fillContactDetails(result: ContactInfoDto, contactId = null) {
-        this.contactService['data'].contactInfo = result;
+        this.contactService["data"].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
         this.contactGroupId.next(this.getContactGroupId(result));
         this.manageAllowed = this.permission.checkCGPermission(result.groups);
@@ -473,28 +685,41 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             { contactGroup: this.contactGroupId.value }
         );
         contactId = contactId || result.personContactInfo.id;
-        if (result['organizationContactInfo'] && result['organizationContactInfo'].contactPersons) {
-            result['organizationContactInfo'].contactPersons.map((contact: PersonShortInfoDto) => {
-                return contact.id == contactId ? result.personContactInfo : contact;
-            });
+        if (
+            result["organizationContactInfo"] &&
+            result["organizationContactInfo"].contactPersons
+        ) {
+            result["organizationContactInfo"].contactPersons.map(
+                (contact: PersonShortInfoDto) => {
+                    return contact.id == contactId
+                        ? result.personContactInfo
+                        : contact;
+                }
+            );
         }
 
-        const featureMaxMessageCount = this.contactsService.getFeatureCount(AppFeatures.CRMMaxCommunicationMessageCount);
-        this.isCommunicationHistoryAllowed = featureMaxMessageCount && this.permission.checkCGPermission(
-            result.groups,
-            'ViewCommunicationHistory'
+        const featureMaxMessageCount = this.contactsService.getFeatureCount(
+            AppFeatures.CRMMaxCommunicationMessageCount
         );
-        this.isSendSmsAndEmailAllowed = featureMaxMessageCount && this.permission.checkCGPermission(
-            result.groups, 
-            'ViewCommunicationHistory.SendSMSAndEmail'
-        );
+        this.isCommunicationHistoryAllowed =
+            featureMaxMessageCount &&
+            this.permission.checkCGPermission(
+                result.groups,
+                "ViewCommunicationHistory"
+            );
+        this.isSendSmsAndEmailAllowed =
+            featureMaxMessageCount &&
+            this.permission.checkCGPermission(
+                result.groups,
+                "ViewCommunicationHistory.SendSMSAndEmail"
+            );
 
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
         this.personContactInfo = result.personContactInfo;
         this.contactsService.updatePersonContactInfo(this.personContactInfo);
         this.contactsService.updateUserId(
-            this.userService['data'].userId = this.primaryContact.userId
+            (this.userService["data"].userId = this.primaryContact.userId)
         );
         this.initContextTypeByRoute();
         this.checkUpdateToolbar();
@@ -502,20 +727,20 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private fillLeadDetails(leadInfo: LeadInfoDto) {
-        if (leadInfo.hasOwnProperty('id')) {
-            this.contactService['data'].leadInfo = this.leadInfo = leadInfo;
-            this.leadId = this.contactInfo['leadId'] = leadInfo.id;
+        if (leadInfo.hasOwnProperty("id")) {
+            this.contactService["data"].leadInfo = this.leadInfo = leadInfo;
+            this.leadId = this.contactInfo["leadId"] = leadInfo.id;
             this.contactsService.leadInfoUpdate({
                 ...this.params,
-                ...leadInfo
-            });        
+                ...leadInfo,
+            });
             this.loadLeadsStages();
         }
         this.storeInitialData();
     }
 
     private fillPartnerDetails(result) {
-        this.contactService['data'].partnerInfo = this.partnerInfo = result;
+        this.contactService["data"].partnerInfo = this.partnerInfo = result;
         this.partnerTypeId = result.typeId;
         this.storeInitialData();
     }
@@ -525,21 +750,23 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     loadContactInfo(params: Params): Observable<ContactInfoDto> {
-        let userId = params['userId'],
-            contactId = params['contactId'],
-            leadId = params['leadId'],
-            companyId = params['companyId'];
+        let userId = params["userId"],
+            contactId = params["contactId"],
+            leadId = params["leadId"],
+            companyId = params["companyId"];
         this.contactsService.contactId.next(contactId);
         this.params = params;
-        this.userService['data'] = {
-            userId: userId, user: null, roles: null
+        this.userService["data"] = {
+            userId: userId,
+            user: null,
+            roles: null,
         };
-        this.contactService['data'].contactInfo = {
-            id: this.customerId = contactId
+        this.contactService["data"].contactInfo = {
+            id: (this.customerId = contactId),
         };
         if (this.leadId != leadId)
-            this.contactService['data'].leadInfo = {
-                id: this.leadId = leadId
+            this.contactService["data"].leadInfo = {
+                id: (this.leadId = leadId),
             };
         return userId
             ? this.loadContactInfoForUser(userId, companyId)
@@ -550,41 +777,58 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         return this.contactGroupId.value === ContactGroup.Employee;
     }
 
-    getContactInfoWithCompany(companyId: number, contactInfo$: Observable<ContactInfoDto>): Observable<ContactInfoDto> {
+    getContactInfoWithCompany(
+        companyId: number,
+        contactInfo$: Observable<ContactInfoDto>
+    ): Observable<ContactInfoDto> {
         return forkJoin(
             contactInfo$,
             companyId
                 ? this.orgContactService.getOrganizationContactInfo(companyId)
                 : of(OrganizationContactInfoDto.fromJS({}))
         ).pipe(
-            map(([contactInfo, organizationContactInfo]: [ContactInfoDto, OrganizationContactInfoDto]) => {
-                contactInfo['organizationContactInfo'] = organizationContactInfo;
-                if (!companyId && contactInfo.primaryOrganizationContactId)
-                    this.orgContactService.getOrganizationContactInfo(
-                        contactInfo.primaryOrganizationContactId
-                    ).subscribe((result: OrganizationContactInfoDto) => {
-                        contactInfo['organizationContactInfo'] = result;
-                        this.contactsService.organizationInfoUpdate(result);
-                    });
-                else
-                    this.contactsService.organizationInfoUpdate(OrganizationContactInfoDto.fromJS({}));
-                return contactInfo;
-            })
+            map(
+                ([contactInfo, organizationContactInfo]: [
+                    ContactInfoDto,
+                    OrganizationContactInfoDto
+                ]) => {
+                    contactInfo["organizationContactInfo"] =
+                        organizationContactInfo;
+                    if (!companyId && contactInfo.primaryOrganizationContactId)
+                        this.orgContactService
+                            .getOrganizationContactInfo(
+                                contactInfo.primaryOrganizationContactId
+                            )
+                            .subscribe((result: OrganizationContactInfoDto) => {
+                                contactInfo["organizationContactInfo"] = result;
+                                this.contactsService.organizationInfoUpdate(
+                                    result
+                                );
+                            });
+                    else
+                        this.contactsService.organizationInfoUpdate(
+                            OrganizationContactInfoDto.fromJS({})
+                        );
+                    return contactInfo;
+                }
+            )
         );
     }
 
-    loadContactInfoForUser(userId: number, companyId: number): Observable<ContactInfoDto> {
+    loadContactInfoForUser(
+        userId: number,
+        companyId: number
+    ): Observable<ContactInfoDto> {
         let res$ = this.getContactInfoWithCompany(
             companyId,
             this.contactService.getContactInfoForUser(userId)
-        ).pipe(
-            publishReplay(),
-            refCount()
-        );
+        ).pipe(publishReplay(), refCount());
         res$.subscribe((res: ContactInfoDto) => {
-            this.fillContactDetails(res, res['id']);
+            this.fillContactDetails(res, res["id"]);
             if (this.permission.isGranted(AppPermissions.CRM)) {
-                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
+                this.store$.dispatch(
+                    new PipelinesStoreActions.LoadRequestAction(false)
+                );
                 this.loadLeadData();
             }
         });
@@ -594,59 +838,74 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     updateContextType(navLink: NavLink, closeDialogs = true): ContextType {
         let newSelectedContextType: ContextType;
         switch (navLink.name) {
-            case 'documents': newSelectedContextType = ContextType.AddFiles;  break;
-            case 'contact-information': newSelectedContextType = ContextType.AddContact;  break;
-            case 'notes': newSelectedContextType = ContextType.AddNotes;  break;
-            case 'invoices': newSelectedContextType = ContextType.AddInvoice; break;
-            case 'lead-related-contacts': newSelectedContextType = ContextType.AddContact; break;
-            case 'subscriptions': newSelectedContextType = ContextType.AddSubscription; break;
+            case "documents":
+                newSelectedContextType = ContextType.AddFiles;
+                break;
+            case "contact-information":
+                newSelectedContextType = ContextType.AddContact;
+                break;
+            case "notes":
+                newSelectedContextType = ContextType.AddNotes;
+                break;
+            case "invoices":
+                newSelectedContextType = ContextType.AddInvoice;
+                break;
+            case "lead-related-contacts":
+                newSelectedContextType = ContextType.AddContact;
+                break;
+            case "subscriptions":
+                newSelectedContextType = ContextType.AddSubscription;
+                break;
         }
-        if (closeDialogs)
-            this.closeEditDialogs();
+        if (closeDialogs) this.closeEditDialogs();
         if (newSelectedContextType !== undefined) {
             setTimeout(() => {
                 this.detailsHeaderComponent.updateSaveOption(
-                    this.detailsHeaderComponent.addContextMenuItems[newSelectedContextType]
+                    this.detailsHeaderComponent.addContextMenuItems[
+                        newSelectedContextType
+                    ]
                 );
             });
         }
         return newSelectedContextType;
     }
 
-    loadContactInfoForClient(contactId: number, leadId: number, companyId: number): Observable<ContactInfoDto> {
+    loadContactInfoForClient(
+        contactId: number,
+        leadId: number,
+        companyId: number
+    ): Observable<ContactInfoDto> {
         let contactInfo$: Observable<ContactInfoDto>;
         if (contactId) {
             if (!this.loading) this.startLoading(true);
             contactInfo$ = this.getContactInfoWithCompany(
                 companyId,
                 this.contactService.getContactInfo(contactId)
-            ).pipe(
-                publishReplay(),
-                refCount()
-            );
-            contactInfo$.pipe(
-                finalize(() => {
-                    this.finishLoading(true);
-                }),
-                switchMap((result: ContactInfoDto) => {
-                    this.fillContactDetails(result);
-                    this.loadLeadData(result.personContactInfo);
-                    if (leadId) {
-                        this.loadLeadsStages();
-                        if (!this.contactInfo['leadId'])
-                            this.contactInfo['leadId'] = leadId;
-                    }
-                    if (this.contactGroupId.value == ContactGroup.Partner)
-                        return this.partnerService.get(contactId);
-                    return of(null);
-                })
-            ).subscribe((result: ContactInfoDto) => {
-                if (result) {
-                    this.fillPartnerDetails(result);
-                    this.loadPartnerTypes();
-                } else if (!this.contactInfo)
-                    this.close(true);
-            });
+            ).pipe(publishReplay(), refCount());
+            contactInfo$
+                .pipe(
+                    finalize(() => {
+                        this.finishLoading(true);
+                    }),
+                    switchMap((result: ContactInfoDto) => {
+                        this.fillContactDetails(result);
+                        this.loadLeadData(result.personContactInfo);
+                        if (leadId) {
+                            this.loadLeadsStages();
+                            if (!this.contactInfo["leadId"])
+                                this.contactInfo["leadId"] = leadId;
+                        }
+                        if (this.contactGroupId.value == ContactGroup.Partner)
+                            return this.partnerService.get(contactId);
+                        return of(null);
+                    })
+                )
+                .subscribe((result: ContactInfoDto) => {
+                    if (result) {
+                        this.fillPartnerDetails(result);
+                        this.loadPartnerTypes();
+                    } else if (!this.contactInfo) this.close(true);
+                });
         } else {
             contactInfo$ = of(new ContactInfoDto());
         }
@@ -654,94 +913,133 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     loadLeadData(personContactInfo?: PersonContactInfoDto, lastLeadCallback?) {
-        let contactInfo = this.contactService['data'].contactInfo,
-            leadInfo = this.contactService['data'].leadInfo;
+        let contactInfo = this.contactService["data"].contactInfo,
+            leadInfo = this.contactService["data"].leadInfo;
 
-        if (contactInfo && (!contactInfo.hasOwnProperty('parentId') || contactInfo.parentId))
+        if (
+            contactInfo &&
+            (!contactInfo.hasOwnProperty("parentId") || contactInfo.parentId)
+        )
             return this.fillLeadDetails(new LeadInfoDto());
 
-        if ((contactInfo && (!leadInfo || !this.leadInfo || this.leadInfo.id != leadInfo.id)) || lastLeadCallback) {
-            this.contactGroupId$.pipe(filter(Boolean), first()).subscribe((contactGroupId: string) => {
-                !lastLeadCallback && this.startLoading(true);
-                let leadId = leadInfo && leadInfo.id,
-                    leadInfo$ = leadId && !lastLeadCallback ? 
-                        this.leadService.getLeadInfo(leadId) :
-                        this.leadService.getLastLeadInfo(
-                            contactGroupId, contactInfo.id
-                        );
+        if (
+            (contactInfo &&
+                (!leadInfo ||
+                    !this.leadInfo ||
+                    this.leadInfo.id != leadInfo.id)) ||
+            lastLeadCallback
+        ) {
+            this.contactGroupId$
+                .pipe(filter(Boolean), first())
+                .subscribe((contactGroupId: string) => {
+                    !lastLeadCallback && this.startLoading(true);
+                    let leadId = leadInfo && leadInfo.id,
+                        leadInfo$ =
+                            leadId && !lastLeadCallback
+                                ? this.leadService.getLeadInfo(leadId)
+                                : this.leadService.getLastLeadInfo(
+                                      contactGroupId,
+                                      contactInfo.id
+                                  );
 
-                let successCallback = (result: LeadInfoDto) => {
-                    this.fillLeadDetails(result);
-                    lastLeadCallback && lastLeadCallback();
-                };
+                    let successCallback = (result: LeadInfoDto) => {
+                        this.fillLeadDetails(result);
+                        lastLeadCallback && lastLeadCallback();
+                    };
 
-                this.appHttpConfiguration.avoidErrorHandling = true;
-                leadInfo$.pipe(finalize(() => {
-                    this.appHttpConfiguration.avoidErrorHandling = false;
-                    this.finishLoading(true);
-                })).subscribe(successCallback, error => {
-                    if (error.code == 404)
-                        this.leadService.getLastLeadInfo(
-                            contactGroupId, contactInfo.id
-                        ).subscribe(successCallback);
-                    else
-                        this.notify.error(error.message);
+                    this.appHttpConfiguration.avoidErrorHandling = true;
+                    leadInfo$
+                        .pipe(
+                            finalize(() => {
+                                this.appHttpConfiguration.avoidErrorHandling =
+                                    false;
+                                this.finishLoading(true);
+                            })
+                        )
+                        .subscribe(successCallback, (error) => {
+                            if (error.code == 404)
+                                this.leadService
+                                    .getLastLeadInfo(
+                                        contactGroupId,
+                                        contactInfo.id
+                                    )
+                                    .subscribe(successCallback);
+                            else this.notify.error(error.message);
+                        });
                 });
-            });
         } else
             this.contactsService.leadInfoUpdate({
                 ...this.params,
-                ...leadInfo
+                ...leadInfo,
             });
     }
 
     private loadLeadsStages() {
-        this.leadInfo$.pipe(
-            first(),
-            switchMap((leadInfo) => {
-                return zip(of(leadInfo), this.pipelineService.getAllPipelinesOberverable(
-                    AppConsts.PipelinePurposeIds.lead
-                ));
-            })
-        ).subscribe(([leadInfo, pipelines]) => {
-            let leadCGManageAllowed = this.permission.checkCGPermission([leadInfo.contactGroupId]);
-            this.allPipelines = pipelines.filter(
-                (pipeline: PipelineDto) => leadCGManageAllowed ?
-                    this.permission.checkCGPermission([pipeline.contactGroupId]) && (
-                        !pipeline.entityTypeSysId || (                        
-                            pipeline.entityTypeSysId.startsWith('Property') && leadInfo.propertyId
+        this.leadInfo$
+            .pipe(
+                first(),
+                switchMap((leadInfo) => {
+                    return zip(
+                        of(leadInfo),
+                        this.pipelineService.getAllPipelinesOberverable(
+                            AppConsts.PipelinePurposeIds.lead
                         )
-                    ) : pipeline.contactGroupId == leadInfo.contactGroupId
-            ).map((pipeline: PipelineDto) => {
-                return {
-                    id: pipeline.id,
-                    text: pipeline.name,
-                    contactGroupId: pipeline.contactGroupId,
-                    items: pipeline.stages.map((stage: StageDto) => {
+                    );
+                })
+            )
+            .subscribe(([leadInfo, pipelines]) => {
+                let leadCGManageAllowed = this.permission.checkCGPermission([
+                    leadInfo.contactGroupId,
+                ]);
+                this.allPipelines = pipelines
+                    .filter((pipeline: PipelineDto) =>
+                        leadCGManageAllowed
+                            ? this.permission.checkCGPermission([
+                                  pipeline.contactGroupId,
+                              ]) &&
+                              (!pipeline.entityTypeSysId ||
+                                  (pipeline.entityTypeSysId.startsWith(
+                                      "Property"
+                                  ) &&
+                                      leadInfo.propertyId))
+                            : pipeline.contactGroupId == leadInfo.contactGroupId
+                    )
+                    .map((pipeline: PipelineDto) => {
                         return {
-                            id: stage.id,
-                            name: stage.name,
-                            index: stage.sortOrder,
-                            action: this.updateLeadStage.bind(this),
-                            disabled: !leadCGManageAllowed || (leadInfo.pipelineId != pipeline.id && stage.isFinal),
-                            pipelineId: pipeline.id
-                        }
-                    })
-                };
+                            id: pipeline.id,
+                            text: pipeline.name,
+                            contactGroupId: pipeline.contactGroupId,
+                            items: pipeline.stages.map((stage: StageDto) => {
+                                return {
+                                    id: stage.id,
+                                    name: stage.name,
+                                    index: stage.sortOrder,
+                                    action: this.updateLeadStage.bind(this),
+                                    disabled:
+                                        !leadCGManageAllowed ||
+                                        (leadInfo.pipelineId != pipeline.id &&
+                                            stage.isFinal),
+                                    pipelineId: pipeline.id,
+                                };
+                            }),
+                        };
+                    });
             });
-        });
     }
 
     private loadPartnerTypes() {
-        this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe(
-            (partnerTypes: PartnerTypeDto[]) => {
-                this.partnerTypes = partnerTypes && partnerTypes.length ?
-                    partnerTypes.map(type => {
-                        type['action'] = this.updatePartnerType.bind(this);
-                        return type;
-                    }) : [];
-            }
-        );
+        this.store$
+            .pipe(select(PartnerTypesStoreSelectors.getPartnerTypes))
+            .subscribe((partnerTypes: PartnerTypeDto[]) => {
+                this.partnerTypes =
+                    partnerTypes && partnerTypes.length
+                        ? partnerTypes.map((type) => {
+                              type["action"] =
+                                  this.updatePartnerType.bind(this);
+                              return type;
+                          })
+                        : [];
+            });
     }
 
     private getCustomerName() {
@@ -749,95 +1047,140 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private showConfirmationDialog(status: GroupStatus) {
-        let hasActiveGroupBefore = this.contactInfo.groups.some(group => group.isActive),
-            hasActiveGroupAfter = this.contactInfo.groups.some(group => 
-                group.groupId == status.groupId ? status.isActive : group.isActive
+        let hasActiveGroupBefore = this.contactInfo.groups.some(
+                (group) => group.isActive
+            ),
+            hasActiveGroupAfter = this.contactInfo.groups.some((group) =>
+                group.groupId == status.groupId
+                    ? status.isActive
+                    : group.isActive
             );
-        this.contactsService.updateStatus(
-            this.contactInfo.id, status.groupId, 
-            status.isActive, 'contact', !hasActiveGroupAfter            
-        ).subscribe((confirm: boolean) => {
-            if (confirm) {   
-                this.contactInfo.groups.some(group => {
-                    if (group.groupId == status.groupId) {
-                        group.isActive = status.isActive;
-                        return true;
-                    }
-                });
-                let userData = this.userService['data'];
-                if (userData && userData.user && hasActiveGroupBefore != hasActiveGroupAfter)
-                    userData.user.isActive = hasActiveGroupAfter;
-                this.notify.success(this.l('StatusSuccessfullyUpdated'));
-                this.toolbarComponent.updateActiveGroups(status);
-            } else
-                this.handleStatusUpdateError(status);
-        }, () => this.handleStatusUpdateError(status));
+        this.contactsService
+            .updateStatus(
+                this.contactInfo.id,
+                status.groupId,
+                status.isActive,
+                "contact",
+                !hasActiveGroupAfter
+            )
+            .subscribe(
+                (confirm: boolean) => {
+                    if (confirm) {
+                        this.contactInfo.groups.some((group) => {
+                            if (group.groupId == status.groupId) {
+                                group.isActive = status.isActive;
+                                return true;
+                            }
+                        });
+                        let userData = this.userService["data"];
+                        if (
+                            userData &&
+                            userData.user &&
+                            hasActiveGroupBefore != hasActiveGroupAfter
+                        )
+                            userData.user.isActive = hasActiveGroupAfter;
+                        this.notify.success(
+                            this.l("StatusSuccessfullyUpdated")
+                        );
+                        this.toolbarComponent.updateActiveGroups(status);
+                        this.invalidate();
+                    } else this.handleStatusUpdateError(status);
+                },
+                () => this.handleStatusUpdateError(status)
+            );
     }
 
     handleStatusUpdateError(status: GroupStatus) {
         status.isActive = !status.isActive;
-        if (this.contactInfo.groups.every(group => group.groupId != status.groupId))
+        if (
+            this.contactInfo.groups.every(
+                (group) => group.groupId != status.groupId
+            )
+        )
             this.contactInfo.groups.push(<ContactGroupInfo>{
-                groupId: status.groupId, 
-                isActive: status.isActive, 
-                isProspective: true
+                groupId: status.groupId,
+                isActive: status.isActive,
+                isProspective: true,
             });
         this.toolbarComponent.updateActiveGroups();
     }
 
-    showContactPersons(event) {
+    showContactPersons = (event, posLeft = -182) => {
         this.closeEditDialogs();
-        this.dialog.open(ContactPersonsDialogComponent, {
-            data: this.contactInfo,
-            hasBackdrop: false,
-            minWidth: 420,
-            closeOnNavigation: true,
-            position: this.getDialogPosition(event, -182, 89),
-            panelClass: ['related-contacts']
-        }).afterClosed().subscribe(result => {
-            if (result == 'addContact')
-                this.addNewContact(event);
-            else if (result) {
-                this.startLoading(true);
-                this.contactService.getContactInfo(result.id)
-                    .pipe(finalize(() => this.finishLoading(true)))
-                    .subscribe((contactInfo) => {
-                        this.itemDetailsService.clearItemsSource();
-                        let orgContactInfo = contactInfo['organizationContactInfo'] = this.contactInfo['organizationContactInfo'];
-                        this.customerId = contactInfo.id;
-                        this.fillContactDetails(contactInfo);
-                        this.loadLeadData(contactInfo.personContactInfo, () => {
-                            this.contactsService.updateLocation(this.customerId, this.leadId, orgContactInfo && orgContactInfo.id);
+        this.dialog
+            .open(ContactPersonsDialogComponent, {
+                data: this.contactInfo,
+                hasBackdrop: false,
+                minWidth: 420,
+                closeOnNavigation: true,
+                position: this.getDialogPosition(event, posLeft, 89),
+                panelClass: [
+                    "related-contacts",
+                    ...(this.showModernLayout ? ["modern"] : []),
+                ],
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result == "addContact") this.addNewContact(event);
+                else if (result) {
+                    this.startLoading(true);
+                    this.contactService
+                        .getContactInfo(result.id)
+                        .pipe(finalize(() => this.finishLoading(true)))
+                        .subscribe((contactInfo) => {
+                            this.itemDetailsService.clearItemsSource();
+                            let orgContactInfo = (contactInfo[
+                                "organizationContactInfo"
+                            ] = this.contactInfo["organizationContactInfo"]);
+                            this.customerId = contactInfo.id;
+                            this.fillContactDetails(contactInfo);
+                            this.loadLeadData(
+                                contactInfo.personContactInfo,
+                                () => {
+                                    this.contactsService.updateLocation(
+                                        this.customerId,
+                                        this.leadId,
+                                        orgContactInfo && orgContactInfo.id
+                                    );
+                                }
+                            );
                         });
-                    });
-            }
-        });
+                }
+            });
         event.stopPropagation();
-    }
+    };
 
     getDialogPosition(event, shiftX, shiftY) {
-        return DialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, shiftY);
+        return DialogService.calculateDialogPosition(
+            event,
+            event.target.closest("div"),
+            shiftX,
+            shiftY
+        );
     }
 
     close(force: boolean = false) {
         this.dialog.closeAll();
-        let data = this.contactService['data'],
+        let data = this.contactService["data"],
             refresh = data.refresh;
         if (!refresh && !force) {
             let compare = JSON.stringify(<any>data);
             refresh = this.initialData != compare;
         }
-        let queryParams = { ... this.queryParams };
+        let queryParams = { ...this.queryParams };
         if (queryParams.referrer) {
             delete queryParams.referrer;
         }
         this._router.navigate(
-            [(this.queryParams && this.queryParams.referrer) || 'app/crm/clients'],
+            [
+                (this.queryParams && this.queryParams.referrer) ||
+                    "app/crm/clients",
+            ],
             {
                 queryParams: _.extend(
                     queryParams,
                     refresh ? { refresh: Date.now() } : {}
-                )
+                ),
             }
         );
         delete data.refresh;
@@ -855,8 +1198,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         let elm = this.getElementRef(),
             handel = window.open();
         handel.document.open();
-        handel.document.write('<h1>' + this.getCustomerName() + '</h1>' +
-            elm.nativeElement.getElementsByClassName('main-content')[0].innerHTML);
+        handel.document.write(
+            "<h1>" +
+                this.getCustomerName() +
+                "</h1>" +
+                elm.nativeElement.getElementsByClassName("main-content")[0]
+                    .innerHTML
+        );
         handel.document.close();
         handel.print();
         handel.close();
@@ -868,13 +1216,26 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.pageHeaderFixed(true);
         this.contactsService.cleanLastContact();
         this.contactsService.unsubscribe();
+
+        this.layoutService.isWideView = false;
+
         super.ngOnDestroy();
     }
 
     deleteContact() {
-        let id = this.contactInfo.groups.every(group => group.isProspective) || this._router.url.split('?').shift().includes('lead') ? this.leadId : this.contactInfo.id,
-            isLead = this._router.url.split('?').shift().includes('lead');
-        this.contactsService.deleteContact(this.getCustomerName(), this.contactInfo.groups.map(group => group.groupId), id, () => this.close(), isLead);
+        let id =
+                this.contactInfo.groups.every((group) => group.isProspective) ||
+                this._router.url.split("?").shift().includes("lead")
+                    ? this.leadId
+                    : this.contactInfo.id,
+            isLead = this._router.url.split("?").shift().includes("lead");
+        this.contactsService.deleteContact(
+            this.getCustomerName(),
+            this.contactInfo.groups.map((group) => group.groupId),
+            id,
+            () => this.close(),
+            isLead
+        );
     }
 
     updateStatus(status: GroupStatus) {
@@ -882,62 +1243,89 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     updateLeadStage($event) {
-        if (!this.leadId || !this.leadInfo)
-            return;
+        if (!this.leadId || !this.leadInfo) return;
 
-        this.leadInfo$.pipe(
-            first(),
-            map((leadInfo: LeadInfoDto) => leadInfo.pipelineId)
-        ).subscribe((pipelineId: number) => {
-            if (pipelineId == $event.itemData.pipelineId)
-                this.updateStageInternal(pipelineId, $event.itemData);
-            else
-                this.message.confirm(
-                    this.l('PipelineAndStageChange'),
-                    this.l('AreYouSure'),
-                    confirmed => {
-                        if (confirmed)
-                            this.updateStageInternal(pipelineId, $event.itemData);
-                        else 
-                            this.toolbarComponent.stagesComponent.disabled = false;
-                    }
-                )
-            this.toolbarComponent.stagesComponent.toggle();
-        });
+        this.leadInfo$
+            .pipe(
+                first(),
+                map((leadInfo: LeadInfoDto) => leadInfo.pipelineId)
+            )
+            .subscribe((pipelineId: number) => {
+                if (pipelineId == $event.itemData.pipelineId)
+                    this.updateStageInternal(pipelineId, $event.itemData);
+                else
+                    this.message.confirm(
+                        this.l("PipelineAndStageChange"),
+                        this.l("AreYouSure"),
+                        (confirmed) => {
+                            if (confirmed)
+                                this.updateStageInternal(
+                                    pipelineId,
+                                    $event.itemData
+                                );
+                            else
+                                this.toolbarComponent.stagesComponent.disabled =
+                                    false;
+                        }
+                    );
+                this.toolbarComponent.stagesComponent.toggle();
+            });
         $event.event.stopPropagation();
     }
 
     private updateStageInternal(pipelineId, data) {
         const pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
         let isPipelineChange = pipelineId != data.pipelineId,
-            sourceStage = this.pipelineService.getStage(pipelinePurposeId, pipelineId, this.leadInfo.stageId),
-            targetStage = this.pipelineService.getStage(pipelinePurposeId, data.pipelineId, data.id);
+            sourceStage = this.pipelineService.getStage(
+                pipelinePurposeId,
+                pipelineId,
+                this.leadInfo.stageId
+            ),
+            targetStage = this.pipelineService.getStage(
+                pipelinePurposeId,
+                data.pipelineId,
+                data.id
+            );
 
         this.toolbarComponent.stagesComponent.disabled = true;
-        if (!this.pipelineService.updateEntityStage(
-            this.leadInfo, sourceStage, targetStage, () => {
-                this.toolbarComponent.stagesComponent.disabled = false;
-                if (this.leadInfo.stageId == targetStage.id) {
-                    this.notify.success(this.l('StageSuccessfullyUpdated'));
-                    if (isPipelineChange || sourceStage.isFinal != targetStage.isFinal) {
-                        this.leadInfo = undefined;
-                        this.reloadCurrentSection(this.params).pipe(
-                            first()
-                        ).subscribe(() => {
-                            this.contactService['data'].refresh = true;
-                        });
-                    }
-                } else
-                    this.refreshStageDropdown();
-            }
-        ))
-            this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
+        if (
+            !this.pipelineService.updateEntityStage(
+                this.leadInfo,
+                sourceStage,
+                targetStage,
+                () => {
+                    this.toolbarComponent.stagesComponent.disabled = false;
+                    if (this.leadInfo.stageId == targetStage.id) {
+                        this.notify.success(this.l("StageSuccessfullyUpdated"));
+                        if (
+                            isPipelineChange ||
+                            sourceStage.isFinal != targetStage.isFinal
+                        ) {
+                            this.leadInfo = undefined;
+                            this.reloadCurrentSection(this.params)
+                                .pipe(first())
+                                .subscribe(() => {
+                                    this.contactService["data"].refresh = true;
+                                });
+                        }
+                    } else this.refreshStageDropdown();
+                }
+            )
+        )
+            this.message.warn(
+                this.l(
+                    "CannotChangeLeadStage",
+                    sourceStage.name,
+                    targetStage.name
+                )
+            );
     }
 
     refreshStageDropdown() {
         if (this.leadInfo)
             this.toolbarComponent.stagesComponent.listComponent.option(
-                'selectedItemKeys', [this.leadInfo.stageId]
+                "selectedItemKeys",
+                [this.leadInfo.stageId]
             );
         this.toolbarComponent.refresh();
     }
@@ -949,21 +1337,27 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private showUpdatePartnerTypeConfirmationDialog(typeId) {
         this.message.confirm(
-            this.l('PartnerTypeUpdateWarningMessage'),
-            this.l('PartnerTypeUpdateConfirmationTitle'),
-            isConfirmed => {
+            this.l("PartnerTypeUpdateWarningMessage"),
+            this.l("PartnerTypeUpdateConfirmationTitle"),
+            (isConfirmed) => {
                 if (isConfirmed) {
-                    this.partnerService.updateType(UpdatePartnerTypeInput.fromJS({
-                        partnerId: this.customerId,
-                        typeId: typeId
-                    })).subscribe(() => {
-                        this.partnerInfo.typeId = typeId;
-                        this.partnerTypeId = typeId;
-                        this.notify.success(this.l('TypeSuccessfullyUpdated'));
-                    });
+                    this.partnerService
+                        .updateType(
+                            UpdatePartnerTypeInput.fromJS({
+                                partnerId: this.customerId,
+                                typeId: typeId,
+                            })
+                        )
+                        .subscribe(() => {
+                            this.partnerInfo.typeId = typeId;
+                            this.partnerTypeId = typeId;
+                            this.notify.success(
+                                this.l("TypeSuccessfullyUpdated")
+                            );
+                        });
                 } else {
                     this.toolbarComponent.partnerTypesComponent.listComponent.option(
-                        'selectedItemKeys',
+                        "selectedItemKeys",
                         [this.partnerInfo.typeId]
                     );
                 }
@@ -972,46 +1366,58 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     getAssignmentsPermissionKey = () => {
-        return this.contactGroupId.value ? this.permission.getCGPermissionKey(
-            [this.contactGroupId.value], 'ManageAssignments') : '';
-    }
+        return this.contactGroupId.value
+            ? this.permission.getCGPermissionKey(
+                  [this.contactGroupId.value],
+                  "ManageAssignments"
+              )
+            : "";
+    };
 
     getProxyService = () => {
         return this.contactService;
-    }
+    };
 
-    addNewContact(event, isSubContact = false) {
-        if (this.isUserProfile || !this.manageAllowed)
-            return;
+    addNewContact = (event, isSubContact = false) => {
+        if (this.isUserProfile || !this.manageAllowed) return;
 
-        let companyInfo = this.contactInfo['organizationContactInfo'];
+        let companyInfo = this.contactInfo["organizationContactInfo"];
         this.dialog.closeAll();
         const dialogData: CreateEntityDialogData = {
             parentId: isSubContact ? this.contactInfo.id : undefined,
-            isInLeadMode: this.contactInfo.groups.every(group => group.isProspective),
-            company: isSubContact ? undefined : companyInfo && companyInfo.fullName,
-            customerType: this.contactGroupId.value || ContactGroup.Client
+            isInLeadMode: this.contactInfo.groups.every(
+                (group) => group.isProspective
+            ),
+            company: isSubContact
+                ? undefined
+                : companyInfo && companyInfo.fullName,
+            customerType: this.contactGroupId.value || ContactGroup.Client,
         };
-        this.dialog.open(CreateEntityDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: dialogData
-        }).afterClosed().subscribe(() => {
-            if (isSubContact)
-                this.reloadCurrentSection();
-            else
-                this.orgContactService.getOrganizationContactInfo(companyInfo.id).subscribe((result: OrganizationContactInfoDto) => {
-                    this.contactInfo['organizationContactInfo'] = result;
-                });
-        });
+        this.dialog
+            .open(CreateEntityDialogComponent, {
+                panelClass: "slider",
+                disableClose: true,
+                closeOnNavigation: false,
+                data: dialogData,
+            })
+            .afterClosed()
+            .subscribe(() => {
+                if (isSubContact) this.reloadCurrentSection();
+                else
+                    this.orgContactService
+                        .getOrganizationContactInfo(companyInfo.id)
+                        .subscribe((result: OrganizationContactInfoDto) => {
+                            this.contactInfo["organizationContactInfo"] =
+                                result;
+                        });
+            });
         event.stopPropagation();
-    }
+    };
 
     reloadCurrentSection(params = this.params) {
-        let area = this._router.url.split('?').shift().split('/').pop();
+        let area = this._router.url.split("?").shift().split("/").pop();
         const loading$ = this.loadContactInfo(params);
-        if (area == 'lead-information') this.leadInfo = undefined;
+        if (area == "lead-information") this.leadInfo = undefined;
         this.contactsService.invalidate(area);
         return loading$;
     }

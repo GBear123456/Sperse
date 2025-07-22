@@ -1428,6 +1428,11 @@
   dependencies:
     tslib "^2.0.0"
 
+"@ngrx/schematics@^19.2.1":
+  version "19.2.1"
+  resolved "https://registry.yarnpkg.com/@ngrx/schematics/-/schematics-19.2.1.tgz#8f03d3a3ae89076df996d8ffdfde9b3bf78b81fd"
+  integrity sha512-6N7nyQ5QkHnFVAHPEHGiIKTgBqbwv/lS/vqbbuY4H4Gd4DYH/wAHcN97/EU+wVzlsrK7I1cCUEL2zwQ7WsbPdg==
+
 "@ngrx/store-devtools@^12.5.1":
   version "12.5.1"
   resolved "https://registry.yarnpkg.com/@ngrx/store-devtools/-/store-devtools-12.5.1.tgz#75f8ef9a4bf4a40d5343ff437651f0f3092914b5"
@@ -2080,6 +2085,13 @@ angular-gridster2@^12.0.1:
   integrity sha512-HK7vf212LSn7mp8g4sNA6/X8TQN4wJyHupKemx+PUPmTs6FHDyquUMUFXYxANR47jdyLEMW/DxCDI0bEhIIChw==
   dependencies:
     tslib "^2.1.0"
+
+angular-svg-icon@12.0.0:
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/angular-svg-icon/-/angular-svg-icon-12.0.0.tgz#02afd674f7ef9b6239512ab96eae3872fa11f217"
+  integrity sha512-nPAbF/U6sHdY+Dt/J5TZuUNOGRZmxoqJioRfLGMeNt8ycbBbTwq1OmkZ7DLuF02+XGafGHwzmI5/2y9OWAl+TA==
+  dependencies:
+    tslib "^2.2.0"
 
 angular-svg-round-progressbar@^3.0.1:
   version "3.0.1"

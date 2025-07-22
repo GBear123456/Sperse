@@ -15,6 +15,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { ContactListsServiceProxy, ContactListInput } from '@shared/service-proxies/service-proxies';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { ToolbarService } from '../../toolbar/toolbar.service';
 
 @Component({
   selector: 'lists-list',
@@ -30,6 +31,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() showSelection = false;
+    @Input() staticListId: string;
     @Input() set selectedItems(value: ContactListInput[]) {
         this.selectedLists = value && value.slice();
     }
@@ -59,7 +61,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         private _filterService: FiltersService,
         private _listsService: ContactListsServiceProxy,
         private store$: Store<AppStore.State>,
-        private actions$: ActionsSubject
+        private actions$: ActionsSubject,
+        private toolbarService: ToolbarService
     ) {
         super(injector);
     }
@@ -74,6 +77,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             this.highlightSelectedFilters();
         }
     }
+
 
     apply(isRemove: boolean = false, selectedKeys?: number[]) {
         if (this.listComponent) {
@@ -157,6 +161,11 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         this.refresh();
+        this.toolbarService.tooltipTarget$.subscribe((id) => {
+            if(id === this.staticListId) {
+                this.toggle();
+            }
+        });
     }
 
     reset() {

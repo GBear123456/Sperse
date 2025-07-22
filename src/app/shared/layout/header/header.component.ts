@@ -13,7 +13,10 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AbpSessionService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 import {
-    ChangeUserLanguageDto, ProfileServiceProxy, LayoutType, CommonUserInfoServiceProxy
+  ChangeUserLanguageDto,
+  ProfileServiceProxy,
+  LayoutType,
+  CommonUserInfoServiceProxy,
 } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
@@ -26,96 +29,105 @@ import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management
 import { ChatSignalrService } from '../chat/chat-signalr.service';
 import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
+import { Router } from '@angular/router';
 
 @Component({
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.less'],
-    selector: 'app-header',
-    providers: [ CommonUserInfoServiceProxy ]
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.less'],
+  selector: 'app-header',
+  providers: [CommonUserInfoServiceProxy],
 })
 export class HeaderComponent implements OnInit {
-    origin = location.origin;
-    customLayoutType = '';
-    languages: abp.localization.ILanguageInfo[];
-    currentLanguage: abp.localization.ILanguageInfo;
-    tenancyName = '';
-    userName = '';
-    unreadChatMessageCount = 0;
-    remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-    isChatConnected = this.chatSignalrService.isChatConnected;
-    userCompany$: Observable<string>;
-    dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
-    isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
-    get showGlobalSearch(): boolean {
-        return this.layoutService.showLeftBar &&
-            (this.toolbarService.isSearchBoxEnabled || this.appService.getModule() == 'crm') &&
-            !location.href.includes(this.layoutService.getWelcomePageUri());
-    }; 
-    
-    constructor(
-        injector: Injector,
-        private dialog: MatDialog,
-        private authService: AppAuthService,
-        private abpSessionService: AbpSessionService,
-        private profileServiceProxy: ProfileServiceProxy,
-        private commonUserInfoService: CommonUserInfoServiceProxy,
-        private feature: FeatureCheckerService,
-        private chatSignalrService: ChatSignalrService,
-        private toolbarService: ToolbarService,
-        public appSession: AppSessionService,
-        public userManagementService: UserManagementService,
-        public quickSideBarChat: QuickSideBarChat,
-        public appService: AppService,
-        public layoutService: LayoutService,
-        public ls: AppLocalizationService
-    ) {}
+  origin = location.origin;
+  customLayoutType = '';
+  languages: abp.localization.ILanguageInfo[];
+  currentLanguage: abp.localization.ILanguageInfo;
+  tenancyName = '';
+  userName = '';
+  unreadChatMessageCount = 0;
+  remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
+  isChatConnected = this.chatSignalrService.isChatConnected;
+  userCompany$: Observable<string>;
+  dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
+  isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
+  get showGlobalSearch(): boolean {
+    return (
+      (this.layoutService.showLeftBar || this.layoutService.showContactDetailsDialog) &&
+      (this.toolbarService.isSearchBoxEnabled || this.appService.getModule() == 'crm') &&
+      !location.href.includes(this.layoutService.getWelcomePageUri())
+    );
+  }
 
-    ngOnInit() {
-        this.languages = this.ls.languages.filter((l: abp.localization.ILanguageInfo) => l.isDisabled === false);
-        this.currentLanguage = this.ls.currentLanguage;
-        this.userCompany$ = this.commonUserInfoService.getCompany().pipe(
-            map(x => isEqual(x, {}) ? null : x)
-        );
-        let tenant = this.appSession.tenant;
-        if (tenant && tenant.customLayoutType && tenant.customLayoutType != LayoutType.Default)
-            this.customLayoutType = kebabCase(tenant.customLayoutType);
-        this.registerToEvents();
-    }
+  constructor(
+    injector: Injector,
+    private dialog: MatDialog,
+    private authService: AppAuthService,
+    private abpSessionService: AbpSessionService,
+    private profileServiceProxy: ProfileServiceProxy,
+    private commonUserInfoService: CommonUserInfoServiceProxy,
+    private feature: FeatureCheckerService,
+    private chatSignalrService: ChatSignalrService,
+    private toolbarService: ToolbarService,
+    public appSession: AppSessionService,
+    public userManagementService: UserManagementService,
+    public quickSideBarChat: QuickSideBarChat,
+    public appService: AppService,
+    public layoutService: LayoutService,
+    public ls: AppLocalizationService,
+    public router: Router
+  ) {}
 
-    registerToEvents() {
-        if (this.isChatEnabled && this.layoutService.showChatButton) {
-            abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
-                this.unreadChatMessageCount = messageCount;
-            });
+  ngOnInit() {
+    this.languages = this.ls.languages.filter(
+      (l: abp.localization.ILanguageInfo) => l.isDisabled === false
+    );
+    this.currentLanguage = this.ls.currentLanguage;
+    this.userCompany$ = this.commonUserInfoService
+      .getCompany()
+      .pipe(map(x => (isEqual(x, {}) ? null : x)));
+    let tenant = this.appSession.tenant;
+    if (tenant && tenant.customLayoutType && tenant.customLayoutType != LayoutType.Default)
+      this.customLayoutType = kebabCase(tenant.customLayoutType);
+    this.registerToEvents();
+  }
 
-            if (!this.isChatConnected)
-                abp.event.on('app.chat.connected', () => {
-                    this.isChatConnected = true;
-                });
-        }
-    }
+  registerToEvents() {
+    if (this.isChatEnabled && this.layoutService.showChatButton) {
+      abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
+        this.unreadChatMessageCount = messageCount;
+      });
 
-    changeLanguage(languageName: string): void {
-        const input = new ChangeUserLanguageDto();
-        input.languageName = languageName;
-
-        this.profileServiceProxy.changeLanguage(input).subscribe(() => {
-            abp.utils.setCookieValue(
-                'Abp.Localization.CultureName',
-                languageName,
-                new Date(new Date().getTime() + 5 * 365 * 86400000), //5 year
-                abp.appPath
-            );
-
-            window.location.reload();
+      if (!this.isChatConnected)
+        abp.event.on('app.chat.connected', () => {
+          this.isChatConnected = true;
         });
-    }    
-
-    logoClick() {
-        if (AppConsts.appMemberPortalUrl && this.authService.checkCurrentTopDomainByUri()) {
-            this.authService.setTokenBeforeRedirect();
-            location.href = AppConsts.appMemberPortalUrl;
-        } else
-            location.href = origin;
     }
+  }
+
+  changeLanguage(languageName: string): void {
+    const input = new ChangeUserLanguageDto();
+    input.languageName = languageName;
+
+    this.profileServiceProxy.changeLanguage(input).subscribe(() => {
+      abp.utils.setCookieValue(
+        'Abp.Localization.CultureName',
+        languageName,
+        new Date(new Date().getTime() + 5 * 365 * 86400000), //5 year
+        abp.appPath
+      );
+
+      window.location.reload();
+    });
+  }
+
+  logoClick() {
+    if (AppConsts.appMemberPortalUrl && this.authService.checkCurrentTopDomainByUri()) {
+      this.authService.setTokenBeforeRedirect();
+      location.href = AppConsts.appMemberPortalUrl;
+    } else location.href = origin;
+  }
+
+  isContactDetailRoute(): boolean {
+    return /\/crm\/contact\//.test(this.router.url);
+  }
 }

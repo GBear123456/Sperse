@@ -1,0 +1,209 @@
+:host {
+    margin: 0 30px;
+    height: 49px;
+
+    .user-card-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: #ecf3fa70;
+        border-radius: 8px;
+        // padding: 0 8px;
+        min-height: 45px;
+        font-family: inherit;
+        margin: 0px 10px;
+        margin-top: 1px;
+    }
+
+    .nav-btn {
+        background: transparent;
+        border: none;
+        color: #cbd5e1;
+        padding: 0;
+        font-size: 18px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
+        &.left {
+            margin-right: 1px;
+
+            &::after {
+                content: "";
+                display: block;
+                background-color: transparent;
+                width: 2px;
+                height: 46px;
+            }
+        }
+
+        &.right {
+            margin-left: 1px;
+
+            &::before {
+                content: "";
+                display: block;
+                background-color: transparent;
+                width: 2px;
+                height: 46px;
+            }
+        }
+        img {
+            height: 45px;
+        }
+    }
+
+    .user-card-content {
+        display: flex;
+        align-items: center;
+        background: none;
+        padding: 2px 8px;
+        border-radius: 6px;
+        flex: 1;
+        min-width: 0;
+
+        .icon-building {
+            color: #1e335c;
+            font-size: 18px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .name-role {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+
+            .name {
+                width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                color: #1e335c;
+                font-size: 15px;
+                margin-right: 4px;
+                white-space: nowrap;
+            }
+
+            .divider {
+                width: 1px;
+                height: 16px;
+                background: #dbeafe;
+                margin: 0 7px;
+                display: inline-block;
+            }
+
+            .role {
+                width: 70px;
+                color: #1e335c;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-weight: 400;
+                font-size: 15px;
+                white-space: nowrap;
+            }
+        }
+
+        .dropdown-btn,
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: #b3b9c4;
+            margin-left: 6px;
+            font-size: 16px;
+            height: 28px;
+            width: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &:hover {
+                color: #1e335c;
+                background: #e5e7eb;
+                border-radius: 50%;
+            }
+        }
+
+        .dropdown-btn {
+            margin-left: 18px; // extra space before dropdown
+        }
+    }
+}
+
+.dropdown-list {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 12px;
+    cursor: pointer;
+    padding: 10px 8px;
+    border-bottom: 1px solid #e7edf2;
+
+    img {
+        width: 38px;
+        border-radius: 50%;
+        aspect-ratio: 1/1;
+    }
+
+    .role-name {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .name {
+        width: 100%;
+        overflow: hidden;
+        word-break: keep-all;
+        text-overflow: ellipsis;
+        font-weight: 600;
+        color: #1e335c;
+        font-size: 15px;
+        margin-right: 4px;
+        white-space: nowrap;
+        text-align: left;
+    }
+
+    .role {
+        width: 100%;
+        color: #1e335c;
+        overflow: hidden;
+        word-break: keep-all;
+        text-overflow: ellipsis;
+        font-weight: 400;
+        font-size: 15px;
+        white-space: nowrap;
+        text-align: left;
+    }
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f5f5;
+}
+
+.selectedItem.flash {
+  animation: flashHighlight 2s ease;
+}
+
+@keyframes flashHighlight {
+  0% {
+    background-color: #d3f3ff;
+  }
+  50% {
+    background-color: #b0e7ff;
+  }
+  100% {
+    background-color: transparent;
+  }
+}

@@ -304,4 +304,34 @@ export class ContactsAreaComponent {
         this.clipboardService.copyFromContent(value);
         this.notifyService.info(this.ls.l('SavedToClipboard'));
     }
+
+    showNewEmailDialog(title = 'NewEmail', data: any = {}) {
+        data = Object.assign({
+            contactId: this.contactInfo.id,
+            contact: this.contactInfo,
+            replyToId: undefined
+        }, data);
+
+        this.contactsService.showEmailDialog(Object.assign(data, {
+            to: data.to ? (data.to['join'] ? data.to : [data.to]) : []
+        }), title).subscribe((res) => {
+            this.dialog.closeAll();
+        })
+    }
+
+    getUsageTypeImage(usageTypeId: string): string {
+        const imageMap: { [key: string]: string } = {
+          'M': 'phone-mobile.svg',
+          'W': 'phone-work.svg',
+          'F': 'fax.svg',
+          'P': 'phone.svg',
+          // add as many mappings as needed
+        };
+        return imageMap[usageTypeId] || 'phone.svg'; // fallback image
+    }
+    // showNewSMSDialog() {
+    //     this.contactsService.showSMSDialog({
+    //         contact: this.contactInfo
+    //     });
+    // }
 }

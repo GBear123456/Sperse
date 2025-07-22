@@ -13,6 +13,7 @@ import { PersonShortInfoDto } from '@shared/service-proxies/service-proxies';
 export class ContactPersonsDialogComponent {
     @ViewChild(ContactListDialogComponent, { static: true }) contactList: ContactListDialogComponent;
     displayItems: PersonShortInfoDto[] = this.search();
+
     constructor(
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
