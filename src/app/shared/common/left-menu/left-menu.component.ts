@@ -9,7 +9,7 @@ import {
   Output,
   OnDestroy,
   OnInit,
-  EventEmitter
+  EventEmitter,
 } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -22,12 +22,13 @@ import { AppConsts } from '@shared/AppConsts';
 import { LeftMenuItem } from './left-menu-item.interface';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
   templateUrl: './left-menu.component.html',
   styleUrls: ['./left-menu.component.less'],
   selector: 'left-menu',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeftMenuComponent implements AfterViewInit, OnDestroy, OnInit {
   @HostBinding('class.collapsed') @Input() collapsed = AppConsts.isMobile;
@@ -43,67 +44,80 @@ export class LeftMenuComponent implements AfterViewInit, OnDestroy, OnInit {
   @Output() collapsedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   private destroy: Subject<null> = new Subject<null>();
   private destroy$: Observable<null> = new Observable<null>();
+  menuSide: 'left' | 'right' = 'left';
+
+  setMenuSide(side: 'left' | 'right') {
+    this.layoutService.setCrmMenuSide(side);
+    this.changeDetectorRef.markForCheck();
+  }
 
   constructor(
-      private changeDetectorRef: ChangeDetectorRef,
-      private router: Router,
-      private leftMenuService: LeftMenuService,
-      private fullScreenService: FullScreenService
-  ) {}
+    private changeDetectorRef: ChangeDetectorRef,
+    private router: Router,
+    private leftMenuService: LeftMenuService,
+    private fullScreenService: FullScreenService,
+    private layoutService: LayoutService
+  ) {
+    this.layoutService.crmMenuPosition$.subscribe((side: 'left' | 'right') => {
+      this.menuSide = side;
+      this.changeDetectorRef.markForCheck();
+    });
+  }
 
   ngOnInit() {
-      this.leftMenuService.collapsed$
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((collapsed: boolean) => {
-              this.collapsed = collapsed;
-              this.collapsedChange.emit(collapsed);
-              this.changeDetectorRef.markForCheck();
-          });
-      this.fullScreenService.isFullScreenMode$
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((isFullScreenMode: boolean) => {
-              this.isFullscreenMode = isFullScreenMode;
-              this.changeDetectorRef.markForCheck();
-          });
+    this.leftMenuService.collapsed$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((collapsed: boolean) => {
+        this.collapsed = collapsed;
+        this.collapsedChange.emit(collapsed);
+        this.changeDetectorRef.markForCheck();
+      });
+    this.fullScreenService.isFullScreenMode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isFullScreenMode: boolean) => {
+        this.isFullscreenMode = isFullScreenMode;
+        this.changeDetectorRef.markForCheck();
+      });
   }
 
   ngAfterViewInit() {
-      setTimeout(() => {
-          this.visibility = 'visible';
-          this.changeDetectorRef.markForCheck();
-      }, 1000);
+    setTimeout(() => {
+      this.visibility = 'visible';
+      this.changeDetectorRef.markForCheck();
+    }, 1000);
   }
 
   setSelectedIndex(index: number) {
-      this.selectedItemIndex = index;
-      this.changeDetectorRef.detectChanges();
+    this.selectedItemIndex = index;
+    this.changeDetectorRef.detectChanges();
   }
 
   onClick(event, elem: LeftMenuItem) {
-      if (!elem.disabled) {
-          if (elem.onClick) {
-              this.selectedItemIndex = this.items.findIndex((item: LeftMenuItem) => item === elem);
-              elem.onClick(elem);
-              this.changeDetectorRef.detectChanges();
-          } else if (elem.component) {
-              this.router.navigate([ this.navigatePrefix + elem.component ]);
-          }
+    if (!elem.disabled) {
+      if (elem.onClick) {
+        this.selectedItemIndex = this.items.findIndex((item: LeftMenuItem) => item === elem);
+        elem.onClick(elem);
+        this.changeDetectorRef.detectChanges();
+      } else if (elem.component) {
+        this.router.navigate([this.navigatePrefix + elem.component]);
       }
+    }
   }
 
   addButtonClick(e, elem: LeftMenuItem) {
-      this.router.navigate(
-          [ this.navigatePrefix + elem.component ],
-          { queryParams: { action: 'addNew' }}
-      );
-      e.stopPropagation();
+    this.router.navigate([this.navigatePrefix + elem.component], {
+      queryParams: { action: 'addNew' },
+    });
+    e.stopPropagation();
   }
 
   itemIsVisible(item: LeftMenuItem): Observable<boolean> {
-      return item.visible instanceof Observable ? item.visible : of(!item.hasOwnProperty('visible') || item.visible);
+    return item.visible instanceof Observable
+      ? item.visible
+      : of(!item.hasOwnProperty('visible') || item.visible);
   }
 
   ngOnDestroy() {
-      this.destroy.next();
+    this.destroy.next();
   }
 }

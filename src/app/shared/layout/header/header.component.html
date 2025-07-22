@@ -1,12 +1,4 @@
-<div
-  class="page-header navbar navbar-fixed-top md-shadow-zero-light"
-  [ngStyle]="{
-    background:
-      appSession.appearanceConfig && appSession.appearanceConfig.customCssId
-        ? undefined
-        : layoutService.getLayoutColor('navBackground')
-  }"
->
+<div class="page-header navbar navbar-fixed-top md-shadow-zero-light">
   <div class="page-header-inner">
     <div class="page-logo" *ngIf="layoutService.showPageLogo">
       <a (click)="logoClick()">

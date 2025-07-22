@@ -43,6 +43,8 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
   leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
   readonly importListFields: KeysEnum<ImportListDto> = ImportListFields;
 
+  menuSide: 'left' | 'right' = 'left';
+
   constructor(
     injector: Injector,
     private importLeadsService: ImportLeadsService,
@@ -68,6 +70,9 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
       }),
     });
     this.initToolbarConfig();
+    this.layoutService.crmMenuPosition$.subscribe(side => {
+      this.menuSide = side;
+    });
   }
 
   initToolbarConfig() {
