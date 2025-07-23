@@ -6,14 +6,37 @@
   >
     <img src="assets/common/icons/contact/header-angle-right.svg" alt="Previous" />
   </button>
-  <div class="user-card-content" #dropdownBtn (click)="toggleDropdown()">
-    <img src="assets/common/icons/contact/building.svg" class="icon-building" alt="Company" />
-    <span class="name-role">
-      <span class="name">{{ contacts[contactIds?.indexOf(currentContactId)]?.Name }}</span>
-    </span>
-    <button class="dropdown-btn">
-      <img src="assets/common/icons/arrow-down-grey.svg" alt="Select Role" />
-    </button>
+  <div class="user-card-content" #dropdownBtn>
+    <ng-container>
+      <img
+        src="assets/common/icons/search-icon.svg"
+        class="icon-building"
+        alt="Search"
+        (click)="toggleSearch()"
+        *ngIf="!searchValue"
+      />
+      <span class="dx-icon dx-icon-clear" (click)="clearSearch()" *ngIf="searchValue"></span>
+    </ng-container>
+    <dx-text-box
+      height="32px"
+      width="100%"
+      class="search-bar"
+      *ngIf="isSearchMode"
+      #searchInput
+      [value]="searchValue"
+      (onInput)="onInputSearch($event)"
+      (onEnterKey)="search($event)"
+      (onValueChanged)="onSearchValueChanged($event)"
+    ></dx-text-box>
+    <div *ngIf="!isSearchMode" class="flex">
+      <img src="assets/common/icons/contact/building.svg" class="icon-building" alt="Company" />
+      <span class="name-role">
+        <span class="name">{{ contacts[contactIds?.indexOf(currentContactId)]?.Name }}</span>
+      </span>
+      <button class="dropdown-btn" (click)="toggleDropdown(); $event.stopPropagation()">
+        <img src="assets/common/icons/arrow-down-grey.svg" alt="Select Role" />
+      </button>
+    </div>
   </div>
   <button
     class="icon-btn nav-btn right"
@@ -25,7 +48,6 @@
 </div>
 <dx-tooltip
   [target]="dropdownBtn"
-  [scroll]="true"
   [visible]="isDropdownVisible"
   [position]="{ my: 'top center', at: 'bottom center' }"
   [closeOnOutsideClick]="true"

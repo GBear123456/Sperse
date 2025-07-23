@@ -23,7 +23,7 @@
 
     <clients-navigation *ngIf="isContactDetailRoute()"></clients-navigation>
     <global-search
-      *ngIf="showGlobalSearch || isContactDetailRoute()"
+      *ngIf="showGlobalSearch"
       [ngClass]="{
         'global-search': !isContactDetailRoute(),
         'contact-info-panel-search': isContactDetailRoute()

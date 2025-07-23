@@ -1,5 +1,5 @@
 :host {
-  margin: 0 30px;
+  margin: auto;
   height: 49px;
 
   .user-card-container {
@@ -13,6 +13,30 @@
     font-family: inherit;
     margin: 0px 10px;
     margin-top: 1px;
+    min-width: 300px;
+  }
+
+  .search-bar {
+    background-color: transparent !important;
+  }
+
+  ::ng-deep {
+    .dx-texteditor-input {
+      font-family: var(--app-font-family);
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 23px;
+      letter-spacing: -0.02em;
+      text-align: left;
+      color: var(--input-placeholder);
+      background: var(--input-bg);
+      border: none;
+      display: flex;
+      align-items: center;
+    }
+    .dx-icon-clear {
+      cursor: pointer;
+    }
   }
 
   .nav-btn {

@@ -54,7 +54,8 @@ export class HeaderComponent implements OnInit {
     return (
       (this.layoutService.showLeftBar || this.layoutService.showContactDetailsDialog) &&
       (this.toolbarService.isSearchBoxEnabled || this.appService.getModule() == 'crm') &&
-      !location.href.includes(this.layoutService.getWelcomePageUri())
+      !location.href.includes(this.layoutService.getWelcomePageUri()) &&
+      !this.isContactDetailRoute()
     );
   }
 
