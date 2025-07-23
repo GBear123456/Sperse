@@ -1,79 +1,133 @@
 <source-contact-list
-    [selectedKey]="data?.leadInfo?.sourceContactId"
-    [targetSelector]="'#contactSourceLink'"
-    (onDataLoaded)="onSourceContactLoaded($event)"
-    (onItemSelected)="onSourceContactChanged($event)">
+  [selectedKey]="data?.leadInfo?.sourceContactId"
+  [targetSelector]="'#contactSourceLink'"
+  (onDataLoaded)="onSourceContactLoaded($event)"
+  (onItemSelected)="onSourceContactChanged($event)"
+>
 </source-contact-list>
 <div #loaderWrapper>
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
-        <mat-tab label="General">
-            <dx-scroll-view showScrollbar="onHover">
-                <div class="lead-info row">
-                    <div *ngFor="let sections of layoutColumns" class="col-md-6">
-                        <div *ngFor="let section of sections" class="section">
-                            <h3 *ngIf="section.name" class="lab {{section.icon}}">{{ls.l('LeadInfoSection_' + section.name)}}</h3>
-                            <div *ngFor="let item of section.items" class="section-item">
-                                <div *ngIf="!item.hideLabel && (!item.hideEmpty || item?.name && getPropValue(item?.name))" class="item-edit-label">
-                                    {{ls.l(capitalize(item?.lname || item?.name || item))}}:
-                                </div>
-                                <ng-container [ngSwitch]="item?.name">
-                                    <ng-container *ngSwitchCase="'contact'">
-                                        <a id="contactSourceLink"
-                                           class="clipboard-holder"
-                                           [class.selected]="!!sourceContactName"
-                                           [class.disabled]="!isCGManageAllowed"
-                                           (click)="openSourceContactList()">{{sourceContactName || (isCGManageAllowed && data?.leadInfo ? ls.l('Search') : '')}}
-                                            <i class="save-to-clipboard" [hidden]="!sourceContactName" (click)="saveToClipboard($event, sourceContactName)"></i>
-                                        </a>
-                                    </ng-container>
-                                    <ng-container *ngSwitchDefault>
-                                        <div *ngIf="getPropValue(item.name) as value"
-                                            class="item-value clipboard-holder"
-                                            [ngClass]="{'item-link': showApplicationAllowed && item.action}"
-                                            [hidden]="isEditAllowed && !item.readonly"
-                                            (click)="showApplicationAllowed && item.action ? item.action() : undefined">
-                                            <a *ngIf="item?.name == 'clientIp'; else default" target="_blank" class="client-ip-link" [href]="urlHelper.getLookupIpUrl(value)">{{value}}</a>
-                                            <ng-template #default>
-                                                <span [title]="value" [ngClass]="{'wide': item.wide}" [ngStyle]="{'white-space': item.name == 'comments' ? 'initial' : 'nowrap'}">
-                                                    <ng-container *ngIf="item?.type?.style == 'currency'; else plaine">{{value | currency: item?.type?.currency}}</ng-container>
-                                                    <ng-template #plaine>{{value}}</ng-template>
-                                                </span>
-                                            </ng-template>
-                                            <i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i>
-                                        </div>
-                                        <ng-container *ngIf="isEditAllowed && !item.readonly">
-                                            <div class="inplace-edit-container {{ item.name }}">
-                                                <inplace-edit [data]="getPropData(item)" (valueChanged)="updateValue($event, item)" [format]="item?.type?.style == 'currency' ? item.type : undefined"></inplace-edit>
-                                            </div>
-                                        </ng-container>
-                                    </ng-container>
-                                </ng-container>
-                            </div>
-                        </div>
-                    </div>
+  <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+    <mat-tab label="General">
+      <dx-scroll-view showScrollbar="onHover">
+        <div class="lead-info row">
+          <div *ngFor="let sections of layoutColumns" class="col-md-6">
+            <div *ngFor="let section of sections" class="section">
+              <h3 *ngIf="section.name" class="lab {{ section.icon }}">
+                {{ ls.l('LeadInfoSection_' + section.name) }}
+              </h3>
+              <div *ngFor="let item of section.items" class="section-item">
+                <div
+                  *ngIf="
+                    !item.hideLabel && (!item.hideEmpty || (item?.name && getPropValue(item?.name)))
+                  "
+                  class="item-edit-label"
+                >
+                  {{ ls.l(capitalize(item?.lname || item?.name || item)) }}:
                 </div>
-            </dx-scroll-view>
-        </mat-tab>
-        <mat-tab label="Applications" [disabled]="!data?.leadInfo?.applicantId || !showApplicationAllowed">
-            <dx-scroll-view showScrollbar="onHover" *ngIf="application">
-                <div *ngIf="selectedTabIndex" class="app-container">
-                    <div *ngFor="let group of getObjectKeys(application)" class="app-group">
-                        <h3 class="lab {{upperCase(group) == 'TRACKING INFORMATION' ? 'single-content': 'c-info'}}">{{upperCase(group)}}</h3>
-                        <div *ngFor="let field of getObjectKeys(application[group])" class="section-item">
-                            <div class="item-edit-label app">{{startCase(field)}}:</div>
-                            <div *ngIf="formatFieldValue(field, application[group][field]) as value"
-                                class="item-value app clipboard-holder"
-                                [title]="value">
-                                <a *ngIf="field == 'ipAddress'; else default" class="client-ip-link" target="_blank" [href]="urlHelper.getLookupIpUrl(value)">{{value}}</a>
-                                <ng-template #default>
-                                    {{value}}
-                                </ng-template>
-                                <i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i>
-                            </div>
-                        </div>
+                <ng-container [ngSwitch]="item?.name">
+                  <ng-container *ngSwitchCase="'contact'">
+                    <a
+                      id="contactSourceLink"
+                      class="clipboard-holder"
+                      [class.selected]="!!sourceContactName"
+                      [class.disabled]="!isCGManageAllowed"
+                      (click)="openSourceContactList()"
+                      >{{
+                        sourceContactName ||
+                          (isCGManageAllowed && data?.leadInfo ? ls.l('Search') : '')
+                      }}
+                      <i
+                        class="save-to-clipboard"
+                        [hidden]="!sourceContactName"
+                        (click)="saveToClipboard($event, sourceContactName)"
+                      ></i>
+                    </a>
+                  </ng-container>
+                  <ng-container *ngSwitchDefault>
+                    <div
+                      *ngIf="getPropValue(item.name) as value"
+                      class="item-value clipboard-holder"
+                      [ngClass]="{ 'item-link': showApplicationAllowed && item.action }"
+                      [hidden]="isEditAllowed && !item.readonly"
+                      (click)="showApplicationAllowed && item.action ? item.action() : undefined"
+                    >
+                      <a
+                        *ngIf="item?.name == 'clientIp'; else default"
+                        target="_blank"
+                        class="client-ip-link"
+                        [href]="urlHelper.getLookupIpUrl(value)"
+                        >{{ value }}</a
+                      >
+                      <ng-template #default>
+                        <span
+                          [title]="value"
+                          [ngClass]="{ wide: item.wide }"
+                          [ngStyle]="{
+                            'white-space': item.name == 'comments' ? 'initial' : 'nowrap'
+                          }"
+                        >
+                          <ng-container *ngIf="item?.type?.style == 'currency'; else plaine">{{
+                            value | currency : item?.type?.currency
+                          }}</ng-container>
+                          <ng-template #plaine>{{ value }}</ng-template>
+                        </span>
+                      </ng-template>
+                      <i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i>
                     </div>
-                </div>
-            </dx-scroll-view>
-        </mat-tab>
-    </mat-tab-group>
+                    <ng-container *ngIf="isEditAllowed && !item.readonly">
+                      <div class="inplace-edit-container {{ item.name }}">
+                        <inplace-edit
+                          [data]="getPropData(item)"
+                          (valueChanged)="updateValue($event, item)"
+                          [format]="item?.type?.style == 'currency' ? item.type : undefined"
+                        ></inplace-edit>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </dx-scroll-view>
+    </mat-tab>
+    <mat-tab
+      label="Applications"
+      [disabled]="!data?.leadInfo?.applicantId || !showApplicationAllowed"
+    >
+      <dx-scroll-view showScrollbar="onHover" *ngIf="application">
+        <div *ngIf="selectedTabIndex" class="app-container">
+          <div *ngFor="let group of getObjectKeys(application)" class="app-group">
+            <h3
+              class="lab {{
+                upperCase(group) == 'TRACKING INFORMATION' ? 'single-content' : 'c-info'
+              }}"
+            >
+              {{ upperCase(group) }}
+            </h3>
+            <div *ngFor="let field of getObjectKeys(application[group])" class="section-item">
+              <div class="item-edit-label app">{{ startCase(field) }}:</div>
+              <div
+                *ngIf="formatFieldValue(field, application[group][field]) as value"
+                class="item-value app clipboard-holder"
+                [title]="value"
+              >
+                <a
+                  *ngIf="field == 'ipAddress'; else default"
+                  class="client-ip-link"
+                  target="_blank"
+                  [href]="urlHelper.getLookupIpUrl(value)"
+                  >{{ value }}</a
+                >
+                <ng-template #default>
+                  {{ value }}
+                </ng-template>
+                <i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </dx-scroll-view>
+    </mat-tab>
+  </mat-tab-group>
 </div>
