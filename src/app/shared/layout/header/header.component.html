@@ -21,7 +21,12 @@
       </a>
     </div>
 
-    <clients-navigation *ngIf="isContactDetailRoute()"></clients-navigation>
+    <clients-navigation
+      *ngIf="isContactDetailRoute()"
+      [ngClass]="{
+        'global-search': isContactDetailRoute()
+      }"
+    ></clients-navigation>
     <global-search
       *ngIf="showGlobalSearch"
       [ngClass]="{

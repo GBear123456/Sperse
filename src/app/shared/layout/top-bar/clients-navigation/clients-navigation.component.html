@@ -7,16 +7,6 @@
     <img src="assets/common/icons/contact/header-angle-right.svg" alt="Previous" />
   </button>
   <div class="user-card-content" #dropdownBtn>
-    <ng-container>
-      <img
-        src="assets/common/icons/search-icon.svg"
-        class="icon-building"
-        alt="Search"
-        (click)="toggleSearch()"
-        *ngIf="!searchValue"
-      />
-      <span class="dx-icon dx-icon-clear" (click)="clearSearch()" *ngIf="searchValue"></span>
-    </ng-container>
     <dx-text-box
       height="32px"
       width="100%"
@@ -37,6 +27,16 @@
         <img src="assets/common/icons/arrow-down-grey.svg" alt="Select Role" />
       </button>
     </div>
+    <ng-container>
+      <img
+        src="assets/common/icons/search-icon.svg"
+        class="icon-search"
+        alt="Search"
+        (click)="toggleSearch()"
+        *ngIf="!searchValue"
+      />
+      <span class="dx-icon dx-icon-clear" (click)="clearSearch()" *ngIf="searchValue"></span>
+    </ng-container>
   </div>
   <button
     class="icon-btn nav-btn right"
