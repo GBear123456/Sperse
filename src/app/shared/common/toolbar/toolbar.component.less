@@ -1761,9 +1761,28 @@
     }
 
     .dx-button-content {
-      min-width: 40px;
-      width: 40px;
+      min-width: 20px;
+      color: var(--text-color);
       padding: 6px 8px;
+    }
+
+    .dx-item-content {
+      color: var(--text-color);
+    }
+
+    &:after {
+      color: var(--text-color);
+    }
+
+    .dx-button-has-icon {
+      .dx-button-content {
+        width: 40px;
+      }
+    }
+
+    .dx-icon,
+    .dx-icon-spindown {
+      color: var(--text-color) !important;
     }
   }
 }
