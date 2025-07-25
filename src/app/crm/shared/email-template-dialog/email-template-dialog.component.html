@@ -70,6 +70,7 @@
                 </div>
             </div>
         </div>
+
         <!-- <dx-select-box #templateSelector
             name="template"
             width="380px"
@@ -106,6 +107,7 @@
             selectionMode="single" [dataSource]="addSendEmailMenuItems"
             [position]="{ my: 'top right', at: 'bottom right' }" target="#saveTemplateOptions">
         </dx-context-menu>
+        
     </ng-container>   
     <div class="form-content">
         <div class="d-flex">
@@ -347,49 +349,45 @@
                 </dx-validation-group>
             </dx-scroll-view>
 
-            <div class="container">
+            <div class="container" *ngIf="showAIPrompt">
                 <div class="prompt-header d-flex justify-content-between align-items-center"
                     style="margin-bottom: 20px;">
-                    <h5 class="your-prompt-title">Prompt</h5>
-                    <div style="display: flex; align-items: center;">
-                        <h5 class="your-prompt-title prompt-library-title" id="aiModelToggle"
-                            (click)="aiTooltipVisible = true" [class]="'ai-model-button id' + uniqId">
-                            Select AI Model
-                            <img class="img" src="./assets/common/icons/down-arrow.png" />
-                        </h5>
-                        <dx-tooltip [width]="250" [position]="'bottom'" [(visible)]="aiTooltipVisible"
-                            [target]="'.ai-model-button.id' + uniqId">
-                            <div *dxTemplate="let data of 'content'" class="tags-container">
-                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="aiModels"
-                                    [itemTemplate]="'aiTemplate'" (onItemClick)="selectedAIItem($event)">
-                                    <div *dxTemplate="let data of 'aiTemplate'" class="tags-list-item">
-                                        <img [src]="'./assets/common/icons/' + data.icon" alt="icon"
-                                            class="ai-model-icon" />
-                                        {{ data.name }}
-                                    </div>
-                                </dx-list>
-                            </div>
-                        </dx-tooltip>
-                    </div>
+                    <h5 class="your-prompt-title">
+                        <i class="create-template"></i>
+                        Your AI Prompt
+                    </h5>
+                   
 
                     <div style="display: flex; align-items: center;">
                         <h5 class="your-prompt-title prompt-library-title" id="promptLibraryToggle"
                             (click)="propmtTooltipVisible = true" [class]="'prompt-liabrary-button id' + uniqId">
-                            Prompt Library
+                            Your Prompt Library
                             <img class="img" src="./assets/common/icons/down-arrow.png" />
                         </h5>
 
-                        <dx-tooltip [width]="250" [position]="'bottom'" [(visible)]="propmtTooltipVisible"
-                            [target]="'.prompt-liabrary-button.id' + uniqId">
-                            <div *dxTemplate="let data of 'content'" class="tags-container">
-                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="promptLibrary"
-                                         [itemTemplate]="'prompTemplate'" (onItemClick)="selectedPromptItem($event)">
-                                    <div *dxTemplate="let data of 'prompTemplate'" class="tags-list-item">
-                                        {{ data.name }}
+                        <dx-tooltip [width]="300" [position]="'bottom'" [(visible)]="propmtTooltipVisible"
+                                        [target]="'.prompt-liabrary-button.id' + uniqId">
+                            <div *dxTemplate="let data of 'content'" class="tags-container text-left p-2">
+                                <div *ngFor="let group of groupedPromptLibrary; let groupIndex = index">
+                                    <!-- Group Title with toggle -->
+                                    <div class="group-header" (click)="toggleGroup(group)">
+                                        <strong>{{ group.category }}</strong>
+                                        <span>{{ group.expanded ? '▲' : '▼' }}</span>
                                     </div>
-                                </dx-list>
+
+                                    <!-- Prompt list inside group -->
+                                    <div class="group-items" *ngIf="group.expanded">
+                                        <div *ngFor="let item of group.prompts; let itemIndex = index"
+                                            class="tags-list-item"
+                                            (click)="selectedPromptItem(item, groupIndex, itemIndex)">
+                                            <div class="prompt-title">{{ item.title }}</div>
+                                            <div class="prompt-subtext">{{ item.subtext }}</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </dx-tooltip>
+
                     </div>
 
                 </div>
@@ -459,14 +457,39 @@
                     </div>
                 </dx-scroll-view>
 
-                <div class="left-buttons">
+                <div class="prompt-footer">
+                    <div style="display: flex; align-items: center;">
+                        <h5 class="gpt-model-toggle" id="aiModelToggle"
+                            (click)="aiTooltipVisible = true" [class]="'ai-model-button id' + uniqId">
+                            <img class="img" src="./assets/common/icons/openai-white.png" />
+                        </h5>
+                        <dx-tooltip [width]="250" [position]="'bottom'" [(visible)]="aiTooltipVisible"
+                            [target]="'.ai-model-button.id' + uniqId">
+                            <div *dxTemplate="let data of 'content'" class="tags-container">
+                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="aiModels"
+                                    [itemTemplate]="'aiTemplate'" (onItemClick)="selectedAIItem($event)">
+                                    <div *dxTemplate="let data of 'aiTemplate'" class="tags-list-item">
+                                        <img [src]="'./assets/common/icons/' + data.icon" alt="icon"
+                                            class="ai-model-icon" />
+                                        {{ data.name }}
+                                    </div>
+                                </dx-list>
+                            </div>
+                        </dx-tooltip>
+                    </div>
+                    <button class="button-generate-ai-message" (click)="generateAIMessage()">
+                        {{processing ? 'Generating..': 'Generate AI Message' }}
+                    </button>
+                    <button class="cancel-button" (click)="cancelAIMessage()">Cancel</button>
+                </div>
+
+                <!-- <div class="left-buttons">
                     <div class="ai-genrate-btn" (click)="getChatGptResponse(contentEditableDiv)">
                         <span>
-                            {{processing ? 'Generating..' :'Generate'}}
+                            {{processing ? 'Generating..' :'Write with AI'}}
                         </span>
                     </div>
-                </div> 
-
+                </div>  -->
             </div> 
         </div>
         <div class="bank-decode-wrapper" *ngIf="!templateEditMode && bankCodeEnabled">

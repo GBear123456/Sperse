@@ -15,6 +15,7 @@ import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import startCase from 'lodash/startCase';
+import { environment } from '@root/environments/environment';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -54,7 +55,9 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { prompts } from './prompts';
 import * as monaco from 'monaco-editor';
+import { numberlike } from '@node_modules/moment/moment';
 
 @Component({
     selector: 'email-template-dialog',
@@ -70,10 +73,15 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     @ViewChild(DxContextMenuComponent) addEmailComponent: DxContextMenuComponent;
     @ViewChild('scrollView') scrollView: DxScrollViewComponent;
+    @ViewChild('contentEditableDiv') contentEditableDiv!: ElementRef<HTMLDivElement>;
     //@ViewChild('tagsButton') tagsButton: ElementRef;
     @ViewChild('aiButton') aiButton: ElementRef;
 
     ckEditor: any;
+    envHost = environment;
+    groupedPromptLibrary: any = prompts;
+    selectedPromptGroupIndex: number = 0;
+    selectedPromptItemIndex: number = 0;
     templateLoaded: boolean;
     fromDataSource: EmailFromInfo[] = [];
     showCC = false;
@@ -82,6 +90,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     tagsTooltipVisible = false;
     aiTooltipVisible = false;
     showPreview = false;
+    showAIPrompt = false;
     propmtTooltipVisible = false;
 
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
@@ -295,54 +304,63 @@ export class EmailTemplateDialogComponent implements OnInit {
                 name: 'GPT-4o',
                 icon: `openai.png`,
                 enabled: true,
+                model: 'gpt-4o'
             },
             {
                 id: '2',
                 name: 'GPT-4 Mini',
                 icon: `openai.png`,
                 enabled: true,
+                model: 'gpt-4-mini'
             },
             {
                 id: '3',
                 name: 'GPT-4 Turbo',
                 icon: `openai.png`,
                 enabled: true,
+                model: 'gpt-4-turbo'
             },
             {
                 id: '5',
                 name: 'GPT-4',
                 icon: `openai.png`,
                 enabled: true,
+                model: 'gpt-4'
             },
             {
                 id: '6',
                 name: 'Claude 3.5 Sonnet',
                 icon: `claude.png`,
                 enabled: false,
+                model: 'claude-3.5-sonnet-20240620'
             },
             {
                 id: '7',
                 name: 'Claude 3 Opus',
                 icon: `claude.png`,
                 enabled: false,
+                model: 'claude-3-opus-20240229'
             },
             {
                 id: '8',
                 name: 'Claude 3 Haiku',
                 icon: `claude.png`,
                 enabled: false,
+                model: 'claude-3-haiku-20240307'
             },
             {
                 id: '9',
                 name: 'Gemini 1.5 Pro',
                 icon: `gemini.png`,
                 enabled: false,
+                model: 'gemini-1.5-pro-latest'
             },
             {
                 id: '10',
                 name: 'Gemini 1.5 Flash',
                 icon: `gemini.png`,
                 enabled: false,
+                model: 'gemini-1.5-flash-latest'
             },
         ];
 
@@ -409,16 +427,16 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     selectedAIItem(item: any): void {
-        this.selectedItemId = item.id;
-        this.dataRecord.modelId = item.id;
+        this.selectedItemId = item.itemData.id;
+        this.dataRecord.modelId = item.itemData.id;
         this.aiTooltipVisible = false;
     }
 
-    selectedPromptItem(item: any): void {
-        this.selectedItemId = item.id;
-        //  this.dataRecord.modelId = item.id;
-        this.propmtTooltipVisible = false;
-    }
+    // selectedPromptItem(item: any): void {
+    //     this.selectedItemId = item.id;
+    //     //  this.dataRecord.modelId = item.id;
+    //     this.propmtTooltipVisible = false;
+    // }
 
     initFromField() {
         let storageKey = 'SupportedFrom' + this.sessionService.userId,
@@ -483,14 +501,15 @@ export class EmailTemplateDialogComponent implements OnInit {
             //     class: 'default',
             //     action: () => this.close()
             // },
-            // {
-            //     id: 'genrateAIOptions',
-            //     title: this.ls.l('Generate'),
-            //     class: 'ai-genrate-btn', 
-            // },
+            {
+                id: 'genrateAIOptions',
+                title: this.processing ? this.ls.l('Generate') : this.ls.l("Write with AI"),
+                class: 'ai-genrate-btn',
+                action: this.toggleAIPrompt.bind(this)
+            },
             {
                 id: 'saveTemplateOptions',
-                title: "Send Email Message",// this.data.saveTitle,
+                title: "Send Email Message1",// this.data.saveTitle,
                 disabled: this.templateEditMode && this.isManageUnallowed,
                 class: 'primary',
                 action: this.save.bind(this),
@@ -509,7 +528,18 @@ export class EmailTemplateDialogComponent implements OnInit {
             // },
         ];
     }
-
+    updateButtons() {
+        this.buttons = this.buttons.map(button => {
+            if (button.id === 'genrateAIOptions') {
+                return {
+                    ...button,
+                    title: this.processing ? this.ls.l('Generating...') : this.ls.l("Write with AI")
+                };
+            }
+            return button;
+        });
+        this.changeDetectorRef.detectChanges();
+    }
     save(event?) {
         if (this.ckEditor.mode == 'source')
             this.ckEditor.execCommand('source');
@@ -1218,40 +1248,42 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     getChatGptResponse() {
         this.processing = true;
-        const content = this.editorContent;
-        const apiKey = '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';
-        const headers = new Headers({
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-        });
+        this.updateButtons();
 
-        const body = JSON.stringify({
-            model: 'gpt-3.5-turbo',
-            messages: [
-                { role: 'system', content: 'You are an expert email marketer. Your task is to create compelling email content based on user input.' },
-                { role: 'user', content: content }
-            ],
-            max_tokens: 4096,
-            temperature: 0.5,
-            top_p: 1
+        const prompt = this.groupedPromptLibrary[this.selectedPromptGroupIndex]?.prompts[this.selectedPromptItemIndex]?.prompt;
+        const model = this.aiModels.find((item: any) => item.id == this.selectedItemId)?.model ?? 'gpt-3.5-turbo';
+
+        const payload = {
+            model,
+            prompt,
+            system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
+        };
+
+        fetch('/.netlify/functions/openai', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('ChatGPT Response:', data);
+            this.invalidate();
+            this.processing = false;
+            
+            const gptResponse = data.response;
+            const responseData = this.extractContent(gptResponse);
+            this.data.subject = responseData.subject;
+            this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
+
+            this.updateButtons();
+        })
+        .catch(error => {
+            this.processing = false;
+            console.error('Error calling ChatGPT Function:', error);
+            this.updateButtons();
         });
-        const url = 'https://api.openai.com/v1/chat/completions';
-        fetch(url, { method: 'POST', headers: headers, body: body })
-            .then(response => response.json())
-            .then(data => {
-                console.log('ChatGPT Response:', data);
-                this.invalidate();
-                this.processing = false;
-                const gptResponse = data.choices[0].message.content;
-                var responseData = this.extractContent(gptResponse);
-                this.data.subject = responseData.subject;
-                var formatedHtml = this.formatEmailContent(responseData.body) as unknown as string;
-                this.data.body = formatedHtml;
-            })
-            .catch(error => {
-                this.processing = false;
-                console.error('Error calling ChatGPT API:', error);
-            });
     }
 
     extractContent(content: any): { subject: string, body: string } {
@@ -1287,4 +1319,37 @@ export class EmailTemplateDialogComponent implements OnInit {
         // Triggered when textarea content changes
     }
 
+    toggleGroup(group: any) {
+        group.expanded = !group.expanded;
+    }
+
+    convertTextToHtml(text: string): string {
+        return text
+            .replace(/• /g, '<li>')
+            .replace(/\n\d+\.\s(.*)/g, '<li>$1</li>')
+            .replace(/\n/g, '<br>')
+            .replace(/<\/li><br>/g, '</li>');
+    }
+
+    selectedPromptItem(item: any, groupIndex: number, itemIndex: number) {
+        const html = this.convertTextToHtml(item.prompt);
+        if (this.contentEditableDiv) {
+            this.contentEditableDiv.nativeElement.innerHTML = html;
+        }
+        this.selectedPromptGroupIndex = groupIndex;
+        this.selectedPromptItemIndex = itemIndex;
+        this.propmtTooltipVisible = false;
+    }
+
+    generateAIMessage() {
+        this.getChatGptResponse();
+    }
+
+    cancelAIMessage() {
+        this.showAIPrompt = false;
+    }
+
+    toggleAIPrompt() {
+        this.showAIPrompt = !this.showAIPrompt;        
+    }
 }
