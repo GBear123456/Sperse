@@ -701,6 +701,9 @@
                 text-underline-position: from-font;
                 text-decoration-skip-ink: none;
                 cursor: pointer;
+                img {
+                    padding-left: 4px;
+                }
             }
 
             .prompt-footer {
@@ -717,9 +720,17 @@
 
                 .button-generate-ai-message {
                     background: #00A8ED;
+                    width: 185px;
                     color: white;
                     padding: 10px 30px;
                     border-radius: 10px;
+                    cursor: pointer;
+                    &:focus {
+                        outline: none;
+                    }
+                }
+                .cancel-button {
+                    cursor: pointer;
                 }
             }
 
@@ -1186,9 +1197,12 @@
 }
 
 .html-container-div {
-    height: 436px;
+    height: 80%;
     overflow-y: auto;
     overflow-x: hidden;
+    &:focus {
+        outline: none;
+    }
 }
 
 .w-71 {
