@@ -509,7 +509,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             },
             {
                 id: 'saveTemplateOptions',
-                title: "Send Email Message1",// this.data.saveTitle,
+                title: "Send Email Message",// this.data.saveTitle,
                 disabled: this.templateEditMode && this.isManageUnallowed,
                 class: 'primary',
                 action: this.save.bind(this),
