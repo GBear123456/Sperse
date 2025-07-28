@@ -8,6 +8,7 @@ import { Params, Router } from '@angular/router';
 import { Observable, combineLatest, fromEvent, of } from 'rxjs';
 import { map, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators';
 import flatten from 'lodash/flatten';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 /** Application imports */
 import { FiltersService } from '@shared/filters/filters.service';
@@ -31,6 +32,7 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { Param } from '@shared/common/odata/param.model';
 import { SliceChartData } from '@app/crm/shared/common/slice-chart-data.interface';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { CreateMailTemplateModalComponent } from '@app/crm/shared/create-mail-template-modal/create-mail-template-modal.component'
 
 @Injectable()
 export class CrmService {
@@ -71,7 +73,8 @@ export class CrmService {
         private router: Router,
         private location: Location,
         private instanceServiceProxy: InstanceServiceProxy,
-        private userService: UserServiceProxy
+        private userService: UserServiceProxy,
+        private dialog: MatDialog 
     ) {}
 
     static getEntityDetailsLink(contactId: string | number, section?: string, leadId?: number, organizationId?: number): any[] {
@@ -313,4 +316,14 @@ export class CrmService {
         }
         return filterChanged;
     }
+    openDialog(data: { title: string; message: string }): CreateMailTemplateModalComponent {
+        const dialogRef = this.dialog.open(CreateMailTemplateModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data
+        }).componentInstance;
+    
+        return dialogRef;
+      }
 }

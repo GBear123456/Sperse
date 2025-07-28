@@ -54,6 +54,8 @@ import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/templat
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
+import { CrmService } from '@app/crm/crm.service';
+
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { prompts } from './prompts';
 import * as monaco from 'monaco-editor';
@@ -123,6 +125,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     charCount: number;
     forceValidationBypass = true;
     emailRegEx = AppConsts.regexPatterns.email;
+    @Input() templateType: EmailTemplateType;
 
     storeAttachmentsToDocumentsCacheKey = 'StoreAttachmentsToDocuments';
 
@@ -184,7 +187,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     showHtmlEditor = false;
     showTemplate = false;
     selectedTab: string = 'new-email';
-
+    internalTemplateId?: number
+    placeholderText: string =  "Search templates";
 
     sendEmailMenuInit$: Observable<any>;
     addSendEmailMenuItems: any[] =
@@ -224,6 +228,19 @@ export class EmailTemplateDialogComponent implements OnInit {
         return Array.from({ length: this.data.body.split('\n').length }, (_, i) => i + 1);
     }
 
+
+
+    emailTemplates: {title: string, previewText: string}[] = [
+        {title: 'template1', previewText: "This is the preview Text1"},
+        {title: 'template2', previewText: "This is the preview Text1"},
+        {title: 'template3', previewText: "This is the preview Text1"},
+        {title: 'template4', previewText: "This is the preview Text1"},
+        {title: 'template5', previewText: "This is the preview Text1"},
+        {title: 'template6', previewText: "This is the preview Text1"},
+        {title: 'template7', previewText: "This is the preview Text1"},
+        {title: 'template8', previewText: "This is the preview Text1"},
+]
+
     constructor(
         private phonePipe: PhoneFormatPipe,
         private domSanitizer: DomSanitizer,
@@ -242,6 +259,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         public appService: AppService,
         public dialog: MatDialog,
         public ls: AppLocalizationService, private fb: FormBuilder,
+        private crmService: CrmService,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {
         if (!data.suggestionEmails)
@@ -1086,6 +1104,11 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.onTemplateCreate.emit(data.templateId);
     }
 
+    
+    dialogSaveCallback(data) {
+        this._refresh.next();
+        this.internalTemplateId = data.templateId;
+    }
     deleteTemplate(event, template, component) {
         component.instance.option('opened', false);
         abp.message.confirm(this.ls.l('DeleteItemConfirmation', template.name), '', (isConfimed) => {
@@ -1351,5 +1374,22 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     toggleAIPrompt() {
         this.showAIPrompt = !this.showAIPrompt;        
+    }
+
+    openModal(): void {
+        this.crmService.openDialog({
+            title: 'Unrelated Component Modal',
+            message: 'This modal was opened from an unrelated component!'
+            })
+    }
+
+    // toggle placeholder text
+
+    onFocusIn() {
+        this.placeholderText = '';
+
+    }
+    onFocusOut () {
+        this.placeholderText = "Search templates";
     }
 }

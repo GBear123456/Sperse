@@ -1,0 +1,318 @@
+<modal-dialog
+    [title]=""
+    [titleClearButton]="false"
+    [buttons]="buttons"
+    [editTitle]="false"
+    class="mail-template-modal"
+>
+    <ng-container headerContent>
+        <div class="header">
+            <div class="header-div">
+                <div class="email-container">
+                    <span class="icon">
+                        <img src="assets/common/icons/group.png" />
+                    </span>
+                    <span class="email-sub-txt">
+                        Create New Email Template</span
+                    >
+                </div>
+            </div>
+        </div>
+    </ng-container>
+    <div class="form-content row">
+        <div [ngClass]="showAIPrompt ? 'col-md-8' : 'col-md-12'">
+            <div class="field-area subject">
+                <label class="caption">{{ ls.l("Template Name") }}:</label>
+                <dx-text-box
+                    name="title"
+                    width="calc(100% - 31px)"
+                    placeholder=""
+                    (onFocusOut)="previewInputFocusOut($event)"
+                    [(value)]="data.subject"
+                >
+                    <dx-validator>
+                        <dxi-validation-rule
+                            type="required"
+                            [message]="ls.l('RequiredField', ls.l('Subject'))"
+                        ></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="field-area subject">
+                <label class="caption">{{ ls.l("Preview Text") }}:</label>
+                <dx-text-box
+                    name="previewText"
+                    width="calc(100% - 31px)"
+                    placeholder=""
+                    (onFocusOut)="previewInputFocusOut($event)"
+                    [(value)]="data.subject"
+                >
+                    <dx-validator>
+                        <dxi-validation-rule
+                            type="required"
+                            [message]="ls.l('RequiredField', ls.l('Subject'))"
+                        ></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="field-area subject">
+                <label class="caption">{{ ls.l("Subject") }}:</label>
+                <dx-text-box
+                    name="subject"
+                    width="calc(100% - 31px)"
+                    placeholder=""
+                    (onFocusOut)="previewInputFocusOut($event)"
+                    [(value)]="data.subject"
+                >
+                    <dx-validator>
+                        <dxi-validation-rule
+                            type="required"
+                            [message]="ls.l('RequiredField', ls.l('Subject'))"
+                        ></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div>
+                <ckeditor
+                    [(ngModel)]="editorData"
+                    [config]="config"
+                    (ready)="onReady($event)"
+                    (change)="onChange($event)"
+                >
+                </ckeditor>
+            </div>
+            <div class="flex-grow"></div>
+            <div class="button-group">
+                <button md-button  class="button-layout button-default">{{ls.l('Cancel')}}</button>
+                <button md-button  class="button-layout button-primary">{{ls.l('Save')}}</button>
+                
+                
+            </div>
+        </div>
+
+        <div
+            class="container"
+            [ngClass]="showAIPrompt ? 'col-md-4' : 'hidden'"
+            *ngIf="showAIPrompt"
+        >
+            <div
+                class="prompt-header d-flex justify-content-between align-items-center"
+                style="margin-bottom: 20px"
+            >
+                <h5 class="your-prompt-title">
+                    <img src="./assets/common/icons/AI.png" class="img" />
+                    Your AI Prompt
+                </h5>
+
+                <div style="display: flex; align-items: center">
+                    <h5
+                        class="your-prompt-title prompt-library-title"
+                        id="promptLibraryToggle"
+                        (click)="propmtTooltipVisible = true"
+                        [class]="'prompt-liabrary-button id' + uniqId"
+                    >
+                        Your Prompt Library
+                        <img
+                            class="img"
+                            src="./assets/common/icons/down-arrow.png"
+                        />
+                    </h5>
+
+                    <dx-tooltip
+                        [width]="300"
+                        [position]="'bottom'"
+                        [(visible)]="propmtTooltipVisible"
+                        [target]="'.prompt-liabrary-button.id' + uniqId"
+                    >
+                        <div
+                            *dxTemplate="let data of 'content'"
+                            class="tags-container text-left p-2"
+                        >
+                            <div
+                                *ngFor="
+                                    let group of groupedPromptLibrary;
+                                    let groupIndex = index
+                                "
+                            >
+                                <!-- Group Title with toggle -->
+                                <div
+                                    class="group-header"
+                                    (click)="toggleGroup(group)"
+                                >
+                                    <strong>{{ group.category }}</strong>
+                                    <span>{{
+                                        group.expanded ? "▲" : "▼"
+                                    }}</span>
+                                </div>
+
+                                <!-- Prompt list inside group -->
+                                <div class="group-items" *ngIf="group.expanded">
+                                    <div
+                                        *ngFor="
+                                            let item of group.prompts;
+                                            let itemIndex = index
+                                        "
+                                        class="tags-list-item"
+                                        (click)="
+                                            selectedPromptItem(
+                                                item,
+                                                groupIndex,
+                                                itemIndex
+                                            )
+                                        "
+                                    >
+                                        <div class="prompt-title">
+                                            {{ item.title }}
+                                        </div>
+                                        <div class="prompt-subtext">
+                                            {{ item.subtext }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </dx-tooltip>
+                </div>
+            </div>
+
+            <dx-scroll-view
+                showScrollbar="onHover"
+                #scrollAIView
+                class="html-scroll-view"
+            >
+                <div class="content-container" *ngIf="!showAIOption">
+                    <div
+                        class="html-container-div"
+                        contenteditable="true"
+                        dir="ltr"
+                        lang="en"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="off"
+                        spellcheck="false"
+                        (input)="onContentChange($event)"
+                        (paste)="onPaste($event)"
+                        #contentEditableDiv
+                    >
+                        <p>
+                            Consectetur adipiscing elit,
+                            <strong>sed do eiusmod</strong> tempor incididunt ut
+                            labore et dolore.
+                        </p>
+                        <ul class="styled-list">
+                            <li>
+                                <strong>Customer Name and Business:</strong>
+                                <div class="list-content">
+                                    Adam Smith, <br />
+                                    Samsung International LLC
+                                </div>
+                            </li>
+                            <li>
+                                <strong>Purpose of the email:</strong>
+                                <div class="list-content">
+                                    voluptatem accusantium doloremque
+                                    laudantium, totam rem aperiam
+                                </div>
+                            </li>
+                            <li>
+                                <strong>Prior communications:</strong>
+                                <div class="list-content">
+                                    Ab illo inventore veritatis et quasi
+                                    architecto beatae vitae dicta sunt
+                                    explicabo.
+                                </div>
+                            </li>
+                            <li>
+                                <strong>Tone of the email:</strong>
+                                <div class="list-content">
+                                    Nemo enim ipsam voluptatem quia voluptas sit
+                                    aspernatur aut odit aut fugit
+                                </div>
+                            </li>
+                            <li>
+                                <strong>Styling Preferences:</strong>
+                                <div class="list-content">
+                                    Sed quia consequuntur magni dolores eos qui
+                                    ratione voluptatem sequi nesciunt.
+                                </div>
+                            </li>
+                            <li>
+                                <strong>Specific details to include:</strong>
+                                <div class="list-content">
+                                    Neque porro quisquam est, qui dolorem ipsum
+                                    quia dolor sit amet, consectetur.
+                                </div>
+                            </li>
+                        </ul>
+                        <div>
+                            <strong>The email must include:</strong>
+                            <div>1. Numquam eius modi tempora incidunt</div>
+                            <div>2. Labore et dolore magnam aliquam</div>
+                            <div>
+                                3. Ut enim ad minima veniam, quis nostrum.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </dx-scroll-view>
+
+            <div class="prompt-footer">
+                <div style="display: flex; align-items: center">
+                    <h5
+                        class="gpt-model-toggle"
+                        id="aiModelToggle"
+                        (click)="aiTooltipVisible = true"
+                        [class]="'ai-model-button id' + uniqId"
+                    >
+                        <img
+                            class="img"
+                            src="./assets/common/icons/openai-white.png"
+                        />
+                    </h5>
+                    <dx-tooltip
+                        [width]="250"
+                        [position]="'bottom'"
+                        [(visible)]="aiTooltipVisible"
+                        [target]="'.ai-model-button.id' + uniqId"
+                    >
+                        <div
+                            *dxTemplate="let data of 'content'"
+                            class="tags-container"
+                        >
+                            <dx-list
+                                height="calc(100% - 40px)"
+                                [selectionMode]="'single'"
+                                [dataSource]="aiModels"
+                                [itemTemplate]="'aiTemplate'"
+                                (onItemClick)="selectedAIItem($event)"
+                            >
+                                <div
+                                    *dxTemplate="let data of 'aiTemplate'"
+                                    class="tags-list-item"
+                                >
+                                    <img
+                                        [src]="
+                                            './assets/common/icons/' + data.icon
+                                        "
+                                        alt="icon"
+                                        class="ai-model-icon"
+                                    />
+                                    {{ data.name }}
+                                </div>
+                            </dx-list>
+                        </div>
+                    </dx-tooltip>
+                </div>
+                <button
+                    class="button-generate-ai-message"
+                    (click)="generateAIMessage()"
+                >
+                    {{ processing ? "Generating.." : "Generate AI Message" }}
+                </button>
+                <button class="cancel-button" (click)="cancelAIMessage()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</modal-dialog>
