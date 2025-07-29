@@ -349,20 +349,20 @@
                                     >
                                     
                                     </dx-text-box>
-                                    <div *ngFor="let template of emailTemplates; let templateIndex = index" class="template-item">
-                                        <h5>
-                                            {{template.title}}
+                                    <div *ngFor="let template of templates$ | async; let templateIndex = index" class="template-item">
+                                        <h5 (click)="viewDetailTemplate($event, template.id)">
+                                            {{template.name}}
                                         </h5>
-                                        <span>
+                                        <!-- <span>
                                             {{template.previewText}}
-                                        </span>
+                                        </span> -->
                                         <div class="template-item-action-btns">
                                             <dx-button
                                                 stylingMode="outlined"
                                                 icon="edit"
                                                 type="default"
                                                 [width]="24"
-                                                (onClick)="click($event)"
+                                                (onClick)="editTemplate($event, template.id)"
                                             >
                                             </dx-button>
                                             <dx-button
@@ -370,17 +370,17 @@
                                                 icon="trash"
                                                 type="danger"
                                                 [width]="24"
-                                                (onClick)="click($event)"
+                                                (onClick)="deleteTemplate($event, template)"
                                             >
                                             </dx-button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-9 template-detail-preview">
-                                    <div class="text-center"><h5>Template1</h5></div>
-                                    <span>this is preview Text 1</span>
-                                    <div>
-                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat doloribus sequi, rem ratione blanditiis ex quasi corporis sapiente cumque deleniti, perferendis impedit id quibusdam laudantium fuga obcaecati temporibus expedita dolorem.
+                                    <div class="text-center"><h5>{{data.subject}}</h5></div>
+                                    <span>{{data.previewText}}</span>
+                                    <div [innerHTML]="data.body">
+                                       
                                     </div>
                                 </div>
 
