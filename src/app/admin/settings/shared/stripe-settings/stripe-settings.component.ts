@@ -69,11 +69,20 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         }
     }
 
-    addApiKeySettings() {
+    hasAnyApiKeySettings(isPartnerApiKey = false) {
+        return !!this.apiKeySettings?.some(v =>
+            isPartnerApiKey ? v.isPartnerApiKey : !v.isPartnerApiKey
+        );
+    }
+
+    addApiKeySettings(isPartnerApiKey = false) {
         let newItem = new StripeSettingsDto();
         newItem.ignoreExternalConnectedAccounts = false;
         newItem.ignoreExternalWebhooks = false;
-        newItem.displayName = 'New API Key';
+        newItem.displayName = isPartnerApiKey ? `New ${(this.isHost ? 'Partner' : 'Payouts')} Key` : 'New API Key';
+        newItem.isActive = isPartnerApiKey;
+        newItem.isPartnerApiKey = isPartnerApiKey;
+
         this.apiKeySettings.push(newItem);
 
         this.changeDetection.detectChanges();
@@ -93,7 +102,13 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         this.message.confirm(`'${setting.displayName}' will be deleted.`, null, (isConfirmed) => {
             if (isConfirmed) {
                 if (!setting.id) {
-                    this.loadSettings();
+                    let index = this.apiKeySettings.findIndex(v => v.id == setting.id);
+                    if (index != -1) {
+                        this.apiKeySettings.splice(index, 1);
+                        this.changeDetection.detectChanges();
+                    } else {
+                        this.loadSettings();
+                    }
                     return;
                 }
 
@@ -287,13 +302,13 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     enableAutomaticTaxation(settingDto: StripeSettingsDto) {
         this.startLoading();
         this.tenantPaymentSettingsService.changeIsStripeTaxationEnabledSettings(settingDto.id, !settingDto.isTaxationEnabled)
-        .pipe(
-            finalize(() => this.finishLoading())
-        ).subscribe(() => {
-            settingDto.isTaxationEnabled = !settingDto.isTaxationEnabled;
-            this.notify.info((this.l('Stripe Taxation ') + (settingDto.isTaxationEnabled ? 'Enabled' : 'Disabled')));
-            this.changeDetection.detectChanges();
-        });
+            .pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe(() => {
+                settingDto.isTaxationEnabled = !settingDto.isTaxationEnabled;
+                this.notify.info((this.l('Stripe Taxation ') + (settingDto.isTaxationEnabled ? 'Enabled' : 'Disabled')));
+                this.changeDetection.detectChanges();
+            });
     }
 
     copyToClipboard(value: string) {

@@ -127,10 +127,15 @@
             <div class="title">API KEYS</div>
         </ng-template>
         <div class="api-keys-tab blocks-tab">
-            <button *ngIf="apiKeySettings && !apiKeySettings.length" class="btn btn-layout" (click)="addApiKeySettings()">
-                {{ l('Add new API settings') }}
-            </button>
-            <div *ngFor="let settings of apiKeySettings" class="api-key-account block" [class.active]="settings.isActive">
+            <div class="w-100">
+                <button *ngIf="!hasAnyApiKeySettings()" class="btn btn-layout" (click)="addApiKeySettings()">
+                    {{ l('Add new API settings') }}
+                </button>
+                <button *ngIf="!hasAnyApiKeySettings(true)" class="btn btn-layout" (click)="addApiKeySettings(true)">
+                    {{ isHost ? l('Add new Partner settings ') : l('Add new Payout settings') }}
+                </button>
+            </div>
+            <div *ngFor="let settings of apiKeySettings" class="api-key-account block" [class.active]="settings.isActive" [class.isPartnerApiKey]="settings.isPartnerApiKey">
                 <div class="section top-bar">
                     <i class="fa check-icon" [ngClass]="settings.isActive ? 'fa-check-circle' : 'fa-circle-thin'"></i>
                     <inplace-edit [id]="settings.id"
@@ -146,7 +151,6 @@
                 <div class="api-key-info" [class.section]="!isHost">
                     <h6>{{l("Secret key")}}</h6>
                     <input placeholder="Enter Your Secret Key" [disabled]="settings.id" type="text" [(ngModel)]="settings.apiKey">
-
                     <h6>{{l("Publishable key")}}</h6>
                     <input placeholder="Enter Your Secret Key" type="text" [(ngModel)]="settings.publishableKey">
                     <p>
@@ -160,43 +164,49 @@
                         </dx-check-box>
                         <span class="small">*Skip webhooks that are not intended for <b>{{tenantName}}</b></span>
                     </p>
-                    <div>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</div>
-                    <p>
-                        <button [disabled]="settings.webhookSingingSecret" [title]="settings.webhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, false)">
-                            {{ settings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
-                        </button>
-                        <img *ngIf="settings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
-                    </p>
-                    <div *ngIf="isHost" class="section">
-                        <h6>{{l("OAuth Client Id")}}</h6>
-                        <input type="text" [(ngModel)]="settings.oAuthClientId">
+                    <ng-container *ngIf="!settings.isPartnerApiKey">
+                        <span>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</span>
+                        <p>
+                            <button [disabled]="settings.webhookSingingSecret" [title]="settings.webhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, false)">
+                                {{ settings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
+                            </button>
+                            <img *ngIf="settings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
+                        </p>
+                    </ng-container>
+                    <ng-container *ngIf="settings.isPartnerApiKey">
+                        <div *ngIf="isHost" class="section">
+                            <h6>{{l("OAuth Client Id")}}</h6>
+                            <input type="text" [(ngModel)]="settings.oAuthClientId">
 
-                        <span class="small">{{l('Connects a tenant\'s Stripe account. The value can be found in the ')}}<a href="https://dashboard.stripe.com/settings/connect" target="_blank">settings</a>.</span><br />
-                        <span class="small">{{l('Please enable ')}}<b>OAuth for Standard accounts</b>{{l(' and add the following URL to OAuth redirects')}}</span>
-                        <span class="small">URL - <span class="copy-url"><b>{{getStripeOAuthConnectRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span>
-                    </div>
-                    <div>Use button below to create <b>Connect</b> webhook and recieve Connect events from Stripe</div>
-                    <p>
-                        <button [disabled]="settings.connectWebhookSingingSecret" [title]="settings.connectWebhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, true)">
-                            {{ settings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
+                            <span class="small">{{l('Connects a tenant\'s Stripe account. The value can be found in the ')}}<a href="https://dashboard.stripe.com/settings/connect" target="_blank">settings</a>.</span><br />
+                            <span class="small">{{l('Please enable ')}}<b>OAuth for Standard accounts</b>{{l(' and add the following URL to OAuth redirects')}}</span>
+                            <span class="small">URL - <span class="copy-url"><b>{{getStripeOAuthConnectRedirectUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span>
+                        </div>
+                        <div>Use button below to create <b>Connect</b> webhook and recieve Connect events from Stripe</div>
+                        <p>
+                            <button [disabled]="settings.connectWebhookSingingSecret" [title]="settings.connectWebhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, true)">
+                                {{ settings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
+                            </button>
+                            <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
+                        </p>
+                        <p>
+                            <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
+                                          [text]="l('Ignore external connected accounts')"
+                                          [(value)]="settings.ignoreExternalConnectedAccounts">
+                            </dx-check-box>
+                            <span class="small">*Skip webhooks from external connected accounts</span>
+                        </p>
+                    </ng-container>
+                    <ng-container *ngIf="!settings.isPartnerApiKey">
+                        <h6 class="tax-settings">Tax Settings</h6>
+                        <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
+                            {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
                         </button>
-                        <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
-                    </p>
-                    <p>
-                        <dx-check-box id="StripeIgnoreExternalConnectedAccounts"
-                                      [text]="l('Ignore external connected accounts')"
-                                      [(value)]="settings.ignoreExternalConnectedAccounts">
-                        </dx-check-box>
-                        <span class="small">*Skip webhooks from external connected accounts</span>
-                    </p>
-                    <h6 class="tax-settings">Tax Settings</h6>
-                    <button class="btn btn-layout" (click)="enableAutomaticTaxation(settings)">
-                        {{(settings.isTaxationEnabled ? 'Disable ' : 'Enable ') + l('Automatic Taxation')}}
-                    </button>
-                    <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
+                        <ng-container *ngIf="settings.isTaxationEnabled"><img src="./assets/common/icons/check-green.svg" /> Enabled </ng-container>
+                    </ng-container>
                 </div>
-                <div *ngIf="!isHost" class="account-actions">
-                    <span *ngIf="!settings.isActive" (click)="setIsActive(settings)"><i class="fa fa-check"></i>Set as active</span>
+                <div *ngIf="!isHost || settings.isPartnerApiKey" class="account-actions">
+                    <span *ngIf="!settings.isPartnerApiKey && !settings.isActive" (click)="setIsActive(settings)"><i class="fa fa-check"></i>Set as active</span>
                     <span (click)="delete(settings)"><i class="fa fa-trash-o"></i>Delete Connection</span>
                 </div>
             </div>
