@@ -111,12 +111,9 @@
     </ng-container>   
     <div class="form-content">
         <div class="d-flex">
-            
             <dx-scroll-view showScrollbar="onHover" #scrollView>
                 <dx-validation-group>
-
                     <div class="row row-body-space" *ngIf="showNewEmailTab">
-
                         <div class="field-area from row--subdiv">
                             <div class="w-48">
                                 <label class="caption"
@@ -124,14 +121,14 @@
                                 <dx-select-box *ngIf="fromDataSource?.length || templateEditMode; else configure"
                                     name="from"
                                     height="40px"
-                                               placeholder=""
-                                               [(value)]="data.emailSettingsSource"
+                                    placeholder=""
+                                    [(value)]="data.emailSettingsSource"
                                     valueExpr="emailSettingsSource"
-                                               displayExpr="emailAddress"
+                                    displayExpr="emailAddress"
                                     [dataSource]="fromDataSource"
-                                               itemTemplate="itemTemplate"
+                                    itemTemplate="itemTemplate"
                                     fieldTemplate="fieldTemplate"
-                                               [disabled]="templateEditMode"
+                                    [disabled]="templateEditMode"
                                     (onValueChanged)="onFromChanged($event)">
                                     <div *dxTemplate="let item of 'itemTemplate'" class="from-item-select-box" [title]="item?.emailAddress">
                                         {{ item?.emailAddress }}
@@ -343,7 +340,70 @@
                         </form>                       
                     </div>   
 
-                    <div class="row w-71" *ngIf="showTemplate">
+                    <div class="w-71 template-container " *ngIf="showTemplate">
+                        <div class="d-flex flex-column template-header">
+                            <h5>My Email Templates Library</h5>
+                            <span>
+                                Choose a template or start with a blank email to your own HTML
+                            </span>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 left-template-div"  >
+                                <dx-button
+                                    stylingMode="outlined"
+                                    text="+ Create New Template"
+                                    type="normal"
+                                    (click)="openModal()"
+                                    class="create-mail-template-btn"
+                                >
+                                </dx-button>
+                                <dx-text-box 
+                                    mode="search"
+                                    height="40px"
+                                    [placeholder]="placeholderText"
+                                    [elementAttr]="{ class: 'template-search-box' }"
+                                    (onFocusIn)="onFocusIn()"
+                                    (onFocusOut)="onFocusOut()"
+                                >
+                                
+                                </dx-text-box>
+                                <div *ngFor="let template of emailTemplates; let templateIndex = index" class="template-item">
+                                    <h5>
+                                        {{template.title}}
+                                    </h5>
+                                    <span>
+                                        {{template.previewText}}
+                                    </span>
+                                    <div class="template-item-action-btns">
+                                        <dx-button
+                                            stylingMode="outlined"
+                                            icon="edit"
+                                            type="default"
+                                            [width]="24"
+                                            (onClick)="click($event)"
+                                        >
+                                        </dx-button>
+                                        <dx-button
+                                            stylingMode="outlined"
+                                            icon="trash"
+                                            type="danger"
+                                            [width]="24"
+                                            (onClick)="click($event)"
+                                        >
+                                        </dx-button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-9 template-detail-preview">
+                                <div class="text-center"><h5>Template1</h5></div>
+                                <span>this is preview Text 1</span>
+                                <div>
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat doloribus sequi, rem ratione blanditiis ex quasi corporis sapiente cumque deleniti, perferendis impedit id quibusdam laudantium fuga obcaecati temporibus expedita dolorem.
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
 
                 </dx-validation-group>
