@@ -69,9 +69,9 @@ import { numberlike } from '@node_modules/moment/moment';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent implements OnInit {
-    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
+    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     @ViewChild(DxContextMenuComponent) addEmailComponent: DxContextMenuComponent;
     @ViewChild('scrollView') scrollView: DxScrollViewComponent;

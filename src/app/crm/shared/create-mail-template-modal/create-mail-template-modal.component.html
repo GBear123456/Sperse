@@ -20,7 +20,7 @@
         </div>
     </ng-container>
     <div class="form-content row">
-        <div [ngClass]="showAIPrompt ? 'col-md-8' : 'col-md-12'">
+        <div [ngClass]="showAIPrompt ? 'col-md-9' : 'col-md-12'">
             <div class="field-area subject">
                 <label class="caption">{{ ls.l("Template Name") }}:</label>
                 <dx-text-box
@@ -28,8 +28,12 @@
                     width="calc(100% - 31px)"
                     placeholder=""
                     (onFocusOut)="previewInputFocusOut($event)"
+                    [(value)]="data.title"
                 >
-                   
+                    <dx-validator>
+                        <dxi-validation-rule type="required"
+                            [message]="ls.l('RequiredField', ls.l('title'))"></dxi-validation-rule>
+                    </dx-validator>
                 </dx-text-box>
             </div>
             <div class="field-area subject">
@@ -39,8 +43,12 @@
                     width="calc(100% - 31px)"
                     placeholder=""
                     (onFocusOut)="previewInputFocusOut($event)"
+                    [(value)]="data.previewText"
                 >
-                  
+                <dx-validator>
+                    <dxi-validation-rule type="required"
+                        [message]="ls.l('RequiredField', ls.l('previewText'))"></dxi-validation-rule>
+                </dx-validator>
                 </dx-text-box>
             </div>
             <div class="field-area subject">
@@ -50,8 +58,12 @@
                     width="calc(100% - 31px)"
                     placeholder=""
                     (onFocusOut)="previewInputFocusOut($event)"
+                    [(value)]="data.subject"
                 >
-                   
+                <dx-validator>
+                    <dxi-validation-rule type="required"
+                        [message]="ls.l('RequiredField', ls.l('subject'))"></dxi-validation-rule>
+                </dx-validator>
                 </dx-text-box>
             </div>
             <div>
@@ -74,7 +86,7 @@
 
         <div
             class="container"
-            [ngClass]="showAIPrompt ? 'col-md-4' : 'hidden'"
+            [ngClass]="showAIPrompt ? 'col-md-3' : 'hidden'"
             *ngIf="showAIPrompt"
         >
             <div
