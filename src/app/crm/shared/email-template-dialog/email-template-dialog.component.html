@@ -85,7 +85,7 @@
     </ng-container>   
     <div class="form-content">
         <div class="row" style="width: 100%;">
-            <div [ngClass]="showAIPrompt?'col-md-9':'col-md-12'">
+            <div [ngClass]="showAIPrompt?'col-lg-9 col-md-8':'col-md-12'">
 
                 <dx-scroll-view showScrollbar="onHover" #scrollView>
                     <dx-validation-group>
@@ -390,7 +390,7 @@
                     </dx-validation-group>
                 </dx-scroll-view>
             </div>
-            <div [ngClass]="showAIPrompt?'col-md-3':'hidden'" *ngIf="showAIPrompt">
+            <div [ngClass]="showAIPrompt?'col-lg-3 col-md-4':'hidden'" *ngIf="showAIPrompt">
                 <div class="container"  >
                     <div class="prompt-header d-flex justify-content-between align-items-center"
                         style="margin-bottom: 20px;">
