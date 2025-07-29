@@ -113,7 +113,7 @@
         <div class="d-flex">
             <dx-scroll-view showScrollbar="onHover" #scrollView>
                 <dx-validation-group>
-                    <div class="row row-body-space" *ngIf="showNewEmailTab">
+                    <div class="w-71 row-body-space" *ngIf="showNewEmailTab">
                         <div class="field-area from row--subdiv">
                             <div class="w-48">
                                 <label class="caption"
@@ -330,7 +330,7 @@
                         <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
                     </div>
 
-                    <div class="w-71 editor-color" *ngIf="showHtmlEditor" >   
+                    <div class="w-71 row-body-space editor-color" *ngIf="showHtmlEditor" >   
                         <form [formGroup]="templateForm" class="editor-form">
                             <ngx-monaco-editor
                             #editor
@@ -340,7 +340,7 @@
                         </form>                       
                     </div>   
 
-                    <div class="w-71 template-container " *ngIf="showTemplate">
+                    <div class="w-71 row-body-space template-container " *ngIf="showTemplate">
                         <div class="d-flex flex-column template-header">
                             <h5>My Email Templates Library</h5>
                             <span>
