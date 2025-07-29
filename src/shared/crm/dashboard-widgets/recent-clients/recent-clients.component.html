@@ -1,78 +1,136 @@
 <div class="wrapper">
-    <header>
-        <h2 class="title">
-            <dx-select-box
-                [items]="visibleItems"
-                [displayExpr]="'name'"
-                [value]="selectedItem.value"
-                (onSelectionChanged)="onSelectionChanged($event)">
-            </dx-select-box>
-            <span>{{selectedItem.value.message}}</span>
+  <header>
+    <h2 class="title">
+      <dx-select-box
+        [items]="visibleItems"
+        [displayExpr]="'name'"
+        [value]="selectedItem.value"
+        (onSelectionChanged)="onSelectionChanged($event)"
+      >
+      </dx-select-box>
+      <span>{{ selectedItem.value.message }}</span>
+    </h2>
+    <div
+      class="view-all"
+      [routerLink]="selectedItem.value.allRecordsLink"
+      [queryParams]="selectedItem.value.linkParams"
+    >
+      {{ viewAllText }}
+      <lucide-icon name="arrow-right" class="w-4 h-4"></lucide-icon>
+    </div>
+  </header>
 
-            <a class="view-all"
-                [routerLink]="selectedItem.value.allRecordsLink"
-                [queryParams]="selectedItem.value.linkParams">                
-                {{viewAllText}}
-                <i class="fa fa-angle-right"></i>
-            </a>
-        </h2>
-    </header>
+  <ng-container *ngIf="recentlyCreatedCustomers$ | async as recentlyCreatedCustomers">
+    <div
+      class="grid-wrapper"
+      *ngIf="recentlyCreatedCustomers && recentlyCreatedCustomers.length; else noData"
+    >
+      <dx-data-grid
+        id="gridContainer"
+        accessKey="recent-records"
+        class="grid-compact-view"
+        [loadPanel]="{ enabled: false }"
+        [dataSource]="recentlyCreatedCustomers"
+        (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+        (onCellClick)="onCellClick($event)"
+      >
+        <dxi-column
+          dataField="fullName"
+          [caption]="ls.l('Customer.Name')"
+          [visible]="!isSalesSelected"
+        ></dxi-column>
+        <dxi-column
+          dataField="bankCode"
+          [caption]="ls.l('BankCode')"
+          cellTemplate="bankCodeCell"
+          [width]="125"
+          [visible]="hasBankCodeFeature"
+        >
+        </dxi-column>
+        <dxi-column
+          dataField="email"
+          [caption]="ls.l('Contact.Email')"
+          [visible]="!isSalesSelected"
+        ></dxi-column>
+        <dxi-column
+          dataField="phone"
+          [caption]="ls.l('Contact.Phone')"
+          [visible]="!isSalesSelected"
+        ></dxi-column>
 
-    <ng-container *ngIf="recentlyCreatedCustomers$ | async as recentlyCreatedCustomers">
-        <div class="grid-wrapper" *ngIf="recentlyCreatedCustomers && recentlyCreatedCustomers.length; else noData">
-            <dx-data-grid id="gridContainer"
-                          accessKey="recent-records"
-                          class="grid-compact-view"
-                          [loadPanel]="{enabled: false}"
-                          [dataSource]="recentlyCreatedCustomers"
-                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
-                          (onCellClick)="onCellClick($event)">
-                <dxi-column dataField="fullName" [caption]="ls.l('Customer.Name')" [visible]="!isSalesSelected"></dxi-column>
-                <dxi-column dataField="bankCode"
-                            [caption]="ls.l('BankCode')"
-                            cellTemplate="bankCodeCell"
-                            [width]="125"
-                            [visible]="hasBankCodeFeature">
-                </dxi-column>
-                <dxi-column dataField="email" [caption]="ls.l('Contact.Email')" [visible]="!isSalesSelected"></dxi-column>
-                <dxi-column dataField="phone" [caption]="ls.l('Contact.Phone')" [visible]="!isSalesSelected"></dxi-column>
+        <dxi-column
+          dataField="customerName"
+          [caption]="ls.l('Customer.Name')"
+          cellTemplate="customerNameTemplate"
+          [visible]="isSalesSelected"
+        ></dxi-column>
+        <dxi-column
+          dataField="amount"
+          [caption]="ls.l('Amount')"
+          cellTemplate="currencyTemplate"
+          [visible]="isSalesSelected"
+          cssClass="tabular"
+        ></dxi-column>
+        <dxi-column
+          dataField="paidBy"
+          [caption]="ls.l('Paid By')"
+          cellTemplate="paidByTemplate"
+          [visible]="isSalesSelected"
+        ></dxi-column>
+        <dxi-column
+          dataField="date"
+          [caption]="ls.l('Date')"
+          cellTemplate="dateagoTemplate"
+          [visible]="isSalesSelected"
+          cssClass="tabular"
+        ></dxi-column>
+        <dxi-column
+          dataField="mentor"
+          [caption]="ls.l('Refered By')"
+          cellTemplate="mentorTemplate"
+          [visible]="isSalesSelected"
+          minWidth="250"
+        ></dxi-column>
 
-                <dxi-column dataField="customerName" [caption]="ls.l('Customer.Name')" cellTemplate="customerNameTemplate" [visible]="isSalesSelected"></dxi-column>
-                <dxi-column dataField="amount" [caption]="ls.l('Amount')" cellTemplate="currencyTemplate" [visible]="isSalesSelected" cssClass="tabular"></dxi-column>
-                <dxi-column dataField="paidBy" [caption]="ls.l('Paid By')" cellTemplate="paidByTemplate" [visible]="isSalesSelected"></dxi-column>
-                <dxi-column dataField="date" [caption]="ls.l('Date')" cellTemplate="dateagoTemplate" [visible]="isSalesSelected" cssClass="tabular"></dxi-column>
-                <dxi-column dataField="mentor" [caption]="ls.l('Refered By')" cellTemplate="mentorTemplate" [visible]="isSalesSelected" minWidth="250"></dxi-column>
-
-                <dxo-paging [pageSize]="10"></dxo-paging>
-                <div *dxTemplate="let cellData of 'bankCodeCell'">
-                    <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
-                </div>
-                <div *dxTemplate="let cellData of 'customerNameTemplate'">
-                    <h3 class="ellipsis" [title]="cellData.value">{{cellData.value}}</h3>
-                    <span class="ellipsis" [title]="cellData.data.customerEmail">{{cellData.data.customerEmail}}</span>
-                </div>
-                <div *dxTemplate="let cellData of 'currencyTemplate'" class="amount">
-                    {{cellData.value | currency:cellData.data.currency:'symbol':'1.2-2'}}
-                </div>
-                <div *dxTemplate="let cellData of 'paidByTemplate'">
-                    <img width="41px" src="./assets/common/images/payments/card-logo/{{getIconNameByType(cellData.value)}}.svg"
-                         onError="this.src='./assets/common/images/payments/card-logo/cash-icon.svg';"
-                         [title]="ls.l(cellData.value || 'Unknown')">
-                </div>
-                <div *dxTemplate="let cellData of 'dateTemplate'" class="date">
-                    {{cellData.value | datetime: formatting.dateTimeMoment}}
-                </div>
-                <div *dxTemplate="let cellData of 'dateagoTemplate'" class="date">
-                    {{cellData.value | dateAgo}}
-                </div>
-                <div *dxTemplate="let cellData of 'mentorTemplate'">
-                    <h3 class="ellipsis" [title]="cellData.value">{{cellData.value}}</h3>
-                    <span class="ellipsis" [title]="cellData.data.mentorEmail">{{cellData.data.mentorEmail}}</span>
-                </div>
-            </dx-data-grid>
+        <dxo-paging [pageSize]="10"></dxo-paging>
+        <div *dxTemplate="let cellData of 'bankCodeCell'">
+          <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
         </div>
-    </ng-container>
+        <div *dxTemplate="let cellData of 'customerNameTemplate'">
+          <h3 class="ellipsis" [title]="cellData.value">{{ cellData.value }}</h3>
+          <span class="ellipsis" [title]="cellData.data.customerEmail">{{
+            cellData.data.customerEmail
+          }}</span>
+        </div>
+        <div *dxTemplate="let cellData of 'currencyTemplate'" class="amount">
+          {{ cellData.value | currency : cellData.data.currency : 'symbol' : '1.2-2' }}
+        </div>
+        <div *dxTemplate="let cellData of 'paidByTemplate'">
+          <img
+            width="41px"
+            src="./assets/common/images/payments/card-logo/{{
+              getIconNameByType(cellData.value)
+            }}.svg"
+            onError="this.src='./assets/common/images/payments/card-logo/cash-icon.svg';"
+            [title]="ls.l(cellData.value || 'Unknown')"
+          />
+        </div>
+        <div *dxTemplate="let cellData of 'dateTemplate'" class="date">
+          {{ cellData.value | datetime : formatting.dateTimeMoment }}
+        </div>
+        <div *dxTemplate="let cellData of 'dateagoTemplate'" class="date">
+          {{ cellData.value | dateAgo }}
+        </div>
+        <div *dxTemplate="let cellData of 'mentorTemplate'">
+          <h3 class="ellipsis" [title]="cellData.value">{{ cellData.value }}</h3>
+          <span class="ellipsis" [title]="cellData.data.mentorEmail">{{
+            cellData.data.mentorEmail
+          }}</span>
+        </div>
+      </dx-data-grid>
+    </div>
+  </ng-container>
 </div>
 <ng-template #noData>
-    <app-no-data [showLink]="false"></app-no-data>
+  <app-no-data [showLink]="false"></app-no-data>
 </ng-template>

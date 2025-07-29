@@ -167,6 +167,10 @@ import {
   Server,
   Settings,
   ExternalLink,
+  MoveLeft,
+  MoveRight,
+  ArrowLeft,
+  ArrowRight,
 } from 'lucide-angular';
 import { AggregateAnalyticsHeaderComponent } from './traffic-stats/aggregate-analytics-dashboard/components/header/header.component';
 import { AggregateAnalyticsFiltersComponent } from './traffic-stats/common/filters/filters.component';
@@ -321,6 +325,10 @@ import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/
       Server,
       Settings,
       ExternalLink,
+      MoveLeft,
+      MoveRight,
+      ArrowLeft,
+      ArrowRight,
     }),
   ],
   declarations: [

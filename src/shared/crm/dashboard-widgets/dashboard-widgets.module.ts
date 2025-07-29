@@ -31,50 +31,47 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
+import { LucideAngularModule, MoveRight } from 'lucide-angular';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        RouterModule,
-        RoundProgressModule,
-        DxButtonModule,
-        DxSelectBoxModule,
-        DxCheckBoxModule,
-        DxTooltipModule,
-        DxChartModule,
-        DxSliderModule,
-        DxPieChartModule,
-        DxDataGridModule,
-        MatDialogModule,
-        DxVectorMapModule,
-        LoadingSpinnerModule,
-        ngCommon.CommonModule,
-        MapModule,
-        BankCodeLettersModule
-    ],
-    declarations: [
-        ClientsByRegionComponent,
-        CountsAndTotalsComponent,
-        NewItemsTotalsComponent,
-        TotalsByPeriodComponent,
-        TotalsBySourceComponent,
-        RecentClientsComponent,
-        ConvertedCurrencyTooltipComponent
-    ],
-    entryComponents: [],
-    exports: [
-        ClientsByRegionComponent,
-        CountsAndTotalsComponent,
-        NewItemsTotalsComponent,
-        TotalsByPeriodComponent,
-        TotalsBySourceComponent,
-        RecentClientsComponent
-    ],
-    providers: [
-        PeriodService,
-        DashboardWidgetsService,
-        DashboardServiceProxy
-    ]
+  imports: [
+    CommonModule,
+    RouterModule,
+    RoundProgressModule,
+    DxButtonModule,
+    DxSelectBoxModule,
+    DxCheckBoxModule,
+    DxTooltipModule,
+    DxChartModule,
+    DxSliderModule,
+    DxPieChartModule,
+    DxDataGridModule,
+    MatDialogModule,
+    DxVectorMapModule,
+    LoadingSpinnerModule,
+    ngCommon.CommonModule,
+    MapModule,
+    BankCodeLettersModule,
+    LucideAngularModule.pick({ MoveRight }),
+  ],
+  declarations: [
+    ClientsByRegionComponent,
+    CountsAndTotalsComponent,
+    NewItemsTotalsComponent,
+    TotalsByPeriodComponent,
+    TotalsBySourceComponent,
+    RecentClientsComponent,
+    ConvertedCurrencyTooltipComponent,
+  ],
+  entryComponents: [],
+  exports: [
+    ClientsByRegionComponent,
+    CountsAndTotalsComponent,
+    NewItemsTotalsComponent,
+    TotalsByPeriodComponent,
+    TotalsBySourceComponent,
+    RecentClientsComponent,
+  ],
+  providers: [PeriodService, DashboardWidgetsService, DashboardServiceProxy],
 })
-export class CRMDashboardWidgetsModule {
-}
+export class CRMDashboardWidgetsModule {}

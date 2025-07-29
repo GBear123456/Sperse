@@ -5,10 +5,12 @@
   header {
     padding-left: 10px;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .title {
-    width: 100%;
     font-size: 20px;
     font-weight: 700;
     letter-spacing: normal;
@@ -64,6 +66,8 @@
     }
 
     a {
+      display: flex;
+      align-items: center;
       font-size: 15px;
       font-weight: 500;
       color: #17aeeb;
@@ -89,6 +93,12 @@
 
   .grid-wrapper {
     height: 500px;
+    background: var(--navbar-bg);
+  }
+
+  .wrapper {
+    background: var(--navbar-bg);
+    border-radius: 10px;
   }
 
   ::ng-deep dx-data-grid {
@@ -96,8 +106,13 @@
     .dx-datagrid {
       width: 100%;
     }
+    .dx-datagrid-scroll-container {
+      background: var(--navbar-bg) !important;
+      color: #767d8b;
+    }
     .dx-datagrid-headers {
       border: none;
+      background: var(--navbar-bg) !important;
 
       .dx-datagrid-content {
         border-bottom: none !important;
@@ -106,20 +121,12 @@
       .dx-column-lines td {
         height: 25px !important;
         padding-left: 10px;
-        .dx-datagrid-text-content {
-          color: #4a4a4a !important;
-        }
       }
     }
     .dx-datagrid-rowsview {
       border-top: none;
       .dx-data-row {
-        &:nth-child(odd) {
-          background-color: rgba(243, 247, 250, 0.7);
-          .dark-theme & {
-            background-color: var(--input-bg);
-          }
-        }
+        background-color: var(--navbar-bg);
 
         td {
           cursor: pointer;
@@ -193,5 +200,21 @@
 
   ::ng-deep .dx-datagrid-content {
     background-color: var(--sidebar-bg) !important;
+  }
+
+  .view-all {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--menu-text-color);
+    background: var(--navbar-bg);
+    border-radius: 10px;
+    padding: 0 8px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 27px;
+    letter-spacing: -0.02em;
+    text-align: left;
+    cursor: pointer;
   }
 }
