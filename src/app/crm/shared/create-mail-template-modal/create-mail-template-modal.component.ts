@@ -4,10 +4,11 @@ import { ModalDialogComponent } from "@shared/common/dialogs/modal/modal-dialog.
 import { IDialogButton } from "@shared/common/dialogs/modal/dialog-button.interface";
 import { AppLocalizationService } from "@app/shared/common/localization/app-localization.service";
 import { prompts } from "../email-template-dialog/prompts";
-import { DxValidatorComponent } from "devextreme-angular/ui/validator";
 import { FeatureCheckerService } from "abp-ng2-module";
-import { AppFeatures } from "@shared/AppFeatures";
-import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
+
+import { CreateEmailTemplateData } from "./create-mail-template-data.interface";
+import { DxValidationGroupComponent } from "devextreme-angular";
+import { DxValidatorComponent } from "devextreme-angular/ui/validator";
 
 @Component({
     selector: "create-mail-template-modal-dialog",
@@ -17,6 +18,9 @@ import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-t
 export class CreateMailTemplateModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
+    @ViewChild(DxValidationGroupComponent)
+    validationGroup: DxValidationGroupComponent;
+
     @Input() editorHeight;
     public editorData = "<p>This is Template1</p>";
     buttons: IDialogButton[];
@@ -156,8 +160,15 @@ export class CreateMailTemplateModalComponent implements OnInit {
         public dialogRef: MatDialogRef<CreateMailTemplateModalComponent>,
         public ls: AppLocalizationService,
         private features: FeatureCheckerService,
-        @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
-    ) {}
+        @Inject(MAT_DIALOG_DATA) public data: CreateEmailTemplateData
+    ) {
+        this.data = this.data || {
+            title: "",
+            previewText: "",
+            subject: "",
+            body: "",
+        };
+    }
 
     ngOnInit(): void {
         this.initDialogButtons();
