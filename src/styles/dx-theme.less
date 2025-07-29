@@ -1,7 +1,7 @@
 /* DevExtreme Theme Variables */
 :root {
   /* Light Theme */
-  --dx-dropdown-bg: var(--card-bg);
+  --dx-dropdown-bg: var(--sidebar-bg);
   --dx-dropdown-text: var(--text-color);
   --dx-dropdown-border: var(--border-color);
   --dx-dropdown-hover-bg: var(--hover-bg);
@@ -15,7 +15,7 @@
 
 /* Dark Theme */
 [data-theme='dark'] {
-  --dx-dropdown-bg: var(--card-bg);
+  --dx-dropdown-bg: var(--sidebar-bg);
   --dx-dropdown-text: var(--text-color);
   --dx-dropdown-border: var(--border-color);
   --dx-dropdown-hover-bg: var(--hover-bg);
@@ -34,14 +34,6 @@
   border-color: var(--dx-dropdown-border);
   transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 
-  .dx-texteditor-input {
-    background-color: var(--dx-dropdown-bg);
-    color: var(--dx-dropdown-text);
-    &::placeholder {
-      color: var(--muted-color);
-    }
-  }
-
   &.dx-state-hover {
     background-color: var(--dx-dropdown-hover-bg);
     color: var(--dx-dropdown-hover-text);
@@ -56,6 +48,10 @@
     color: var(--dx-dropdown-disabled-text);
     opacity: 0.7;
   }
+}
+
+.dx-texteditor-input {
+  background-color: var(--sidebar-bg) !important;
 }
 
 .dx-dropdownlist-popup-wrapper {
@@ -686,10 +682,6 @@
 
 .dx-popup-normal {
   background-color: var(--background-color) !important;
-}
-
-.dx-texteditor.dx-editor-outlined {
-  background: var(--background-color) !important;
 }
 
 .dx-empty-message {

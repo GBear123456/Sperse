@@ -1,0 +1,8 @@
+<button class="theme-toggle" (click)="toggleTheme()">
+  <ng-container *ngIf="!(isDark$ | async)">
+    <img src="assets/theme/light-mode.svg" alt="sun-icon" />
+  </ng-container>
+  <ng-container *ngIf="isDark$ | async">
+    <img src="assets/theme/dark-mode.svg" alt="moon-icon" />
+  </ng-container>
+</button>

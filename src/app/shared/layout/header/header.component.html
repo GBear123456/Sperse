@@ -41,6 +41,7 @@
         [data]="appService.contactInfo"
       ></contact-info-panel>
       <user-management-list>
+        <app-theme-toggle></app-theme-toggle>
         <li
           *ngIf="languages.length"
           class="m-nav__item m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--skin-light m-list-search m-list-search--skin-light m-dropdown--open dropdown-language"

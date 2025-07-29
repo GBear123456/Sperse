@@ -92,8 +92,12 @@
     display: block;
     cursor: pointer;
     background: url(../../../../assets/common/icons/welcome.svg) center no-repeat;
-    margin: 0px 18px 11px 18px;
+    margin: 10px 18px 11px 18px;
     overflow: hidden;
+
+    .home-text {
+      display: none;
+    }
 
     platform-select {
       left: 40px;
@@ -105,14 +109,21 @@
   }
 
   .top-home-dark {
-    width: 55px;
-    height: 40px;
     display: block;
+    width: 55px;
+    height: 60px;
     cursor: pointer;
-    background: url(../../../../assets/common/icons/welcome.svg) center no-repeat;
+    background: url(../../../../assets/common/icons/welcome-dark.svg) center no-repeat;
     margin: 0px 18px 11px 18px;
     overflow: hidden;
-    opacity: 0.4;
+    position: relative;
+
+    .home-text {
+      display: block;
+      position: absolute;
+      left: 9px;
+      bottom: -5px;
+    }
 
     platform-select {
       left: 40px;
@@ -143,44 +154,10 @@
           border-bottom-right-radius: 0;
           width: 100%;
         }
-        .dx-accordion-item-body {
-          &.api {
-            background: var(--card-bg);
-          }
-          &.admin {
-            background: var(--card-bg);
-          }
-          &.crm {
-            background: var(--card-bg);
-          }
-          &.cfo {
-            background: var(--card-bg);
-          }
-        }
       }
       &.dx-accordion-item-closed {
         width: 56px;
         border: 0;
-        .api {
-          background: #10750008;
-          border: 1px solid #10750030;
-          color: #107500;
-        }
-        .admin {
-          background: #0051aa08;
-          border: 1px solid #0051aa30;
-          color: #0051aa;
-        }
-        .crm {
-          background: #4d3aa008;
-          border: 1px solid #4d3aa030;
-          color: #4d3aa0;
-        }
-        .cfo {
-          background: #00b0f508;
-          border: 1px solid #00b0f530;
-          color: #00b0f5;
-        }
       }
     }
     .dx-accordion-item-title {
@@ -189,19 +166,23 @@
       }
 
       &.cfo {
-        background: #00b0f5;
+        background: #15516c;
+        color: #fff;
       }
 
       &.crm {
         background: #4d3aa0;
+        color: #fff;
       }
 
       &.api {
-        background: #107500;
+        background: #083709;
+        color: #fff;
       }
 
       &.admin {
-        background: #0051aa;
+        background: #05254c;
+        color: #fff;
       }
 
       font-family: Plus Jakarta Sans !important;
@@ -219,33 +200,6 @@
     }
     .dx-accordion-item-body {
       padding: 0 0 7px 0;
-
-      &.cfo {
-        ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
-          border-left: 2px solid #00b0f5;
-          background: var(--card-bg);
-        }
-      }
-      &.crm {
-        ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
-          border-left: 2px solid #4d3aa0;
-          background: var(--card-bg);
-        }
-      }
-
-      &.api {
-        ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
-          border-left: 2px solid #107500;
-          background: var(--card-bg);
-        }
-      }
-
-      &.admin {
-        ::ng-deep dx-menu .dx-menu-item-selected .dx-menu-item-content {
-          border-left: 2px solid #0051aa;
-          background: var(--card-bg);
-        }
-      }
     }
   }
 

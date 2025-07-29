@@ -27,8 +27,8 @@
 
     .home-button {
       padding: 4px 12px;
-      background-color: var(--warning-color);
-      color: var(--text-color);
+      background-color: var(--info-color);
+      color: #fff;
       border-radius: 4px;
     }
 
@@ -55,7 +55,7 @@
     width: 341px;
     height: calc(~'100vh - 215px');
     border-right: 1px solid var(--border-color);
-    background-color: var(--card-bg);
+    background-color: var(--navbar-bg);
 
     float: right;
     transition: transform 0.3s ease, opacity 0.3s ease;
@@ -115,15 +115,15 @@
       display: flex;
       align-items: center;
       padding: 12px;
-      border-radius: 4px;
+      border-radius: 10px;
       cursor: pointer;
 
       &:hover {
-        background-color: var(--button-hover-bg);
-        color: var(--text-color);
+        background-color: var(--card-bg);
+        color: var(--menu-text-color);
 
         img {
-          filter: brightness(0) invert(1);
+          filter: brightness(1) invert(0);
         }
       }
 
@@ -148,7 +148,6 @@
           display: none;
           position: absolute;
           border-radius: 50%;
-          line-height: 25px;
           font-weight: 300;
           text-align: center;
           font-size: 25px;
@@ -162,7 +161,9 @@
         }
 
         &:hover .add-button {
-          display: block;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         &.intro-link {

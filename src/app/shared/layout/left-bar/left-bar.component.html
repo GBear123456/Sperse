@@ -1,16 +1,16 @@
 <div class="total-wrapper">
-  <div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
   <a
     routerLink="/app/crm/{{
       appService.isHostTenant ? 'dashboard' : layoutService.getWelcomePageUri()
     }}"
-    class="top-home"
-    [ngClass]="{ 'top-home-dark': isDarkTheme }"
+    class="top-home-dark"
     (click)="updateSelectedItem()"
     (mouseover)="showPlatformSelect()"
   >
+    <span class="home-text">Home</span>
     <platform-select></platform-select>
   </a>
+  <div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
   <div class="accordion-wrapper" *ngIf="selectedModuleIndex != undefined">
     <dx-accordion
       [(selectedIndex)]="selectedModuleIndex"

@@ -1,7 +1,7 @@
 :host {
   width: 100%;
   min-height: 330px;
-  background-color: var(--background-color);
+  background-color: var(--sidebar-bg);
   position: relative;
   padding-top: 30px;
   display: block;
@@ -204,5 +204,9 @@
         display: none !important;
       }
     }
+  }
+
+  ::ng-deep .dx-texteditor-input {
+    background-color: var(--sidebar-bg) !important;
   }
 }
