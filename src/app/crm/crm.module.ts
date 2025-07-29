@@ -46,6 +46,7 @@ import { FileUploadModule } from 'ng2-file-upload';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { CKEditorModule } from 'ckeditor4-angular';
 
+
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
@@ -116,9 +117,7 @@ import { EditTenantModule } from '@app/admin/tenants/edit-tenant-modal/edit-tena
 import { AddCouponDialogComponent } from './coupons/add-coupon-dialog/add-coupon-dialog.component';
 import { TenantReportsComponent } from './tenant-reports/tenant-reports.component';
 import { CrmContactGroupGuard } from './crm-contact-group-guard';
-import { ZapierModule } from '@shared/common/zapier/zapier.module';
-
-import {CreateMailTemplateModalComponent} from './shared/create-mail-template-modal/create-mail-template-modal.component'
+import { ZapierModule } from '@shared/common/zapier/zapier.module';import {CreateMailTemplateModalComponent} from './shared/create-mail-template-modal/create-mail-template-modal.component'
 
 @NgModule({
     imports: [
@@ -226,6 +225,7 @@ import {CreateMailTemplateModalComponent} from './shared/create-mail-template-mo
         EditTypeItemDialogComponent,
         TenantReportsComponent,
         CreateMailTemplateModalComponent
+
     ],
     providers: [
         ImportServiceProxy,

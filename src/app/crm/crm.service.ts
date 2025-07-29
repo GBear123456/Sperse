@@ -10,6 +10,7 @@ import { map, publishReplay, refCount, startWith, switchMap } from 'rxjs/operato
 import flatten from 'lodash/flatten';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
+
 /** Application imports */
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
@@ -316,14 +317,13 @@ export class CrmService {
         }
         return filterChanged;
     }
-    openDialog(data: { title: string; message: string }): CreateMailTemplateModalComponent {
+    openDialog(): CreateMailTemplateModalComponent {
         const dialogRef = this.dialog.open(CreateMailTemplateModalComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data
         }).componentInstance;
     
         return dialogRef;
       }
-}
+    }

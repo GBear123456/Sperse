@@ -5,8 +5,9 @@ import { IDialogButton } from "@shared/common/dialogs/modal/dialog-button.interf
 import { AppLocalizationService } from "@app/shared/common/localization/app-localization.service";
 import { prompts } from "../email-template-dialog/prompts";
 import { DxValidatorComponent } from "devextreme-angular/ui/validator";
-import { FeatureCheckerService } from 'abp-ng2-module';
-import { AppFeatures } from '@shared/AppFeatures';
+import { FeatureCheckerService } from "abp-ng2-module";
+import { AppFeatures } from "@shared/AppFeatures";
+import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 
 @Component({
     selector: "create-mail-template-modal-dialog",
@@ -17,7 +18,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     @Input() editorHeight;
-    public editorData = "<p>This is Template1</p>"
+    public editorData = "<p>This is Template1</p>";
     buttons: IDialogButton[];
     showAIPrompt = false;
     propmtTooltipVisible = false;
@@ -31,9 +32,9 @@ export class CreateMailTemplateModalComponent implements OnInit {
     ckConfig: any = {
         versionCheck: false,
         height: 500,
-        enterMode: 3, /* CKEDITOR.ENTER_DIV */
+        enterMode: 3 /* CKEDITOR.ENTER_DIV */,
         pasteFilter: null,
-        toolbarLocation: 'bottom',
+        toolbarLocation: "bottom",
         allowedContent: true,
         toolbarCanCollapse: true,
         startupShowBorders: false,
@@ -41,22 +42,80 @@ export class CreateMailTemplateModalComponent implements OnInit {
         stylesSet: [],
         contentsCss: [],
         toolbar: [
-            { name: 'document', items: ['Templates', '-', 'ExportPdf', 'Print'] }, // Removed 'Preview'
-            { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo'] },
-            { name: 'editing', items: ['Find', 'Replace', '-', 'Scayt'] },
-            '/',
-            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strikethrough', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat'] },
-            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
-            '/',
-            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'Mathjax'] },
-            { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
-            { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
-            { name: 'colors', items: ['TextColor', 'BGColor'] },
-            { name: 'tools', items: ['Maximize', 'ShowBlocks'] }
+            {
+                name: "document",
+                items: ["Templates", "-", "ExportPdf", "Print"],
+            }, // Removed 'Preview'
+            {
+                name: "clipboard",
+                items: [
+                    "Cut",
+                    "Copy",
+                    "Paste",
+                    "PasteText",
+                    "PasteFromWord",
+                    "-",
+                    "Undo",
+                    "Redo",
+                ],
+            },
+            { name: "editing", items: ["Find", "Replace", "-", "Scayt"] },
+            "/",
+            {
+                name: "basicstyles",
+                items: [
+                    "Bold",
+                    "Italic",
+                    "Underline",
+                    "Strikethrough",
+                    "Subscript",
+                    "Superscript",
+                    "-",
+                    "CopyFormatting",
+                    "RemoveFormat",
+                ],
+            },
+            {
+                name: "paragraph",
+                items: [
+                    "NumberedList",
+                    "BulletedList",
+                    "-",
+                    "Outdent",
+                    "Indent",
+                    "-",
+                    "Blockquote",
+                    "CreateDiv",
+                    "-",
+                    "JustifyLeft",
+                    "JustifyCenter",
+                    "JustifyRight",
+                    "JustifyBlock",
+                ],
+            },
+            "/",
+            {
+                name: "insert",
+                items: [
+                    "Image",
+                    "Table",
+                    "HorizontalRule",
+                    "Smiley",
+                    "SpecialChar",
+                    "PageBreak",
+                    "Iframe",
+                    "Mathjax",
+                ],
+            },
+            { name: "links", items: ["Link", "Unlink", "Anchor"] },
+            { name: "styles", items: ["Styles", "Format", "Font", "FontSize"] },
+            { name: "colors", items: ["TextColor", "BGColor"] },
+            { name: "tools", items: ["Maximize", "ShowBlocks"] },
         ],
-        removePlugins: 'elementspath',
-        extraPlugins: 'preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting',
-        skin: 'moono-lisa' // kama, moono, moono-lisa
+        removePlugins: "elementspath",
+        extraPlugins:
+            "preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting",
+        skin: "moono-lisa", // kama, moono, moono-lisa
     };
     editorContent: string = `<p>Consectetur adipiscing elit, <strong>sed do eiusmod</strong> tempor incididunt ut labore et dolore.</p>
   <ul class="styled-list">
@@ -97,8 +156,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
         public dialogRef: MatDialogRef<CreateMailTemplateModalComponent>,
         public ls: AppLocalizationService,
         private features: FeatureCheckerService,
-
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {}
 
     ngOnInit(): void {
@@ -175,10 +233,10 @@ export class CreateMailTemplateModalComponent implements OnInit {
         }
     }
     onReady(event: any) {
-        console.log('Editor is ready:', event);
-      }
-    
-      onChange(event: any) {
-        console.log('Editor content changed:', this.editorData);
-      }
+        console.log("Editor is ready:", event);
+    }
+
+    onChange(event: any) {
+        console.log("Editor content changed:", this.editorData);
+    }
 }

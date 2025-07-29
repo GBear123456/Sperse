@@ -1377,10 +1377,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     openModal(): void {
-        this.crmService.openDialog({
-            title: 'Unrelated Component Modal',
-            message: 'This modal was opened from an unrelated component!'
-            })
+        this.crmService.openDialog()
     }
 
     // toggle placeholder text
