@@ -123,11 +123,16 @@
                                     height="40px"
                                     placeholder=""
                                     [(value)]="data.emailSettingsSource"
+                                    placeholder=""
+                                    [(value)]="data.emailSettingsSource"
                                     valueExpr="emailSettingsSource"
+                                    displayExpr="emailAddress"
                                     displayExpr="emailAddress"
                                     [dataSource]="fromDataSource"
                                     itemTemplate="itemTemplate"
+                                    itemTemplate="itemTemplate"
                                     fieldTemplate="fieldTemplate"
+                                    [disabled]="templateEditMode"
                                     [disabled]="templateEditMode"
                                     (onValueChanged)="onFromChanged($event)">
                                     <div *dxTemplate="let item of 'itemTemplate'" class="from-item-select-box" [title]="item?.emailAddress">
@@ -413,6 +418,7 @@
                 <div class="prompt-header d-flex justify-content-between align-items-center"
                     style="margin-bottom: 20px;">
                     <h5 class="your-prompt-title">
+                        <img src="./assets/common/icons/AI.png" class="img" />
                         <img src="./assets/common/icons/AI.png" class="img" />
                         Your AI Prompt
                     </h5>
