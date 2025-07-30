@@ -317,11 +317,14 @@ export class CrmService {
         }
         return filterChanged;
     }
-    openDialog(): CreateMailTemplateModalComponent {
+    openDialog(id?: number): CreateMailTemplateModalComponent {
         const dialogRef = this.dialog.open(CreateMailTemplateModalComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
+            data: {
+                id: id? id: undefined
+            }
         }).componentInstance;
     
         return dialogRef;

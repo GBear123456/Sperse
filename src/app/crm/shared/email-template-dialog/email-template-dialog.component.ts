@@ -776,7 +776,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         }
     }
 
-    loadTemplateById(templateId) {
+    loadTemplateById(templateId: number) {
         if (!this.templateEditMode)
             return;
 
@@ -798,7 +798,11 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.templateLoaded = true;
         });
     }
-
+    viewDetailTemplate(event, id: number) {
+        console.log({id})
+        this.templateEditMode=true;
+        this.loadTemplateById(id)
+    }
     updateTemplateAttachments(templateAttachments: Attachment[]) {
         this.removeTemplateAttachments();
 
@@ -1100,8 +1104,9 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.onTemplateCreate.emit();
     }
 
-    editTemplate(data: EmailTemplateData) {
-        this.onTemplateCreate.emit(data.templateId);
+    editTemplate(id: number) {
+        this.crmService.openDialog(id)
+        
     }
 
     
