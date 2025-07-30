@@ -1,14 +1,7 @@
 <div class="total-wrapper">
-  <a
-    routerLink="/app/crm/{{
-      appService.isHostTenant ? 'dashboard' : layoutService.getWelcomePageUri()
-    }}"
-    class="top-home-dark"
-    (click)="updateSelectedItem()"
-    (mouseover)="showPlatformSelect()"
-  >
-    <span class="home-text">Home</span>
+  <a class="top-home-dark" (click)="onHomeClick($event)" (mouseover)="showPlatformSelect()">
     <platform-select></platform-select>
+    <span class="home-text">Home</span>
   </a>
   <div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
   <div class="accordion-wrapper" *ngIf="selectedModuleIndex != undefined">

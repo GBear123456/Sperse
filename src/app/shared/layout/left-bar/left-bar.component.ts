@@ -182,7 +182,18 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.changeDetectorRef.detectChanges();
   }
 
+  // Alternative method if you want to handle navigation manually:
+  onHomeClick(event: Event) {
+    event.preventDefault();
+    this.updateSelectedItem();
+    this.router.navigate([
+      '/app/crm',
+      this.appService.isHostTenant ? 'start' : this.layoutService.getWelcomePageUri(),
+    ]);
+  }
+
   updateSelectedItem() {
+    // Navigate to /app/crm/start
     let module = this.moduleItems[this.selectedModuleIndex];
     if (module && module.items.length) {
       let route = this.router.url.split('?').shift();
