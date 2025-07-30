@@ -8,7 +8,7 @@ export interface CreateEmailTemplateData {
     previewText: string;
     body: string;
     subject: string;
-    type: EmailTemplateType;
+    type?: EmailTemplateType;
     id?: number | null;
     cc: string[] | undefined;
     bcc: string[] | undefined;

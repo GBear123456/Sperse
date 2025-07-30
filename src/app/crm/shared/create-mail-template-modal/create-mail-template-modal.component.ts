@@ -8,7 +8,7 @@ import {
     Output,
     EventEmitter,
     ElementRef,
-    ChangeDetectorRef
+    ChangeDetectorRef,
 } from "@angular/core";
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -25,12 +25,15 @@ import { prompts } from "../email-template-dialog/prompts";
 import { AppLocalizationService } from "@app/shared/common/localization/app-localization.service";
 import { IDialogButton } from "@shared/common/dialogs/modal/dialog-button.interface";
 import { CreateEmailTemplateData } from "./create-mail-template-data.interface";
+
 import {
     EmailTemplateServiceProxy,
     CreateEmailTemplateRequest,
     UpdateEmailTemplateRequest,
     FileInfo,
     EmailTemplateType,
+    GetTemplateReponse
+
 } from "@shared/service-proxies/service-proxies";
 
 @Component({
@@ -49,11 +52,12 @@ export class CreateMailTemplateModalComponent implements OnInit {
     @Output() onSave: EventEmitter<CreateEmailTemplateData> =
         new EventEmitter<CreateEmailTemplateData>();
 
-        aiModels: any[] = [];
+    aiModels: any[] = [];
     processing = false;
+    templateLoaded = false;
     selectedPromptGroupIndex: number = 0;
     selectedPromptItemIndex: number = 0;
-    public editorData: string = "<p>This is Template1</p>";
+    editorData: string = "<p>This is Template1</p>";
     editorError: string | null = null;
     templateEditMode: boolean = false;
     buttons: IDialogButton[];
@@ -154,41 +158,8 @@ export class CreateMailTemplateModalComponent implements OnInit {
             "preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting",
         skin: "moono-lisa", // kama, moono, moono-lisa
     };
-    editorContent: string = `<p>Consectetur adipiscing elit, <strong>sed do eiusmod</strong> tempor incididunt ut labore et dolore.</p>
-  <ul class="styled-list">
-      <li>
-          <strong>Customer Name and Business:</strong>
-          <div class="list-content">John Doe, <br> ABC Enterprises Inc.</div>
-      </li>
-      <li>
-          <strong>Purpose of the email:</strong>
-          <div class="list-content">Request for a product quotation and availability confirmation for upcoming projects.</div>
-      </li>
-      <li>
-          <strong>Prior communications:</strong>
-          <div class="list-content">Follow-up on the meeting held on October 5th regarding the new partnership opportunities.</div>
-      </li>
-      <li>
-          <strong>Tone of the email:</strong>
-          <div class="list-content">Professional, courteous, and concise with an emphasis on collaboration.</div>
-      </li>
-      <li>
-          <strong>Styling Preferences:</strong>
-          <div class="list-content">Use a formal business format with a clean, minimal design, and company branding colors.</div>
-      </li>
-      <li>
-          <strong>Specific details to include:</strong>
-          <div class="list-content">Deadline for the response, contact person details, and required specifications of the product.</div>
-      </li>
-  </ul>
-  <div class="email-instructions">
-  <span><strong>The email must include:</strong></span>
-  <ol>
-      <li class="list-content pb-2">A clear subject line indicating the purpose of the email</li>
-      <li class="list-content pb-2">A brief introduction and context for the communication</li>
-      <li class="list-content pb-2">A call to action with a specific deadline for the response</li>
-  </ol>
-  </div>`;
+    
+    data: CreateEmailTemplateData;
     constructor(
         public dialogRef: MatDialogRef<CreateMailTemplateModalComponent>,
         public ls: AppLocalizationService,
@@ -197,95 +168,95 @@ export class CreateMailTemplateModalComponent implements OnInit {
         private emailTemplateProxy: EmailTemplateServiceProxy,
         public changeDetectorRef: ChangeDetectorRef,
 
-
-        @Inject(MAT_DIALOG_DATA) public data: CreateEmailTemplateData
+        @Inject(MAT_DIALOG_DATA) public params: { id?: number }
     ) {
         this.data = this.data || {
             title: "",
             previewText: "",
             subject: "",
             body: "",
-            type: EmailTemplateType.Invoice,
+            type: EmailTemplateType.Contact,
             cc: undefined,
             bcc: undefined,
             attachments: undefined,
         };
+
+        if(this.params.id) {
+            this.loadTemplate(this.data.id)
+        } else {
+            this.resetForm()
+        }
     }
 
     ngOnInit(): void {
         this.initDialogButtons();
         this.aiModels = [
             {
-                id: '1',
-                name: 'GPT-4o',
+                id: "1",
+                name: "GPT-4o",
                 icon: `openai.png`,
                 enabled: true,
-                model: 'gpt-4o'
+                model: "gpt-4o",
             },
             {
-                id: '2',
-                name: 'GPT-4 Mini',
+                id: "2",
+                name: "GPT-4 Mini",
                 icon: `openai.png`,
                 enabled: true,
-                model: 'gpt-4-mini'
+                model: "gpt-4-mini",
             },
             {
-                id: '3',
-                name: 'GPT-4 Turbo',
+                id: "3",
+                name: "GPT-4 Turbo",
                 icon: `openai.png`,
                 enabled: true,
-                model: 'gpt-4-turbo'
+                model: "gpt-4-turbo",
             },
             {
-                id: '5',
-                name: 'GPT-4',
+                id: "5",
+                name: "GPT-4",
                 icon: `openai.png`,
                 enabled: true,
-                model: 'gpt-4'
+                model: "gpt-4",
             },
             {
-                id: '6',
-                name: 'Claude 3.5 Sonnet',
+                id: "6",
+                name: "Claude 3.5 Sonnet",
                 icon: `claude.png`,
                 enabled: false,
-                model: 'claude-3.5-sonnet-20240620'
+                model: "claude-3.5-sonnet-20240620",
             },
             {
-                id: '7',
-                name: 'Claude 3 Opus',
+                id: "7",
+                name: "Claude 3 Opus",
                 icon: `claude.png`,
                 enabled: false,
-                model: 'claude-3-opus-20240229'
+                model: "claude-3-opus-20240229",
             },
             {
-                id: '8',
-                name: 'Claude 3 Haiku',
+                id: "8",
+                name: "Claude 3 Haiku",
                 icon: `claude.png`,
                 enabled: false,
-                model: 'claude-3-haiku-20240307'
+                model: "claude-3-haiku-20240307",
             },
             {
-                id: '9',
-                name: 'Gemini 1.5 Pro',
+                id: "9",
+                name: "Gemini 1.5 Pro",
                 icon: `gemini.png`,
                 enabled: false,
-                model: 'gemini-1.5-pro-latest'
+                model: "gemini-1.5-pro-latest",
             },
             {
-                id: '10',
-                name: 'Gemini 1.5 Flash',
+                id: "10",
+                name: "Gemini 1.5 Flash",
                 icon: `gemini.png`,
                 enabled: false,
-                model: 'gemini-1.5-flash-latest'
+                model: "gemini-1.5-flash-latest",
             },
         ];
-        // var defaultHeight = 595;
-        // if (innerHeight > 1110) {
-        //     defaultHeight = 450;
-        // }
-
-        // this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
-        //     (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 244 : defaultHeight) + 'px';
+    
+        this.ckConfig.height = 595
     }
 
     onClose(): void {
@@ -302,6 +273,28 @@ export class CreateMailTemplateModalComponent implements OnInit {
             },
         ];
     }
+
+    loadTemplate(id: number) {
+        this.startLoading();
+        this.emailTemplateProxy.getTemplate(id).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe((res: GetTemplateReponse) => {
+            this.data.bcc = res.bcc;
+            this.data.body = res.body;
+            this.data.cc = res.cc;
+            this.data.subject = res.subject;
+            this.data.previewText = res.previewText;
+            this.invalidate();
+            this.templateLoaded = true;
+        });
+    }
+    
+
+    updateDataLength() {}
+
+    invalidate() {}
+
+    // AI prompt functions
     toggleAIPrompt() {
         this.showAIPrompt = !this.showAIPrompt;
     }
@@ -313,24 +306,19 @@ export class CreateMailTemplateModalComponent implements OnInit {
     closeAIOptionDiv() {
         this.showAIOption = false;
     }
-
-    updateDataLength() {}
-
-    invalidate() {}
-
-    
-    // AI prompt functions
     selectedAIItem(item: any): void {
         this.selectedItemId = item.itemData.id;
         this.dataRecord.modelId = item.itemData.id;
         this.aiTooltipVisible = false;
     }
     updateButtons() {
-        this.buttons = this.buttons.map(button => {
-            if (button.id === 'genrateAIOptions') {
+        this.buttons = this.buttons.map((button) => {
+            if (button.id === "genrateAIOptions") {
                 return {
                     ...button,
-                    title: this.processing ? this.ls.l('Generating...') : this.ls.l("Write with AI")
+                    title: this.processing
+                        ? this.ls.l("Generating...")
+                        : this.ls.l("Write with AI"),
                 };
             }
             return button;
@@ -344,51 +332,69 @@ export class CreateMailTemplateModalComponent implements OnInit {
         this.processing = true;
         this.updateButtons();
 
-        const prompt = this.groupedPromptLibrary[this.selectedPromptGroupIndex]?.prompts[this.selectedPromptItemIndex]?.prompt;
-        const model = this.aiModels.find((item: any) => item.id == this.selectedItemId)?.model ?? 'gpt-3.5-turbo';
+        const prompt =
+            this.groupedPromptLibrary[this.selectedPromptGroupIndex]?.prompts[
+                this.selectedPromptItemIndex
+            ]?.prompt;
+        const model =
+            this.aiModels.find((item: any) => item.id == this.selectedItemId)
+                ?.model ?? "gpt-3.5-turbo";
 
         const payload = {
             model,
             prompt,
-            system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
+            system: "You are an expert email marketer. Your task is to create compelling email content based on user input.",
         };
 
-        fetch('/.netlify/functions/openai', {
-            method: 'POST',
+        fetch("/.netlify/functions/openai", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json",
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('ChatGPT Response:', data);
-            this.invalidate();
-            this.processing = false;
-            
-            const gptResponse = data.response;
-            const responseData = this.extractContent(gptResponse);
-            this.data.subject = responseData.subject;
-            this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("ChatGPT Response:", data);
+                this.invalidate();
+                this.processing = false;
 
-            this.updateButtons();
-        })
-        .catch(error => {
-            this.processing = false;
-            console.error('Error calling ChatGPT Function:', error);
-            this.updateButtons();
-        });
+                const gptResponse = data.response;
+                const responseData = this.extractContent(gptResponse);
+                this.data.subject = responseData.subject;
+                this.data.body = this.formatEmailContent(
+                    responseData.body
+                ) as unknown as string;
+                this.editorData = this.formatEmailContent(
+                    responseData.body
+                ) as unknown as string;
+
+                this.updateButtons();
+            })
+            .catch((error) => {
+                this.processing = false;
+                console.error("Error calling ChatGPT Function:", error);
+                this.updateButtons();
+            });
     }
-    extractContent(content: any): { subject: string, body: string } {
+    extractContent(content: any): { subject: string; body: string } {
         const subjectMatch = content.match(/^Subject: (.*?)(?:\n\n|$)/);
-        const subject = subjectMatch ? subjectMatch[1] : '';
-        const body = content.replace(/^Subject: .*?\n\n/, '');
+        const subject = subjectMatch ? subjectMatch[1] : "";
+        const body = content.replace(/^Subject: .*?\n\n/, "");
         return { subject, body };
     }
     formatEmailContent(response: string): string {
-        const formattedResponse = response.replace(/\n/g, '</br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        const updateHtmlRes = formattedResponse.replace(/^```html/, '').replace(/^```/, '').replace(/```$/, '');
-        return updateHtmlRes.toString().replace('SafeValue must use [property]=binding', '').replace(/<div[^>]*>(\s|&nbsp;)*<\/div>/g, '');
+        const formattedResponse = response
+            .replace(/\n/g, "</br>")
+            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        const updateHtmlRes = formattedResponse
+            .replace(/^```html/, "")
+            .replace(/^```/, "")
+            .replace(/```$/, "");
+        return updateHtmlRes
+            .toString()
+            .replace("SafeValue must use [property]=binding", "")
+            .replace(/<div[^>]*>(\s|&nbsp;)*<\/div>/g, "");
     }
 
     previewInputFocusOut(event, checkDisplay?) {
@@ -402,7 +408,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
     // ckeditor
     onContentChange(event: any) {
-        this.editorContent = event.target.innerHTML;
+        this.editorData = event.target.innerHTML;
         this.invalidate();
     }
 
@@ -410,7 +416,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
         event.preventDefault();
         const pasteContent = event.clipboardData?.getData("text/plain");
         document.execCommand("insertText", false, pasteContent);
-        this.editorContent = (event.target as HTMLElement).innerText;
+        this.editorData = (event.target as HTMLElement).innerText;
         this.invalidate();
     }
     onReady(event: any) {
@@ -418,13 +424,13 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
 
     onChange(event: any) {
-        this.data.body = this.editorContent;
+        this.data.body = this.editorData;
         console.log("Editor content changed:", this.editorData);
     }
     // save && edit template data
     saveTemplate() {
         console.log("save button clicked");
-        this.data.body = this.editorContent;
+        this.data.body = this.editorData;
 
         const isValid = this.validateData();
         if (isValid) {
@@ -489,7 +495,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
         request$.pipe(finalize(() => this.finishLoading())).subscribe({
             next: (response: any) => {
-                // Handle response (response could be a number or an object with an ID)
                 let id: number;
                 if (typeof response === "number") {
                     id = response;
@@ -510,7 +515,8 @@ export class CreateMailTemplateModalComponent implements OnInit {
                 //     })) || [];
 
                 this.onSave.emit(this.data);
-                this.close();
+                // this.close();
+                this.dialogRef.close(this.data);
                 this.notifyService.success(this.ls.l("SuccessfullySaved"));
                 this.resetForm();
             },
@@ -553,7 +559,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
             subject: "",
             body: "",
             id: null,
-            type: EmailTemplateType.Invoice,
+            type: EmailTemplateType.Contact,
             attachments: [],
             cc: [],
             bcc: [],
