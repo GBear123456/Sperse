@@ -11,11 +11,12 @@
                     <span class="icon">
                         <img src="assets/common/icons/group.png">
                     </span>
-                    <span class="email-sub-txt"> New Email</span>
+                    <span class="email-sub-txt"> {{title}}</span>
                 </div>
                 <div class="header-content">
                     {{data.subject}}
                 </div>
+
             </div>
             <div class="right">
                 <div class="actions">
@@ -349,8 +350,8 @@
                                     >
                                     
                                     </dx-text-box>
-                                    <div *ngFor="let template of templates$ | async; let templateIndex = index" class="template-item">
-                                        <h5 (click)="viewDetailTemplate($event, template.id)">
+                                    <div *ngFor="let template of templates$ | async; let templateIndex = index" class="template-item" [class.active]="template.id === curTemplateId">
+                                        <h5 (click)="viewDetailTemplate($event, template)">
                                             {{template.name}}
                                         </h5>
                                         <!-- <span>
@@ -377,16 +378,41 @@
                                     </div>
                                 </div>
                                 <div class="col-md-9 template-detail-preview">
-                                    <div class="text-center"><h5>Subject: {{data.subject}}</h5></div>
-                                    <span>Preview Text: {{data.previewText}}</span>
-                                    <div [innerHTML]="data.body">
-                                       
+                                    <div class="template-preview-item" style="display:flex; justify-content: space-between;">
+                                        <div class="d-flex">
+                                            <label class="label">Title: </label>  
+                                            <h5> {{ curTemplateTitle }}</h5>
+                                        </div>
+                                        <dx-button
+                                        stylingMode="outlined"
+                                        text="Compose mail with this template"
+                                        type="normal"
+                                        [disabled]="templateData.subject == ''"
+                                        (click)="setTemplate()"
+                                        class="set-template-btn"
+                                        >
+                                        </dx-button>
                                     </div>
+                                    <div class="template-preview-item"> 
+                                        <label class="label">
+                                            Subject:
+                                        </label> 
+                                        <h6> {{templateData.subject}}</h6></div>
+                                    <div class="template-preview-item">
+                                        <label class="label">
+                                            Preview Text:
+                                        </label>
+                                        <h6>{{templateData.previewText}}</h6> 
+                                    </div>
+                                    <div class="template-preview-content">
+                                        <ckeditor *ngIf="ckConfig.height && templateLoaded" [config]="ckConfig" [(data)]="templateData.body"
+                                        ></ckeditor>
+                                    </div>
+                                    
                                 </div>
 
                             </div>
                         </div>
-
                     </dx-validation-group>
                 </dx-scroll-view>
             </div>

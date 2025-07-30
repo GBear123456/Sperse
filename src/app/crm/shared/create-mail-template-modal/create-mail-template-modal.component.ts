@@ -32,8 +32,7 @@ import {
     UpdateEmailTemplateRequest,
     FileInfo,
     EmailTemplateType,
-    GetTemplateReponse
-
+    GetTemplateReponse,
 } from "@shared/service-proxies/service-proxies";
 
 @Component({
@@ -41,6 +40,7 @@ import {
     templateUrl: "./create-mail-template-modal.component.html",
     styleUrls: ["./create-mail-template-modal.component.less"],
 })
+
 export class CreateMailTemplateModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
@@ -51,7 +51,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
     @Output() onSave: EventEmitter<CreateEmailTemplateData> =
         new EventEmitter<CreateEmailTemplateData>();
-
+    modalTitle: string = "Create New Email Template";
     aiModels: any[] = [];
     processing = false;
     templateLoaded = false;
@@ -158,7 +158,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
             "preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting",
         skin: "moono-lisa", // kama, moono, moono-lisa
     };
-    
+
     data: CreateEmailTemplateData;
     constructor(
         public dialogRef: MatDialogRef<CreateMailTemplateModalComponent>,
@@ -180,16 +180,19 @@ export class CreateMailTemplateModalComponent implements OnInit {
             bcc: undefined,
             attachments: undefined,
         };
-
-        if(this.params.id) {
-            this.loadTemplate(this.data.id)
+        if (this.params.id) {
+            this.loadTemplate(this.params.id);
+            this.templateEditMode = true;
         } else {
-            this.resetForm()
+            this.resetForm();
         }
     }
 
     ngOnInit(): void {
         this.initDialogButtons();
+        this.params.id
+            ? (this.modalTitle = "Edit Email Template")
+            : "Create New Email Template";
         this.aiModels = [
             {
                 id: "1",
@@ -255,8 +258,8 @@ export class CreateMailTemplateModalComponent implements OnInit {
                 model: "gemini-1.5-flash-latest",
             },
         ];
-    
-        this.ckConfig.height = 595
+
+        this.ckConfig.height = 595;
     }
 
     onClose(): void {
@@ -276,19 +279,21 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
     loadTemplate(id: number) {
         this.startLoading();
-        this.emailTemplateProxy.getTemplate(id).pipe(
-            finalize(() => this.finishLoading())
-        ).subscribe((res: GetTemplateReponse) => {
-            this.data.bcc = res.bcc;
-            this.data.body = res.body;
-            this.data.cc = res.cc;
-            this.data.subject = res.subject;
-            this.data.previewText = res.previewText;
-            this.invalidate();
-            this.templateLoaded = true;
-        });
+        this.emailTemplateProxy
+            .getTemplate(id)
+            .pipe(finalize(() => this.finishLoading()))
+            .subscribe((res: GetTemplateReponse) => {
+                this.data.bcc = res.bcc;
+                this.data.body = res.body;
+                this.data.cc = res.cc;
+                this.data.subject = res.subject;
+                this.data.previewText = res.previewText;
+                this.data.title = res.name;
+                this.invalidate();
+                this.templateLoaded = true;
+                this.editorData = res.body;
+            });
     }
-    
 
     updateDataLength() {}
 
@@ -470,9 +475,8 @@ export class CreateMailTemplateModalComponent implements OnInit {
         //     ) || [];
 
         // Prepare template data
-        const isUpdating = this.data.id;
         const templateData = {
-            id: isUpdating ? this.data.id : undefined,
+            id: this.templateEditMode ? this.params.id : undefined,
             name: this.data.title,
             type: this.data.type,
             subject: this.data.subject,
@@ -485,7 +489,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
         this.startLoading();
 
-        const request$: Observable<any> = isUpdating
+        const request$: Observable<any> = this.templateEditMode
             ? this.emailTemplateProxy.update(
                   new UpdateEmailTemplateRequest(templateData)
               )
@@ -495,14 +499,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
         request$.pipe(finalize(() => this.finishLoading())).subscribe({
             next: (response: any) => {
-                let id: number;
-                if (typeof response === "number") {
-                    id = response;
-                } else if (response && response.result) {
-                    id = response.result; // Handle ABP response format
-                } else {
-                    throw new Error("Unexpected response format");
-                }
+                console.log({ response });
 
                 // if (id) {
                 //     this.data.templateId = id;
@@ -515,7 +512,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
                 //     })) || [];
 
                 this.onSave.emit(this.data);
-                // this.close();
                 this.dialogRef.close(this.data);
                 this.notifyService.success(this.ls.l("SuccessfullySaved"));
                 this.resetForm();

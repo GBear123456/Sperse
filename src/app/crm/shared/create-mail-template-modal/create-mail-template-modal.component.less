@@ -105,6 +105,7 @@
     }
     .caption {
         font-size: 12px;
+        width: 100px
     }
 
     ::ng-deep .left-buttons {
@@ -1345,7 +1346,7 @@
     width: 100px;
 }
 :host ::ng-deep .cke_contents {
-    min-height: 500px !important;
+    min-height: calc(100vh - 415px) !important;
     max-height: 600px !important;
     overflow-y: auto;
 }
