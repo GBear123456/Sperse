@@ -78,7 +78,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild('contentEditableDiv') contentEditableDiv!: ElementRef<HTMLDivElement>;
     //@ViewChild('tagsButton') tagsButton: ElementRef;
     @ViewChild('aiButton') aiButton: ElementRef;
-
+    title: string ="New Email";
     ckEditor: any;
     envHost = environment;
     groupedPromptLibrary: any = prompts;
@@ -94,7 +94,12 @@ export class EmailTemplateDialogComponent implements OnInit {
     showPreview = false;
     showAIPrompt = false;
     propmtTooltipVisible = false;
-
+    curTemplateId: number | undefined
+    templateData = {
+        body: '',
+        subject: '',
+        previewText: ''
+    };
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
     @Input() tagsList = [];
@@ -125,6 +130,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     charCount: number;
     forceValidationBypass = true;
     emailRegEx = AppConsts.regexPatterns.email;
+    curTemplateTitle : string;
     @Input() templateType: EmailTemplateType;
 
     storeAttachmentsToDocumentsCacheKey = 'StoreAttachmentsToDocuments';
@@ -788,24 +794,38 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.emailTemplateProxy.getTemplate(templateId).pipe(
             finalize(() => this.finishLoading())
         ).subscribe((res: GetTemplateReponse) => {
-            this.data.bcc = res.bcc;
-            this.data.body = res.body;
-            this.data.cc = res.cc;
-            this.data.subject = res.subject;
-            this.data.previewText = res.previewText;
-            this.showCC = Boolean(res.cc && res.cc.length);
-            this.showBCC = Boolean(res.bcc && res.bcc.length);
-            this.updateTemplateAttachments(res.attachments);
+            if(this.showTemplate) {
+                this.templateData.body = res.body;
+                this.templateData.subject = res.subject;
+                this.templateData.previewText = res.previewText;
 
-            this.onTemplateChange.emit(templateId);
+            } else {
+                this.data.bcc = res.bcc;
+                this.data.body = res.body;
+                this.data.cc = res.cc;
+                this.data.subject = res.subject;
+                this.data.previewText = res.previewText;
+                this.showCC = Boolean(res.cc && res.cc.length);
+                this.showBCC = Boolean(res.bcc && res.bcc.length);
+                this.updateTemplateAttachments(res.attachments);
+                this.onTemplateChange.emit(templateId);
+            }
+
             this.invalidate();
             this.templateLoaded = true;
         });
     }
-    viewDetailTemplate(event, id: number) {
-        console.log({id})
-        this.templateEditMode=true;
-        this.loadTemplateById(id)
+    viewDetailTemplate(event,  data) {
+        this.templateEditMode = true;
+        this.curTemplateTitle = data.name;
+        this.curTemplateId = data.id;
+        this.loadTemplateById(data.id);
+    }
+    setTemplate() {
+        this.data.body = this.templateData.body;
+        this.data.subject = this.templateData.subject;
+        this.data.previewText = this.templateData.previewText;
+        this.showTabs('new-email')
     }
     updateTemplateAttachments(templateAttachments: Attachment[]) {
         this.removeTemplateAttachments();
@@ -1109,7 +1129,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.openCreateOrEditTemplate()
     }
 
-    editTemplate(id: number) :void {
+    editTemplate(event, id: number) :void {
         this.openCreateOrEditTemplate(id)
         
     }
@@ -1119,8 +1139,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         this._refresh.next();
         this.internalTemplateId = data.templateId;
     }
-    deleteTemplate(event, template, component) {
-        component.instance.option('opened', false);
+    deleteTemplate(event, template) {
+        // component.instance.option('opened', false);
         abp.message.confirm(this.ls.l('DeleteItemConfirmation', template.name), '', (isConfimed) => {
             if (isConfimed) {
                 this.startLoading();
@@ -1136,6 +1156,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                     });
             }
         });
+        
         event.stopPropagation();
         event.preventDefault();
     }
@@ -1339,12 +1360,16 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.showTemplate = false;
         if (tabName == 'new-email') {
             this.showNewEmailTab = true;
+            this.title= "New Email";
         }
         else if (tabName == 'html-editor') {
             this.showHtmlEditor = true;
+            this.title= "Html Editor";
+
         }
         else if (tabName == 'template') {
             this.showTemplate = true;
+            this.title = "Template"
         }
     }
 

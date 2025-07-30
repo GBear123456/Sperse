@@ -1136,7 +1136,7 @@
         }
 
         .tab {
-            padding: 4px 15px;
+            padding: 4px 12px;
             font-size: 13px;
             border: 1px solid #ecf3fa;
             cursor: pointer;
@@ -1149,6 +1149,7 @@
             height: 42px;
             border-radius: 10px 10px 0px 0px;
             color: #08295b;
+            width: 122px;
         }
 
         .tab svg {
@@ -1313,12 +1314,12 @@
 }
 
 .template-container {
-    padding-top: 26px;
     flex-direction: column;
 }
 .create-mail-template-btn {
     width: 100%;
     background: white;
+    height: 40px;
 }
 .template-header {
     padding-left: 15px;
@@ -1328,7 +1329,7 @@
 
 ::ng-deep .template-search-box {
     background: white;
-    border: 1px solid #ecf3fa;
+    border: 1px solid #c2c2c2;
     border-radius: 4px;
     max-width: 400px;
     width: 100%;
@@ -1354,18 +1355,30 @@
 }
 .template-item {
     background: white;
-    border: 1px solid #ecf3fa;
+    border: 1px solid #d8d8d8;
     border-radius: 4px;
     margin: 4px 0px;
     padding: 4px 8px;
+    height: 40px;
     cursor: pointer;
     position: relative;
-
+    display: flex;
+    align-items: center;
+    h5 {
+        margin-bottom: 0px !important;
+    }
     &:hover {
         h5 {
             color: #3e88fb;
         }
     }
+    &.active {
+        background: #99efc6;
+    }
+    &:hover {
+        background: #99efc6;
+    }
+
 }
 
 ::ng-deep .template-item-action-btns {
@@ -1385,10 +1398,34 @@
         }
     }
 }
-.template-detail-preview {
+::ng-deep .template-detail-preview {
     border-left: 1px solid #e2eaf2;
     padding-top: 15px;
     display: flex;
     flex-direction: column;
     height: 100%;
+    
+    .template-preview-content{
+        border: 1px solid #e2eaf2;
+        padding: 10px
+    }
+}
+.template-preview-item {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    label, h5, h6 {
+        margin-bottom: 0px !important;
+    }
+}
+
+.label {
+    width: 80px;
+}
+
+.set-template-btn {
+    border-radius: 6px;
+    background: #00ca6a;
+    color: white;
+    height: 40px;
 }
