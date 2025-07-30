@@ -91,14 +91,14 @@
                 </div>
                 <div class="flex-grow"></div>
                 <div class="button-group">
-                    <button md-button class="button-layout button-default" (click)="resetForm()">
+                    <button md-button class="button-layout temp-btn button-default" (click)="resetForm()">
                         {{ ls.l("Cancel") }}
                     </button>
                     <button
                         md-button
                         validationGroup="templateValidation"
                         (click)="saveTemplate()"
-                        class="button-layout button-primary"
+                        class="button-layout button-primary temp-btn"
                     >
                         {{ ls.l("Save") }}
                     </button>

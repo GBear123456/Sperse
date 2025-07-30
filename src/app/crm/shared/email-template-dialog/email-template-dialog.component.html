@@ -335,7 +335,7 @@
                                         stylingMode="outlined"
                                         text="+ Create New Template"
                                         type="normal"
-                                        (click)="openModal()"
+                                        (click)="createTemplate()"
                                         class="create-mail-template-btn"
                                     >
                                     </dx-button>
@@ -377,8 +377,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-9 template-detail-preview">
-                                    <div class="text-center"><h5>{{data.subject}}</h5></div>
-                                    <span>{{data.previewText}}</span>
+                                    <div class="text-center"><h5>Subject: {{data.subject}}</h5></div>
+                                    <span>Preview Text: {{data.previewText}}</span>
                                     <div [innerHTML]="data.body">
                                        
                                     </div>

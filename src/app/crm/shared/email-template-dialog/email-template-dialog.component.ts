@@ -55,7 +55,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { CrmService } from '@app/crm/crm.service';
-
+import { CreateMailTemplateModalComponent } from '@app/crm/shared/create-mail-template-modal/create-mail-template-modal.component';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { prompts } from './prompts';
 import * as monaco from 'monaco-editor';
@@ -227,19 +227,6 @@ export class EmailTemplateDialogComponent implements OnInit {
     get lineNumbers(): number[] {
         return Array.from({ length: this.data.body.split('\n').length }, (_, i) => i + 1);
     }
-
-
-
-    emailTemplates: {title: string, previewText: string}[] = [
-        {title: 'template1', previewText: "This is the preview Text1"},
-        {title: 'template2', previewText: "This is the preview Text1"},
-        {title: 'template3', previewText: "This is the preview Text1"},
-        {title: 'template4', previewText: "This is the preview Text1"},
-        {title: 'template5', previewText: "This is the preview Text1"},
-        {title: 'template6', previewText: "This is the preview Text1"},
-        {title: 'template7', previewText: "This is the preview Text1"},
-        {title: 'template8', previewText: "This is the preview Text1"},
-]
 
     constructor(
         private phonePipe: PhoneFormatPipe,
@@ -455,7 +442,24 @@ export class EmailTemplateDialogComponent implements OnInit {
     //     //  this.dataRecord.modelId = item.id;
     //     this.propmtTooltipVisible = false;
     // }
+    openCreateOrEditTemplate(id?: number): void {
+        const dialogRef = this.dialog.open(CreateMailTemplateModalComponent, {
+            data: { id },
+            panelClass: ['slider'], 
+            hasBackdrop: true,
+            closeOnNavigation: true
+        });
 
+        
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('Modal closed with result:', result);
+            if (result) {
+                
+                this.refresh();
+                this.notifyService.success(this.ls.l('TemplateListUpdated'));
+            }
+        });
+    }
     initFromField() {
         let storageKey = 'SupportedFrom' + this.sessionService.userId,
             supportedFrom: any = sessionStorage.getItem(storageKey);
@@ -1101,11 +1105,12 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     createTemplate() {
-        this.onTemplateCreate.emit();
+        // this.onTemplateCreate.emit();
+        this.openCreateOrEditTemplate()
     }
 
-    editTemplate(id: number) {
-        this.crmService.openDialog(id)
+    editTemplate(id: number) :void {
+        this.openCreateOrEditTemplate(id)
         
     }
 
