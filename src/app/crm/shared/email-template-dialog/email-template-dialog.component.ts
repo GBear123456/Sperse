@@ -6,7 +6,7 @@ import {
 import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { finalize, startWith, switchMap } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxValidationGroupComponent } from 'devextreme-angular';
@@ -125,6 +125,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         startWith(null),
         switchMap(() => this.emailTemplateProxy.getTemplates(this.data.templateType))
     );
+    filteredTemplates$: BehaviorSubject<GetTemplatesResponse[]> = new BehaviorSubject<GetTemplatesResponse[]>([]);
+    searchTerm: string = ''
     attachments: Partial<EmailAttachment>[] = this.data.attachments || [];
     uniqId = Math.random().toString().slice(-7);
     charCount: number;
@@ -263,6 +265,17 @@ export class EmailTemplateDialogComponent implements OnInit {
         });
 
         data.saveAttachmentsToDocuments = this.getAttachmentsToDocumentsCache();
+        this.templates$ = this.refresh$.pipe(
+            startWith(null),
+            switchMap(() => this.emailTemplateProxy.getTemplates(this.data.templateType))
+        );
+
+        // Subscribe to templates$ to initialize filteredTemplates$
+        this.templates$.subscribe(templates => {
+            this.filteredTemplates$.next(templates);
+        });
+
+
     }
 
     ngOnInit() {
@@ -1423,5 +1436,17 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
     onFocusOut () {
         this.placeholderText = "Search templates";
+    }
+
+    onSearchChange(event: any) {
+        const searchValue = event.value?.toLowerCase() || '';
+        this.searchTerm = searchValue;
+        
+        this.templates$.subscribe(templates => {
+            const filtered = templates.filter(template => 
+                template.name.toLowerCase().includes(searchValue) || false)
+            
+            this.filteredTemplates$.next(filtered);
+        });
     }
 }
