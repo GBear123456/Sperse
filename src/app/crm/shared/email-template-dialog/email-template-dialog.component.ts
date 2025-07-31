@@ -98,7 +98,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     templateData = {
         body: '',
         subject: '',
-        previewText: ''
+        previewText: '',
+        attachments: []
     };
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
@@ -270,7 +271,6 @@ export class EmailTemplateDialogComponent implements OnInit {
             switchMap(() => this.emailTemplateProxy.getTemplates(this.data.templateType))
         );
 
-        // Subscribe to templates$ to initialize filteredTemplates$
         this.templates$.subscribe(templates => {
             this.filteredTemplates$.next(templates);
         });
@@ -463,7 +463,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     // }
     openCreateOrEditTemplate(id?: number): void {
         const dialogRef = this.dialog.open(CreateMailTemplateModalComponent, {
-            data: { id },
+            data: { id, contact: this.data.contact },
             panelClass: ['slider'], 
             hasBackdrop: true,
             closeOnNavigation: true
@@ -473,6 +473,11 @@ export class EmailTemplateDialogComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             console.log('Modal closed with result:', result);
             if (result) {
+                this.templateData.body = result.body;
+                this.templateData.attachments= result.attachment;
+                this.templateData.previewText = result.previewText;
+                this.templateData.subject = result.subject;
+                this.curTemplateTitle = result.title;
                 
                 this.refresh();
                 this.notifyService.success(this.ls.l('TemplateListUpdated'));
@@ -811,6 +816,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.templateData.body = res.body;
                 this.templateData.subject = res.subject;
                 this.templateData.previewText = res.previewText;
+                this.templateData.attachments = res.attachments;
 
             } else {
                 this.data.bcc = res.bcc;
@@ -832,12 +838,15 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.templateEditMode = true;
         this.curTemplateTitle = data.name;
         this.curTemplateId = data.id;
+        this.showTabs('template');
         this.loadTemplateById(data.id);
     }
     setTemplate() {
         this.data.body = this.templateData.body;
         this.data.subject = this.templateData.subject;
         this.data.previewText = this.templateData.previewText;
+        this.attachments = this.templateData.attachments;
+
         this.showTabs('new-email')
     }
     updateTemplateAttachments(templateAttachments: Attachment[]) {
@@ -956,14 +965,6 @@ export class EmailTemplateDialogComponent implements OnInit {
             window['CKEDITOR'].warn = function () { };
         }
         this.ckEditor = event.editor;
-        setTimeout(() => {
-            // this.ckEditor.container.find('.cke_toolbox').$[0].append(
-            //     this.tagsButton.nativeElement);
-            // this.tagsButton.nativeElement.style.display = 'inline';
-            // Append the aiButton right after the tagsButton
-            //this.tagsButton.nativeElement.after(this.aiButton.nativeElement);
-            // this.invalidate();
-        });
     }
 
     updateDataLength() {

@@ -45,7 +45,7 @@ import { DxFileManagerModule } from 'devextreme-angular';
 import { FileUploadModule } from 'ng2-file-upload';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { CKEditorModule } from 'ckeditor4-angular';
-
+import { NgxFileDropModule } from 'ngx-file-drop';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -190,7 +190,8 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';import {Creat
         TenantSettingsWizardModule,
         LeftMenuModule,
         ZapierModule,
-        EditTenantModule
+        EditTenantModule,
+        NgxFileDropModule
     ],
     declarations: [
         ClientsComponent,

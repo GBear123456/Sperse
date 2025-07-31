@@ -10,29 +10,44 @@ import {
     ElementRef,
     ChangeDetectorRef,
 } from "@angular/core";
+import { DomSanitizer } from "@angular/platform-browser";
+
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import {
+    MAT_DIALOG_DATA,
+    MatDialogRef,
+    MatDialog,
+} from "@angular/material/dialog";
 import { FeatureCheckerService } from "abp-ng2-module";
 import { DxValidatorComponent } from "devextreme-angular/ui/validator";
 import { NotifyService } from "abp-ng2-module";
 import { DxValidationGroupComponent } from "devextreme-angular";
 import { finalize } from "rxjs/operators";
-import { Observable, Subject } from "rxjs";
+import { NgxFileDropEntry } from "ngx-file-drop";
+import { Observable } from "rxjs";
+import { DxScrollViewComponent } from "devextreme-angular/ui/scroll-view";
+import { FormGroup, FormBuilder } from "@angular/forms";
 
 /** Application imports */
+import { AppConsts } from "@shared/AppConsts";
 import { ModalDialogComponent } from "@shared/common/dialogs/modal/modal-dialog.component";
 import { prompts } from "../email-template-dialog/prompts";
 import { AppLocalizationService } from "@app/shared/common/localization/app-localization.service";
 import { IDialogButton } from "@shared/common/dialogs/modal/dialog-button.interface";
 import { CreateEmailTemplateData } from "./create-mail-template-data.interface";
+import { EmailAttachment } from "@app/crm/shared/email-template-dialog/email-attachment";
+import { TemplateDocumentsDialogData } from "@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface";
+import { TemplateDocumentsDialogComponent } from "@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog.component";
 
 import {
     EmailTemplateServiceProxy,
     CreateEmailTemplateRequest,
     UpdateEmailTemplateRequest,
-    FileInfo,
+    ContactCommunicationServiceProxy,
     EmailTemplateType,
     GetTemplateReponse,
+    Attachment,
+    FileInfo,
 } from "@shared/service-proxies/service-proxies";
 
 @Component({
@@ -40,12 +55,12 @@ import {
     templateUrl: "./create-mail-template-modal.component.html",
     styleUrls: ["./create-mail-template-modal.component.less"],
 })
-
 export class CreateMailTemplateModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     @ViewChild(DxValidationGroupComponent)
     validationGroup: DxValidationGroupComponent;
+    @ViewChild("scrollView") scrollView: DxScrollViewComponent;
     @ViewChild("contentEditableDiv")
     contentEditableDiv!: ElementRef<HTMLDivElement>;
 
@@ -70,6 +85,8 @@ export class CreateMailTemplateModalComponent implements OnInit {
     dataRecord = { modelId: null };
     previewText: string;
     ckEditor: any;
+    charCount: number;
+
     ckConfig: any = {
         versionCheck: false,
         height: 500,
@@ -158,17 +175,23 @@ export class CreateMailTemplateModalComponent implements OnInit {
             "preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting",
         skin: "moono-lisa", // kama, moono, moono-lisa
     };
+    templateForm: FormGroup;
 
-    data: CreateEmailTemplateData;
+    attachments: Partial<EmailAttachment>[] = this.data.attachments || [];
     constructor(
         public dialogRef: MatDialogRef<CreateMailTemplateModalComponent>,
         public ls: AppLocalizationService,
         private features: FeatureCheckerService,
         private notifyService: NotifyService,
         private emailTemplateProxy: EmailTemplateServiceProxy,
+        private communicationProxy: ContactCommunicationServiceProxy,
         public changeDetectorRef: ChangeDetectorRef,
+        public dialog: MatDialog,
+        private fb: FormBuilder,
+        private domSanitizer: DomSanitizer,
 
-        @Inject(MAT_DIALOG_DATA) public params: { id?: number }
+        @Inject(MAT_DIALOG_DATA) public data: CreateEmailTemplateData,
+        @Inject(MAT_DIALOG_DATA) public params: { id?: number; contact?: any }
     ) {
         this.data = this.data || {
             title: "",
@@ -259,7 +282,8 @@ export class CreateMailTemplateModalComponent implements OnInit {
             },
         ];
 
-        this.ckConfig.height = 595;
+        this.ckConfig.height = 550;
+        this.ckConfig.versionCheck = false;
     }
 
     onClose(): void {
@@ -285,6 +309,8 @@ export class CreateMailTemplateModalComponent implements OnInit {
             .subscribe((res: GetTemplateReponse) => {
                 this.data.bcc = res.bcc;
                 this.data.body = res.body;
+                this.data.attachments = res.attachments;
+                this.attachments = res.attachments;
                 this.data.cc = res.cc;
                 this.data.subject = res.subject;
                 this.data.previewText = res.previewText;
@@ -295,7 +321,17 @@ export class CreateMailTemplateModalComponent implements OnInit {
             });
     }
 
-    updateDataLength() {}
+    updateDataLength() {
+        this.templateForm = this.fb.group({
+            emailContentBodyTemplate: [this.data.body],
+        });
+        this.charCount =
+            Math.max(
+                this.data.body.replace(/(<([^>]+)>|\&nbsp;)/gi, "").length - 1,
+                0
+            ) ?? 0;
+        this.changeDetectorRef.markForCheck();
+    }
 
     invalidate() {}
 
@@ -430,15 +466,24 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
     onChange(event: any) {
         this.data.body = this.editorData;
+        this.updateDataLength();
         console.log("Editor content changed:", this.editorData);
     }
     // save && edit template data
     saveTemplate() {
         console.log("save button clicked");
         this.data.body = this.editorData;
-
+        this.data.attachments = [
+            ...this.attachments.filter((item) => !item.loader),
+        ];
         const isValid = this.validateData();
         if (isValid) {
+            if (this.data.attachments.some((item) => item.loader)) {
+                this.notifyService.info(
+                    this.ls.l("AttachmentsUploadInProgress")
+                );
+                return;
+            }
             this.saveTemplateData();
         }
     }
@@ -465,24 +510,30 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
 
     saveTemplateData() {
-        // const attachments =
-        //     this.data.attachments?.map(
-        //         (item) =>
-        //             new FileInfo({
-        //                 id: item.fileId || item.id,
-        //                 name: item.name,
-        //             })
-        //     ) || [];
-
+        const attachments = (this.data.attachments || [])
+            .map((item) => {
+                if (!item.id || !item.name) {
+                    this.notifyService.warn(
+                        this.ls.l("InvalidAttachment", item.name || "Unknown")
+                    );
+                    return null;
+                }
+                return new FileInfo({
+                    id: item.fileId || item.id,
+                    name: item.name,
+                });
+            })
+            .filter((item) => item !== null);
+            console.log('Preparing to save template:', this.data);
         // Prepare template data
         const templateData = {
             id: this.templateEditMode ? this.params.id : undefined,
             name: this.data.title,
-            type: this.data.type,
+            type: this.data.type ||  EmailTemplateType.Contact,
             subject: this.data.subject,
             previewText: this.data.previewText,
             body: this.data.body,
-            attachments: undefined,
+            attachments: attachments,
             cc: undefined,
             bcc: undefined,
         };
@@ -499,22 +550,20 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
         request$.pipe(finalize(() => this.finishLoading())).subscribe({
             next: (response: any) => {
-                console.log({ response });
 
-                // if (id) {
-                //     this.data.templateId = id;
-                // }
-                // this.data.attachments =
-                //     this.data.attachments?.map((item) => ({
-                //         ...item,
-                //         fromTemplate: true,
-                //         loader: undefined,
-                //     })) || [];
-
+                this.data.attachments = this.data.attachments.map(item => ({
+                    ...item,
+                    fromTemplate: true,
+                    loader: undefined,
+                    xhr: undefined,
+                    url: undefined // Clean up URLs
+                }));
+                console.log(this.data, '##########')
                 this.onSave.emit(this.data);
                 this.dialogRef.close(this.data);
-                this.notifyService.success(this.ls.l("SuccessfullySaved"));
-                this.resetForm();
+                this.notifyService.success(this.ls.l('SuccessfullySaved'));
+                
+                // this.resetForm();
             },
             error: (error) => {
                 // Handle specific error messages from the backend
@@ -584,5 +633,183 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
     cancelAIMessage() {
         this.showAIPrompt = false;
+    }
+
+    //  attachment functions
+    addAttachments(files: NgxFileDropEntry[]) {
+        if (files.length) {
+            if (this.scrollView) {
+                let scroll = this.scrollView.instance;
+                setTimeout(() => scroll.scrollTo(scroll.scrollHeight()), 600);
+                scroll.update();
+            }
+            files.forEach((file: NgxFileDropEntry) => {
+                if (file.fileEntry)
+                    file.fileEntry["file"](this.uploadFile.bind(this));
+                else this.uploadFile(file);
+            });
+            let templateDialog = this.dialog.getDialogById("templateDialog");
+            if (templateDialog) templateDialog.close();
+        }
+    }
+
+    // Remove an attachment
+    removeAttachment(attachment: Partial<EmailAttachment>, index?) {
+        if (index != undefined) {
+            this.attachments.splice(index, 1);
+            this.changeDetectorRef.markForCheck();
+        }
+        if (attachment.id) {
+            if (attachment.hasOwnProperty("loader"))
+                this.communicationProxy
+                    .deleteAttachment(attachment.id)
+                    .subscribe();
+        } else {
+            attachment.loader.unsubscribe();
+            attachment.xhr.abort();
+        }
+    }
+
+    // Upload a file
+    uploadFile(file) {
+        if (file.size > 5 * 1024 * 1024)
+            return this.notifyService.warn(this.ls.l("FilesizeLimitWarn", 5));
+
+        let attachment: Partial<EmailAttachment> = {
+            name: file.name,
+            size: file.size,
+        };
+
+        attachment.url = this.domSanitizer.bypassSecurityTrustResourceUrl(
+            URL.createObjectURL(file)
+        );
+        attachment.loader = this.sendAttachment(file, attachment).subscribe(
+            (res: any) => {
+                if (res) {
+                    if (res.result) attachment.id = res.result;
+                    else {
+                        attachment.progress =
+                            res.loaded == res.total
+                                ? 0
+                                : Math.round((res.loaded / res.total) * 100);
+                        this.changeDetectorRef.markForCheck();
+                    }
+                }
+            },
+            (res) => {
+                this.attachments = this.attachments.filter(
+                    (item) => item.name != file.name
+                );
+                this.notifyService.error(res.error.message);
+                this.changeDetectorRef.markForCheck();
+            },
+            () => {
+                attachment.loader = undefined;
+                this.changeDetectorRef.markForCheck();
+            }
+        );
+        this.attachments.push(attachment);
+    }
+
+    // Send attachment to server
+    sendAttachment(file, attachment) {
+        return new Observable((subscriber) => {
+            let xhr = new XMLHttpRequest(),
+                formData = new FormData();
+            formData.append("file", file);
+            xhr.open(
+                "POST",
+                AppConsts.remoteServiceBaseUrl +
+                    "/api/services/CRM/ContactCommunication/SaveAttachment"
+            );
+            xhr.setRequestHeader(
+                "Authorization",
+                "Bearer " + abp.auth.getToken()
+            );
+
+            xhr.upload.addEventListener("progress", (event) => {
+                subscriber.next(event);
+            });
+
+            xhr.addEventListener("load", () => {
+                let responce = JSON.parse(xhr.responseText);
+                if (xhr.status === 200) subscriber.next(responce);
+                else subscriber.error(responce);
+                subscriber.complete();
+            });
+            attachment.xhr = xhr;
+            xhr.send(formData);
+        });
+    }
+
+    // Open documents dialog to select files
+    openDocuments() {
+        const templateDocumentsDialogData: TemplateDocumentsDialogData = {
+            fullHeight: true,
+            contactId: this.params.contact && this.params.contact?.id,
+            dropFiles: this.addAttachments.bind(this),
+            showDocuments: true,
+        };
+        this.dialog
+            .open(TemplateDocumentsDialogComponent, {
+                id: "templateDialog",
+                panelClass: ["slider"],
+                hasBackdrop: true,
+                closeOnNavigation: true,
+                data: templateDocumentsDialogData,
+            })
+            .afterClosed()
+            .subscribe((data) => {
+                if (data && data.length) {
+                    this.attachments = this.attachments.concat(
+                        data.map((item) => {
+                            return {
+                                id: item.key.split("_")[0],
+                                name: item.name,
+                                size: item.size,
+                                progress: 0,
+                            };
+                        })
+                    );
+                    this.changeDetectorRef.detectChanges();
+                }
+            });
+    }
+
+    // Handle attachment click (e.g., to download or view)
+    attachmentClick(event, attachment) {
+        if (!attachment.url) {
+            this.startLoading();
+            this.communicationProxy
+                .getAttachmentLink(attachment.id)
+                .pipe(finalize(() => this.finishLoading()))
+                .subscribe((res) => window.open(res, "_blank"));
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    }
+
+    // Update attachments from a template
+    updateTemplateAttachments(templateAttachments: Attachment[]) {
+        this.removeTemplateAttachments();
+
+        if (!templateAttachments) return;
+
+        this.attachments = this.attachments.concat(
+            templateAttachments.map((item) => {
+                return <EmailAttachment>{
+                    id: item.id,
+                    name: item.name,
+                    size: item.size,
+                    progress: 0,
+                    fromTemplate: true,
+                };
+            })
+        );
+    }
+
+    // Remove attachments loaded from a template
+    removeTemplateAttachments() {
+        this.attachments = this.attachments.filter((v) => !v.fromTemplate);
     }
 }
