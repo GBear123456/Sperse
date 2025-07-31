@@ -204,7 +204,7 @@
             margin-left: 0 !important;
 
             label.caption {
-                width: 67px !important;
+                width: 90px !important;
             }
         }
 
@@ -1430,4 +1430,14 @@
     background: #00ca6a;
     color: white;
     height: 40px;
+}
+
+:host ::ng-deep .cke_contents {
+    height: calc(100vh - 455px) !important;
+    max-height: 600px !important;
+    overflow-y: auto;
+}
+
+.from-item-selet{
+    width: 200px !important;
 }

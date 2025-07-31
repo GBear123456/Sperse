@@ -3,7 +3,7 @@
               [buttons]="buttons"
               [editTitle]="false"
               class="email-template-dialog"
-    (onContextItemChanged)="save()">   
+              (onContextItemChanged)="save()">   
     <ng-container headerContent>
         <div class="header">
             <div class="header-div">
@@ -111,21 +111,22 @@
                                         fieldTemplate="fieldTemplate"
                                         [disabled]="templateEditMode"
                                         [disabled]="templateEditMode"
+                                        class="from-item-selet"
                                         (onValueChanged)="onFromChanged($event)">
                                         <div *dxTemplate="let item of 'itemTemplate'" class="from-item-select-box" [title]="item?.emailAddress">
                                             {{ item?.emailAddress }}
                                         </div>
                                         <div *dxTemplate="let item of 'fieldTemplate'" class="from-field-select-box">
                                             <dx-text-box
-                                                        height="40px"
-                                                        [readOnly]="true"
-                                                        [value]="item?.emailAddress"
+                                                height="40px"
+                                                [readOnly]="true"
+                                                [value]="item?.emailAddress"
                                                 [hint]="item?.emailAddress">
                                             </dx-text-box>
                                         </div>
                                         <dx-validator>
                                             <dxi-validation-rule
-                                                                type="required"
+                                                type="required"
                                                 [message]="ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))">
                                             </dxi-validation-rule>
                                         </dx-validator>
@@ -200,16 +201,16 @@
                                                 width="calc(100% - 35px)"
                                                 placeholder=""
                                                 noDataText=""
-                                        [multiline]="false"
+                                                [multiline]="false"
                                                 [acceptCustomValue]="true"
                                                 [(value)]="data.cc"
-                                        (onKeyUp)="onKeyUp($event)"
+                                                (onKeyUp)="onKeyUp($event)"
                                                 (onInitialized)="onTagBoxInitialized($event)"
-                                        (onFocusOut)="emailInputFocusOut($event, true)"
-                                        (onCustomItemCreating)="onCustomItemCreating($event)">
+                                                (onFocusOut)="emailInputFocusOut($event, true)"
+                                                (onCustomItemCreating)="onCustomItemCreating($event)">
                                         <dx-validator>
                                             <dxi-validation-rule type="custom"
-                                                                [message]="ls.l('InvalidField', ls.l('CC'))"
+                                                [message]="ls.l('InvalidField', ls.l('CC'))"
                                                 [validationCallback]="validateEmailList(CCElement)">
                                             </dxi-validation-rule>
                                         </dx-validator>
@@ -219,20 +220,20 @@
                                 <div class="w-48" [hidden]="!showBCC">
                                     <label class="caption">{{ls.l('BCC')}}:</label>
                                     <dx-tag-box #BCCElement
-                                                name="bcc"
-                                                width="calc(100% - 46px)"
-                                                noDataText=""
+                                        name="bcc"
+                                        width="calc(100% - 46px)"
+                                        noDataText=""
                                         placeholder=""
-                                                [multiline]="false"
-                                                [acceptCustomValue]="true"
-                                                [(value)]="data.bcc"
+                                        [multiline]="false"
+                                        [acceptCustomValue]="true"
+                                        [(value)]="data.bcc"
                                         (onKeyUp)="onKeyUp($event)"
-                                                (onInitialized)="onTagBoxInitialized($event)"
+                                        (onInitialized)="onTagBoxInitialized($event)"
                                         (onFocusOut)="emailInputFocusOut($event, true)"
                                         (onCustomItemCreating)="onCustomItemCreating($event)">
                                         <dx-validator>
                                             <dxi-validation-rule type="custom"
-                                                                [message]="ls.l('InvalidField', ls.l('BCC'))"
+                                                [message]="ls.l('InvalidField', ls.l('BCC'))"
                                                 [validationCallback]="validateEmailList(BCCElement)">
                                             </dxi-validation-rule>
                                         </dx-validator>
@@ -265,14 +266,19 @@
                                             name="previewText"
                                             width="calc(100% - 102px)"
                                             height="40px"
-                                    placeholder=""
+                                            placeholder=""
                                             [(value)]="data.previewText">
                                 </dx-text-box>
                             </div>
 
                             <div class="field-area ckeditor bt-none">
-                                <ckeditor *ngIf="ckConfig.height && templateLoaded" [config]="ckConfig" [(data)]="data.body"
-                                    (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
+                                <ckeditor 
+                                    *ngIf="ckConfig.height && templateLoaded" 
+                                    [config]="ckConfig" 
+                                    [(data)]="data.body"
+                                    (ready)="onCKReady($event)" 
+                                    (change)="updateDataLength()">
+                                </ckeditor>
 
                             </div>
 
@@ -408,6 +414,18 @@
                                     <div class="template-preview-content">
                                         <ckeditor *ngIf="ckConfig.height && templateLoaded" [config]="ckConfig" [(data)]="templateData.body"
                                         ></ckeditor>
+                                        <div class="field-area attachments">
+                                            <div *ngFor="let attachment of templateData.attachments; let i = index" class="attachment"
+                                                [ngClass]="{'progress': !!attachment.loader}"
+                                                [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
+                                                <a target="_blank" [download]="attachment.name" [href]="attachment.url"
+                                                    (click)="attachmentClick($event, attachment)"
+                                                    class="name">{{attachment.name}}</a>&nbsp;<span class="size">
+                                                    ({{attachment.size |filesize}})
+                                                </span><i (click)="removeAttachment(attachment, i)" aria-hidden="true"
+                                                    class="delete fa fa-times"></i>
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                 </div>
