@@ -167,7 +167,7 @@
                     <ng-container *ngIf="!settings.isPartnerApiKey">
                         <span>Use button below to create <b>Account</b> webhook and recieve Account events from Stripe</span>
                         <p>
-                            <button [disabled]="settings.webhookSingingSecret" [title]="settings.webhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, false)">
+                            <button [disabled]="settings.webhookSingingSecret" [title]="settings.webhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings)">
                                 {{ settings.webhookSingingSecret ? 'Account Webhook is created' : 'Create Account webhook' }}
                             </button>
                             <img *ngIf="settings.webhookSingingSecret" src="./assets/common/icons/check-green.svg" />
@@ -184,7 +184,7 @@
                         </div>
                         <div>Use button below to create <b>Connect</b> webhook and recieve Connect events from Stripe</div>
                         <p>
-                            <button [disabled]="settings.connectWebhookSingingSecret" [title]="settings.connectWebhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings, true)">
+                            <button [disabled]="settings.connectWebhookSingingSecret" [title]="settings.connectWebhookSingingSecret || ''" class="btn btn-layout" (click)="createWebhook(settings)">
                                 {{ settings.connectWebhookSingingSecret ? 'Connect webhook is created' : 'Create Connect webhook' }}
                             </button>
                             <img *ngIf="settings.connectWebhookSingingSecret" src="./assets/common/icons/check-green.svg" />
@@ -220,7 +220,7 @@
         <div class="import-tab">
             <h5>{{l("Account")}}:</h5>
             <dx-select-box #selectBox
-                           [dataSource]="stripePaymentSettings.stripeAccountSettings"
+                           [dataSource]="importSettingsDataSource"
                            displayExpr="displayName">
             </dx-select-box>
             <div *ngIf="selectBox.selectedItem as settingData">

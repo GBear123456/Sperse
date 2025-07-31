@@ -34,6 +34,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     apiKeySettings: StripeSettingsDto[];
     connectedSettings: StripeSettingsDto[];
 
+    importSettingsDataSource: StripeSettingsDto[];
     StripeImportType = StripeImportType;
     importTypes: any[] = Object.values(StripeImportType).filter(x => typeof x === "number");
 
@@ -63,6 +64,8 @@ export class StripeSettingsComponent extends SettingsComponentBase {
                     this.apiKeySettings = res.stripeAccountSettings.filter(v => !!v.apiKey && !v.connectedAccountId).sort((a, b) => a.isActive || a.id > b.id ? -1 : 1);
                     this.connectedSettings = res.stripeAccountSettings.filter(v => !!v.connectedAccountId).sort((a, b) => a.isActive || a.id > b.id ? -1 : 1);
 
+                    this.importSettingsDataSource = res.stripeAccountSettings.filter(v => !v.isPartnerApiKey);
+
                     this.updateShowImportSection();
                     this.changeDetection.detectChanges();
                 })
@@ -91,7 +94,7 @@ export class StripeSettingsComponent extends SettingsComponentBase {
     setIsActive(setting: StripeSettingsDto) {
         this.message.confirm(`'${setting.displayName}' will be set as active and affect all future payments, which will use the new configuration.`, null, (isConfirmed) => {
             if (isConfirmed) {
-                this.apiKeySettings.concat(this.connectedSettings).forEach(v => v.isActive = false);
+                this.apiKeySettings.concat(this.connectedSettings).filter(v => !v.isPartnerApiKey).forEach(v => v.isActive = false);
                 setting.isActive = true;
                 this.changeDetection.detectChanges();
             }
@@ -142,14 +145,14 @@ export class StripeSettingsComponent extends SettingsComponentBase {
         });
     }
 
-    createWebhook(setting: StripeSettingsDto, isConnected) {
+    createWebhook(setting: StripeSettingsDto) {
         if (!setting.id) {
             this.message.info('Please save the settings before creating webhooks.');
             return;
         }
 
         this.startLoading();
-        this.tenantPaymentSettingsService.createStripeWebhook(setting.id, isConnected)
+        this.tenantPaymentSettingsService.createStripeWebhook(setting.id)
             .pipe(
                 finalize(() => this.finishLoading())
             )
