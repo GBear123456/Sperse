@@ -136,10 +136,6 @@
     }
   }
 
-  .accordion-wrapper {
-    min-height: calc(100vh - 380px);
-  }
-
   ::ng-deep dx-accordion {
     background-color: transparent !important;
     .dx-empty-message {
@@ -212,9 +208,6 @@
     margin-left: 0px;
     margin-bottom: 10px;
 
-    position: absolute;
-    bottom: 0;
-
     .m-topbar__nav.m-nav {
       flex-direction: column;
       margin: 0 18px;
@@ -222,17 +215,11 @@
   }
 
   ::ng-deep user-dropdown-menu {
+    position: fixed;
+    bottom: 10px;
+    left: 20px;
     .m-topbar__user-profile--img {
       margin-left: -6px;
-    }
-  }
-
-  user-management-list {
-    position: static !important;
-
-    .userpic {
-      display: flex;
-      justify-content: center;
     }
   }
 }
@@ -272,8 +259,12 @@
   }
 }
 
-.total-wrapper {
-  max-height: 807px;
+.top-wrapper {
+  height: 700px;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.total-wrapper {
+  max-height: 807px;
 }
