@@ -1,83 +1,102 @@
 <div class="total-wrapper">
-  <a class="top-home-dark" (click)="onHomeClick($event)" (mouseover)="showPlatformSelect()">
-    <platform-select></platform-select>
-    <span class="home-text">Home</span>
-  </a>
-  <div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
-  <div class="accordion-wrapper" *ngIf="selectedModuleIndex != undefined">
-    <dx-accordion
-      [(selectedIndex)]="selectedModuleIndex"
-      [items]="moduleItems"
-      (onItemTitleClick)="onItemTitleClick($event)"
-    >
-      <div *dxTemplate="let module of 'item'" class="{{ module.title.toLowerCase() }}">
-        <dx-scroll-view [height]="getAccordeonHeight(module.items)">
-          <div class="nav-menu">
-            <dx-menu
-              [width]="'calc(' + width + ' - 36px)'"
-              [dataSource]="module.items"
-              [selectByClick]="true"
-              [selectionMode]="'single'"
-              [hoverStateEnabled]="true"
-              orientation="vertical"
-              [adaptivityEnabled]="true"
-              [(selectedItem)]="module.selectedItem"
-              [hideSubmenuOnMouseLeave]="true"
-              [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 200, show: 0 } }"
-              [showSubmenuMode]="{ name: 'onHover', delay: { hide: 200, show: 0 } }"
-              (onSubmenuShowing)="onSubmenuShowing($event)"
-              (onSubmenuHiding)="onSubmenuHiding($event)"
-              (onItemClick)="navigate($event)"
-            >
-              <div *dxTemplate="let data of 'item'">
-                <ng-container *ngIf="data && data.text">
-                  <img
-                    [id]="getTargetByTitle(data.text)"
-                    *ngIf="!data.params"
-                    [src]="data.icon"
-                  /><span
-                    class="caption"
-                    style="padding: 10px 0"
-                    *ngIf="!!data.params || expanded || isSubMenuOpen"
-                    >{{ ls.l(data.text) }}</span
-                  ><span class="triangle" *ngIf="!data.params && data?.items?.length">&#9656;</span>
-                  <dx-tooltip
-                    *ngIf="!data?.items?.length"
-                    target="#{{ getTargetByTitle(data.text) }}"
-                    [position]="{ my: 'left center', at: 'right' }"
-                    showEvent="dxhoverstart"
-                    hideEvent="dxhoverend"
-                  >
-                    <div *dxTemplate="let item of 'content'">
-                      <span class="menu-tooltip">{{ ls.l(data.text) }}</span>
-                    </div>
-                  </dx-tooltip>
-                </ng-container>
-              </div>
-            </dx-menu>
-          </div>
-        </dx-scroll-view>
-      </div>
+  <div class="top-wrapper">
+    <a class="top-home-dark" (click)="onHomeClick($event)" (mouseover)="showPlatformSelect()">
+      <platform-select></platform-select>
+      <span class="home-text">Home</span>
+    </a>
+    <div class="top-menu" (click)="layoutService.toggleHeadlineButtonSubject.next(true)"></div>
+    <div class="accordion-wrapper" *ngIf="selectedModuleIndex != undefined">
+      <dx-accordion
+        [(selectedIndex)]="selectedModuleIndex"
+        [items]="moduleItems"
+        (onItemTitleClick)="onItemTitleClick($event)"
+      >
+        <div *dxTemplate="let module of 'item'" class="{{ module.title.toLowerCase() }}">
+          <dx-scroll-view [height]="getAccordeonHeight(module.items)">
+            <div class="nav-menu">
+              <dx-menu
+                [width]="'calc(' + width + ' - 36px)'"
+                [dataSource]="module.items"
+                [selectByClick]="true"
+                [selectionMode]="'single'"
+                [hoverStateEnabled]="true"
+                orientation="vertical"
+                [adaptivityEnabled]="true"
+                [(selectedItem)]="module.selectedItem"
+                [hideSubmenuOnMouseLeave]="true"
+                [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 200, show: 0 } }"
+                [showSubmenuMode]="{ name: 'onHover', delay: { hide: 200, show: 0 } }"
+                (onSubmenuShowing)="onSubmenuShowing($event)"
+                (onSubmenuHiding)="onSubmenuHiding($event)"
+                (onItemClick)="navigate($event)"
+              >
+                <div *dxTemplate="let data of 'item'">
+                  <ng-container *ngIf="data && data.text">
+                    <img
+                      [id]="getTargetByTitle(data.text)"
+                      *ngIf="!data.params"
+                      [src]="data.icon"
+                    /><span
+                      class="caption"
+                      style="padding: 10px 0"
+                      *ngIf="!!data.params || expanded || isSubMenuOpen"
+                      >{{ ls.l(data.text) }}</span
+                    ><span class="triangle" *ngIf="!data.params && data?.items?.length"
+                      >&#9656;</span
+                    >
+                    <dx-tooltip
+                      *ngIf="!data?.items?.length"
+                      target="#{{ getTargetByTitle(data.text) }}"
+                      [position]="{ my: 'left center', at: 'right' }"
+                      showEvent="dxhoverstart"
+                      hideEvent="dxhoverend"
+                    >
+                      <div *dxTemplate="let item of 'content'">
+                        <span class="menu-tooltip">{{ ls.l(data.text) }}</span>
+                      </div>
+                    </dx-tooltip>
+                  </ng-container>
+                </div>
+              </dx-menu>
+            </div>
+          </dx-scroll-view>
+        </div>
 
-      <div *dxTemplate="let data of 'title'" class="{{ data.title.toLowerCase() }}">
-        {{ data.title }}
-      </div>
-    </dx-accordion>
+        <div *dxTemplate="let data of 'title'" class="{{ data.title.toLowerCase() }}">
+          {{ data.title }}
+        </div>
+      </dx-accordion>
+    </div>
   </div>
   <user-management-list>
     <app-theme-toggle></app-theme-toggle>
     <li
       *ngIf="userManagementService.notificationEnabled && layoutService.showNotificationsButton"
-      headerNotifications
       class="{{
         layoutService.showTopBar
           ? 'm-dropdown--align-right'
           : 'm-dropdown--align-left m-dropdown--up'
       }} m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width"
-      data-dropdown-toggle="click"
-      data-dropdown-persistent="true"
-      id="header_notification_bar"
-    ></li>
+      id="popupButton"
+      (click)="openPopup()"
+      style="margin-top: 20px; margin-bottom: 10px"
+    >
+      <lucide-icon name="bell-dot" class="cursor-pointer"></lucide-icon>
+    </li>
+    <dx-popup
+      width="auto"
+      height="auto"
+      [dragEnabled]="false"
+      [showTitle]="false"
+      [closeOnOutsideClick]="true"
+      [(visible)]="popupVisible"
+      container=".dx-viewport"
+    >
+      <dxo-position at="top" my="left bottom" of="#popupButton" collision="fit">
+        <dxo-offset [x]="-30" [y]="-20"></dxo-offset
+      ></dxo-position>
+      <leftbar-notifications></leftbar-notifications>
+    </dx-popup>
 
     <li
       *ngIf="isChatEnabled && !isChatConnected && layoutService.showChatButton"

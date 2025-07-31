@@ -387,4 +387,10 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
   getAccordeonHeight(items) {
     return innerHeight - 420 < items.length * 25 ? innerHeight - 420 : '100%';
   }
+
+  popupVisible = false;
+
+  openPopup() {
+    this.popupVisible = true;
+  }
 }
