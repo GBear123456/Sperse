@@ -347,11 +347,12 @@
                                         [elementAttr]="{ class: 'template-search-box' }"
                                         (onFocusIn)="onFocusIn()"
                                         (onFocusOut)="onFocusOut()"
+                                        (onValueChanged)="onSearchChange($event)"
                                     >
                                     
                                     </dx-text-box>
-                                    <div *ngFor="let template of templates$ | async; let templateIndex = index" class="template-item" [class.active]="template.id === curTemplateId">
-                                        <h5 (click)="viewDetailTemplate($event, template)">
+                                    <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item" [class.active]="template.id === curTemplateId" (click)="viewDetailTemplate($event, template)">
+                                        <h5 >
                                             {{template.name}}
                                         </h5>
                                         <!-- <span>
