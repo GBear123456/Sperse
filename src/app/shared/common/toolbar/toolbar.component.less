@@ -904,10 +904,6 @@
       width: stretch;
       background-color: transparent;
 
-      &[button-pressed='true'] {
-        border-color: var(--info-color) !important;
-      }
-
       &[group-item-position='single'] {
         margin-left: 0;
         margin-right: 12px;
@@ -1530,10 +1526,6 @@
     width: stretch;
     background-color: transparent;
 
-    &[button-pressed='true'] {
-      border-color: var(--info-color) !important;
-    }
-
     &[group-item-position='single'] {
       margin-left: 0;
       margin-right: 12px;
@@ -1789,4 +1781,34 @@
 
 :host dx-toolbar {
   background-color: var(--background-color) !important;
+}
+
+::ng-deep .dx-button-mode-contained {
+  border-color: var(--button-border) !important;
+}
+
+::ng-deep .dx-tooltip-wrapper .dx-overlay-content {
+  background-color: var(--button-bg) !important;
+}
+
+::ng-deep .dx-popup-normal {
+  background-color: var(--button-bg) !important;
+}
+
+::ng-deep .dx-texteditor-input {
+  background-color: var(--button-bg) !important;
+  border-bottom: 1px solid var(--input-border) !important;
+}
+
+::ng-deep .dx-treelist-rowsview {
+  background: var(--button-bg) !important;
+}
+
+::ng-deep .dx-treelist-table {
+  background: var(--button-bg) !important;
+}
+
+::ng-deep .dx-toolbar,
+.dx-treelist-container {
+  background: var(--button-bg) !important;
 }

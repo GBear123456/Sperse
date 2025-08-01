@@ -291,12 +291,6 @@ i.save-to-clipboard {
     }
 }
 
-/* DevExtreme Button Content Theme Variables */
-.dx-button-content {
-    background-color: var(--button-bg);
-    color: var(--text-color);
-    border-color: var(--border-color);
-}
 
 .dx-button-content:hover {
     background-color: var(--hover-bg);
