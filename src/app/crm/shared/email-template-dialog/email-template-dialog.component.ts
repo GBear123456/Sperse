@@ -846,6 +846,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.data.subject = this.templateData.subject;
         this.data.previewText = this.templateData.previewText;
         this.attachments = this.templateData.attachments;
+        this.templateForm.get('emailContentBodyTemplate')?.setValue(this.templateData.body);
 
         this.showTabs('new-email')
     }
