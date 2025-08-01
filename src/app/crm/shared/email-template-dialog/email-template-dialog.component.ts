@@ -1315,45 +1315,106 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.invalidate();
     }
 
-    getChatGptResponse() {
-        this.processing = true;
+    // Helper method to clean HTML content
+private cleanHtmlContent(html: string): string {
+    // Remove HTML tags, replace <br> with newlines, and trim whitespace
+    return html
+        .replace(/<[^>]+>/g, '') // Remove HTML tags
+        .replace(/<br\s*\/?>/gi, '\n') // Replace <br> with newlines
+        .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces
+        .trim();
+}
+
+getChatGptResponse() {
+    this.processing = true;
+    this.updateButtons();
+
+    // Use the edited content from contentEditableDiv
+    const editedPrompt = this.contentEditableDiv?.nativeElement?.innerHTML || this.editorContent;
+    const cleanedPrompt = this.cleanHtmlContent(editedPrompt);
+
+    // Validate prompt
+    if (!cleanedPrompt) {
+        this.notifyService.error(this.ls.l('PromptEmptyError', 'Please provide content for the AI to process.'));
+        this.processing = false;
         this.updateButtons();
-
-        const prompt = this.groupedPromptLibrary[this.selectedPromptGroupIndex]?.prompts[this.selectedPromptItemIndex]?.prompt;
-        const model = this.aiModels.find((item: any) => item.id == this.selectedItemId)?.model ?? 'gpt-3.5-turbo';
-
-        const payload = {
-            model,
-            prompt,
-            system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
-        };
-
-        fetch('/.netlify/functions/openai', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('ChatGPT Response:', data);
-            this.invalidate();
-            this.processing = false;
-            
-            const gptResponse = data.response;
-            const responseData = this.extractContent(gptResponse);
-            this.data.subject = responseData.subject;
-            this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
-
-            this.updateButtons();
-        })
-        .catch(error => {
-            this.processing = false;
-            console.error('Error calling ChatGPT Function:', error);
-            this.updateButtons();
-        });
+        return;
     }
+
+    const model = this.aiModels.find((item: any) => item.id == this.selectedItemId)?.model ?? 'gpt-3.5-turbo';
+
+    const payload = {
+        model,
+        prompt: cleanedPrompt, // Use cleaned user-edited content
+        system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.'
+    };
+
+    fetch('/.netlify/functions/openai', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('ChatGPT Response:', data);
+        this.invalidate();
+        this.processing = false;
+
+        const gptResponse = data.response;
+        const responseData = this.extractContent(gptResponse);
+        this.data.subject = responseData.subject;
+        this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
+
+        this.updateButtons();
+    })
+    .catch(error => {
+        this.processing = false;
+        console.error('Error calling ChatGPT Function:', error);
+        this.notifyService.error(this.ls.l('APIError', 'Failed to generate AI response. Please try again.'));
+        this.updateButtons();
+    });
+}
+    // getChatGptResponse() {
+    //     this.processing = true;
+    //     this.updateButtons();
+
+    //     const prompt = this.groupedPromptLibrary[this.selectedPromptGroupIndex]?.prompts[this.selectedPromptItemIndex]?.prompt;
+    //     const model = this.aiModels.find((item: any) => item.id == this.selectedItemId)?.model ?? 'gpt-3.5-turbo';
+
+    //     const payload = {
+    //         model,
+    //         prompt,
+    //         system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
+    //     };
+
+    //     fetch('/.netlify/functions/openai', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(payload)
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log('ChatGPT Response:', data);
+    //         this.invalidate();
+    //         this.processing = false;
+            
+    //         const gptResponse = data.response;
+    //         const responseData = this.extractContent(gptResponse);
+    //         this.data.subject = responseData.subject;
+    //         this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
+
+    //         this.updateButtons();
+    //     })
+    //     .catch(error => {
+    //         this.processing = false;
+    //         console.error('Error calling ChatGPT Function:', error);
+    //         this.updateButtons();
+    //     });
+    // }
 
     extractContent(content: any): { subject: string, body: string } {
         const subjectMatch = content.match(/^Subject: (.*?)(?:\n\n|$)/);

@@ -371,6 +371,7 @@
                                                 type="default"
                                                 [width]="24"
                                                 (onClick)="editTemplate($event, template.id)"
+                                                class="template-item-btn"
                                             >
                                             </dx-button>
                                             <dx-button
@@ -379,6 +380,7 @@
                                                 type="danger"
                                                 [width]="24"
                                                 (onClick)="deleteTemplate($event, template)"
+                                                class="template-item-btn"
                                             >
                                             </dx-button>
                                         </div>
@@ -391,12 +393,12 @@
                                             <h5> {{ curTemplateTitle }}</h5>
                                         </div>
                                         <dx-button
-                                        stylingMode="outlined"
-                                        text="Compose mail with this template"
-                                        type="normal"
-                                        [disabled]="templateData.subject == ''"
-                                        (click)="setTemplate()"
-                                        class="set-template-btn"
+                                            stylingMode="outlined"
+                                            text="Compose mail with this template"
+                                            type="normal"
+                                            [disabled]="templateData.subject == ''"
+                                            (click)="setTemplate()"
+                                            class="set-template-btn"
                                         >
                                         </dx-button>
                                     </div>
