@@ -72,7 +72,7 @@
       height: 269px;
       margin-right: 15px;
       border-radius: 14px;
-      background: color-mix(in srgb, var(--card-bg) 65%, transparent);
+      background: var(--navbar-bg);
       display: inline-block;
       position: relative;
       cursor: pointer;
@@ -450,5 +450,11 @@
 
   ::ng-deep .dx-texteditor-input {
     background-color: var(--sidebar-bg) !important;
+  }
+
+  ::ng-deep .sales-grid {
+    .wrapper {
+      background: var(--navbar-bg) !important;
+    }
   }
 }
