@@ -272,11 +272,14 @@
   justify-content: space-between;
 }
 
-::ng-deep .dx-popup-content {
-  padding: 0 !important;
-}
-
-::ng-deep .dx-overlay-content {
-  border: none !important;
-  border-radius: 4px !important;
+:host {
+  ::ng-deep .notification-popup {
+    .dx-popup-content {
+      padding: 0 !important;
+    }
+    .dx-overlay-content {
+      border: none !important;
+      border-radius: 4px !important;
+    }
+  }
 }
