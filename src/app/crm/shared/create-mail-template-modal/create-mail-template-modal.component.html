@@ -12,131 +12,158 @@
                     <span class="icon">
                         <img src="assets/common/icons/group.png" />
                     </span>
-                    <span class="email-sub-txt">
-                        {{ls.l(modalTitle)}}</span
-                    >
+                    <span class="email-sub-txt"> {{ ls.l(modalTitle) }}</span>
                 </div>
             </div>
         </div>
     </ng-container>
     <div class="form-content row">
-        <div [ngClass]="showAIPrompt ? 'col-md-9' : 'col-md-12'">
-            <dx-validation-group>
-                <div class="field-area subject">
-                    <label class="caption">{{ ls.l("Template Name") }}:</label>
-                    <dx-text-box
-                        name="title"
-                        width="calc(100% - 31px)"
-                        placeholder=""
-                        (onFocusOut)="previewInputFocusOut($event)"
-                        [(value)]="data.title"
-                        validationGroup="templateValidation"
-                    >
-                        <dx-validator>
-                            <dxi-validation-rule
-                                type="required"
-                                [message]="ls.l('RequiredField', ls.l('title'))"
-                            ></dxi-validation-rule>
-                        </dx-validator>
-                    </dx-text-box>
-                </div>
-                <div class="field-area subject">
-                    <label class="caption">{{ ls.l("Preview Text") }}:</label>
-                    <dx-text-box
-                        name="previewText"
-                        width="calc(100% - 31px)"
-                        placeholder=""
-                        (onFocusOut)="previewInputFocusOut($event)"
-                        [(value)]="data.previewText"
-                        validationGroup="templateValidation"
-                    >
-                        <dx-validator>
-                            <dxi-validation-rule
-                                type="required"
-                                [message]="
-                                    ls.l('RequiredField', ls.l('previewText'))
-                                "
-                            ></dxi-validation-rule>
-                        </dx-validator>
-                    </dx-text-box>
-                </div>
-                <div class="field-area subject">
-                    <label class="caption">{{ ls.l("Subject") }}:</label>
-                    <dx-text-box
-                        name="subject"
-                        width="calc(100% - 31px)"
-                        placeholder=""
-                        (onFocusOut)="previewInputFocusOut($event)"
-                        [(value)]="data.subject"
-                        validationGroup="templateValidation"
-                    >
-                        <dx-validator>
-                            <dxi-validation-rule
-                                type="required"
-                                [message]="
-                                    ls.l('RequiredField', ls.l('subject'))
-                                "
-                            ></dxi-validation-rule>
-                        </dx-validator>
-                    </dx-text-box>
-                </div>
-                <div>
-                    <ckeditor
-                        [(ngModel)]="editorData"
-                        [config]="ckConfig"
-                        (ready)="onReady($event)"
-                        (change)="onChange($event)"
-                    >
-                    </ckeditor>
-                </div>
-                <div class="attachment-div">
-                    <div class="attachment-field-area">
-                        <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)">
-                            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-                                <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()">
-                                    <img src="assets/common/icons/attach.svg">{{ ls.l('Add attachment') }}
-                                </a>
-                                <dx-check-box *ngIf="attachments && attachments.length"
-                                    class="saveToDocs" [(value)]="data.saveAttachmentsToDocuments"
-                                    [rtlEnabled]="true" [text]="ls.l('Save to Documents')">
-                                </dx-check-box>
-                            </ng-template>
-                        </ngx-file-drop>
-                    </div>
-                    <div class="attachment-field-area bottom-text-ste"></div>
-                    <div class="attachment-field-area bottom-text-ste">
-                        {{ charCount ? charCount :0  }} chars
-                    </div>
-                </div>
+        <dx-validation-group
+            [class.col-md-9]="showAIPrompt"
+            [class.col-md-12]="!showAIPrompt"
+        >
+            <div class="field-area subject">
+                <label class="caption">{{ ls.l("Template Name") }}:</label>
+                <dx-text-box
+                    name="title"
+                    placeholder=""
+                    [(value)]="data.title"
+                    validationGroup="templateValidation"
+                    (onFocusOut)="emailInputFocusOut($event)"
 
-                <div class="field-area attachments">
-                    <div *ngFor="let attachment of attachments; let i = index" class="attachment"
-                        [ngClass]="{'progress': !!attachment.loader}"
-                        [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
-                        <a target="_blank" [download]="attachment.name" [href]="attachment.url"
-                            (click)="attachmentClick($event, attachment)"
-                            class="name">{{attachment.name}}</a>&nbsp;<span class="size">
-                            ({{attachment.size |filesize}})
-                        </span><i (click)="removeAttachment(attachment, i)" aria-hidden="true"
-                            class="delete fa fa-times"></i>
-                    </div>
-                </div>
-                <div class="flex-grow"></div>
-                <div class="button-group">
-                    <button md-button class="button-layout temp-btn button-default" (click)="resetForm()">
-                        {{ ls.l("Cancel") }}
-                    </button>
-                    <button
-                        md-button
-                        validationGroup="templateValidation"
-                        (click)="saveTemplate()"
-                        class="button-layout button-primary temp-btn"
+                >
+                    <dx-validator>
+                        <dxi-validation-rule
+                            type="required"
+                            [message]="ls.l('RequiredField', ls.l('title'))"
+                        ></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="field-area subject">
+                <label class="caption">{{ ls.l("Preview Text") }}:</label>
+                <dx-text-box
+                    name="previewText"
+                    width="calc(100% - 31px)"
+                    placeholder=""
+                    [(value)]="data.previewText"
+                    validationGroup="templateValidation"
+                >
+                    <dx-validator>
+                        <dxi-validation-rule
+                            type="required"
+                            [message]="
+                                ls.l('RequiredField', ls.l('previewText'))
+                            "
+                        ></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="field-area subject">
+                <label class="caption">{{ ls.l("Subject") }}:</label>
+                <dx-text-box
+                    name="subject"
+                    width="calc(100% - 31px)"
+                    placeholder=""
+                    [(value)]="data.subject"
+                    validationGroup="templateValidation"
+                >
+                    <dx-validator>
+                        <dxi-validation-rule
+                            type="required"
+                            [message]="ls.l('RequiredField', ls.l('subject'))"
+                        ></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div>
+                <ckeditor
+                    [(ngModel)]="editorData"
+                    [config]="ckConfig"
+                    (ready)="onReady($event)"
+                    (change)="onChange($event)"
+                >
+                </ckeditor>
+            </div>
+            <div class="attachment-div">
+                <div class="attachment-field-area">
+                    <ngx-file-drop
+                        accept="*.*"
+                        (onFileDrop)="addAttachments($event)"
                     >
-                        {{ ls.l("Save") }}
-                    </button>
+                        <ng-template
+                            ngx-file-drop-content-tmp
+                            let-openFileSelector="openFileSelector"
+                        >
+                            <a
+                                href="javascript:void(0);"
+                                class="attach-link"
+                                (click)="openDocuments()"
+                            >
+                                <img src="assets/common/icons/attach.svg" />{{
+                                    ls.l("Add attachment")
+                                }}
+                            </a>
+                            <dx-check-box
+                                *ngIf="attachments && attachments.length"
+                                class="saveToDocs"
+                                [(value)]="data.saveAttachmentsToDocuments"
+                                [rtlEnabled]="true"
+                                [text]="ls.l('Save to Documents')"
+                            >
+                            </dx-check-box>
+                        </ng-template>
+                    </ngx-file-drop>
                 </div>
-            </dx-validation-group>
-        </div>
+                <div class="attachment-field-area bottom-text-ste"></div>
+                <div class="attachment-field-area bottom-text-ste">
+                    {{ charCount ? charCount : 0 }} chars
+                </div>
+            </div>
+
+            <div class="field-area attachments">
+                <div
+                    *ngFor="let attachment of attachments; let i = index"
+                    class="attachment"
+                    [ngClass]="{ progress: !!attachment.loader }"
+                    [ngStyle]="{
+                        'background-size': (attachment.progress || 0) + '%'
+                    }"
+                >
+                    <a
+                        target="_blank"
+                        [download]="attachment.name"
+                        [href]="attachment.url"
+                        (click)="attachmentClick($event, attachment)"
+                        class="name"
+                        >{{ attachment.name }}</a
+                    >&nbsp;<span class="size">
+                        ({{ attachment.size | filesize }}) </span
+                    ><i
+                        (click)="removeAttachment(attachment, i)"
+                        aria-hidden="true"
+                        class="delete fa fa-times"
+                    ></i>
+                </div>
+            </div>
+            <div class="button-group">
+                <button
+                    md-button
+                    class="button-layout temp-btn button-default"
+                    (click)="resetForm()"
+                >
+                    {{ ls.l("Cancel") }}
+                </button>
+                <button
+                    md-button
+                    validationGroup="templateValidation"
+                    (click)="saveTemplate()"
+                    class="button-layout button-primary temp-btn"
+                >
+                    {{ ls.l("Save") }}
+                </button>
+            </div>
+        </dx-validation-group>
 
         <div
             class="container"
