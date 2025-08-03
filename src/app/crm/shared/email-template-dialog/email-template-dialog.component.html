@@ -277,7 +277,9 @@
                                     [config]="ckConfig" 
                                     [(data)]="data.body"
                                     (ready)="onCKReady($event)" 
-                                    (change)="updateDataLength()">
+                                    (change)="updateDataLength()"
+                                    [style.width]="'100%'"
+                                    >
                                 </ckeditor>
 
                             </div>
@@ -357,6 +359,9 @@
                                     >
                                     
                                     </dx-text-box>
+                                    <div *ngIf="filteredTemplates$.length == 0" class="template-item">
+                                        No Templates
+                                    </div>
                                     <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item" [class.active]="template.id === curTemplateId" (click)="viewDetailTemplate($event, template)">
                                         <h5 >
                                             {{template.name}}
