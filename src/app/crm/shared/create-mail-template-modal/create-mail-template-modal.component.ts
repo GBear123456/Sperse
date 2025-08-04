@@ -438,15 +438,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
             .replace(/<div[^>]*>(\s|&nbsp;)*<\/div>/g, "");
     }
 
-    previewInputFocusOut(event, checkDisplay?) {
-        event.text = event.event.target.value;
-
-        let isComboListEmpty = !event.text.length;
-
-        if (isComboListEmpty) {
-            this.previewText = event.text;
-        }
-    }
     // ckeditor
     onContentChange(event: any) {
         this.editorData = event.target.innerHTML;
