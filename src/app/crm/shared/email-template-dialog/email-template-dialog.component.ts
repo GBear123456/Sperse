@@ -147,6 +147,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         toolbarCanCollapse: true,
         startupShowBorders: false,
         qtBorder: 0,
+        width: '100%',
         stylesSet: [],
         contentsCss: [],
         toolbar: [
@@ -1164,8 +1165,14 @@ export class EmailTemplateDialogComponent implements OnInit {
                     .subscribe(() => {
                         this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
                         this.refresh();
-                        if (this.data.templateId === template.id) {
+                        if (this.curTemplateId === template.id) {
+                            this.curTemplateId = null
                             this.data.templateId = null;
+                            this.templateData.attachments = null;
+                            this.templateData.body= "";
+                            this.templateData.previewText = "";
+                            this.curTemplateTitle = "";
+                            this.templateData.subject = ""
                         }
                         this.onTemplateDelete.emit(template.id);
                     });
