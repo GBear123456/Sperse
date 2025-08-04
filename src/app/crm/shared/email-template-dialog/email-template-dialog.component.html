@@ -193,8 +193,8 @@
                                 </div>
                             </div>
 
-                            <div class="field-area from row--subdiv">
-                                <div class="w-48" [hidden]="!showCC">
+                            <div class="field-area from row--subdiv row">
+                                <div class="col-md-6 sub-div" [hidden]="!showCC">
                                     <label class="caption">{{ls.l('CC')}}:</label>
                                     <dx-tag-box #CCElement
                                                 name="cc"
@@ -217,7 +217,7 @@
                                     </dx-tag-box>
                                 </div>
 
-                                <div class="w-48" [hidden]="!showBCC">
+                                <div class="col-md-6 sub-div" [hidden]="!showBCC">
                                     <label class="caption">{{ls.l('BCC')}}:</label>
                                     <dx-tag-box #BCCElement
                                         name="bcc"

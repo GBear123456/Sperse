@@ -754,7 +754,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     showInputField(element, field) {
-        this[field] = true;
+        
+        this[field] = !this[field];
         setTimeout(() =>
             element.instance.focus());
         this.changeDetectorRef.detectChanges();
