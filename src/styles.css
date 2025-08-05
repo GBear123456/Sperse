@@ -5,7 +5,6 @@
 @import "styles/dx-theme.less";
 @import "styles/mat-theme.less";
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
