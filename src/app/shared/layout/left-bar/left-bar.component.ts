@@ -78,6 +78,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
   expanded = false;
   isDarkTheme$ = this.themeService.isDarkTheme$;
   isDarkTheme: boolean = false;
+  totalWrapperMaxHeight = 'auto';
 
   constructor(
     private feature: FeatureCheckerService,
@@ -119,6 +120,13 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    const windowHeight = window.innerHeight;
+    this.totalWrapperMaxHeight = windowHeight < 900 ? `${windowHeight - 150}px` : '807px';
+    this.changeDetectorRef.detectChanges();
+  }
+
   ngOnInit(): void {
     this.layoutService.expandedLeftBarSubject
       .asObservable()
@@ -146,6 +154,8 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isDarkTheme = val;
         this.changeDetectorRef.markForCheck();
       });
+
+    this.onResize(null as any);
   }
 
   ngAfterViewInit() {

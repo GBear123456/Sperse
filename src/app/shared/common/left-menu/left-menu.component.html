@@ -23,9 +23,9 @@
           </div>
           <div [ngClass]="{ link: item.component || item.onClick }" (click)="onClick($event, item)">
             <span>{{ item.caption }}</span>
-            <span *ngIf="item.showPlus" class="add-button" (click)="addButtonClick($event, item)"
-              >+</span
-            >
+            <div *ngIf="item.showPlus" class="add-button" (click)="addButtonClick($event, item)">
+              +
+            </div>
           </div>
         </li>
       </ng-template>
