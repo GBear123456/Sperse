@@ -17,6 +17,7 @@ import { Observable } from 'rxjs';
         color: var(--text-color);
         width: 50px;
         height: 25px;
+        margin-left: 10px;
       }
       .theme-toggle:hover {
         transform: scale(1.1);
