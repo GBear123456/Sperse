@@ -146,6 +146,7 @@
                                                 placeholder=""
                                                  [multiline]="false"
                                                 [acceptCustomValue]="true"
+                                                class="reply-tag-box"
                                                 [(value)]="data.replyTo"
                                                 [disabled]="true"
                                                 (onKeyUp)="onKeyUp($event)"
@@ -207,7 +208,9 @@
                                                 (onKeyUp)="onKeyUp($event)"
                                                 (onInitialized)="onTagBoxInitialized($event)"
                                                 (onFocusOut)="emailInputFocusOut($event, true)"
-                                                (onCustomItemCreating)="onCustomItemCreating($event)">
+                                                (onCustomItemCreating)="onCustomItemCreating($event)"
+                                                (onValueChanged)="onValueChanged($event, 'showCC')"
+                                                >
                                         <dx-validator>
                                             <dxi-validation-rule type="custom"
                                                 [message]="ls.l('InvalidField', ls.l('CC'))"
@@ -226,6 +229,7 @@
                                         placeholder=""
                                         [multiline]="false"
                                         [acceptCustomValue]="true"
+                                        (onValueChanged)="onValueChanged($event, 'showBCC')"
                                         [(value)]="data.bcc"
                                         (onKeyUp)="onKeyUp($event)"
                                         (onInitialized)="onTagBoxInitialized($event)"

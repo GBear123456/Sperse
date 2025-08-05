@@ -752,10 +752,12 @@ export class EmailTemplateDialogComponent implements OnInit {
                 event.component.option('isValid', false);
         });
     }
-
+    onValueChanged(event, field) {
+        this[field]= event.value && event.value.length > 0;
+    }
     showInputField(element, field) {
         
-        this[field] = !this[field];
+        this[field] = true;
         setTimeout(() =>
             element.instance.focus());
         this.changeDetectorRef.detectChanges();
