@@ -1,360 +1,312 @@
 <div #loaderWrapper>
-    <action-menu
-        width="150px"
-        [items]="actionMenuItems"
-        target=""
-        (onItemClick)="onMenuItemClick($event)"
-    >
-    </action-menu>
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
-        <mat-tab [label]="ls.l('LeadHistory')">
-            <div class="wrapper">
-                <div class="grid-view">
-                    <dx-data-grid
-                        #leadDataGrid
-                        height="100%"
-                        class="main-component-view"
-                        accessKey="narrowHeaderPanel"
-                        noDataText=""
-                        [renderAsync]="true"
-                        [loadPanel]="{ enabled: false }"
-                        [dataSource]="leadDataSource"
-                        [allowColumnReordering]="true"
-                        [columnAutoWidth]="true"
-                        [cacheEnabled]="false"
-                        [remoteOperations]="{
-                            filtering: false,
-                            grouping: false,
-                            groupPaging: true,
-                            paging: true,
-                            sorting: true,
-                            summary: true
-                        }"
-                        [allowColumnResizing]="true"
-                        [hoverStateEnabled]="true"
-                        [pager]="defaultGridPagerConfig"
-                        (onCellClick)="onCellClick($event)"
-                        (onContentReady)="loadingService.finishLoading()"
-                        (onDataErrorOccurred)="
-                            httpInterceptor.handleError($event.error)
-                        "
-                    >
-                        <dxo-selection mode="none"></dxo-selection>
-                        <dxo-scrolling
-                            rowRenderingMode="virtual"
-                        ></dxo-scrolling>
+  <action-menu
+    width="150px"
+    [items]="actionMenuItems"
+    target=""
+    (onItemClick)="onMenuItemClick($event)"
+  >
+  </action-menu>
+  <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+    <mat-tab [label]="ls.l('LeadHistory')">
+      <div class="wrapper">
+        <div class="grid-view">
+          <dx-data-grid
+            #leadDataGrid
+            height="100%"
+            class="main-component-view"
+            accessKey="narrowHeaderPanel"
+            noDataText=""
+            [renderAsync]="true"
+            [loadPanel]="{ enabled: false }"
+            [dataSource]="leadDataSource"
+            [allowColumnReordering]="true"
+            [columnAutoWidth]="true"
+            [cacheEnabled]="false"
+            [remoteOperations]="{
+              filtering: false,
+              grouping: false,
+              groupPaging: true,
+              paging: true,
+              sorting: true,
+              summary: true
+            }"
+            [allowColumnResizing]="true"
+            [hoverStateEnabled]="true"
+            [pager]="defaultGridPagerConfig"
+            (onCellClick)="onCellClick($event)"
+            (onContentReady)="loadingService.finishLoading()"
+            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+          >
+            <dxo-selection mode="none"></dxo-selection>
+            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
 
-                        <dxi-column
-                            alignment="center"
-                            width="90px"
-                            cellTemplate="actionsCellTemplate"
-                            headerCellTemplate="actionsCellTemplate"
-                        >
-                        </dxi-column>
+            <dxi-column
+              alignment="center"
+              width="90px"
+              cellTemplate="actionsCellTemplate"
+              headerCellTemplate="actionsCellTemplate"
+            >
+            </dxi-column>
 
-                        <dxi-column
-                            [dataField]="leadFields.Id"
-                            [visible]="false"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="leadFields.CustomerId"
-                            [visible]="false"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="leadFields.LeadDate"
-                            [caption]="ls.l('Created')"
-                            cellTemplate="dateCell"
-                            cssClass="tabular"
-                            sortOrder="desc"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="leadFields.PipelineId"
-                            [caption]="ls.l('Pipeline')"
-                            cellTemplate="pipelineCell"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="leadFields.Stage"
-                            [caption]="ls.l('Stage')"
-                            cssClass="clipboard-holder"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="leadFields.SourceAffiliateCode"
-                            [caption]="ls.l('SourceAffiliateCode')"
-                            cssClass="clipboard-holder"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="leadFields.SourceContactName"
-                            [caption]="ls.l('SourceContactName')"
-                            cssClass="clipboard-holder"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="leadFields.SourceCampaignCode"
-                            [caption]="ls.l('CampaignCode')"
-                            cssClass="clipboard-holder"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="leadFields.SourceChannelCode"
-                            [caption]="ls.l('ChannelCode')"
-                            cssClass="clipboard-holder"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="leadFields.SourceRefererUrl"
-                            [caption]="ls.l('RefererUrl')"
-                            cssClass="clipboard-holder"
-                        ></dxi-column>
+            <dxi-column [dataField]="leadFields.Id" [visible]="false"></dxi-column>
+            <dxi-column [dataField]="leadFields.CustomerId" [visible]="false"></dxi-column>
+            <dxi-column
+              [dataField]="leadFields.LeadDate"
+              [caption]="ls.l('Created')"
+              cellTemplate="dateCell"
+              cssClass="tabular"
+              sortOrder="desc"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="leadFields.PipelineId"
+              [caption]="ls.l('Pipeline')"
+              cellTemplate="pipelineCell"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="leadFields.Stage"
+              [caption]="ls.l('Stage')"
+              cssClass="clipboard-holder"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="leadFields.SourceAffiliateCode"
+              [caption]="ls.l('SourceAffiliateCode')"
+              cssClass="clipboard-holder"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="leadFields.SourceContactName"
+              [caption]="ls.l('SourceContactName')"
+              cssClass="clipboard-holder"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="leadFields.SourceCampaignCode"
+              [caption]="ls.l('CampaignCode')"
+              cssClass="clipboard-holder"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="leadFields.SourceChannelCode"
+              [caption]="ls.l('ChannelCode')"
+              cssClass="clipboard-holder"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="leadFields.SourceRefererUrl"
+              [caption]="ls.l('RefererUrl')"
+              cssClass="clipboard-holder"
+            ></dxi-column>
 
-                        <a
-                            class="dx-link dx-link-edit"
-                            *dxTemplate="let cellData of 'actionsCellTemplate'"
-                        ></a>
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
 
-                        <div
-                            *dxTemplate="let cellData of 'pipelineCell'"
-                            class="clipboard-holder"
-                        >
-                            {{ pipelines[cellData.value].name }}
-                        </div>
-
-                        <div
-                            *dxTemplate="let cellData of 'dateCell'"
-                            class="clipboard-holder"
-                        >
-                            {{
-                                cellData.value
-                                    | datetime : formatting.dateTimeMoment
-                            }}
-                        </div>
-                        <dxo-group-panel [visible]="true"></dxo-group-panel>
-                        <dxo-sorting mode="multiple"></dxo-sorting>
-                    </dx-data-grid>
-                </div>
+            <div *dxTemplate="let cellData of 'pipelineCell'" class="clipboard-holder">
+              {{ pipelines[cellData.value].name }}
             </div>
-        </mat-tab>
-        <mat-tab [label]="ls.l('ReferredContacts')">
-            <div class="wrapper">
-                <div class="grid-view">
-                    <dx-data-grid
-                        #contactDataGrid
-                        height="100%"
-                        class="main-component-view"
-                        accessKey="narrowHeaderPanel"
-                        noDataText=""
-                        [renderAsync]="true"
-                        [loadPanel]="{ enabled: false }"
-                        [dataSource]="contactDataSource"
-                        [allowColumnReordering]="true"
-                        [columnAutoWidth]="true"
-                        [cacheEnabled]="false"
-                        [remoteOperations]="{
-                            filtering: false,
-                            grouping: false,
-                            groupPaging: true,
-                            paging: true,
-                            sorting: true,
-                            summary: true
-                        }"
-                        [allowColumnResizing]="true"
-                        [hoverStateEnabled]="true"
-                        [pager]="defaultGridPagerConfig"
-                        (onCellClick)="onCellClick($event)"
-                        (onContentReady)="loadingService.finishLoading()"
-                        (onDataErrorOccurred)="
-                            httpInterceptor.handleError($event.error)
-                        "
-                    >
-                        <dxo-selection mode="none"></dxo-selection>
-                        <dxo-scrolling
-                            rowRenderingMode="virtual"
-                        ></dxo-scrolling>
 
-                        <dxi-column
-                            alignment="center"
-                            width="90px"
-                            cellTemplate="actionsCellTemplate"
-                            headerCellTemplate="actionsCellTemplate"
-                        >
-                        </dxi-column>
-
-                        <dxi-column
-                            [dataField]="clientFields.Id"
-                            [visible]="false"
-                            sortOrder="desc"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="clientFields.Name"
-                            [caption]="ls.l('Customer.Name')"
-                            cssClass="clipboard-holder"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="clientFields.Email"
-                            [caption]="ls.l('Contact.Email')"
-                            cssClass="clipboard-holder"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="clientFields.IsActive"
-                            [caption]="ls.l('Active')"
-                            dataType="boolean"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="clientFields.ContactDate"
-                            [caption]="ls.l('Created')"
-                            cellTemplate="dateCell"
-                            cssClass="tabular"
-                            sortOrder="desc"
-                        ></dxi-column>
-                        <ng-container *ngIf="tenantHasBankCodeFeature">
-                            <dxi-column
-                                [dataField]="clientFields.BankCode"
-                                cellTemplate="bankCodeCell"
-                                [caption]="ls.l('BankCode')"
-                                [renderAsync]="true"
-                                [visible]="tenantHasBankCodeFeature"
-                                [showInColumnChooser]="tenantHasBankCodeFeature"
-                            >
-                            </dxi-column>
-                        </ng-container>
-
-                        <div *dxTemplate="let cellData of 'bankCodeCell'">
-                            <bank-code-letters
-                                [bankCode]="cellData.value"
-                                [showDescriptionsOnClick]="true"
-                                [showReportLink]="true"
-                            >
-                            </bank-code-letters>
-                        </div>
-
-                        <a
-                            class="dx-link dx-link-edit"
-                            *dxTemplate="let cellData of 'actionsCellTemplate'"
-                        ></a>
-
-                        <div
-                            *dxTemplate="let cellData of 'dateCell'"
-                            class="clipboard-holder"
-                        >
-                            {{
-                                cellData.value
-                                    | datetime : formatting.dateTimeMoment
-                            }}
-                        </div>
-                        <dxo-group-panel [visible]="true"></dxo-group-panel>
-                        <dxo-sorting mode="multiple"></dxo-sorting>
-                    </dx-data-grid>
-                </div>
+            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+              {{ cellData.value | datetime : formatting.dateTimeMoment }}
             </div>
-        </mat-tab>
-        <mat-tab [label]="ls.l('SubContacts')">
-            <div class="wrapper">
-                <div class="grid-view">
-                    <dx-data-grid
-                        #subContactDataGrid
-                        height="100%"
-                        class="main-component-view"
-                        accessKey="narrowHeaderPanel"
-                        noDataText=""
-                        [renderAsync]="true"
-                        [loadPanel]="{ enabled: false }"
-                        [dataSource]="subContactDataSource"
-                        [allowColumnReordering]="true"
-                        [columnAutoWidth]="true"
-                        [cacheEnabled]="false"
-                        [remoteOperations]="{
-                            filtering: false,
-                            grouping: false,
-                            groupPaging: true,
-                            paging: true,
-                            sorting: true,
-                            summary: true
-                        }"
-                        [allowColumnResizing]="true"
-                        [hoverStateEnabled]="true"
-                        [pager]="defaultGridPagerConfig"
-                        (onCellClick)="onCellClick($event)"
-                        (onContentReady)="loadingService.finishLoading()"
-                        (onDataErrorOccurred)="
-                            httpInterceptor.handleError($event.error)
-                        "
-                    >
-                        <dxo-selection mode="none"></dxo-selection>
-                        <dxo-scrolling
-                            rowRenderingMode="virtual"
-                        ></dxo-scrolling>
+            <dxo-group-panel [visible]="true"></dxo-group-panel>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+          </dx-data-grid>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab [label]="ls.l('ReferredContacts')">
+      <div class="wrapper">
+        <div class="grid-view">
+          <dx-data-grid
+            #contactDataGrid
+            height="100%"
+            class="main-component-view"
+            accessKey="narrowHeaderPanel"
+            noDataText=""
+            [renderAsync]="true"
+            [loadPanel]="{ enabled: false }"
+            [dataSource]="contactDataSource"
+            [allowColumnReordering]="true"
+            [columnAutoWidth]="true"
+            [cacheEnabled]="false"
+            [remoteOperations]="{
+              filtering: false,
+              grouping: false,
+              groupPaging: true,
+              paging: true,
+              sorting: true,
+              summary: true
+            }"
+            [allowColumnResizing]="true"
+            [hoverStateEnabled]="true"
+            [pager]="defaultGridPagerConfig"
+            (onCellClick)="onCellClick($event)"
+            (onContentReady)="loadingService.finishLoading()"
+            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+          >
+            <dxo-selection mode="none"></dxo-selection>
+            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
 
-                        <dxi-column
-                            alignment="center"
-                            width="90px"
-                            cellTemplate="actionsCellTemplate"
-                            headerCellTemplate="actionsCellTemplate"
-                        >
-                        </dxi-column>
+            <dxi-column
+              alignment="center"
+              width="90px"
+              cellTemplate="actionsCellTemplate"
+              headerCellTemplate="actionsCellTemplate"
+            >
+            </dxi-column>
 
-                        <dxi-column
-                            [dataField]="clientFields.Id"
-                            [visible]="false"
-                            sortOrder="desc"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="clientFields.Name"
-                            [caption]="ls.l('Customer.Name')"
-                            cssClass="clipboard-holder"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="clientFields.Email"
-                            [caption]="ls.l('Contact.Email')"
-                            cssClass="clipboard-holder"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="clientFields.IsActive"
-                            [caption]="ls.l('Active')"
-                            dataType="boolean"
-                        ></dxi-column>
-                        <dxi-column
-                            [dataField]="clientFields.ContactDate"
-                            [caption]="ls.l('Created')"
-                            cellTemplate="dateCell"
-                            cssClass="tabular"
-                            sortOrder="desc"
-                        ></dxi-column>
-                        <ng-container *ngIf="tenantHasBankCodeFeature">
-                            <dxi-column
-                                [dataField]="clientFields.BankCode"
-                                cellTemplate="bankCodeCell"
-                                [caption]="ls.l('BankCode')"
-                                [renderAsync]="true"
-                                [visible]="tenantHasBankCodeFeature"
-                                [showInColumnChooser]="tenantHasBankCodeFeature"
-                            >
-                            </dxi-column>
-                        </ng-container>
+            <dxi-column
+              [dataField]="clientFields.Id"
+              [visible]="false"
+              sortOrder="desc"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="clientFields.Name"
+              [caption]="ls.l('Customer.Name')"
+              cssClass="clipboard-holder"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="clientFields.Email"
+              [caption]="ls.l('Contact.Email')"
+              cssClass="clipboard-holder"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="clientFields.IsActive"
+              [caption]="ls.l('Active')"
+              dataType="boolean"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="clientFields.ContactDate"
+              [caption]="ls.l('Created')"
+              cellTemplate="dateCell"
+              cssClass="tabular"
+              sortOrder="desc"
+            ></dxi-column>
+            <ng-container *ngIf="tenantHasBankCodeFeature">
+              <dxi-column
+                [dataField]="clientFields.BankCode"
+                cellTemplate="bankCodeCell"
+                [caption]="ls.l('BankCode')"
+                [renderAsync]="true"
+                [visible]="tenantHasBankCodeFeature"
+                [showInColumnChooser]="tenantHasBankCodeFeature"
+              >
+              </dxi-column>
+            </ng-container>
 
-                        <div *dxTemplate="let cellData of 'bankCodeCell'">
-                            <bank-code-letters
-                                [bankCode]="cellData.value"
-                                [showDescriptionsOnClick]="true"
-                                [showReportLink]="true"
-                            >
-                            </bank-code-letters>
-                        </div>
-
-                        <a
-                            class="dx-link dx-link-edit"
-                            *dxTemplate="let cellData of 'actionsCellTemplate'"
-                        ></a>
-
-                        <div
-                            *dxTemplate="let cellData of 'dateCell'"
-                            class="clipboard-holder"
-                        >
-                            {{
-                                cellData.value
-                                    | datetime : formatting.dateTimeMoment
-                            }}
-                        </div>
-                        <dxo-group-panel [visible]="true"></dxo-group-panel>
-                        <dxo-sorting mode="multiple"></dxo-sorting>
-                    </dx-data-grid>
-                </div>
+            <div *dxTemplate="let cellData of 'bankCodeCell'">
+              <bank-code-letters
+                [bankCode]="cellData.value"
+                [showDescriptionsOnClick]="true"
+                [showReportLink]="true"
+              >
+              </bank-code-letters>
             </div>
-        </mat-tab>
-    </mat-tab-group>
+
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
+
+            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+              {{ cellData.value | datetime : formatting.dateTimeMoment }}
+            </div>
+            <dxo-group-panel [visible]="true"></dxo-group-panel>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+          </dx-data-grid>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab [label]="ls.l('SubContacts')">
+      <div class="wrapper">
+        <div class="grid-view">
+          <dx-data-grid
+            #subContactDataGrid
+            height="100%"
+            class="main-component-view"
+            accessKey="narrowHeaderPanel"
+            noDataText=""
+            [renderAsync]="true"
+            [loadPanel]="{ enabled: false }"
+            [dataSource]="subContactDataSource"
+            [allowColumnReordering]="true"
+            [columnAutoWidth]="true"
+            [cacheEnabled]="false"
+            [remoteOperations]="{
+              filtering: false,
+              grouping: false,
+              groupPaging: true,
+              paging: true,
+              sorting: true,
+              summary: true
+            }"
+            [allowColumnResizing]="true"
+            [hoverStateEnabled]="true"
+            [pager]="defaultGridPagerConfig"
+            (onCellClick)="onCellClick($event)"
+            (onContentReady)="loadingService.finishLoading()"
+            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+          >
+            <dxo-selection mode="none"></dxo-selection>
+            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+
+            <dxi-column
+              alignment="center"
+              width="90px"
+              cellTemplate="actionsCellTemplate"
+              headerCellTemplate="actionsCellTemplate"
+            >
+            </dxi-column>
+
+            <dxi-column
+              [dataField]="clientFields.Id"
+              [visible]="false"
+              sortOrder="desc"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="clientFields.Name"
+              [caption]="ls.l('Customer.Name')"
+              cssClass="clipboard-holder"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="clientFields.Email"
+              [caption]="ls.l('Contact.Email')"
+              cssClass="clipboard-holder"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="clientFields.IsActive"
+              [caption]="ls.l('Active')"
+              dataType="boolean"
+            ></dxi-column>
+            <dxi-column
+              [dataField]="clientFields.ContactDate"
+              [caption]="ls.l('Created')"
+              cellTemplate="dateCell"
+              cssClass="tabular"
+              sortOrder="desc"
+            ></dxi-column>
+            <ng-container *ngIf="tenantHasBankCodeFeature">
+              <dxi-column
+                [dataField]="clientFields.BankCode"
+                cellTemplate="bankCodeCell"
+                [caption]="ls.l('BankCode')"
+                [renderAsync]="true"
+                [visible]="tenantHasBankCodeFeature"
+                [showInColumnChooser]="tenantHasBankCodeFeature"
+              >
+              </dxi-column>
+            </ng-container>
+
+            <div *dxTemplate="let cellData of 'bankCodeCell'">
+              <bank-code-letters
+                [bankCode]="cellData.value"
+                [showDescriptionsOnClick]="true"
+                [showReportLink]="true"
+              >
+              </bank-code-letters>
+            </div>
+
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
+
+            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+              {{ cellData.value | datetime : formatting.dateTimeMoment }}
+            </div>
+            <dxo-group-panel [visible]="true"></dxo-group-panel>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+          </dx-data-grid>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>
