@@ -288,7 +288,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.templateForm.get('emailContentBodyTemplate')?.valueChanges.subscribe(value => {
             this.data.body = value;
-            //console.log('Editor value changed:', value);
         });
 
         setTimeout(() => {
@@ -494,13 +493,12 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
 
         
         dialogRef.afterClosed().subscribe(result => {
-            console.log('Modal closed with result:', result);
             if (result) {
-                this.templateData.body = result.body;
-                this.templateData.attachments= result.attachment;
-                this.templateData.previewText = result.previewText;
-                this.templateData.subject = result.subject;
-                this.curTemplateTitle = result.title;
+                // this.templateData.body = result.body;
+                // this.templateData.attachments= result.attachment;
+                // this.templateData.previewText = result.previewText;
+                // this.templateData.subject = result.subject;
+                // this.curTemplateTitle = result.title;
                 
                 this.refresh();
                 this.notifyService.success(this.ls.l('TemplateListUpdated'));
@@ -1240,6 +1238,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
                         };
                     })
                 );
+
                 this.changeDetectorRef.detectChanges();
             }
         });
@@ -1397,7 +1396,6 @@ getChatGptResponse() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('ChatGPT Response:', data);
         this.invalidate();
         this.processing = false;
 
@@ -1405,6 +1403,7 @@ getChatGptResponse() {
         const responseData = this.extractContent(gptResponse);
         this.data.subject = responseData.subject;
         this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
+        this.aceEditor.session.setValue(this.formatEmailContent(responseData.body))
 
         this.updateButtons();
     })

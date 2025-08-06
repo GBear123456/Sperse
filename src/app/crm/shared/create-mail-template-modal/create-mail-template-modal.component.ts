@@ -396,7 +396,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log("ChatGPT Response:", data);
                 this.invalidate();
                 this.processing = false;
 
@@ -452,17 +451,14 @@ export class CreateMailTemplateModalComponent implements OnInit {
         this.invalidate();
     }
     onReady(event: any) {
-        console.log("Editor is ready:", event);
     }
 
     onChange(event: any) {
         this.data.body = this.editorData;
         this.updateDataLength();
-        console.log("Editor content changed:", this.editorData);
     }
     // save && edit template data
     saveTemplate() {
-        console.log("save button clicked");
         this.data.body = this.editorData;
         this.data.attachments = [
             ...this.attachments.filter((item) => !item.loader),
@@ -515,7 +511,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
                 });
             })
             .filter((item) => item !== null);
-            console.log('Preparing to save template:', this.data);
         // Prepare template data
         const templateData = {
             id: this.templateEditMode ? this.params.id : undefined,
@@ -549,7 +544,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
                     xhr: undefined,
                     url: undefined // Clean up URLs
                 }));
-                console.log(this.data, '##########')
                 this.onSave.emit(this.data);
                 this.dialogRef.close(this.data);
                 this.notifyService.success(this.ls.l('SuccessfullySaved'));
