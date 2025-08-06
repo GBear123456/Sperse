@@ -6,7 +6,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    background: var(--background-color);
+    background: var(--navbar-bg);
     border-radius: 8px;
     // padding: 0 8px;
     min-height: 51px;
@@ -21,19 +21,6 @@
   }
 
   ::ng-deep {
-    .dx-texteditor-input {
-      font-family: var(--app-font-family);
-      font-size: 15px;
-      font-weight: 400;
-      line-height: 23px;
-      letter-spacing: -0.02em;
-      text-align: left;
-      color: var(--input-placeholder);
-      background: var(--input-bg);
-      border: none;
-      display: flex;
-      align-items: center;
-    }
     .dx-icon-clear {
       cursor: pointer;
     }
@@ -97,6 +84,15 @@
       margin-right: 10px;
       display: flex;
       align-items: center;
+      width: 18px;
+      height: 28px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-image: url('assets/common/icons/contact/building.svg');
+
+      .dark-theme & {
+        background-image: url('assets/common/icons/contact/building-dark.svg');
+      }
     }
 
     .name-role {
@@ -234,5 +230,19 @@
   }
   100% {
     background-color: transparent;
+  }
+}
+
+::ng-deep .user-card-container {
+  .dx-texteditor-input {
+    background-color: var(--navbar-bg) !important;
+    border: none !important;
+    color: var(--text-color) !important;
+    font-family: var(--app-font-family);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 23px;
+    letter-spacing: -0.02em;
+    text-align: left;
   }
 }

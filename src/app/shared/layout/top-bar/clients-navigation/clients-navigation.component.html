@@ -19,7 +19,7 @@
       (onValueChanged)="onSearchValueChanged($event)"
     ></dx-text-box>
     <div *ngIf="!isSearchMode" class="flex">
-      <img src="assets/common/icons/contact/building.svg" class="icon-building" alt="Company" />
+      <div class="icon-building"></div>
       <span class="name-role">
         <span class="name">{{ contacts[contactIds?.indexOf(currentContactId)]?.Name }}</span>
       </span>

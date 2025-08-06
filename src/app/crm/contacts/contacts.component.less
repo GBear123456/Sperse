@@ -237,8 +237,8 @@
           }
         }
         .sub-contacts-info {
-          display: flex;
-          align-items: flex-start;
+          display: flex !important;
+          align-items: baseline;
           & > div {
             margin: 0 10px;
             & > a {
@@ -335,7 +335,7 @@
     }
     .sub-contacts-info {
       display: flex;
-      align-items: flex-start;
+      align-items: baseline;
       & > div {
         margin: 0 10px;
         & > a {
@@ -419,7 +419,8 @@
   font-size: 14px;
 }
 
-.contact-persons-info {
-  display: flex;
-  align-items: center;
+::ng-deep .contact-persons-info,
+.sub-contacts-info {
+  display: flex !important;
+  align-items: baseline !important;
 }

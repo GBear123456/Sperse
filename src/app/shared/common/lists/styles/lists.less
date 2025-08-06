@@ -130,6 +130,10 @@
       background: var(--background-color) !important;
     }
 
+    .dx-button-text {
+      color: var(--text-color) !important;
+    }
+
     .dx-treelist-icon-container.dx-editor-inline-block {
       padding-left: 0;
 
@@ -251,6 +255,11 @@
     }
   }
 
+  ::ng-deep .dx-tab-content,
+  .dx-tab-selected {
+    color: var(--text-color) !important;
+  }
+
   .add-new-item-mode {
     ::ng-deep .dx-widget {
       .dx-item-content {
@@ -274,5 +283,13 @@
         }
       }
     }
+  }
+
+  ::ng-deep .dx-texteditor-input {
+    background: var(--background-color);
+  }
+
+  ::ng-deep .dx-list-item-before-bag {
+    background: var(--button-bg);
   }
 }
