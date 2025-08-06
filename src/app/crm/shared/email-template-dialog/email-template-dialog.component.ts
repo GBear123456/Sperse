@@ -1,7 +1,7 @@
 /** Core imports */
 import {
     Component, ChangeDetectionStrategy, ViewChild, OnInit, ElementRef,
-    Inject, ChangeDetectorRef, Input, Output, EventEmitter
+    Inject, ChangeDetectorRef, Input, Output, EventEmitter, AfterViewInit
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -58,8 +58,12 @@ import { CrmService } from '@app/crm/crm.service';
 import { CreateMailTemplateModalComponent } from '@app/crm/shared/create-mail-template-modal/create-mail-template-modal.component';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { prompts } from './prompts';
-import * as monaco from 'monaco-editor';
-import { numberlike } from '@node_modules/moment/moment';
+
+// HTML editor
+import * as ace from 'ace-builds'
+import 'ace-builds/src-min-noconflict/mode-html';
+import 'ace-builds/src-min-noconflict/theme-monokai';
+import 'ace-builds/src-min-noconflict/ext-language_tools'; 
 
 @Component({
     selector: 'email-template-dialog',
@@ -68,7 +72,7 @@ import { numberlike } from '@node_modules/moment/moment';
     providers: [CacheHelper, PhoneFormatPipe, EmailTemplateServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EmailTemplateDialogComponent implements OnInit {
+export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
@@ -78,6 +82,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild('contentEditableDiv') contentEditableDiv!: ElementRef<HTMLDivElement>;
     //@ViewChild('tagsButton') tagsButton: ElementRef;
     @ViewChild('aiButton') aiButton: ElementRef;
+    @ViewChild('editor') private editorRef!: ElementRef<HTMLElement>;
+    private aceEditor!: ace.Ace.Editor;
     title: string ="New Email";
     ckEditor: any;
     envHost = environment;
@@ -442,6 +448,22 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
+
+    ngAfterViewInit(): void {
+        this.aceEditor = ace.edit(this.editorRef.nativeElement);
+
+        // Configure editor options
+        this.aceEditor.setOptions({
+          mode: 'ace/mode/html',
+          theme: 'ace/theme/monokai',
+          enableBasicAutocompletion: true,
+          enableLiveAutocompletion: true,
+          enableSnippets: true
+        });
+    
+        // Set initial content
+        this.aceEditor.session.setValue('');
+    }
     getSanitizedIcon(icon: string) {
         return this.domSanitizer.bypassSecurityTrustHtml(icon);
     }
@@ -850,7 +872,11 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.data.subject = this.templateData.subject;
         this.data.previewText = this.templateData.previewText;
         this.attachments = this.templateData.attachments;
-        this.templateForm.get('emailContentBodyTemplate')?.setValue(this.templateData.body);
+        this.aceEditor.session.setValue(
+            // this.aceEditor.getCursorPosition(),
+            this.templateData.body
+          );
+        // this.templateForm.get('emailContentBodyTemplate')?.setValue(this.templateData.body);
 
         this.showTabs('new-email')
     }
@@ -976,8 +1002,11 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.templateForm = this.fb.group({
             emailContentBodyTemplate: [this.data.body]
         });
-        this.charCount = Math.max(this.data.body.replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0) ?? 0;
-        this.changeDetectorRef.markForCheck();
+        if(this.data.body){
+
+            this.charCount = Math.max(this.data.body.replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0) ?? 0;
+            this.changeDetectorRef.markForCheck();
+        }
     }
 
     onTagClick(event) {
@@ -1451,6 +1480,9 @@ getChatGptResponse() {
         else if (tabName == 'html-editor') {
             this.showHtmlEditor = true;
             this.title= "Html Editor";
+            setTimeout(() => {
+                this.aceEditor.resize();
+              }, 0);
 
         }
         else if (tabName == 'template') {
