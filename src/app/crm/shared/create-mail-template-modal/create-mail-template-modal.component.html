@@ -81,7 +81,7 @@
             </div>
             <div>
                 <ckeditor
-                    [(ngModel)]="editorData"
+                    [(ngModel)]="data.body"
                     [config]="ckConfig"
                     (ready)="onReady($event)"
                     (change)="onChange($event)"
