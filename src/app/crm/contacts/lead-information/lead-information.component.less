@@ -44,6 +44,9 @@
     font-style: normal;
     letter-spacing: 0.2px;
     color: #677380;
+    .dark-theme & {
+      color: var(--text-color);
+    }
     &.app {
       min-width: 200px;
     }
@@ -59,6 +62,9 @@
     white-space: nowrap;
     letter-spacing: 0.3px;
     color: #424c56;
+    .dark-theme & {
+      color: #a0aab4;
+    }
     span {
       overflow: hidden;
       display: inline-block;
@@ -80,7 +86,12 @@
     margin-right: 50px;
     &.comments inplace-edit .inplace-edit-view-mode .link a {
       white-space: break-spaces !important;
+      color: var(--text-color);
     }
+  }
+
+  ::ng-deep .link a {
+    color: var(--text-color) !important;
   }
 
   .lead-info {
@@ -160,5 +171,9 @@
 
   .lead-info {
     margin-top: 75px;
+
+    h3 {
+      color: var(--text-color);
+    }
   }
 }
