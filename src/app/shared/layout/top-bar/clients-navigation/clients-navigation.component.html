@@ -4,7 +4,7 @@
     [disabled]="!contactIds || contactIds.indexOf(currentContactId) <= 0"
     (click)="goToPrevClient()"
   >
-    <img src="assets/common/icons/contact/header-angle-right.svg" alt="Previous" />
+    <lucide-angular name="chevron-left" class="w-5 h-5 mb-0 dark:text-white"></lucide-angular>
   </button>
   <div class="user-card-content" #dropdownBtn>
     <dx-text-box
@@ -43,7 +43,7 @@
     [disabled]="!contactIds || contactIds.indexOf(currentContactId) === contactIds.length - 1"
     (click)="goToNextClient()"
   >
-    <img src="assets/common/icons/contact/header-angle-right.svg" alt="Next" />
+    <lucide-angular name="chevron-right" class="w-5 h-5 mb-0 dark:text-white"></lucide-angular>
   </button>
 </div>
 <dx-tooltip

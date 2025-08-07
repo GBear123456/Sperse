@@ -51,7 +51,7 @@ import 'assets/metronic/src/js/framework/components/general/offcanvas.js';
 import { ContactInfoPanelComponent } from '@app/shared/common/contact-info-panel/contact-info-panel.component';
 import { GlobalSearchComponent } from '@app/shared/layout/top-bar/global-search/global-search.component';
 import { ClientsNavigationComponent } from '@app/shared/layout/top-bar/clients-navigation/clients-navigation.component';
-import { LucideAngularModule, BellDot } from 'lucide-angular';
+import { LucideAngularModule, BellDot, ChevronLeft, ChevronRight } from 'lucide-angular';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 
 let COMPONENTS = [
@@ -100,7 +100,7 @@ let COMPONENTS = [
     NoDataModule,
     CommonModule,
     SharedModule,
-    LucideAngularModule.pick({ BellDot }),
+    LucideAngularModule.pick({ BellDot, ChevronLeft, ChevronRight }),
   ],
   declarations: COMPONENTS,
   exports: COMPONENTS,
