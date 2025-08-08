@@ -64,6 +64,10 @@ import * as ace from 'ace-builds'
 import 'ace-builds/src-min-noconflict/mode-html';
 import 'ace-builds/src-min-noconflict/theme-monokai';
 import 'ace-builds/src-min-noconflict/ext-language_tools'; 
+import 'ace-builds/src-noconflict/theme-chrome';
+import 'ace-builds/src-noconflict/theme-github';
+import 'ace-builds/src-noconflict/theme-solarized_dark';
+import 'ace-builds/src-noconflict/theme-twilight';
 
 @Component({
     selector: 'email-template-dialog',
@@ -140,6 +144,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     forceValidationBypass = true;
     emailRegEx = AppConsts.regexPatterns.email;
     curTemplateTitle : string;
+    showSetting: boolean = false;
     @Input() templateType: EmailTemplateType;
 
     storeAttachmentsToDocumentsCacheKey = 'StoreAttachmentsToDocuments';
@@ -230,16 +235,21 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         ];
     @ViewChild('editor', { static: false }) editor: any;
     templateForm: FormGroup;
-    editorOptions = {
-        theme: 'vs-dark',
-        language: 'html',
-        automaticLayout: true,
+   
+    editorSettings = {
         fontSize: 14,
-        minimap: {
-            enabled: false
-        }
+        theme: 'ace/theme/monokai',
+        showLineNumbers: true,
     };
 
+
+    editorThemes = [
+        { name: 'Monokai', value: 'ace/theme/monokai' },
+        { name: 'Chrome', value: 'ace/theme/chrome' },
+        { name: 'GitHub', value: 'ace/theme/github' },
+        { name: 'Solarized Dark', value: 'ace/theme/solarized_dark' },
+        { name: 'Twilight', value: 'ace/theme/twilight' }
+    ];
     get lineNumbers(): number[] {
         return Array.from({ length: this.data.body.split('\n').length }, (_, i) => i + 1);
     }
@@ -453,11 +463,13 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
 
         // Configure editor options
         this.aceEditor.setOptions({
-          mode: 'ace/mode/html',
-          theme: 'ace/theme/monokai',
-          enableBasicAutocompletion: true,
-          enableLiveAutocompletion: true,
-          enableSnippets: true
+            mode: 'ace/mode/html',
+            theme: this.editorSettings.theme,
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: true,
+            fontSize: this.editorSettings.fontSize,
+            showLineNumbers: this.editorSettings.showLineNumbers,
         });
     
         // Set initial content
@@ -1552,5 +1564,19 @@ getChatGptResponse() {
             
             this.filteredTemplates$.next(filtered);
         });
+    }
+
+    toggleSetting() {
+        this.showSetting=!this.showSetting;
+    }
+
+    updateEditorSettings(): void {
+        this.aceEditor.setOptions({
+            fontSize: this.editorSettings.fontSize,
+            theme: this.editorSettings.theme,
+            showLineNumbers: this.editorSettings.showLineNumbers,
+            showGutter: this.editorSettings.showLineNumbers,
+        });
+        this.changeDetectorRef.detectChanges();
     }
 }

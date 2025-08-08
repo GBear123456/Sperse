@@ -72,11 +72,11 @@
                 </div>
             </div>
         </div>
-        <div class="buttons" *ngIf="!data.addMode && !isManageUnallowed && data.contact && onTemplateCreate.observers.length">
+        <!-- <div class="buttons" *ngIf="!data.addMode && !isManageUnallowed && data.contact && onTemplateCreate.observers.length">
             <i class="create-template" [title]="ls.l('CreateTemplate')" (click)="createTemplate()"></i>
             <i *ngIf="data.templateId" [title]="ls.l('EditTemplate')" class="edit-template fa fa-pencil"
                 (click)="editTemplate(data)"></i>
-        </div> 
+        </div>  -->
 
         <dx-context-menu *ngIf="addSendEmailMenuItems && addSendEmailMenuItems.length" [selectByClick]="true"
             selectionMode="single" [dataSource]="addSendEmailMenuItems"
@@ -332,6 +332,50 @@
                                 formControlName="emailContentBodyTemplate" class="editor-container">
                                 </ngx-monaco-editor>
                             </form>                        -->
+                            <div class="d-flex setting-div">
+                                <dx-button
+                                    stylingMode="outlined"
+                                    icon="preferences"
+                                    type="default"
+                                    (onClick)="toggleSetting()"
+                                    class="setting-btn"
+                                >
+                                </dx-button>
+                                <div *ngIf="showSetting" class="d-flex" style="padding-left: 20px">
+                                    <div class="settings-item">
+                                        <label class="caption">Font Size:</label>
+                                        <dx-number-box
+                                            [(value)]="editorSettings.fontSize"
+                                            [min]="8"
+                                            [max]="32"
+                                            [step]="2"
+                                            [showSpinButtons]="true"
+                                            (onValueChanged)="updateEditorSettings()">
+                                        </dx-number-box>
+                                    </div>
+                                    <div class="settings-item">
+                                        <label class="caption">Theme:</label>
+                                        <dx-select-box
+                                            [(value)]="editorSettings.theme"
+                                            [dataSource]="editorThemes"
+                                            displayExpr="name"
+                                            valueExpr="value"
+                                            (onValueChanged)="updateEditorSettings()">
+                                            <div *dxTemplate="let item of 'item'" class="theme-item">
+                                                {{ item.name }}
+                                            </div>
+                                        </dx-select-box>
+                                    </div>
+                                    <div class="settings-item">
+                                        <dx-check-box
+                                            [(value)]="editorSettings.showLineNumbers"
+                                            text="Show Line Numbers"
+                                            (onValueChanged)="updateEditorSettings()">
+                                        </dx-check-box>
+                                    </div>
+                                </div>
+                            </div>
+                    
                             <div #editor style="height: calc(100vh - 85px); width: 100%"></div>
                         </div>   
 
@@ -364,7 +408,7 @@
                                     >
                                     
                                     </dx-text-box>
-                                    <div *ngIf="filteredTemplates$.length == 0" class="template-item">
+                                    <div *ngIf="(filteredTemplates$ | async)?.length== 0" class="template-item">
                                         No Templates
                                     </div>
                                     <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item" [class.active]="template.id === curTemplateId" (click)="viewDetailTemplate($event, template)">
