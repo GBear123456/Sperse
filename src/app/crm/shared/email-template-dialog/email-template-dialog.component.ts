@@ -1417,7 +1417,7 @@ getChatGptResponse() {
         const responseData = this.extractContent(gptResponse);
         this.data.subject = responseData.subject;
         this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
-        this.aceEditor.session.setValue(this.formatEmailContent(responseData.body))
+        this.aceEditor.session.setValue(this.data.body)
 
         this.updateButtons();
     })
