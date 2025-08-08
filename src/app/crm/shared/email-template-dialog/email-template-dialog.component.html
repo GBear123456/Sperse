@@ -260,7 +260,7 @@
                                 </dx-text-box>
                                 <div class="bcc-links">
                                     <span (click)="showInputField(PreviewTextElement, 'showPreview')"
-                                        [ngClass]="{disabled: showPreview}">Preview</span>
+                                        >Preview</span>
                                 </div>
                             </div>
 
@@ -350,6 +350,7 @@
                                             [max]="32"
                                             [step]="2"
                                             [showSpinButtons]="true"
+                                            class="setting-input"
                                             (onValueChanged)="updateEditorSettings()">
                                         </dx-number-box>
                                     </div>
@@ -360,6 +361,7 @@
                                             [dataSource]="editorThemes"
                                             displayExpr="name"
                                             valueExpr="value"
+                                            class="setting-input"
                                             (onValueChanged)="updateEditorSettings()">
                                             <div *dxTemplate="let item of 'item'" class="theme-item">
                                                 {{ item.name }}
@@ -370,6 +372,13 @@
                                         <dx-check-box
                                             [(value)]="editorSettings.showLineNumbers"
                                             text="Show Line Numbers"
+                                            (onValueChanged)="updateEditorSettings()">
+                                        </dx-check-box>
+                                    </div>
+                                    <div class="settings-item">
+                                        <dx-check-box
+                                            [(value)]="editorSettings.showPrintMargin"
+                                            text="Show Print Margin"
                                             (onValueChanged)="updateEditorSettings()">
                                         </dx-check-box>
                                     </div>

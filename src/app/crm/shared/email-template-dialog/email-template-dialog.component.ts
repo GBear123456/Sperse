@@ -240,6 +240,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         fontSize: 14,
         theme: 'ace/theme/monokai',
         showLineNumbers: true,
+        showPrintMargin: false
     };
 
 
@@ -470,6 +471,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
             enableSnippets: true,
             fontSize: this.editorSettings.fontSize,
             showLineNumbers: this.editorSettings.showLineNumbers,
+            showPrintMargin: this.editorSettings.showPrintMargin
         });
     
         // Set initial content
@@ -789,7 +791,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     }
     showInputField(element, field) {
         
-        this[field] = true;
+        this[field] = !this[field];
         setTimeout(() =>
             element.instance.focus());
         this.changeDetectorRef.detectChanges();
@@ -1415,7 +1417,7 @@ getChatGptResponse() {
         const responseData = this.extractContent(gptResponse);
         this.data.subject = responseData.subject;
         this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
-        this.aceEditor.session.setValue(this.formatEmailContent(responseData.body))
+        this.aceEditor.session.setValue(this.data.body)
 
         this.updateButtons();
     })
@@ -1576,6 +1578,7 @@ getChatGptResponse() {
             theme: this.editorSettings.theme,
             showLineNumbers: this.editorSettings.showLineNumbers,
             showGutter: this.editorSettings.showLineNumbers,
+            showPrintMargin: this.editorSettings.showPrintMargin
         });
         this.changeDetectorRef.detectChanges();
     }
