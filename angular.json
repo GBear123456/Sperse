@@ -94,7 +94,15 @@
               "node_modules/ngx-extended-pdf-viewer/assets/pdf-es5.js",
               "node_modules/ngx-extended-pdf-viewer/assets/viewer-es5.js",
               "node_modules/ngx-extended-pdf-viewer/assets/pdf.worker-es5.js",
-              "node_modules/jspdf/dist/jspdf.min.js"
+              "node_modules/jspdf/dist/jspdf.min.js",
+              "node_modules/ace-builds/src-min/ace.js",
+              "ace-builds/src-min-noconflict/mode-html",
+              "ace-builds/src-min-noconflict/theme-monokai",
+              "ace-builds/src-min-noconflict/ext-language_tools", 
+              "ace-builds/src-noconflict/theme-chrome",
+              "ace-builds/src-noconflict/theme-github",
+              "ace-builds/src-noconflict/theme-solarized_dark",
+              "ace-builds/src-noconflict/theme-twilight"
             ],
             "aot": false,
             "vendorChunk": true,

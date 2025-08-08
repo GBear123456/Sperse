@@ -68,7 +68,7 @@ import 'ace-builds/src-noconflict/theme-chrome';
 import 'ace-builds/src-noconflict/theme-github';
 import 'ace-builds/src-noconflict/theme-solarized_dark';
 import 'ace-builds/src-noconflict/theme-twilight';
-
+import 'ace-builds/src-noconflict/ext-beautify';
 @Component({
     selector: 'email-template-dialog',
     templateUrl: 'email-template-dialog.component.html',
@@ -469,13 +469,18 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: true,
             enableSnippets: true,
+            fontFamily: 'monospace',
             fontSize: this.editorSettings.fontSize,
             showLineNumbers: this.editorSettings.showLineNumbers,
             showPrintMargin: this.editorSettings.showPrintMargin
         });
     
         // Set initial content
+        this.aceEditor.resize();
         this.aceEditor.session.setValue('');
+        window.addEventListener('resize', () => {
+        this.aceEditor.resize();
+        });
     }
     getSanitizedIcon(icon: string) {
         return this.domSanitizer.bypassSecurityTrustHtml(icon);
@@ -888,6 +893,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
             // this.aceEditor.getCursorPosition(),
             this.templateData.body
           );
+          this.formatCode();
         // this.templateForm.get('emailContentBodyTemplate')?.setValue(this.templateData.body);
 
         this.showTabs('new-email')
@@ -1418,6 +1424,8 @@ getChatGptResponse() {
         this.data.subject = responseData.subject;
         this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
         this.aceEditor.session.setValue(this.data.body)
+        this.formatCode()
+        this.changeDetectorRef.detectChanges();
 
         this.updateButtons();
     })
@@ -1580,6 +1588,20 @@ getChatGptResponse() {
             showGutter: this.editorSettings.showLineNumbers,
             showPrintMargin: this.editorSettings.showPrintMargin
         });
+        this.aceEditor.resize(true);
+        this.aceEditor.renderer.updateFull();
         this.changeDetectorRef.detectChanges();
+    }
+
+    formatCode () {
+        const code = this.aceEditor.getValue(); // Get current code
+        // const formattedCode = beautify.js(code, {
+        // indent_size: 2, // 2 spaces for indentation
+        // space_in_empty_paren: true,
+        // break_chained_methods: true
+        // });
+        const beautify = ace.require("ace/ext/beautify")
+        beautify.beautify(this.aceEditor.session)
+        this.aceEditor.setValue(code, -1); //
     }
 }
