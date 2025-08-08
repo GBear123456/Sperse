@@ -210,6 +210,7 @@
     }
 
     .mat-horizontal-stepper-header-container {
+      background: var(--sidebar-bg);
       justify-content: center;
       border-bottom: 1px solid var(--border-color);
       padding: 0 20%;
@@ -287,7 +288,7 @@
   }
 
   ::ng-deep .mat-horizontal-content-container {
-    background-color: var(--card-bg);
+    background-color: var(--background-color);
   }
 
   ::ng-deep ngx-file-drop {
@@ -374,8 +375,8 @@
       opacity: 0.8;
     }
   }
-}
 
-::ng-deep .dx-item.dx-state-hover {
-  background-color: var(--menu-hover-bg) !important; // your custom color
+  ::ng-deep .dx-texteditor-input {
+    background: var(--background-color) !important;
+  }
 }

@@ -2,7 +2,11 @@
   <crm-left-menu [selectedItemIndex]="2" [ngStyle]="{ float: menuSide }"></crm-left-menu>
   <div
     [ngClass]="{ expanded: leftMenuCollapsed$ | async }"
-    [ngStyle]="menuSide === 'left' ? { 'margin-left': '341px' } : { 'margin-right': '341px' }"
+    [ngStyle]="
+      menuSide === 'left' && !(leftMenuCollapsed$ | async)
+        ? { 'margin-left': '341px' }
+        : { 'margin-right': '341px' }
+    "
   >
     <app-headline
       [names]="[l('Import')]"

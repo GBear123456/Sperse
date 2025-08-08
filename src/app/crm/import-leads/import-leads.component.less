@@ -77,11 +77,18 @@
 
     .mat-horizontal-stepper-header-container {
       background-color: var(--background-color);
-      border-bottom: 1px solid #dfdfdf;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .leftMenuCollapsed {
+      margin-left: 0px !important;
     }
   }
 
   ::ng-deep .dx-scrollable-wrapper {
     color: var(--text-color) !important;
   }
+}
+::ng-deep .dx-texteditor-input {
+  background: var(--background-color) !important;
 }
