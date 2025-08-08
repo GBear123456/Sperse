@@ -238,3 +238,8 @@ i.save-to-clipboard {
 .dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item-content.dx-selectbox-popup-horizonal-line-spec {
     border-top: 1px solid hsl(214.3 31.8% 91.4%);
 }
+
+
+.ace_editor .ace_content, .ace_line span {
+    font-family:  'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro', 'source-code-pro', monospace !important
+}
