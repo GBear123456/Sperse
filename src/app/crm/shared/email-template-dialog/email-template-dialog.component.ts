@@ -1686,7 +1686,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
 
     formatEmailContent(response: string): string {
         const formattedResponse = response
-            .replace(/\n/g, "<br></br>")
+            .replace(/\n/g, "<br>")
             .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
         const updateHtmlRes = formattedResponse
             .replace(/^```html/, "")
