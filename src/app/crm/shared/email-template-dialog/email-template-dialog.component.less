@@ -8,7 +8,7 @@
 .email-content {
     margin-top: 10px !important;
     margin-left: 25px !important;
-    margin-right: 25px !important;
+    margin-right: 8px !important;
     display: flex;
     flex-direction: column;
 }
@@ -1152,7 +1152,7 @@
 
         .actions {
             display: flex;
-            gap: 10px;
+            gap: 4px;
             margin-top: 0;
         }
 
@@ -1337,6 +1337,13 @@
 .template-header {
     border-bottom: 1px solid #ecf3fa;
     padding-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    padding-top: 15px;
+    background: #fbfbfb;
+    z-index: 10;
+    top: 0;
     & span {
         color: gray;
     }
@@ -1365,14 +1372,17 @@
 }
 
 .left-template-div {
-    padding: 15px 25px;
+    padding: 0px 15px 0px 25px;
     background: #fbfbfb;
+    overflow-y: scroll;
+    height: calc(100vh - 105px);
+    position:relative;
 }
 .template-item {
     background: white;
     border: 1px solid #d8d8d8;
     border-radius: 4px;
-    margin: 8px 0px;
+    margin: 4px 0px;
     padding: 4px 8px;
     height: 40px;
     cursor: pointer;
@@ -1448,14 +1458,18 @@
     height: 40px;
 }
 
-:host ::ng-deep .cke_contents {
-    height: calc(100vh - 455px) !important;
+:host ::ng-deep .ckeditor .cke_contents {
+    height: calc(100vh - 365px) !important;
     max-height: 600px !important;
     overflow-y: auto;
     &::-webkit-scrollbar {
         display: none; 
         width: 0;
     }
+}
+
+:host ::ng-deep .template-cke .cke_contents {
+    height: calc(100vh - 325px) !important;
 }
 
 .from-item-selet{
@@ -1524,4 +1538,9 @@ input.dx-texteditor-input {
     color: #838995;
     border: 1px solid #838995;
     cursor: pointer;
+}
+
+.template-list-div {
+    display: flex;
+    flex-direction: column;
 }

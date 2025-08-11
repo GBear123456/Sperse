@@ -20,7 +20,7 @@
             </div>
             <div class="right">
                 <div class="actions">
-                    <div style="display: flex; align-items: center;">
+                    <div style="display: flex; align-items: center; padding-right: 6px;">
                         <span #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length">
                             <a (click)="tagsTooltipVisible = true">Add a Tag</a>
                         </span>
@@ -86,7 +86,7 @@
     </ng-container>   
     <div class="form-content">
         <div class="row" style="width: 100%;">
-            <div [ngClass]="showAIPrompt?'col-xl-9 col-lg-8':'col-md-12 p-0'">
+            <div [ngClass]="showAIPrompt?'col-xl-9 col-lg-8 p-0':'col-md-12 p-0'">
 
                 <dx-scroll-view showScrollbar="onHover" #scrollView>
                     <dx-validation-group>
@@ -413,58 +413,62 @@
                                         <span>
                                             Choose a template or start with a blank email to your own HTML
                                         </span>
+                                        <dx-button
+                                            stylingMode="outlined"
+                                            text="+ Create New Template"
+                                            type="normal"
+                                            (click)="createTemplate()"
+                                            class="create-mail-template-btn"
+                                        >
+                                        </dx-button>
+                                        <dx-text-box 
+                                            mode="search"
+                                            height="40px"
+                                            [placeholder]="placeholderText"
+                                            [elementAttr]="{ class: 'template-search-box' }"
+                                            (onFocusIn)="onFocusIn()"
+                                            (onFocusOut)="onFocusOut()"
+                                            (onValueChanged)="onSearchChange($event)"
+                                        >
+                                        
+                                        </dx-text-box>
         
                                     </div>
-                                    <dx-button
-                                        stylingMode="outlined"
-                                        text="+ Create New Template"
-                                        type="normal"
-                                        (click)="createTemplate()"
-                                        class="create-mail-template-btn"
-                                    >
-                                    </dx-button>
-                                    <dx-text-box 
-                                        mode="search"
-                                        height="40px"
-                                        [placeholder]="placeholderText"
-                                        [elementAttr]="{ class: 'template-search-box' }"
-                                        (onFocusIn)="onFocusIn()"
-                                        (onFocusOut)="onFocusOut()"
-                                        (onValueChanged)="onSearchChange($event)"
-                                    >
-                                    
-                                    </dx-text-box>
-                                    <div *ngIf="(filteredTemplates$ | async)?.length== 0" class="template-item">
-                                        No Templates
-                                    </div>
-                                    <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item" [class.active]="template.id === curTemplateId" (click)="viewDetailTemplate($event, template)">
-                                        <h5 >
-                                            {{template.name}}
-                                        </h5>
-                                        <!-- <span>
-                                            {{template.previewText}}
-                                        </span> -->
-                                        <div class="template-item-action-btns">
-                                            <dx-button
-                                                stylingMode="outlined"
-                                                icon="edit"
-                                                type="default"
-                                                [width]="24"
-                                                (onClick)="editTemplate($event, template.id)"
-                                                class="template-item-btn"
-                                            >
-                                            </dx-button>
-                                            <dx-button
-                                                stylingMode="outlined"
-                                                icon="trash"
-                                                type="danger"
-                                                [width]="24"
-                                                (onClick)="deleteTemplate($event, template)"
-                                                class="template-item-btn"
-                                            >
-                                            </dx-button>
+                                    <div class="template-list-div">
+                                        <div *ngIf="(filteredTemplates$ | async)?.length== 0" class="template-item">
+                                            No Templates
                                         </div>
+                                        <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item" [class.active]="template.id === curTemplateId" (click)="viewDetailTemplate($event, template)">
+                                            <h5 >
+                                                {{template.name}}
+                                            </h5>
+                                            <!-- <span>
+                                                {{template.previewText}}
+                                            </span> -->
+                                            <div class="template-item-action-btns">
+                                                <dx-button
+                                                    stylingMode="outlined"
+                                                    icon="edit"
+                                                    type="default"
+                                                    [width]="24"
+                                                    (onClick)="editTemplate($event, template.id)"
+                                                    class="template-item-btn"
+                                                >
+                                                </dx-button>
+                                                <dx-button
+                                                    stylingMode="outlined"
+                                                    icon="trash"
+                                                    type="danger"
+                                                    [width]="24"
+                                                    (onClick)="deleteTemplate($event, template)"
+                                                    class="template-item-btn"
+                                                >
+                                                </dx-button>
+                                            </div>
+                                        </div>
+
                                     </div>
+                                
                                 </div>
                                 <div class="col-md-9 template-detail-preview">
                                     <div class="template-preview-item" style="display:flex; justify-content: space-between;">
@@ -494,7 +498,7 @@
                                         <h6>{{templateData.previewText}}</h6> 
                                     </div>
                                     <div class="template-preview-content">
-                                        <ckeditor *ngIf="ckConfig.height && templateLoaded" [config]="ckConfig" [(data)]="templateData.body"
+                                        <ckeditor *ngIf="ckConfig.height && templateLoaded" class="template-cke" [config]="ckConfig" [(data)]="templateData.body"
                                         ></ckeditor>
                                         <div class="field-area attachments">
                                             <div *ngFor="let attachment of templateData.attachments; let i = index" class="attachment"
