@@ -7,6 +7,7 @@
         border: none !important;
     }
 
+
     ::ng-deep .cke_toolbar_break {
         display: flex !important;
         clear: none !important;
@@ -21,7 +22,7 @@
 
     ::ng-deep .mat-dialog-actions {
         width: 30%;
-
+        padding-right: 15px;
         .mat-dialog-buttons {
             height: 44px !important;
             display: flex;
@@ -29,7 +30,29 @@
             margin-left: 3.7%;
             display: flex;
             justify-content: flex-end;
+            align-items: center;
+            .temp-save-btn {
+                background-color: var(--app-button-color);
+                color: var(--app-button-text-color);
+                border-radius: var(--app-border-radius) !important;
+                border: none;
+                height: 42px !important;
+                width: 75px;
+                &:hover {
+                    background-color: var(--app-button-highlighted-color);
+                }
 
+            }
+            .temp-btn {
+                border-radius: var(--app-border-radius) !important;
+                border: none;
+                height: 42px !important;
+                width: 75px;
+                &:hover{
+                    border: 1px solid var(--app-button-highlighted-color) !important;
+                }
+                
+            }
             .button-ai-generate-btn {
                 margin-left: 0;
             }
@@ -41,6 +64,11 @@
             .mat-dialog-buttons button {
                 justify-content: left !important;
             }
+            .temp-save-btn {
+    background-color: var(--app-button-color);
+    color: var(--app-button-text-color);
+    border-radius: var(--app-border-radius) !important;
+}
         }
 
         #saveTemplateOptions {
@@ -210,12 +238,7 @@
             gap: 10px;
         }
 
-        .row-body-space {
-            margin-left: 25px !important;
-            margin-right: 25px !important;
-            margin-top: 30px !important;
-        }
-
+        
         .bank-decode-wrapper {
             min-width: 820px;
             max-width: calc(40vw - 100px);
@@ -1343,10 +1366,14 @@
 
 .temp-btn {
     width: 100px;
+    border-radius: var(--app-border-radius) !important;
+
 }
+
+
 :host ::ng-deep .cke_contents {
-    height: calc(100vh - 455px) !important;
-    max-height: 600px !important;
+    height: calc(100vh - 350px) !important;
+    max-height: 620px !important;
     overflow-y: auto;
     &::-webkit-scrollbar {
         display: none; 

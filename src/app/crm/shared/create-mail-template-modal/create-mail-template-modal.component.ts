@@ -86,6 +86,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
     previewText: string;
     ckEditor: any;
     charCount: number;
+    uniqId = Math.random().toString().slice(-7);
 
     ckConfig: any = {
         versionCheck: false,
@@ -298,6 +299,18 @@ export class CreateMailTemplateModalComponent implements OnInit {
                 class: "ai-genrate-btn",
                 action: this.toggleAIPrompt.bind(this),
             },
+            {
+                id: 'cancelTemplateBtn',
+                title: "Save",
+                class: "button-layout temp-save-btn ",
+                action: this.saveTemplate.bind(this)
+            },
+            {
+                id: 'saveTemplateBtn',
+                title: "Cancel",
+                class: 'button-layout temp-btn',
+                action: this.resetForm.bind(this)
+            }
         ];
     }
 

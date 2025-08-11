@@ -4,10 +4,19 @@
 .right-div {
     padding-right: 10px;
 }
+
+.email-content {
+    margin-top: 10px !important;
+    margin-left: 25px !important;
+    margin-right: 25px !important;
+    display: flex;
+    flex-direction: column;
+}
 :host {
     ::ng-deep .cke_chrome {
         border: none !important;
     }
+
 
  
     ::ng-deep .cke_toolbar_break {
@@ -91,6 +100,8 @@
             background-position: center;
             background-size: 12px;
         }
+
+       
     }
 
     ::ng-deep ckeditor {
@@ -203,10 +214,12 @@
 
         .row {
             margin-left: 0 !important;
+            margin-right: 0 !important;
 
             label.caption {
                 width: 90px !important;
                 margin-bottom: 0px !important;
+
             }
         }
 
@@ -376,7 +389,7 @@
             label {
                 color: #7c8c95;
                 font-family: Manrope;
-                font-size: 15px;
+                font-size: 14px;
                 font-weight: 500;
                 line-height: 22px;
                 text-align: left;
@@ -1322,7 +1335,6 @@
     color: white;
 }
 .template-header {
-    padding-left: 15px;
     border-bottom: 1px solid #ecf3fa;
     padding-bottom: 8px;
     & span {
@@ -1353,7 +1365,7 @@
 }
 
 .left-template-div {
-    padding-top: 15px;
+    padding: 15px 25px;
     background: #fbfbfb;
 }
 .template-item {
@@ -1458,21 +1470,32 @@
 .setting-div {
     width: 100%;
     padding: 4px 0px;
+    padding-left: 10px;
     height: 45px;
+    border-bottom: 1px solid #4a4d53;
 }
 
 .settings-item {
     display: flex;
-    margin-right: 8px;
+    margin-right: 12px;
     align-items: center;
+    label, span {
+        color: #838995 !important;
+        width: 60px !important;
+        margin-bottom: 0px !important;
+    }
    
 }
-
+.custom-checkbox {
+    color: #838995 !important
+}
 .setting-btn {
     width: 40px;
     height: 40px;
     padding: 2px;
     color: gray;
+    background: transparent !important;
+    
 }
 
 input.dx-texteditor-input {
@@ -1484,3 +1507,21 @@ input.dx-texteditor-input {
     width: 100%;
 }
 
+.p-0 {
+    padding: 0px !important;
+}
+
+.ace_editor {
+    border-bottom-left-radius: 15px;
+}
+
+.custom-numberbox{
+    border-color: #838995; 
+}
+
+.format-btn {
+    background: transparent;
+    color: #838995;
+    border: 1px solid #838995;
+    cursor: pointer;
+}

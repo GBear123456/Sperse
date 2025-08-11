@@ -21,6 +21,7 @@
         <dx-validation-group
             [class.col-md-9]="showAIPrompt"
             [class.col-md-12]="!showAIPrompt"
+            style="padding-left: 25px"
         >
             <div class="field-area subject">
                 <label class="caption">{{ ls.l("Template Name") }}:</label>
@@ -29,7 +30,6 @@
                     placeholder=""
                     [(value)]="data.title"
                     validationGroup="templateValidation"
-                    (onFocusOut)="emailInputFocusOut($event)"
                     width="100%"
 
                 >
@@ -148,23 +148,6 @@
                         class="delete fa fa-times"
                     ></i>
                 </div>
-            </div>
-            <div class="button-group">
-                <button
-                    md-button
-                    class="button-layout temp-btn button-default"
-                    (click)="resetForm()"
-                >
-                    {{ ls.l("Cancel") }}
-                </button>
-                <button
-                    md-button
-                    validationGroup="templateValidation"
-                    (click)="saveTemplate()"
-                    class="button-layout button-primary temp-btn"
-                >
-                    {{ ls.l("Save") }}
-                </button>
             </div>
         </dx-validation-group>
 

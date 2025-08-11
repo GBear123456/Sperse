@@ -42,6 +42,7 @@ import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
 import { DxPopoverModule } from 'devextreme-angular/ui/popover';
 import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
 import { DxFileManagerModule } from 'devextreme-angular';
+import { DxSwitchModule } from 'devextreme-angular';
 import { FileUploadModule } from 'ng2-file-upload';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { CKEditorModule } from 'ckeditor4-angular';
@@ -155,7 +156,8 @@ import { ZapierModule } from '@shared/common/zapier/zapier.module';import {Creat
         DxPopoverModule,
         DxCalendarModule,
         DxFileManagerModule,
-
+        DxSwitchModule,
+        
         ReactiveFormsModule,
         MatSidenavModule,
         MatProgressBarModule,
