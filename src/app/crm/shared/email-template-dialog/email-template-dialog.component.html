@@ -86,11 +86,12 @@
     </ng-container>   
     <div class="form-content">
         <div class="row" style="width: 100%;">
-            <div [ngClass]="showAIPrompt?'col-xl-9 col-lg-8':'col-md-12'">
+            <div [ngClass]="showAIPrompt?'col-xl-9 col-lg-8':'col-md-12 p-0'">
 
                 <dx-scroll-view showScrollbar="onHover" #scrollView>
                     <dx-validation-group>
-                        <div class="row row-body-space" *ngIf="showNewEmailTab">
+                        <div class="email-content" *ngIf="showNewEmailTab">
+
                             <div class="field-area from row--subdiv">
                                 <div class="w-48">
                                     <label class="caption"
@@ -333,36 +334,43 @@
                                 formControlName="emailContentBodyTemplate" class="editor-container">
                                 </ngx-monaco-editor>
                             </form>                        -->
-                            <div class="d-flex setting-div">
+                            <div class="d-flex setting-div"                                    
+                                [style.backgroundColor]="editorColor"
+                            >
                                 <dx-button
-                                    stylingMode="outlined"
                                     icon="preferences"
                                     type="default"
                                     (onClick)="toggleSetting()"
                                     class="setting-btn"
                                 >
                                 </dx-button>
-                                <div *ngIf="showSetting" class="d-flex" style="padding-left: 20px">
+                                <div  class="d-flex" style="padding-left: 20px">
                                     <div class="settings-item">
-                                        <label class="caption">Font Size:</label>
+                                        <label class="label">Font Size:</label>
                                         <dx-number-box
                                             [(value)]="editorSettings.fontSize"
-                                            [min]="8"
+                                            [min]="12"
                                             [max]="32"
                                             [step]="2"
+                                            [elementAttr]="{'class':'custom-numberbox'}"
                                             [showSpinButtons]="true"
                                             class="setting-input"
+                                            mode="outlined"
+                                            [inputAttr]="{'style': 'padding: 4px 10px; border: 1px solid #838995 !important; color: white;border-radius: 6px;  font-size: 14px; background: ' + editorColor}"
+                                            [style.backgroundColor]="editorColor"
                                             (onValueChanged)="updateEditorSettings()">
                                         </dx-number-box>
                                     </div>
                                     <div class="settings-item">
-                                        <label class="caption">Theme:</label>
+                                        <label class="label">Theme:</label>
                                         <dx-select-box
                                             [(value)]="editorSettings.theme"
                                             [dataSource]="editorThemes"
                                             displayExpr="name"
                                             valueExpr="value"
                                             class="setting-input"
+                                            [inputAttr]="{'style': 'padding: 4px 10px; border: 1px solid #838995 !important; color: white; border-radius: 4px; font-size: 14px; background: ' + editorColor}"
+                                            mode="outlined"
                                             (onValueChanged)="updateEditorSettings()">
                                             <div *dxTemplate="let item of 'item'" class="theme-item">
                                                 {{ item.name }}
@@ -373,32 +381,40 @@
                                         <dx-check-box
                                             [(value)]="editorSettings.showLineNumbers"
                                             text="Show Line Numbers"
-                                            (onValueChanged)="updateEditorSettings()">
+                                            (onValueChanged)="updateEditorSettings()"
+                                            [elementAttr]="{'class': 'custom-checkbox'}"
+                                            >
                                         </dx-check-box>
                                     </div>
                                     <div class="settings-item">
                                         <dx-check-box
                                             [(value)]="editorSettings.showPrintMargin"
                                             text="Show Print Margin"
+                                            [elementAttr]="{'class': 'custom-checkbox'}"
+
                                             (onValueChanged)="updateEditorSettings()">
                                         </dx-check-box>
+                                    </div>
+                                    <div class="settings-item">
+                                        <button (click)="formatCode()" type="button" class="format-btn">format code</button>
                                     </div>
                                 </div>
                             </div>
                     
-                            <div #editor style="height: calc(100vh - 130px); width: 100%"></div>
+                            <div #editor style="height: calc(100vh - 127px); width: 100%; padding-top: 15px;"></div>
                         </div>   
 
-                        <div class="row row-body-space template-container " *ngIf="showTemplate">
-                            <div class="d-flex flex-column template-header">
-                                <h5>My Email Templates Library</h5>
-                                <span>
-                                    Choose a template or start with a blank email to your own HTML
-                                </span>
-
-                            </div>
+                        <div class="row  template-container " *ngIf="showTemplate">
+                            
                             <div class="row">
                                 <div class="col-md-3 left-template-div"  >
+                                    <div class="d-flex flex-column template-header">
+                                        <h5>My Email Templates Library</h5>
+                                        <span>
+                                            Choose a template or start with a blank email to your own HTML
+                                        </span>
+        
+                                    </div>
                                     <dx-button
                                         stylingMode="outlined"
                                         text="+ Create New Template"
