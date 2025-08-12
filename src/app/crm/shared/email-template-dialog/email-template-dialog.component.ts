@@ -624,11 +624,14 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                // this.templateData.body = result.body;
-                // this.templateData.attachments= result.attachment;
-                // this.templateData.previewText = result.previewText;
-                // this.templateData.subject = result.subject;
-                // this.curTemplateTitle = result.title;
+                if(result.id == this.curTemplateId) {
+                    this.templateData.body = result.body;
+                    this.templateData.attachments= result.attachment;
+                    this.templateData.previewText = result.previewText;
+                    this.templateData.subject = result.subject;
+                    this.curTemplateTitle = result.title;
+
+                }
 
                 this.refresh();
                 this.notifyService.success(this.ls.l("TemplateListUpdated"));
@@ -1598,7 +1601,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         const payload = {
             model,
             prompt: cleanedPrompt, // Use cleaned user-edited content
-            system: "You are an expert email marketer. Your task is to create compelling email content based on user input.",
+            system: "You are an expert email marketer. Your task is to create compelling email content with the html based on user input.",
         };
 
         fetch("/.netlify/functions/openai", {

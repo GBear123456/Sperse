@@ -440,6 +440,10 @@
                                         >
                                         
                                         </dx-text-box>
+
+                                        <div class="badge">
+                                        {{(templates$ | async)?.length}}
+                                        </div>
         
                                     </div>
                                     <div class="template-list-div">
@@ -480,29 +484,32 @@
                                 
                                 </div>
                                 <div class="col-md-9 template-detail-preview">
-                                    <div class="button-div">
-                                        
-                                        <dx-button
-                                            stylingMode="outlined"
-                                            text="Use this template"
-                                            type="normal"
-                                            [disabled]="templateData.subject == ''"
-                                            (click)="setTemplate()"
-                                            class="set-template-btn"
-                                        >
-                                        </dx-button>
+                                    <div class="d-flex flex-column" style="min-height:60px ">
+                                        <div class="button-div">
+                                            <dx-button
+                                                stylingMode="outlined"
+                                                text="Use this template"
+                                                type="normal"
+                                                [disabled]="templateData.subject == ''"
+                                                (click)="setTemplate()"
+                                                class="set-template-btn"
+                                            >
+                                            </dx-button>
+                                        </div>
+                                        <div class="text-center"> 
+                                            <!-- <label class="label">
+                                                Subject:
+                                            </label>  -->
+                                            <h4> {{templateData.subject}}</h4></div>
+                                        <div class="text-center ">
+                                            <!-- <label class="label">
+                                                Preview Text:
+                                            </label> -->
+                                            <h6>{{templateData.previewText}}</h6> 
+                                        </div>
+
                                     </div>
-                                    <div class="text-center"> 
-                                        <!-- <label class="label">
-                                            Subject:
-                                        </label>  -->
-                                        <h4> {{templateData.subject}}</h4></div>
-                                    <div class="text-center ">
-                                        <!-- <label class="label">
-                                            Preview Text:
-                                        </label> -->
-                                        <h6>{{templateData.previewText}}</h6> 
-                                    </div>
+                                
                                     <div class="template-preview-content">
                                         <ckeditor *ngIf="ckConfig.height && templateLoaded" class="template-cke" [config]="ckConfig" [(data)]="templateData.body"
                                         ></ckeditor>
