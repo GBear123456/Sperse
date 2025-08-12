@@ -480,11 +480,8 @@
                                 
                                 </div>
                                 <div class="col-md-9 template-detail-preview">
-                                    <div class="template-preview-item" style="display:flex; justify-content: space-between;">
-                                        <div class="d-flex">
-                                            <label class="label">Title: </label>  
-                                            <h5> {{ curTemplateTitle }}</h5>
-                                        </div>
+                                    <div class="button-div">
+                                        
                                         <dx-button
                                             stylingMode="outlined"
                                             text="Use this template"
@@ -495,15 +492,15 @@
                                         >
                                         </dx-button>
                                     </div>
-                                    <div class="template-preview-item"> 
-                                        <label class="label">
+                                    <div class="text-center"> 
+                                        <!-- <label class="label">
                                             Subject:
-                                        </label> 
-                                        <h6> {{templateData.subject}}</h6></div>
-                                    <div class="template-preview-item">
-                                        <label class="label">
+                                        </label>  -->
+                                        <h4> {{templateData.subject}}</h4></div>
+                                    <div class="text-center ">
+                                        <!-- <label class="label">
                                             Preview Text:
-                                        </label>
+                                        </label> -->
                                         <h6>{{templateData.previewText}}</h6> 
                                     </div>
                                     <div class="template-preview-content">
