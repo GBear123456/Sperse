@@ -129,9 +129,7 @@
                     *ngFor="let attachment of attachments; let i = index"
                     class="attachment"
                     [ngClass]="{ progress: !!attachment.loader }"
-                    [ngStyle]="{
-                        'background-size': (attachment.progress || 0) + '%'
-                    }"
+                    [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}"
                 >
                     <a
                         target="_blank"

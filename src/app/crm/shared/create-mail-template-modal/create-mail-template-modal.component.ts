@@ -467,12 +467,11 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
 
     onChange(event: any) {
-        this.data.body = this.editorData;
         this.updateDataLength();
     }
     // save && edit template data
     saveTemplate() {
-        this.data.body = this.editorData;
+
         this.data.attachments = [
             ...this.attachments.filter((item) => !item.loader),
         ];
