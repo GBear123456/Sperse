@@ -438,32 +438,33 @@
                                         <div *ngIf="(filteredTemplates$ | async)?.length== 0" class="template-item">
                                             No Templates
                                         </div>
-                                        <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item" [class.active]="template.id === curTemplateId" (click)="viewDetailTemplate($event, template)">
-                                            <h5 >
-                                                {{template.name}}
-                                            </h5>
-                                            <!-- <span>
-                                                {{template.previewText}}
-                                            </span> -->
-                                            <div class="template-item-action-btns">
-                                                <dx-button
-                                                    stylingMode="outlined"
-                                                    icon="edit"
-                                                    type="default"
-                                                    [width]="24"
-                                                    (onClick)="editTemplate($event, template.id)"
-                                                    class="template-item-btn"
-                                                >
-                                                </dx-button>
-                                                <dx-button
-                                                    stylingMode="outlined"
-                                                    icon="trash"
-                                                    type="danger"
-                                                    [width]="24"
-                                                    (onClick)="deleteTemplate($event, template)"
-                                                    class="template-item-btn"
-                                                >
-                                                </dx-button>
+                                        <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item-container" [class.active]="template.id === curTemplateId" (click)="viewDetailTemplate($event, template)">
+                                            <div class="template-item">
+                                                <h5 >
+                                                    {{template.name}}
+                                                </h5>
+                                                <!-- <span>
+                                                    {{template.previewText}}
+                                                </span> -->
+                                                <div class="template-item-action-btns">
+                                                    <dx-button
+                                                        stylingMode="outlined"
+                                                        icon="edit"
+                                                        [width]="24"
+                                                        (onClick)="editTemplate($event, template.id)"
+                                                        class="template-item-btn"
+                                                    >
+                                                    </dx-button>
+                                                    <dx-button
+                                                        stylingMode="outlined"
+                                                        icon="trash"
+                                                        [width]="24"
+                                                        (onClick)="deleteTemplate($event, template)"
+                                                        class="template-item-btn"
+                                                    >
+                                                    </dx-button>
+                                                </div>
+
                                             </div>
                                         </div>
 

@@ -60,7 +60,7 @@
             height: 44px;
             border-radius: 10px;
             background: #00ca6a;
-            margin-right: 6.5%;
+            margin-right: 1.5%;
             justify-content: left !important;
         }
 
@@ -1152,7 +1152,7 @@
 
         .actions {
             display: flex;
-            gap: 4px;
+            gap: 4px !important;
             margin-top: 0;
         }
 
@@ -1330,9 +1330,12 @@
 }
 .create-mail-template-btn {
     width: 100%;
-    background: #00ca6a;
+    background: var(--app-button-color);
+    border-radius: var(--app-border-radius);
     height: 40px;
-    color: white;
+    color: var(--app-button-text-color);
+    margin-top: 10px;
+
 }
 .template-header {
     border-bottom: 1px solid #ecf3fa;
@@ -1355,7 +1358,7 @@
     border-radius: 4px !important;
     max-width: 500px;
     width: 100%;
-    margin: 8px 0px;
+    margin: 15px 0px 8px 0px;
     .dx-texteditor-input {
         font-size: 14px !important;
         &::placeholder {
@@ -1372,36 +1375,45 @@
 }
 
 .left-template-div {
-    padding: 0px 15px 0px 25px;
+    padding: 0px 5px 0px 25px;
     background: #fbfbfb;
     overflow-y: scroll;
-    height: calc(100vh - 105px);
+    height: calc(100vh - 80px);
     position:relative;
+    border-bottom-left-radius: 25px;
 }
+
+.template-item-container {
+    padding: 4px;
+    border-bottom: 1px solid #d8d8d8;
+
+}
+
 .template-item {
-    background: white;
-    border: 1px solid #d8d8d8;
     border-radius: 4px;
     margin: 4px 0px;
     padding: 4px 8px;
-    height: 40px;
+    height: 35px;
     cursor: pointer;
     position: relative;
     display: flex;
     align-items: center;
     h5 {
         margin-bottom: 0px !important;
+        font-size: 14px;
     }
     &:hover {
         h5 {
-            color: #3e88fb;
+            color: var(--app-button-text-color);
         }
     }
     &.active {
-        background: #99efc6;
+        background: var(--app-button-highlighted-color);
+
     }
     &:hover {
-        background: #99efc6;
+        background: var(--app-button-highlighted-color);
+
     }
 }
 .template-item-btn {
@@ -1431,6 +1443,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 15px 8px 0px 8px !important;
     
     .template-preview-content{
         border: 1px solid #e2eaf2;
