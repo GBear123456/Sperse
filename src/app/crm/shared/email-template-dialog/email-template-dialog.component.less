@@ -11,6 +11,8 @@
     margin-right: 8px !important;
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
+    height: calc(100vh - 90px);
 }
 :host {
     ::ng-deep .cke_chrome {
@@ -32,7 +34,6 @@
     }
 
     ::ng-deep .mat-dialog-actions {
-        width: 30%;
 
         .mat-dialog-buttons {
             height: 44px !important;
@@ -60,7 +61,7 @@
             height: 44px;
             border-radius: 10px;
             background: #00ca6a;
-            margin-right: 6.5%;
+            margin-right: 1.5%;
             justify-content: left !important;
         }
 
@@ -355,6 +356,7 @@
             }
 
             &.ckeditor {
+                position: relative;
                 & > p {
                     font-size: 12px;
                     color: #8a969b;
@@ -981,10 +983,10 @@
 
     .tags-button {
         a {
-            font-size: 12px;
+            font-size: 13px;
             padding: 6px 12px 6px 8px;
-            border-radius: 8px;
-            line-height: 12px;
+            border-radius: 6px;
+            line-height: 15px;
             opacity: 50%;
             background: #dce4ed;
             color: #08295b;
@@ -1103,7 +1105,8 @@
 ::ng-deep .mat-dialog-header {
     background-color: #ffffff !important;
     padding: 0px !important;
-
+    display: grid !important;
+    grid-template-columns: 11fr 4fr !important;
     .header {
         display: flex;
         justify-content: space-between;
@@ -1113,7 +1116,6 @@
 
         .header-div {
             margin-left: 25px;
-            width: 345px;
         }
 
         .email-container {
@@ -1152,7 +1154,7 @@
 
         .actions {
             display: flex;
-            gap: 4px;
+            gap: 4px !important;
             margin-top: 0;
         }
 
@@ -1330,9 +1332,12 @@
 }
 .create-mail-template-btn {
     width: 100%;
-    background: #00ca6a;
+    background: var(--app-button-color);
+    border-radius: var(--app-border-radius);
     height: 40px;
-    color: white;
+    color: var(--app-button-text-color);
+    margin-top: 10px;
+
 }
 .template-header {
     border-bottom: 1px solid #ecf3fa;
@@ -1355,7 +1360,7 @@
     border-radius: 4px !important;
     max-width: 500px;
     width: 100%;
-    margin: 8px 0px;
+    margin: 15px 0px 8px 0px;
     .dx-texteditor-input {
         font-size: 14px !important;
         &::placeholder {
@@ -1372,36 +1377,54 @@
 }
 
 .left-template-div {
-    padding: 0px 15px 0px 25px;
+    padding: 0px 5px 0px 25px;
     background: #fbfbfb;
     overflow-y: scroll;
-    height: calc(100vh - 105px);
+    height: calc(100vh - 80px);
     position:relative;
+    border-bottom-left-radius: 25px;
 }
-.template-item {
-    background: white;
-    border: 1px solid #d8d8d8;
+
+.template-item-container {
+    padding: 2px;
+    border-bottom: 1px solid #d8d8d8;
+
+}
+
+::ng-deep .template-item {
     border-radius: 4px;
     margin: 4px 0px;
     padding: 4px 8px;
-    height: 40px;
+    height: 32px;
     cursor: pointer;
     position: relative;
     display: flex;
     align-items: center;
     h5 {
         margin-bottom: 0px !important;
+        font-size: 14px;
     }
     &:hover {
         h5 {
-            color: #3e88fb;
+            color: var(--app-button-text-color);
+        }
+        .dx-button i {
+            color: var(--app-button-text-color) !important;
         }
     }
     &.active {
-        background: #99efc6;
+        background: var(--app-button-highlighted-color);
+        h5 {
+            color: var(--app-button-text-color);
+        }
+        .dx-button i {
+            color: var(--app-button-text-color) !important;
+        }
+
     }
     &:hover {
-        background: #99efc6;
+        background: var(--app-button-highlighted-color);
+
     }
 }
 .template-item-btn {
@@ -1415,6 +1438,18 @@
     gap: 4px;
     top: 50%;
     transform: translateY(-50%);
+    .save-btn:hover {
+        i  {
+            color: var(--app-button-color)
+        }
+    }
+
+    .cancel-btn:hover {
+        i {
+            color: 'red'
+        }
+    }
+
     .dx-button {
         height: 24px !important;
         .dx-button-content {
@@ -1423,6 +1458,7 @@
                 font-size: 16px !important;
             }
         }
+        
     }
 }
 ::ng-deep .template-detail-preview {
@@ -1431,6 +1467,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 15px 8px 0px 8px !important;
     
     .template-preview-content{
         border: 1px solid #e2eaf2;
@@ -1453,9 +1490,13 @@
 
 .set-template-btn {
     border-radius: 6px;
-    background: #00ca6a;
-    color: white;
+    background: var(--app-button-color);
+    color: var(--app-button-text-color);
+    border-radius: var(--app-border-radius);
     height: 40px;
+    &:hover {
+        background-color: var(--app-button-highlighted-color);
+    }
 }
 
 :host ::ng-deep .ckeditor .cke_contents {
@@ -1487,6 +1528,8 @@
     padding-left: 10px;
     height: 45px;
     border-bottom: 1px solid #4a4d53;
+    align-items: baseline;
+
 }
 
 .settings-item {
@@ -1504,8 +1547,8 @@
     color: #838995 !important
 }
 .setting-btn {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     padding: 2px;
     color: gray;
     background: transparent !important;
@@ -1538,9 +1581,36 @@ input.dx-texteditor-input {
     color: #838995;
     border: 1px solid #838995;
     cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
 }
 
 .template-list-div {
     display: flex;
     flex-direction: column;
 }
+:host {
+    ::ng-deep .custom-context-menu {
+        left: 30px !important;
+    }
+}
+
+
+.dx-context-menu {
+    position: absolute !important;
+    top: 100px !important;
+    left: 200px !important;
+  }
+  
+  /* Style menu items */
+  .dx-menu-item {
+    font-size: 16px;
+    color: #444;
+    padding: 10px 20px;
+  }
+  
+  /* Add hover effect */
+  .dx-menu-item:hover {
+    background-color: #007acc;
+    color: white;
+  }

@@ -14,31 +14,13 @@
                     <span class="email-sub-txt"> {{title}}</span>
                 </div>
                 <div class="header-content">
-                    {{data.subject}}
+                    {{abbrTitle(data.subject)}}
                 </div>
 
             </div>
             <div class="right">
                 <div class="actions">
-                    <div style="display: flex; align-items: center; padding-right: 6px;">
-                        <span #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length">
-                            <a (click)="tagsTooltipVisible = true">Add a Tag</a>
-                        </span>
-                        <dx-tooltip [width]="250"
-                                    position="bottom" [(visible)]="tagsTooltipVisible"
-                            [target]="'.tags-button.id' + uniqId">
-                            <div *dxTemplate="let data of 'content'" class="tags-container">
-                                <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
-                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
-                                    [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
-                                    <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
-                                        [ngClass]="{disabled: !templateEditMode && !getTagValue(data)}">
-                                        {{ getTagText(data) }}
-                                    </div>
-                                </dx-list>
-                            </div>
-                        </dx-tooltip>
-                    </div>
+                   
                     <span class="tab new-email" (click)="showTabs('new-email')"
                         [class.selected-tab]="selectedTab === 'new-email'">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -78,15 +60,23 @@
                 (click)="editTemplate(data)"></i>
         </div>  -->
 
-        <dx-context-menu *ngIf="addSendEmailMenuItems && addSendEmailMenuItems.length" [selectByClick]="true"
-            selectionMode="single" [dataSource]="addSendEmailMenuItems"
-            [position]="{ my: 'top right', at: 'bottom right' }" target="#saveTemplateOptions">
+        <dx-context-menu 
+            *ngIf="addSendEmailMenuItems && addSendEmailMenuItems.length" 
+            [selectByClick]="true"
+            selectionMode="single" 
+            [dataSource]="addSendEmailMenuItems"
+            [position]="{ my: 'top right', at: 'bottom right', offset: '1 0' }" 
+            target="#saveTemplateOptions"
+            cssClass="custom-context-menu"
+            [width]="200"
+            
+        >
         </dx-context-menu>
         
     </ng-container>   
     <div class="form-content">
         <div class="row" style="width: 100%;">
-            <div [ngClass]="showAIPrompt?'col-xl-9 col-lg-8 p-0':'col-md-12 p-0'">
+            <div [class]="showAIPrompt?'col-xl-9 col-lg-8 p-0':'col-md-12 p-0'">
 
                 <dx-scroll-view showScrollbar="onHover" #scrollView>
                     <dx-validation-group>
@@ -287,7 +277,25 @@
                                     [style.width]="'100%'"
                                     >
                                 </ckeditor>
-
+                                <div style="display: flex; align-items: center; padding-right: 6px; position: absolute; top: 10px; right: 0px;">
+                                    <span #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length">
+                                        <a (click)="tagsTooltipVisible = true">Add a Tag</a>
+                                    </span>
+                                    <dx-tooltip [width]="250"
+                                                position="bottom" [(visible)]="tagsTooltipVisible"
+                                        [target]="'.tags-button.id' + uniqId">
+                                        <div *dxTemplate="let data of 'content'" class="tags-container">
+                                            <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                                            <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                                [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                                <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                                 [class]="{disabled: !templateEditMode && !getTagValue(data)}">
+                                                    {{ getTagText(data) }}
+                                                </div>
+                                            </dx-list>
+                                        </div>
+                                    </dx-tooltip>
+                                </div>
                             </div>
 
                             <div class="attachment-div">
@@ -438,32 +446,33 @@
                                         <div *ngIf="(filteredTemplates$ | async)?.length== 0" class="template-item">
                                             No Templates
                                         </div>
-                                        <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item" [class.active]="template.id === curTemplateId" (click)="viewDetailTemplate($event, template)">
-                                            <h5 >
-                                                {{template.name}}
-                                            </h5>
-                                            <!-- <span>
-                                                {{template.previewText}}
-                                            </span> -->
-                                            <div class="template-item-action-btns">
-                                                <dx-button
-                                                    stylingMode="outlined"
-                                                    icon="edit"
-                                                    type="default"
-                                                    [width]="24"
-                                                    (onClick)="editTemplate($event, template.id)"
-                                                    class="template-item-btn"
-                                                >
-                                                </dx-button>
-                                                <dx-button
-                                                    stylingMode="outlined"
-                                                    icon="trash"
-                                                    type="danger"
-                                                    [width]="24"
-                                                    (onClick)="deleteTemplate($event, template)"
-                                                    class="template-item-btn"
-                                                >
-                                                </dx-button>
+                                        <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item-container"  (click)="viewDetailTemplate($event, template)">
+                                            <div class="template-item" [class.active]="template.id === curTemplateId">
+                                                <h5 >
+                                                    {{template.name}}
+                                                </h5>
+                                                <!-- <span>
+                                                    {{template.previewText}}
+                                                </span> -->
+                                                <div class="template-item-action-btns">
+                                                    <dx-button
+                                                        stylingMode="outlined"
+                                                        icon="edit"
+                                                        [width]="24"
+                                                        (onClick)="editTemplate($event, template.id)"
+                                                        class="template-item-btn edit-btn"
+                                                    >
+                                                    </dx-button>
+                                                    <dx-button
+                                                        stylingMode="outlined"
+                                                        icon="trash"
+                                                        [width]="24"
+                                                        (onClick)="deleteTemplate($event, template)"
+                                                        class="template-item-btn cancel-btn"
+                                                    >
+                                                    </dx-button>
+                                                </div>
+
                                             </div>
                                         </div>
 
@@ -478,7 +487,7 @@
                                         </div>
                                         <dx-button
                                             stylingMode="outlined"
-                                            text="Compose mail with this template"
+                                            text="Use this template"
                                             type="normal"
                                             [disabled]="templateData.subject == ''"
                                             (click)="setTemplate()"
@@ -502,8 +511,8 @@
                                         ></ckeditor>
                                         <div class="field-area attachments">
                                             <div *ngFor="let attachment of templateData.attachments; let i = index" class="attachment"
-                                                [ngClass]="{'progress': !!attachment.loader}"
-                                                [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
+                                                [class]="{'progress': !!attachment.loader}"
+                                                [style]="{'background-size': (attachment.progress || 0) + '%'}">
                                                 <a target="_blank" [download]="attachment.name" [href]="attachment.url"
                                                     (click)="attachmentClick($event, attachment)"
                                                     class="name">{{attachment.name}}</a>&nbsp;<span class="size">
@@ -521,7 +530,7 @@
                     </dx-validation-group>
                 </dx-scroll-view>
             </div>
-            <div [ngClass]="showAIPrompt?'col-xl-3 col-lg-4 col-md-4 container':'hidden'" *ngIf="showAIPrompt">
+            <div [class]="showAIPrompt?'col-xl-3 col-lg-4 col-md-4 container':'hidden'" *ngIf="showAIPrompt">
                     <div class="prompt-header d-flex justify-content-between align-items-center"
                         style="margin-bottom: 20px;">
                         <h5 class="your-prompt-title">
