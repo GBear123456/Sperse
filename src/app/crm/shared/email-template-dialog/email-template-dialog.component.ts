@@ -1818,4 +1818,14 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         });
         this.aceEditor.setValue(formattedString as unknown as string, -1); //
     }
+
+    abbrTitle (title: string) :string {
+        if(title){
+            if (title.length <= 50) {
+                return title;
+            }
+            return title.substring(0, 50) + '...';
+        } 
+        else return title;
+    }
 }
