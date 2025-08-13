@@ -82,7 +82,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
     groupedPromptLibrary: any = prompts;
     showAIOption = false;
     aiTooltipVisible = false;
-    selectedItemId: string | null = null;
+    selectedItemId: string | null = '1';
     dataRecord = { modelId: null };
     previewText: string;
     ckEditor: any;
