@@ -204,6 +204,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
             cc: undefined,
             bcc: undefined,
             attachments: undefined,
+            saveAttachmentsToDocuments: true
         };
        
         if (this.params.id) {
@@ -214,11 +215,15 @@ export class CreateMailTemplateModalComponent implements OnInit {
         }
     }
     @HostListener('document:keydown.escape', ['$event'])
-    onEscKey(event: KeyboardEvent) {
-      const isFullscreen = document.querySelector('.cke_maximized') !== null;
-      if (isFullscreen) {
-        // Let CKEditor handle it, prevent dialog from closing
-        event.stopPropagation();
+    onESC(event: KeyboardEvent) {
+        const fullscreen = document.querySelector('.cke_maximized');
+        if (fullscreen) {
+            event.stopPropagation();
+        
+    //   const isFullscreen = document.querySelector('.cke_maximized') !== null;
+    //   if (isFullscreen) {
+    //     // Let CKEditor handle it, prevent dialog from closing
+    //     event.stopPropagation();
       } else {
         // Manually close dialog when not fullscreen
         this.dialogRef.close();
@@ -450,13 +455,15 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
     formatEmailContent(response: string): string {
         const formattedResponse = response
-            // .replace(/\n/g, "</br>")
+            // .replace(/\n/g, "<br>")
             .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
         const updateHtmlRes = formattedResponse
             .replace(/^```html/, "")
             .replace(/^```/, "")
             .replace(/```$/, "");
-        return updateHtmlRes
+        const htmlRegex = /<html\b[^<]*(?:(?!<\/html>)<[^<]*)*<\/html>/i;
+        const match = updateHtmlRes.match(htmlRegex);
+        return match
             .toString()
             .replace("SafeValue must use [property]=binding", "")
             .replace(/<div[^>]*>(\s|&nbsp;)*<\/div>/g, "");
@@ -617,6 +624,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
             attachments: [],
             cc: [],
             bcc: [],
+            saveAttachmentsToDocuments:true
         };
         this.editorData = "";
         this.editorError = null;

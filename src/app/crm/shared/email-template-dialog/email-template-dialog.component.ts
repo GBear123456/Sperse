@@ -613,6 +613,13 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     //     //  this.dataRecord.modelId = item.id;
     //     this.propmtTooltipVisible = false;
     // }
+    myPreventEscPlugin(editor) {
+        editor.on('keydown', function(evt) {
+          if (evt.data.keyCode === 27 && editor.commands.get('fullscreen').value) {
+            evt.stop(); // stops it from bubbling to mat-dialog
+          }
+        });
+      }
     openCreateOrEditTemplate(id?: number): void {
         const dialogRef = this.dialog.open(CreateMailTemplateModalComponent, {
             data: { id, contact: this.data.contact },
@@ -1601,7 +1608,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         const payload = {
             model,
             prompt: cleanedPrompt, // Use cleaned user-edited content
-            system: "You are an expert email marketer. Your task is to create compelling email content with the html based on user input. Remeber that html content result does not need padding",
+            system: "You are an expert email marketer. Your task is to create compelling email content with the html based on user input.",
         };
 
         fetch("/.netlify/functions/openai", {
@@ -1695,7 +1702,9 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
             .replace(/^```html/, "")
             .replace(/^```/, "")
             .replace(/```$/, "");
-        return updateHtmlRes
+        const htmlRegex = /<html\b[^<]*(?:(?!<\/html>)<[^<]*)*<\/html>/i;
+        const match = updateHtmlRes.match(htmlRegex);
+        return match
             .toString()
             .replace("SafeValue must use [property]=binding", "")
             .replace(/<div[^>]*>(\s|&nbsp;)*<\/div>/g, "");
