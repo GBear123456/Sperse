@@ -122,7 +122,7 @@
             </div>
 
             <div class="field-area attachments">
-                <div
+                <ng-template
                     *ngFor="let attachment of attachments; let i = index"
                     class="attachment"
                     [ngClass]="{ progress: !!attachment.loader }"
@@ -142,11 +142,11 @@
                         aria-hidden="true"
                         class="delete fa fa-times"
                     ></i>
-                </div>
+                </ng-template>
             </div>
         </dx-validation-group>
 
-        <div
+        <ng-template
             class="container"
             [ngClass]="showAIPrompt ? 'col-md-3' : 'hidden'"
             *ngIf="showAIPrompt"
@@ -184,7 +184,7 @@
                             *dxTemplate="let data of 'content'"
                             class="tags-container text-left p-2"
                         >
-                            <div
+                            <ng-template
                                 *ngFor="let group of groupedPromptLibrary;let groupIndex = index"
                             >
                                 <!-- Group Title with toggle -->
@@ -199,8 +199,8 @@
                                 </div>
 
                                 <!-- Prompt list inside group -->
-                                <div class="group-items" *ngIf="group.expanded">
-                                    <div
+                                <ng-template class="group-items" *ngIf="group.expanded">
+                                    <ng-template
                                         *ngFor="let item of group.prompts;let itemIndex = index"
                                         class="tags-list-item"
                                         (click)="selectedPromptItem(item,groupIndex,itemIndex)"
@@ -211,9 +211,9 @@
                                         <div class="prompt-subtext">
                                             {{ item.subtext }}
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
+                                    </ng-template>
+                                </ng-template>
+                            </ng-template>
                         </div>
                     </dx-tooltip>
                 </div>
@@ -224,7 +224,7 @@
                 #scrollAIView
                 class="html-scroll-view"
             >
-                <div class="content-container" *ngIf="!showAIOption">
+                <ng-template class="content-container" *ngIf="!showAIOption">
                     <div
                         class="html-container-div"
                         contenteditable="true"
@@ -297,7 +297,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </ng-template>
             </dx-scroll-view>
 
             <div class="prompt-footer">
@@ -359,6 +359,6 @@
                     Cancel
                 </button>
             </div>
-        </div>
+        </ng-template>
     </div>
 </modal-dialog>
