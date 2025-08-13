@@ -88,7 +88,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
     ckEditor: any;
     charCount: number;
     uniqId = Math.random().toString().slice(-7);
-
     ckConfig: any = {
         versionCheck: false,
         height: 500,
@@ -203,7 +202,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
             type: EmailTemplateType.Contact,
             cc: undefined,
             bcc: undefined,
-            attachments: undefined,
+            attachments: [],
             saveAttachmentsToDocuments: true
         };
        
@@ -231,6 +230,8 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
     ngOnInit(): void {
         this.initDialogButtons();
+        console.log(this.data)
+
         this.params.id
             ? (this.modalTitle = "Edit Email Template")
             : "Create New Email Template";
