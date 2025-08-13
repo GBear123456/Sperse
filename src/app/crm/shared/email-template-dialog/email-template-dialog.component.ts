@@ -1619,9 +1619,9 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
                 const gptResponse = data.response;
                 const responseData = this.extractContent(gptResponse);
                 this.data.subject = responseData.subject;
-                // this.data.body = this.formatEmailContent(
-                //     responseData.body,
-                // ) as unknown as string;
+                this.data.body = this.formatEmailContent(
+                    responseData.body,
+                ) as unknown as string;
                 this.aceEditor.session.setValue(this.data.body);
                 await this.formatCode();
                 this.changeDetectorRef.detectChanges();
@@ -1689,7 +1689,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
 
     formatEmailContent(response: string): string {
         const formattedResponse = response
-            .replace(/\n/g, "<br>")
+            // .replace(/\n/g, "<br>")
             .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
         const updateHtmlRes = formattedResponse
             .replace(/^```html/, "")

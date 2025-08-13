@@ -213,7 +213,17 @@ export class CreateMailTemplateModalComponent implements OnInit {
             this.resetForm();
         }
     }
-   
+    @HostListener('document:keydown.escape', ['$event'])
+    onEscKey(event: KeyboardEvent) {
+      const isFullscreen = document.querySelector('.cke_maximized') !== null;
+      if (isFullscreen) {
+        // Let CKEditor handle it, prevent dialog from closing
+        event.stopPropagation();
+      } else {
+        // Manually close dialog when not fullscreen
+        this.dialogRef.close();
+      }
+    }
     ngOnInit(): void {
         this.initDialogButtons();
         this.params.id
@@ -399,7 +409,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
         const payload = {
             model,
             prompt,
-            system: "You are an expert email marketer. Your task is to create compelling email content based on user input.",
+            system: "You are an expert email marketer. Your task is to create compelling email content with the html based on user input. Remeber that html content result does not need padding",
         };
 
         fetch("/.netlify/functions/openai", {
@@ -440,7 +450,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
     formatEmailContent(response: string): string {
         const formattedResponse = response
-            .replace(/\n/g, "</br>")
+            // .replace(/\n/g, "</br>")
             .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
         const updateHtmlRes = formattedResponse
             .replace(/^```html/, "")
