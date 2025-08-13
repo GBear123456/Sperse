@@ -105,7 +105,7 @@
                                 {{ls.l("Add attachment")}}
                             </a>
                             <dx-check-box
-                                *ngIf="attachments && attachments.length"
+                                *ngIf="!templateEditMode &&attachments && attachments.length"
                                 class="saveToDocs"
                                 [(value)]="data.saveAttachmentsToDocuments"
                                 [rtlEnabled]="true"
@@ -122,7 +122,7 @@
             </div>
 
             <div class="field-area attachments">
-                <ng-template
+                <!-- <ng-template
                     *ngFor="let attachment of attachments; let i = index"
                     class="attachment"
                     [ngClass]="{ progress: !!attachment.loader }"
@@ -142,7 +142,7 @@
                         aria-hidden="true"
                         class="delete fa fa-times"
                     ></i>
-                </ng-template>
+                </ng-template> -->
             </div>
         </dx-validation-group>
 
