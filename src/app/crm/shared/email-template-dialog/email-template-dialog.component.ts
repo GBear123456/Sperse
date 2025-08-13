@@ -628,7 +628,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
             panelClass: ["slider"],
             hasBackdrop: true,
             closeOnNavigation: true,
-            disableClose: true
         });
 
         dialogRef.afterClosed().subscribe((result) => {

@@ -80,7 +80,7 @@
 
                 <dx-scroll-view showScrollbar="onHover" #scrollView>
                     <dx-validation-group>
-                        <div class="email-content" *ngIf="showNewEmailTab">
+                        <div class="email-content" [class.scroll]="data.attachments && data.attachments.length" *ngIf="showNewEmailTab">
 
                             <div class="field-area from row--subdiv">
                                 <div class="w-48">
@@ -277,7 +277,7 @@
                                     [style.width]="'100%'"
                                     >
                                 </ckeditor>
-                                <div style="display: flex; align-items: center; padding-right: 6px; position: absolute; top: 10px; right: 0px;">
+                                <div style="display: flex; align-items: center; padding-right: 6px; position: absolute; top: 10px; right: 5px;">
                                     <span #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length">
                                         <a (click)="tagsTooltipVisible = true">Add a Tag</a>
                                     </span>
@@ -409,7 +409,7 @@
                                 </div>
                             </div>
                     
-                            <div #editor style="height: calc(100vh - 127px); width: 100%; padding-top: 15px;"></div>
+                            <div #editor style="height: calc(100vh - 127px); width: 100%; padding-top: 15px;" class="code-editor"></div>
                         </div>   
 
                         <div class="row  template-container " *ngIf="showTemplate">
