@@ -1,5 +1,5 @@
-<div class="import-wrapper">
-  <crm-left-menu [ngStyle]="{ float: menuSide }"></crm-left-menu>
+<div class="import-wrapper" [class.reverse]="menuSide === 'right'">
+  <crm-left-menu></crm-left-menu>
   <import-wizard
     [title]="l('Import leads')"
     icon="icon-globe"
@@ -17,7 +17,6 @@
     (onSelectionChanged)="onStepChanged($event)"
     (onComplete)="complete($event)"
     (onCancel)="cancel()"
-    [ngStyle]="menuSide === 'left' ? { 'margin-left': '341px' } : { 'margin-right': '341px' }"
   >
     <div class="success">
       <div *ngIf="importStatus == importStatuses.InProgress">

@@ -12,6 +12,13 @@
 :host {
   .import-wrapper {
     height: 100%;
+    width: calc('100vw - 90px');
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  .import-wrapper.reverse {
+    flex-direction: row-reverse;
   }
 
   .success {
@@ -54,9 +61,11 @@
   ::ng-deep import-wizard {
     margin: 0;
     height: 100%;
-    max-width: 100% !important;
-    position: absolute;
-    top: 75px;
+    max-width: calc(100% - 340px) !important;
+    width: calc(100% - 340px);
+    overflow-x: auto;
+    flex: 1 1 auto;
+    min-width: 0;
 
     h1 {
       i {
@@ -91,4 +100,8 @@
 }
 ::ng-deep .dx-texteditor-input {
   background: var(--background-color) !important;
+}
+
+::ng-deep .dx-progressbar-status {
+  color: var(--text-color) !important;
 }
