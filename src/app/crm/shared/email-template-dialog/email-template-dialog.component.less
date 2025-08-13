@@ -564,6 +564,7 @@
             background: #ffffff;
             border-radius: 15px;
             display: flex;
+            justify-content: space-between;
             width: 100%;
             margin-top: 5px;
 
@@ -1639,7 +1640,39 @@ input.dx-texteditor-input {
     align-items: center;
   }
 
+:host {
+    ::ng-deep .code-editor::-webkit-scrollbar-track {
+      background: black !important;
+    }
 
-  ::ng-deep .code-editor::-webkit-scrollbar-track {
-    background: black !important;
-  }
+    /* Ace Editor Scrollbar Styling */
+    ::ng-deep .ace_editor::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+
+    ::ng-deep .ace_editor::-webkit-scrollbar-track {
+        background: #2d2d2d !important;
+        border-radius: 6px;
+    }
+
+    ::ng-deep .ace_editor::-webkit-scrollbar-thumb {
+        background: #555 !important;
+        border-radius: 6px;
+        border: 2px solid #2d2d2d;
+    }
+
+    ::ng-deep .ace_editor::-webkit-scrollbar-thumb:hover {
+        background: #777 !important;
+    }
+
+    ::ng-deep .ace_editor::-webkit-scrollbar-corner {
+        background: #2d2d2d !important;
+    }
+
+    /* For Firefox */
+    ::ng-deep .ace_editor {
+        scrollbar-width: thin;
+        scrollbar-color: #555 #2d2d2d;
+    }
+}
