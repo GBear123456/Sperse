@@ -9,6 +9,7 @@ import {
     EventEmitter,
     ElementRef,
     ChangeDetectorRef,
+    HostListener
 } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 
@@ -204,6 +205,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
             bcc: undefined,
             attachments: undefined,
         };
+       
         if (this.params.id) {
             this.loadTemplate(this.params.id);
             this.templateEditMode = true;
@@ -211,7 +213,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
             this.resetForm();
         }
     }
-
+   
     ngOnInit(): void {
         this.initDialogButtons();
         this.params.id

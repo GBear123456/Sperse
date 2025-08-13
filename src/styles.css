@@ -243,3 +243,9 @@ i.save-to-clipboard {
 .ace_editor .ace_content, .ace_line span {
     font-family:  'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro', 'source-code-pro', monospace !important
 }
+
+
+.ace_gutter .ace_gutter-cell {
+    text-align: center !important;
+    font-family:  'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro', 'source-code-pro', monospace !important
+  }
