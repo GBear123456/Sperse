@@ -1067,7 +1067,11 @@
 ::ng-deep .tags-container {
     .tags-list-item {
         text-align: left;
-
+        padding: 4px !important;
+        border-radius: 4px;
+        &.selected {
+            background: #ecf3fa;
+        }
         &.disabled {
             opacity: 0.5;
             pointer-events: none;

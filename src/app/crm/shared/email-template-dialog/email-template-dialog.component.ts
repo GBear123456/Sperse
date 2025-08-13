@@ -11,6 +11,8 @@ import {
     Output,
     EventEmitter,
     AfterViewInit,
+    HostListener
+
 } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 
@@ -291,7 +293,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     dataRecord = { modelId: null };
     promptLibrary: any[] = [];
 
-    selectedItemId: string | null = null;
+    selectedItemId: string | null = '1';
     bankCodeEnabled = this.features.isEnabled(AppFeatures.CRMBANKCode);
 
     showNewEmailTab = true;
@@ -719,6 +721,21 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
             this.showCC = true;
         }
         this.changeDetectorRef.detectChanges();
+    }
+    @HostListener('document:keydown.escape', ['$event'])
+    onESC(event: KeyboardEvent) {
+        const fullscreen = document.querySelector('.cke_maximized');
+        if (fullscreen) {
+            event.stopPropagation();
+        
+    //   const isFullscreen = document.querySelector('.cke_maximized') !== null;
+    //   if (isFullscreen) {
+    //     // Let CKEditor handle it, prevent dialog from closing
+    //     event.stopPropagation();
+      } else {
+        // Manually close dialog when not fullscreen
+        this.dialogRef.close();
+      }
     }
 
     initDialogButtons() {

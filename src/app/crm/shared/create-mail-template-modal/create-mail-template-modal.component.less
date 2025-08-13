@@ -1,6 +1,15 @@
 .mail-template-modal{
     width: 96vw;
 }
+:host ::ng-deep .editor-div .cke_contents {
+    height: calc(100vh - 350px) !important;
+    max-height: 620px !important;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+        display: none; 
+        width: 0;
+    }
+}
 
 :host {
     ::ng-deep .cke_chrome {
@@ -1054,7 +1063,11 @@
 ::ng-deep .tags-container {
     .tags-list-item {
         text-align: left;
-
+        padding: 4px !important;
+        border-radius: 4px;
+        &.selected {
+            background: #ecf3fa;
+        }
         &.disabled {
             opacity: 0.5;
             pointer-events: none;
@@ -1370,12 +1383,3 @@
 }
 
 
-:host ::ng-deep .cke_contents {
-    height: calc(100vh - 350px) !important;
-    max-height: 620px !important;
-    overflow-y: auto;
-    &::-webkit-scrollbar {
-        display: none; 
-        width: 0;
-    }
-}
