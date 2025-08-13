@@ -423,7 +423,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         }
 
         //(window as any).CKEDITOR.disableVersionWarning = true;
-
         delete this.data.attachments;
         this.dialogRef.afterClosed().subscribe(() => {
             if (this.attachments.length && !this.data.attachments)
@@ -620,6 +619,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
             panelClass: ["slider"],
             hasBackdrop: true,
             closeOnNavigation: true,
+            disableClose: true
         });
 
         dialogRef.afterClosed().subscribe((result) => {
@@ -736,15 +736,15 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
                 disabled: this.templateEditMode && this.isManageUnallowed,
                 class: "primary",
                 action: this.save.bind(this),
-                contextMenu: {
-                    hidden: this.data.hideContextMenu,
-                    items: this.saveButtonOptions,
-                    cacheKey: this.cacheHelper.getCacheKey(
-                        "save_option_active_index",
-                        "EmailTemplateDialog",
-                    ),
-                    defaultIndex: 0,
-                },
+                // contextMenu: {
+                //     hidden: this.data.hideContextMenu,
+                //     items: this.saveButtonOptions,
+                //     cacheKey: this.cacheHelper.getCacheKey(
+                //         "save_option_active_index",
+                //         "EmailTemplateDialog",
+                //     ),
+                //     defaultIndex: 0,
+                // },
             },
             // {
             //     id: 'refreshOptions',
@@ -1601,7 +1601,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         const payload = {
             model,
             prompt: cleanedPrompt, // Use cleaned user-edited content
-            system: "You are an expert email marketer. Your task is to create compelling email content with the html based on user input.",
+            system: "You are an expert email marketer. Your task is to create compelling email content with the html based on user input. Remeber that html content result does not need padding",
         };
 
         fetch("/.netlify/functions/openai", {
@@ -1619,9 +1619,9 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
                 const gptResponse = data.response;
                 const responseData = this.extractContent(gptResponse);
                 this.data.subject = responseData.subject;
-                this.data.body = this.formatEmailContent(
-                    responseData.body,
-                ) as unknown as string;
+                // this.data.body = this.formatEmailContent(
+                //     responseData.body,
+                // ) as unknown as string;
                 this.aceEditor.session.setValue(this.data.body);
                 await this.formatCode();
                 this.changeDetectorRef.detectChanges();
