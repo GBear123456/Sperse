@@ -79,7 +79,7 @@
                     </dx-validator>
                 </dx-text-box>
             </div>
-            <div>
+            <div (keydown.escape)="onESC($event)">
                 <ckeditor
                     [(ngModel)]="data.body"
                     [config]="ckConfig"

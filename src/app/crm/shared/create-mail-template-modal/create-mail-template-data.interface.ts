@@ -15,5 +15,7 @@ export interface CreateEmailTemplateData {
     cc: string[] | undefined;
     bcc: string[] | undefined;
     attachments: Partial<EmailAttachment>[];
+    saveAttachmentsToDocuments: boolean;
+
     
 }
