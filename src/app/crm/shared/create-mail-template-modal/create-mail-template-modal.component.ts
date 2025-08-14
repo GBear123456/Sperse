@@ -49,12 +49,15 @@ import {
     GetTemplateReponse,
     Attachment,
     FileInfo,
+    TenantSettingsServiceProxy,
 } from "@shared/service-proxies/service-proxies";
+
 
 @Component({
     selector: "create-mail-template-modal-dialog",
     templateUrl: "./create-mail-template-modal.component.html",
     styleUrls: ["./create-mail-template-modal.component.less"],
+    providers: [TenantSettingsServiceProxy],
 })
 export class CreateMailTemplateModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
@@ -190,6 +193,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
         public dialog: MatDialog,
         private fb: FormBuilder,
         private domSanitizer: DomSanitizer,
+        private tenantSettingsService: TenantSettingsServiceProxy,
 
         @Inject(MAT_DIALOG_DATA) public data: CreateEmailTemplateData,
         @Inject(MAT_DIALOG_DATA) public params: { id?: number; contact?: any }
@@ -415,38 +419,39 @@ export class CreateMailTemplateModalComponent implements OnInit {
         const payload = {
             model,
             prompt,
-            system: "You are an expert email marketer. Your task is to create compelling email content with the html based on user input. Remeber that html content result does not need padding",
+            system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
         };
 
-        fetch("/.netlify/functions/openai", {
-            method: "POST",
+        fetch('/.netlify/functions/openai', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(payload)
         })
-            .then((response) => response.json())
-            .then((data) => {
-                this.invalidate();
-                this.processing = false;
+        .then(response => response.json())
+        .then(data => {
+            console.log('ChatGPT Response:', data);
+            this.invalidate();
+            this.processing = false;
 
-                const gptResponse = data.response;
-                const responseData = this.extractContent(gptResponse);
-                this.data.subject = responseData.subject;
-                this.data.body = this.formatEmailContent(
-                    responseData.body
-                ) as unknown as string;
-                this.editorData = this.formatEmailContent(
-                    responseData.body
-                ) as unknown as string;
+            const gptResponse = data.response;
+            const responseData = this.extractContent(gptResponse);
+            this.data.subject = responseData.subject;
+            this.data.body = this.formatEmailContent(
+                responseData.body
+            ) as unknown as string;
+            this.editorData = this.formatEmailContent(
+                responseData.body
+            ) as unknown as string;
 
-                this.updateButtons();
-            })
-            .catch((error) => {
-                this.processing = false;
-                console.error("Error calling ChatGPT Function:", error);
-                this.updateButtons();
-            });
+            this.updateButtons();
+        })
+        .catch(error => {
+            this.processing = false;
+            console.error('Error calling ChatGPT Function:', error);
+            this.updateButtons();
+        });
     }
     extractContent(content: any): { subject: string; body: string } {
         const subjectMatch = content.match(/^Subject: (.*?)(?:\n\n|$)/);

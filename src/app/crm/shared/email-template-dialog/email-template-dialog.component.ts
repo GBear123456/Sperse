@@ -11,7 +11,9 @@ import {
     Output,
     EventEmitter,
     AfterViewInit,
-    HostListener
+    HostListener,
+    OnDestroy,
+    Injector
 
 } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
@@ -58,6 +60,7 @@ import {
     EmailTemplateType,
     FileInfo,
     Attachment,
+    TenantSettingsServiceProxy,
 } from "@shared/service-proxies/service-proxies";
 import { PhoneFormatPipe } from "@shared/common/pipes/phone-format/phone-format.pipe";
 import { AppSessionService } from "@shared/common/session/app-session.service";
@@ -74,6 +77,7 @@ import { CreateMailTemplateModalComponent } from "@app/crm/shared/create-mail-te
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { prompts } from "./prompts";
 
+
 // HTML editor
 import * as ace from "ace-builds";
 import "ace-builds/src-min-noconflict/mode-html";
@@ -87,15 +91,16 @@ import "ace-builds/src-noconflict/theme-github_dark";
 import * as prettier from "prettier";
 import * as prettierPluginVoidHtml from "@awmottaz/prettier-plugin-void-html";
 import * as parserHtml from "prettier/plugins/html";
+import { DxTextBoxComponent } from "devextreme-angular/ui/text-box";
 
 @Component({
     selector: "email-template-dialog",
     templateUrl: "email-template-dialog.component.html",
     styleUrls: ["email-template-dialog.component.less"],
-    providers: [CacheHelper, PhoneFormatPipe, EmailTemplateServiceProxy],
+    providers: [CacheHelper, PhoneFormatPipe, EmailTemplateServiceProxy, TenantSettingsServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
+export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
     @ViewChild(DxValidationGroupComponent)
@@ -106,10 +111,13 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     @ViewChild("scrollView") scrollView: DxScrollViewComponent;
     @ViewChild("contentEditableDiv")
     contentEditableDiv!: ElementRef<HTMLDivElement>;
-    //@ViewChild('tagsButton') tagsButton: ElementRef;
+    // @ViewChild('tagsButton') tagsButton: ElementRef;
     @ViewChild("aiButton") aiButton: ElementRef;
     @ViewChild("editor") private editorRef!: ElementRef<HTMLElement>;
+    @ViewChild("tagsButton") tagsTooltip!: ElementRef;
+    @ViewChild("subjectField") subjectField: DxTextBoxComponent;
     private aceEditor!: ace.Ace.Editor;
+    isTagsTooltipVisible = false;
     title: string = "New Email";
     ckEditor: any;
     envHost = environment;
@@ -121,7 +129,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     showCC = false;
     showBCC = false;
     tagLastValue: string;
-    tagsTooltipVisible = false;
     aiTooltipVisible = false;
     showPreview = false;
     showAIPrompt = false;
@@ -173,6 +180,9 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     filteredTemplates$: BehaviorSubject<GetTemplatesResponse[]> =
         new BehaviorSubject<GetTemplatesResponse[]>([]);
     searchTerm: string = "";
+    // Cache templates locally to avoid repeated HTTP requests during filtering
+    private cachedTemplates: GetTemplatesResponse[] = [];
+    private searchDebounceTimer: any;
     attachments: Partial<EmailAttachment>[] = this.data.attachments || [];
     uniqId = Math.random().toString().slice(-7);
     charCount: number;
@@ -183,7 +193,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     @Input() templateType: EmailTemplateType;
 
     storeAttachmentsToDocumentsCacheKey = "StoreAttachmentsToDocuments";
-
+    private ckEditorDocument: Document | null = null;
     ckConfig: any = {
         versionCheck: false,
         enterMode: 3 /* CKEDITOR.ENTER_DIV */,
@@ -192,6 +202,12 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         allowedContent: true,
         toolbarCanCollapse: true,
         startupShowBorders: false,
+        resize_enabled: true,
+        resize_dir: 'both', // Allow resizing in both directions (horizontal and vertical)
+        resize_minWidth: 300, // Minimum width in pixels
+        resize_minHeight: 200, // Minimum height in pixels
+        resize_maxWidth: 800, // Maximum width in pixels
+        resize_maxHeight: 600,
         qtBorder: 0,
         width: "100%",
         stylesSet: [],
@@ -354,6 +370,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     }
 
     constructor(
+        injector: Injector,
         private phonePipe: PhoneFormatPipe,
         private domSanitizer: DomSanitizer,
         private notifyService: NotifyService,
@@ -374,6 +391,8 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         private fb: FormBuilder,
         private crmService: CrmService,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData,
+        private tenantSettingsService: TenantSettingsServiceProxy,
+
     ) {
         if (!data.suggestionEmails) data.suggestionEmails = [];
 
@@ -382,14 +401,8 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         });
 
         data.saveAttachmentsToDocuments = this.getAttachmentsToDocumentsCache();
-        this.templates$ = this.refresh$.pipe(
-            startWith(null),
-            switchMap(() =>
-                this.emailTemplateProxy.getTemplates(this.data.templateType),
-            ),
-        );
-
         this.templates$.subscribe((templates) => {
+            this.cachedTemplates = templates || [];
             this.filteredTemplates$.next(templates);
         });
     }
@@ -722,6 +735,53 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         this.changeDetectorRef.detectChanges();
     }
     @HostListener('document:keydown.escape', ['$event'])
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        this.handleClick(event, document);
+        // Also handle global document clicks to close tooltip when clicking outside
+        this.handleGlobalClick(event);
+      }
+    
+      // Handle clicks in the CKEditor iframe
+      handleCKEditorClick(event: MouseEvent) {
+
+        this.handleClick(event, this.ckEditorDocument!);
+      }
+    private handleClick(event: MouseEvent, contextDocument: Document) {
+        const targetElement = event.target as HTMLElement;
+        const tooltipElement = contextDocument.querySelector('.dx-tooltip-wrapper');
+        
+        // Check if the click is outside the tags button and the tooltip
+        if (
+          this.isTagsTooltipVisible &&
+          this.tagsTooltip &&
+          !this.tagsTooltip.nativeElement.contains(targetElement) &&
+          !tooltipElement?.contains(targetElement)
+        ) {
+          this.isTagsTooltipVisible = false;
+          this.changeDetectorRef.detectChanges();
+        }
+    }
+
+    private handleGlobalClick(event: MouseEvent) {
+        const targetElement = event.target as HTMLElement;
+        
+        // Check if the click is outside the tags button and any visible tooltip
+        if (this.isTagsTooltipVisible && this.tagsTooltip) {
+            const tooltipElement = document.querySelector('.dx-tooltip-wrapper');
+            const tagsButtonElement = this.tagsTooltip.nativeElement;
+            
+            // Check if click is outside both the tags button and the tooltip
+            if (!tagsButtonElement.contains(targetElement) && !tooltipElement?.contains(targetElement)) {
+                this.isTagsTooltipVisible = false;
+                this.changeDetectorRef.detectChanges();
+            }
+        }
+    }
+
+    toggleTooltip() {
+    this.isTagsTooltipVisible = !this.isTagsTooltipVisible;
+    }
     onESC(event: KeyboardEvent) {
         const fullscreen = document.querySelector('.cke_maximized');
         if (fullscreen) {
@@ -1198,6 +1258,13 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
             window["CKEDITOR"].warn = function () {};
         }
         this.ckEditor = event.editor;
+        const iframe = this.ckEditor.container.$.querySelector('iframe');
+            if (iframe) {
+            this.ckEditorDocument = iframe.contentDocument || iframe.contentWindow?.document || null;
+            if (this.ckEditorDocument) {
+                this.ckEditorDocument.addEventListener('click', this.handleCKEditorClick.bind(this));
+            }
+            }
     }
 
     updateDataLength() {
@@ -1236,7 +1303,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         }
 
         this.invalidate();
-        this.tagsTooltipVisible = false;
+        this.isTagsTooltipVisible = false;
     }
 
     getTagValue(name) {
@@ -1584,124 +1651,52 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         this.invalidate();
     }
 
-    // Helper method to clean HTML content
-    private cleanHtmlContent(html: string): string {
-        // Remove HTML tags, replace <br> with newlines, and trim whitespace
-        return html
-            .replace(/<[^>]+>/g, "") // Remove HTML tags
-            .replace(/<br\s*\/?>/gi, "\n") // Replace <br> with newlines
-            .replace(/&nbsp;/g, " ") // Replace non-breaking spaces
-            .trim();
-    }
 
-    async getChatGptResponse() {
+
+    getChatGptResponse() {
         this.processing = true;
         this.updateButtons();
 
-        // Use the edited content from contentEditableDiv
-        const editedPrompt =
-            this.contentEditableDiv?.nativeElement?.innerHTML ||
-            this.editorContent;
-        const cleanedPrompt = this.cleanHtmlContent(editedPrompt);
-
-        // Validate prompt
-        if (!cleanedPrompt) {
-            this.notifyService.error(
-                this.ls.l(
-                    "PromptEmptyError",
-                    "Please provide content for the AI to process.",
-                ),
-            );
-            this.processing = false;
-            this.updateButtons();
-            return;
-        }
-
-        const model =
-            this.aiModels.find((item: any) => item.id == this.selectedItemId)
-                ?.model ?? "gpt-3.5-turbo";
+        const prompt = this.groupedPromptLibrary[this.selectedPromptGroupIndex]?.prompts[this.selectedPromptItemIndex]?.prompt;
+        const model = this.aiModels.find((item: any) => item.id == this.selectedItemId)?.model ?? 'gpt-3.5-turbo';
 
         const payload = {
             model,
-            prompt: cleanedPrompt, // Use cleaned user-edited content
-            system: "You are an expert email marketer. Your task is to create compelling email content with the html based on user input.",
+            prompt,
+            system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
         };
 
-        fetch("/.netlify/functions/openai", {
-            method: "POST",
+        fetch('/.netlify/functions/openai', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(payload)
         })
-            .then((response) => response.json())
-            .then(async (data) => {
-                this.invalidate();
-                this.processing = false;
+        .then(response => response.json())
+        .then(data => {
+            console.log('ChatGPT Response:', data);
+            this.invalidate();
+            this.processing = false;
 
-                const gptResponse = data.response;
-                const responseData = this.extractContent(gptResponse);
-                this.data.subject = responseData.subject;
-                this.data.body = this.formatEmailContent(
-                    responseData.body,
-                ) as unknown as string;
-                this.aceEditor.session.setValue(this.data.body);
-                await this.formatCode();
-                this.changeDetectorRef.detectChanges();
+            const gptResponse = data.response;
+            const responseData = this.extractContent(gptResponse);
+            this.data.subject = responseData.subject;
+            this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
+            this.aceEditor.session.setValue(this.data.body);
+            this.formatCode();
+            this.changeDetectorRef.detectChanges();
 
-                this.updateButtons();
-            })
-            .catch((error) => {
-                this.processing = false;
-                console.error("Error calling ChatGPT Function:", error);
-                this.notifyService.error(
-                    this.ls.l(
-                        "APIError",
-                        "Failed to generate AI response. Please try again.",
-                    ),
-                );
-                this.updateButtons();
-            });
+            this.updateButtons();
+        })
+        .catch(error => {
+            this.processing = false;
+            console.error('Error calling ChatGPT Function:', error);
+            this.updateButtons();
+        });
     }
-    // getChatGptResponse() {
-    //     this.processing = true;
-    //     this.updateButtons();
 
-    //     const prompt = this.groupedPromptLibrary[this.selectedPromptGroupIndex]?.prompts[this.selectedPromptItemIndex]?.prompt;
-    //     const model = this.aiModels.find((item: any) => item.id == this.selectedItemId)?.model ?? 'gpt-3.5-turbo';
 
-    //     const payload = {
-    //         model,
-    //         prompt,
-    //         system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
-    //     };
-
-    //     fetch('/.netlify/functions/openai', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(payload)
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         console.log('ChatGPT Response:', data);
-    //         this.invalidate();
-    //         this.processing = false;
-
-    //         const gptResponse = data.response;
-    //         const responseData = this.extractContent(gptResponse);
-    //         this.data.subject = responseData.subject;
-    //         this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
-
-    //         this.updateButtons();
-    //     })
-    //     .catch(error => {
-    //         this.processing = false;
-    //         console.error('Error calling ChatGPT Function:', error);
-    //         this.updateButtons();
-    //     });
-    // }
 
     extractContent(content: any): { subject: string; body: string } {
         const subjectMatch = content.match(/^Subject: (.*?)(?:\n\n|$)/);
@@ -1797,18 +1792,46 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
         this.placeholderText = "Search templates";
     }
 
+    onSearchInput(event: any) {
+        const searchValue = event.event?.target?.value?.toLowerCase() || "";
+        this.searchTerm = searchValue;
+        
+        // Clear previous timer and set new one for debouncing
+        if (this.searchDebounceTimer) {
+            clearTimeout(this.searchDebounceTimer);
+        }
+        
+        this.searchDebounceTimer = setTimeout(() => {
+            this.updateFilteredTemplates(searchValue);
+        }, 300); // 300ms debounce delay
+    }
+
+    private updateFilteredTemplates(searchValue: string) {
+        if (!searchValue.trim()) {
+            // If no search term, show all templates
+            this.filteredTemplates$.next(this.cachedTemplates);
+            return;
+        }
+        
+        // Filter from cached templates (client-side filtering)
+        const filtered = this.cachedTemplates.filter(
+            template => template.name.toLowerCase().includes(searchValue.toLowerCase())
+        );
+        this.filteredTemplates$.next(filtered);
+    }
+
     onSearchChange(event: any) {
         const searchValue = event.value?.toLowerCase() || "";
         this.searchTerm = searchValue;
-
-        this.templates$.subscribe((templates) => {
-            const filtered = templates.filter(
-                (template) =>
-                    template.name.toLowerCase().includes(searchValue) || false,
-            );
-
-            this.filteredTemplates$.next(filtered);
-        });
+        
+        // Clear previous timer and set new one for debouncing
+        if (this.searchDebounceTimer) {
+            clearTimeout(this.searchDebounceTimer);
+        }
+        
+        this.searchDebounceTimer = setTimeout(() => {
+            this.updateFilteredTemplates(searchValue);
+        }, 300); // 300ms debounce delay
     }
 
     toggleSetting() {
@@ -1834,11 +1857,11 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
     }
 
     async formatCode() {
-        const code = this.aceEditor.getValue(); // Get current code
+        const code = this.aceEditor.getValue(); 
 
         const formattedString =await prettier.format(code, {
-            parser: "html", // Choose parser based on your content (html, babel, css, etc.)
-            plugins: [parserHtml,prettierPluginVoidHtml], // Use relevant parser plugin
+            parser: "html", 
+            plugins: [parserHtml,prettierPluginVoidHtml],
             tabWidth: 2,
             useTabs: false,
             printWidth: 120,
@@ -1855,5 +1878,17 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit {
             return title.substring(0, 50) + '...';
         } 
         else return title;
+    }
+
+    ngOnDestroy() {
+        // Clean up event listeners to prevent memory leaks
+        if (this.ckEditorDocument) {
+            this.ckEditorDocument.removeEventListener('click', this.handleCKEditorClick.bind(this));
+        }
+        
+        // Clean up search debounce timer
+        if (this.searchDebounceTimer) {
+            clearTimeout(this.searchDebounceTimer);
+        }
     }
 }

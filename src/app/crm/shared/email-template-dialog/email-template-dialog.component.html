@@ -162,15 +162,15 @@
                                             width="calc(100% - 31px)"
                                             noDataText=""
                                             placeholder=""
-                                    [dataSource]="data.suggestionEmails"
+                                            [dataSource]="data.suggestionEmails"
                                             [multiline]="false"
                                             [acceptCustomValue]="true"
-                                    [(value)]="data.to"
+                                            [(value)]="data.to"
                                             [disabled]="templateEditMode"
                                             (onKeyUp)="onKeyUp($event)"
-                                    (onInitialized)="onTagBoxInitialized($event)"
+                                            (onInitialized)="onTagBoxInitialized($event)"
                                             (onFocusOut)="emailInputFocusOut($event)"
-                                    (onCustomItemCreating)="onCustomItemCreating($event)">
+                                            (onCustomItemCreating)="onCustomItemCreating($event)">
                                     <dx-validator>
                                         <dxi-validation-rule type="custom"
                                                             [message]="ls.l('InvalidField', ls.l('To'))"
@@ -239,11 +239,10 @@
 
                             <div class="field-area subject">
                                 <label class="caption">{{ls.l('Subject')}}:</label>
-                                <dx-text-box
+                                <dx-text-box #subjectField
                                     name="subject"
                                     width="calc(100% - 31px)"
                                     placeholder=""
-                                    (onFocusOut)="previewInputFocusOut($event)"
                                     [(value)]="data.subject">
                                     <dx-validator>
                                         <dxi-validation-rule type="required"
@@ -277,12 +276,12 @@
                                     [style.width]="'100%'"
                                     >
                                 </ckeditor>
-                                <div style="display: flex; align-items: center; padding-right: 6px; position: absolute; top: 10px; right: 5px;">
+                                <div style="display: flex; align-items: center; padding-right: 6px; position: absolute; top: 10px; right: 10px;">
                                     <span #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length">
-                                        <a (click)="tagsTooltipVisible = true">Add a Tag</a>
+                                        <a (click)="toggleTooltip()">Add a Tag</a>
                                     </span>
                                     <dx-tooltip [width]="250"
-                                                position="bottom" [(visible)]="tagsTooltipVisible"
+                                                position="bottom" [(visible)]="isTagsTooltipVisible"
                                         [target]="'.tags-button.id' + uniqId">
                                         <div *dxTemplate="let data of 'content'" class="tags-container">
                                             <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
@@ -305,14 +304,14 @@
                                             <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()">
                                                 <img src="assets/common/icons/attach.svg">{{ ls.l('Add attachment') }}
                                             </a>
-                                            <dx-check-box *ngIf="!templateEditMode && attachments && attachments.length"
+                                            <!-- <dx-check-box *ngIf="!templateEditMode && attachments && attachments.length"
                                                 class="saveToDocs" [(value)]="data.saveAttachmentsToDocuments"
                                                 [rtlEnabled]="true" [text]="ls.l('Save to Documents')">
-                                            </dx-check-box>
+                                            </dx-check-box> -->
                                         </ng-template>
                                     </ngx-file-drop>
                                 </div>
-                                <div class="attachment-field-area bottom-text-ste">Insert Widget</div>
+                                <!-- <div class="attachment-field-area bottom-text-ste">Insert Widget</div> -->
                                 <div class="attachment-field-area bottom-text-ste">
                                     {{ charCount ? charCount :0  }} chars
                                 </div>
@@ -436,7 +435,7 @@
                                             [elementAttr]="{ class: 'template-search-box' }"
                                             (onFocusIn)="onFocusIn()"
                                             (onFocusOut)="onFocusOut()"
-                                            (onValueChanged)="onSearchChange($event)"
+                                            (onInput)="onSearchInput($event)"
                                         >
                                         
                                         </dx-text-box>
