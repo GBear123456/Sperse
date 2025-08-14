@@ -76,7 +76,7 @@ import { CrmService } from "@app/crm/crm.service";
 import { CreateMailTemplateModalComponent } from "@app/crm/shared/create-mail-template-modal/create-mail-template-modal.component";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { prompts } from "./prompts";
-import { OpenAIService } from "@shared/common/services/openai.service";
+
 
 // HTML editor
 import * as ace from "ace-builds";
@@ -97,7 +97,7 @@ import { DxTextBoxComponent } from "devextreme-angular/ui/text-box";
     selector: "email-template-dialog",
     templateUrl: "email-template-dialog.component.html",
     styleUrls: ["email-template-dialog.component.less"],
-    providers: [CacheHelper, PhoneFormatPipe, EmailTemplateServiceProxy, TenantSettingsServiceProxy, OpenAIService],
+    providers: [CacheHelper, PhoneFormatPipe, EmailTemplateServiceProxy, TenantSettingsServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -392,7 +392,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         private crmService: CrmService,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData,
         private tenantSettingsService: TenantSettingsServiceProxy,
-        private openAIService: OpenAIService,
+
     ) {
         if (!data.suggestionEmails) data.suggestionEmails = [];
 
@@ -1651,136 +1651,52 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         this.invalidate();
     }
 
-    // Helper method to clean HTML content
-    private cleanHtmlContent(html: string): string {
-        // Remove HTML tags, replace <br> with newlines, and trim whitespace
-        return html
-            .replace(/<[^>]+>/g, "") // Remove HTML tags
-            .replace(/<br\s*\/?>/gi, "\n") // Replace <br> with newlines
-            .replace(/&nbsp;/g, " ") // Replace non-breaking spaces
-            .trim();
-    }
 
-    async getChatGptResponse() {
+
+    getChatGptResponse() {
         this.processing = true;
         this.updateButtons();
 
-        // Use the edited content from contentEditableDiv
-        const editedPrompt =
-            this.contentEditableDiv?.nativeElement?.innerHTML ||
-            this.editorContent;
-        const cleanedPrompt = this.cleanHtmlContent(editedPrompt);
+        const prompt = this.groupedPromptLibrary[this.selectedPromptGroupIndex]?.prompts[this.selectedPromptItemIndex]?.prompt;
+        const model = this.aiModels.find((item: any) => item.id == this.selectedItemId)?.model ?? 'gpt-3.5-turbo';
 
-        // Validate prompt
-        if (!cleanedPrompt) {
-            this.notifyService.error(
-                this.ls.l(
-                    "PromptEmptyError",
-                    "Please provide content for the AI to process.",
-                ),
-            );
+        const payload = {
+            model,
+            prompt,
+            system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
+        };
+
+        fetch('/.netlify/functions/openai', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('ChatGPT Response:', data);
+            this.invalidate();
             this.processing = false;
+
+            const gptResponse = data.response;
+            const responseData = this.extractContent(gptResponse);
+            this.data.subject = responseData.subject;
+            this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
+            this.aceEditor.session.setValue(this.data.body);
+            this.formatCode();
+            this.changeDetectorRef.detectChanges();
+
             this.updateButtons();
-            return;
-        }
-
-        try {
-            const model =
-                this.aiModels.find((item: any) => item.id == this.selectedItemId)
-                    ?.model ?? "gpt-3.5-turbo";
-
-            // Use the OpenAI service to generate content
-            this.openAIService.generateEmailContent(cleanedPrompt, model)
-                .subscribe({
-                    next: async (data) => {
-                        this.invalidate();
-                        this.processing = false;
-
-                        const gptResponse = data.choices[0].message.content;
-                        const responseData = this.extractContent(gptResponse);
-                        this.data.subject = responseData.subject;
-                        
-                        // Reset validation state for subject field after GPT sets the value
-                        if (this.subjectField && this.subjectField.instance) {
-                            this.subjectField.instance.option('isValid', true);
-                        }
-                        
-                        // Reset validation group state to clear any existing validation errors
-                        if (this.validationGroup && this.validationGroup.instance) {
-                            this.validationGroup.instance.reset(); // Use correct method to reset validation group
-                        }
-                        
-                        this.data.body = this.formatEmailContent(
-                            responseData.body,
-                        ) as unknown as string;
-                        this.aceEditor.session.setValue(this.data.body);
-                        await this.formatCode();
-                        this.changeDetectorRef.detectChanges();
-
-                        this.updateButtons();
-                    },
-                    error: (error) => {
-                        this.processing = false;
-                        console.error("Error calling OpenAI API:", error);
-                        
-                        const errorMessage = this.openAIService.getErrorMessage(error);
-                        this.notifyService.error(
-                            this.ls.l("APIError", errorMessage),
-                        );
-                        this.updateButtons();
-                    }
-                });
-        } catch (error) {
+        })
+        .catch(error => {
             this.processing = false;
-            console.error("Error calling OpenAI API:", error);
-            
-            const errorMessage = this.openAIService.getErrorMessage(error);
-            this.notifyService.error(
-                this.ls.l("APIError", errorMessage),
-            );
+            console.error('Error calling ChatGPT Function:', error);
             this.updateButtons();
-        }
+        });
     }
 
-    // getChatGptResponse() {
-    //     this.processing = true;
-    //     this.updateButtons();
 
-    //     const prompt = this.groupedPromptLibrary[this.selectedPromptGroupIndex]?.prompts[this.selectedPromptItemIndex]?.prompt;
-    //     const model = this.aiModels.find((item: any) => item.id == this.selectedItemId)?.model ?? 'gpt-3.5-turbo';
-
-    //     const payload = {
-    //         model,
-    //         prompt,
-    //         system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
-    //     };
-
-    //     fetch('/.netlify/functions/openai', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(payload)
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         console.log('ChatGPT Response:', data);
-    //         this.invalidate();
-    //         this.processing = false;
-
-    //         const gptResponse = data.response;
-    //         const responseData = this.extractContent(gptResponse);
-    //         this.data.subject = responseData.subject;
-    //         this.data.body = this.formatEmailContent(responseData.body) as unknown as string;
-
-    //         this.updateButtons();
-    //     })
-    //     .catch(error => {
-    //         this.processing = false;
-    //         console.error('Error calling ChatGPT Function:', error);
-    //         this.updateButtons();
-    //     });
-    // }
 
     extractContent(content: any): { subject: string; body: string } {
         const subjectMatch = content.match(/^Subject: (.*?)(?:\n\n|$)/);
