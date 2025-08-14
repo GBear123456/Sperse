@@ -310,7 +310,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     promptLibrary: any[] = [];
 
     selectedItemId: string | null = '1';
-    bankCodeEnabled = this.features.isEnabled(AppFeatures.CRMBANKCode);
+    // bankCodeEnabled = this.features.isEnabled(AppFeatures.CRMBANKCode);
 
     showNewEmailTab = true;
     showHtmlEditor = false;
@@ -454,9 +454,10 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         this.ckConfig.height = this.editorHeight
             ? this.editorHeight
             : innerHeight -
-              (this.features.isEnabled(AppFeatures.CRMBANKCode)
-                  ? 544
-                  : defaultHeight) +
+              // (this.features.isEnabled(AppFeatures.CRMBANKCode)
+              //     ? 544
+              //     : defaultHeight) +
+              defaultHeight +
               "px";
 
         this.initDialogButtons();
@@ -1663,7 +1664,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         const payload = {
             model,
             prompt,
-            system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
+            system: 'You are an expert email marketer. Your task is to create compelling email HTML content based on user input.',
         };
 
         fetch('/.netlify/functions/openai', {

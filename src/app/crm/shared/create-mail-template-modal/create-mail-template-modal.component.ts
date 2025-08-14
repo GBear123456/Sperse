@@ -419,7 +419,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
         const payload = {
             model,
             prompt,
-            system: 'You are an expert email marketer. Your task is to create compelling email content based on user input.',
+            system: 'You are an expert email marketer. Your task is to create compelling email HTML content based on user input.',
         };
 
         fetch('/.netlify/functions/openai', {
