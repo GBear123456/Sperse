@@ -130,7 +130,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     showBCC = false;
     tagLastValue: string;
     aiTooltipVisible = false;
-    showPreview = false;
     showAIPrompt = false;
     propmtTooltipVisible = false;
     curTemplateId: number | undefined;
@@ -287,6 +286,25 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         extraPlugins:
             "preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting",
         skin: "moono-lisa", // kama, moono, moono-lisa
+    };
+
+    // Configuration for template preview (read-only, no toolbar)
+    templatePreviewConfig: any = {
+        versionCheck: false,
+        enterMode: 3 /* CKEDITOR.ENTER_DIV */,
+        pasteFilter: null,
+        toolbar: [], // Empty toolbar - no editing tools
+        allowedContent: true,
+        startupShowBorders: false,
+        resize_enabled: false, // Disable resizing for preview
+        readOnly: true, // Make it read-only
+        width: "100%",
+        height: "400px",
+        stylesSet: [],
+        contentsCss: [],
+        removePlugins: "elementspath,resize",
+        extraPlugins: "showblocks",
+        skin: "moono-lisa",
     };
 
     saveButtonOptions = [
@@ -597,9 +615,23 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
 
         // Set initial content
         this.aceEditor.resize();
-        this.aceEditor.session.setValue("");
+        // Load existing content if available
+        if (this.data.body) {
+            this.aceEditor.session.setValue(this.data.body);
+        } else {
+            this.aceEditor.session.setValue("");
+        }
         this.aceEditor.session.setUseWrapMode(true);
         this.aceEditor.renderer.setScrollMargin(10, 0);
+
+        // Add change event listener for real-time synchronization
+        this.aceEditor.session.on('change', () => {
+            if (this.showHtmlEditor) {
+                this.data.body = this.aceEditor.getValue();
+                this.updateDataLength();
+                this.changeDetectorRef.detectChanges();
+            }
+        });
 
         window.addEventListener("resize", () => {
             this.aceEditor.resize();
@@ -1045,19 +1077,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         this.changeDetectorRef.detectChanges();
     }
 
-    previewInputFocusOut(event, checkDisplay?) {
-        event.text = this.tagLastValue || event.event.target.value;
-        this.tagLastValue = "";
-        let isComboListEmpty = !event.text.length;
-        if (
-            checkDisplay &&
-            isComboListEmpty &&
-            !event.component.field().value
-        ) {
-            this.showPreview = false;
-            this.changeDetectorRef.detectChanges();
-        }
-    }
+
 
     startLoading() {
         this.modalDialog && this.modalDialog.startLoading();
@@ -1279,6 +1299,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
                         1,
                     0,
                 ) ?? 0;
+            
             this.changeDetectorRef.markForCheck();
         }
     }
@@ -1730,11 +1751,29 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         if (tabName == "new-email") {
             this.showNewEmailTab = true;
             this.title = "New Email";
+            // Sync HTML editor content back to CKEditor
+            if (this.aceEditor && this.aceEditor.getValue()) {
+                this.data.body = this.aceEditor.getValue();
+                this.updateDataLength();
+                this.changeDetectorRef.detectChanges();
+            }
         } else if (tabName == "html-editor") {
             this.showHtmlEditor = true;
             this.title = "Html Editor";
+            // Sync CKEditor content to HTML editor
+            if (this.aceEditor && this.data.body) {
+                this.aceEditor.session.setValue(this.data.body);
+            }
             setTimeout(() => {
                 this.aceEditor.resize();
+                // Ensure content is synced after resize
+                if (this.aceEditor && this.data.body) {
+                    this.aceEditor.session.setValue(this.data.body);
+                }
+                // Auto-format the code when switching to HTML editor tab
+                if (this.aceEditor && this.aceEditor.getValue()) {
+                    this.formatCode();
+                }
             }, 0);
         } else if (tabName == "template") {
             this.showTemplate = true;
@@ -1744,6 +1783,34 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
 
     updateEditor(): void {
         // Triggered when textarea content changes
+    }
+
+    syncHtmlEditorContent(): void {
+        // Manually sync content between HTML editor and CKEditor
+        if (this.aceEditor && this.data.body) {
+            this.aceEditor.session.setValue(this.data.body);
+        }
+    }
+
+    syncCKEditorContent(): void {
+        // Manually sync content from HTML editor to CKEditor
+        if (this.aceEditor && this.aceEditor.getValue()) {
+            this.data.body = this.aceEditor.getValue();
+            this.updateDataLength();
+            this.changeDetectorRef.detectChanges();
+        }
+    }
+
+    onPromptTooltipWheel(event: WheelEvent): void {
+        // Handle mouse wheel scrolling for the prompt library tooltip
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const tooltipContent = event.currentTarget as HTMLElement;
+        if (tooltipContent) {
+            const scrollAmount = event.deltaY > 0 ? 30 : -30;
+            tooltipContent.scrollTop += scrollAmount;
+        }
     }
 
     toggleGroup(group: any) {
