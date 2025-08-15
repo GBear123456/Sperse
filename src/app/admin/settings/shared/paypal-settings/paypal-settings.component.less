@@ -1,247 +1,125 @@
 :host {
   display: block;
-  padding: 1rem;
-
-  @media (min-width: 640px) {
-    padding: 1.5rem;
-  }
-
-  .header {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    gap: 0.5rem;
-
-    @media (min-width: 640px) {
-      flex-direction: row;
-    }
-
-    img {
-      width: auto;
-      height: 2.5rem;
-      object-fit: contain;
-      align-self: flex-start;
-
-      @media (min-width: 640px) {
-        height: 3.5rem;
-      }
-    }
-
-    .header-toggle {
-      margin-top: 5px;
-      align-self: flex-end;
-
-      @media (min-width: 640px) {
-        align-self: flex-start;
-      }
-    }
-  }
-
-  .main-tabs {
-    margin: 1rem 0;
-  }
 
   ::ng-deep .mat-tab-body-content {
-    overflow: hidden;
     padding: 20px 0 0 10px;
 
     .introduction-tab {
-      display: grid;
-      grid-template-columns: repeat(1, minmax(0, 1fr));
-      gap: 1rem;
+      .take-payments-header {
+        display: flex;
+        justify-content: space-between;
 
-      @media (min-width: 640px) {
-        gap: 1.5rem;
-      }
-
-      @media (min-width: 1024px) {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .left-side {
-        @media (min-width: 1024px) {
-          grid-column: span 2 / span 2;
+        h3 {
+          font-size: 26px;
+          font-weight: 600;
         }
 
-        .payment-header {
-          h2 {
-            margin-bottom: 0.5rem;
-            font-size: 1.25rem;
-            line-height: 1.75rem;
+        span {
+          font-size: 13px;
+        }
+
+        .stripe-button {
+          height: 43px;
+          width: 180px;
+        }
+      }
+
+      .video-block {
+        display: flex;
+        margin-top: 33px;
+        padding: 20px;
+        background-color: #f1f9ff;
+        border-radius: 10px;
+
+        img {
+          width: 306px;
+          height: 205px;
+          border-radius: 4px;
+        }
+
+        .video-block-text {
+          margin-left: 33px;
+
+          .video-block-title {
+            margin-top: 25px;
+            font-size: 22px;
             font-weight: 600;
-
-            @media (min-width: 640px) {
-              font-size: 1.875rem;
-              line-height: 2.25rem;
-            }
-          }
-
-          p {
-            color: rgb(75 85 99);
-            margin: 0;
-          }
-        }
-
-        .content-wrapper {
-          display: grid;
-          margin-top: 1rem;
-          grid-template-columns: repeat(1, minmax(0, 1fr));
-          gap: 1rem;
-
-          margin-top: 1.5rem;
-          margin-bottom: 1.5rem;
-
-          @media (min-width: 640px) {
-            gap: 1.5rem;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-          }
-
-          @media (min-width: 768px) {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
           }
 
           ul {
-            list-style: none;
-            margin: 0;
+            margin-top: 13px;
             padding: 0;
+            font-size: 13px;
+            line-height: 23px;
+            list-style-type: disc;
+            list-style-position: inside;
 
             li {
-              display: flex;
-              align-items: flex-start;
-              gap: 0.5rem;
+              margin-bottom: 6px;
 
-              .title {
-                font-size: 0.875rem;
-                line-height: 1.5rem;
-
-                @media (min-width: 640px) {
-                  font-size: 1rem;
-                  line-height: 2rem;
-                }
+              &::marker {
+                color: #00a8ed;
               }
             }
           }
 
-          .content-info {
-            border-radius: 0.5rem;
-            background-color: var(--card-bg);
-            padding: 1rem;
-
-            @media (min-width: 640px) {
-              padding: 1.5rem;
-            }
-
-            .info-img {
-              display: flex;
-              align-items: center;
-              margin-bottom: 1rem;
-
-              img {
-                width: 100%;
-                max-width: 100%;
-                height: auto;
-                border-radius: 0.5rem;
-                object-fit: cover;
-              }
-            }
-
-            h3 {
-              margin-bottom: 1rem;
-              font-size: 1.125rem;
-              line-height: 1.75rem;
-              font-weight: 700;
-
-              @media (min-width: 640px) {
-                font-size: 1.25rem;
-                line-height: 1.75rem;
-              }
-            }
-
-            ul li div {
-              color: rgb(59 130 246);
-              font-size: 2rem;
-              line-height: 1.75rem;
-            }
+          .video-block-learnmore {
+            font-size: 13px;
+            font-weight: 600;
 
             a {
-              margin-top: 1rem;
-            }
-          }
-
-          .content-invoice {
-            border-radius: 0.5rem;
-            background-color: var(--card-bg);
-            padding: 1rem;
-
-            @media (min-width: 640px) {
-              padding: 1.5rem;
-            }
-
-            h3 {
-              margin-bottom: 1rem;
-              font-size: 1.125rem;
-              line-height: 1.75rem;
-              font-weight: 700;
-
-              @media (min-width: 640px) {
-                font-size: 1.25rem;
-                line-height: 1.75rem;
-              }
-            }
-
-            p {
-              margin-bottom: 1rem;
-              font-size: 0.75rem;
-              line-height: 1rem;
-              color: rgb(75 85 99);
-
-              @media (min-width: 640px) {
-                font-size: 0.875rem;
-                line-height: 1.25rem;
-              }
-            }
-
-            ul {
-              .check {
-                flex-shrink: 0;
-                color: rgb(34 197 94);
-              }
-            }
-
-            button {
-              background-color: rgb(59 130 246);
-              color: white;
-              margin-top: 1rem;
-
-              @media (min-width: 640px) {
-                margin-top: 1.5rem;
-              }
+              color: #5c5968;
             }
           }
         }
       }
 
-      .faq-side {
-        border-radius: 0.5rem;
-        background-color: var(--card-bg);
-        padding: 1rem;
+      .payments-block {
+        margin-top: 20px;
+        padding: 20px 30px;
+        border: 1px solid #eaeff4;
 
-        @media (min-width: 640px) {
-          padding: 1.5rem;
+        h2 {
+          font-size: 22px;
+          line-height: 27px;
+          font-weight: 600;
         }
 
-        .faq-block-title {
-          font-size: 1.25rem;
-          line-height: 1.75rem;
-          margin-bottom: 1rem;
-          font-weight: 700;
+        h3 {
+          font-size: 15px;
+          line-height: 27px;
+          font-weight: 500;
+        }
 
-          @media (min-width: 640px) {
-            font-size: 1.5rem;
-            line-height: 2rem;
-            margin-bottom: 1.5rem;
+        ul {
+          font-size: 13px;
+          padding: 0;
+          list-style-type: none;
+          margin-bottom: 0;
+
+          li {
+            margin-bottom: 6px;
+            line-height: 23px;
+
+            &:before {
+              content: '\f058';
+              font-size: 18px;
+              font-family: FontAwesome !important;
+              color: #00ba00;
+              margin-right: 8px;
+            }
           }
+        }
+      }
+
+      .faq-block {
+        background-color: #f1eff8;
+        border-radius: 10px;
+        padding: 30px;
+
+        .faq-block-title {
+          font-size: 23px;
+          margin-bottom: 18px;
         }
 
         .faq-block-row {
@@ -265,356 +143,138 @@
       }
     }
 
-    .settings-header {
-      h3 {
-        font-weight: 700;
-        font-size: 1.125rem;
-        line-height: 1.75rem;
-        margin: 0;
-
-        @media (min-width: 640px) {
-          font-size: 1.25rem;
-          line-height: 1.75rem;
-        }
+    .connected-tab {
+      .block {
+        width: 500px;
       }
 
-      p {
-        color: rgb(75 85 99);
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-        margin: 1rem 0;
-
-        @media (min-width: 640px) {
-          font-size: 1rem;
-          line-height: 1.5rem;
-        }
-      }
-    }
-
-    .settings-tab {
-      .child-tabs {
-        ::ng-deep .mat-tab-header {
-          border-bottom: none;
-          padding: 0;
-        }
-
-        ::ng-deep .mat-tab-label {
-          width: 14rem;
-          font-size: 1rem;
-          padding: 8px 12px;
-          min-width: fit-content;
-          border-radius: 0.125rem;
-          background-color: transparent;
-        }
-
-        ::ng-deep .mat-tab-label-content {
-          text-transform: none;
-        }
-
-        ::ng-deep .mat-tab-label-active {
-          background-color: rgb(22 155 215);
-          color: white;
-        }
-
-        ::ng-deep .mat-tab-label:focus {
-          background-color: rgb(22 155 215);
-          color: white;
-        }
-
-        ::ng-deep .mat-ink-bar {
-          display: none;
-        }
-      }
-
-      ::ng-deep .mat-tab-body-content {
-        overflow: hidden;
-        padding: 2rem 0 0 0;
-      }
-
-      .webhook-config {
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-        display: flex;
-        gap: 0.75rem;
-        border-radius: 0.375rem;
-        border-width: 1px;
-        border-color: rgb(253 230 138);
-        border-style: solid;
-        background-color: rgb(255 251 235);
-        padding: 0.75rem;
-
-        @media (min-width: 640px) {
-          padding: 1rem;
-        }
-
-        lucide-angular {
-          display: flex;
-          color: rgb(245 158 11);
-        }
-
-        ::ng-deep lucide-angular svg {
-          width: 1.25rem;
-          height: 1.25rem;
-        }
-
-        .webhook-content {
-          font-size: 0.75rem;
-          line-height: 1rem;
-
-          @media (min-width: 640px) {
-            font-size: 0.875rem;
-            line-height: 1.25rem;
-          }
-
-          p {
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-            color: rgb(146 64 14);
-
-            &:nth-child(2) {
-              font-weight: 500;
-            }
-          }
-
-          code {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0.25rem;
-            color: rgb(146 64 14);
-            background-color: rgb(255 255 255);
-            border-color: rgb(253 230 138);
-            border-width: 1px;
-            border-style: solid;
-            border-radius: 0.25rem;
-            word-break: break-all;
-            overflow-x: auto;
-            margin-top: 0.5rem;
-
-            @media (min-width: 640px) {
-              font-size: 0.75rem;
-              line-height: 1rem;
-            }
-          }
-        }
-      }
-
-      .advanced-config {
-        border-top: 1px solid hsl(var(--border));
-        padding-top: 1rem;
-        margin: 1.5rem 0;
-
-        @media (min-width: 640px) {
-          margin: 2rem 0;
-        }
-
-        h4 {
+      .connected-account {
+        .name-title {
+          font-size: 17px;
           font-weight: 600;
-          font-size: 0.875rem;
-          line-height: 1.25rem;
+          margin-left: 10px;
+        }
 
-          @media (min-width: 640px) {
-            font-size: 1rem;
-            line-height: 1.5rem;
+        .account-info {
+          .stripe-button-container {
+            margin-bottom: 25px;
+
+            .paypal-button {
+              background-color: #ffc439;
+              color: black;
+            }
           }
         }
 
-        .feature-wrapper {
-          display: grid;
-          gap: 0.25rem;
-          margin: 1.5rem 0;
+        .account-warning {
+          color: red;
+          line-height: 20px;
+          font-style: italic;
+        }
+      }
+    }
 
-          @media (min-width: 640px) {
-            gap: 0.5rem;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+    .api-keys-tab {
+      input {
+        width: 100%;
+        border: 1px solid #e1e7ed;
+        border-radius: 6px;
+        height: 45px;
+        padding: 0 10px;
+
+        &::placeholder {
+          color: #b1b0ae;
+        }
+      }
+    }
+
+    .blocks-tab {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+
+      .block {
+        border: 1px solid #e1e7ed;
+        border-radius: 10px;
+        padding: 16px 20px;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 28px;
+
+        &.active {
+          border-color: #00ca6a;
+          background-color: #e6faf03b;
+
+          .check-icon {
+            color: var(--app-button-color) !important;
+          }
+        }
+
+        .section {
+          border-bottom: 1px solid #dfebe7;
+          padding-bottom: 12px;
+          margin-bottom: 20px;
+        }
+
+        .top-bar {
+          .check-icon {
+            font-size: 20px;
+            color: #dfebe7;
           }
 
-          .feature-config {
-            display: flex;
-            gap: 0.75rem;
-            align-items: flex-start;
+          inplace-edit {
+            display: inline-block;
+            width: 90%;
+            margin-left: 10px;
+            font-size: 17px;
+            font-weight: 600;
+          }
+        }
 
-            .feature-content {
-              display: grid;
+        h6 {
+          font-size: 16px;
+          font-weight: 600;
+          margin: 15px 0;
+        }
 
-              p {
-                margin: 0px;
-                font-weight: 500;
-                font-size: 0.875rem;
-                line-height: 1;
-              }
+        .small {
+          font-size: 11px;
+        }
+
+        ::ng-deep .dx-checkbox .dx-checkbox-text {
+          font-size: 13px;
+          font-weight: 500;
+        }
+
+        .account-actions {
+          display: flex;
+          justify-content: space-around;
+          font-size: 13px;
+          font-weight: 500;
+          color: #08295b;
+          opacity: 0.6;
+
+          span {
+            cursor: pointer;
+
+            i {
+              margin-right: 7px;
+              font-size: 13px;
             }
           }
         }
       }
     }
+  }
 
-    .verify-tab {
-      .card h4,
-      .test-guide h4 {
-        margin: 0;
-        font-size: 1rem;
-        line-height: 1.5rem;
-        font-weight: 600;
+  .clipboard-holder {
+    .save-to-clipboard {
+      display: none;
+    }
 
-        @media (min-width: 640px) {
-          font-size: 1.125rem;
-          line-height: 1.75rem;
-        }
-      }
-
-      .test-content {
-        margin: 1.5rem 0;
-        display: grid;
-        grid-template-columns: repeat(1, minmax(0px, 1fr));
-        gap: 1rem;
-
-        @media (min-width: 640px) {
-          gap: 2rem;
-        }
-
-        @media (min-width: 768px) {
-          grid-template-columns: repeat(2, minmax(0px, 1fr));
-        }
-
-        .card {
-          border: 1px solid hsl(var(--border));
-          border-radius: 0.5rem;
-          padding: 1rem;
-
-          @media (min-width: 640px) {
-            padding: 1.5rem;
-          }
-
-          p {
-            margin: 1rem 0;
-            font-size: 0.75rem;
-            line-height: 1rem;
-            color: var(--muted-color);
-
-            @media (min-width: 640px) {
-              font-size: 0.875rem;
-              line-height: 1.25rem;
-            }
-          }
-
-          .transaction-list {
-            font-size: 0.75rem;
-            line-height: 1rem;
-
-            @media (min-width: 640px) {
-              font-size: 0.875rem;
-              line-height: 1.25rem;
-            }
-
-            .transaction-card {
-              border-radius: 0.375rem;
-              background-color: var(--success-color-bg);
-              padding: 0.5rem;
-
-              @media (min-width: 640px) {
-                padding: 0.75rem;
-              }
-
-              & > span {
-                font-weight: 600;
-              }
-
-              .transaction-details {
-                display: flex;
-                justify-content: space-between;
-                gap: 0.5rem;
-
-                span {
-                  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-                    'Liberation Mono', 'Courier New', monospace;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      .test-guide {
-        .test-guide-mode {
-          background-color: var(--card-bg);
-          border-radius: 0.375rem;
-          border: 1px solid var(--border-color);
-          padding: 0.75rem;
-          margin-top: 1rem;
-
-          @media (min-width: 640px) {
-            padding: 1rem;
-          }
-
-          h5 {
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-            line-height: 1.25rem;
-            font-weight: 600;
-            color: var(--primary-color);
-
-            @media (min-width: 640px) {
-              font-size: 1rem;
-              line-height: 1.5rem;
-            }
-          }
-
-          ol {
-            color: var(--primary-color);
-            font-size: 0.75rem;
-            line-height: 1rem;
-            display: grid;
-            gap: 0.5rem;
-
-            @media (min-width: 640px) {
-              font-size: 0.875rem;
-              line-height: 1.25rem;
-            }
-          }
-        }
-
-        .test-guide-alert {
-          color: rgb(245 158 11);
-          display: flex;
-          border-radius: 0.375rem;
-          border: 1px solid rgb(253 230 138);
-          background-color: rgb(255 251 235);
-          padding: 0.75rem;
-          margin: 1rem 0;
-
-          @media (min-width: 640px) {
-            padding: 1rem;
-          }
-
-          .alert-content {
-            font-size: 0.75rem;
-            line-height: 1rem;
-            color: rgb(146 64 14);
-
-            @media (min-width: 640px) {
-              font-size: 0.875rem;
-              line-height: 1.25rem;
-            }
-
-            p {
-              margin: 0;
-
-              &:nth-child(1) {
-                font-weight: 600;
-                margin-bottom: 0.25rem;
-              }
-            }
-          }
-
-          lucide-angular {
-            display: flex;
-          }
-
-          ::ng-deep lucide-angular svg {
-            width: 1.25rem;
-            height: 1.25rem;
-          }
-        }
+    &:hover {
+      .save-to-clipboard {
+        display: inline-block;
       }
     }
   }

@@ -63,7 +63,7 @@ export class PayPalComponent {
         return enbaledConfigs.reduce((prev, curr) => prev && curr.initialized, true);
     }
 
-    initialize(clientId: string, type: ButtonType, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>, currency: string) {
+    initialize(clientId: string, type: ButtonType, requestPayment: () => Promise<string>, requestSubscription: () => Promise<string>, currency: string, merchantId?: string, bnCode?: string) {
         if (!clientId)
             return;
 
@@ -72,15 +72,15 @@ export class PayPalComponent {
         this.requestSubscription = requestSubscription;
 
         if (type == ButtonType.Subscription || type == ButtonType.Both) {
-            this.initializeScript(clientId, ButtonType.Subscription, currency);
+            this.initializeScript(clientId, merchantId, ButtonType.Subscription, currency, bnCode);
         }
 
         if (type == ButtonType.Payment || type == ButtonType.Both) {
-            this.initializeScript(clientId, ButtonType.Payment, currency);
+            this.initializeScript(clientId, merchantId, ButtonType.Payment, currency, bnCode);
         }
     }
 
-    private initializeScript(clientId: string, type: ButtonType, currency: string) {
+    private initializeScript(clientId: string, merchantId: string, type: ButtonType, currency: string, bnCode: string) {
         let typeConfig = this.config[type];
         typeConfig.isEnabled = true;
 
@@ -92,10 +92,14 @@ export class PayPalComponent {
             let payPalUrl = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${currency}`;
             if (type == ButtonType.Subscription)
                 payPalUrl += '&vault=true&intent=subscription';
+            if (merchantId)
+                payPalUrl += `&merchant-id=${merchantId}`;
 
             let data = {
                 namespace: typeConfig.namespace
             };
+            if (bnCode)
+                data['partnerAttributionId'] = bnCode;
             DomHelper.addScriptLink(payPalUrl, 'text/javascript', () => {
                 this.preparePaypalButton(type, typeConfig.namespace, typeConfig.buttonId);
             }, data);

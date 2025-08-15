@@ -1,259 +1,137 @@
 :host {
   display: block;
-  padding: 16px;
-
-  @media (min-width: 640px) {
-    padding: 24px;
-  }
-
-  .header {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    gap: 8px;
-
-    @media (min-width: 640px) {
-      flex-direction: row;
-    }
-
-    img {
-      width: auto;
-      height: 40px;
-      object-fit: contain;
-      align-self: flex-start;
-
-      @media (min-width: 640px) {
-        height: 56px;
-      }
-    }
-
-    .header-toggle {
-      margin-top: 5px;
-      align-self: flex-end;
-
-      @media (min-width: 640px) {
-        align-self: flex-start;
-      }
-    }
-  }
-
-  .main-tabs {
-    margin: 16px 0;
-  }
 
   ::ng-deep .mat-tab-body-content {
-    overflow: hidden;
     padding: 20px 0 0 10px;
-    background-color: var(--background-color);
 
     .introduction-tab {
-      display: grid;
-      grid-template-columns: repeat(1, minmax(0, 1fr));
-      gap: 16px;
+      .take-payments-header {
+        display: flex;
+        justify-content: space-between;
 
-      @media (min-width: 640px) {
-        gap: 24px;
-      }
-
-      @media (min-width: 1024px) {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .left-side {
-        @media (min-width: 1024px) {
-          grid-column: span 2 / span 2;
+        h3 {
+          font-size: 26px;
+          font-weight: 600;
         }
 
-        .payment-header {
-          h2 {
-            margin-bottom: 8px;
-            font-size: 20px;
-            line-height: 28px;
+        span {
+          font-size: 13px;
+        }
+
+        .stripe-button {
+          height: 43px;
+          width: 180px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+      }
+
+      .video-block {
+        display: flex;
+        margin-top: 33px;
+        padding: 20px;
+        background-color: #f1f9ff;
+        border-radius: 10px;
+
+        img {
+          width: 306px;
+          height: 205px;
+          border-radius: 4px;
+        }
+
+        .video-block-text {
+          margin-left: 33px;
+
+          .video-block-title {
+            margin-top: 25px;
+            font-size: 22px;
             font-weight: 600;
-
-            @media (min-width: 640px) {
-              font-size: 30px;
-              line-height: 36px;
-            }
-          }
-
-          p {
-            color: rgb(75 85 99);
-            margin: 0;
-          }
-        }
-
-        .content-wrapper {
-          display: grid;
-          margin-top: 16px;
-          grid-template-columns: repeat(1, minmax(0, 1fr));
-          gap: 16px;
-
-          margin-top: 24px;
-          margin-bottom: 24px;
-
-          @media (min-width: 640px) {
-            gap: 24px;
-            margin-top: 32px;
-            margin-bottom: 32px;
-          }
-
-          @media (min-width: 768px) {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
           }
 
           ul {
-            list-style: none;
-            margin: 0;
+            margin-top: 13px;
             padding: 0;
+            font-size: 13px;
+            line-height: 23px;
+            list-style-type: disc;
+            list-style-position: inside;
 
             li {
-              display: flex;
-              align-items: flex-start;
-              gap: 8px;
+              margin-bottom: 6px;
 
-              .title {
-                font-size: 14px;
-                line-height: 24px;
-
-                @media (min-width: 640px) {
-                  font-size: 16px;
-                  line-height: 32px;
-                }
+              &::marker {
+                color: #00a8ed;
               }
             }
           }
 
-          .content-info {
-            border-radius: 8px;
-            background-color: var(--card-bg);
-            padding: 16px;
-
-            @media (min-width: 640px) {
-              padding: 24px;
-            }
-
-            .info-img {
-              display: flex;
-              align-items: center;
-              margin-bottom: 16px;
-
-              img {
-                width: 100%;
-                max-width: 100%;
-                height: auto;
-                border-radius: 8px;
-                object-fit: cover;
-              }
-            }
-
-            h3 {
-              margin-bottom: 16px;
-              font-size: 18px;
-              line-height: 28px;
-              font-weight: 700;
-
-              @media (min-width: 640px) {
-                font-size: 20px;
-                line-height: 28px;
-              }
-            }
-
-            ul li div {
-              color: rgb(59 130 246);
-              font-size: 32px;
-              line-height: 28px;
-            }
+          .video-block-learnmore {
+            font-size: 13px;
+            font-weight: 600;
 
             a {
-              margin-top: 16px;
-            }
-          }
-
-          .content-invoice {
-            border-radius: 8px;
-            background-color: var(--card-bg);
-            padding: 16px;
-
-            @media (min-width: 640px) {
-              padding: 24px;
-            }
-
-            h3 {
-              margin-bottom: 16px;
-              font-size: 18px;
-              line-height: 28px;
-              font-weight: 700;
-
-              @media (min-width: 640px) {
-                font-size: 20px;
-                line-height: 28px;
-              }
-            }
-
-            p {
-              margin-bottom: 16px;
-              font-size: 12px;
-              line-height: 16px;
-              color: rgb(75 85 99);
-
-              @media (min-width: 640px) {
-                font-size: 14px;
-                line-height: 20px;
-              }
-            }
-
-            ul {
-              .check {
-                flex-shrink: 0;
-                color: rgb(34 197 94);
-              }
-            }
-
-            button {
-              background-color: rgb(59 130 246);
-              color: white;
-              margin-top: 16px;
-
-              @media (min-width: 640px) {
-                margin-top: 24px;
-              }
+              color: #5c5968;
             }
           }
         }
       }
 
-      .faq-side {
-        border-radius: 8px;
-        background-color: var(--card-bg);
-        padding: 16px;
+      .payments-block {
+        margin-top: 20px;
+        padding: 30px;
+        border: 1px solid #eaeff4;
 
-        @media (min-width: 640px) {
-          padding: 24px;
+        h2 {
+          font-size: 22px;
+          line-height: 27px;
+          font-weight: 600;
         }
 
-        .faq-block-title {
-          font-size: 20px;
-          line-height: 28px;
-          margin-bottom: 16px;
-          font-weight: 700;
+        h3 {
+          font-size: 15px;
+          line-height: 27px;
+          font-weight: 500;
+        }
 
-          @media (min-width: 640px) {
-            font-size: 24px;
-            line-height: 32px;
-            margin-bottom: 24px;
+        ul {
+          font-size: 13px;
+          padding: 0;
+          list-style-type: none;
+
+          li {
+            margin-bottom: 6px;
+            line-height: 23px;
+
+            &:before {
+              content: '\f058';
+              font-size: 18px;
+              font-family: FontAwesome !important;
+              color: #00ba00;
+              margin-right: 8px;
+            }
           }
+        }
+      }
+
+      .faq-block {
+        background-color: #f1eff8;
+        border-radius: 10px;
+        padding: 30px;
+
+        .faq-block-title {
+          font-size: 23px;
+          margin-bottom: 18px;
         }
 
         .faq-block-row {
-          background-color: var(--background-color);
+          background-color: #e9e7f1;
           font-size: 13px;
           line-height: 23px;
-          color: var(--text-color);
+          color: #5c5968;
           margin-bottom: 8px;
           border-radius: 6px;
           padding: 5px;
-          border: 1px solid var(--border-color);
 
           img {
             margin-right: 6px;
@@ -261,12 +139,7 @@
           }
 
           a {
-            color: var(--primary-color);
-            text-decoration: none;
-
-            &:hover {
-              color: var(--primary-color);
-            }
+            color: #5c5968;
           }
         }
       }
@@ -275,30 +148,27 @@
     .connected-tab {
       .block {
         width: 500px;
-        background-color: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        padding: 20px;
       }
 
       .connected-account {
         .account-info {
           .stripe-button-container {
             margin-bottom: 25px;
+
+            .stripe-button {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
           }
 
           .account-details {
             margin-bottom: 25px;
-            color: var(--text-color);
 
             .fa-refresh {
-              color: var(--primary-color);
+              color: #00aeef;
               margin-left: 10px;
               cursor: pointer;
-
-              &:hover {
-                color: var(--primary-color);
-              }
             }
           }
 
@@ -310,32 +180,26 @@
     }
 
     .api-keys-tab {
-      input {
-        width: 100%;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        height: 45px;
-        padding: 0 10px;
-        background-color: var(--background-color);
-        color: var(--text-color);
+      .api-key-account {
+        width: 500px;
+        height: 100%;
 
-        &:hover {
-          border-color: var(--border-color);
+        &.isPartnerApiKey {
+          border-color: #00a4ca !important;
+          background-color: #e6edfa3b !important;
         }
 
-        &:focus {
-          border-color: var(--primary-color);
-          outline: none;
-        }
+        input {
+          width: 100%;
+          border: 1px solid #e1e7ed;
+          border-radius: 6px;
+          height: 45px;
+          padding: 0 10px;
 
-        &::placeholder {
-          color: var(--muted-color);
+          &::placeholder {
+            color: #b1b0ae;
+          }
         }
-      }
-
-      button {
-        background-color: rgb(30 174 219);
-        color: white;
       }
     }
 
@@ -345,30 +209,24 @@
       gap: 15px;
 
       .block {
-        border: 1px solid var(--border-color);
+        border: 1px solid #e1e7ed;
         border-radius: 10px;
         padding: 16px 20px;
         font-size: 13px;
         font-weight: 500;
         line-height: 28px;
-        background-color: var(--card-bg);
-        color: var(--text-color);
 
         &.active {
-          border-color: var(--success-color);
-          background-color: var(--success-color);
+          border-color: #00ca6a;
+          background-color: #e6faf03b;
 
           .check-icon {
-            color: var(--success-color) !important;
+            color: var(--app-button-color) !important;
           }
         }
 
-        .form-group {
-          margin-bottom: 16px;
-        }
-
         .section {
-          border-bottom: 1px solid var(--border-color);
+          border-bottom: 1px solid #dfebe7;
           padding-bottom: 12px;
           margin-bottom: 20px;
         }
@@ -376,7 +234,7 @@
         .top-bar {
           .check-icon {
             font-size: 20px;
-            color: var(--muted-color);
+            color: #dfebe7;
           }
 
           inplace-edit {
@@ -385,7 +243,6 @@
             margin-left: 10px;
             font-size: 17px;
             font-weight: 600;
-            color: var(--text-color);
           }
         }
 
@@ -393,13 +250,15 @@
           font-size: 16px;
           font-weight: 600;
           margin: 15px 0;
-          color: var(--text-color);
+        }
+
+        .small {
+          font-size: 11px;
         }
 
         ::ng-deep .dx-checkbox .dx-checkbox-text {
           font-size: 13px;
           font-weight: 500;
-          color: var(--text-color);
         }
 
         .account-actions {
@@ -407,15 +266,11 @@
           justify-content: space-around;
           font-size: 13px;
           font-weight: 500;
-          color: var(--primary-color);
+          color: #08295b;
           opacity: 0.6;
 
           span {
             cursor: pointer;
-
-            &:hover {
-              opacity: 1;
-            }
 
             i {
               margin-right: 7px;
@@ -428,25 +283,11 @@
 
     .import-tab {
       width: 300px;
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 20px;
 
       h5 {
         font-size: 16px;
         font-weight: 600;
         margin: 15px 0;
-        color: var(--text-color);
-      }
-
-      ::ng-deep dx-select-box .dx-placeholder {
-        font-weight: 400;
-        font-size: 20px;
-      }
-
-      ::ng-deep .dx-scrollable-container {
-        background-color: var(--card-bg) !important;
       }
     }
   }
@@ -454,12 +295,6 @@
   .clipboard-holder {
     .save-to-clipboard {
       display: none;
-      color: var(--primary-color);
-      cursor: pointer;
-
-      &:hover {
-        color: var(--primary-color);
-      }
     }
 
     &:hover {
@@ -467,11 +302,5 @@
         display: inline-block;
       }
     }
-  }
-
-  .stripe-button {
-    display: flex;
-    align-items: center;
-    gap: 10px;
   }
 }
