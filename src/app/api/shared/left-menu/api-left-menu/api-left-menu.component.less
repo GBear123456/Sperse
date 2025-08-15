@@ -8,7 +8,7 @@
     width: 341px;
     height: calc(~'100vh - 215px');
     border-right: 1px solid #dfdfdf;
-    background-color: #fff;
+    background-color: var(--background-color);
     padding: 35px 25px 25px 25px;
     float: left;
     transition: transform 0.5s;
@@ -78,7 +78,7 @@
         position: absolute;
         left: -52px;
         top: -17px;
-        background: white no-repeat center;
+        background: var(--background-color) no-repeat center;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -182,29 +182,6 @@
     }
     &:focus {
       outline: none;
-    }
-  }
-
-  ::ng-deep .left-menu {
-    height: calc(~'100vh - 50px') !important;
-    padding: 45px 25px 25px 25px !important;
-
-    .items-progress {
-      color: var(--text-color) !important;
-      font-weight: 500;
-      letter-spacing: 0.7px !important;
-
-      &-item {
-        &:not(:last-child) {
-          padding-bottom: 56px;
-        }
-      }
-    }
-  }
-
-  ::ng-deep .showLeftBar {
-    .left-menu {
-      height: calc(~'100vh - 75px') !important;
     }
   }
 }
