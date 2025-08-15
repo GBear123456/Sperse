@@ -26,6 +26,10 @@
     .card {
       border-radius: 0.5rem;
 
+      .dark-theme & {
+        background: var(--card-bg);
+      }
+
       .title {
         font-size: 1.5rem;
         font-weight: bold;
@@ -287,7 +291,7 @@
                 }
 
                 ::ng-deep .dx-texteditor-input {
-                  border-bottom: none;
+                  border-radius: 3px;
                 }
               }
             }
@@ -422,6 +426,14 @@
             }
           }
         }
+
+        ::ng-deep .dx-texteditor-input {
+          background: var(--background-color) !important;
+        }
+
+        ::ng-deep .dx-texteditor-container {
+          background: var(--background-color) !important;
+        }
       }
 
       .free-ssl-certificates {
@@ -489,7 +501,9 @@
       }
     }
   }
-
+  ::ng-deep .dx-scrollview-content {
+    background: var(--background-color) !important;
+  }
   .m-checkbox-list {
     label {
       display: block;
