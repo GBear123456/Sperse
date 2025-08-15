@@ -8,10 +8,16 @@
     display: none;
 }
 
-:root {
-    --editor-scroller-color: #272822;
+
+.ace_editor .ace_content, .ace_line span {
+    font-family:  'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro', 'source-code-pro', monospace !important
 }
 
+
+.ace_gutter .ace_gutter-cell {
+    text-align: center !important;
+    font-family:  'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro', 'source-code-pro', monospace !important
+  }
 /* fix scrolling body when mat dialog is open*/
 html,
 body {
@@ -244,16 +250,9 @@ i.save-to-clipboard {
 }
 
 
-.ace_editor .ace_content, .ace_line span {
-    font-family:  'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro', 'source-code-pro', monospace !important
-}
 
 
-.ace_gutter .ace_gutter-cell {
-    text-align: center !important;
-    font-family:  'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro', 'source-code-pro', monospace !important
-  }
-
-  .ace_editor ::-webkit-scrollbar-track {
-    background-color: #3a3a3a !important; /* Replace with your desired color */
+.cke_top {
+    background: transparent !important;
+    border-bottom: none !important;
 }

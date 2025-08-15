@@ -41,24 +41,7 @@
                     </dx-validator>
                 </dx-text-box>
             </div>
-            <div class="field-area subject">
-                <label class="caption">{{ ls.l("Preview Text") }}:</label>
-                <dx-text-box
-                    name="previewText"
-                    width="calc(100% - 31px)"
-                    placeholder=""
-                    [(value)]="data.previewText"
-                    width="100%"
-                    validationGroup="templateValidation"
-                >
-                    <dx-validator>
-                        <dxi-validation-rule
-                            type="required"
-                            [message]="ls.l('RequiredField', ls.l('previewText'))"
-                        ></dxi-validation-rule>
-                    </dx-validator>
-                </dx-text-box>
-            </div>
+
             <div class="field-area subject">
                 <label class="caption">{{ ls.l("Subject") }}:</label>
                 <dx-text-box
@@ -75,6 +58,18 @@
                             [message]="ls.l('RequiredField', ls.l('subject'))"
                         ></dxi-validation-rule>
                     </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="field-area subject">
+                <label class="caption">{{ ls.l("Preview Text") }}:</label>
+                <dx-text-box
+                    name="previewText"
+                    width="calc(100% - 31px)"
+                    placeholder=""
+                    [(value)]="data.previewText"
+                    width="100%"
+                    validationGroup="templateValidation"
+                >
                 </dx-text-box>
             </div>
             <div (keydown.escape)="onESC($event)" class="editor-div">
@@ -175,14 +170,17 @@
                     </h5>
 
                     <dx-tooltip
-                        [width]="300"
+                        [width]="350"
                         [position]="'bottom'"
                         [(visible)]="propmtTooltipVisible"
                         [target]="'.prompt-liabrary-button.id' + uniqId"
                     >
                         <div
                             *dxTemplate="let data of 'content'"
-                            class="tags-container text-left p-2"
+                            class="tags-container text-left p-2 prompt-tooltip-scroll"
+                            style="max-height: 500px; overflow-y: scroll; overflow-x: hidden; scrollbar-width: thin; -webkit-overflow-scrolling: touch; cursor: default;"
+                            tabindex="0"
+                            (wheel)="onPromptTooltipWheel($event)"
                         >
                             <div
                                 *ngFor="let group of groupedPromptLibrary;let groupIndex = index"
@@ -191,9 +189,10 @@
                                 <div
                                     class="group-header"
                                     (click)="toggleGroup(group)"
+                                    style="cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eee;"
                                 >
                                     <strong>{{ group.category }}</strong>
-                                    <span>{{
+                                    <span style="float: right;">{{
                                         group.expanded ? "▲" : "▼"
                                     }}</span>
                                 </div>
@@ -204,11 +203,12 @@
                                         *ngFor="let item of group.prompts;let itemIndex = index"
                                         class="tags-list-item"
                                         (click)="selectedPromptItem(item,groupIndex,itemIndex)"
+                                        style="cursor: pointer; padding: 8px 0; border-bottom: 1px solid #f5f5f5;"
                                     >
-                                        <div class="prompt-title">
+                                        <div class="prompt-title" style="font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                             {{ item.title }}
                                         </div>
-                                        <div class="prompt-subtext">
+                                        <div class="prompt-subtext" style="font-size: 12px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                             {{ item.subtext }}
                                         </div>
                                     </div>

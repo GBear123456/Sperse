@@ -835,4 +835,16 @@ export class CreateMailTemplateModalComponent implements OnInit {
     removeTemplateAttachments() {
         this.attachments = this.attachments.filter((v) => !v.fromTemplate);
     }
+
+    onPromptTooltipWheel(event: WheelEvent): void {
+        // Handle mouse wheel scrolling for the prompt library tooltip
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const tooltipContent = event.currentTarget as HTMLElement;
+        if (tooltipContent) {
+            const scrollAmount = event.deltaY > 0 ? 30 : -30;
+            tooltipContent.scrollTop += scrollAmount;
+        }
+    }
 }
