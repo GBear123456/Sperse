@@ -30,9 +30,7 @@ body {
 .cdk-global-scrollblock {
     overflow: hidden;
 }
-body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
-    font-family: var(--app-font-family);
-}
+
 
 a {
     cursor: pointer;
@@ -255,4 +253,8 @@ i.save-to-clipboard {
 .cke_top {
     background: transparent !important;
     border-bottom: none !important;
+}
+
+.cke_editable {
+    margin: 0 !important;
 }

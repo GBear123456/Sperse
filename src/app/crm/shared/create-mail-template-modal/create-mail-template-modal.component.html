@@ -31,7 +31,8 @@
                     [(value)]="data.title"
                     validationGroup="templateValidation"
                     width="100%"
-
+                    (onFocusIn)="onFieldFocusImproved('title', $event)"
+                    (onFocusOut)="onFieldBlur('title', $event)"
                 >
                     <dx-validator>
                         <dxi-validation-rule
@@ -51,6 +52,8 @@
                     [(value)]="data.subject"
                     validationGroup="templateValidation"
                     width="100%"
+                    (onFocusIn)="onFieldFocusImproved('subject', $event)"
+                    (onFocusOut)="onFieldBlur('subject', $event)"
                 >
                     <dx-validator>
                         <dxi-validation-rule
@@ -69,6 +72,8 @@
                     [(value)]="data.previewText"
                     width="100%"
                     validationGroup="templateValidation"
+                    (onFocusIn)="onFieldFocusImproved('previewText', $event)"
+                    (onFocusOut)="onFieldBlur('previewText', $event)"
                 >
                 </dx-text-box>
             </div>
@@ -78,8 +83,30 @@
                     [config]="ckConfig"
                     (ready)="onReady($event)"
                     (change)="onChange($event)"
+                    (focus)="onCKEditorFocusImproved($event)"
+                    (blur)="onCKEditorBlur($event)"
                 >
                 </ckeditor>
+                <div #tagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField" [style.left.px]="tooltipButtonLeft" [style.top.px]="tooltipButtonTop">
+                    <span #tagsButton [class]="'tags-button id' + uniqId">
+                        <a (click)="onTagButtonClick($event)">Add a Tag</a>
+                    </span>
+                </div>
+                <dx-tooltip [width]="250"
+                            [position]="tooltipPosition" 
+                            [(visible)]="isTagsTooltipVisible"
+                            [target]="'.tags-button.id' + uniqId">
+                    <div *dxTemplate="let data of 'content'" class="tags-container">
+                        <p class="tags-note">Supported Tags:</p>
+                        <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                            [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                            <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                             [class]="{disabled: !templateEditMode && !getTagValue(data)}">
+                                {{ getTagText(data) }}
+                            </div>
+                        </dx-list>
+                    </div>
+                </dx-tooltip>
             </div>
             <div class="attachment-div">
                 <div class="attachment-field-area">
