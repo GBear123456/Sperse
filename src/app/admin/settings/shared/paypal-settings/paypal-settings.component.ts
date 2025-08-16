@@ -7,7 +7,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    PayPalSettings,
+    PayPalSettingsDto,
     TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@root/shared/AppConsts';
@@ -23,12 +23,14 @@ import { SettingsComponentBase } from './../settings-base.component';
 })
 export class PaypalSettingsComponent extends SettingsComponentBase {
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
-    paypalPaymentSettings: PayPalSettings = new PayPalSettings();
+    paypalPaymentSettings: PayPalSettingsDto = new PayPalSettingsDto();
 
     payPalEnvironments = [
         { value: 'sandbox', text: 'Sandbox' },
         { value: 'live', text: 'Live' }
     ];
+
+    selectedTabIndex = 0;
 
     constructor(
         _injector: Injector,
@@ -38,6 +40,10 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     }
 
     ngOnInit(): void {
+        this.loadSettings();
+    }
+
+    loadSettings() {
         this.startLoading();
         if (this.isPaymentsEnabled) {
             this.tenantPaymentSettingsService.getPayPalSettings()
@@ -51,6 +57,39 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
         }
     }
 
+    createConnectedAccount() {
+        if (this.isHost || !this.paypalPaymentSettings.isHostAccountEnabled || (this.paypalPaymentSettings && this.paypalPaymentSettings.merchantId))
+            return;
+
+        this.message.confirm('', this.l('Do you want to connect Paypal account ?'), (isConfirmed) => {
+            if (isConfirmed) {
+                this.startLoading();
+                this.tenantPaymentSettingsService.getPayPalPartnerConnectUrl().pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe((url) => {
+                    window.location.href = url;
+                });
+            }
+        });
+    }
+
+    unlinkMerchant() {
+        if (this.isHost || !this.paypalPaymentSettings.merchantId)
+            return;
+
+        this.message.confirm('', this.l('Do you want to unlink Paypal account ?'), (isConfirmed) => {
+            if (isConfirmed) {
+                this.startLoading();
+                this.tenantPaymentSettingsService.unlinkPayPalMerchant().pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe(() => {
+                    this.selectedTabIndex = 0;
+                    this.loadSettings();
+                });
+            }
+        });
+    }
+
     getSaveObs(): Observable<any> {
         return this.tenantPaymentSettingsService.updatePayPalSettings(this.paypalPaymentSettings);
     }
@@ -58,5 +97,14 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     getPayPalWebhookUrl(): string {
         let tenantId = this.appSession.tenantId || '';
         return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=${tenantId}`;
+    }
+
+    get isMerchantConnected(): boolean {
+        return this.paypalPaymentSettings.merchantId && this.paypalPaymentSettings.merchantEmailConfirmed && this.paypalPaymentSettings.merchantPaymentsReceivable;
+    }
+
+    copyToClipboard(value: string) {
+        this.clipboardService.copyFromContent(value.trim());
+        this.notify.info(this.l('SavedToClipboard'));
     }
 }
